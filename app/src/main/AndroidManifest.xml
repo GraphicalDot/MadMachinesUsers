@@ -74,10 +74,6 @@
             android:name=".messages.controller.activity.CreateGroup"
             android:label="@string/title_activity_create_group" >
         </activity>
-        <activity
-            android:name=".common.controller.demo"
-            android:label="@string/title_activity_demo" >
-        </activity>
     </application>
 
 </manifest>
