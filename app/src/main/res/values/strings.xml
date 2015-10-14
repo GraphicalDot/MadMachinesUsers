@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">Sports Unity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="splashText">Messaging app for Sports lover</string>
+    <string name="welcome">Welcome to Sports Unity</string>
+    <string name="terms">By continuing, you accept the Terms of Use and Privacy Policy</string>
+
+    <string name="facebook_app_id">1641376076109497</string>
+
+    <string name="title_activity_splash">Sports Unity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_activity_enter_otp">EnterOtp</string>
+    <string name="contacts">Contacts</string>
+    <string name="others">OTHERS</string>
+    <string name="friends">CHATS</string>
+    <string name="title_activity_enter_phone">EnterPhone</string>
+    <string name="title_activity_profile_creation">ProfileCreationActivity</string>
+    <string name="title_activity_select_sports">SelectSportsActivity</string>
+    <string name="title_activity_chat_screen">ChatScreenActivity</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="openDrawer">openDrawer</string>
+    <string name="closeDrawer">closeDrawer</string>
+    <string name="title_activity_create_group">CreateGroup</string>
+    <string name="start_messaging">To start messaging contacts who have Sports Unity, tap on contacts and get started</string>
+    <string name="btn_invite">invite</string>
+    <string name="activeStatus">Active_status</string>
+    <string name="username">name</string>
+    <string name="lastMessage">lastmessage</string>
+    <string name="people_around_me_text">PEOPLE AROUND ME</string>
+    <string name="join_group_text">JOIN GROUP</string>
+    <string name="create_group_text">CREATE GROUP</string>
+    <string name="btn_resend">RESEND</string>
+    <string name="edit_phone_number">EDIT PHONE NUMBER</string>
+    <string name="btn_create_account">Create Account</string>
+
+    <string name="default_status">Available</string>
+
+    <string name="message_login_failed">Login failed, try again.</string>
+    <string name="title_activity_demo">demo</string>
+
+</resources>

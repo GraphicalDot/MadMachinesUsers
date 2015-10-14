@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/chat_msg_bg">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:id="@+id/message_Sent"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/chat_blue"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/singleMessageRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/message_send"
+        android:layout_marginLeft="5dp"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/message_Sent"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="3dp">
+
+        <TextView
+            android:id="@+id/timestampRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:text="Enter"
+            android:layout_marginRight="16dp"
+            android:textSize="10sp" />
+
+    </LinearLayout>
+
+
+</RelativeLayout>

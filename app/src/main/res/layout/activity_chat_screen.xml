@@ -1,0 +1,124 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/grey_chat_bg"
+    android:id="@+id/list_parent"
+    tools:context="com.sports.unity.messages.controller.activity.ChatScreenActivity">
+
+    <include
+        android:id="@+id/tool_bar_chat"
+        layout="@layout/toolbar_chat"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:minHeight="?android:attr/actionBarSize" />
+
+    <ListView
+        android:id="@+id/msgview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/type_msg"
+        android:layout_below="@+id/tool_bar_chat"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll" />
+
+    <LinearLayout
+        android:id="@+id/type_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:background="@android:color/white"
+        android:weightSum="3">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.3dp"
+            android:background="@color/horizontal_line_grey"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="5">
+
+            <EditText
+                android:id="@+id/msg"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="4"
+                android:background="@android:color/transparent"
+                android:maxLength="700"
+                android:hint="Write a message"
+                android:focusable="true"
+                android:paddingLeft="16dp"
+                android:textColor="@android:color/black" />
+
+            <Button
+                android:id="@+id/send"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="@color/app_theme_blue"
+                android:text="SEND" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:weightSum="5">
+
+            <ImageButton
+                android:id="@+id/btn_text"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="showKeyboard"
+                android:src="@drawable/ic_keyboard_selected" />
+
+            <ImageButton
+                android:id="@+id/btn_camera"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="openCamera"
+                android:src="@drawable/ic_camera_disabled"/>
+
+            <ImageButton
+                android:id="@+id/btn_emoticons"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="emojipopup"
+                android:src="@drawable/ic_emojis_disabled"/>
+
+            <ImageButton
+                android:id="@+id/btn_gallery"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="galleryPopup"
+                android:src="@drawable/ic_gallery_disabled"/>
+
+            <ImageButton
+                android:id="@+id/btn_audiomsg"
+                style="?android:attr/buttonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="voicePopup"
+                android:src="@drawable/ic_mic_disabled"/>
+
+
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

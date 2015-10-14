@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_menu_search"
+        android:orderInCategory="200"
+        android:title="Search"
+        app:showAsAction="ifRoom"></item>
+    <item
+        android:id="@+id/mini_cards"
+        android:checkable="true"
+        android:title="Mini cards"
+        android:titleCondensed="Mini cards"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_filter"
+        android:icon="@drawable/ic_menu_filter"
+        android:orderInCategory="100"
+        android:title="filter"
+        app:showAsAction="ifRoom"></item>
+</menu>
