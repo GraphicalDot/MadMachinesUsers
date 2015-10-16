@@ -34,9 +34,9 @@ public class EnterPhoneActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-
         moveBack();
+
+        super.onBackPressed();
     }
 
     private void init(){
@@ -92,6 +92,7 @@ public class EnterPhoneActivity extends AppCompatActivity {
 
     private void moveBack(){
         Intent intent = new Intent(EnterPhoneActivity.this, SplashScreenActivity.class);
+        intent.putExtra( Constants.INTENT_KEY_FORCE_SHOW, true);
         startActivity(intent);
     }
 

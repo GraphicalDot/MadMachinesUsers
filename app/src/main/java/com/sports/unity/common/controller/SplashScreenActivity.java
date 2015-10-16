@@ -14,6 +14,7 @@ import android.view.WindowManager;
 
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.util.Constants;
 import com.sports.unity.util.SystemUiHider;
 
 public class SplashScreenActivity extends AppCompatActivity {
@@ -23,11 +24,16 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(com.sports.unity.R.layout.activity_splash);
 
-        if ( isUserRegisteredFromSharedPreference() ) {
-            moveToNextActivity(MainActivity.class);
+        boolean forceShow = getIntent().getBooleanExtra(Constants.INTENT_KEY_FORCE_SHOW, false);
+
+        if( forceShow ) {
+            show();
         } else {
-            initViews();
-            new fetch().execute();
+            if (isUserRegisteredFromSharedPreference()) {
+                moveToNextActivity(MainActivity.class);
+            } else {
+                show();
+            }
         }
 
     }
@@ -41,6 +47,11 @@ public class SplashScreenActivity extends AppCompatActivity {
         startActivity(intent);
 
         finish();
+    }
+
+    private void show(){
+        initViews();
+        new fetch().execute();
     }
 
     private void initViews() {

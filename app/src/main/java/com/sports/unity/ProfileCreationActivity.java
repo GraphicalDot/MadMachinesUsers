@@ -106,9 +106,9 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-
         moveBack();
+
+        super.onBackPressed();
     }
 
     private void addListenerToContinueButton(){
