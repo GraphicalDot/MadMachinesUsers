@@ -7,56 +7,61 @@
     tools:context="com.sports.unity.common.controller.EnterPhoneActivity"
     android:background="@drawable/splash_720">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:id="@+id/imageView"
-        android:src="@drawable/splash_logo"
-        android:layout_marginTop="76dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
-
     <RelativeLayout
+        android:id="@+id/editContent"
         android:layout_width="fill_parent"
-        android:layout_height="43dp"
-        android:orientation="horizontal"
-
+        android:layout_height="@dimen/edit_view_height"
         android:layout_centerVertical="true"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
+        android:layout_marginStart="@dimen/horizontal_padding_medium"
+        android:layout_marginEnd="@dimen/horizontal_padding_medium"
         android:background="@drawable/number_bg">
 
         <EditText
             android:layout_width="wrap_content"
-            android:layout_height="43dp"
+            android:layout_height="wrap_content"
             android:id="@+id/countryCode"
-            android:text="+91"
-            android:padding="10dp"
+            android:text="@string/country_code"
+            android:padding="@dimen/horizontal_padding_very_small"
             android:editable="false"
-            android:textColor="#FFFFFF"
+            android:textColor="@android:color/white"
             android:background="@android:color/transparent"
-            android:layout_alignParentStart="true"/>
+            android:layout_alignParentLeft="true"/>
 
         <EditText
             android:layout_width="fill_parent"
-            android:layout_height="43dp"
+            android:layout_height="wrap_content"
             android:id="@+id/phoneNumber"
             android:inputType="phone"
-            android:padding="10dp"
+            android:padding="@dimen/horizontal_padding_very_small"
             android:background="@android:color/transparent"
             android:gravity="left"
             android:textColor="@android:color/white"
             android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/getotp"
-            android:layout_toEndOf="@+id/countryCode" />
+            android:layout_toLeftOf="@+id/getOtp"
+            android:layout_toRightOf="@+id/countryCode" />
 
         <Button
-            android:layout_width="40dp"
-            android:layout_height="43dp"
+            android:layout_width="@dimen/edit_view_height"
+            android:layout_height="@dimen/edit_view_height"
             android:background="@drawable/next"
-            android:id="@+id/getotp"
+            android:id="@+id/getOtp"
             android:onClick="NavigateToEnterOtp"
-            android:layout_alignParentEnd="true"/>
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
 
-</RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:layout_above="@id/editContent"
+        android:gravity="center"
+        >
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="@dimen/sports_unity_logo_height"
+            android:layout_height="@dimen/sports_unity_logo_height"
+            android:src="@drawable/splash_logo"
+            />
+    </LinearLayout>
+
 </RelativeLayout>

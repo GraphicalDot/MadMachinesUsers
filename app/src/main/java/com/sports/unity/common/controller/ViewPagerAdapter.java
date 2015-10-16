@@ -14,16 +14,16 @@ import com.sports.unity.scores.controller.fragment.ScoresFragment;
  */
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    CharSequence Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
-    int NumbOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
+    private String Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapter is created
+    private int numberOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapter is created
 
 
     // Build a Constructor and assign the passed Values to appropriate values in the class
-    public ViewPagerAdapter(FragmentManager fm, CharSequence mTitles[], int mNumbOfTabsumb) {
+    public ViewPagerAdapter(FragmentManager fm, String mTitles[], int numberOfTabs) {
         super(fm);
 
         this.Titles = mTitles;
-        this.NumbOfTabs = mNumbOfTabsumb;
+        this.numberOfTabs = numberOfTabs;
 
     }
 
@@ -58,7 +58,7 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return NumbOfTabs;
+        return numberOfTabs;
     }
 
 

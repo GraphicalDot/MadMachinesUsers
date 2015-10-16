@@ -19,6 +19,7 @@ import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.ContactsObserver;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
+import com.sports.unity.util.Constants;
 
 import org.jivesoftware.smack.AbstractConnectionListener;
 import org.jivesoftware.smack.SmackException;
@@ -65,8 +66,11 @@ public class XMPPService extends Service {
     protected void onHandleIntent(Intent intent) throws IOException, XMPPException, SmackException {
         if (mConnection == null) {
             mConnection = ProfileCreationActivity.returnConnection();
-            if (!mConnection.isAuthenticated())
-                mConnection.login(tinyDB.getString("username"), tinyDB.getString("password"));
+            if ( ! mConnection.isAuthenticated() ) {
+                String username = tinyDB.getString(TinyDB.KEY_USERNAME);
+                String password = tinyDB.getString(TinyDB.KEY_PASSWORD);
+                mConnection.login( username, password);
+            }
             StanzaFilter filter = new StanzaTypeFilter(Message.class);
             mConnection.addSyncStanzaListener(new StanzaListener() {
                 @Override
@@ -141,7 +145,9 @@ public class XMPPService extends Service {
                     Log.i("isAuthenticated", String.valueOf(XMPPClient.getConnection().isAuthenticated()));
                 } else {
                     try {
-                        mConnection.login(tinyDB.getString("username"), tinyDB.getString("password"));
+                        String username = tinyDB.getString(TinyDB.KEY_USERNAME);
+                        String password = tinyDB.getString(TinyDB.KEY_PASSWORD);
+                        mConnection.login( username, password);
                         Log.i("isAuthenticated", String.valueOf(XMPPClient.getConnection().isAuthenticated()));
                     } catch (XMPPException e) {
                         e.printStackTrace();

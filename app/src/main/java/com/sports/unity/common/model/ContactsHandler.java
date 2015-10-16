@@ -24,26 +24,32 @@ import java.util.ArrayList;
  */
 public class ContactsHandler {
 
-    static Context sContext;
-    static byte[] imgs;
-    static String status;
+    private static final String defaultStatus = "Invite to Sports Unity";
 
-    public ContactsHandler(Context c) {
-        this.sContext = c;
+    private static ContactsHandler CONTACT_HANDLER = null;
+
+    public static ContactsHandler getInstance(){
+        if( CONTACT_HANDLER == null ){
+            CONTACT_HANDLER = new ContactsHandler();
+        }
+        return CONTACT_HANDLER;
     }
 
-    static ContentResolver sContentResolver;
+    private byte[] imgs;
+    private String status;
 
-    static final String defaultStatus = "Invite to Sports Unity";
+    private ContactsHandler() {
 
-    public static void getaAllContacts() {
+    }
+
+    public void getAllContacts(Context context) {
         String[] PROJECTION = new String[]{
                 ContactsContract.Contacts._ID,
                 ContactsContract.Contacts.DISPLAY_NAME,
                 ContactsContract.Contacts.HAS_PHONE_NUMBER,
         };
         String SELECTION = ContactsContract.Contacts.HAS_PHONE_NUMBER + "='1'";
-        sContentResolver = sContext.getContentResolver();
+        ContentResolver sContentResolver = context.getContentResolver();
         Cursor cursor = sContentResolver.query(ContactsContract.Contacts.CONTENT_URI, PROJECTION, SELECTION, null, null);
         while (cursor.moveToNext()) {
             String contact_id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
@@ -58,10 +64,10 @@ public class ContactsHandler {
                     phoneNumber = phoneNumber.replaceAll("\\s+", "");
                     phoneNumber = phoneNumber.replaceAll("[-+.^:,]", "");
                     if (phoneNumber.startsWith("91")) {
-                        SportsUnityDBHelper.getInstance(sContext).addToContacts(name, phoneNumber, false, false, defaultStatus);
+                        SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, false, false, defaultStatus);
                     } else {
                         phoneNumber = "91" + phoneNumber;
-                        SportsUnityDBHelper.getInstance(sContext).addToContacts(name, phoneNumber, false, false, defaultStatus);
+                        SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, false, false, defaultStatus);
                     }
                 }
             }
@@ -69,21 +75,23 @@ public class ContactsHandler {
         cursor.close();
     }
 
-    public static void updateRegisteredUsers() throws XMPPException {
+    public void updateRegisteredUsers(Context context) throws XMPPException {
 
         Log.i("Updating  : ", "contacsupdating");
-        ArrayList<String> contactNumberList = SportsUnityDBHelper.getInstance(sContext).readContactNumbers();
+        ArrayList<String> contactNumberList = SportsUnityDBHelper.getInstance(context).readContactNumbers();
         for (int i = 0; i < contactNumberList.size(); i++) {
             String number = contactNumberList.get(i);
             MainActivity.answerForm.setAnswer("user", number);
             if (checkIfUserExists(number, MainActivity.searchForm, MainActivity.searchManager, MainActivity.answerForm)) {
-                SportsUnityDBHelper.getInstance(sContext).updateContacts(number, imgs, status);
+                SportsUnityDBHelper.getInstance(context).updateContacts(number, imgs, status);
             }
         }
 
+        imgs = null;
+        status = null;
     }
 
-    public static Boolean checkIfUserExists(String number, Form searchForm, UserSearchManager search, Form answerForm) throws XMPPException {
+    private Boolean checkIfUserExists(String number, Form searchForm, UserSearchManager search, Form answerForm) throws XMPPException {
         Boolean flag = false;
         try {
 

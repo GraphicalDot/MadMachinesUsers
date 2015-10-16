@@ -52,9 +52,9 @@ public class ContactsObserver extends ContentObserver {
         Log.i("callingonchange:", "yes");
 
 
-        ContactsHandler.getaAllContacts();
+        ContactsHandler.getInstance().getAllContacts(this.context);
         try {
-            ContactsHandler.updateRegisteredUsers();
+            ContactsHandler.getInstance().updateRegisteredUsers(this.context);
         } catch (XMPPException e) {
             e.printStackTrace();
         }

@@ -1,4 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+
     <dimen name="keyboard_height">230dip</dimen>
+
+    <dimen name="horizontal_padding_very_small">10dp</dimen>
+    <dimen name="horizontal_padding_small">16dp</dimen>
+    <dimen name="horizontal_padding_medium">30dp</dimen>
+    <dimen name="horizontal_padding_large">45dp</dimen>
+
+    <dimen name="vertical_padding_very_small">10dp</dimen>
+    <dimen name="vertical_padding_small">16dp</dimen>
+    <dimen name="vertical_padding_medium">30dp</dimen>
+    <dimen name="vertical_padding_large">45dp</dimen>
+
+    <dimen name="font_size_very_small">10sp</dimen>
+    <dimen name="font_size_small">15sp</dimen>
+    <dimen name="font_size_medium">20sp</dimen>
+    <dimen name="font_size_large">25sp</dimen>
+    <dimen name="font_size_xlarge">30sp</dimen>
+    <dimen name="font_size_xxlarge">50sp</dimen>
+
+    <dimen name="sports_unity_logo_height">100dp</dimen>
+    <dimen name="edit_view_height">45dp</dimen>
+
+    <dimen name="profile_image_circle_radius">96dp</dimen>
+
 </resources>

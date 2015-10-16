@@ -3,10 +3,7 @@ package com.sports.unity.common.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.telephony.TelephonyManager;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -16,7 +13,10 @@ import android.widget.Toast;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.sports.unity.R;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 
 import org.apache.http.Header;
 import org.json.JSONException;
@@ -24,35 +24,43 @@ import org.json.JSONObject;
 
 public class EnterPhoneActivity extends AppCompatActivity {
 
-    Button b;
-    EditText phoneno;
-    TelephonyManager telephonyManager;
-    public final static String EXTRA_MESSAGE = "PHONE_NUMBER";
-    static String url = "http://54.169.217.88/register?";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(com.sports.unity.R.layout.activity_enter_phone);
-        b = (Button) findViewById(com.sports.unity.R.id.getotp);
-        phoneno = (EditText) findViewById(com.sports.unity.R.id.phoneNumber);
-        telephonyManager = (TelephonyManager) getApplicationContext().getSystemService(getApplicationContext().TELEPHONY_SERVICE);
-        if (telephonyManager.getSimState() == TelephonyManager.SIM_STATE_ABSENT) {
-            Toast.makeText(getApplicationContext(), "Sim not found", Toast.LENGTH_SHORT).show();
-        } else {
-            String mPhoneNumber = telephonyManager.getLine1Number();
-            phoneno.setText(mPhoneNumber);
-        }
-        b.setOnClickListener(new View.OnClickListener() {
+        setContentView(R.layout.activity_enter_phone);
+
+        init();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        moveBack();
+    }
+
+    private void init(){
+
+        final Button continueButton = (Button) findViewById(R.id.getOtp);
+        final EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
+
+        setUserPhoneNumber(phoneNumberEditText);
+
+        continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (phoneno.getText().toString().length() < 10) {
-                    Toast.makeText(getApplicationContext(), "Please enter a valid 10 digit number", Toast.LENGTH_SHORT).show();
+                String phoneNumber = phoneNumberEditText.getText().toString();
+
+                if (phoneNumber.length() < 10) {
+                    Toast.makeText(EnterPhoneActivity.this, R.string.please_enter_valid_10_digit_numbers, Toast.LENGTH_SHORT).show();
                 } else {
                     RequestParams requestParams = new RequestParams();
-                    requestParams.add("phone_number", "91" + phoneno.getText().toString());
-                    new AsyncHttpClient().get(url, requestParams, new JsonHttpResponseHandler() {
+                    requestParams.add(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, "91" + phoneNumber);
+
+                    AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+                    asyncHttpClient.setTimeout(Constants.CONNECTION_TIME_OUT);
+                    asyncHttpClient.get(Constants.URL_REGISTER, requestParams, new JsonHttpResponseHandler() {
+
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             Log.i("Success", "Sent Data");
 
@@ -62,12 +70,19 @@ public class EnterPhoneActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                         }
+
+                        @Override
+                        public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                            super.onFailure(statusCode, headers, throwable, errorResponse);
+
+                            Toast.makeText(EnterPhoneActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+                        }
+
                     });
-                    Intent intent = new Intent(EnterPhoneActivity.this, EnterOtpActivity.class);
-                    String message = phoneno.getText().toString();
-                    TinyDB.getInstance(getApplicationContext()).putString("username", "91" + phoneno.getText().toString());
-                    intent.putExtra(EXTRA_MESSAGE, message);
-                    startActivity(intent);
+
+                    TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_USERNAME, "91" + phoneNumber);
+
+                    moveToNextActivity(phoneNumber);
                 }
 
 
@@ -75,25 +90,27 @@ public class EnterPhoneActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(com.sports.unity.R.menu.menu_enter_phone, menu);
-        return true;
+    private void moveBack(){
+        Intent intent = new Intent(EnterPhoneActivity.this, SplashScreenActivity.class);
+        startActivity(intent);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    private void moveToNextActivity(String phoneNumber){
+        Intent intent = new Intent(EnterPhoneActivity.this, EnterOtpActivity.class);
+        intent.putExtra(Constants.INTENT_KEY_PHONE_NUMBER, phoneNumber);
+        startActivity(intent);
 
-        //noinspection SimplifiableIfStatement
-        if (id == com.sports.unity.R.id.action_settings) {
-            return true;
+        finish();
+    }
+
+    private void setUserPhoneNumber(EditText phoneNumberEditText){
+        String phoneNumber = CommonUtil.getUserSimNumber(this);
+
+        if( phoneNumber == null ){
+            Toast.makeText(getApplicationContext(), R.string.sim_not_found, Toast.LENGTH_SHORT).show();
+        } else {
+            phoneNumberEditText.setText(phoneNumber);
         }
-
-        return super.onOptionsItemSelected(item);
     }
+
 }

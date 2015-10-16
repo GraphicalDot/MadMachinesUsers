@@ -8,8 +8,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -23,61 +21,92 @@ import com.loopj.android.http.RequestParams;
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.util.Constants;
 
 import org.apache.http.Header;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class EnterOtpActivity extends AppCompatActivity {
 
-    TextView otpText;
-    EditText Otp;
-    Button sendOtp;
-    Button resend;
-    static String url = "http://54.169.217.88/register?";
-    final static int DEFAULT_TIMEOUT = 20 * 1000;
-    Button editNumber;
+    private boolean paused = false;
+    private boolean moved = false;
 
+    private View.OnClickListener sendButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            beforeAsyncCall();
+            createUser();
+        }
+    };
+
+    private View.OnClickListener resendOtpButtonClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+//            beforeAsyncCall();
+            resendOtp();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(com.sports.unity.R.layout.activity_enter_otp);
-        sendOtp = (Button) findViewById(com.sports.unity.R.id.sendOtpButton);
-        sendOtp.setVisibility(View.INVISIBLE);
-        editNumber = (Button) findViewById(R.id.editnumber);
-        editNumber.setOnClickListener(new View.OnClickListener() {
+
+        initViews();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        paused = false;
+        boolean isRegistered = TinyDB.getInstance(getApplicationContext()).getBoolean( TinyDB.KEY_REGISTERED, false);
+        if( isRegistered ){
+            moveToNextActivity();
+        } else {
+            //nothing
+        }
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        paused = true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        moveBack();
+    }
+
+    private void initViews(){
+        Button editNumberButton = (Button) findViewById(R.id.editnumber);
+        editNumberButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        resend = (Button) findViewById(R.id.resend);
-        resend.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                RequestParams requestParams = new RequestParams();
-                requestParams.add("phone_number", "91" + getIntent().getStringExtra(EnterPhoneActivity.EXTRA_MESSAGE));
-                new AsyncHttpClient().get(url, requestParams, new JsonHttpResponseHandler() {
-                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                        Toast.makeText(getApplicationContext(), "Resending...", Toast.LENGTH_SHORT).show();
-                        Log.i("Success", "Sent Data");
 
-                        try {
-                            Log.i("Info  : ", response.getString("info"));
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-            }
-        });
-        otpText = (TextView) findViewById(com.sports.unity.R.id.enterotpText);
-        otpText.setText("Enter the verification number we sent to +91 " + getIntent().getStringExtra(EnterPhoneActivity.EXTRA_MESSAGE));
-        Otp = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
-        Otp.addTextChangedListener(new TextWatcher() {
+        final Button sendOtpButton = (Button) findViewById(com.sports.unity.R.id.sendOtpButton);
+        sendOtpButton.setVisibility(View.INVISIBLE);
+        sendOtpButton.setOnClickListener(sendButtonClickListener);
+
+        Button resendButton = (Button) findViewById(R.id.resend);
+        resendButton.setOnClickListener(resendOtpButtonClickListener);
+
+        TextView otpText = (TextView) findViewById(com.sports.unity.R.id.enterotpText);
+        otpText.setText(getString(R.string.otp_message_verification) + getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER));
+
+        EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
+        otpEditText.addTextChangedListener(new TextWatcher() {
+
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -85,62 +114,58 @@ public class EnterOtpActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() == 4)
-                    sendOtp.setVisibility(View.VISIBLE);
-                else if (s.length() != 4)
-                    sendOtp.setVisibility(View.INVISIBLE);
+                if (s.length() == 4) {
+                    sendOtpButton.setVisibility(View.VISIBLE);
+                } else if (s.length() != 4) {
+                    sendOtpButton.setVisibility(View.INVISIBLE);
+                }
             }
 
             @Override
             public void afterTextChanged(Editable s) {
 
             }
-        });
-        sendOtp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createUser();
-            }
+
         });
     }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
 
     private void createUser() {
+        EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
+        String otp = otpEditText.getText().toString();
+        String phoneNumber = getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
+
         RequestParams requestParams = new RequestParams();
-        requestParams.add("phone_number", "91" + getIntent().getStringExtra(EnterPhoneActivity.EXTRA_MESSAGE));
-        requestParams.add("auth_code", Otp.getText().toString());
-        AsyncHttpClient client = new AsyncHttpClient();
-        client.setTimeout(DEFAULT_TIMEOUT);
-        String url = "http://54.169.217.88/create?";
-        client.get(url, requestParams, new JsonHttpResponseHandler() {
+        requestParams.add(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, "91" + phoneNumber);
+        requestParams.add(Constants.REQUEST_PARAMETER_KEY_AUTH_CODE, otp);
+
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        asyncHttpClient.setTimeout(Constants.CONNECTION_TIME_OUT);
+        asyncHttpClient.get(Constants.URL_CREATE, requestParams, new JsonHttpResponseHandler() {
+
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                String password;
                 Log.i("Success", "Sent Data");
 
                 try {
+                    afterAsyncCall();
+
                     Log.i("Info  : ", response.getString("info"));
                     if (response.getString("status").equals("200")) {
-                        password = response.getString("password");
-                        Log.i("password", password);
-                        TinyDB.getInstance(getApplicationContext()).putString("password", password);
-                        TinyDB.getInstance(getApplicationContext()).putBoolean("registered", true);
-                        new Handler(Looper.getMainLooper()).post(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent intent = new Intent(EnterOtpActivity.this, ProfileCreationActivity.class);
-                                //intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                                finish();
-                            }
-                        });
+                        String password = response.getString(Constants.REQUEST_PARAMETER_KEY_PASSWORD);
+                        TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
+                        TinyDB.getInstance(getApplicationContext()).putBoolean(TinyDB.KEY_REGISTERED, true);
 
+                        if (!paused) {
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    moveToNextActivity();
+                                }
+                            });
+                        } else {
+                            //nothing
+                        }
                     } else {
-                        Toast.makeText(getApplicationContext(), "Wrong or expired token", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), R.string.otp_message_wrong_expired_token, Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -149,48 +174,88 @@ public class EnterOtpActivity extends AppCompatActivity {
 
             }
 
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                String resp = String.valueOf(statusCode);
-                resp = resp + "   Failed";
-                Log.i("Response : ", resp);
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                afterAsyncCall();
 
-            }
-
-            public void onFailure(int statusCode, Header[] headers, JSONObject response) {
                 String resp = String.valueOf(statusCode);
                 resp = resp + "   Failed";
                 Log.i("Response ", resp);
-            }
 
-            public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
-                String resp = String.valueOf(statusCode);
-                resp = resp.concat("   Failed No response");
-                Log.i("No Response Sent", resp);
+                Toast.makeText(getApplicationContext(), R.string.otp_message_wrong_expired_token, Toast.LENGTH_LONG).show();
             }
 
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(com.sports.unity.R.menu.menu_enter_otp, menu);
-        return true;
+    private void resendOtp(){
+        String phoneNumber = getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
+
+        RequestParams requestParams = new RequestParams();
+        requestParams.add(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, "91" + phoneNumber);
+
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        asyncHttpClient.setTimeout(Constants.CONNECTION_TIME_OUT);
+        asyncHttpClient.get(Constants.URL_REGISTER, requestParams, new JsonHttpResponseHandler() {
+
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+//                afterAsyncCall();
+                Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending, Toast.LENGTH_SHORT).show();
+
+                try {
+                    Log.i("Success", "Sent Data");
+                    Log.i("Info  : ", response.getString("info"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+
+//                afterAsyncCall();
+                Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    private void beforeAsyncCall(){
+        Button sendOtpButton = (Button) findViewById(R.id.sendOtpButton);
+        sendOtpButton.setOnClickListener(null);
 
-        //noinspection SimplifiableIfStatement
-        if (id == com.sports.unity.R.id.action_settings) {
-            return true;
+//        Button resendOtpButton = (Button) findViewById(R.id.resend);
+//        resendOtpButton.setOnClickListener(null);
+
+        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+    }
+
+    private void afterAsyncCall(){
+        Button sendOtpButton = (Button) findViewById(R.id.sendOtpButton);
+        sendOtpButton.setOnClickListener(sendButtonClickListener);
+
+//        Button resendOtpButton = (Button) findViewById(R.id.resend);
+//        resendOtpButton.setOnClickListener(resendOtpButtonClickListener);
+
+        findViewById(R.id.progressBar).setVisibility(View.GONE);
+    }
+
+    private void moveToNextActivity(){
+        if( ! moved ) {
+            moved = true;
+
+            Intent intent = new Intent(this, ProfileCreationActivity.class);
+            startActivity(intent);
+
+            finish();
         }
-        return super.onOptionsItemSelected(item);
     }
+
+    private void moveBack(){
+        Intent intent = new Intent(this, EnterPhoneActivity.class);
+        startActivity(intent);
+    }
+
 }
 
 

@@ -11,8 +11,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,6 +26,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
+import com.sports.unity.common.controller.EnterPhoneActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.TinyDB;
 
@@ -55,9 +54,19 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private String profilePicUrl;
     private byte[] byteArray;
 
+    private boolean paused = false;
+    private boolean vCardSaved = false;
+    private boolean moved = false;
 
-    private TinyDB tinyDB = TinyDB.getInstance(this);
+    private View.OnClickListener continueButtonOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            beforeAsyncCall();
 
+            TinyDB.getInstance(ProfileCreationActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nameText.getText().toString());
+            new LoginAndPushVCardThread().start();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,15 +80,40 @@ public class ProfileCreationActivity extends AppCompatActivity {
         addListenerToContinueButton();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        paused = false;
+        if ( vCardSaved ) {
+            moveOn();
+        }
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        paused = true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        moveBack();
+    }
+
     private void addListenerToContinueButton(){
         Button continueButton = (Button) findViewById(R.id.continue_button);
-        continueButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tinyDB.putString("name", nameText.getText().toString());
-                new LoginAndPushVCardThread().start();
-            }
-        });
+        continueButton.setOnClickListener(continueButtonOnClickListener);
     }
 
     private void initFacebookLogin(){
@@ -135,12 +169,12 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                Toast.makeText(getApplicationContext(), "Login cancelled", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), R.string.profile_facebook_login_cancelled, Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onError(FacebookException e) {
-                Toast.makeText(getApplicationContext(), "Login failed", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), R.string.profile_facebook_login_failed, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -154,18 +188,21 @@ public class ProfileCreationActivity extends AppCompatActivity {
     }
 
     private void onSuccessfulLogin(){
-        tinyDB.putBoolean("Registered", true);
-        Intent serviceIntent = new Intent(ProfileCreationActivity.this, XMPPService.class);
-        startService(serviceIntent);
-        Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
-        startActivity(intent);
+        vCardSaved = true;
+//        TinyDB.getInstance(ProfileCreationActivity.this).putBoolean(TinyDB.KEY_REGISTERED, true);
+
+        if( ! paused ) {
+            moveOn();
+        } else {
+            //nothing
+        }
     }
 
     private void onUnSuccessfulLogin(){
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText( ProfileCreationActivity.this, R.string.message_login_failed, Toast.LENGTH_SHORT).show();
+                Toast.makeText(ProfileCreationActivity.this, R.string.message_login_failed, Toast.LENGTH_SHORT).show();
             }
         });
         //TODO
@@ -173,6 +210,38 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
     private void onUnSuccessfulVCardSubmit(){
         //TODO
+    }
+
+    private void beforeAsyncCall(){
+        Button continueButton = (Button) findViewById(R.id.continue_button);
+        continueButton.setOnClickListener( null);
+
+        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+    }
+
+    private void afterAsyncCall(){
+        Button continueButton = (Button) findViewById(R.id.continue_button);
+        continueButton.setOnClickListener( continueButtonOnClickListener);
+
+        findViewById(R.id.progressBar).setVisibility(View.GONE);
+    }
+
+    private void moveOn(){
+        if( ! moved ) {
+            moved = true;
+            Intent serviceIntent = new Intent(ProfileCreationActivity.this, XMPPService.class);
+            startService(serviceIntent);
+
+            Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
+            startActivity(intent);
+
+            finish();
+        }
+    }
+
+    private void moveBack(){
+        Intent intent = new Intent(this, EnterPhoneActivity.class);
+        startActivity(intent);
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
@@ -192,6 +261,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         protected void onPostExecute(Bitmap image) {
             setProfileImage(image);
         }
+
     }
 
     private class LoginAndPushVCardThread extends Thread {
@@ -200,7 +270,10 @@ public class ProfileCreationActivity extends AppCompatActivity {
         public void run() {
             boolean success = false;
             try {
-                XMPPClient.getConnection().login(tinyDB.getString("username"), tinyDB.getString("password"));
+                TinyDB tinyDB = TinyDB.getInstance(ProfileCreationActivity.this);
+                String username = tinyDB.getString(TinyDB.KEY_USERNAME);
+                String password = tinyDB.getString(TinyDB.KEY_PASSWORD);
+                XMPPClient.getConnection().login( username, password);
                 success = true;
             } catch (XMPPException e) {
                 e.printStackTrace();
@@ -211,15 +284,16 @@ public class ProfileCreationActivity extends AppCompatActivity {
             }
 
             if( success ) {
-                new Vcard().execute();
+                new SubmitVCardAsyncTask().execute();
             } else {
+                afterAsyncCall();
                 onUnSuccessfulLogin();
             }
         }
 
     }
 
-    private class Vcard extends AsyncTask<Void, Void, Void> {
+    private class SubmitVCardAsyncTask extends AsyncTask<Void, Void, Void> {
         private boolean success = false;
 
         @Override
@@ -227,11 +301,12 @@ public class ProfileCreationActivity extends AppCompatActivity {
             try {
                 VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
                 VCard vCard = new VCard();
-                vCard.setNickName(tinyDB.getString("name"));
+                vCard.setNickName(TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_PROFILE_NAME));
                 vCard.setAvatar(byteArray);
                 vCard.setMiddleName( getResources().getString(R.string.default_status));
                 vCard.setJabberId(XMPPClient.getConnection().getUser());
                 manager.saveVCard(vCard);
+
                 success = true;
             } catch (SmackException.NoResponseException e) {
                 e.printStackTrace();
@@ -246,6 +321,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Void o) {
+            afterAsyncCall();
             if( success ){
                 onSuccessfulLogin();
             } else {
@@ -258,31 +334,4 @@ public class ProfileCreationActivity extends AppCompatActivity {
         return XMPPClient.getConnection();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(com.sports.unity.R.menu.menu_profile_creation, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == com.sports.unity.R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

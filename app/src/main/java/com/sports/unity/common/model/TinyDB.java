@@ -24,6 +24,12 @@ import java.util.Map;
 
 public class TinyDB {
 
+    public static final String KEY_REGISTERED = "Registered";
+    public static final String KEY_USERNAME = "username";
+    public static final String KEY_PASSWORD = "password";
+
+    public static final String KEY_PROFILE_NAME = "name";
+
     private SharedPreferences preferences;
     private String DEFAULT_APP_IMAGEDATA_DIRECTORY;
     private String lastImagePath = "";
