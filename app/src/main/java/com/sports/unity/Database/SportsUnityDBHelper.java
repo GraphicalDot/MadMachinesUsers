@@ -18,27 +18,22 @@ import static com.sports.unity.Database.SportsUnityContract.MessagesEntry;
  */
 public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "spu.db";
-
-    private static final String COMMA_SEP = ",";
-
     private static final String CREATE_CONTACTS_TABLE = "CREATE TABLE IF NOT EXISTS " +
             ContactsEntry.TABLE_NAME + "( " +
-            ContactsEntry.COLUMN_NAME + " " + "VARCHAR " + COMMA_SEP +
-            ContactsEntry.COLUMN_PHONENUMBER + " VARCHAR UNIQUE " + COMMA_SEP +
-            ContactsEntry.COLUMN_CHAT_ENABLED + " boolean " + COMMA_SEP +
-            ContactsEntry.COLUMN_USER_IMAGE + " BLOB " + COMMA_SEP +
-            ContactsEntry.COLUMN_UNREAD_COUNT + " INTEGER " + COMMA_SEP +
-            ContactsEntry.COLUMN_STATUS + " VARCHAR " + COMMA_SEP +
+            ContactsEntry.COLUMN_NAME + " " + "VARCHAR " + DBConstants.COMMA_SEP +
+            ContactsEntry.COLUMN_PHONENUMBER + " VARCHAR UNIQUE " + DBConstants.COMMA_SEP +
+            ContactsEntry.COLUMN_CHAT_ENABLED + " boolean " + DBConstants.COMMA_SEP +
+            ContactsEntry.COLUMN_USER_IMAGE + " BLOB " + DBConstants.COMMA_SEP +
+            ContactsEntry.COLUMN_UNREAD_COUNT + " INTEGER " + DBConstants.COMMA_SEP +
+            ContactsEntry.COLUMN_STATUS + " VARCHAR " + DBConstants.COMMA_SEP +
             ContactsEntry.COLUMN_REGISTERED + " boolean);";
 
     private static final String CREATE_MESSAGES_TABLE = "CREATE TABLE IF NOT EXISTS " +
             MessagesEntry.TABLE_NAME + "( " +
-            MessagesEntry.COLUMN_MESSAGE + " " + "VARCHAR " + COMMA_SEP +
-            MessagesEntry.COLUMN_PHONENUMBER + " VARCHAR " + COMMA_SEP +
-            MessagesEntry.COLUMN_SEND_TIMESTAMP + "  DATETIME " + COMMA_SEP +
-            MessagesEntry.COLUMN_NAME_I_AM_SENDER + " boolean " + COMMA_SEP +
+            MessagesEntry.COLUMN_MESSAGE + " " + "VARCHAR " + DBConstants.COMMA_SEP +
+            MessagesEntry.COLUMN_PHONENUMBER + " VARCHAR " + DBConstants.COMMA_SEP +
+            MessagesEntry.COLUMN_SEND_TIMESTAMP + "  DATETIME " + DBConstants.COMMA_SEP +
+            MessagesEntry.COLUMN_NAME_I_AM_SENDER + " boolean " + DBConstants.COMMA_SEP +
             MessagesEntry.COLUMN_RECIEVE_TIMESTAMP + " DATETIME DEFAULT CURRENT_TIMESTAMP);";
 
     private static final String DELETE_CONTACTS_TABLE = "DROP TABLE IF EXISTS " + ContactsEntry.TABLE_NAME;
@@ -58,7 +53,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     }
 
     private SportsUnityDBHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        super(context, DBConstants.DATABASE_NAME, null, DBConstants.DATABASE_VERSION);
     }
 
 

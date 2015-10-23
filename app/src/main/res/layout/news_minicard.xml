@@ -66,6 +66,24 @@
                         android:layout_gravity="bottom"
                         android:textColor="@color/news_data"
                         android:textSize="10sp" />
+
+                    <TextView
+                        android:id="@+id/text3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:text="Sport: "
+                        android:textColor="@color/news_static"
+                        android:textSize="10sp"
+                        android:layout_marginLeft="20dp"/>
+
+                    <TextView
+                        android:id="@+id/type"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:textColor="@color/news_data"
+                        android:textSize="10sp" />
                 </LinearLayout>
 
             </RelativeLayout>

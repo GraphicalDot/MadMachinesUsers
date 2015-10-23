@@ -4,7 +4,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Rect;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -13,6 +15,8 @@ import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -23,10 +27,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sports.unity.ChatScreenApplication;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.FontTypeface;
 
@@ -246,8 +252,13 @@ public class ChatScreenActivity extends AppCompatActivity {
             enablePopupWindowOnKeyBoard();
             ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_camera);
             viewGroup.setVisibility(View.VISIBLE);
+            Intent intent=new Intent(ChatScreenActivity.this,CameraActivity.class);
+            startActivity(intent);
+
         }
+
     }
+
 
     public void emojipopup(View view) {
         if (isKeyBoardVisible) {

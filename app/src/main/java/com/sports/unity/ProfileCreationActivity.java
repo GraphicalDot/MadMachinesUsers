@@ -28,7 +28,9 @@ import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.EnterPhoneActivity;
 import com.sports.unity.common.controller.MainActivity;
+import com.sports.unity.common.controller.SelectSportsActivity;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -102,13 +104,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
         super.onPause();
 
         paused = true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        moveBack();
-
-        super.onBackPressed();
     }
 
     private void addListenerToContinueButton(){
@@ -229,19 +224,22 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private void moveOn(){
         if( ! moved ) {
             moved = true;
+
+            UserUtil.setProfileCreated( this, true);
+
             Intent serviceIntent = new Intent(ProfileCreationActivity.this, XMPPService.class);
             startService(serviceIntent);
 
-            Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
-            startActivity(intent);
+            if( UserUtil.isSportsSelected() ) {
+                Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(ProfileCreationActivity.this, SelectSportsActivity.class);
+                startActivity(intent);
+            }
 
             finish();
         }
-    }
-
-    private void moveBack(){
-        Intent intent = new Intent(this, EnterPhoneActivity.class);
-        startActivity(intent);
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {

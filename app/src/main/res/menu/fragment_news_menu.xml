@@ -10,7 +10,7 @@
     <item
         android:id="@+id/mini_cards"
         android:checkable="true"
-        android:title="Mini cards"
+        android:title="@string/news_checkbox"
         android:titleCondensed="Mini cards"
         app:showAsAction="never" />
     <item

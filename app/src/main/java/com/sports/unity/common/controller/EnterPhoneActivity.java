@@ -32,13 +32,6 @@ public class EnterPhoneActivity extends AppCompatActivity {
         init();
     }
 
-    @Override
-    public void onBackPressed() {
-        moveBack();
-
-        super.onBackPressed();
-    }
-
     private void init(){
 
         final Button continueButton = (Button) findViewById(R.id.getOtp);
@@ -88,12 +81,6 @@ public class EnterPhoneActivity extends AppCompatActivity {
 
             }
         });
-    }
-
-    private void moveBack(){
-        Intent intent = new Intent(EnterPhoneActivity.this, SplashScreenActivity.class);
-        intent.putExtra( Constants.INTENT_KEY_FORCE_SHOW, true);
-        startActivity(intent);
     }
 
     private void moveToNextActivity(String phoneNumber){

@@ -40,6 +40,32 @@
 
     <string name="message_login_failed">Login failed, try again.</string>
     <string name="title_activity_demo">demo</string>
+    <string name="title_activity_news_details">NewsDetailsActivity</string>
+    <string name="title_activity_filter">FilterActivity</string>
+    <string name="title_activity_tour">TourActivity</string>
+
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="tour_score_details">Class aptent taciti sociosqu ad litora torquent per conubia nostra.</string>
+    <string name="tour_score_title">Score</string>
+    <string name="tour_news_details">Class aptent taciti sociosqu ad litora torquent per conubia nostra.</string>
+    <string name="tour_news_title">News</string>
+    <string name="tour_people_details">Class aptent taciti sociosqu ad litora torquent per conubia nostra.</string>
+    <string name="tour_people_title">People Arround Me</string>
+    <string name="basketball">Basketball</string>
+    <string name="cricket">Cricket</string>
+    <string name="football">Football</string>
+    <string name="formula_one">Formula One</string>
+    <string name="tennis">Tennis</string>
+    <string name="filter_by_sports">FILTER BY SPORTS</string>
+    <string name="clear_all_filters">Clear All Filters</string>
+    <string name="apply_filters">Apply Filters</string>
+    <string name="advance_filters">ADVANCE FILTERS</string>
+    <string name="filter_by_team">Filter By Teams</string>
+    <string name="filter_by_leaugues_cups">Filter By Leagues/Cups</string>
+    <string name="filter_by_players">Filter By Players</string>
+    <string name="news_checkbox">Mini Card</string>
 
     <string name="country_code">+91</string>
     <string name="sim_not_found">Sim not found.</string>
@@ -54,8 +80,16 @@
     <string name="profile_facebook_login_failed">Login failed</string>
     <string name="profile_facebook_login_cancelled">Login cancelled</string>
 
+    <string name="select_your_favourite_sports">Select your favourite sports</string>
+    <string name="select_atleast_one_sport_message">Select at least one sport.</string>
+    <string name="keep_one_sport_selected">Keep at least one sport selected.</string>
+
     <string name="scores">Scores</string>
     <string name="news">News</string>
     <string name="messages">Messages</string>
+    <string name="title_activity_camera">CameraActivity</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_on_return">OnReturnActivity</string>
 
 </resources>

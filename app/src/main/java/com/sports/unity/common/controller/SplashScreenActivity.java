@@ -6,14 +6,20 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 
+import com.sports.unity.ProfileCreationActivity;
+import com.sports.unity.R;
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.SystemUiHider;
 
@@ -24,28 +30,27 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(com.sports.unity.R.layout.activity_splash);
 
-        boolean forceShow = getIntent().getBooleanExtra(Constants.INTENT_KEY_FORCE_SHOW, false);
+        UserUtil.init(this);
 
-        if( forceShow ) {
-            show();
-        } else {
-            if (isUserRegisteredFromSharedPreference()) {
-                moveToNextActivity(MainActivity.class);
+        if ( UserUtil.isUserRegistered() ) {
+            if( UserUtil.isProfileCreated() ){
+                if( UserUtil.isSportsSelected() ){
+                    moveToNextActivity(MainActivity.class);
+                } else {
+                    moveToNextActivity(SelectSportsActivity.class);
+                }
             } else {
-                show();
+                moveToNextActivity(ProfileCreationActivity.class);
             }
+        } else {
+            show();
         }
 
     }
 
-    private boolean isUserRegisteredFromSharedPreference(){
-        return TinyDB.getInstance(this).getBoolean( TinyDB.KEY_REGISTERED, false);
-    }
-
     private void moveToNextActivity( Class nextActivityClass){
-        Intent intent = new Intent(SplashScreenActivity.this, nextActivityClass);
-        startActivity(intent);
-
+        Intent mainIntent = new Intent(SplashScreenActivity.this, nextActivityClass);
+        startActivity(mainIntent);
         finish();
     }
 
@@ -55,14 +60,27 @@ public class SplashScreenActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        findViewById(com.sports.unity.R.id.dummy_button).setOnClickListener(new View.OnClickListener() {
-
+        ImageView img=(ImageView) findViewById(R.id.imageView);
+        img.animate()
+                .setStartDelay(1000)
+                .setDuration(2000)
+                .scaleX(-50)
+                .scaleY(-50);
+//        img.animate()
+//                .setStartDelay(1500)
+//                .setDuration(2000)
+//                .scaleX(20)
+//                .scaleY(20);
+        ImageView img1=(ImageView) findViewById(R.id.imageView1);
+        img1.animate().setStartDelay(1000)
+                .setDuration(1800).alpha(-1);
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(View view) {
-                moveToNextActivity(EnterPhoneActivity.class);
+            public void run() {
+                moveToNextActivity(TourActivity.class);
+                overridePendingTransition(R.anim.f1, R.anim.f2);
             }
-
-        });
+        }, 2000);
     }
 
     public class fetch extends AsyncTask {

@@ -83,8 +83,8 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/news_data"
                     android:textSize="10sp" />
-            </LinearLayout>
 
+            </LinearLayout>
             <TextView
                 android:id="@+id/info_text"
                 android:layout_width="wrap_content"

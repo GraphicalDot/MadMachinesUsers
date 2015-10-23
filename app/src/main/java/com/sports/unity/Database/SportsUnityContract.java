@@ -30,4 +30,21 @@ public final class SportsUnityContract {
         public static final String COLUMN_MESSAGE = "data";
         public static final String COLUMN_NAME_I_AM_SENDER = "i_am_sender";
     }
+
+    public static abstract class NewsEntry implements BaseColumns {
+        public static final String TABLE_NAME = "newsTable";
+
+        public static final String COLUMN_NEWS_ID = "news_id";
+        public static final String COLUMN_WEBSITE = "";
+        public static final String COLUMN_IMAGE_URL = "";
+        public static final String COLUMN_IMAGE_CONTENT = "";
+        public static final String COLUMN_TITLE = "";
+        public static final String COLUMN_SUMMARY = "";
+        public static final String COLUMN_NEWS_LINK = "";
+        public static final String COLUMN_CUSTOM_SUMMARY = "";
+        public static final String COLUMN_PUBLISHED = "";
+        public static final String COLUMN_TYPE = "";
+        public static final String COLUMN_PUBLISH_EPOCH = "";
+
+    }
 }

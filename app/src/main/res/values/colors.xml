@@ -14,9 +14,17 @@
     <color name="chat_msg_bg">#ebebeb</color>
     <color name="last_msg">#666</color>
     <color name="messages_bg">#e1e1e1</color>
-    <color name="news_data">#b2b2b2</color>
+    <color name="news_data">#a6a6a6</color>
     <color name="news_static">#4c4c4c</color>
     <color name="news_headline_mini">#333333</color>
     <color name="active_chatScreen">#959595</color>
+    <color name="gray1">#7d7d7d</color>
+    <color name="gray2">#4c4c4c</color>
+    <color name="gray3">#f2f2f2</color>
+    <color name="divider_color">#e5e5e5</color>
+    <color name="tour_news_color">#f8b54f</color>
+    <color name="tour_score_color">#e8526d</color>
+    <color name="tour_people_color">#3fba91</color>
+    <color name="tour_details_color">#666</color>
 
 </resources>

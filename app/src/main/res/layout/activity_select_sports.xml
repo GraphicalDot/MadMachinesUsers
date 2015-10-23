@@ -41,15 +41,6 @@
             android:id="@+id/toLeagueSelect"
             android:layout_alignParentRight="true"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="skip"
-            style="?android:attr/borderlessButtonStyle"
-            android:textColor="@android:color/white"
-            android:background="@android:color/transparent"
-            android:id="@+id/skipSelection"
-            android:layout_alignParentLeft="true"/>
     </RelativeLayout>
 
 </RelativeLayout>

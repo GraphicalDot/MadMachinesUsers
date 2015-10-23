@@ -2,6 +2,7 @@ package com.sports.unity.messages.controller.activity;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,7 +27,7 @@ import org.jivesoftware.smackx.xdata.packet.DataForm;
 
 import java.util.ArrayList;
 
-public class CreateGroup extends ActionBarActivity {
+public class CreateGroup extends AppCompatActivity {
     ListView contacts;
     EditText groupName;
     ArrayAdapter<String> adapter;
@@ -113,12 +114,9 @@ public class CreateGroup extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }

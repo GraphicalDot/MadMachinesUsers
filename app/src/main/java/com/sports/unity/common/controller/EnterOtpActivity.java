@@ -21,6 +21,7 @@ import com.loopj.android.http.RequestParams;
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
 
 import org.apache.http.Header;
@@ -62,8 +63,7 @@ public class EnterOtpActivity extends AppCompatActivity {
         super.onResume();
 
         paused = false;
-        boolean isRegistered = TinyDB.getInstance(getApplicationContext()).getBoolean( TinyDB.KEY_REGISTERED, false);
-        if( isRegistered ){
+        if( UserUtil.isUserRegistered() ){
             moveToNextActivity();
         } else {
             //nothing
@@ -152,7 +152,7 @@ public class EnterOtpActivity extends AppCompatActivity {
                     if (response.getString("status").equals("200")) {
                         String password = response.getString(Constants.REQUEST_PARAMETER_KEY_PASSWORD);
                         TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
-                        TinyDB.getInstance(getApplicationContext()).putBoolean(TinyDB.KEY_REGISTERED, true);
+                        UserUtil.setUserRegistered( EnterOtpActivity.this, true);
 
                         if (!paused) {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
