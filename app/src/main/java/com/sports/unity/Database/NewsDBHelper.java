@@ -18,8 +18,6 @@ import static com.sports.unity.Database.SportsUnityContract.NewsEntry;
  */
 public class NewsDBHelper extends SQLiteOpenHelper {
 
-
-
     private static final String CREATE_NEWS_TABLE = "CREATE TABLE IF NOT EXISTS " +
             NewsEntry.TABLE_NAME + "( " +
             NewsEntry.COLUMN_NEWS_ID + " VARCHAR UNIQUE " + DBConstants.COMMA_SEP +
@@ -51,36 +49,84 @@ public class NewsDBHelper extends SQLiteOpenHelper {
     }
 
     public void saveNewsArticles(ArrayList<News> newsArrayList){
-        //TODO
+        ArrayList<ContentValues> contentValuesArrayList = new ArrayList<>();
+
+        for(News news : newsArrayList){
+            contentValuesArrayList.add( getContentValuesObject(news));
+        }
+
+        DBUtil.insertContentValuesInTable(this, NewsEntry.TABLE_NAME, contentValuesArrayList);
     }
 
     public ArrayList<News> fetchNewsArticles(){
-        //TODO
-        return null;
+        String[] projection = {
+            NewsEntry.COLUMN_NEWS_ID,
+            NewsEntry.COLUMN_WEBSITE,
+            NewsEntry.COLUMN_IMAGE_URL,
+            NewsEntry.COLUMN_IMAGE_CONTENT,
+            NewsEntry.COLUMN_TITLE,
+            NewsEntry.COLUMN_SUMMARY,
+            NewsEntry.COLUMN_NEWS_LINK,
+            NewsEntry.COLUMN_CUSTOM_SUMMARY,
+            NewsEntry.COLUMN_PUBLISHED,
+            NewsEntry.COLUMN_TYPE,
+            NewsEntry.COLUMN_PUBLISH_EPOCH,
+        };
+
+        Cursor cursor = DBUtil.query( this,
+                NewsEntry.TABLE_NAME,
+                projection,
+                null,
+                null,
+                null,
+                null,
+                null);
+
+        ArrayList<News> newsArrayList = new ArrayList<>();
+
+        if ( cursor.moveToFirst() ) {
+            do {
+                News news = new News();
+                news.setNewsId(cursor.getString(0));
+                news.setWebsite(cursor.getString(1));
+                news.setHdpi(cursor.getString(2));
+                //TODO image content
+                news.setTitle(cursor.getString(4));
+                news.setSummary(cursor.getString(5));
+                news.setNewsLink(cursor.getString(6));
+                news.setCustomSummary(cursor.getString(7));
+                news.setPublished(cursor.getString(8));
+                news.setType(cursor.getString(9));
+                news.setPublishEpoch(cursor.getLong(10));
+
+                newsArrayList.add(news);
+            } while ( cursor.moveToNext() );
+        }
+
+        return newsArrayList;
     }
 
-    private void saveNewsArticle(String id, String website, String image_url, String image_content, String title,String summary,
-                              String news_link, String custom_summary, String published, String type,String published_epoc) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    private void saveNewsArticle(News news) {
+        ContentValues contentValues = getContentValuesObject(news);
 
+        DBUtil.insertContentValuesInTable(this, NewsEntry.TABLE_NAME, contentValues);
+    }
+
+    private ContentValues getContentValuesObject(News news){
         ContentValues contentValues = new ContentValues();
-        contentValues.put(NewsEntry.COLUMN_NEWS_ID, id);
-        contentValues.put(NewsEntry.COLUMN_WEBSITE, website);
-        contentValues.put(NewsEntry.COLUMN_IMAGE_URL, image_url);
-        contentValues.put(NewsEntry.COLUMN_IMAGE_CONTENT, image_content);
-        contentValues.put(NewsEntry.COLUMN_TITLE, title);
-        contentValues.put(NewsEntry.COLUMN_SUMMARY, summary);
-        contentValues.put(NewsEntry.COLUMN_NEWS_LINK, news_link);
-        contentValues.put(NewsEntry.COLUMN_CUSTOM_SUMMARY, custom_summary);
-        contentValues.put(NewsEntry.COLUMN_PUBLISHED, published);
-        contentValues.put(NewsEntry.COLUMN_TYPE, type);
-        contentValues.put(NewsEntry.COLUMN_PUBLISH_EPOCH, published_epoc);
-
-        db.insert(NewsEntry.TABLE_NAME, null, contentValues);
-        db.close();
+        contentValues.put(NewsEntry.COLUMN_NEWS_ID, news.getNewsId());
+        contentValues.put(NewsEntry.COLUMN_WEBSITE, news.getWebsite());
+        contentValues.put(NewsEntry.COLUMN_IMAGE_URL, news.getHdpi());
+        //TODO image content
+        contentValues.put(NewsEntry.COLUMN_TITLE, news.getTitle());
+        contentValues.put(NewsEntry.COLUMN_SUMMARY, news.getSummary());
+        contentValues.put(NewsEntry.COLUMN_NEWS_LINK, news.getNewsLink());
+        contentValues.put(NewsEntry.COLUMN_CUSTOM_SUMMARY, news.getCustomSummary());
+        contentValues.put(NewsEntry.COLUMN_PUBLISHED, news.getPublished());
+        contentValues.put(NewsEntry.COLUMN_TYPE, news.getType());
+        contentValues.put(NewsEntry.COLUMN_PUBLISH_EPOCH, news.getPublishEpoch());
+        return contentValues;
     }
-
-
 
     @Override
     public void onCreate(SQLiteDatabase db) {

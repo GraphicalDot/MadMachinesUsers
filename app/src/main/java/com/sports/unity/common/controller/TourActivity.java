@@ -12,7 +12,6 @@ import android.widget.RadioGroup;
 
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
-import com.viewpagerindicator.CirclePageIndicator;
 
 
 public class TourActivity extends AppCompatActivity {

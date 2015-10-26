@@ -5,6 +5,8 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.sports.unity.Database.DBUtil;
+
 /**
  * Created by amandeep on 15/10/15.
  */
@@ -29,6 +31,7 @@ public class CommonUtil {
         if (str == null || (strLen = str.length()) == 0) {
             return str;
         }
+
         return new StringBuffer(strLen)
                 .append(Character.toTitleCase(str.charAt(0)))
                 .append(str.substring(1))
