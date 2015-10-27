@@ -9,6 +9,7 @@ public class Constants {
 
     public static final String URL_REGISTER = "http://54.169.217.88/register?";
     public static final String URL_CREATE = "http://54.169.217.88/create?";
+    public static final String URL_NEWS_CONTENT = "http://52.74.250.156:8000//mixed?";
 
     public static final String REQUEST_PARAMETER_KEY_PHONE_NUMBER = "phone_number";
     public static final String REQUEST_PARAMETER_KEY_AUTH_CODE = "auth_code";

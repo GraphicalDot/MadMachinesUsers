@@ -26,13 +26,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.sports.unity.Database.NewsDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.news.model.News;
 import com.sports.unity.news.model.NewsList;
-
+import com.sports.unity.util.CommonUtil;
+import com.sports.unity.Database.NewsDBHelper;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -91,8 +93,16 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
         progressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#2C84CC"), android.graphics.PorterDuff.Mode.MULTIPLY);
 
         Log.i("NewsFragment", "initial request call");
-        progressBar.setVisibility(View.VISIBLE);
-        requestContent();
+
+
+        if( CommonUtil.isInternetConnectionAvailable(getActivity()) ) {
+            progressBar.setVisibility(View.VISIBLE);
+            requestContent();
+        } else {
+            progressBar.setVisibility(View.GONE);
+            filteredNewsArticle=NewsDBHelper.getInstance(getActivity()).fetchNewsArticles();
+            displayResult();
+        }
 
         if (mSwipeRefreshLayout != null) {
 
@@ -133,7 +143,7 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
                 if (!loading && (totalItemCount - visibleItemCount)
                         <= (firstVisibleItem + visibleThreshold)) {
                     // End has been reached
-                   current_page++;
+                    current_page++;
                     Log.i("Yaeye!", "end called");
                     Log.i("NewsFragment", "request content on load more");
 
@@ -174,7 +184,7 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
         Log.i("requestContent", "Filter size" + filter.size());
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        Log.i("requestContent" , "Skip limit" +skipLimit);
+        Log.i("requestContent", "Skip limit" + skipLimit);
         for(int i=0;i<filter.size();i++) {
             url = "http://52.74.250.156:8000//mixed?skip=" + skipLimit + "&limit=" + loadLimit + "&image_size=hdpi&type="+filter.get(i)+"";
 
@@ -210,25 +220,25 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
         Log.i("On Response List.size()", "" + list.size());
 
         ArrayList<News> toBeAdded = null;
-        if( !filteredNewsArticle.isEmpty() && !list.isEmpty() ) {
+        if (!filteredNewsArticle.isEmpty() && !list.isEmpty()) {
 
             long latestNewsArticleEpoch_AlreadyHave = filteredNewsArticle.get(0).getPublishEpoch();
-            long oldestNewsArticleEpoch_AlreadyHave = filteredNewsArticle.get(filteredNewsArticle.size()-1).getPublishEpoch();
+            long oldestNewsArticleEpoch_AlreadyHave = filteredNewsArticle.get(filteredNewsArticle.size() - 1).getPublishEpoch();
             long latestNewsArticleEpoch = list.get(0).getPublishEpoch();
 
-            if( latestNewsArticleEpoch > latestNewsArticleEpoch_AlreadyHave ){
+            if (latestNewsArticleEpoch > latestNewsArticleEpoch_AlreadyHave) {
                 toBeAdded = new ArrayList<>();
-                for(News news : list){
-                    if( news.getPublishEpoch() > latestNewsArticleEpoch_AlreadyHave ){
+                for (News news : list) {
+                    if (news.getPublishEpoch() > latestNewsArticleEpoch_AlreadyHave) {
                         toBeAdded.add(news);
                     } else {
                         //nothing
                     }
                 }
-            } else if( latestNewsArticleEpoch < oldestNewsArticleEpoch_AlreadyHave ) {
+            } else if (latestNewsArticleEpoch < oldestNewsArticleEpoch_AlreadyHave) {
                 toBeAdded = new ArrayList<>();
-                for(News news : list){
-                    if( news.getPublishEpoch() < oldestNewsArticleEpoch_AlreadyHave ){
+                for (News news : list) {
+                    if (news.getPublishEpoch() < oldestNewsArticleEpoch_AlreadyHave) {
                         toBeAdded.add(news);
                     } else {
                         //nothing
@@ -241,16 +251,40 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
             toBeAdded = list;
         }
 
-        if( toBeAdded != null ) {
+        if (toBeAdded != null) {
             filteredNewsArticle.addAll(toBeAdded);
         } else {
             //nothing
         }
 
         Collections.sort(filteredNewsArticle);
+
+        insertIntoDb();
+
         displayResult();
     }
 
+    public void insertIntoDb()
+    {
+        if(filteredNewsArticle.size()>50)
+        {
+            ArrayList<News> newsListForInsert = new ArrayList<>();
+            for(int i=0; i<50; i++)
+            {
+                if( ! filteredNewsArticle.isEmpty() ) {
+                    newsListForInsert.add(filteredNewsArticle.get(i));
+                } else {
+                    //nothing
+                }
+
+            }
+            NewsDBHelper.getInstance(getActivity()).saveNewsArticles(newsListForInsert);
+        }
+        else
+        {
+            NewsDBHelper.getInstance(getActivity()).saveNewsArticles(filteredNewsArticle);
+        }
+    }
     @Override
     public void onErrorResponse(VolleyError volleyError) {
         resetScrollFlag();

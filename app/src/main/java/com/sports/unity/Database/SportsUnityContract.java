@@ -34,17 +34,17 @@ public final class SportsUnityContract {
     public static abstract class NewsEntry implements BaseColumns {
         public static final String TABLE_NAME = "newsTable";
 
-        public static final String COLUMN_NEWS_ID = "news_id";
-        public static final String COLUMN_WEBSITE = "";
-        public static final String COLUMN_IMAGE_URL = "";
-        public static final String COLUMN_IMAGE_CONTENT = "";
-        public static final String COLUMN_TITLE = "";
-        public static final String COLUMN_SUMMARY = "";
-        public static final String COLUMN_NEWS_LINK = "";
-        public static final String COLUMN_CUSTOM_SUMMARY = "";
-        public static final String COLUMN_PUBLISHED = "";
-        public static final String COLUMN_TYPE = "";
-        public static final String COLUMN_PUBLISH_EPOCH = "";
+        public static final String COLUMN_NEWS_ID = "newsId";
+        public static final String COLUMN_WEBSITE = "website";
+        public static final String COLUMN_IMAGE_URL = "image_url";
+        public static final String COLUMN_IMAGE_CONTENT = "image_content";
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_SUMMARY = "summary";
+        public static final String COLUMN_NEWS_LINK = "newsLink";
+        public static final String COLUMN_CUSTOM_SUMMARY = "customSummary";
+        public static final String COLUMN_PUBLISHED = "published";
+        public static final String COLUMN_TYPE = "type";
+        public static final String COLUMN_PUBLISH_EPOCH = "publishEpoch";
 
     }
 }

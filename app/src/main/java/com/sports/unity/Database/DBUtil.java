@@ -38,4 +38,9 @@ public class DBUtil {
         return cursor;
     }
 
+    static void clearContentFromTable(SQLiteOpenHelper sqLiteOpenHelper, String table){
+        SQLiteDatabase db = sqLiteOpenHelper.getReadableDatabase();
+        db.delete( table, null, null);
+    }
+
 }

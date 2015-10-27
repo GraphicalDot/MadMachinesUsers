@@ -48,13 +48,14 @@ public class NewsDBHelper extends SQLiteOpenHelper {
         super(context, DBConstants.NEWS_DATABASE_NAME, null, DBConstants.NEWS_DATABASE_VERSION);
     }
 
-    public void saveNewsArticles(ArrayList<News> newsArrayList){
+    public  void saveNewsArticles(ArrayList<News> newsArrayList){
         ArrayList<ContentValues> contentValuesArrayList = new ArrayList<>();
 
         for(News news : newsArrayList){
             contentValuesArrayList.add( getContentValuesObject(news));
         }
 
+        DBUtil.clearContentFromTable( this, NewsEntry.TABLE_NAME);
         DBUtil.insertContentValuesInTable(this, NewsEntry.TABLE_NAME, contentValuesArrayList);
     }
 
@@ -73,7 +74,7 @@ public class NewsDBHelper extends SQLiteOpenHelper {
             NewsEntry.COLUMN_PUBLISH_EPOCH,
         };
 
-        Cursor cursor = DBUtil.query( this,
+        Cursor cursor = DBUtil.query(this,
                 NewsEntry.TABLE_NAME,
                 projection,
                 null,
