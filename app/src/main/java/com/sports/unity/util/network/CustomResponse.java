@@ -1,5 +1,7 @@
 package com.sports.unity.util.network;
 
+import android.content.Context;
+
 import com.android.volley.VolleyError;
 
 import java.util.ArrayList;
@@ -9,7 +11,7 @@ import java.util.ArrayList;
  */
 public abstract class CustomResponse {
 
-    private ResponseListener responseListener = null;
+    protected ResponseListener responseListener = null;
 
     public CustomResponse(){
 
@@ -23,18 +25,18 @@ public abstract class CustomResponse {
         responseListener = null;
     }
 
-    abstract void responedFromCache();
+    abstract public void responedFromCache();
 
-    abstract void handleResponse(String content);
+    abstract public void handleResponse(String content);
 
-    abstract void onErrorResponse(VolleyError error);
+    abstract public void onErrorResponse(VolleyError error);
 
-    abstract void fetchContentFromDB();
+    abstract public void fetchContentFromDB(Context context, String tag);
 
-    abstract ArrayList<ContentRequest> getCustomRequest(String tag);
+    abstract public ArrayList<ContentRequest> getCustomRequest(String tag);
 
-    abstract boolean isContentAvailable();
+    abstract public boolean isContentAvailable();
 
-    abstract boolean isExpired();
+    abstract public boolean isExpired();
 
 }

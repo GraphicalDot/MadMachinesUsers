@@ -21,6 +21,8 @@ public class Constants {
     public static final String GAME_KEY_TENNIS = "tennis";
     public static final String GAME_KEY_F1 = "f1";
 
+    public static final String NEWS_REQUEST_TAG = "news_tag";
+
     public static final int CONNECTION_TIME_OUT = 20*1000;
 
 }

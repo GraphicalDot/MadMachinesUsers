@@ -110,10 +110,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             } else if (minutes >= 0) {
                 holder.published.setText(String.valueOf(minutes) + " minute" + ( minutes==1 ? "":"s" ) +" ago");
             }
-            if (news.get(position).getHdpi() != null && !news.get(position).getHdpi().equals("null")) {
+            if (news.get(position).getImage_link() != null && !news.get(position).getImage_link().equals("null")) {
                 holder.imageView.setVisibility(View.VISIBLE);
-                holder.imageView.setTag(news.get(position).getHdpi());
-                String myUri = news.get(position).getHdpi();
+                holder.imageView.setTag(news.get(position).getImage_link());
+                String myUri = news.get(position).getImage_link();
                 Picasso.with(activity).load(myUri).into(holder.imageView);
             } else {
                 holder.imageView.setVisibility(View.GONE);

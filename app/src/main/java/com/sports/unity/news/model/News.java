@@ -12,9 +12,9 @@ public class News implements Comparable<News>{
     @SerializedName("website")
     @Expose
     private String website;
-    @SerializedName("hdpi")
+    @SerializedName("image_link")
     @Expose
-    private String hdpi;
+    private String image_link;
     @SerializedName("title")
     @Expose
     private String title;
@@ -55,17 +55,17 @@ public class News implements Comparable<News>{
     }
 
     /**
-     * @return The hdpi
+     * @return The image_link
      */
-    public String getHdpi() {
-        return hdpi;
+    public String getImage_link() {
+        return image_link;
     }
 
     /**
-     * @param hdpi The hdpi
+     * @param image_link The image_link
      */
-    public void setHdpi(String hdpi) {
-        this.hdpi = hdpi;
+    public void setImage_link(String image_link) {
+        this.image_link = image_link;
     }
 
     /**

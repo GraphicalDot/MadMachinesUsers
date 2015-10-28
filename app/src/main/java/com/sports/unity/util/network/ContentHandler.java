@@ -2,19 +2,17 @@ package com.sports.unity.util.network;
 
 import android.content.Context;
 
+import com.sports.unity.news.model.NewsResponseHandler;
+import com.sports.unity.util.Constants;
+
 /**
  * Created by Dell on 5/28/2015.
  */
 public class ContentHandler {
 
-    public static void askContent( Context context, String tag, CustomResponse customResponse){
+    public static void askContent( Context context, String tag, boolean requestingForLatestContent, boolean doNotHaveContent){
         ContentCache contentCache = ContentCache.getInstance();
-        contentCache.addCustomResponse(tag, customResponse);
-    }
-
-    public static void askContent( Context context, String tag){
-        ContentCache contentCache = ContentCache.getInstance();
-        contentCache.askContent(context, tag);
+        contentCache.askContent(context, tag, requestingForLatestContent, doNotHaveContent);
     }
 
     public static CustomResponse getContentResponse( String tag){

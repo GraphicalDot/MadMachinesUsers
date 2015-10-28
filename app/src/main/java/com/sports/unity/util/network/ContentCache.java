@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.VolleyError;
+import com.sports.unity.news.model.NewsResponseHandler;
+import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,58 +38,65 @@ public class ContentCache {
 
     }
 
-    void addCustomResponse(String tag, CustomResponse customResponse){
-        if( ! customResponseHashMap.containsKey(tag) ) {
-            customResponseHashMap.put(tag, customResponse);
+    private CustomResponse createCustomResponse(String tag){
+        CustomResponse customResponse = null;
+        if( tag.equals(Constants.NEWS_REQUEST_TAG) ) {
+            customResponse = new NewsResponseHandler();
+        } else {
+            //nothing
         }
+        customResponseHashMap.put(tag, customResponse);
+        return customResponse;
     }
 
-    void askContent( Context context, String tag){
+    void askContent( Context context, String tag, boolean requestingForLatestContent, boolean doNotHaveContent){
 
-        if( customResponseHashMap.containsKey(tag) ) {
-            CustomResponse customResponse = customResponseHashMap.get(tag);
+        if( ! customResponseHashMap.containsKey(tag) ) {
+            createCustomResponse(tag);
+        }
 
-            boolean isContentAvailableInCache = false;
-            boolean isRefreshRequired = false;
+        CustomResponse customResponse = customResponseHashMap.get(tag);
 
-            if ( customResponse.isContentAvailable() ) {
-                isContentAvailableInCache = true;
-                if (customResponse.isExpired()) {
-                    isRefreshRequired = true;
-                }
-            } else {
-                isContentAvailableInCache = false;
+        boolean isContentAvailableInCache = false;
+        boolean isRefreshRequired = false;
+
+        if ( customResponse.isContentAvailable() ) {
+            isContentAvailableInCache = true;
+            if (customResponse.isExpired()) {
                 isRefreshRequired = true;
             }
+        } else {
+            isContentAvailableInCache = false;
+            isRefreshRequired = true;
+        }
 
-            if (isContentAvailableInCache) {
+        if (isContentAvailableInCache) {
 
-                if (isRefreshRequired) {
-                    requestContent(tag);
-                }
-
-                Log.i("Volley Network", "Available in Cache");
-                respond(tag);
-            } else {
-                Log.i("Volley Network", "Fetch from Storage");
-
-                customResponse.fetchContentFromDB();
+            if (isRefreshRequired) {
+                requestContent(tag);
             }
 
+            Log.i("Volley Network", "Available in Cache");
+            respond(tag);
+        } else {
+            Log.i("Volley Network", "Fetch from Storage");
+
+            customResponse.fetchContentFromDB(context, tag);
         }
 
     }
 
     CustomResponse getContentResponse( String tag){
         if( customResponseHashMap.containsKey( tag) ){
-            return customResponseHashMap.get( tag);
+            //nothing
         } else {
-            return null;
+            createCustomResponse(tag);
         }
+        return customResponseHashMap.get( tag);
     }
 
-    void requestContent(String tag){
-        Log.i( "Volley Network", "Refresh Required");
+    void requestContent(String tag) {
+        Log.i("Volley Network", "Refresh Required");
         CustomResponse customResponse = customResponseHashMap.get(tag);
         ArrayList<ContentRequest> requests = customResponse.getCustomRequest(tag);
 

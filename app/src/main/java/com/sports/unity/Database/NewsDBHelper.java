@@ -90,7 +90,7 @@ public class NewsDBHelper extends SQLiteOpenHelper {
                 News news = new News();
                 news.setNewsId(cursor.getString(0));
                 news.setWebsite(cursor.getString(1));
-                news.setHdpi(cursor.getString(2));
+                news.setImage_link(cursor.getString(2));
                 //TODO image content
                 news.setTitle(cursor.getString(4));
                 news.setSummary(cursor.getString(5));
@@ -117,7 +117,7 @@ public class NewsDBHelper extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(NewsEntry.COLUMN_NEWS_ID, news.getNewsId());
         contentValues.put(NewsEntry.COLUMN_WEBSITE, news.getWebsite());
-        contentValues.put(NewsEntry.COLUMN_IMAGE_URL, news.getHdpi());
+        contentValues.put(NewsEntry.COLUMN_IMAGE_URL, news.getImage_link());
         //TODO image content
         contentValues.put(NewsEntry.COLUMN_TITLE, news.getTitle());
         contentValues.put(NewsEntry.COLUMN_SUMMARY, news.getSummary());
