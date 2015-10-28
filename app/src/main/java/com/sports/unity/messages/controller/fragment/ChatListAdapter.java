@@ -46,11 +46,11 @@ public class ChatListAdapter extends ArrayAdapter<SportsUnityDBHelper.Chats> {
 
         //DateTime currentDateTime = new DateTime(LocalDate.now(DateTimeZone.forID("Asia/Kolkata")).toDateTimeAtCurrentTime());
 
-        if (chatArrayList.get(position).sentTime != null) {
+        if (chatArrayList.get(position).sent != null) {
             //int days = Days.daysBetween(dateTime, currentDateTime).getDays();
-            lastMsgTime.setText(chatArrayList.get(position).sentTime);
+            lastMsgTime.setText(chatArrayList.get(position).sent);
         } else {
-            lastMsgTime.setText(chatArrayList.get(position).recieveTime);
+            lastMsgTime.setText(chatArrayList.get(position).recieved);
         }
 
         if (chatArrayList.get(position).unreadCount == 0) {
@@ -60,8 +60,8 @@ public class ChatListAdapter extends ArrayAdapter<SportsUnityDBHelper.Chats> {
             lastMsgTime.setTextColor(Color.parseColor("#2c84cc"));
 
         }
-        lastMsg.setText(chatArrayList.get(position).msg);
-        name.setText(chatArrayList.get(position).name);
+        lastMsg.setText(chatArrayList.get(position).data);
+        name.setText(chatArrayList.get(position).userName);
         return rowView;
     }
 

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.sports.unity" >
+    package="com.sports.unity">
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -20,22 +24,32 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
 
-        <receiver android:name=".messages.controller.activity.ChatScreenActivity$MessageRecieved" >
+        <receiver android:name=".messages.controller.activity.ChatScreenActivity$MessageRecieved">
             <intent-filter>
                 <action android:name="com.madmachines.SINGLE_MESSAGE_RECEIVED" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".messages.controller.fragment.ChatFragment$MessageRecieved" >
+        <receiver android:name=".messages.controller.fragment.ChatFragment$MessageRecieved">
             <intent-filter>
                 <action android:name="com.madmachine.SINGLE_MESSAGE_RECEIVED" />
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".NetworkStateReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>
+                <action android:name="android.net.wifi.STATE_CHANGE"/>
+            </intent-filter>
+        </receiver>
+
+        <activity
+            android:name=".common.controller.MainActivity"
+            android:label="@string/app_name" />
         <activity
             android:name=".common.controller.SplashScreenActivity"
             android:label="@string/title_activity_splash" >
@@ -60,24 +74,21 @@
             android:name=".ProfileCreationActivity"
             android:label="@string/title_activity_profile_creation" />
         <activity
-            android:name=".common.controller.MainActivity"
-            android:label="@string/app_name" />
-        <activity
             android:name=".common.controller.SelectSportsActivity"
             android:label="@string/title_activity_select_sports" />
-        <activity
-            android:name=".messages.controller.activity.ChatScreenActivity"
-            android:label="@string/title_activity_chat_screen" />
-        <activity
-            android:name=".messages.controller.activity.CreateGroup"
-            android:label="@string/title_activity_create_group" >
-        </activity>
 
         <service
             android:name=".XMPPManager.XMPPService"
             android:enabled="true"
             android:exported="true" />
 
+        <activity
+            android:name=".messages.controller.activity.ChatScreenActivity"
+            android:label="@string/title_activity_chat_screen" />
+        <activity
+            android:name=".messages.controller.activity.CreateGroup"
+            android:label="@string/title_activity_create_group"></activity>
+        
         <activity
             android:name=".news.controller.activity.NewsDetailsActivity"
             android:label="@string/title_activity_news_details" />
@@ -96,10 +107,6 @@
         <activity
             android:name=".messages.controller.activity.CameraActivity"
             android:label="@string/title_activity_camera" >
-        </activity>
-        <activity
-            android:name=".messages.controller.activity.GallaryActivity"
-            android:label="@string/title_activity_gallary" >
         </activity>
     </application>
 

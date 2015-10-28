@@ -145,6 +145,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
                                     GraphResponse response) {
                                 try {
                                     nameText.setText(object.getString("name"));
+                                    TinyDB.getInstance(getApplicationContext()).putString((String) object.get("name"), TinyDB.KEY_PROFILE_NAME);
                                     JSONObject data = response.getJSONObject();
                                     if (data.has("picture")) {
                                         profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
@@ -194,13 +195,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
     }
 
     private void onUnSuccessfulLogin(){
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                Toast.makeText(ProfileCreationActivity.this, R.string.message_login_failed, Toast.LENGTH_SHORT).show();
-            }
-        });
-        //TODO
+        Toast.makeText(ProfileCreationActivity.this, R.string.message_login_failed, Toast.LENGTH_SHORT).show();
     }
 
     private void onUnSuccessfulVCardSubmit(){
@@ -284,8 +279,13 @@ public class ProfileCreationActivity extends AppCompatActivity {
             if( success ) {
                 new SubmitVCardAsyncTask().execute();
             } else {
-                afterAsyncCall();
-                onUnSuccessfulLogin();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        afterAsyncCall();
+                        onUnSuccessfulLogin();
+                    }
+                });
             }
         }
 

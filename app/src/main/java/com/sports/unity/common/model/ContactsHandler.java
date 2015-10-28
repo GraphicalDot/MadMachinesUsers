@@ -12,6 +12,8 @@ import com.sports.unity.XMPPManager.XMPPClient;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smackx.search.ReportedData;
 import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
@@ -64,10 +66,10 @@ public class ContactsHandler {
                     phoneNumber = phoneNumber.replaceAll("\\s+", "");
                     phoneNumber = phoneNumber.replaceAll("[-+.^:,]", "");
                     if (phoneNumber.startsWith("91")) {
-                        SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, false, false, defaultStatus);
+                        SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, false, defaultStatus);
                     } else {
                         phoneNumber = "91" + phoneNumber;
-                        SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, false, false, defaultStatus);
+                        SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, false, defaultStatus);
                     }
                 }
             }
@@ -105,6 +107,8 @@ public class ContactsHandler {
                         card.load(XMPPClient.getConnection(), number + "@mm.io");
                         imgs = card.getAvatar();
                         status = card.getMiddleName();
+                        String name = card.getNickName();
+                        addToContactList(number);
                         Log.i("Iterator values......", " " + value);
                         flag = true;
                     }
@@ -118,10 +122,18 @@ public class ContactsHandler {
             e.printStackTrace();
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
+        } catch (SmackException.NotLoggedInException e) {
+            e.printStackTrace();
         }
 
 
         return false;
+    }
+
+    private static void addToContactList(String number) throws SmackException.NotLoggedInException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, SmackException.NoResponseException {
+        Presence response = new Presence(Presence.Type.subscribe);
+        response.setTo(number + "@mm.io");
+        XMPPClient.getConnection().sendPacket(response);
     }
 
 

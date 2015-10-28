@@ -44,11 +44,16 @@ public class ContactsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 if (contactList.get(position).registered) {
-                    String jid = contactList.get(position).jid;
-                    String jbname = contactList.get(position).name;
-                    Intent chatScreen = new Intent(getActivity(), ChatScreenActivity.class);
-                    chatScreen.putExtra("jid", jid);
-                    chatScreen.putExtra("jbname", jbname);
+                    String number = contactList.get(position).jid;
+                    String name = contactList.get(position).name;
+                    long contactId = contactList.get(position).id;
+                    long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
+
+                    Intent chatScreen =  new Intent(getActivity(), ChatScreenActivity.class);
+                    chatScreen.putExtra("number", number);
+                    chatScreen.putExtra("name", name);
+                    chatScreen.putExtra("contactId", contactId);
+                    chatScreen.putExtra("chatId", chatId);
                     startActivity(chatScreen);
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Invite him to sports Unity!", Toast.LENGTH_SHORT).show();

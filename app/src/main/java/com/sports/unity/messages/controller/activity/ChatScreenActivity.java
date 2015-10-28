@@ -4,12 +4,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
 import android.content.pm.PackageManager;
 import android.graphics.Rect;
+import android.net.Uri;
 import android.hardware.Camera;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
@@ -35,15 +40,25 @@ import com.sports.unity.R;
 
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.messages.controller.model.PersonalMessaging;
 
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
-import org.joda.time.DateTime;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.RosterListener;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.jivesoftware.smackx.chatstates.ChatState;
+import org.jivesoftware.smackx.iqlast.LastActivityManager;
+import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 
 public class ChatScreenActivity extends AppCompatActivity {
 
@@ -52,9 +67,14 @@ public class ChatScreenActivity extends AppCompatActivity {
     private static String JABBERID;
     private static String JABBERNAME;
 
+    private static long chatID = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
+
+    private long contactID = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
+
     private EditText mMsg;
     private Chat chat;
     private MessageRecieved messageRecieved;
+    private TextView status;
 
     private ViewGroup parentLayout;
 
@@ -63,8 +83,11 @@ public class ChatScreenActivity extends AppCompatActivity {
 
     private int keyboardHeight;
     private boolean isKeyBoardVisible;
+    private static XMPPTCPConnection con;
 
     private SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
+    private PersonalMessaging personalMessaging = PersonalMessaging.getInstance(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,15 +105,19 @@ public class ChatScreenActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 
-        JABBERID = getIntent().getStringExtra("jid");                       //name of the user you are messaging with
-        JABBERNAME = getIntent().getStringExtra("jbname");                  //phone number or jid of the user you are chatting with
+        JABBERID = getIntent().getStringExtra("number");                       //name of the user you are messaging with
+        JABBERNAME = getIntent().getStringExtra("name");                  //phone number or jid of the user you are chatting with
+        contactID = getIntent().getLongExtra("contactId", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
+        chatID = getIntent().getLongExtra("chatId", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
 
 
         ListView mChatView = (ListView) findViewById(R.id.msgview);                // List for messages
 
         messageRecieved = new MessageRecieved();
 
-        sportsUnityDBHelper.clearUnreadCount(JABBERID);
+        con = XMPPClient.getConnection();
+
+        sportsUnityDBHelper.clearUnreadCount(sportsUnityDBHelper.getContactId(JABBERID));
         TextView user = (TextView) toolbar.findViewById(R.id.chat_username);
         user.setText(JABBERNAME);
         user.setTypeface(FontTypeface.getInstance(this).getRobotoRegular());
@@ -103,16 +130,47 @@ public class ChatScreenActivity extends AppCompatActivity {
         });
 
         mMsg = (EditText) findViewById(R.id.msg);
+
+        mMsg.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    personalMessaging.sendStatus(ChatState.composing, chat);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        status = (TextView) toolbar.findViewById(R.id.status_active);
+
+        try {
+            getLastSeen();
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        }
+
         Button mSend = (Button) findViewById(R.id.send);
         mSend.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
-        //MessageListener messageListener = new MessageListenerImpl();
         ChatManager chatManager = ChatManager.getInstanceFor(XMPPClient.getConnection());
         if (mMsg.getText().toString() != null) {
             chat = chatManager.getThreadChat(JABBERID);
-            if (chat == null)
+            if (chat == null) {
                 chat = chatManager.createChat(JABBERID + "@mm.io");
+            }
 
-            messageList = sportsUnityDBHelper.getMessages(JABBERID);
+            initChatId();
+
+            messageList = sportsUnityDBHelper.getMessages(chatID, SportsUnityDBHelper.DEFAULT_ENTRY_ID, false);
             chatScreenAdapter = new ChatScreenAdapter(ChatScreenActivity.this, messageList);
             mChatView.setAdapter(chatScreenAdapter);
             mSend.setOnClickListener(new View.OnClickListener() {
@@ -124,56 +182,77 @@ public class ChatScreenActivity extends AppCompatActivity {
         }
     }
 
+    private void initChatId() {
+        if (chatID == SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
+            chatID = sportsUnityDBHelper.getChatEntryID(contactID);
+        } else {
+            //nothing
+        }
+    }
+
+
+    private void createChatEntryifNotExists() {
+        if (chatID == SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
+            chatID = sportsUnityDBHelper.getChatEntryID(contactID);
+            if (chatID != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
+                //nothing
+            } else {
+                chatID = sportsUnityDBHelper.createChatEntry(JABBERNAME, contactID);
+                Log.i("ChatEntry : ", "chat entry made " + chatID + " : " + contactID);
+            }
+        } else {
+            //nothing
+        }
+    }
+
+    public void getLastSeen() throws SmackException.NotConnectedException {
+        /*Roster roster = Roster.getInstanceFor(con);
+        Collection<RosterEntry> entries = roster.getEntries();
+        Presence presence;
+
+        for (RosterEntry entry : entries) {
+            presence = roster.getPresence(entry.getUser());
+
+            System.out.println(entry.getUser());
+            System.out.println(presence.getType().name());
+            System.out.println(presence.getStatus());
+        }*/
+
+        try {
+            LastActivityManager lActivityManager = LastActivityManager.getInstanceFor(XMPPClient.getConnection());
+            Log.d("LAST ACTIVITY", lActivityManager.getLastActivity(JABBERID + "@mm.io") + "");
+        } catch (XMPPException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     private void sendMessage() {
+        createChatEntryifNotExists();
 
         if (mMsg.getText().toString().equals("")) {
             //Do nothing
         } else {
-            try {
-                Message message = new Message();
-                message.setBody(mMsg.getText().toString());
-                DateTime dateTime = DateTime.now();
-                JivePropertiesManager.addProperty(message, "time", dateTime.getMillis());
+            Log.i("Message Entry", "adding message chat " + chatID);
+            personalMessaging.sendMessageToPeer(mMsg.getText().toString(), chat, JABBERID, chatID, JABBERNAME);
 
-                chat.sendMessage(message);
+            personalMessaging.sendStatus(ChatState.paused, chat);
 
+            /**
+             *  update the chatscreen list of messages
+             */
 
-                sportsUnityDBHelper.addMessage(mMsg.getText().toString(), JABBERID, true, null);
-                sportsUnityDBHelper.updateChatLabel(JABBERID);
-                messageList = sportsUnityDBHelper.getMessages(JABBERID);
-                chatScreenAdapter.notifydataset(messageList);
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            }
+            messageList = sportsUnityDBHelper.getMessages(chatID, SportsUnityDBHelper.DEFAULT_ENTRY_ID, false);
+            chatScreenAdapter.notifydataset(messageList);
         }
+
         mMsg.setText("");
     }
-
-    /*public class MessageListenerImpl implements MessageListener, ChatStateListener {
-        @Override
-        public void stateChanged(Chat chat, ChatState state) {
-            if (ChatState.composing.equals(state)) {
-                Log.d("Chat State", chat.getParticipant() + " is typing..");
-                userActiveStatus.setText("typing...");
-            } else if (ChatState.gone.equals(state)) {
-                Log.d("Chat State", chat.getParticipant() + " has left the conversation.");
-                userActiveStatus.setText("Online");
-            } else {
-                Log.d("Chat State", chat.getParticipant() + ": " + state.name());
-            }
-        }
-
-        @Override
-        public void processMessage(Chat chat, Message message) {
-
-        }
-
-        @Override
-        public void processMessage(Message message) {
-
-        }
-    }*/
 
     /**
      * Overriding onKeyDown for dismissing keyboard on key down
@@ -274,6 +353,24 @@ public class ChatScreenActivity extends AppCompatActivity {
             enablePopupWindowOnKeyBoard();
             ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_gallery);
             viewGroup.setVisibility(View.VISIBLE);
+            Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            photoPickerIntent.setType("image/*");
+            startActivityForResult(photoPickerIntent, 1);
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            Uri chosenImageUri = data.getData();
+
+            Bitmap mBitmap = null;
+            try {
+                mBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), chosenImageUri);
+                Log.i("getBitmap? :", "yes");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -326,10 +423,6 @@ public class ChatScreenActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-//        Intent intent = new Intent();
-//        intent.setAction("com.madmachine.SINGLE_MESSAGE_RECEIVED");
-//        sendBroadcast(intent);
-
         super.onBackPressed();
     }
 
@@ -352,9 +445,10 @@ public class ChatScreenActivity extends AppCompatActivity {
             return true;
         }
         if (id == R.id.action_clear_chat) {
-            sportsUnityDBHelper.clearChat(JABBERID);
-            messageList = sportsUnityDBHelper.getMessages(JABBERID);
+            sportsUnityDBHelper.clearChat(chatID);
+            messageList = sportsUnityDBHelper.getMessages(chatID, SportsUnityDBHelper.DEFAULT_ENTRY_ID, false);
             chatScreenAdapter.notifydataset(messageList);
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -394,7 +488,7 @@ public class ChatScreenActivity extends AppCompatActivity {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            messageList = SportsUnityDBHelper.getInstance(context).getMessages(JABBERID);
+            messageList = SportsUnityDBHelper.getInstance(context).getMessages(chatID, SportsUnityDBHelper.DEFAULT_ENTRY_ID, false);
             chatScreenAdapter.notifydataset(messageList);
             Log.i("yoyo :", "yoyo");
 

@@ -32,7 +32,7 @@ public class EnterPhoneActivity extends AppCompatActivity {
         init();
     }
 
-    private void init(){
+    private void init() {
 
         final Button continueButton = (Button) findViewById(R.id.getOtp);
         final EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
@@ -83,7 +83,7 @@ public class EnterPhoneActivity extends AppCompatActivity {
         });
     }
 
-    private void moveToNextActivity(String phoneNumber){
+    private void moveToNextActivity(String phoneNumber) {
         Intent intent = new Intent(EnterPhoneActivity.this, EnterOtpActivity.class);
         intent.putExtra(Constants.INTENT_KEY_PHONE_NUMBER, phoneNumber);
         startActivity(intent);
@@ -91,10 +91,10 @@ public class EnterPhoneActivity extends AppCompatActivity {
         finish();
     }
 
-    private void setUserPhoneNumber(EditText phoneNumberEditText){
+    private void setUserPhoneNumber(EditText phoneNumberEditText) {
         String phoneNumber = CommonUtil.getUserSimNumber(this);
 
-        if( phoneNumber == null ){
+        if (phoneNumber == null) {
             Toast.makeText(getApplicationContext(), R.string.sim_not_found, Toast.LENGTH_SHORT).show();
         } else {
             phoneNumberEditText.setText(phoneNumber);

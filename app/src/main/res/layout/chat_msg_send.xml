@@ -5,13 +5,13 @@
     android:background="@color/chat_msg_bg">
 
     <LinearLayout
+        android:id="@+id/message_Sent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="2dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:id="@+id/message_Sent"
         android:layout_marginTop="5dp"
         android:background="@drawable/chat_blue"
         android:orientation="vertical">
@@ -26,23 +26,29 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/message_send"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/message_send"
-        android:layout_marginLeft="5dp"
         android:layout_alignParentRight="true"
         android:layout_below="@id/message_Sent"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="3dp">
+        android:layout_marginBottom="3dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="16dp">
 
         <TextView
             android:id="@+id/timestampRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:text="Enter"
+            android:layout_gravity="center_vertical|end"
             android:layout_marginRight="16dp"
+            android:text="Enter"
             android:textSize="10sp" />
+
+        <ImageView
+            android:id="@+id/receivedStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_msg_pending" />
 
     </LinearLayout>
 

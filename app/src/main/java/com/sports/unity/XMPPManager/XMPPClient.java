@@ -30,7 +30,7 @@ public class XMPPClient {
                 configuration.setHost(SERVER_HOST);
                 configuration.setPort(SERVER_PORT);
                 configuration.setServiceName(SERVICE_NAME);
-                configuration.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
+                configuration.setSecurityMode(ConnectionConfiguration.SecurityMode.ifpossible);
                 configuration.setDebuggerEnabled(true);
                 configuration.setConnectTimeout(20000);
                 configuration.setSendPresence(true);

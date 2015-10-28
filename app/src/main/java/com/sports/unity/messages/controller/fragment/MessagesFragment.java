@@ -1,5 +1,6 @@
 package com.sports.unity.messages.controller.fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sports.unity.R;
+import com.sports.unity.messages.controller.activity.CreateGroup;
 
 /**
  * Created by Agupta on 8/13/2015.
@@ -94,8 +96,8 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
                 chats.setTextColor(Color.parseColor("#2C84CC"));
                 break;
             case R.id.create_group_txt:
-                //Intent intent = new Intent(getActivity(), CreateGroup.class);
-                //startActivity(intent);
+                Intent intent = new Intent(getActivity(), CreateGroup.class);
+                startActivity(intent);
                 Log.i("createGroupActivity : " , "shown");
                 break;
         }

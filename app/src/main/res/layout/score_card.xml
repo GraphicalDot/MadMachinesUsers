@@ -41,12 +41,9 @@
 
                         <ImageView
                             android:id="@+id/t1flag"
-                            android:layout_width="40dp"
-                            android:layout_height="20dp"
-                            android:padding="0.3dp"
-                            android:background="#cbcbcb"
-                            android:src="@drawable/ireland"
-                            android:scaleType="fitXY"/>
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:padding="0.3dp" />
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -57,18 +54,21 @@
                                 android:id="@+id/team1"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerInParent="true"
                                 android:paddingLeft="8dp"
-                                android:textSize="18dp"
-                                android:text="Srilanka" />
+                                android:textColor="@android:color/black"
+                                android:textSize="18dp" />
 
                             <TextView
                                 android:id="@+id/t1score"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
-                                android:textSize="18dp"
+                                android:layout_centerInParent="true"
                                 android:paddingRight="8dp"
-                                android:text="374/8(50)" />
+                                android:textColor="@android:color/black"
+                                android:textSize="18dp" />
                         </RelativeLayout>
 
 
@@ -82,11 +82,9 @@
 
                         <ImageView
                             android:id="@+id/t2flag"
-                            android:layout_width="40dp"
-                            android:layout_height="20dp"
-                            android:padding="0.3dp"
-                            android:background="#cbcbcb"
-                            android:src="@drawable/zimbabwe"/>
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:padding="0.3dp" />
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -95,20 +93,23 @@
 
                             <TextView
                                 android:id="@+id/team2"
-                                android:paddingLeft="8dp"
-                                android:textSize="18dp"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Pakistan" />
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerInParent="true"
+                                android:paddingLeft="8dp"
+                                android:textColor="@android:color/black"
+                                android:textSize="18dp" />
 
                             <TextView
                                 android:id="@+id/t2score"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
-                                android:textSize="18dp"
+                                android:layout_centerInParent="true"
                                 android:paddingRight="8dp"
-                                android:text="Yet to bat" />
+                                android:textColor="@android:color/black"
+                                android:textSize="18dp" />
 
                         </RelativeLayout>
 
@@ -128,21 +129,20 @@
                     android:layout_weight="3">
 
                     <TextView
-                        android:id="@+id/odi"
+                        android:id="@+id/matchDay"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:text="5th odi"
                         android:textColor="@android:color/black" />
 
                 </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/footer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/footer"
                 android:background="#e6e6e6"
                 android:orientation="vertical">
 
@@ -151,18 +151,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
-                    android:textColor="#666666"
                     android:layout_marginTop="6dp"
-                    android:text="QUICKEN LOANS ARENA"
+                    android:textColor="#666666"
                     android:textSize="12dp" />
 
                 <TextView
                     android:id="@+id/date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textColor="#666666"
-                    android:layout_marginLeft="16dp"
                     android:layout_marginBottom="6dp"
+                    android:layout_marginLeft="16dp"
+                    android:textColor="#666666"
                     android:textSize="12dp" />
             </LinearLayout>
         </LinearLayout>

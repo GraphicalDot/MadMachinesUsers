@@ -63,7 +63,7 @@ public class EnterOtpActivity extends AppCompatActivity {
         super.onResume();
 
         paused = false;
-        if( UserUtil.isUserRegistered() ){
+        if (UserUtil.isUserRegistered()) {
             moveToNextActivity();
         } else {
             //nothing
@@ -85,7 +85,7 @@ public class EnterOtpActivity extends AppCompatActivity {
         super.onBackPressed();
     }
 
-    private void initViews(){
+    private void initViews() {
         Button editNumberButton = (Button) findViewById(R.id.editnumber);
         editNumberButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,7 +152,8 @@ public class EnterOtpActivity extends AppCompatActivity {
                     if (response.getString("status").equals("200")) {
                         String password = response.getString(Constants.REQUEST_PARAMETER_KEY_PASSWORD);
                         TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
-                        UserUtil.setUserRegistered( EnterOtpActivity.this, true);
+                        Log.i("password", password);
+                        UserUtil.setUserRegistered(EnterOtpActivity.this, true);
 
                         if (!paused) {
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -188,7 +189,7 @@ public class EnterOtpActivity extends AppCompatActivity {
         });
     }
 
-    private void resendOtp(){
+    private void resendOtp() {
         String phoneNumber = getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
 
         RequestParams requestParams = new RequestParams();
@@ -220,7 +221,7 @@ public class EnterOtpActivity extends AppCompatActivity {
         });
     }
 
-    private void beforeAsyncCall(){
+    private void beforeAsyncCall() {
         Button sendOtpButton = (Button) findViewById(R.id.sendOtpButton);
         sendOtpButton.setOnClickListener(null);
 
@@ -230,7 +231,7 @@ public class EnterOtpActivity extends AppCompatActivity {
         findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
     }
 
-    private void afterAsyncCall(){
+    private void afterAsyncCall() {
         Button sendOtpButton = (Button) findViewById(R.id.sendOtpButton);
         sendOtpButton.setOnClickListener(sendButtonClickListener);
 
@@ -240,8 +241,8 @@ public class EnterOtpActivity extends AppCompatActivity {
         findViewById(R.id.progressBar).setVisibility(View.GONE);
     }
 
-    private void moveToNextActivity(){
-        if( ! moved ) {
+    private void moveToNextActivity() {
+        if (!moved) {
             moved = true;
 
             Intent intent = new Intent(this, ProfileCreationActivity.class);
@@ -251,7 +252,7 @@ public class EnterOtpActivity extends AppCompatActivity {
         }
     }
 
-    private void moveBack(){
+    private void moveBack() {
         Intent intent = new Intent(this, EnterPhoneActivity.class);
         startActivity(intent);
     }

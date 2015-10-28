@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
@@ -28,6 +29,7 @@ import com.sports.unity.common.view.SlidingTabLayout;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.smackx.xdata.Form;
 
@@ -49,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(com.sports.unity.R.layout.activity_main);
 
         new CheckConnection().execute();
+        SportsUnityDBHelper.getInstance(this).addDummyMessageIfNotExist();
 
         initViews();
 

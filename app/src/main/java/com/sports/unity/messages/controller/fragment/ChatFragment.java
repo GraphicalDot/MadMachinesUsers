@@ -38,7 +38,7 @@ public class ChatFragment extends Fragment {
         return view;
     }
 
-    private void initContent(View view){
+    private void initContent(View view) {
         chatListView = (ListView) view.findViewById(R.id.chats);
 
         ChatListAdapter chatListAdapter = new ChatListAdapter(getActivity(), 0, new ArrayList<SportsUnityDBHelper.Chats>());
@@ -49,25 +49,31 @@ public class ChatFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ArrayList<SportsUnityDBHelper.Chats> chatList = ((ChatListAdapter) chatListView.getAdapter()).getChatArrayList();
-                String jid = chatList.get(position).jid;
-                String jbname = chatList.get(position).name;
+
+                long contactId = chatList.get(position).contactId;
+                SportsUnityDBHelper.Contacts contacts = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
+                String number = contacts.jid;
+                String name = chatList.get(position).userName;
+                long chatId = chatList.get(position).chatid;
+
                 Intent chatScreen = new Intent(getActivity(), ChatScreenActivity.class);
-                chatScreen.putExtra("jid", jid);
-                chatScreen.putExtra("jbname", jbname);
-                chatScreen.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                chatScreen.putExtra("number", number);
+                chatScreen.putExtra("name", name);
+                chatScreen.putExtra("contactId", contactId);
+                chatScreen.putExtra("chatId", chatId);
                 startActivity(chatScreen);
             }
         });
     }
 
-    private void updateContent(){
+    private void updateContent() {
         ArrayList<SportsUnityDBHelper.Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatScreenList();
         ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
         adapter.updateList(chatList);
-        chatListView.setAdapter( adapter);
+        chatListView.setAdapter(adapter);
     }
 
-    private void clearStaticContent(){
+    private void clearStaticContent() {
         chatListView = null;
     }
 
@@ -106,7 +112,7 @@ public class ChatFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            if ( chatListView != null ) {
+            if (chatListView != null) {
                 ArrayList<SportsUnityDBHelper.Chats> chatList = SportsUnityDBHelper.getInstance(context).getChatScreenList();
                 ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
                 adapter.updateList(chatList);

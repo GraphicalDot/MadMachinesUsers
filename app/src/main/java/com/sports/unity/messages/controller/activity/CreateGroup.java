@@ -26,6 +26,7 @@ import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CreateGroup extends AppCompatActivity {
     ListView contacts;
@@ -65,7 +66,7 @@ public class CreateGroup extends AppCompatActivity {
                         int position = checked.keyAt(i);
                         // Add users if it is checked i.e.) == TRUE!
                         if (checked.valueAt(i)) {
-                            users.add(list.get(position).name);
+                            users.add(list.get(position).number);
                         }
                     }
                 }
@@ -83,7 +84,11 @@ public class CreateGroup extends AppCompatActivity {
         muc = manager.getMultiUserChat(groupName.getText().toString() + "@conference.mm.io");
         try {
             muc.create(groupName.getText().toString());
-            muc.sendConfigurationForm(new Form(DataForm.Type.submit));
+            Form form = muc.getConfigurationForm();
+            Form submitForm = form.createAnswerForm();
+            submitForm.setAnswer("muc#roomconfig_persistentroom", true);
+            muc.sendConfigurationForm(submitForm);
+            muc.join("anupam");
         } catch (XMPPException.XMPPErrorException e) {
             e.printStackTrace();
         } catch (SmackException e) {
@@ -97,7 +102,7 @@ public class CreateGroup extends AppCompatActivity {
     private void inviteUsers() {
         for (int i = 0; i < users.size(); i++) {
             try {
-                muc.invite(list.get(i).number + "@mm.io", "Meet me in this excellent room");
+                muc.invite(users.get(i) + "@mm.io", "Meet me in this excellent room");
             } catch (SmackException.NotConnectedException e) {
                 e.printStackTrace();
             }

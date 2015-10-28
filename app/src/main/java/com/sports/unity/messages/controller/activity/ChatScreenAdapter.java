@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
@@ -66,6 +67,7 @@ public class ChatScreenAdapter extends BaseAdapter {
 
         public TextView message;
         public TextView timeStamp;
+        public ImageView receivedStatus;
     }
 
     @Override
@@ -83,6 +85,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                     holder.message.setTypeface(FontTypeface.getInstance(activity.getApplicationContext()).getRobotoRegular());
                     holder.timeStamp = (TextView) vi.findViewById(R.id.timestampLeft);
                     holder.timeStamp.setTypeface(FontTypeface.getInstance(activity.getApplicationContext()).getRobotoCondensedRegular());
+                    holder.receivedStatus = null;
                     vi.setTag(holder);
                     break;
                 case 1:
@@ -91,7 +94,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                     holder.message.setTypeface(FontTypeface.getInstance(activity.getApplicationContext()).getRobotoRegular());
                     holder.timeStamp = (TextView) vi.findViewById(R.id.timestampRight);
                     holder.timeStamp.setTypeface(FontTypeface.getInstance(activity.getApplicationContext()).getRobotoCondensedRegular());
-
+                    holder.receivedStatus = (ImageView) vi.findViewById(R.id.receivedStatus);
                     vi.setTag(holder);
                     break;
             }
@@ -99,15 +102,30 @@ public class ChatScreenAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) vi.getTag();
         }
-        holder.message.setText(message.msgTxt);
+        holder.message.setText(message.textData);
         switch (getItemViewType(position)) {
             case 0:
-                holder.timeStamp.setText(message.send_Time);
+                holder.timeStamp.setText(message.sendTime);
                 break;
             case 1:
-                holder.timeStamp.setText(message.recieve_Time);
+                holder.timeStamp.setText(message.recieveTime);
                 break;
 
+        }
+
+        if (holder.receivedStatus == null) {
+
+        } else {
+
+            if (message.serverR != null) {
+                holder.receivedStatus.setImageResource(R.drawable.ic_msg_sent);
+            }
+            if (message.recipientR != null) {
+                holder.receivedStatus.setImageResource(R.drawable.ic_msg_delivered);
+            }
+            if( message.serverR == null && message.recipientR == null ){
+                holder.receivedStatus.setImageResource(R.drawable.ic_msg_pending);
+            }
         }
 
         return vi;

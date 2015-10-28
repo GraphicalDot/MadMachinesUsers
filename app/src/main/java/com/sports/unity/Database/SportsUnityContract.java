@@ -12,22 +12,30 @@ public final class SportsUnityContract {
 
     public static abstract class ContactsEntry implements BaseColumns {
         public static final String TABLE_NAME = "contactsTable";
+        public static final String COLUMN_CONTACT_ID = "contact_id";
         public static final String COLUMN_NAME = "display_name";
         public static final String COLUMN_PHONENUMBER = "jid";
-        public static final String COLUMN_CHAT_ENABLED = "chat_label";
         public static final String COLUMN_REGISTERED = "is_sportsunity_user";
         public static final String COLUMN_UNIQUE_INDEX = "id";
         public static final String COLUMN_USER_IMAGE = "user_image";
-        public static final String COLUMN_UNREAD_COUNT = "unread_messages";
         public static final String COLUMN_STATUS = "status";
     }
 
     public static abstract class MessagesEntry implements BaseColumns {
         public static final String TABLE_NAME = "messagesTable";
+        public static final String COLUMN_ID = "incremental_messages_id";
+        public static final String COLUMN_MESSAGE_ID = "message_id";
+        public static final String COLUMN_CHAT_ID = "chat_id";
+        public static final String COLUMN_GROUP_ID = "group_id";
+        public static final String COLUMN_CHAT_IS_GROUP = "chat_type";
         public static final String COLUMN_PHONENUMBER = "_jid";
-        public static final String COLUMN_RECIEVE_TIMESTAMP = "recieve_timestamp";
+        public static final String COLUMN_RECEIVE_TIMESTAMP = "recieve_timestamp";
         public static final String COLUMN_SEND_TIMESTAMP = "send_timestamp";
-        public static final String COLUMN_MESSAGE = "data";
+        public static final String COLUMN_DATA_TEXT = "text_data";
+        public static final String COLUMN_DATA_MEDIA = "media_data";
+        public static final String COLUMN_MIME_TYPE = "data_mime_type";
+        public static final String COLUMN_SERVER_RECEIPT = "receive_server_timestamp";
+        public static final String COLUMN_RECIPIENT_RECEIPT = "receive_recipient_timestamp";
         public static final String COLUMN_NAME_I_AM_SENDER = "i_am_sender";
     }
 
@@ -47,4 +55,26 @@ public final class SportsUnityContract {
         public static final String COLUMN_PUBLISH_EPOCH = "publishEpoch";
 
     }
+
+    public static abstract class GroupEntry implements BaseColumns {
+        public static final String TABLE_NAME = "groupTable";
+        public static final String COLUMN_GROUP_ID = "group_id";
+        public static final String COLUMN_GROUP_NAME = "group_name";
+        public static final String COLUMN_GROUP_IMAGE = "group_image";
+        public static final String COLUMN_LAST_MESSAGE_ID = "last_message";
+        public static final String COLUMN_UNREAD_COUNT = "unread_count";
+
+    }
+
+    public static abstract class ChatEntry implements BaseColumns {
+        public static final String TABLE_NAME = "chatEntryTable";
+        public static final String COLUMN_CHAT_ID = "chat_id";
+        public static final String COLUMN_NAME = "name";
+        public static final String COLUMN_CONTACT_ID = "contact_id";
+        public static final String COLUMN_LAST_MESSAGE_ID = "last_message";
+        public static final String COLUMN_UNREAD_COUNT = "unread_count";
+        public static final String COLUMN_LAST_SEEN = "last_seen";
+
+    }
+
 }

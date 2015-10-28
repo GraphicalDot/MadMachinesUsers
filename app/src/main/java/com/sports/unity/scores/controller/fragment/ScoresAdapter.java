@@ -2,10 +2,7 @@ package com.sports.unity.scores.controller.fragment;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,10 +11,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sports.unity.R;
-import com.sports.unity.scores.model.cricket.Result;
+import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.scores.model.football.FootballLiveScoreResult;
+import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by madmachines on 8/10/15.
@@ -25,18 +28,12 @@ import java.util.List;
 public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder> {
 
     private Context context;
-    private List<Result> list;
-    private Typeface robotoCondensedReg;
-    private Typeface robotoMedium;
-    private Typeface robotoCondensedBold;
+    private List<FootballLiveScoreResult> list;
 
 
-    public ScoresAdapter(ArrayList<Result> list, Context applicationContext, Activity activity) {
+    public ScoresAdapter(ArrayList<FootballLiveScoreResult> list, Context applicationContext, Activity activity) {
         this.list = list;
         this.context = applicationContext;
-        this.robotoCondensedReg = Typeface.createFromAsset(context.getAssets(), "RobotoCondensed-Regular.ttf");
-        this.robotoMedium = Typeface.createFromAsset(context.getAssets(), "Roboto-Medium.ttf");
-        this.robotoCondensedBold = Typeface.createFromAsset(context.getAssets(), "RobotoCondensed-Bold.ttf");
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -47,7 +44,7 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder
         public ImageView t2flag;
         public TextView team2;
         public TextView t2score;
-        public TextView odi;
+        public TextView matchDay;
         public TextView venue;
         public TextView date;
         LinearLayout footer;
@@ -64,7 +61,7 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder
             t2flag = (ImageView) v.findViewById(R.id.t2flag);
             team2 = (TextView) v.findViewById(R.id.team2);
             t2score = (TextView) v.findViewById(R.id.t2score);
-            odi = (TextView) v.findViewById(R.id.odi);
+            matchDay = (TextView) v.findViewById(R.id.matchDay);
             venue = (TextView) v.findViewById(R.id.venue);
             date = (TextView) v.findViewById(R.id.date);
             footer = (LinearLayout) v.findViewById(R.id.footer);
@@ -82,37 +79,63 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder
 
     @Override
     public void onBindViewHolder(ScoresAdapter.ViewHolder holder, int position) {
-        String[] teams = {};
-        Result result = list.get(position);
-        if ( result.getLive() != null) {
-            teams = result.getMatchDesc().split("vs");
-            if ("True".equals(result.getLive())) {
-                liveMatchColoring(holder);
-            } else {
-                clearLiveMatchColoring(holder);
-            }
+
+        FootballLiveScoreResult footballLiveScoreResult = list.get(position);
+        Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballLiveScoreResult.getMatchDateEpoch()) * 1000)));
+        String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
+        String day = (String) android.text.format.DateFormat.format("dd", date); //20
+        String month = getMonth((String) android.text.format.DateFormat.format("MMM", date));
+        String isttime = null;
+        try {
+            isttime = getLocalTime(footballLiveScoreResult.getMatchTime()).substring(0, 5);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        if ("?".equals(footballLiveScoreResult.getAwayTeamScore())) {
+
+            holder.team1.setText(footballLiveScoreResult.getHomeTeam());
+            holder.team2.setText(footballLiveScoreResult.getAwayTeam());
+            holder.matchDay.setText(isttime);
+            holder.venue.setText(footballLiveScoreResult.getStadium());
+            Picasso.with(context).load(footballLiveScoreResult.getHomeTeamFlag()).into(holder.t1flag);
+            Picasso.with(context).load(footballLiveScoreResult.getAwayTeamFlag()).into(holder.t2flag);
+            holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
 
 
         } else {
-            String descrption = result.getMatchDesc();
-            teams = descrption.substring(0, descrption.indexOf(",")).split("vs");
 
-            clearLiveMatchColoring(holder);
+            holder.team1.setText(footballLiveScoreResult.getHomeTeam());
+            holder.team2.setText(footballLiveScoreResult.getAwayTeam());
+            holder.t1score.setText(footballLiveScoreResult.getHomeTeamScore());
+            holder.t2score.setText(footballLiveScoreResult.getAwayTeamScore());
+            holder.matchDay.setText(footballLiveScoreResult.getMatchStatus());
+            holder.venue.setText(footballLiveScoreResult.getStadium());
+            Picasso.with(context).load(footballLiveScoreResult.getHomeTeamFlag()).into(holder.t1flag);
+            Picasso.with(context).load(footballLiveScoreResult.getAwayTeamFlag()).into(holder.t2flag);
+            holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
         }
-        holder.team1.setText(teams[0]);
-        holder.team2.setText(teams[1]);
-        holder.t1score.setText(result.getRuns() + "/" + result.getWkts() + "  " + "(" + result.getOvers() + ")");
-        holder.odi.setText(result.getMchNum());
-        holder.date.setText("Wednesday 7" + Html.fromHtml("<sup>th</sup>") + " August");
-        holder.odi.setTypeface(robotoMedium);
-        holder.venue.setTypeface(robotoCondensedBold);
-        holder.date.setTypeface(robotoCondensedReg);
-        holder.team1.setTypeface(robotoCondensedBold);
-        holder.team2.setTypeface(robotoCondensedReg);
-        holder.t1score.setTypeface(robotoCondensedReg);
+
+        holder.matchDay.setTypeface(FontTypeface.getInstance(context).getRobotoMedium());
+        holder.venue.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedBold());
+        holder.date.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedRegular());
+        holder.team1.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedBold());
+        holder.team2.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedBold());
+        holder.t1score.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedRegular());
+        holder.t2score.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedRegular());
+
     }
 
-    private void liveMatchColoring(ScoresAdapter.ViewHolder holder){
+    private String getLocalTime(String matchTime) throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+        formatter.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
+        java.sql.Time timeValue = new java.sql.Time(formatter.parse(matchTime).getTime());
+        String time = timeValue.toString();
+
+        return time;
+    }
+
+    /*private void liveMatchColoring(ScoresAdapter.ViewHolder holder) {
         holder.footer.setBackgroundColor(Color.parseColor("#236aa3"));
         holder.rootLayout.setBackgroundColor(Color.parseColor("#2c84cc"));
         holder.team1.setTextColor(Color.parseColor("#ffffff"));
@@ -125,7 +148,7 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder
         holder.seperator.setBackgroundColor(Color.parseColor("#236aa3"));
     }
 
-    private void clearLiveMatchColoring(ScoresAdapter.ViewHolder holder){
+    private void clearLiveMatchColoring(ScoresAdapter.ViewHolder holder) {
         holder.footer.setBackgroundColor(Color.parseColor("#e6e6e6"));
         holder.rootLayout.setBackgroundColor(Color.parseColor("#ffffff"));
         holder.team1.setTextColor(Color.parseColor("#000000"));
@@ -136,6 +159,36 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder
         holder.venue.setTextColor(Color.parseColor("#666666"));
         holder.odi.setTextColor(Color.parseColor("#000000"));
         holder.seperator.setBackgroundColor(Color.parseColor("#cbcbcb"));
+    }*/
+
+    public String getMonth(String mon) {
+        switch (mon) {
+            case "Jan":
+                return "January";
+            case "Feb":
+                return "February";
+            case "Mar":
+                return "March";
+            case "Apr":
+                return "April";
+            case "May":
+                return "May";
+            case "Jun":
+                return "June";
+            case "Jul":
+                return "July";
+            case "Aug":
+                return "August";
+            case "Sep":
+                return "September";
+            case "Oct":
+                return "October";
+            case "Nov":
+                return "November";
+            case "Dec":
+                return "December";
+        }
+        return null;
     }
 
     @Override
