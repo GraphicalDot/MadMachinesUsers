@@ -187,7 +187,7 @@ public class NewsResponseHandler extends CustomResponse {
                     //nothing
                 }
 
-                ContentHandler.askContent( context, tag, true);
+                ContentHandler.askContent( context, tag, true, false);
             }
 
         });
