@@ -121,7 +121,7 @@
                     android:id="@+id/seperator"
                     android:layout_width="1dp"
                     android:layout_height="fill_parent"
-                    android:background="#cbcbcb" />
+                    android:background="#f2f2f2" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -143,7 +143,7 @@
                 android:id="@+id/footer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#e6e6e6"
+                android:background="#f2f2f2"
                 android:orientation="vertical">
 
                 <TextView
@@ -152,7 +152,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="6dp"
-                    android:textColor="#666666"
+                    android:textColor="#333"
                     android:textSize="12dp" />
 
                 <TextView

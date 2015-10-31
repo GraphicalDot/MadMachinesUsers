@@ -16,11 +16,11 @@ public class SportsGridViewAdapter extends BaseAdapter {
 
     private Context mContext;
     private Integer[] mThumbIds = {
-            R.drawable.basketball,
-            R.drawable.cricket,
-            R.drawable.football,
-            R.drawable.tennis,
-            R.drawable.f1,
+            R.drawable.btn_basketball_disabled,
+            R.drawable.btn_cricket_disabled,
+            R.drawable.btn_football_disabled,
+            R.drawable.btn_tennis_disabled,
+            R.drawable.btn_f1_disabled,
     };
 
     public SportsGridViewAdapter(Context c) {
@@ -48,7 +48,6 @@ public class SportsGridViewAdapter extends BaseAdapter {
         ImageView imageView;
         if (convertView == null){
             imageView = new ImageView(mContext);
-            imageView.setLayoutParams(new GridView.LayoutParams(250, 250));
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             imageView.setPadding(8, 8, 8, 8);
         }

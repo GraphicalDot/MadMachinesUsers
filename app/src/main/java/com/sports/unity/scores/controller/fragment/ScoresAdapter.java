@@ -116,11 +116,11 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder
             holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
         }
 
-        holder.matchDay.setTypeface(FontTypeface.getInstance(context).getRobotoMedium());
+        holder.matchDay.setTypeface(FontTypeface.getInstance(context).getRobotoRegular());
         holder.venue.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedBold());
         holder.date.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedRegular());
-        holder.team1.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedBold());
-        holder.team2.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedBold());
+        holder.team1.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedRegular());
+        holder.team2.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedRegular());
         holder.t1score.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedRegular());
         holder.t2score.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedRegular());
 

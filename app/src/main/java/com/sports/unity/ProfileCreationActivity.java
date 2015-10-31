@@ -4,10 +4,16 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
 import android.util.Log;
@@ -26,7 +32,6 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
-import com.sports.unity.common.controller.EnterPhoneActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.SelectSportsActivity;
 import com.sports.unity.common.model.TinyDB;
@@ -41,6 +46,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -56,9 +63,12 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private String profilePicUrl;
     private byte[] byteArray;
 
+    private static final int LOAD_IMAGE_GALLERY = 1;
     private boolean paused = false;
     private boolean vCardSaved = false;
     private boolean moved = false;
+
+    private static int RESULT_LOAD_IMAGE = 1;
 
     private View.OnClickListener continueButtonOnClickListener = new View.OnClickListener() {
         @Override
@@ -67,6 +77,17 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
             TinyDB.getInstance(ProfileCreationActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nameText.getText().toString());
             new LoginAndPushVCardThread().start();
+        }
+    };
+
+    private View.OnClickListener profilePictureonOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(
+                    Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            intent.setType("image/* video/*");
+            startActivityForResult(Intent.createChooser(intent, "select image"),LOAD_IMAGE_GALLERY);
         }
     };
 
@@ -80,14 +101,78 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         addFacebookCallback();
         addListenerToContinueButton();
+        addListnerToProfilePicture();
+
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == LOAD_IMAGE_GALLERY && resultCode == RESULT_OK && null != data)  {
+
+            Uri selectedImage = data.getData();
+            String [] filePathColumn = {MediaStore.Images.Media.DATA};
+            Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+            cursor.moveToFirst();
+            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+            String filePath = cursor.getString(columnIndex);
+            File file=new File(filePath);
+            cursor.close();
+            Bitmap selectedphoto = BitmapFactory.decodeFile(filePath);
+
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            selectedphoto.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+            byteArray = byteArrayOutputStream.toByteArray();
+
+
+           Bitmap bmp=decodeSampleImage(file,200,200);
+            CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
+            // circleImageView.setImageBitmap(selectedphoto);
+
+            circleImageView.setImageBitmap(bmp);
+        }
+        else {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
+    public static Bitmap decodeSampleImage(File f, int width, int height) {
+        try {
+            System.gc(); // First of all free some memory
+
+            // Decode image size
+
+            BitmapFactory.Options o = new BitmapFactory.Options();
+            o.inJustDecodeBounds = true;
+            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
+
+            // The new size we want to scale to
+
+            final int requiredWidth = width;
+            final int requiredHeight = height;
+
+            // Find the scale value (as a power of 2)
+
+            int sampleScaleSize = 1;
+
+            while (o.outWidth / sampleScaleSize / 2 >= requiredWidth && o.outHeight / sampleScaleSize / 2 >= requiredHeight)
+                sampleScaleSize *= 2;
+
+            // Decode with inSampleSize
+
+            BitmapFactory.Options o2 = new BitmapFactory.Options();
+            o2.inSampleSize = sampleScaleSize;
+
+            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+        } catch (Exception e) {
+            Log.d("error", e.getMessage()); // We don't want the application to just throw an exception
+        }
+
+        return null;
+    }
     @Override
     protected void onResume() {
         super.onResume();
@@ -104,6 +189,13 @@ public class ProfileCreationActivity extends AppCompatActivity {
         super.onPause();
 
         paused = true;
+    }
+
+
+    private  void addListnerToProfilePicture()
+    {
+        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
+        circleImageView.setOnClickListener(profilePictureonOnClickListener);
     }
 
     private void addListenerToContinueButton(){

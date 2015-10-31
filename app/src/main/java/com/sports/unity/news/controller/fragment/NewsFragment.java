@@ -50,8 +50,10 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
     private RecyclerView.Adapter mAdapter;
     private LinearLayoutManager mLayoutManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-
+    private  String type_1="";
     private String url = null;
+    private Long timestampFirst;
+    private Long timestampLast;
 
     private int loadLimit = 10;
     private int skipLimit = 0;
@@ -73,7 +75,6 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
         View v = inflater.inflate(com.sports.unity.R.layout.news, container, false);
 
         filter = UserUtil.getSportsSelected();
-        //filterChanged();
 
         initViews(v);
         return v;
@@ -163,6 +164,8 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
         loading = false;
     }
 
+
+
     private void requestContentLoadMore() {
         Log.i("requestContentLoadMore" , "Filter size" +filter.size());
         skipLimit = skipLimit + 10;
@@ -170,13 +173,18 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
         // progressBar.setVisibility(View.GONE);
         StringRequest stringRequest = null;
         Log.i("requestContentLoadMore" , "Skip limit" +skipLimit);
-        for(int i=0;i<filter.size();i++) {
-            url = "http://52.74.250.156:8000//mixed?skip=" + skipLimit + "&limit=" + loadLimit + "&image_size=hdpi&type="+filter.get(i)+"";
+//        for(int i=0;i<filter.size();i++) {
+//
+//
+//        }
+            url = "http://52.74.250.156:8000//mixed?skip="+skipLimit+"&limit=10&image_size=hdpi"+type_1+"&direction=down&timestamp="+timestampLast;
 
+        Log.i("filter","type"+type_1);
+        Log.i("filter","type"+url);
             stringRequest = new StringRequest(Request.Method.GET, url, this, this);
             queue.add(stringRequest);
-        }
-        volleyPendingRequests = filter.size();
+
+       volleyPendingRequests =1;
     }
 
     private void requestContent() {
@@ -185,14 +193,27 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
         Log.i("requestContent", "Skip limit" + skipLimit);
+       type_1="";
         for(int i=0;i<filter.size();i++) {
-            url = "http://52.74.250.156:8000//mixed?skip=" + skipLimit + "&limit=" + loadLimit + "&image_size=hdpi&type="+filter.get(i)+"";
+            //url = "http://52.74.250.156:8000//mixed?skip=" + skipLimit + "&limit=" + loadLimit + "&image_size=hdpi&type="+filter.get(i)+"";
+          String temp="&type_1="+filter.get(i);
+            type_1=type_1+temp;
 
-            stringRequest = new StringRequest(Request.Method.GET, url, this, this);
-
-            queue.add(stringRequest);
         }
-        volleyPendingRequests = filter.size();
+
+        Log.i("filter","type"+type_1);
+        if(timestampFirst==null) {
+            url = "http://52.74.250.156:8000//mixed?skip=0&limit=10&image_size=hdpi"+type_1;
+        }else
+        {
+            url = "http://52.74.250.156:8000//mixed?skip=0&limit=10&image_size=hdpi"+type_1+"&direction=up&timestamp="+timestampFirst;
+        }
+        Log.i("filter","type"+url);
+
+        stringRequest = new StringRequest(Request.Method.GET, url, this, this);
+
+        queue.add(stringRequest);
+        volleyPendingRequests =1;
     }
 
     @Override
@@ -219,43 +240,51 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
 
         Log.i("On Response List.size()", "" + list.size());
 
-        ArrayList<News> toBeAdded = null;
-        if (!filteredNewsArticle.isEmpty() && !list.isEmpty()) {
+      //  ArrayList<News> toBeAdded = null;
+      //  if (!filteredNewsArticle.isEmpty() && !list.isEmpty()) {
 
-            long latestNewsArticleEpoch_AlreadyHave = filteredNewsArticle.get(0).getPublishEpoch();
-            long oldestNewsArticleEpoch_AlreadyHave = filteredNewsArticle.get(filteredNewsArticle.size() - 1).getPublishEpoch();
-            long latestNewsArticleEpoch = list.get(0).getPublishEpoch();
+//            long latestNewsArticleEpoch_AlreadyHave = filteredNewsArticle.get(0).getPublishEpoch();
+//            long oldestNewsArticleEpoch_AlreadyHave = filteredNewsArticle.get(filteredNewsArticle.size() - 1).getPublishEpoch();
+//            long latestNewsArticleEpoch = list.get(0).getPublishEpoch();
 
-            if (latestNewsArticleEpoch > latestNewsArticleEpoch_AlreadyHave) {
-                toBeAdded = new ArrayList<>();
-                for (News news : list) {
-                    if (news.getPublishEpoch() > latestNewsArticleEpoch_AlreadyHave) {
-                        toBeAdded.add(news);
-                    } else {
-                        //nothing
-                    }
-                }
-            } else if (latestNewsArticleEpoch < oldestNewsArticleEpoch_AlreadyHave) {
-                toBeAdded = new ArrayList<>();
-                for (News news : list) {
-                    if (news.getPublishEpoch() < oldestNewsArticleEpoch_AlreadyHave) {
-                        toBeAdded.add(news);
-                    } else {
-                        //nothing
-                    }
-                }
-            } else {
-                //nothing
-            }
-        } else {
-            toBeAdded = list;
+//            if (latestNewsArticleEpoch > latestNewsArticleEpoch_AlreadyHave) {
+//                toBeAdded = new ArrayList<>();
+//                for (News news : list) {
+//                    if (news.getPublishEpoch() > latestNewsArticleEpoch_AlreadyHave) {
+//                        toBeAdded.add(news);
+//                    } else {
+//                        //nothing
+//                    }
+//                }
+//            } else if (latestNewsArticleEpoch < oldestNewsArticleEpoch_AlreadyHave) {
+//                toBeAdded = new ArrayList<>();
+//                for (News news : list) {
+//                    if (news.getPublishEpoch() < oldestNewsArticleEpoch_AlreadyHave) {
+//                        toBeAdded.add(news);
+//                    } else {
+//                        //nothing
+//                    }
+//                }
+//            }
+//            else {
+//                //nothing
+//            }
+        if(!list.isEmpty())
+        {
+            filteredNewsArticle.addAll(list);
+            timestampFirst=filteredNewsArticle.get(0).getPublishEpoch();
+            timestampLast=filteredNewsArticle.get(filteredNewsArticle.size()-1).getPublishEpoch();
         }
 
-        if (toBeAdded != null) {
-            filteredNewsArticle.addAll(toBeAdded);
-        } else {
-            //nothing
-        }
+//        else {
+//            toBeAdded = list;
+//        }
+//
+//        if (toBeAdded != null) {
+//            filteredNewsArticle.addAll(toBeAdded);
+//        } else {
+//            //nothing
+//        }
 
         Collections.sort(filteredNewsArticle);
 
@@ -402,13 +431,18 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if( requestCode == 999 ) {
+        if( requestCode == 999 && data != null ) {
             filter = UserUtil.getSportsSelected();
 //            filterChanged();
 //            displayResult();
             skipLimit=0;
+            type_1="";
+            timestampFirst=null;
+            timestampLast=null;
            filteredNewsArticle.clear();
            requestContent();
+        } else {
+            //nothing
         }
     }
 
