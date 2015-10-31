@@ -91,5 +91,8 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_on_return">OnReturnActivity</string>
+    <string name="singlechat_popup_block_contact">Block Contact</string>
+    <string name="singlechat_popup_delete_chat">Delete Chat</string>
+    <string name="singlechat_popup_view_contact">View Contact</string>
 
 </resources>

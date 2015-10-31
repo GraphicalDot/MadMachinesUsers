@@ -13,6 +13,7 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -102,13 +103,15 @@ public class ChatScreenAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) vi.getTag();
         }
+
+        SimpleDateFormat formatter = new SimpleDateFormat("k:mm");
         holder.message.setText(message.textData);
         switch (getItemViewType(position)) {
             case 0:
-                holder.timeStamp.setText(message.sendTime);
+                holder.timeStamp.setText(String.valueOf(new java.text.SimpleDateFormat("HH:mm").format(Long.valueOf(message.recieveTime))));
                 break;
             case 1:
-                holder.timeStamp.setText(message.recieveTime);
+                holder.timeStamp.setText(String.valueOf(new java.text.SimpleDateFormat("HH:mm").format(Long.valueOf(message.recieveTime))));
                 break;
 
         }
@@ -123,7 +126,7 @@ public class ChatScreenAdapter extends BaseAdapter {
             if (message.recipientR != null) {
                 holder.receivedStatus.setImageResource(R.drawable.ic_msg_delivered);
             }
-            if( message.serverR == null && message.recipientR == null ){
+            if (message.serverR == null && message.recipientR == null) {
                 holder.receivedStatus.setImageResource(R.drawable.ic_msg_pending);
             }
         }

@@ -2,6 +2,10 @@ package com.sports.unity.XMPPManager;
 
 import android.util.Log;
 
+import com.sports.unity.ConnectivityListener;
+import com.sports.unity.util.ActivityActionHandler;
+import com.sports.unity.util.ActivityActionListener;
+
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SmackException;
@@ -10,11 +14,12 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 
 import java.io.IOException;
+import java.util.Objects;
 
 /**
  * Created by madmachines on 31/8/15.
  */
-public class XMPPClient {
+public class XMPPClient implements ConnectivityListener {
 
     public static String SERVER_HOST = "54.169.217.88";
     public static int SERVER_PORT = 5222;
@@ -22,6 +27,18 @@ public class XMPPClient {
     public static XMPPTCPConnection connection = null;
     public static ReconnectionManager reconnectionManager;
 
+    private static XMPPClient XMPP_CLIENT = null;
+
+    public static XMPPClient getInstance() {
+        if (XMPP_CLIENT == null) {
+            XMPP_CLIENT = new XMPPClient();
+        }
+        return XMPP_CLIENT;
+    }
+
+    private XMPPClient() {
+
+    }
 
     private static void openConnection() {
         try {
@@ -72,5 +89,10 @@ public class XMPPClient {
 
     }
 
+    @Override
+    public void internetStateChangeEvent(boolean state) {
+        //TODO
+        Log.i("working", "yes");
+    }
 
 }

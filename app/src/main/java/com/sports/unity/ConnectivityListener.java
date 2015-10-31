@@ -5,5 +5,6 @@ package com.sports.unity;
  */
 public interface ConnectivityListener {
 
-    public void callback();
+    public void internetStateChangeEvent(boolean state);
+
 }

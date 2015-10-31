@@ -8,6 +8,8 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.text.format.Time;
 import android.util.Log;
 
+import org.joda.time.DateTime;
+
 import java.util.ArrayList;
 
 import static com.sports.unity.Database.SportsUnityContract.ContactsEntry;
@@ -153,8 +155,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        Time today = new Time(Time.getCurrentTimezone());
-        today.setToNow();
+        if (msg.equals(""))
+            msg = null;
+//        Time today = new Time(Time.getCurrentTimezone());
+//        today.setToNow();
+        DateTime dateTime = DateTime.now();
         values.put(MessagesEntry.COLUMN_PHONENUMBER, number);
         values.put(MessagesEntry.COLUMN_DATA_TEXT, msg);
         values.put(MessagesEntry.COLUMN_MESSAGE_ID, messageId);
@@ -166,7 +171,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         values.put(MessagesEntry.COLUMN_SEND_TIMESTAMP, sentTime);
         values.put(MessagesEntry.COLUMN_SERVER_RECEIPT, serverTime);
         values.put(MessagesEntry.COLUMN_RECIPIENT_RECEIPT, recipientTime);
-        values.put(MessagesEntry.COLUMN_RECEIVE_TIMESTAMP, String.valueOf(today.format("%k:%M")));
+        values.put(MessagesEntry.COLUMN_RECEIVE_TIMESTAMP, String.valueOf(dateTime.getMillis()));
 
         long lastMessageId = db.insert(MessagesEntry.TABLE_NAME, null, values);
         //Log.i("Time : ", today.format("%k:%M"));
@@ -377,6 +382,23 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 //        db.close();
 
         return DEFAULT_ENTRY_ID;
+    }
+
+    public void updateChatEntryName(int contactId, String name) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ChatEntry.COLUMN_NAME, name);
+
+        String selection = ChatEntry.COLUMN_CONTACT_ID + " = ?";
+        String selectionArgs[] = {String.valueOf(contactId)};
+
+        int count = db.update(
+                ChatEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+
     }
 
     public class Message {

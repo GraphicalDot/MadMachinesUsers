@@ -8,6 +8,8 @@ import com.sports.unity.ChatScreenApplication;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
+import com.sports.unity.util.ActivityActionHandler;
+import com.sports.unity.util.ActivityActionListener;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.chat.Chat;
@@ -47,6 +49,23 @@ public class PersonalMessaging {
             pmessaging = new PersonalMessaging(context);
         }
         return pmessaging;
+    }
+
+    private boolean sendActionToCorrespondingActivityListener(String key, int id, Object data) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+
+        if (actionListener != null) {
+            if (data == null) {
+                actionListener.handleAction(id);
+            } else {
+                actionListener.handleAction(id, data);
+            }
+            success = true;
+        }
+        return success;
     }
 
     public void sendMessageToPeer(String msg, Chat chat, String number, long chatId, String name) {
@@ -122,12 +141,6 @@ public class PersonalMessaging {
         }
 
         updateReadreceipts(applicationContext);
-        /*if (ChatScreenApplication.isActivityVisible()) {
-            if (ChatScreenActivity.getJABBERID().equals(fromJid)) {
-                updateReadreceipts(applicationContext);
-            }
-
-        }*/
     }
 
     public void updateReadreceipts(Context applicationContext) {
@@ -137,9 +150,11 @@ public class PersonalMessaging {
          */
 
         Log.i("Ticks :", "updated");
-        Intent intent = new Intent();
+        /*Intent intent = new Intent();
         intent.setAction("com.madmachine.SINGLE_MESSAGE_RECEIVED");
-        applicationContext.sendBroadcast(intent);
+        applicationContext.sendBroadcast(intent);*/
+        sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, null);
+
 
     }
 
