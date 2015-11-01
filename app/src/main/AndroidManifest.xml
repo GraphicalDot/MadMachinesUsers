@@ -24,7 +24,9 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        >
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
@@ -46,24 +48,36 @@
             </intent-filter>
         </receiver>
 
-        <activity
-            android:name=".common.controller.MainActivity"
-            android:label="@string/app_name" />
+        <service
+            android:name=".XMPPManager.XMPPService"
+            android:enabled="true"
+            android:exported="true" />
+
         <activity
             android:name=".common.controller.SplashScreenActivity"
-            android:label="@string/title_activity_splash" >
+            android:label="@string/title_activity_splash"
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
+            android:name=".common.controller.MainActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="portrait"
+            />
+        <activity
             android:name=".common.controller.EnterOtpActivity"
-            android:label="@string/title_activity_enter_otp" />
+            android:label="@string/title_activity_enter_otp"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".common.controller.EnterPhoneActivity"
-            android:label="@string/title_activity_enter_phone" />
+            android:label="@string/title_activity_enter_phone"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
@@ -71,42 +85,55 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity
             android:name=".ProfileCreationActivity"
-            android:label="@string/title_activity_profile_creation" />
+            android:label="@string/title_activity_profile_creation"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".common.controller.SelectSportsActivity"
-            android:label="@string/title_activity_select_sports" />
-
-        <service
-            android:name=".XMPPManager.XMPPService"
-            android:enabled="true"
-            android:exported="true" />
-
+            android:label="@string/title_activity_select_sports"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".messages.controller.activity.ChatScreenActivity"
-            android:label="@string/title_activity_chat_screen" />
+            android:label="@string/title_activity_chat_screen"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".messages.controller.activity.CreateGroup"
-            android:label="@string/title_activity_create_group"></activity>
-        
+            android:label="@string/title_activity_create_group"
+            android:screenOrientation="portrait"
+            >
+        </activity>
         <activity
             android:name=".news.controller.activity.NewsDetailsActivity"
-            android:label="@string/title_activity_news_details" />
+            android:label="@string/title_activity_news_details"
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".common.controller.FilterActivity"
-            android:label="@string/title_activity_filter" >
+            android:label="@string/title_activity_filter"
+            android:screenOrientation="portrait"
+            >
         </activity>
         <activity
             android:name=".common.controller.LeagueSelectActivity"
-            android:label="@string/title_activity_filter" >
+            android:label="@string/title_activity_filter"
+            android:screenOrientation="portrait"
+            >
         </activity>
         <activity
             android:name=".common.controller.TourActivity"
-            android:label="@string/title_activity_tour" >
+            android:label="@string/title_activity_tour"
+            android:screenOrientation="portrait"
+            >
         </activity>
         <activity
             android:name=".messages.controller.activity.CameraActivity"
-            android:label="@string/title_activity_camera" >
+            android:label="@string/title_activity_camera"
+            android:screenOrientation="portrait"
+            >
         </activity>
+
     </application>
 
 </manifest>

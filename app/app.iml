@@ -118,8 +118,8 @@
     <orderEntry type="library" exported="" name="smack-android-4.1.4" level="project" />
     <orderEntry type="library" exported="" name="smack-android-extensions-4.1.4" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-22.2.1" level="project" />
-    <orderEntry type="library" exported="" name="support-annotations-22.2.1" level="project" />
     <orderEntry type="library" exported="" name="minidns-0.1.7" level="project" />
+    <orderEntry type="library" exported="" name="support-annotations-22.2.1" level="project" />
     <orderEntry type="library" exported="" name="android-async-http-1.4.8" level="project" />
     <orderEntry type="library" exported="" name="facebook-android-sdk-4.4.0" level="project" />
     <orderEntry type="library" exported="" name="org.apache.commons.io-2.4" level="project" />

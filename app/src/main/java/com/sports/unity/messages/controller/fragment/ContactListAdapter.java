@@ -23,18 +23,21 @@ import java.util.ArrayList;
 public class ContactListAdapter extends ArrayAdapter<SportsUnityDBHelper.Contacts> implements View.OnClickListener {
 
     private final Activity context;
-    ArrayList<SportsUnityDBHelper.Contacts> contactsArrayList;
-    Button invite;
+    private ArrayList<SportsUnityDBHelper.Contacts> contactsArrayList;
+    private Button invite;
+
+    private int itemLayoutId = 0;
 
     public ContactListAdapter(Activity context, int resource, ArrayList<SportsUnityDBHelper.Contacts> list) {
-        super(context, R.layout.list_contact_msgs, list);
+        super(context, resource, list);
         this.context = context;
         this.contactsArrayList = list;
+        itemLayoutId = resource;
     }
 
     public View getView(int position, View view, ViewGroup parent) {
         LayoutInflater inflater = context.getLayoutInflater();
-        View rowView = inflater.inflate(R.layout.list_contact_msgs, null, true);
+        View rowView = inflater.inflate( itemLayoutId, null, true);
 
         ImageView userIcon = (ImageView) rowView.findViewById(R.id.user_icon);
 
@@ -44,9 +47,17 @@ public class ContactListAdapter extends ArrayAdapter<SportsUnityDBHelper.Contact
         TextView status = (TextView) rowView.findViewById(R.id.status);
         status.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoLight());
 
-        invite = (Button) rowView.findViewById(R.id.btn_invite);
-        invite.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
-        invite.setOnClickListener(this);
+        if( itemLayoutId == R.layout.list_contact_msgs ) {
+            invite = (Button) rowView.findViewById(R.id.btn_invite);
+            invite.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
+            invite.setOnClickListener(this);
+
+            if (contactsArrayList.get(position).registered) {
+                invite.setVisibility(View.INVISIBLE);
+            }
+        } else if( itemLayoutId == R.layout.list_item_members ) {
+
+        }
 
         txtTitle.setText(contactsArrayList.get(position).name);
         status.setText(contactsArrayList.get(position).status);
@@ -55,9 +66,6 @@ public class ContactListAdapter extends ArrayAdapter<SportsUnityDBHelper.Contact
             userIcon.setImageBitmap(BitmapFactory.decodeByteArray(contactsArrayList.get(position).image, 0, contactsArrayList.get(position).image.length));
         }
 
-        if (contactsArrayList.get(position).registered) {
-            invite.setVisibility(View.INVISIBLE);
-        }
         return rowView;
 
     }
@@ -66,6 +74,7 @@ public class ContactListAdapter extends ArrayAdapter<SportsUnityDBHelper.Contact
     public void onClick(View v) {
         Toast.makeText(context, "Not implemented yet", Toast.LENGTH_SHORT).show();
     }
+
 }
 
 

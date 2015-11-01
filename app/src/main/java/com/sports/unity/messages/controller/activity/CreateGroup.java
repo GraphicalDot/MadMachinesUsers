@@ -1,131 +1,131 @@
 package com.sports.unity.messages.controller.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.SparseBooleanArray;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
-import com.sports.unity.XMPPManager.XMPPClient;
-
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.muc.MultiUserChatManager;
-import org.jivesoftware.smackx.xdata.Form;
-import org.jivesoftware.smackx.xdata.packet.DataForm;
+import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.messages.controller.fragment.ContactsFragment;
+import com.sports.unity.messages.controller.fragment.GroupDetailFragment;
+import com.sports.unity.messages.controller.model.GroupMessaging;
+import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class CreateGroup extends AppCompatActivity {
-    ListView contacts;
-    EditText groupName;
-    ArrayAdapter<String> adapter;
-    ArrayList<SportsUnityDBHelper.GroupParticipants> list = new ArrayList<>();
-    ArrayList<String> users = new ArrayList<>();
-    ArrayList<String> usernames = new ArrayList<>();
-    Button create;
-    private MultiUserChat muc;
+
+    private String groupName = null;
+    private String groupDescription = null;
+
+    private String currentUserPhoneNumber = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_group);
-        contacts = (ListView) findViewById(R.id.contactsGroupAdd);
-        contacts.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-        groupName = (EditText) findViewById(R.id.groupNameEnter);
+        setContentView(R.layout.activity_group_detail);
 
-        list = SportsUnityDBHelper.getInstance(this).readContactNames();
+        currentUserPhoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
 
-        for (int i = 0; i < list.size(); i++) {
-            usernames.add(list.get(i).name);
-        }
+        addGroupDetailFragment();
+    }
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, usernames);
-        contacts.setAdapter(adapter);
+    private void addGroupDetailFragment(){
+        GroupDetailFragment groupDetailFragment = new GroupDetailFragment();
 
-        create = (Button) findViewById(R.id.createButton);
-        create.setOnClickListener(new View.OnClickListener() {
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, groupDetailFragment).commit();
+    }
+
+    public void moveToMembersListFragment(){
+        Bundle bundle = new Bundle();
+        bundle.putInt( Constants.INTENT_KEY_CONTACT_FRAGMENT_USAGE, ContactsFragment.USAGE_FOR_MEMBERS);
+
+        ContactsFragment fragment = new ContactsFragment();
+        fragment.setArguments( bundle);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.replace(R.id.fragment_container, fragment, "as_member");
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+
+        setToolBarForMembersList();
+    }
+
+    public void setGroupDetails(String groupName, String groupDescription){
+        this.groupName = groupName;
+        this.groupDescription = groupDescription;
+    }
+
+    private void setToolBarForMembersList(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+
+        toolbar.findViewById(R.id.backImage).setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                SparseBooleanArray checked = contacts.getCheckedItemPositions();
-                if (checked != null) {
-                    for (int i = 0; i < checked.size(); i++) {
-                        // Item position in adapter
-                        int position = checked.keyAt(i);
-                        // Add users if it is checked i.e.) == TRUE!
-                        if (checked.valueAt(i)) {
-                            users.add(list.get(position).number);
-                        }
-                    }
-                }
-                if (!groupName.getText().toString().trim().isEmpty())
-                    createGroup();
-                else
-                    Toast.makeText(CreateGroup.this, "Please enter a Name", Toast.LENGTH_SHORT).show();
+                onBackPressed();
+            }
+        });
+
+        TextView title = (TextView) toolbar.findViewById(R.id.title);
+        title.setText( R.string.group_title_add_members);
+
+        TextView actionView = (TextView) toolbar.findViewById(R.id.actionButton);
+        actionView.setText( R.string.done);
+        actionView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+        actionView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                //TODO
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                ContactsFragment fragment = (ContactsFragment)fragmentManager.findFragmentByTag("as_member");
+
+                createGroup(fragment.getSelectedMembersList());
             }
 
         });
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    private void createGroup() {
-        MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(XMPPClient.getConnection());
-        muc = manager.getMultiUserChat(groupName.getText().toString() + "@conference.mm.io");
-        try {
-            muc.create(groupName.getText().toString());
-            Form form = muc.getConfigurationForm();
-            Form submitForm = form.createAnswerForm();
-            submitForm.setAnswer("muc#roomconfig_persistentroom", true);
-            muc.sendConfigurationForm(submitForm);
-            muc.join("anupam");
-        } catch (XMPPException.XMPPErrorException e) {
-            e.printStackTrace();
-        } catch (SmackException e) {
-            e.printStackTrace();
-        }
+    private void createGroup(ArrayList<SportsUnityDBHelper.Contacts> selectedMembers){
+        GroupMessaging groupMessaging = GroupMessaging.getInstance(this);
+        String roomName = currentUserPhoneNumber + "" + System.currentTimeMillis();
 
-        inviteUsers();
-    }
+        boolean success = groupMessaging.createGroup(roomName, currentUserPhoneNumber);
+        if( success ){
+            groupMessaging.setGroupConfigDetail( roomName, groupName, groupDescription);
+            groupMessaging.joinGroup(roomName, currentUserPhoneNumber);
+            groupMessaging.inviteMembers(roomName, selectedMembers, "");
 
+            long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry( groupName, SportsUnityDBHelper.DEFAULT_ENTRY_ID, null, roomName);
+            SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, roomName);
 
-    private void inviteUsers() {
-        for (int i = 0; i < users.size(); i++) {
-            try {
-                muc.invite(users.get(i) + "@mm.io", "Meet me in this excellent room");
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            }
+            finish();
+        } else {
+            Toast.makeText(this, R.string.group_message_try_again, Toast.LENGTH_SHORT).show();
         }
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_create_group, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

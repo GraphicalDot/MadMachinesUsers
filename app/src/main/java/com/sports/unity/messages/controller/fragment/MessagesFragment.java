@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.messages.controller.activity.CreateGroup;
+import com.sports.unity.util.Constants;
 
 /**
  * Created by Agupta on 8/13/2015.
@@ -82,7 +83,13 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
                 others.setTextColor(Color.parseColor("#2C84CC"));
                 break;
             case R.id.btn_contacts:
-                getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, new ContactsFragment()).commit();
+                Bundle bundle = new Bundle();
+                bundle.putInt( Constants.INTENT_KEY_CONTACT_FRAGMENT_USAGE, ContactsFragment.USAGE_FOR_CONTACTS);
+
+                ContactsFragment fragment = new ContactsFragment();
+                fragment.setArguments(bundle);
+
+                getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
                 buttonContainerLayout.setBackgroundResource(R.drawable.btn_contacts_focused);
                 contacts.setTextColor(Color.parseColor("#FFFFFF"));
                 chats.setTextColor(Color.parseColor("#2C84CC"));
