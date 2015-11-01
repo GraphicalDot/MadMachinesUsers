@@ -26,7 +26,7 @@ import java.util.ArrayList;
  */
 public class ContactsHandler {
 
-    private static final String defaultStatus = "Invite to Sports Unity";
+    public static final String defaultStatus = "Invite to Sports Unity";
 
     private static ContactsHandler CONTACT_HANDLER = null;
 

@@ -28,6 +28,7 @@ import com.sports.unity.common.view.SlidingTabLayout;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.iqlast.packet.LastActivity;
 import org.jivesoftware.smackx.search.UserSearchManager;
@@ -43,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     public static UserSearchManager searchManager;
     public static Form searchForm = null;
     public static Form answerForm = null;
+    private Presence presence;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private void initViews(){
+    private void initViews() {
         Toolbar toolbar = initToolBar();
 
         DrawerLayout mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
         mDrawer.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
-        String titles[] = { getString(R.string.scores), getString(R.string.news), getString(R.string.messages) };
+        String titles[] = {getString(R.string.scores), getString(R.string.news), getString(R.string.messages)};
         int numberOfTabs = titles.length;
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
@@ -137,12 +139,22 @@ public class MainActivity extends AppCompatActivity {
         pager.setCurrentItem(1);
     }
 
-    private Toolbar initToolBar(){
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    private Toolbar initToolBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
         TextView title = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        title.setText( R.string.app_name);
+        title.setText(R.string.app_name);
         title.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -199,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
                     TinyDB tinyDB = TinyDB.getInstance(MainActivity.this);
                     String username = tinyDB.getString(TinyDB.KEY_USERNAME);
                     String password = tinyDB.getString(TinyDB.KEY_PASSWORD);
-                    XMPPClient.getConnection().login( username, password);
+                    XMPPClient.getConnection().login(username, password);
                 } catch (XMPPException e) {
                     e.printStackTrace();
                 } catch (SmackException e) {
@@ -219,12 +231,24 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(XMPPTCPConnection con) {
             if (isMyServiceRunning(XMPPService.class) && XMPPClient.getConnection().isAuthenticated()) {
                 Log.i("Service is :", "Running");
+                presence = new Presence(Presence.Type.available);
+                try {
+                    con.sendPacket(presence);
+                } catch (SmackException.NotConnectedException e) {
+                    e.printStackTrace();
+                }
                 getForms(con);
 
             } else {
                 Intent serviceIntent = new Intent(MainActivity.this, XMPPService.class);
                 startService(serviceIntent);
                 if (XMPPClient.getConnection().isAuthenticated()) {
+                    presence = new Presence(Presence.Type.available);
+                    try {
+                        con.sendPacket(presence);
+                    } catch (SmackException.NotConnectedException e) {
+                        e.printStackTrace();
+                    }
                     getForms(con);
                 }
             }

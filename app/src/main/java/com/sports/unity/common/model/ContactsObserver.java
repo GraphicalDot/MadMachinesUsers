@@ -26,6 +26,7 @@ public class ContactsObserver extends ContentObserver {
      */
     private Context context;
     private static ContactsObserver CONTACTS_OBSERVER = null;
+    private boolean contactSync = false;
 
     /**
      * this list contins numbers which are in the sports unity app database
@@ -51,22 +52,17 @@ public class ContactsObserver extends ContentObserver {
         super.onChange(selfChange);
         Log.i("callingonchange:", "yes");
 
+        if (contactSync == false) {
+            contactSync = true;
+            ContactsHandler.getInstance().getAllContacts(this.context);
 
-        ContactsHandler.getInstance().getAllContacts(this.context);
-        try {
-            ContactsHandler.getInstance().updateRegisteredUsers(this.context);
-        } catch (XMPPException e) {
-            e.printStackTrace();
+            spuContacts = SportsUnityDBHelper.getInstance(context).getAllContactsNumbersOnly();
+            for (String c : spuContacts)
+                Log.i("spucontacts :", c);
+            androidContacts = readContactsDatabase();
+
+            matchAndUpdate(spuContacts, androidContacts, context);
         }
-
-
-        spuContacts = SportsUnityDBHelper.getInstance(context).getAllContactsNumbersOnly();
-        for (String c : spuContacts)
-            Log.i("spucontacts :", c);
-        androidContacts = readContactsDatabase();
-
-        matchAndUpdate(spuContacts, androidContacts, context);
-
     }
 
     public HashMap readContactsDatabase() {
@@ -105,26 +101,19 @@ public class ContactsObserver extends ContentObserver {
 
     }
 
-    /* public class Contact {
-         private String name;
-         private String num;
+    private void matchAndUpdate(ArrayList<String> spuContacts, HashMap<String, String> androidContacts, Context context) {
 
-         public Contact(String name, String num) {
-             this.name = name;
-             this.num = num;
-         }
-
-
-     }
- */
-    private void matchAndUpdate(ArrayList<String> spuContacts, HashMap<String,String> androidContacts, Context context) {
-
+        SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         for (String contact : spuContacts) {
             if (androidContacts.containsKey(contact)) {
-                SportsUnityDBHelper.getInstance(context).updateUserName(contact, androidContacts.get(contact));
+                sportsUnityDBHelper.updateUserName(contact, androidContacts.get(contact));
+                sportsUnityDBHelper.updateChatEntryName(sportsUnityDBHelper.getContactId(contact), androidContacts.get(contact));
             } else {
-                SportsUnityDBHelper.getInstance(context).setPhonenumberAsName(contact);
+                sportsUnityDBHelper.setPhonenumberAsName(contact);
+                sportsUnityDBHelper.updateChatEntryName(sportsUnityDBHelper.getContactId(contact), contact);
+
             }
         }
+        contactSync = false;
     }
 }

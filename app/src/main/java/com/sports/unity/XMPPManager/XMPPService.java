@@ -5,7 +5,9 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.provider.ContactsContract;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
@@ -14,9 +16,13 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.MainActivity;
+import com.sports.unity.common.model.ContactsHandler;
+import com.sports.unity.common.model.ContactsObserver;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
+import com.sports.unity.util.ActivityActionHandler;
+import com.sports.unity.util.ActivityActionListener;
 
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
@@ -39,6 +45,7 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.joda.time.DateTime;
 
 import java.io.IOException;
@@ -73,8 +80,11 @@ public class XMPPService extends Service {
     protected void onHandleIntent(Intent intent) throws IOException, XMPPException, SmackException {
         if (mConnection == null) {
             mConnection = ProfileCreationActivity.returnConnection();
-            if (!mConnection.isAuthenticated())
+            if (!mConnection.isAuthenticated()) {
                 mConnection.login(tinyDB.getString(TinyDB.KEY_USERNAME), tinyDB.getString(TinyDB.KEY_PASSWORD));
+                Presence presence = new Presence(Presence.Type.unavailable);
+                mConnection.sendPacket(presence);
+            }
 
             attachListeners(mConnection);
         }
@@ -146,6 +156,10 @@ public class XMPPService extends Service {
                     Presence response = new Presence(Presence.Type.subscribed);
                     response.setTo(presence.getFrom().substring(0, presence.getFrom().indexOf("@")));
                     connection.sendPacket(response);
+                } else if (presence.getType() == Presence.Type.available) {
+
+                } else if (presence.getType() == Presence.Type.unavailable) {
+
                 }
             }
         }, new PacketTypeFilter(Presence.class));
@@ -211,7 +225,6 @@ public class XMPPService extends Service {
 
         @Override
         public void reconnectingIn(int seconds) {
-            Log.i("reconnectingIn", String.valueOf(seconds));
         }
 
         @Override
@@ -240,6 +253,7 @@ public class XMPPService extends Service {
                     handleChatMessage(message);
                 }
             } else if (message.getType().equals(Message.Type.groupchat)) {
+
             } else if (((Message) packet).getType().equals(Presence.Type.subscribe)) {
                 Log.i("subscription", "recieved");
             }
@@ -250,13 +264,14 @@ public class XMPPService extends Service {
 
         Object value = JivePropertiesManager.getProperty(message, "time");
         Object isGroupChat = JivePropertiesManager.getProperty(message, "isGroupChat");
-        addToDatabase(message, value, isGroupChat);
         if (ChatScreenApplication.isActivityVisible()) {
             if (ChatScreenActivity.getJABBERID().equals(message.getFrom().toString().substring(0, message.getFrom().indexOf("@")))) {
-                Intent intent = new Intent();
+                addToDatabase(message, value, isGroupChat);
+                /*Intent intent = new Intent();
                 intent.setAction("com.madmachines.SINGLE_MESSAGE_RECEIVED");
                 sendBroadcast(intent);
-                Log.i("Broadcast : ", "sent");
+                Log.i("Broadcast : ", "sent");*/
+                sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, null);
             } else {
                 try {
                     DisplayNotification(message);
@@ -288,6 +303,8 @@ public class XMPPService extends Service {
 
             Log.i("status :", "composing");
 
+            sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, ChatState.composing.toString());
+
         } else if (message.hasExtension(ChatState.active.toString(), ChatStateExtension.NAMESPACE)) {
 
             Log.i("status :", "active");
@@ -299,6 +316,7 @@ public class XMPPService extends Service {
         } else if (message.hasExtension(ChatState.paused.toString(), ChatStateExtension.NAMESPACE)) {
 
             Log.i("status :", "paused");
+            sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, ChatState.paused.toString());
 
         } else if (message.hasExtension(ChatState.inactive.toString(), ChatStateExtension.NAMESPACE)) {
 
@@ -316,9 +334,7 @@ public class XMPPService extends Service {
         Log.i("service", "created");
         sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
         tinyDB = TinyDB.getInstance(this);
-        //getApplicationContext().getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, ContactsObserver.getInstance(new Handler(), this));
-        /*IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(new NetworkStateReceiver(), filter);*/
+        getApplicationContext().getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, ContactsObserver.getInstance(new Handler(), this));
     }
 
     public void addToDatabase(Message message, Object value, Object isGroupChat) {
@@ -348,35 +364,72 @@ public class XMPPService extends Service {
         SimpleDateFormat formatter = new SimpleDateFormat("k:mm");
         Log.i("senttime : ", String.valueOf(formatter.format(dateTime.getMillis())));
         Log.i("Message Entry", "adding message from server chat " + chatId);
-        sportsUnityDBHelper.addTextMessage(message.getBody().toString(), from, false,
-                String.valueOf(formatter.format(dateTime.getMillis())), message.getStanzaId(), null, null,
+        long messageId = sportsUnityDBHelper.addTextMessage(message.getBody().toString(), from, false,
+                String.valueOf(dateTime.getMillis()), message.getStanzaId(), null, null,
                 chatId, groupChatId, isGroup);
+        sportsUnityDBHelper.updateChatEntry(messageId, chatId);
 
     }
 
+    private boolean sendActionToCorrespondingActivityListener(String key, int id, Object data) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+
+        if (actionListener != null) {
+            if (data == null) {
+                actionListener.handleAction(id);
+            } else {
+                actionListener.handleAction(id, data);
+            }
+            success = true;
+        }
+        return success;
+    }
 
     public void DisplayNotification(Message message) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
 
         String number = message.getFrom().substring(0, message.getFrom().indexOf("@"));
-        String name = sportsUnityDBHelper.getJabberName(number);
+        SportsUnityDBHelper.Contacts contact = sportsUnityDBHelper.getContact(number);
+        if (contact == null) {
+            newContact(message, number);
+        } else {
+            existingContact(message, contact, number);
+        }
+
+    }
+
+    private void newContact(Message message, String number) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+
+        long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
+        VCard card = new VCard();
+        card.load(mConnection, number + "@mm.io");
+        String status = card.getMiddleName();
+        byte[] image = card.getAvatar();
+
+        chatId = createChatEntry(number, chatId, image, status);
+
+        SportsUnityDBHelper.Contacts newAddedContact = sportsUnityDBHelper.getContact(number);
+
+        Object value = JivePropertiesManager.getProperty(message, "time");
+        Object isGroupChat = JivePropertiesManager.getProperty(message, "isGroupChat");
+        addToDatabase(message, value, isGroupChat);
+
         Intent notificationIntent = new Intent(this, ChatScreenActivity.class);
-        notificationIntent.putExtra("jid", number);
-        notificationIntent.putExtra("jbname", name);
+        notificationIntent.putExtra("number", number);
+        notificationIntent.putExtra("name", newAddedContact.name);
+        notificationIntent.putExtra("chatId", chatId);
+        notificationIntent.putExtra("contactId", newAddedContact.id);
+        notificationIntent.putExtra("userpicture", newAddedContact.image);
+
         Intent backIntent = new Intent(this, MainActivity.class);
         backIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivities(this, mNotificationId, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
         builder.setSmallIcon(R.drawable.ic_stat_notification);
         builder.setContentText(message.getBody().toString());
-        if (name != null && !name.isEmpty())
-            builder.setContentTitle(name);
-        else {
-            /*builder.setContentTitle(jabberID);
-            VCard card = new VCard();
-            card.load(XMPPClient.getConnection(), jabberID + "@mm.io");
-            sportsUnityDBHelper.addToContacts(jabberID, jabberID, true, true, card.getMiddleName());*/
-
-        }
+        builder.setContentTitle(newAddedContact.name);
         builder.setContentIntent(pendingIntent);
         builder.setPriority(Notification.PRIORITY_HIGH);
         builder.setDefaults(Notification.DEFAULT_ALL);
@@ -384,9 +437,68 @@ public class XMPPService extends Service {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(mNotificationId, builder.build());
         sportsUnityDBHelper.updateUnreadCount(sportsUnityDBHelper.getContactId(number));
-        Intent intent = new Intent();
-        intent.setAction("com.madmachine.SINGLE_MESSAGE_RECEIVED");
-        sendBroadcast(intent);
+//        Intent intent = new Intent();
+//        intent.setAction("com.madmachine.SINGLE_MESSAGE_RECEIVED");
+//        sendBroadcast(intent);
+        sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
+
+
+    }
+
+    private void existingContact(Message message, SportsUnityDBHelper.Contacts contact, String number) {
+
+        long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
+
+        String name = contact.name;
+        chatId = sportsUnityDBHelper.getChatEntryID(contact.id);
+
+        Intent notificationIntent = new Intent(this, ChatScreenActivity.class);
+        notificationIntent.putExtra("number", number);
+        notificationIntent.putExtra("name", name);
+        notificationIntent.putExtra("chatId", chatId);
+        notificationIntent.putExtra("contactId", contact.id);
+        notificationIntent.putExtra("userpicture", contact.image);
+
+        Object value = JivePropertiesManager.getProperty(message, "time");
+        Object isGroupChat = JivePropertiesManager.getProperty(message, "isGroupChat");
+        addToDatabase(message, value, isGroupChat);
+
+        Intent backIntent = new Intent(this, MainActivity.class);
+        backIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivities(this, mNotificationId, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+        builder.setSmallIcon(R.drawable.ic_stat_notification);
+
+        builder.setContentText(message.getBody().toString());
+        builder.setContentTitle(name);
+        builder.setContentIntent(pendingIntent);
+        builder.setPriority(Notification.PRIORITY_HIGH);
+        builder.setDefaults(Notification.DEFAULT_ALL);
+        builder.setAutoCancel(true);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        notificationManager.notify(mNotificationId, builder.build());
+        sportsUnityDBHelper.updateUnreadCount(sportsUnityDBHelper.getContactId(number));
+//        Intent intent = new Intent();
+//        intent.setAction("com.madmachine.SINGLE_MESSAGE_RECEIVED");
+//        sendBroadcast(intent);
+        sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
+
+
+    }
+
+    private long createChatEntry(String number, long chatId, byte[] image, String status) {
+
+        /**
+         * first create a contact before adding a chat entry for it
+         */
+
+        sportsUnityDBHelper.addToContacts(number, number, true, ContactsHandler.getInstance().defaultStatus);
+        sportsUnityDBHelper.updateContacts(number, image, status);
+
+        chatId = sportsUnityDBHelper.createChatEntry(number, sportsUnityDBHelper.getContactId(number));
+
+
+        return chatId;
     }
 
     @Override

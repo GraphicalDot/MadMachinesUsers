@@ -32,9 +32,9 @@ public class SplashScreenActivity extends AppCompatActivity {
 
         UserUtil.init(this);
 
-        if ( UserUtil.isUserRegistered() ) {
-            if( UserUtil.isProfileCreated() ){
-                if( UserUtil.isSportsSelected() ){
+        if (UserUtil.isUserRegistered()) {
+            if (UserUtil.isProfileCreated()) {
+                if (UserUtil.isSportsSelected()) {
                     moveToNextActivity(MainActivity.class);
                 } else {
                     moveToNextActivity(SelectSportsActivity.class);
@@ -48,19 +48,19 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     }
 
-    private void moveToNextActivity( Class nextActivityClass){
+    private void moveToNextActivity(Class nextActivityClass) {
         Intent mainIntent = new Intent(SplashScreenActivity.this, nextActivityClass);
         startActivity(mainIntent);
         finish();
     }
 
-    private void show(){
+    private void show() {
         initViews();
         new fetch().execute();
     }
 
     private void initViews() {
-        ImageView img=(ImageView) findViewById(R.id.imageView);
+        ImageView img = (ImageView) findViewById(R.id.imageView);
         img.animate()
                 .setStartDelay(1000)
                 .setDuration(2000)
@@ -71,7 +71,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 //                .setDuration(2000)
 //                .scaleX(20)
 //                .scaleY(20);
-        ImageView img1=(ImageView) findViewById(R.id.imageView1);
+        ImageView img1 = (ImageView) findViewById(R.id.imageView1);
         img1.animate().setStartDelay(1000)
                 .setDuration(1800).alpha(-1);
         new Handler().postDelayed(new Runnable() {

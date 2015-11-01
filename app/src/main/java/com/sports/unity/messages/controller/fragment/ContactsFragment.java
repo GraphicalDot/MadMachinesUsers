@@ -48,12 +48,14 @@ public class ContactsFragment extends Fragment {
                     String name = contactList.get(position).name;
                     long contactId = contactList.get(position).id;
                     long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
+                    byte[] userPicture = contactList.get(position).image;
 
-                    Intent chatScreen =  new Intent(getActivity(), ChatScreenActivity.class);
+                    Intent chatScreen = new Intent(getActivity(), ChatScreenActivity.class);
                     chatScreen.putExtra("number", number);
                     chatScreen.putExtra("name", name);
                     chatScreen.putExtra("contactId", contactId);
                     chatScreen.putExtra("chatId", chatId);
+                    chatScreen.putExtra("userpicture", userPicture);
                     startActivity(chatScreen);
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "Invite him to sports Unity!", Toast.LENGTH_SHORT).show();
