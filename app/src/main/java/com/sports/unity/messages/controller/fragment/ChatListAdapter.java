@@ -61,7 +61,7 @@ public class ChatListAdapter extends ArrayAdapter<SportsUnityDBHelper.Chats> {
 
         }
         lastMsg.setText(chatArrayList.get(position).data);
-        name.setText(chatArrayList.get(position).userName);
+        name.setText(chatArrayList.get(position).name);
         return rowView;
     }
 

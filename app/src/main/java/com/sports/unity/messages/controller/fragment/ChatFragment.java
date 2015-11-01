@@ -49,25 +49,43 @@ public class ChatFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 ArrayList<SportsUnityDBHelper.Chats> chatList = ((ChatListAdapter) chatListView.getAdapter()).getChatArrayList();
-
-                long contactId = chatList.get(position).contactId;
-                SportsUnityDBHelper.Contacts contacts = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
-                String number = contacts.jid;
-                String name = chatList.get(position).userName;
-                long chatId = chatList.get(position).chatid;
+                SportsUnityDBHelper.Chats chatObject = chatList.get(position);
 
                 Intent chatScreen = new Intent(getActivity(), ChatScreenActivity.class);
-                chatScreen.putExtra("number", number);
-                chatScreen.putExtra("name", name);
-                chatScreen.putExtra("contactId", contactId);
-                chatScreen.putExtra("chatId", chatId);
+
+                String groupSeverId = chatObject.groupServerId;
+                if( groupSeverId == null ) {
+                    long contactId = chatObject.contactId;
+                    SportsUnityDBHelper.Contacts contacts = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
+                    String number = contacts.jid;
+                    String name = chatObject.name;
+                    long chatId = chatObject.chatid;
+
+                    chatScreen.putExtra("number", number);
+                    chatScreen.putExtra("name", name);
+                    chatScreen.putExtra("contactId", contactId);
+                    chatScreen.putExtra("chatId", chatId);
+                } else {
+                    long contactId = chatObject.contactId;
+                    SportsUnityDBHelper.Contacts contacts = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
+                    String number = groupSeverId;
+                    String name = chatObject.name;
+                    long chatId = chatObject.chatid;
+
+                    chatScreen.putExtra("number", number);
+                    chatScreen.putExtra("name", name);
+                    chatScreen.putExtra("contactId", contactId);
+                    chatScreen.putExtra("chatId", chatId);
+                    chatScreen.putExtra("groupServerId", groupSeverId);
+                }
+
                 startActivity(chatScreen);
             }
         });
     }
 
     private void updateContent() {
-        ArrayList<SportsUnityDBHelper.Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatScreenList();
+        ArrayList<SportsUnityDBHelper.Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList();
         ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
         adapter.updateList(chatList);
         chatListView.setAdapter(adapter);
@@ -113,7 +131,7 @@ public class ChatFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (chatListView != null) {
-                ArrayList<SportsUnityDBHelper.Chats> chatList = SportsUnityDBHelper.getInstance(context).getChatScreenList();
+                ArrayList<SportsUnityDBHelper.Chats> chatList = SportsUnityDBHelper.getInstance(context).getChatList();
                 ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
                 adapter.updateList(chatList);
                 chatListView.setAdapter(adapter);

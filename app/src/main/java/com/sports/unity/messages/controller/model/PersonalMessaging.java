@@ -30,23 +30,19 @@ public class PersonalMessaging {
 
     private static PersonalMessaging pmessaging = null;
 
-    private final Map<Chat, ChatState> chatStates = new WeakHashMap<Chat, ChatState>();
-
-    private Context context;
-
-    private SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
-
-    private PersonalMessaging(Context context) {
-
-        this.context = context;
-
-    }
-
     synchronized public static PersonalMessaging getInstance(Context context) {
         if (pmessaging == null) {
             pmessaging = new PersonalMessaging(context);
         }
         return pmessaging;
+    }
+
+    private final Map<Chat, ChatState> chatStates = new WeakHashMap<Chat, ChatState>();
+
+    private SportsUnityDBHelper sportsUnityDBHelper = null;
+
+    private PersonalMessaging(Context context) {
+        sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
     }
 
     public void sendMessageToPeer(String msg, Chat chat, String number, long chatId, String name) {
@@ -68,9 +64,8 @@ public class PersonalMessaging {
          * SportsUnityDBHelper.getInstance(context).addMessageToDatabase();
          */
 
-        long messageId = sportsUnityDBHelper.addTextMessage(msg, number, true, null, id, null, null, chatId, SportsUnityDBHelper.DEFAULT_ENTRY_ID, false);
-        sportsUnityDBHelper.updateChatEntry(messageId, chatId);
-
+        long messageId = sportsUnityDBHelper.addTextMessage(msg, number, true, null, id, null, null, chatId);
+        sportsUnityDBHelper.updateChatEntry(messageId, chatId, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
     }
 
@@ -94,16 +89,6 @@ public class PersonalMessaging {
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         }
-
-    }
-
-    private synchronized boolean updateChatState(Chat chat, ChatState newState) {
-        ChatState lastChatState = chatStates.get(chat);
-        if (lastChatState != newState) {
-            chatStates.put(chat, newState);
-            return true;
-        }
-        return false;
     }
 
     public void setReceivedReceipts(String fromJid, String receiptId, Context applicationContext) {
@@ -121,26 +106,7 @@ public class PersonalMessaging {
             sportsUnityDBHelper.updateClientReceived(receiptId);
         }
 
-        updateReadreceipts(applicationContext);
-        /*if (ChatScreenApplication.isActivityVisible()) {
-            if (ChatScreenActivity.getJABBERID().equals(fromJid)) {
-                updateReadreceipts(applicationContext);
-            }
-
-        }*/
-    }
-
-    public void updateReadreceipts(Context applicationContext) {
-
-        /**
-         * get read receipts in database and then update the double ticks in the corresponding chats
-         */
-
-        Log.i("Ticks :", "updated");
-        Intent intent = new Intent();
-        intent.setAction("com.madmachine.SINGLE_MESSAGE_RECEIVED");
-        applicationContext.sendBroadcast(intent);
-
+        updateReadReceipts(applicationContext);
     }
 
     public void setActiveStatus(String phoneNumber, String status) {
@@ -159,6 +125,28 @@ public class PersonalMessaging {
         String status = null;
 
         return status;
+
+    }
+
+    private synchronized boolean updateChatState(Chat chat, ChatState newState) {
+        ChatState lastChatState = chatStates.get(chat);
+        if (lastChatState != newState) {
+            chatStates.put(chat, newState);
+            return true;
+        }
+        return false;
+    }
+
+    private void updateReadReceipts(Context applicationContext) {
+
+        /**
+         * get read receipts in database and then update the double ticks in the corresponding chats
+         */
+
+        Log.i("Ticks :", "updated");
+        Intent intent = new Intent();
+        intent.setAction("com.madmachine.SINGLE_MESSAGE_RECEIVED");
+        applicationContext.sendBroadcast(intent);
 
     }
 
