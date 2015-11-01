@@ -26,23 +26,23 @@ import java.util.ArrayList;
 
 public class SelectSportsActivity extends AppCompatActivity {
 
-    private int[] flag = {0,0,0,0,0};
+    private int[] flag = {0, 0, 0, 0, 0};
 
     private ArrayList<String> sports = new ArrayList<String>();
 
     private Integer[] mThumbIds = {
-            R.drawable.basketball,
-            R.drawable.cricket,
-            R.drawable.football,
-            R.drawable.tennis,
-            R.drawable.f1,
+            R.drawable.btn_basketball_disabled,
+            R.drawable.btn_cricket_disabled,
+            R.drawable.btn_football_disabled,
+            R.drawable.btn_tennis_disabled,
+            R.drawable.btn_f1_disabled,
     };
     private Integer[] mThumbIdsSelected = {
-            R.drawable.basketball_selected,
-            R.drawable.cricket_selected,
-            R.drawable.football_selected,
-            R.drawable.tennis_selected,
-            R.drawable.f1_selected,
+            R.drawable.btn_basketball_selected,
+            R.drawable.btn_cricket_selected,
+            R.drawable.btn_football_selected,
+            R.drawable.btn_tennis_selected,
+            R.drawable.btn_f1_selected,
     };
     private String[] mSports = {
             Constants.GAME_KEY_BASKETBALL,
@@ -63,6 +63,9 @@ public class SelectSportsActivity extends AppCompatActivity {
     private void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
+
+//        int size = (int) getResources().getDimension(R.dimen.select_sports_page);
+
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
@@ -104,7 +107,7 @@ public class SelectSportsActivity extends AppCompatActivity {
 
     }
 
-    private void moveOn(){
+    private void moveOn() {
         UserUtil.setSportsSelected(SelectSportsActivity.this, sports);
 
         Intent intent = new Intent(SelectSportsActivity.this, MainActivity.class);

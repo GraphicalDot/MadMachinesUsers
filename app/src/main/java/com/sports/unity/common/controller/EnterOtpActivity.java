@@ -25,6 +25,7 @@ import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
 
 import org.apache.http.Header;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -116,7 +117,7 @@ public class EnterOtpActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (s.length() == 4) {
                     sendOtpButton.setVisibility(View.VISIBLE);
-                } else if (s.length() != 4) {
+                } else {
                     sendOtpButton.setVisibility(View.INVISIBLE);
                 }
             }
@@ -218,6 +219,24 @@ public class EnterOtpActivity extends AppCompatActivity {
 //                afterAsyncCall();
                 Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
             }
+
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
+
+                Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+                Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+
+                Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+            }
+
         });
     }
 

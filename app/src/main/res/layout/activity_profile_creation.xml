@@ -2,13 +2,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context="com.sports.unity.ProfileCreationActivity"
-    android:background="@drawable/splash_720"
-    >
+    android:background="@drawable/splash_bg">
 
     <LinearLayout
         android:id="@+id/centerContent"
@@ -18,23 +18,55 @@
         android:gravity="center"
         android:layout_centerInParent="true"
         >
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/login_button"
+
+        <FrameLayout
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_marginLeft="@dimen/activity_vertical_margin"
-            android:layout_marginRight="@dimen/activity_vertical_margin"
-            android:layout_below="@+id/nameView"
-            />
+            android:layout_height="50dp"
+            >
+
+            <com.facebook.login.widget.LoginButton
+                xmlns:facebook="http://schemas.android.com/apk/res-auto"
+                facebook:com_facebook_login_text="USE MY FACEBOOK DETAILS"
+                android:id="@+id/login_button"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_marginEnd="@dimen/activity_vertical_margin"
+                android:layout_marginStart="@dimen/activity_vertical_margin"
+                android:layout_gravity="center"
+                android:src="@drawable/ab_bg"
+                android:layout_below="@+id/nameView"
+                />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="#3b5998"
+                android:layout_marginEnd="@dimen/activity_vertical_margin"
+                android:layout_marginStart="@dimen/activity_vertical_margin">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:src="@drawable/fb"
+                    android:layout_marginLeft="24dp"
+                   android:background="@android:color/transparent"/>
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@android:color/transparent"
+                android:text="USE MY FACEBOOK DETAILS"
+                android:textColor="@color/ColorPrimary"
+                android:clickable="false"
+                />
+            </LinearLayout>
+        </FrameLayout>
+
 
         <Button
             android:id="@+id/continue_button"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/app_theme_blue"
+            android:layout_height="50dp"
+            android:background="@color/ColorPrimary"
             android:text="CONTINUE"
-            android:textColor="@android:color/white"
+            android:textColor="@color/app_theme_blue"
             android:layout_marginEnd="@dimen/activity_vertical_margin"
             android:layout_marginStart="@dimen/activity_vertical_margin"
             android:layout_marginTop="15dp"
@@ -46,11 +78,13 @@
         android:id="@+id/nameView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
         android:hint="Name"
+        android:background="@drawable/text"
+        android:ems="10"
+        android:inputType="textNoSuggestions"
+        android:textColorHint="@android:color/white"
         android:textColor="@android:color/white"
         android:gravity="center"
-        android:ems="10"
         android:layout_marginEnd="@dimen/activity_vertical_margin"
         android:layout_marginStart="@dimen/activity_vertical_margin"
         android:layout_marginBottom="@dimen/activity_vertical_margin"

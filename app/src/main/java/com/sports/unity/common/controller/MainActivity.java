@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
@@ -36,6 +37,8 @@ import org.jivesoftware.smackx.xdata.Form;
 
 import java.io.IOException;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * Created by Edwin on 15/02/2015.
  */
@@ -56,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         SportsUnityDBHelper.getInstance(this).addDummyMessageIfNotExist();
 
         initViews();
-
+        setNavigation();
         /*
          * Retain contact information
          */
@@ -66,6 +69,13 @@ public class MainActivity extends AppCompatActivity {
         fragmentTransaction.commit();
     }
 
+    private void setNavigation()
+    {
+        ViewGroup view=(ViewGroup) findViewById(R.id.navigation);
+        TextView name=(TextView) view.findViewById(R.id.name);
+        CircleImageView prof_img=(CircleImageView) findViewById(R.id.circleView);
+        name.setText("Hello");
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.

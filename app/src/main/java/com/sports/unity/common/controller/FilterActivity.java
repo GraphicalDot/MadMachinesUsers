@@ -117,7 +117,6 @@ public class FilterActivity extends AppCompatActivity {
         }
 
         clearrFilter.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 //TODO
@@ -178,9 +177,7 @@ public class FilterActivity extends AppCompatActivity {
             Intent intent = getIntent();
             setResult(RESULT_OK, intent);
             finish();
-        }
-        else
-        {
+        } else {
             finish();
         }
 
