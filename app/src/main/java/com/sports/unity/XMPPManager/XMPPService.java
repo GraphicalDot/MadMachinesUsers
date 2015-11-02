@@ -120,7 +120,7 @@ public class XMPPService extends Service {
 
                 Log.i("Group Chat", "new invitation from server");
 
-                String groupServerId = multiUserChat.getRoom().substring( 0, multiUserChat.getRoom().indexOf("@conference.mm.io"));
+                String groupServerId = multiUserChat.getRoom().substring(0, multiUserChat.getRoom().indexOf("@conference.mm.io"));
                 String ownerPhoneNumber = inviter.substring(0, inviter.indexOf("@mm.io"));
                 Log.i("Group Server ID", "" + groupServerId);
 
@@ -128,7 +128,7 @@ public class XMPPService extends Service {
 
                 SportsUnityDBHelper.Contacts owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
                 long chatId = sportsUnityDBHelper.createGroupChatEntry(reason, owner.id, null, groupServerId);
-                sportsUnityDBHelper.updateChatEntry( SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupServerId);
+                sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupServerId);
 
                 String currentUserPhoneNumber = TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME);
                 GroupMessaging.getInstance(getApplicationContext()).joinGroup(groupServerId, currentUserPhoneNumber);
@@ -271,7 +271,7 @@ public class XMPPService extends Service {
                     handleChatMessage(message, false);
                 }
             } else if (message.getType().equals(Message.Type.groupchat)) {
-                Log.i("Group Chat","new message fro server");
+                Log.i("Group Chat", "new message fro server");
 
                 if (message.getBody() == null) {
                     getStatus(message);
@@ -291,27 +291,44 @@ public class XMPPService extends Service {
         String to = message.getTo().substring(0, message.getTo().indexOf("@"));
 
         boolean success = true;
+        long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
+        String groupServerId = null;
         if (isGroupChat) {
-            String messageFrom = message.getFrom().substring(message.getFrom().indexOf("/")+1);
+            groupServerId = from;
+            String messageFrom = message.getFrom().substring(message.getFrom().indexOf("/") + 1);
 
-            if( ! to.equals(messageFrom) ) {
-                addToDatabase(message, value, isGroupChat, messageFrom, from);
+            if (!to.equals(messageFrom)) {
+                chatId = getChatIdOrCreateIfNotExist(isGroupChat, messageFrom, groupServerId);
+                addToDatabase(message, value, chatId, isGroupChat, messageFrom, groupServerId);
             } else {
                 success = false;
             }
         } else {
-            createContactIfNotExist(from);
-
-            addToDatabase(message, value, isGroupChat, from, "");
+            groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
+            chatId = getChatIdOrCreateIfNotExist(isGroupChat, from, groupServerId);
+            addToDatabase(message, value, chatId, isGroupChat, from, groupServerId);
         }
-        
-        if (ChatScreenApplication.isActivityVisible()) {
-            if (ChatScreenActivity.getJABBERID().equals(from)) {
+
+        if (success == true && chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
+
+            if (ChatScreenApplication.isActivityVisible()) {
+                if (ChatScreenActivity.getJABBERID().equals(from)) {
 //                addToDatabase(message, value, isGroupChat);
-                sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, null);
+                    sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, null);
+                } else {
+                    try {
+                        DisplayNotification(message, chatId, isGroupChat, groupServerId);
+                    } catch (XMPPException.XMPPErrorException e) {
+                        e.printStackTrace();
+                    } catch (SmackException.NoResponseException e) {
+                        e.printStackTrace();
+                    } catch (SmackException.NotConnectedException e) {
+                        e.printStackTrace();
+                    }
+                }
             } else {
                 try {
-                    DisplayNotification(message, isGroupChat, from);
+                    DisplayNotification(message, chatId, isGroupChat, groupServerId);
                 } catch (XMPPException.XMPPErrorException e) {
                     e.printStackTrace();
                 } catch (SmackException.NoResponseException e) {
@@ -320,16 +337,7 @@ public class XMPPService extends Service {
                     e.printStackTrace();
                 }
             }
-        } else {
-            try {
-                DisplayNotification(message, isGroupChat, from);
-            } catch (XMPPException.XMPPErrorException e) {
-                e.printStackTrace();
-            } catch (SmackException.NoResponseException e) {
-                e.printStackTrace();
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            }
+
         }
         Log.i("personalmessage :", "recieved");
     }
@@ -374,17 +382,17 @@ public class XMPPService extends Service {
         getApplicationContext().getContentResolver().registerContentObserver(ContactsContract.Contacts.CONTENT_URI, true, ContactsObserver.getInstance(new Handler(), this));
     }
 
-    public void addToDatabase(Message message, Object value, boolean isGroupChat, String from, String fromGroup) {
-
-//        String from = message.getFrom().toString().substring(0, message.getFrom().indexOf("@"));
-//        String to = message.getTo().toString().substring(0, message.getTo().indexOf("@"));
-
+    private long getChatIdOrCreateIfNotExist(boolean isGroupChat, String from, String fromGroup) {
         long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
 
-        if ( ! isGroupChat ) {
+        if (!isGroupChat) {
             SportsUnityDBHelper.Contacts contact = sportsUnityDBHelper.getContact(from);
+            if( contact == null ) {
+                createContact(from);
+                contact = sportsUnityDBHelper.getContact(from);
+            }
 
-            chatId = sportsUnityDBHelper.getChatEntryID(contact.id, from);
+            chatId = sportsUnityDBHelper.getChatEntryID(contact.id, fromGroup);
             if (chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
                 //nothing
             } else {
@@ -401,6 +409,12 @@ public class XMPPService extends Service {
 //                Log.i("GroupChatEntry : ", "group chat entry made from server " + chatId + " , " + contact.id);
 //            }
         }
+        return chatId;
+    }
+
+    public void addToDatabase(Message message, Object value, long chatId, boolean isGroupChat, String from, String fromGroup) {
+//        String from = message.getFrom().toString().substring(0, message.getFrom().indexOf("@"));
+//        String to = message.getTo().toString().substring(0, message.getTo().indexOf("@"));
 
         DateTime dateTime = new DateTime(value);
         SimpleDateFormat formatter = new SimpleDateFormat("k:mm");
@@ -408,7 +422,7 @@ public class XMPPService extends Service {
         Log.i("Message Entry", "adding message from server chat " + chatId);
 
         long messageId = sportsUnityDBHelper.addTextMessage(message.getBody().toString(), from, false,
-                String.valueOf(formatter.format(dateTime.getMillis())), message.getStanzaId(), null, null,
+                String.valueOf(dateTime.getMillis()), message.getStanzaId(), null, null,
                 chatId);
         sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
     }
@@ -430,14 +444,21 @@ public class XMPPService extends Service {
         return success;
     }
 
-    public void DisplayNotification(Message message, boolean isGroupChat, String groupServerId) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+    public void DisplayNotification(Message message, long chatId, boolean isGroupChat, String groupServerId) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
 
         String number = message.getFrom().substring(0, message.getFrom().indexOf("@"));
         String name = sportsUnityDBHelper.getJabberName(number);
 
+        SportsUnityDBHelper.Contacts contact = sportsUnityDBHelper.getContact(number);
+
         Intent notificationIntent = new Intent(this, ChatScreenActivity.class);
-        notificationIntent.putExtra("jid", number);
-        notificationIntent.putExtra("jbname", name);
+        notificationIntent.putExtra("name", name);
+        notificationIntent.putExtra("number", number);
+        notificationIntent.putExtra("chatId", chatId);
+        notificationIntent.putExtra("contactId", contact.id);
+        notificationIntent.putExtra("groupServerId", groupServerId);
+        notificationIntent.putExtra("userpicture", contact.image);
+
         Intent backIntent = new Intent(this, MainActivity.class);
         backIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivities(this, mNotificationId, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -460,17 +481,17 @@ public class XMPPService extends Service {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         notificationManager.notify(mNotificationId, builder.build());
 
-        if( isGroupChat ){
-            long chatId = sportsUnityDBHelper.getChatEntryID(groupServerId);
+        if (isGroupChat) {
+//            long chatId = sportsUnityDBHelper.getChatEntryID(groupServerId);
             sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
         } else {
-            sportsUnityDBHelper.updateUnreadCount(sportsUnityDBHelper.getContactId(number), groupServerId);
+            sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
         }
 
         sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
     }
 
-    private boolean createContactIfNotExist(String number) {
+    private boolean createContact(String number) {
         boolean success = false;
         try {
             VCard card = new VCard();
@@ -484,7 +505,7 @@ public class XMPPService extends Service {
 //        SportsUnityDBHelper.Contacts newAddedContact = sportsUnityDBHelper.getContact(number);
 
             success = true;
-        }catch (Throwable throwable){
+        } catch (Throwable throwable) {
 
         }
         return success;
@@ -600,7 +621,7 @@ public class XMPPService extends Service {
 //
 //        return chatId;
 //    }
-    
+
     @Override
     public void onDestroy() {
         mConnection.disconnect();

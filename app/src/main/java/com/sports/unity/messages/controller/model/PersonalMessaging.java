@@ -39,15 +39,7 @@ public class PersonalMessaging {
         return pmessaging;
     }
 
-    private final Map<Chat, ChatState> chatStates = new WeakHashMap<Chat, ChatState>();
-
-    private SportsUnityDBHelper sportsUnityDBHelper = null;
-
-    private PersonalMessaging(Context context) {
-        sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
-    }
-
-    private boolean sendActionToCorrespondingActivityListener(String key, int id, Object data) {
+    public static boolean sendActionToCorrespondingActivityListener(String key, int id, Object data) {
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
@@ -62,6 +54,14 @@ public class PersonalMessaging {
             success = true;
         }
         return success;
+    }
+
+    private final Map<Chat, ChatState> chatStates = new WeakHashMap<Chat, ChatState>();
+
+    private SportsUnityDBHelper sportsUnityDBHelper = null;
+
+    private PersonalMessaging(Context context) {
+        sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
     }
 
     public void sendMessageToPeer(String msg, Chat chat, String number, long chatId, String name) {

@@ -5,6 +5,7 @@ import android.content.Intent;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.util.ActivityActionHandler;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -261,9 +262,11 @@ public class GroupMessaging {
         /**
          * get read receipts in database and then update the double ticks in the corresponding chats
          */
-        Intent intent = new Intent();
-        intent.setAction("com.madmachine.SINGLE_MESSAGE_RECEIVED");
-        applicationContext.sendBroadcast(intent);
+//        Intent intent = new Intent();
+//        intent.setAction("com.madmachine.SINGLE_MESSAGE_RECEIVED");
+//        applicationContext.sendBroadcast(intent);
+
+        PersonalMessaging.sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, null);
     }
 
 }

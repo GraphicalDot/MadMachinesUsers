@@ -160,8 +160,8 @@ public class ChatScreenActivity extends AppCompatActivity {
 
         groupServerId = getIntent().getStringExtra("groupServerId");
 
-        if( groupServerId == null ){
-            groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
+        if( groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID) ){
+            //nothing
         } else {
             isGroupChat = true;
 
@@ -174,10 +174,6 @@ public class ChatScreenActivity extends AppCompatActivity {
         messageRecieved = new MessageRecieved();
 
         con = XMPPClient.getConnection();
-
-        if( chatID != SportsUnityDBHelper.DEFAULT_ENTRY_ID ) {
-            sportsUnityDBHelper.clearUnreadCount( chatID, groupServerId);
-        }
 
         TextView user = (TextView) toolbar.findViewById(R.id.chat_username);
         user.setText(JABBERNAME);
@@ -258,6 +254,11 @@ public class ChatScreenActivity extends AppCompatActivity {
                 }
             });
         }
+
+        if( chatID != SportsUnityDBHelper.DEFAULT_ENTRY_ID ) {
+            sportsUnityDBHelper.clearUnreadCount( chatID, groupServerId);
+        }
+
     }
 
     private void initChatId() {

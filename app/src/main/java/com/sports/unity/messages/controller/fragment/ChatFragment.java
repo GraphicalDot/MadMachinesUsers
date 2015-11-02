@@ -73,7 +73,7 @@ public class ChatFragment extends Fragment {
                 Intent chatScreen = new Intent(getActivity(), ChatScreenActivity.class);
 
                 String groupSeverId = chatObject.groupServerId;
-                if (groupSeverId == null) {
+                if ( groupSeverId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID) ) {
                     long contactId = chatObject.contactId;
                     SportsUnityDBHelper.Contacts contacts = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
                     String number = contacts.jid;
@@ -85,6 +85,7 @@ public class ChatFragment extends Fragment {
                     chatScreen.putExtra("name", name);
                     chatScreen.putExtra("contactId", contactId);
                     chatScreen.putExtra("chatId", chatId);
+                    chatScreen.putExtra("groupServerId", groupSeverId);
                     chatScreen.putExtra("userpicture", userpicture);
                 } else {
                     long contactId = chatObject.contactId;

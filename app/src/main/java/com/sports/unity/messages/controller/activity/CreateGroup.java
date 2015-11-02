@@ -20,6 +20,7 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.fragment.ContactsFragment;
 import com.sports.unity.messages.controller.fragment.GroupDetailFragment;
 import com.sports.unity.messages.controller.model.GroupMessaging;
@@ -113,12 +114,13 @@ public class CreateGroup extends AppCompatActivity {
         String roomName = currentUserPhoneNumber + "" + System.currentTimeMillis();
 
         boolean success = groupMessaging.createGroup(roomName, currentUserPhoneNumber);
+        SportsUnityDBHelper.Contacts owner = SportsUnityDBHelper.getInstance(this).getContact(currentUserPhoneNumber);
         if( success ){
             groupMessaging.setGroupConfigDetail( roomName, groupName, groupDescription);
             groupMessaging.joinGroup(roomName, currentUserPhoneNumber);
             groupMessaging.inviteMembers(roomName, selectedMembers, "");
 
-            long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry( groupName, SportsUnityDBHelper.DEFAULT_ENTRY_ID, null, roomName);
+            long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry( groupName, owner.id, null, roomName);
             SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, roomName);
 
             finish();

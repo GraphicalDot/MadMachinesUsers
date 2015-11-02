@@ -56,6 +56,7 @@ public class ContactsFragment extends Fragment {
                 chatScreen.putExtra("name", name);
                 chatScreen.putExtra("contactId", contactId);
                 chatScreen.putExtra("chatId", chatId);
+                chatScreen.putExtra("groupServerId", SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
                 chatScreen.putExtra("userpicture", userPicture);
                 startActivity(chatScreen);
             } else {
