@@ -128,7 +128,7 @@ public class ChatScreenActivity extends AppCompatActivity {
             ChatScreenActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID, SportsUnityDBHelper.DEFAULT_ENTRY_ID, false);
+                    messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
                     chatScreenAdapter.notifydataset(messageList);
                 }
             });

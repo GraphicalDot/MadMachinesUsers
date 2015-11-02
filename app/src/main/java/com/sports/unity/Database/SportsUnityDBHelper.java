@@ -178,20 +178,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     public int getContactId(String number) {
 
-        Time today = new Time(Time.getCurrentTimezone());
-        today.setToNow();
-        values.put(MessagesEntry.COLUMN_PHONENUMBER, number);
-        values.put(MessagesEntry.COLUMN_DATA_TEXT, msg);
-        values.put(MessagesEntry.COLUMN_MESSAGE_ID, messageId);
-        values.put(MessagesEntry.COLUMN_MIME_TYPE, MIME_TYPE_TEXT);
-        values.put(MessagesEntry.COLUMN_NAME_I_AM_SENDER, iamsender);
-        values.put(MessagesEntry.COLUMN_CHAT_ID, chatID);
-        values.put(MessagesEntry.COLUMN_GROUP_ID, groupID);
-        values.put(MessagesEntry.COLUMN_CHAT_IS_GROUP, isGroupChat);
-        values.put(MessagesEntry.COLUMN_SEND_TIMESTAMP, sentTime);
-        values.put(MessagesEntry.COLUMN_SERVER_RECEIPT, serverTime);
-        values.put(MessagesEntry.COLUMN_RECIPIENT_RECEIPT, recipientTime);
-        values.put(MessagesEntry.COLUMN_RECEIVE_TIMESTAMP, String.valueOf(today.format("%k:%M")));
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {
+                ContactsEntry.COLUMN_CONTACT_ID,                               //0th column
+        };
 
         String selection = ContactsEntry.COLUMN_PHONENUMBER + " LIKE ?";
         String[] selectionArgs = {number};
@@ -499,9 +489,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         }
 
         c.close();
-//        db.close();
-
-        return DEFAULT_ENTRY_ID;
+        return null;
     }
 
     public void updateChatEntryName(int contactId, String name) {

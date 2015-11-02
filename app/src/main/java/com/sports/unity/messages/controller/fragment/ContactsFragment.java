@@ -51,7 +51,7 @@ public class ContactsFragment extends Fragment {
                 long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
                 byte[] userPicture = contactList.get(position).image;
 
-                Intent chatScreen =  new Intent(getActivity(), ChatScreenActivity.class);
+                Intent chatScreen = new Intent(getActivity(), ChatScreenActivity.class);
                 chatScreen.putExtra("number", number);
                 chatScreen.putExtra("name", name);
                 chatScreen.putExtra("contactId", contactId);
@@ -69,12 +69,12 @@ public class ContactsFragment extends Fragment {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            CheckBox checkBox = (CheckBox)view.findViewById(R.id.checkbox);
-            Boolean flag = (Boolean)checkBox.getTag();
+            CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+            Boolean flag = (Boolean) checkBox.getTag();
 
             SportsUnityDBHelper.Contacts contacts = contactList.get(position);
 
-            if( flag == null || flag == false ){
+            if (flag == null || flag == false) {
                 checkBox.setTag(true);
                 checkBox.setChecked(true);
 
@@ -86,13 +86,13 @@ public class ContactsFragment extends Fragment {
                 selectedMembersList.remove(contacts);
             }
 
-            TextView textView = (TextView)titleLayout.findViewById(R.id.members_count);
-            textView.setText( selectedMembersList.size() + "/100");
+            TextView textView = (TextView) titleLayout.findViewById(R.id.members_count);
+            textView.setText(selectedMembersList.size() + "/100");
         }
 
     };
 
-    public ContactsFragment(){
+    public ContactsFragment() {
 
     }
 
@@ -118,31 +118,19 @@ public class ContactsFragment extends Fragment {
             resource = R.layout.list_contact_msgs;
             itemListener = contactItemListener;
 
-        contacts.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (contactList.get(position).registered) {
-                    String number = contactList.get(position).jid;
-                    String name = contactList.get(position).name;
-                    long contactId = contactList.get(position).id;
-                    long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
+            contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList();
+        }
 
-                    Intent chatScreen =  new Intent(getActivity(), ChatScreenActivity.class);
-                    chatScreen.putExtra("number", number);
-                    chatScreen.putExtra("name", name);
-                    chatScreen.putExtra("contactId", contactId);
-                    chatScreen.putExtra("chatId", chatId);
-                    startActivity(chatScreen);
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(), "Invite him to sports Unity!", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
+        ContactListAdapter adapter = new ContactListAdapter(getActivity(), resource, contactList);
+        contacts.setAdapter(adapter);
+        contacts.setOnItemClickListener(itemListener);
+
         return v;
     }
 
-    public ArrayList<SportsUnityDBHelper.Contacts> getSelectedMembersList() {
+    public ArrayList<SportsUnityDBHelper.Contacts> getSelectedMembersList () {
         return selectedMembersList;
     }
 
 }
+

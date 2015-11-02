@@ -155,7 +155,7 @@ public class ChatFragment extends Fragment {
                 @Override
                 public void run() {
                     if (chatListView != null) {
-                        ArrayList<SportsUnityDBHelper.Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatScreenList();
+                        ArrayList<SportsUnityDBHelper.Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList();
                         ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
                         adapter.updateList(chatList);
                         chatListView.setAdapter(adapter);

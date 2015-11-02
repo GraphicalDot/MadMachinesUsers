@@ -125,20 +125,7 @@ public class PersonalMessaging {
             sportsUnityDBHelper.updateClientReceived(receiptId);
         }
 
-        updateReadReceipts(applicationContext);
-    }
-
-    public void updateReadreceipts(Context applicationContext) {
-
-        /**
-         * get read receipts in database and then update the double ticks in the corresponding chats
-         */
-
-        Log.i("Ticks :", "updated");
-        Intent intent = new Intent();
-        intent.setAction("com.madmachine.SINGLE_MESSAGE_RECEIVED");
-        applicationContext.sendBroadcast(intent);
-
+        updateReadreceipts(applicationContext);
     }
 
     public void setActiveStatus(String phoneNumber, String status) {
