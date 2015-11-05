@@ -91,21 +91,17 @@ public class NewsFragment extends Fragment {
     private RecyclerView.Adapter mAdapter;
     private LinearLayoutManager mLayoutManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
-    private  String type_1="";
+
+    private String type_1 = "";
     private Long timestampFirst;
     private Long timestampLast;
     private LinearLayout error;
 
-    private int loadLimit = 10;
-    private int skipLimit = 0;
-    private static int current_page = 1;
     private boolean loading = true;
     private int visibleThreshold = 5;
     private int previousTotal = 0;
-//    private int volleyPendingRequests = 0;
     private ProgressBar progressBar;
 
-    private ArrayList<News> allNewsArticle = new ArrayList<>();
     private ArrayList<News> filteredNewsArticle = new ArrayList<>();
     private ArrayList<String> filter = null;
 
@@ -135,7 +131,7 @@ public class NewsFragment extends Fragment {
 
         Log.i("NewsFragment", "initial request call");
 
-        error=(LinearLayout) v.findViewById(R.id.error);
+        error = (LinearLayout) v.findViewById(R.id.error);
         error.setVisibility(View.GONE);
 
         TextView oops=(TextView) error.findViewById(R.id.oops);
@@ -157,12 +153,9 @@ public class NewsFragment extends Fragment {
             mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    Toast.makeText(getActivity(), "Refreshing!", Toast.LENGTH_SHORT).show();
-                    //requestDataRefresh();
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            // getData(url);
                             Log.i("NewsFragment" , "refresh and request content");
                             requestContent();
                             mSwipeRefreshLayout.setRefreshing(false);
@@ -190,13 +183,9 @@ public class NewsFragment extends Fragment {
 
                 if (!loading && (totalItemCount - visibleItemCount)
                         <= (firstVisibleItem + visibleThreshold)) {
-                    // End has been reached
-                    current_page++;
-                    Log.i("Yaeye!", "end called");
                     Log.i("NewsFragment", "request content on load more");
 
                     requestContentLoadMore();
-
                     loading = true;
                 } else {
                     //nothing
@@ -211,25 +200,16 @@ public class NewsFragment extends Fragment {
         loading = false;
     }
 
-
-
     private void requestContentLoadMore() {
         if( ! requestInProcess.contains(REQUEST_MORE_CONTENT_TAG) ) {
             Log.i("requestContentLoadMore", "Filter size" + filter.size());
-           // skipLimit = skipLimit + 10;
-            Log.i("requestContent", "Skip limit" + skipLimit);
-            RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-            // progressBar.setVisibility(View.GONE);
-            StringRequest stringRequest = null;
-//        Log.i("requestContentLoadMore" , "Skip limit" +skipLimit);
-//        for(int i=0;i<filter.size();i++) {
-//
-//
-//        }
 
+            RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+
+            StringRequest stringRequest = null;
             String url = null;
             if (timestampLast != null) {
-                url = "http://52.74.250.156:8000//mixed?skip=" + skipLimit + "&limit=10&image_size=hdpi" + type_1 + "&direction=down&timestamp=" + timestampLast;
+                url = "http://52.74.250.156:8000//mixed?skip=0&limit=10&image_size=hdpi" + type_1 + "&direction=down&timestamp=" + timestampLast;
             } else {
                 url = null;
                 //nothing
@@ -254,9 +234,9 @@ public class NewsFragment extends Fragment {
     private void requestContent() {
         if( ! requestInProcess.contains(REQUEST_CONTENT_TAG) ) {
             Log.i("NewsFragment", "requestContent : Filter size" + filter.size());
+
             StringRequest stringRequest = null;
             RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-            Log.i("requestContent", "Skip limit" + skipLimit);
             type_1 = "";
             for (int i = 0; i < filter.size(); i++) {
                 //url = "http://52.74.250.156:8000//mixed?skip=" + skipLimit + "&limit=" + loadLimit + "&image_size=hdpi&type="+filter.get(i)+"";
@@ -293,7 +273,7 @@ public class NewsFragment extends Fragment {
 
     public void onResponse(String response) {
         Log.i("NewsFragment" , "response on request call");
-//        volleyPendingRequests--;
+
         resetScrollFlag();
         progressBar.setVisibility(View.GONE);
 
@@ -314,12 +294,11 @@ public class NewsFragment extends Fragment {
 
         Log.i("On Response List.size()", "" + list.size());
 
-        if(!list.isEmpty())
-        {
+        if(!list.isEmpty()) {
             filteredNewsArticle.addAll(list);
             timestampFirst=filteredNewsArticle.get(0).getPublishEpoch();
             timestampLast=filteredNewsArticle.get(filteredNewsArticle.size()-1).getPublishEpoch();
-        }else {
+        } else {
           //nothing
         }
 
@@ -331,13 +310,10 @@ public class NewsFragment extends Fragment {
         displayResult();
     }
 
-    public void insertIntoDb()
-    {
-        if(filteredNewsArticle.size()>50)
-        {
+    public void insertIntoDb() {
+        if(filteredNewsArticle.size() > 50) {
             ArrayList<News> newsListForInsert = new ArrayList<>();
-            for(int i=0; i<50; i++)
-            {
+            for(int i = 0; i < 50; i++) {
                 if( ! filteredNewsArticle.isEmpty() ) {
                     newsListForInsert.add(filteredNewsArticle.get(i));
                 } else {
@@ -346,9 +322,7 @@ public class NewsFragment extends Fragment {
 
             }
             NewsDBHelper.getInstance(getActivity()).saveNewsArticles(newsListForInsert);
-        }
-        else
-        {
+        } else {
             NewsDBHelper.getInstance(getActivity()).saveNewsArticles(filteredNewsArticle);
         }
     }
@@ -361,7 +335,6 @@ public class NewsFragment extends Fragment {
 
     private void displayResult() {
         Log.i("Filtered list size ", "" + filteredNewsArticle.size());
-//        if( volleyPendingRequests == 0 )
         {
             mRecyclerView.post(new Runnable() {
                 @Override
@@ -415,12 +388,14 @@ public class NewsFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_news_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-        if ((TinyDB.getInstance(getActivity()).getBoolean("check", false)))
-            menu.findItem(R.id.mini_cards).setChecked(true);
-        else
-            menu.findItem(R.id.mini_cards).setChecked(false);
 
+        if ((TinyDB.getInstance(getActivity()).getBoolean("check", false))) {
+            menu.findItem(R.id.mini_cards).setChecked(true);
+        } else {
+            menu.findItem(R.id.mini_cards).setChecked(false);
+        }
+
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
 
@@ -428,11 +403,13 @@ public class NewsFragment extends Fragment {
 
         if( requestCode == 999 && data != null ) {
             filter = UserUtil.getSportsSelected();
-            type_1="";
-            timestampFirst=null;
-            timestampLast=null;
+            type_1 = "";
+            timestampFirst = null;
+            timestampLast = null;
+
             filteredNewsArticle.clear();
             mAdapter.notifyDataSetChanged();
+
             NewsDBHelper.getInstance(getActivity()).saveNewsArticles(filteredNewsArticle);
             if(CommonUtil.isInternetConnectionAvailable(getActivity())) {
                 requestContent();
@@ -477,7 +454,6 @@ public class NewsFragment extends Fragment {
             displayResult();
             return true;
         }
-
 
         return super.onOptionsItemSelected(item);
     }
