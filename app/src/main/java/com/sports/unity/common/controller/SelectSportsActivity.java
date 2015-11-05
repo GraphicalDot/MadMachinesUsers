@@ -61,33 +61,36 @@ public class SelectSportsActivity extends AppCompatActivity {
     }
 
     private void initView() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
 
-//        int size = (int) getResources().getDimension(R.dimen.select_sports_page);
+        /*
+         * initialise tool bar
+         */
+        {
+            Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+            setSupportActionBar(toolbar);
 
-
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setText(R.string.select_your_favourite_sports);
-        mTitle.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+            TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+            mTitle.setText(R.string.select_your_favourite_sports);
+            mTitle.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
+        }
 
         GridView gridview = (GridView) findViewById(R.id.gridview);
         gridview.setAdapter(new SportsGridViewAdapter(this));
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (flag[position] == 0) {
-                    ImageView imageView = (ImageView) view;
-                    imageView.setImageResource(mThumbIdsSelected[position]);
-                    sports.add(mSports[position]);
-                    flag[position] = 1;
-                } else {
-                    ImageView imageView = (ImageView) view;
-                    imageView.setImageResource(mThumbIds[position]);
-                    sports.remove(mSports[position]);
-                    flag[position] = 0;
-                }
+            if (flag[position] == 0) {
+                ImageView imageView = (ImageView) view;
+                imageView.setImageResource(mThumbIdsSelected[position]);
+                sports.add(mSports[position]);
+                flag[position] = 1;
+            } else {
+                ImageView imageView = (ImageView) view;
+                imageView.setImageResource(mThumbIds[position]);
+                sports.remove(mSports[position]);
+                flag[position] = 0;
+            }
             }
         });
 
@@ -96,12 +99,11 @@ public class SelectSportsActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-
-                if (sports.isEmpty()) {
-                    Toast.makeText(SelectSportsActivity.this, R.string.select_atleast_one_sport_message, Toast.LENGTH_SHORT).show();
-                } else {
-                    moveOn();
-                }
+            if (sports.isEmpty()) {
+                Toast.makeText(SelectSportsActivity.this, R.string.select_atleast_one_sport_message, Toast.LENGTH_SHORT).show();
+            } else {
+                moveOn();
+            }
             }
         });
 

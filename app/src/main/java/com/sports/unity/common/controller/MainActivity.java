@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
     public static UserSearchManager searchManager;
     public static Form searchForm = null;
     public static Form answerForm = null;
-    private Presence presence;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,17 +59,17 @@ public class MainActivity extends AppCompatActivity {
 
         initViews();
         setNavigation();
-        /*
-         * Retain contact information
-         */
-        RetainDataFragment retainDataFragment = new RetainDataFragment();
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(retainDataFragment, "data");
-        fragmentTransaction.commit();
+
+//        /*
+//         * Retain contact information
+//         */
+//        RetainDataFragment retainDataFragment = new RetainDataFragment();
+//        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+//        fragmentTransaction.add(retainDataFragment, "data");
+//        fragmentTransaction.commit();
     }
 
-    private void setNavigation()
-    {
+    private void setNavigation() {
         ViewGroup view=(ViewGroup) findViewById(R.id.navigation);
         TextView name=(TextView) view.findViewById(R.id.name);
         CircleImageView prof_img=(CircleImageView) findViewById(R.id.circleView);
@@ -241,7 +240,7 @@ public class MainActivity extends AppCompatActivity {
         protected void onPostExecute(XMPPTCPConnection con) {
             if (isMyServiceRunning(XMPPService.class) && XMPPClient.getConnection().isAuthenticated()) {
                 Log.i("Service is :", "Running");
-                presence = new Presence(Presence.Type.available);
+                Presence presence = new Presence(Presence.Type.available);
                 try {
                     con.sendPacket(presence);
                 } catch (SmackException.NotConnectedException e) {
@@ -253,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent serviceIntent = new Intent(MainActivity.this, XMPPService.class);
                 startService(serviceIntent);
                 if (XMPPClient.getConnection().isAuthenticated()) {
-                    presence = new Presence(Presence.Type.available);
+                    Presence presence = new Presence(Presence.Type.available);
                     try {
                         con.sendPacket(presence);
                     } catch (SmackException.NotConnectedException e) {

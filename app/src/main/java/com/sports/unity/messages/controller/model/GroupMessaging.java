@@ -91,6 +91,7 @@ public class GroupMessaging {
             submitForm.setAnswer("muc#roomconfig_roomdesc", groupDescription);
 
             multiUserChat.sendConfigurationForm(submitForm);
+            multiUserChat.changeSubject(groupName);
 
             success = false;
         } catch (XMPPException.XMPPErrorException e) {

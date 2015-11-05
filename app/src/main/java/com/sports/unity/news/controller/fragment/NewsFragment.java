@@ -371,7 +371,7 @@ public class NewsFragment extends Fragment {
                         Toast.makeText(getActivity(),"Check your internet connection",Toast.LENGTH_LONG).show();
                     } else{
                         error.setVisibility(View.GONE);
-                        if ((TinyDB.getInstance(getActivity().getApplicationContext()).getBoolean("check", false))) {
+                        if ((TinyDB.getInstance(getActivity()).getBoolean("check", false))) {
                             if (mAdapter == null) {
                                 mAdapter = new NewsMinicardAdapter(NewsFragment.this.filteredNewsArticle, getActivity());
                                 mRecyclerView.setAdapter(mAdapter);
@@ -416,7 +416,7 @@ public class NewsFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_news_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
-        if ((TinyDB.getInstance(getActivity().getApplicationContext()).getBoolean("check", false)))
+        if ((TinyDB.getInstance(getActivity()).getBoolean("check", false)))
             menu.findItem(R.id.mini_cards).setChecked(true);
         else
             menu.findItem(R.id.mini_cards).setChecked(false);
@@ -463,13 +463,13 @@ public class NewsFragment extends Fragment {
         if (id == R.id.mini_cards) {
             if (item.isChecked()) {
                 item.setChecked(false);
-                TinyDB.getInstance(getActivity().getApplicationContext()).putBoolean("check", false);
+                TinyDB.getInstance(getActivity()).putBoolean("check", false);
                 mAdapter = new NewsAdapter(NewsFragment.this.filteredNewsArticle, getActivity());
                 mRecyclerView.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();
             } else {
                 item.setChecked(true);
-                TinyDB.getInstance(getActivity().getApplicationContext()).putBoolean("check", true);
+                TinyDB.getInstance(getActivity()).putBoolean("check", true);
                 mAdapter = new NewsMinicardAdapter(NewsFragment.this.filteredNewsArticle, getActivity());
                 mRecyclerView.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();

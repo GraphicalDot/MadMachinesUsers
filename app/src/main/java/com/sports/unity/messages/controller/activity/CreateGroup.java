@@ -12,6 +12,7 @@ import android.widget.AbsListView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -79,6 +80,7 @@ public class CreateGroup extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
+        ((ImageView)toolbar.findViewById(R.id.backImage)).setImageResource( R.drawable.ic_menu_back_blk);
         toolbar.findViewById(R.id.backImage).setOnClickListener(new View.OnClickListener() {
 
             @Override

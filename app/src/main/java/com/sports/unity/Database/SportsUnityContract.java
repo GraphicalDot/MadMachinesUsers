@@ -20,6 +20,7 @@ public final class SportsUnityContract {
         public static final String COLUMN_UNIQUE_INDEX = "id";
         public static final String COLUMN_USER_IMAGE = "user_image";
         public static final String COLUMN_STATUS = "status";
+        public static final String COLUMN_AVAILABLE = "available";
 
     }
 

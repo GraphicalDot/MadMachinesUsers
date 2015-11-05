@@ -142,8 +142,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             // circleImageView.setImageBitmap(selectedphoto);
 
             circleImageView.setImageBitmap(bmp);
-        }
-        else {
+        } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
@@ -182,6 +181,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         return null;
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -201,8 +201,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
     }
 
 
-    private  void addListnerToProfilePicture()
-    {
+    private  void addListnerToProfilePicture() {
         CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
         circleImageView.setOnClickListener(profilePictureonOnClickListener);
     }
@@ -433,10 +432,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 onUnSuccessfulVCardSubmit();
             }
         }
-    }
-
-    public static XMPPTCPConnection returnConnection() {
-        return XMPPClient.getConnection();
     }
 
 }

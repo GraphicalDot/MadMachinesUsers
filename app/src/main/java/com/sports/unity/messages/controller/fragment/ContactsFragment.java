@@ -115,11 +115,17 @@ public class ContactsFragment extends Fragment {
 
             titleLayout = (ViewGroup)v.findViewById(R.id.title_layout_for_members_list);
             titleLayout.setVisibility(View.VISIBLE);
+
+            ViewGroup searchLayout = (ViewGroup)v.findViewById(R.id.search_layout);
+            searchLayout.setVisibility(View.VISIBLE);
         } else if( usageIn == USAGE_FOR_CONTACTS ){
             resource = R.layout.list_contact_msgs;
             itemListener = contactItemListener;
 
-            contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList();
+            contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList_AvailableOnly();
+
+            ViewGroup searchLayout = (ViewGroup)v.findViewById(R.id.search_layout);
+            searchLayout.setVisibility(View.GONE);
         }
 
         ContactListAdapter adapter = new ContactListAdapter(getActivity(), resource, contactList);

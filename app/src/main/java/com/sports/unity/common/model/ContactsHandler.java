@@ -9,6 +9,7 @@ import android.util.Log;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.util.Constants;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -66,10 +67,10 @@ public class ContactsHandler {
                     phoneNumber = phoneNumber.replaceAll("\\s+", "");
                     phoneNumber = phoneNumber.replaceAll("[-+.^:,]", "");
                     if (phoneNumber.startsWith("91")) {
-                        SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, false, defaultStatus);
+                        SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, false, defaultStatus, true);
                     } else {
                         phoneNumber = "91" + phoneNumber;
-                        SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, false, defaultStatus);
+                        SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, false, defaultStatus, true);
                     }
                 }
             }
@@ -80,6 +81,9 @@ public class ContactsHandler {
     public void updateRegisteredUsers(Context context) throws XMPPException {
 
         Log.i("Updating  : ", "contacsupdating");
+        String currentUserPhoneNumber = TinyDB.getInstance(context).getString(TinyDB.KEY_USERNAME);
+        SportsUnityDBHelper.getInstance(context).addToContacts(currentUserPhoneNumber, currentUserPhoneNumber, true, ContactsHandler.getInstance().defaultStatus, false);
+
         ArrayList<String> contactNumberList = SportsUnityDBHelper.getInstance(context).readContactNumbers();
         for (int i = 0; i < contactNumberList.size(); i++) {
             String number = contactNumberList.get(i);

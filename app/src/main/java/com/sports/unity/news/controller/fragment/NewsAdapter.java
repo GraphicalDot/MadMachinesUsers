@@ -109,7 +109,10 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
                 holder.published.setText(String.valueOf(hours) + " hour" + ( hours==1 ? "":"s" ) +" ago");
             } else if (minutes >= 0) {
                 holder.published.setText(String.valueOf(minutes) + " minute" + ( minutes==1 ? "":"s" ) +" ago");
+            } else {
+                holder.published.setText("");
             }
+
             if (news.get(position).getImage_link() != null && !news.get(position).getImage_link().equals("null")) {
                 holder.imageView.setVisibility(View.VISIBLE);
                 holder.imageView.setTag(news.get(position).getImage_link());

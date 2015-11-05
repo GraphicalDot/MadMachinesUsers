@@ -22,7 +22,7 @@
             android:layout_marginLeft="-16dp"
             android:layout_marginRight="-8dp"
             style="?android:attr/buttonBarButtonStyle"
-            android:src="@drawable/ic_menu_back_blk" />
+            android:src="@drawable/ic_close_blk" />
 
         <TextView
             android:id="@+id/title"

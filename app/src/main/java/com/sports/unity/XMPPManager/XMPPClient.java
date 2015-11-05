@@ -56,6 +56,9 @@ public class XMPPClient implements ConnectivityListener {
                 connection.setUseStreamManagement(true);
                 connection.setUseStreamManagementResumption(true);
 
+                XMPPTCPConnection.setUseStreamManagementDefault(true);
+                XMPPTCPConnection.setUseStreamManagementResumptiodDefault(true);
+
                 reconnectionManager = ReconnectionManager.getInstanceFor(connection);
                 reconnectionManager.enableAutomaticReconnection();
                 reconnectionManager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.RANDOM_INCREASING_DELAY);

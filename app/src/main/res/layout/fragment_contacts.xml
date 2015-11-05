@@ -6,6 +6,8 @@
     >
 
     <LinearLayout
+        android:id="@+id/search_layout"
+        android:background="@color/messages_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -18,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:background="@android:color/white"
+            android:background="@drawable/round_edge_box"
             android:paddingLeft="@dimen/vertical_padding_very_small"
             android:paddingTop="@dimen/horizontal_padding_very_small"
             android:paddingBottom="@dimen/horizontal_padding_very_small"
@@ -26,13 +28,14 @@
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_menu_search_blk"
+                android:src="@drawable/ic_search_grey"
                 />
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
                 android:textColor="@color/gray1"
+                android:paddingLeft="@dimen/vertical_padding_very_small"
                 android:text="@string/search_dots"
                 android:textSize="@dimen/font_size_medium"
                 />

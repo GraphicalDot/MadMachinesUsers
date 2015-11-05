@@ -47,21 +47,23 @@ public class EnterPhoneActivity extends AppCompatActivity {
     private void init() {
 
         TextView entr_ph_no=(TextView) findViewById(R.id.entr_ph_no);
-        TextView txt_details=(TextView) findViewById(R.id.txt_details);
-        TextView take_a_minut=(TextView) findViewById(R.id.take_a_minut);
-        TextView privacy_policy=(TextView) findViewById(R.id.privacy_policy);
         entr_ph_no.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
+
+        TextView txt_details=(TextView) findViewById(R.id.txt_details);
         txt_details.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
+
+        TextView take_a_minut=(TextView) findViewById(R.id.take_a_minut);
         take_a_minut.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
+
+        TextView privacy_policy=(TextView) findViewById(R.id.privacy_policy);
         privacy_policy.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
 
         final Button continueButton = (Button) findViewById(R.id.getOtp);
-        final EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
         continueButton.setVisibility(View.INVISIBLE);
         continueButton.setOnClickListener(sendButtonClickListener);
 
+        final EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
         setUserPhoneNumber(phoneNumberEditText, continueButton);
-
         phoneNumberEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -87,52 +89,6 @@ public class EnterPhoneActivity extends AppCompatActivity {
 
     }
 
-    private void createUser() {
-        EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
-        String phoneNumber = phoneNumberEditText.getText().toString();
-
-        RequestParams requestParams = new RequestParams();
-            requestParams.add(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, "91" + phoneNumber);
-
-            AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-            asyncHttpClient.setTimeout(Constants.CONNECTION_TIME_OUT);
-            asyncHttpClient.get(Constants.URL_REGISTER, requestParams, new JsonHttpResponseHandler() {
-
-                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                    Log.i("Success", "Sent Data");
-
-                    try {
-                        Log.i("Info  : ", response.getString("info"));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    super.onFailure(statusCode, headers, throwable, errorResponse);
-
-                    Toast.makeText(EnterPhoneActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
-                    UserUtil.setOtpSent(EnterPhoneActivity.this, false);
-                }
-
-            });
-
-            TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_USERNAME, "91" + phoneNumber);
-            UserUtil.setOtpSent(EnterPhoneActivity.this, true);
-            moveToNextActivity(phoneNumber);
-
-    }
-
-
-    private void moveToNextActivity(String phoneNumber) {
-        Intent intent = new Intent(EnterPhoneActivity.this, EnterOtpActivity.class);
-       // intent.putExtra(Constants.INTENT_KEY_PHONE_NUMBER, phoneNumber);
-        startActivity(intent);
-
-        finish();
-    }
-
     private void setUserPhoneNumber(EditText phoneNumberEditText, Button continueButton) {
         String phone_Number = getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
 
@@ -150,6 +106,51 @@ public class EnterPhoneActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    private void createUser() {
+        EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
+        String phoneNumber = phoneNumberEditText.getText().toString();
+
+        RequestParams requestParams = new RequestParams();
+        requestParams.add(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, "91" + phoneNumber);
+
+        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+        asyncHttpClient.setTimeout(Constants.CONNECTION_TIME_OUT);
+        asyncHttpClient.get(Constants.URL_REGISTER, requestParams, new JsonHttpResponseHandler() {
+
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                Log.i("Success", "Sent Data");
+
+                try {
+                    Log.i("Info  : ", response.getString("info"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                super.onFailure(statusCode, headers, throwable, errorResponse);
+
+                Toast.makeText(EnterPhoneActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+                UserUtil.setOtpSent(EnterPhoneActivity.this, false);
+            }
+
+        });
+
+        TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_USERNAME, "91" + phoneNumber);
+        UserUtil.setOtpSent(EnterPhoneActivity.this, true);
+        moveToNextActivity();
+
+    }
+
+
+    private void moveToNextActivity() {
+        Intent intent = new Intent(EnterPhoneActivity.this, EnterOtpActivity.class);
+        startActivity(intent);
+
+        finish();
     }
 
 }

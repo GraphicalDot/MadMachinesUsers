@@ -45,6 +45,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             ContactsEntry.COLUMN_PHONENUMBER + " VARCHAR UNIQUE " + COMMA_SEP +
             ContactsEntry.COLUMN_USER_IMAGE + " BLOB " + COMMA_SEP +
             ContactsEntry.COLUMN_STATUS + " VARCHAR " + COMMA_SEP +
+            ContactsEntry.COLUMN_AVAILABLE + " boolean DEFAULT true " + COMMA_SEP +
             ContactsEntry.COLUMN_REGISTERED + " boolean);";
 
     private static final String CREATE_MESSAGES_TABLE = "CREATE TABLE IF NOT EXISTS " +
@@ -135,7 +136,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     }
 
-    public void addToContacts(String name, String number, boolean registered, String defaultStatus) {
+    public void addToContacts(String name, String number, boolean registered, String defaultStatus, boolean available) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues contentValues = new ContentValues();
@@ -143,6 +144,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         contentValues.put(ContactsEntry.COLUMN_PHONENUMBER, number);
         contentValues.put(ContactsEntry.COLUMN_REGISTERED, registered);
         contentValues.put(ContactsEntry.COLUMN_STATUS, defaultStatus);
+        contentValues.put(ContactsEntry.COLUMN_AVAILABLE, available);
 
         db.insert(ContactsEntry.TABLE_NAME, null, contentValues);
     }
@@ -229,6 +231,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(ContactsEntry.COLUMN_NAME, name);
+        values.put(ContactsEntry.COLUMN_AVAILABLE, true);
 
         String selection = ContactsEntry.COLUMN_PHONENUMBER + " LIKE ? ";
         String[] selectionArgs = {contact};
@@ -311,7 +314,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     }
 
-    public ArrayList<Contacts> getContactList() {
+    public ArrayList<Contacts> getContactList_AvailableOnly() {
         if( allContacts == null ) {
             ArrayList<Contacts> list = new ArrayList<>();
             SQLiteDatabase db = this.getReadableDatabase();
@@ -324,14 +327,18 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                     ContactsEntry.COLUMN_CONTACT_ID,
                     ContactsEntry.COLUMN_STATUS
             };
+
+            String selection = ContactsEntry.COLUMN_AVAILABLE + " LIKE ? ";
+            String[] selectionArgs = {"1"};
+
             String sortOrder =
                     ContactsEntry.COLUMN_NAME + " ASC ";
 
             Cursor c = db.query(
                     ContactsEntry.TABLE_NAME,  // The table to query
                     projection,                               // The columns to return
-                    null,                                // The columns for the WHERE clause
-                    null,                            // The values for the WHERE clause
+                    selection,                                // The columns for the WHERE clause
+                    selectionArgs,                            // The values for the WHERE clause
                     null,                                     // don't group the rows
                     null,                                     // don't filter by row groups
                     sortOrder                                 // The sort order
@@ -365,8 +372,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactsEntry.COLUMN_STATUS
         };
 
-        String selection = ContactsEntry.COLUMN_REGISTERED + " LIKE ? ";
-        String[] selectionArgs = {"1"};
+        String selection = ContactsEntry.COLUMN_REGISTERED + " LIKE ? and " + ContactsEntry.COLUMN_AVAILABLE + " LIKE ?";
+        String[] selectionArgs = { "1" , "1" };
 
         String sortOrder = ContactsEntry.COLUMN_NAME + " ASC ";
 
@@ -415,6 +422,27 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         c.close();
         return list;
+    }
+
+    public void updateContacts(String number, byte[] userImage, String status, boolean available) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ContactsEntry.COLUMN_REGISTERED, true);
+        values.put(ContactsEntry.COLUMN_USER_IMAGE, userImage);
+        values.put(ContactsEntry.COLUMN_STATUS, status);
+        values.put(ContactsEntry.COLUMN_AVAILABLE, status);
+
+        String selection = ContactsEntry.COLUMN_PHONENUMBER + " LIKE ? ";
+        String[] selectionArgs = {number};
+
+        int count = db.update(
+                ContactsEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+        Log.i("updated :", String.valueOf(count));
     }
 
     public void updateContacts(String number, byte[] userImage, String status) {

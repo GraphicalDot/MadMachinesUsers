@@ -103,7 +103,7 @@ public class EnterOtpActivity extends AppCompatActivity {
         resendButton.setOnClickListener(resendOtpButtonClickListener);
 
         TextView otpText = (TextView) findViewById(com.sports.unity.R.id.enterotpText);
-        otpText.setText(getString(R.string.otp_message_verification) + TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME).substring(2));
+        otpText.setText(getString(R.string.otp_message_verification) + getPhoneNumber());
 
         EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         otpEditText.addTextChangedListener(new TextWatcher() {
@@ -130,10 +130,16 @@ public class EnterOtpActivity extends AppCompatActivity {
         });
     }
 
+    private String getPhoneNumber(){
+        String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
+        phoneNumber = phoneNumber.substring(2);
+        return phoneNumber;
+    }
+
     private void createUser() {
         EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         String otp = otpEditText.getText().toString();
-        String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);//getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
+        String phoneNumber = getPhoneNumber();
 
         RequestParams requestParams = new RequestParams();
         requestParams.add(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, "91" + phoneNumber);
@@ -154,8 +160,8 @@ public class EnterOtpActivity extends AppCompatActivity {
                     if (response.getString("status").equals("200")) {
                         String password = response.getString(Constants.REQUEST_PARAMETER_KEY_PASSWORD);
                         TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
+
                         UserUtil.setOtpSent(EnterOtpActivity.this, false);
-                        Log.i("password", password);
                         UserUtil.setUserRegistered(EnterOtpActivity.this, true);
 
                         if (!paused) {
@@ -193,7 +199,7 @@ public class EnterOtpActivity extends AppCompatActivity {
     }
 
     private void resendOtp() {
-        String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);//getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
+        String phoneNumber = getPhoneNumber();
 
         RequestParams requestParams = new RequestParams();
         requestParams.add(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, "91" + phoneNumber);
@@ -276,7 +282,8 @@ public class EnterOtpActivity extends AppCompatActivity {
     }
 
     private void moveBack() {
-        String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);//getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
+        String phoneNumber = getPhoneNumber();
+
         Intent intent = new Intent(this, EnterPhoneActivity.class);
         intent.putExtra(Constants.INTENT_KEY_PHONE_NUMBER, phoneNumber.substring(2));
         startActivity(intent);

@@ -28,4 +28,6 @@
 
     <dimen name="profile_image_circle_radius">96dp</dimen>
 
+    <dimen name="round_edge_radius">3dp</dimen>
+
 </resources>

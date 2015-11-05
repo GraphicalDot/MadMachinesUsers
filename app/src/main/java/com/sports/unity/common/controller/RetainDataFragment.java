@@ -14,7 +14,7 @@ public class RetainDataFragment extends Fragment {
     private ArrayList<SportsUnityDBHelper.Contacts> contactList = null;
 
     public ArrayList<SportsUnityDBHelper.Contacts> getContactList() {
-        contactList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContactList();
+        contactList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContactList_AvailableOnly();
         return contactList;
     }
 }
