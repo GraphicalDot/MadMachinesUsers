@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class UserUtil {
 
     private static boolean USER_REGISTERED = false;
+    private static boolean OTP_SENT = false;
     private static boolean PROFILE_CREATED = false;
     private static ArrayList<String> SPORTS_SELECTED = null;
 
@@ -17,6 +18,7 @@ public class UserUtil {
         TinyDB tinyDB = TinyDB.getInstance(context);
         USER_REGISTERED = tinyDB.getBoolean( TinyDB.KEY_REGISTERED, false);
         PROFILE_CREATED = tinyDB.getBoolean(TinyDB.KEY_PROFILE_CREATED, false);
+        OTP_SENT = tinyDB.getBoolean(TinyDB.KEY_OTP_SENT, false);
 
         SPORTS_SELECTED = tinyDB.getListString( TinyDB.KEY_SPORTS_SELECTED);
     }
@@ -39,11 +41,22 @@ public class UserUtil {
         SPORTS_SELECTED = sportsSelected;
 
         TinyDB tinyDB = TinyDB.getInstance(context);
-        tinyDB.putListString( TinyDB.KEY_SPORTS_SELECTED, sportsSelected);
+        tinyDB.putListString(TinyDB.KEY_SPORTS_SELECTED, sportsSelected);
+    }
+
+    public static void setOtpSent(Context context, boolean otpSent) {
+        OTP_SENT = otpSent;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putBoolean(TinyDB.KEY_OTP_SENT, otpSent);
     }
 
     public static boolean isUserRegistered() {
         return USER_REGISTERED;
+    }
+
+    public static boolean isOtpSent() {
+        return OTP_SENT;
     }
 
     public static boolean isProfileCreated() {

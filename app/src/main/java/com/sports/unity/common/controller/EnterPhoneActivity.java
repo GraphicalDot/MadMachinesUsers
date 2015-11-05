@@ -10,13 +10,16 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.sports.unity.R;
+import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
@@ -43,12 +46,21 @@ public class EnterPhoneActivity extends AppCompatActivity {
 
     private void init() {
 
+        TextView entr_ph_no=(TextView) findViewById(R.id.entr_ph_no);
+        TextView txt_details=(TextView) findViewById(R.id.txt_details);
+        TextView take_a_minut=(TextView) findViewById(R.id.take_a_minut);
+        TextView privacy_policy=(TextView) findViewById(R.id.privacy_policy);
+        entr_ph_no.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
+        txt_details.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
+        take_a_minut.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
+        privacy_policy.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
+
         final Button continueButton = (Button) findViewById(R.id.getOtp);
         final EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
         continueButton.setVisibility(View.INVISIBLE);
         continueButton.setOnClickListener(sendButtonClickListener);
-        setUserPhoneNumber(phoneNumberEditText);
 
+        setUserPhoneNumber(phoneNumberEditText, continueButton);
 
         phoneNumberEditText.addTextChangedListener(new TextWatcher() {
 
@@ -101,12 +113,13 @@ public class EnterPhoneActivity extends AppCompatActivity {
                     super.onFailure(statusCode, headers, throwable, errorResponse);
 
                     Toast.makeText(EnterPhoneActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+                    UserUtil.setOtpSent(EnterPhoneActivity.this, false);
                 }
 
             });
 
             TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_USERNAME, "91" + phoneNumber);
-
+            UserUtil.setOtpSent(EnterPhoneActivity.this, true);
             moveToNextActivity(phoneNumber);
 
     }
@@ -114,20 +127,29 @@ public class EnterPhoneActivity extends AppCompatActivity {
 
     private void moveToNextActivity(String phoneNumber) {
         Intent intent = new Intent(EnterPhoneActivity.this, EnterOtpActivity.class);
-        intent.putExtra(Constants.INTENT_KEY_PHONE_NUMBER, phoneNumber);
+       // intent.putExtra(Constants.INTENT_KEY_PHONE_NUMBER, phoneNumber);
         startActivity(intent);
 
         finish();
     }
 
-    private void setUserPhoneNumber(EditText phoneNumberEditText) {
-        String phoneNumber = CommonUtil.getUserSimNumber(this);
+    private void setUserPhoneNumber(EditText phoneNumberEditText, Button continueButton) {
+        String phone_Number = getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
 
-        if (phoneNumber == null) {
-            Toast.makeText(getApplicationContext(), R.string.sim_not_found, Toast.LENGTH_SHORT).show();
+        if (phone_Number != null) {
+            phoneNumberEditText.setText(phone_Number);
+            continueButton.setVisibility(View.VISIBLE);
         } else {
-            phoneNumberEditText.setText(phoneNumber);
+            String phoneNumber = CommonUtil.getUserSimNumber(this);
+
+            if (phoneNumber == null) {
+                Toast.makeText(getApplicationContext(), R.string.sim_not_found, Toast.LENGTH_SHORT).show();
+            } else {
+                phoneNumberEditText.setText(phoneNumber);
+                continueButton.setVisibility(View.VISIBLE);
+            }
         }
+
     }
 
 }

@@ -112,6 +112,8 @@ public class SelectSportsActivity extends AppCompatActivity {
 
         Intent intent = new Intent(SelectSportsActivity.this, MainActivity.class);
         startActivity(intent);
+
+        finish();
     }
 
 }

@@ -73,10 +73,15 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private View.OnClickListener continueButtonOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            beforeAsyncCall();
 
-            TinyDB.getInstance(ProfileCreationActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nameText.getText().toString());
-            new LoginAndPushVCardThread().start();
+            Log.i("name","entered"+nameText.getText().toString());
+            if(!nameText.getText().toString().isEmpty()) {
+                beforeAsyncCall();
+                TinyDB.getInstance(ProfileCreationActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nameText.getText().toString());
+                new LoginAndPushVCardThread().start();
+            } else {
+                Toast.makeText(getApplicationContext(),"Please enter your name", Toast.LENGTH_SHORT).show();
+            }
         }
     };
 
@@ -121,14 +126,18 @@ public class ProfileCreationActivity extends AppCompatActivity {
             String filePath = cursor.getString(columnIndex);
             File file=new File(filePath);
             cursor.close();
-            Bitmap selectedphoto = BitmapFactory.decodeFile(filePath);
+          //  Bitmap selectedphoto = BitmapFactory.decodeFile(filePath);
+
+//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//            selectedphoto.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+//            byteArray = byteArrayOutputStream.toByteArray();
+
+
+            Bitmap bmp=decodeSampleImage(file,150,150);
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            selectedphoto.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
             byteArray = byteArrayOutputStream.toByteArray();
-
-
-           Bitmap bmp=decodeSampleImage(file,200,200);
             CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
             // circleImageView.setImageBitmap(selectedphoto);
 
@@ -358,7 +367,11 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 TinyDB tinyDB = TinyDB.getInstance(ProfileCreationActivity.this);
                 String username = tinyDB.getString(TinyDB.KEY_USERNAME);
                 String password = tinyDB.getString(TinyDB.KEY_PASSWORD);
-                XMPPClient.getConnection().login( username, password);
+                if( ! XMPPClient.getConnection().isAuthenticated() ) {
+                    XMPPClient.getConnection().login(username, password);
+                } else {
+                    //nothing
+                }
                 success = true;
             } catch (XMPPException e) {
                 e.printStackTrace();
@@ -368,7 +381,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            if( success ) {
+            if( success == true ) {
                 new SubmitVCardAsyncTask().execute();
             } else {
                 runOnUiThread(new Runnable() {
@@ -383,21 +396,23 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
     }
 
+
     private class SubmitVCardAsyncTask extends AsyncTask<Void, Void, Void> {
         private boolean success = false;
 
         @Override
         protected Void doInBackground(Void... params) {
             try {
-                VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
-                VCard vCard = new VCard();
-                vCard.setNickName(TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_PROFILE_NAME));
-                vCard.setAvatar(byteArray);
-                vCard.setMiddleName( getResources().getString(R.string.default_status));
-                vCard.setJabberId(XMPPClient.getConnection().getUser());
-                manager.saveVCard(vCard);
 
-                success = true;
+                    VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
+                    VCard vCard = new VCard();
+                    vCard.setNickName(TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_PROFILE_NAME));
+                    vCard.setAvatar(byteArray);
+                    vCard.setMiddleName(getResources().getString(R.string.default_status));
+                    vCard.setJabberId(XMPPClient.getConnection().getUser());
+                    manager.saveVCard(vCard);
+
+                    success = true;
             } catch (SmackException.NoResponseException e) {
                 e.printStackTrace();
             } catch (XMPPException.XMPPErrorException e) {

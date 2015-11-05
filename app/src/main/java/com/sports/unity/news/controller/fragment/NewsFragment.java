@@ -16,7 +16,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -29,10 +31,12 @@ import com.google.gson.Gson;
 import com.sports.unity.Database.NewsDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
+import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.news.model.News;
 import com.sports.unity.news.model.NewsList;
+import com.sports.unity.news.model.NewsResponseListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.Database.NewsDBHelper;
 import java.util.ArrayList;
@@ -44,16 +48,53 @@ import java.util.Set;
 /**
  * Created by Edwin on 15/02/2015.
  */
-public class NewsFragment extends Fragment implements Response.Listener<String>, Response.ErrorListener {
+public class NewsFragment extends Fragment {
+
+    private static final String REQUEST_CONTENT_TAG = "RequestContent";
+    private static final String REQUEST_MORE_CONTENT_TAG = "RequestContentMore";
+
+    private HashSet<String> requestInProcess = new HashSet<>();
+
+    private NewsResponseListener responseListener_ForLoadContent = new NewsResponseListener() {
+
+        @Override
+        public void onErrorResponse(VolleyError volleyError) {
+            requestInProcess.remove(REQUEST_CONTENT_TAG);
+            NewsFragment.this.onErrorResponse(volleyError);
+        }
+
+        @Override
+        public void onResponse(String s) {
+            requestInProcess.remove(REQUEST_CONTENT_TAG);
+            NewsFragment.this.onResponse(s);
+        }
+
+    };
+
+    private NewsResponseListener responseListener_ForLoadMoreContent = new NewsResponseListener() {
+
+        @Override
+        public void onErrorResponse(VolleyError volleyError) {
+            requestInProcess.remove(REQUEST_MORE_CONTENT_TAG);
+            NewsFragment.this.onErrorResponse(volleyError);
+        }
+
+        @Override
+        public void onResponse(String s) {
+            requestInProcess.remove(REQUEST_MORE_CONTENT_TAG);
+            NewsFragment.this.onResponse(s);
+        }
+
+    };
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private LinearLayoutManager mLayoutManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private  String type_1="";
-    private String url = null;
     private Long timestampFirst;
     private Long timestampLast;
+    private LinearLayout error;
 
     private int loadLimit = 10;
     private int skipLimit = 0;
@@ -61,13 +102,12 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
     private boolean loading = true;
     private int visibleThreshold = 5;
     private int previousTotal = 0;
-    private int volleyPendingRequests = 0;
+//    private int volleyPendingRequests = 0;
     private ProgressBar progressBar;
 
     private ArrayList<News> allNewsArticle = new ArrayList<>();
     private ArrayList<News> filteredNewsArticle = new ArrayList<>();
     private ArrayList<String> filter = null;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -95,6 +135,13 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
 
         Log.i("NewsFragment", "initial request call");
 
+        error=(LinearLayout) v.findViewById(R.id.error);
+        error.setVisibility(View.GONE);
+
+        TextView oops=(TextView) error.findViewById(R.id.oops);
+        TextView something_wrong=(TextView) error.findViewById(R.id.something_wrong);
+        oops.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
+        something_wrong.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
 
         if( CommonUtil.isInternetConnectionAvailable(getActivity()) ) {
             progressBar.setVisibility(View.VISIBLE);
@@ -167,59 +214,86 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
 
 
     private void requestContentLoadMore() {
-        Log.i("requestContentLoadMore" , "Filter size" +filter.size());
-        skipLimit = skipLimit + 10;
-        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        // progressBar.setVisibility(View.GONE);
-        StringRequest stringRequest = null;
-        Log.i("requestContentLoadMore" , "Skip limit" +skipLimit);
+        if( ! requestInProcess.contains(REQUEST_MORE_CONTENT_TAG) ) {
+            Log.i("requestContentLoadMore", "Filter size" + filter.size());
+           // skipLimit = skipLimit + 10;
+            Log.i("requestContent", "Skip limit" + skipLimit);
+            RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+            // progressBar.setVisibility(View.GONE);
+            StringRequest stringRequest = null;
+//        Log.i("requestContentLoadMore" , "Skip limit" +skipLimit);
 //        for(int i=0;i<filter.size();i++) {
 //
 //
 //        }
-            url = "http://52.74.250.156:8000//mixed?skip="+skipLimit+"&limit=10&image_size=hdpi"+type_1+"&direction=down&timestamp="+timestampLast;
 
-        Log.i("filter","type"+type_1);
-        Log.i("filter","type"+url);
-            stringRequest = new StringRequest(Request.Method.GET, url, this, this);
-            queue.add(stringRequest);
+            String url = null;
+            if (timestampLast != null) {
+                url = "http://52.74.250.156:8000//mixed?skip=" + skipLimit + "&limit=10&image_size=hdpi" + type_1 + "&direction=down&timestamp=" + timestampLast;
+            } else {
+                url = null;
+                //nothing
+            }
 
-       volleyPendingRequests =1;
+            if( url != null ) {
+                Log.i("filter", "type" + type_1);
+                Log.i("filter", "type" + url);
+                stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadMoreContent, responseListener_ForLoadMoreContent);
+                queue.add(stringRequest);
+
+                requestInProcess.add(REQUEST_MORE_CONTENT_TAG);
+            } else {
+                //nothing
+            }
+
+        } else {
+            //nothing
+        }
     }
 
     private void requestContent() {
+        if( ! requestInProcess.contains(REQUEST_CONTENT_TAG) ) {
+            Log.i("NewsFragment", "requestContent : Filter size" + filter.size());
+            StringRequest stringRequest = null;
+            RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+            Log.i("requestContent", "Skip limit" + skipLimit);
+            type_1 = "";
+            for (int i = 0; i < filter.size(); i++) {
+                //url = "http://52.74.250.156:8000//mixed?skip=" + skipLimit + "&limit=" + loadLimit + "&image_size=hdpi&type="+filter.get(i)+"";
+                String temp = "&type_1=" + filter.get(i);
+                type_1 = type_1 + temp;
 
-        Log.i("requestContent", "Filter size" + filter.size());
-        StringRequest stringRequest = null;
-        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        Log.i("requestContent", "Skip limit" + skipLimit);
-       type_1="";
-        for(int i=0;i<filter.size();i++) {
-            //url = "http://52.74.250.156:8000//mixed?skip=" + skipLimit + "&limit=" + loadLimit + "&image_size=hdpi&type="+filter.get(i)+"";
-          String temp="&type_1="+filter.get(i);
-            type_1=type_1+temp;
+            }
 
+            Log.i("filter", "type" + type_1);
+            Log.i("timestamp First", "timestampfirst" + timestampFirst);
+
+            String url = null;
+            if (timestampFirst == null) {
+                url = "http://52.74.250.156:8000//mixed?skip=0&limit=10&image_size=hdpi" + type_1;
+            } else {
+                url = "http://52.74.250.156:8000//mixed?skip=0&limit=10&image_size=hdpi" + type_1 + "&direction=up&timestamp=" + timestampFirst;
+            }
+
+            if( url != null ) {
+                Log.i("filter", "type" + url);
+
+                stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent, responseListener_ForLoadContent);
+                queue.add(stringRequest);
+
+                requestInProcess.add(REQUEST_CONTENT_TAG);
+            } else {
+                //nothing
+            }
+
+        } else {
+            //nothing
         }
-
-        Log.i("filter","type"+type_1);
-        if(timestampFirst==null) {
-            url = "http://52.74.250.156:8000//mixed?skip=0&limit=10&image_size=hdpi"+type_1;
-        }else
-        {
-            url = "http://52.74.250.156:8000//mixed?skip=0&limit=10&image_size=hdpi"+type_1+"&direction=up&timestamp="+timestampFirst;
-        }
-        Log.i("filter","type"+url);
-
-        stringRequest = new StringRequest(Request.Method.GET, url, this, this);
-
-        queue.add(stringRequest);
-        volleyPendingRequests =1;
     }
 
-    @Override
     public void onResponse(String response) {
         Log.i("NewsFragment" , "response on request call");
-        volleyPendingRequests--;
+//        volleyPendingRequests--;
         resetScrollFlag();
         progressBar.setVisibility(View.GONE);
 
@@ -240,53 +314,17 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
 
         Log.i("On Response List.size()", "" + list.size());
 
-      //  ArrayList<News> toBeAdded = null;
-      //  if (!filteredNewsArticle.isEmpty() && !list.isEmpty()) {
-
-//            long latestNewsArticleEpoch_AlreadyHave = filteredNewsArticle.get(0).getPublishEpoch();
-//            long oldestNewsArticleEpoch_AlreadyHave = filteredNewsArticle.get(filteredNewsArticle.size() - 1).getPublishEpoch();
-//            long latestNewsArticleEpoch = list.get(0).getPublishEpoch();
-
-//            if (latestNewsArticleEpoch > latestNewsArticleEpoch_AlreadyHave) {
-//                toBeAdded = new ArrayList<>();
-//                for (News news : list) {
-//                    if (news.getPublishEpoch() > latestNewsArticleEpoch_AlreadyHave) {
-//                        toBeAdded.add(news);
-//                    } else {
-//                        //nothing
-//                    }
-//                }
-//            } else if (latestNewsArticleEpoch < oldestNewsArticleEpoch_AlreadyHave) {
-//                toBeAdded = new ArrayList<>();
-//                for (News news : list) {
-//                    if (news.getPublishEpoch() < oldestNewsArticleEpoch_AlreadyHave) {
-//                        toBeAdded.add(news);
-//                    } else {
-//                        //nothing
-//                    }
-//                }
-//            }
-//            else {
-//                //nothing
-//            }
         if(!list.isEmpty())
         {
             filteredNewsArticle.addAll(list);
             timestampFirst=filteredNewsArticle.get(0).getPublishEpoch();
             timestampLast=filteredNewsArticle.get(filteredNewsArticle.size()-1).getPublishEpoch();
+        }else {
+          //nothing
         }
 
-//        else {
-//            toBeAdded = list;
-//        }
-//
-//        if (toBeAdded != null) {
-//            filteredNewsArticle.addAll(toBeAdded);
-//        } else {
-//            //nothing
-//        }
-
-        Collections.sort(filteredNewsArticle);
+        Log.i("Timestamp Last", "" + timestampLast);
+       // Collections.sort(filteredNewsArticle);
 
         insertIntoDb();
 
@@ -314,104 +352,61 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
             NewsDBHelper.getInstance(getActivity()).saveNewsArticles(filteredNewsArticle);
         }
     }
-    @Override
+
     public void onErrorResponse(VolleyError volleyError) {
         resetScrollFlag();
         progressBar.setVisibility(View.GONE);
     }
 
-//    private void finalResult(ArrayList<News> list) {
-//        Log.i("all list size()", "" + list.size());
-//        allNewsArticle.addAll(list);
-//        if( isFilterOn() ){
-//            populateFilteredArticles(list);
-//        } else {
-//
-//        }
-//
-//        Log.i("all news articles size", "" + allNewsArticle.size());
-//
-//        displayResult();
-//    }
-//
-//    private boolean isFilterOn(){
-//        boolean filterON = false;
-//        if ( ! filter.isEmpty() ) {
-//            filterON = true;
-//        } else {
-//            //nothing
-//        }
-//        return filterON;
-//    }
-//
-//    private void filterChanged(){
-//        if( isFilterOn() ){
-////            filteredNewsArticle = new ArrayList<>();
-//            filteredNewsArticle.clear();
-//            populateFilteredArticles(allNewsArticle);
-//        } else {
-//            filteredNewsArticle = allNewsArticle;
-//        }
-//    }
-//
-//    private void populateFilteredArticles( ArrayList<News> content){
-//        if ( isFilterOn() ) {
-//            News newsItem = null;
-//            for (int index = 0; index < content.size(); index++)
-//            {
-//                newsItem = content.get(index);
-//                if ( filter.contains(newsItem.getType()) ) {
-//                    filteredNewsArticle.add(newsItem);
-//                } else {
-//                    //nothing
-//                }
-//            }
-//        } else {
-//            //nothing
-//        }
-//
-//    }
 
     private void displayResult() {
-        Log.i( "Filtered list size ", "" + filteredNewsArticle.size());
-        if( volleyPendingRequests == 0 ) {
+        Log.i("Filtered list size ", "" + filteredNewsArticle.size());
+//        if( volleyPendingRequests == 0 )
+        {
             mRecyclerView.post(new Runnable() {
                 @Override
                 public void run() {
-                    if ((TinyDB.getInstance(getActivity().getApplicationContext()).getBoolean("check", false))) {
-                        if (mAdapter == null) {
-                            mAdapter = new NewsMinicardAdapter(NewsFragment.this.filteredNewsArticle, getActivity());
-                            mRecyclerView.setAdapter(mAdapter);
-                        } else {
-                            if (mAdapter instanceof NewsMinicardAdapter) {
-                                Log.i("sportunity", "no change in mini adapter");
-//                                mRecyclerView.setAdapter(mAdapter);
-                            } else {
-                                Log.i("sportunity", "creating mini adapter");
+                    if(filteredNewsArticle.size()==0) {
+                        error.setVisibility(View.VISIBLE);
+                        Toast.makeText(getActivity(),"Check your internet connection",Toast.LENGTH_LONG).show();
+                    } else{
+                        error.setVisibility(View.GONE);
+                        if ((TinyDB.getInstance(getActivity().getApplicationContext()).getBoolean("check", false))) {
+                            if (mAdapter == null) {
                                 mAdapter = new NewsMinicardAdapter(NewsFragment.this.filteredNewsArticle, getActivity());
                                 mRecyclerView.setAdapter(mAdapter);
-
-                            }
-                        }
-                        mAdapter.notifyDataSetChanged();
-
-                    } else {
-                        if (mAdapter == null) {
-                            Log.i("sportunity", "creating news adapter");
-                            mAdapter = new NewsAdapter(NewsFragment.this.filteredNewsArticle, getActivity());
-                            mRecyclerView.setAdapter(mAdapter);
-                        } else {
-                            if (mAdapter instanceof NewsAdapter) {
-                                Log.i("sportunity", "no change in news adapter");
-//                                mRecyclerView.setAdapter(mAdapter);
                             } else {
+                                if (mAdapter instanceof NewsMinicardAdapter) {
+                                    Log.i("sportunity", "no change in mini adapter");
+//                                mRecyclerView.setAdapter(mAdapter);
+                                } else {
+                                    Log.i("sportunity", "creating mini adapter");
+                                    mAdapter = new NewsMinicardAdapter(NewsFragment.this.filteredNewsArticle, getActivity());
+                                    mRecyclerView.setAdapter(mAdapter);
+
+                                }
+                            }
+                            mAdapter.notifyDataSetChanged();
+
+                        } else {
+                            if (mAdapter == null) {
                                 Log.i("sportunity", "creating news adapter");
                                 mAdapter = new NewsAdapter(NewsFragment.this.filteredNewsArticle, getActivity());
                                 mRecyclerView.setAdapter(mAdapter);
+                            } else {
+                                if (mAdapter instanceof NewsAdapter) {
+                                    Log.i("sportunity", "no change in news adapter");
+//                                mRecyclerView.setAdapter(mAdapter);
+                                } else {
+                                    Log.i("sportunity", "creating news adapter");
+                                    mAdapter = new NewsAdapter(NewsFragment.this.filteredNewsArticle, getActivity());
+                                    mRecyclerView.setAdapter(mAdapter);
+                                }
                             }
+                            mAdapter.notifyDataSetChanged();
                         }
-                        mAdapter.notifyDataSetChanged();
                     }
+
                 }
             });
         }
@@ -433,14 +428,19 @@ public class NewsFragment extends Fragment implements Response.Listener<String>,
 
         if( requestCode == 999 && data != null ) {
             filter = UserUtil.getSportsSelected();
-//            filterChanged();
-//            displayResult();
-            skipLimit=0;
             type_1="";
             timestampFirst=null;
             timestampLast=null;
-           filteredNewsArticle.clear();
-           requestContent();
+            filteredNewsArticle.clear();
+            mAdapter.notifyDataSetChanged();
+            NewsDBHelper.getInstance(getActivity()).saveNewsArticles(filteredNewsArticle);
+            if(CommonUtil.isInternetConnectionAvailable(getActivity())) {
+                requestContent();
+            }else{
+
+                displayResult();
+            }
+
         } else {
             //nothing
         }

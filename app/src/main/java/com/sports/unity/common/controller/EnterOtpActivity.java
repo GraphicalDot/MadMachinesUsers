@@ -103,7 +103,7 @@ public class EnterOtpActivity extends AppCompatActivity {
         resendButton.setOnClickListener(resendOtpButtonClickListener);
 
         TextView otpText = (TextView) findViewById(com.sports.unity.R.id.enterotpText);
-        otpText.setText(getString(R.string.otp_message_verification) + getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER));
+        otpText.setText(getString(R.string.otp_message_verification) + TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME).substring(2));
 
         EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         otpEditText.addTextChangedListener(new TextWatcher() {
@@ -133,10 +133,11 @@ public class EnterOtpActivity extends AppCompatActivity {
     private void createUser() {
         EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         String otp = otpEditText.getText().toString();
-        String phoneNumber = getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
+        String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);//getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
 
         RequestParams requestParams = new RequestParams();
         requestParams.add(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, "91" + phoneNumber);
+
         requestParams.add(Constants.REQUEST_PARAMETER_KEY_AUTH_CODE, otp);
 
         AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
@@ -153,6 +154,7 @@ public class EnterOtpActivity extends AppCompatActivity {
                     if (response.getString("status").equals("200")) {
                         String password = response.getString(Constants.REQUEST_PARAMETER_KEY_PASSWORD);
                         TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
+                        UserUtil.setOtpSent(EnterOtpActivity.this, false);
                         Log.i("password", password);
                         UserUtil.setUserRegistered(EnterOtpActivity.this, true);
 
@@ -191,7 +193,7 @@ public class EnterOtpActivity extends AppCompatActivity {
     }
 
     private void resendOtp() {
-        String phoneNumber = getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
+        String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);//getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
 
         RequestParams requestParams = new RequestParams();
         requestParams.add(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, "91" + phoneNumber);
@@ -203,6 +205,7 @@ public class EnterOtpActivity extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 //                afterAsyncCall();
                 Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending, Toast.LENGTH_SHORT).show();
+                UserUtil.setOtpSent(EnterOtpActivity.this, true);
 
                 try {
                     Log.i("Success", "Sent Data");
@@ -215,29 +218,30 @@ public class EnterOtpActivity extends AppCompatActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
-
-//                afterAsyncCall();
-                Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+                onFailure_OnSendingOTP();
             }
 
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-
-                Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+                onFailure_OnSendingOTP();
             }
 
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-
-                Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+                onFailure_OnSendingOTP();
             }
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, String responseString) {
-
-                Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+                onFailure_OnSendingOTP();
             }
 
         });
+    }
+
+    private void onFailure_OnSendingOTP(){
+//                afterAsyncCall();
+        Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+        UserUtil.setOtpSent(EnterOtpActivity.this, false);
     }
 
     private void beforeAsyncCall() {
@@ -272,7 +276,9 @@ public class EnterOtpActivity extends AppCompatActivity {
     }
 
     private void moveBack() {
+        String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);//getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
         Intent intent = new Intent(this, EnterPhoneActivity.class);
+        intent.putExtra(Constants.INTENT_KEY_PHONE_NUMBER, phoneNumber.substring(2));
         startActivity(intent);
     }
 

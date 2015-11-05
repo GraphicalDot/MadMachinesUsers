@@ -27,11 +27,13 @@ public class TinyDB {
     public static final String KEY_REGISTERED = "Registered";
     public static final String KEY_PROFILE_CREATED = "profile_created";
     public static final String KEY_SPORTS_SELECTED = "sports_selected";
+    public static final String KEY_OTP_SENT = "otp_sent";
 
     public static final String KEY_USERNAME = "username";
     public static final String KEY_PASSWORD = "password";
 
     public static final String KEY_PROFILE_NAME = "name";
+
 
     private SharedPreferences preferences;
     private String DEFAULT_APP_IMAGEDATA_DIRECTORY;

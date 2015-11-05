@@ -14,7 +14,7 @@
     <color name="chat_msg_bg">#ebebeb</color>
     <color name="last_msg">#666</color>
     <color name="messages_bg">#e1e1e1</color>
-    <color name="news_data">#a6a6a6</color>
+    <color name="news_data">#808080</color>
     <color name="news_static">#4c4c4c</color>
     <color name="news_headline_mini">#333333</color>
     <color name="active_chatScreen">#959595</color>

@@ -43,7 +43,11 @@ public class SplashScreenActivity extends AppCompatActivity {
                 moveToNextActivity(ProfileCreationActivity.class);
             }
         } else {
-            show();
+            if( UserUtil.isOtpSent() ){
+                moveToNextActivity(EnterOtpActivity.class);
+            } else {
+                show();
+            }
         }
 
     }

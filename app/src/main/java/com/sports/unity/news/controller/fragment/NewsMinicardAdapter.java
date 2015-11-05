@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,12 @@ import org.joda.time.Hours;
 import org.joda.time.LocalDate;
 import org.joda.time.Minutes;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by madmachines on 23/9/15.
@@ -76,7 +82,9 @@ public class NewsMinicardAdapter extends RecyclerView.Adapter<NewsMinicardAdapte
         holder.type.setText(CommonUtil.capitalize(news.get(position).getType()));
 
         DateTime dateTime = new DateTime(news.get(position).getPublishEpoch() * 1000);
+
         DateTime dateTime1 = new DateTime(LocalDate.now(DateTimeZone.forID("Asia/Kolkata")).toDateTimeAtCurrentTime());
+
         int days = Days.daysBetween(dateTime, dateTime1).getDays();
         int hours = Hours.hoursBetween(dateTime, dateTime1).getHours();
         int minutes = Minutes.minutesBetween(dateTime, dateTime1).getMinutes();
@@ -86,6 +94,8 @@ public class NewsMinicardAdapter extends RecyclerView.Adapter<NewsMinicardAdapte
             holder.published.setText(String.valueOf(hours) + " hour" + ( hours==1 ? "":"s" ) +" ago");
         } else if (minutes >= 0) {
             holder.published.setText(String.valueOf(minutes) + " minute" + ( minutes==1 ? "":"s" ) +" ago");
+        } else {
+            holder.published.setText("");
         }
 
         if (news.get(position).getImage_link() != null && !news.get(position).getImage_link().equals("null")) {

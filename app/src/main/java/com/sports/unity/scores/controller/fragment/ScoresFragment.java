@@ -11,6 +11,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -20,6 +24,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.sports.unity.R;
+import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.scores.model.football.FootballLiveScore;
 import com.sports.unity.scores.model.football.FootballLiveScoreResult;
 
@@ -37,10 +42,11 @@ public class ScoresFragment extends Fragment implements Response.Listener<String
     RecyclerView mRecyclerView;
     RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-
+    LinearLayout error;
     private ArrayList<FootballLiveScoreResult> matches = null;
     private int volleyPendingRequests = 0;
     private String formattedDate;
+    private ArrayList<String> filter = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -52,6 +58,14 @@ public class ScoresFragment extends Fragment implements Response.Listener<String
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
+
+        error=(LinearLayout) v.findViewById(R.id.error);
+        error.setVisibility(View.GONE);
+
+        TextView oops=(TextView) error.findViewById(R.id.oops);
+        TextView something_wrong=(TextView) error.findViewById(R.id.something_wrong);
+        oops.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
+        something_wrong.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
 
         Calendar c = Calendar.getInstance();
         System.out.println("Current time => " + c.getTime());
@@ -90,9 +104,22 @@ public class ScoresFragment extends Fragment implements Response.Listener<String
         } else {
             volleyPendingRequests--;
             Log.i("data extracted : ", response);
-            FootballLiveScore footballLiveScore = new Gson().fromJson(response, FootballLiveScore.class);
-            ArrayList<FootballLiveScoreResult> list = (ArrayList<FootballLiveScoreResult>) footballLiveScore.getFootballLiveScoreResult();
-            matches.addAll(list);
+
+            ArrayList<FootballLiveScoreResult> list = null;
+            try {
+                FootballLiveScore footballLiveScore = new Gson().fromJson(response, FootballLiveScore.class);
+                list = (ArrayList<FootballLiveScoreResult>) footballLiveScore.getFootballLiveScoreResult();
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+
+            if( list != null ) {
+                error.setVisibility(View.GONE);
+                matches.addAll(list);
+            } else {
+                //nothing
+                error.setVisibility(View.VISIBLE);
+            }
 
         }
         if (volleyPendingRequests == 0 || matches != null) {
