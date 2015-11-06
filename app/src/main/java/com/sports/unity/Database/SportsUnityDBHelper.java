@@ -84,7 +84,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     private static final String CREATE_GROUP_USER_TABLE = "CREATE TABLE IF NOT EXISTS " +
             GroupUserEntry.TABLE_NAME + "( " +
-            GroupUserEntry.COLUMN_CHAT_ID + " INTEGER "  + COMMA_SEP +
+            GroupUserEntry.COLUMN_CHAT_ID + " INTEGER " + COMMA_SEP +
             GroupUserEntry.COLUMN_CONTACT_ID + " " + " INTEGER );";
 
     private static final String DROP_CONTACTS_TABLE = "DROP TABLE IF EXISTS " + ContactsEntry.TABLE_NAME;
@@ -315,7 +315,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<Contacts> getContactList_AvailableOnly() {
-        if( allContacts == null ) {
+        if (allContacts == null) {
             ArrayList<Contacts> list = new ArrayList<>();
             SQLiteDatabase db = this.getReadableDatabase();
 
@@ -373,7 +373,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         };
 
         String selection = ContactsEntry.COLUMN_REGISTERED + " LIKE ? and " + ContactsEntry.COLUMN_AVAILABLE + " LIKE ?";
-        String[] selectionArgs = { "1" , "1" };
+        String[] selectionArgs = {"1", "1"};
 
         String sortOrder = ContactsEntry.COLUMN_NAME + " ASC ";
 
@@ -465,10 +465,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         Log.i("updated :", String.valueOf(count));
     }
 
-    public GroupParticipants getGroupParticipants( int chatId) {
+    public GroupParticipants getGroupParticipants(int chatId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String selectQuery = "SELECT " + ContactsEntry.COLUMN_NAME + ", " + ContactsEntry.COLUMN_PHONENUMBER + ", " +ContactsEntry.COLUMN_REGISTERED + ", " +
+        String selectQuery = "SELECT " + ContactsEntry.COLUMN_NAME + ", " + ContactsEntry.COLUMN_PHONENUMBER + ", " + ContactsEntry.COLUMN_REGISTERED + ", " +
                 ContactsEntry.COLUMN_USER_IMAGE + ", " + ContactsEntry.COLUMN_CONTACT_ID + ", " + ContactsEntry.COLUMN_STATUS + ", " +
                 " FROM " + ContactsEntry.TABLE_NAME + " A INNER JOIN " + GroupUserEntry.TABLE_NAME + " B ON A." + ContactsEntry.COLUMN_CONTACT_ID + " = B." + GroupUserEntry.COLUMN_CONTACT_ID +
                 " WHERE B." + GroupUserEntry.COLUMN_CHAT_ID + " LIKE ?";
@@ -477,15 +477,15 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, selectionArgs);
 
         ArrayList<Contacts> users = new ArrayList<>();
-        if ( cursor.moveToFirst() ) {
+        if (cursor.moveToFirst()) {
             do {
                 boolean value = cursor.getInt(2) > 0;
-                users.add( new Contacts(cursor.getString(0), cursor.getString(1), value, cursor.getBlob(3), cursor.getInt(4), cursor.getString(5)));
+                users.add(new Contacts(cursor.getString(0), cursor.getString(1), value, cursor.getBlob(3), cursor.getInt(4), cursor.getString(5)));
             } while (cursor.moveToNext());
         }
         cursor.close();
 
-        GroupParticipants groupParticipants = new GroupParticipants( chatId, users);
+        GroupParticipants groupParticipants = new GroupParticipants(chatId, users);
         return groupParticipants;
     }
 
@@ -536,7 +536,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 selectionArgs);
 
     }
-    
+
     public class Message {
 
         public String number;
@@ -577,7 +577,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 MessagesEntry.COLUMN_RECIPIENT_RECEIPT,                         //5th column
                 MessagesEntry.COLUMN_NAME_I_AM_SENDER,                          //6th column
                 MessagesEntry.COLUMN_RECEIVE_TIMESTAMP,                         //7th column
-                MessagesEntry.COLUMN_SEND_TIMESTAMP                             //8th column
+                MessagesEntry.COLUMN_SEND_TIMESTAMP,                             //8th column
+                MessagesEntry.COLUMN_ID
         };
 
         String selection = MessagesEntry.COLUMN_CHAT_ID + " = ?";
@@ -596,7 +597,12 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         if (c.moveToFirst()) {
             do {
                 boolean value = c.getInt(6) > 0;
-                list.add(new Message(c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8)));
+                int id = c.getInt(9);
+                if( id != DUMMY_MESSAGE_ROW_ID ) {
+                    list.add(new Message(c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8)));
+                } else {
+                    //nothing
+                }
             } while (c.moveToNext());
         }
         c.close();
@@ -609,10 +615,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        if (msg.equals(""))
-            msg = null;
-//        Time today = new Time(Time.getCurrentTimezone());
-//        today.setToNow();
         DateTime dateTime = DateTime.now();
         values.put(MessagesEntry.COLUMN_PHONENUMBER, number);
         values.put(MessagesEntry.COLUMN_DATA_TEXT, msg);
@@ -714,7 +716,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         values.put(ChatEntry.COLUMN_UNREAD_COUNT, ++unread);
 
         String selection = ChatEntry.COLUMN_CHAT_ID + " LIKE ? and " + ChatEntry.COLUMN_GROUP_SERVER_ID + " LIKE ? ";
-        String[] selectionArgs = { String.valueOf(chatId), groupServerId };
+        String[] selectionArgs = {String.valueOf(chatId), groupServerId};
 
         int count = db.update(
                 ChatEntry.TABLE_NAME,
@@ -943,10 +945,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             Cursor cursor = db.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
                 do {
-                    list.add( new Chats( cursor.getInt(0), cursor.getString(1), cursor.getInt(2),
+                    list.add(new Chats(cursor.getInt(0), cursor.getString(1), cursor.getInt(2),
                             cursor.getInt(3), cursor.getString(4), cursor.getBlob(5),
                             cursor.getString(6), cursor.getString(7), cursor.getString(8),
-                            cursor.getInt(9), cursor.getString(10), cursor.getBlob(11), cursor.getBlob(12)) );
+                            cursor.getInt(9), cursor.getString(10), cursor.getBlob(11), cursor.getBlob(12)));
                 } while (cursor.moveToNext());
             }
 

@@ -14,8 +14,9 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.common.controller.CustomAppCompatActivity;
 
-public class CameraActivity extends AppCompatActivity {
+public class CameraActivity extends CustomAppCompatActivity {
 
     private static final int CAMERA_REQUEST = 1888;
     Context context;

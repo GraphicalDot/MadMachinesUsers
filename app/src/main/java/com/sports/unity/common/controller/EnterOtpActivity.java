@@ -285,7 +285,7 @@ public class EnterOtpActivity extends AppCompatActivity {
         String phoneNumber = getPhoneNumber();
 
         Intent intent = new Intent(this, EnterPhoneActivity.class);
-        intent.putExtra(Constants.INTENT_KEY_PHONE_NUMBER, phoneNumber.substring(2));
+        intent.putExtra(Constants.INTENT_KEY_PHONE_NUMBER, phoneNumber);
         startActivity(intent);
     }
 

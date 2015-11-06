@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -87,8 +88,8 @@ public class ContactsHandler {
         ArrayList<String> contactNumberList = SportsUnityDBHelper.getInstance(context).readContactNumbers();
         for (int i = 0; i < contactNumberList.size(); i++) {
             String number = contactNumberList.get(i);
-            MainActivity.answerForm.setAnswer("user", number);
-            if (checkIfUserExists(number, MainActivity.searchForm, MainActivity.searchManager, MainActivity.answerForm)) {
+            XMPPService.answerForm.setAnswer("user", number);
+            if (checkIfUserExists(number, XMPPService.searchForm, XMPPService.searchManager, XMPPService.answerForm)) {
                 SportsUnityDBHelper.getInstance(context).updateContacts(number, imgs, status);
             }
         }

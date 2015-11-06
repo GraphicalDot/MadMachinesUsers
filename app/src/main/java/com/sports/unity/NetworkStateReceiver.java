@@ -19,7 +19,7 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 
         boolean connected = CommonUtil.isInternetConnectionAvailable(context);
         if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
-            XMPPClient.getInstance().internetStateChangeEvent( connected);
+            XMPPClient.getInstance().internetStateChangeEvent( context, connected);
         } else {
 
         }

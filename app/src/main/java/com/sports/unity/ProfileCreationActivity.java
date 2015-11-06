@@ -100,6 +100,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        XMPPService.startService(this);
         initFacebookLogin();
 
         setContentView(R.layout.activity_profile_creation);
@@ -321,9 +322,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             moved = true;
 
             UserUtil.setProfileCreated( this, true);
-
-            Intent serviceIntent = new Intent(ProfileCreationActivity.this, XMPPService.class);
-            startService(serviceIntent);
+//            XMPPService.startService(ProfileCreationActivity.this);
 
             if( UserUtil.isSportsSelected() ) {
                 Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
@@ -361,23 +360,10 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            boolean success = false;
-            try {
-                TinyDB tinyDB = TinyDB.getInstance(ProfileCreationActivity.this);
-                String username = tinyDB.getString(TinyDB.KEY_USERNAME);
-                String password = tinyDB.getString(TinyDB.KEY_PASSWORD);
-                if( ! XMPPClient.getConnection().isAuthenticated() ) {
-                    XMPPClient.getConnection().login(username, password);
-                } else {
-                    //nothing
-                }
-                success = true;
-            } catch (XMPPException e) {
-                e.printStackTrace();
-            } catch (SmackException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+            boolean success = XMPPClient.reconnectConnection();
+
+            if( success ) {
+                success = XMPPClient.authenticateConnection(ProfileCreationActivity.this);
             }
 
             if( success == true ) {

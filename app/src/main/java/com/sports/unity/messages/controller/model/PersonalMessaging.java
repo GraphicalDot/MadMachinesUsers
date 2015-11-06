@@ -1,22 +1,15 @@
 package com.sports.unity.messages.controller.model;
 
 import android.content.Context;
-import android.content.Intent;
-import android.util.Log;
 
-import com.sports.unity.ChatScreenApplication;
 import com.sports.unity.Database.SportsUnityDBHelper;
-import com.sports.unity.XMPPManager.XMPPClient;
-import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smackx.chatstates.ChatState;
-import org.jivesoftware.smackx.chatstates.ChatStateManager;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
 import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
@@ -116,9 +109,6 @@ public class PersonalMessaging {
          * set read receipts in database
          */
 
-        Log.i("deliveredto :", fromJid);
-        Log.i("receiptiD :", receiptId);
-
         if (fromJid.substring(0, fromJid.indexOf("@")).equals("dev")) {
             sportsUnityDBHelper.updateServerReceived(receiptId);
         } else {
@@ -155,17 +145,13 @@ public class PersonalMessaging {
         }
         return false;
     }
-    
+
     public void updateReadreceipts(Context applicationContext) {
 
         /**
          * get read receipts in database and then update the double ticks in the corresponding chats
          */
 
-        Log.i("Ticks :", "updated");
-        /*Intent intent = new Intent();
-        intent.setAction("com.madmachine.SINGLE_MESSAGE_RECEIVED");
-        applicationContext.sendBroadcast(intent);*/
         sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, null);
 
 

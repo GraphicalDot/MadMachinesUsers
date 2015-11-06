@@ -30,7 +30,7 @@ import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 
-public class CreateGroup extends AppCompatActivity {
+public class  CreateGroup extends AppCompatActivity {
 
     private String groupName = null;
     private String groupDescription = null;

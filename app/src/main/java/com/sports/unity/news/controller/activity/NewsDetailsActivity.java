@@ -19,8 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.common.controller.CustomAppCompatActivity;
 
-public class NewsDetailsActivity extends AppCompatActivity {
+public class NewsDetailsActivity extends CustomAppCompatActivity {
 
     private String content = "";
     private String url = "";
