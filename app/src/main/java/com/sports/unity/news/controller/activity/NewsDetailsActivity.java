@@ -15,6 +15,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,7 +38,7 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
 
         url = getIntent().getStringExtra("Url");
         title = getIntent().getStringExtra("title");
-        content = title + " " + url;
+        content = title + "\n\n" + url;
 
         initViews();
     }
@@ -60,18 +61,23 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
             }
         });
         final Activity activity = this;
-        webview.setWebChromeClient(new WebChromeClient() {
-            public void onProgressChanged(WebView view, int progress) {
-                activity.setProgress(progress * 1000);
-            }
-        });
+
         webview.setWebViewClient(new WebViewClient() {
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 Toast.makeText(activity, "Oh no! " + description, Toast.LENGTH_SHORT).show();
             }
         });
+        webview.getSettings().setJavaScriptEnabled(true);
+        webview.getSettings().setLoadWithOverviewMode(true);
+        webview.getSettings().setUseWideViewPort(true);
 
+        webview.getSettings().setSupportZoom(true);
         webview.getSettings().setBuiltInZoomControls(true);
+        webview.getSettings().setDisplayZoomControls(false);
+
+        webview.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+        webview.setScrollbarFadingEnabled(false);
+
         webview.loadUrl(url);
     }
 
@@ -92,7 +98,7 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
             case R.id.action_share:
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, "Sports Unity");
+                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, title);
                 sharingIntent.putExtra(Intent.EXTRA_TEXT,content);
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 return true;

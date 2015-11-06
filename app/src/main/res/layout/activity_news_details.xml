@@ -15,5 +15,4 @@
             android:id="@+id/webview">
 
     </WebView>
-
 </RelativeLayout>
