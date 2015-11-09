@@ -46,11 +46,11 @@ public class ChatFragment extends Fragment {
 
     private ChatFragmentDialogListAdapter chatFragmentDialogListAdapter;
 
-    MessageRecieved messageRecieved;
+  //  MessageRecieved messageRecieved;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        messageRecieved = new MessageRecieved();
+      //  messageRecieved = new MessageRecieved();
         view = inflater.inflate(com.sports.unity.R.layout.fragment_chats, container, false);
         initContent(view);
 
@@ -211,22 +211,22 @@ public class ChatFragment extends Fragment {
         clearStaticContent();
     }
 
-    public static class MessageRecieved extends BroadcastReceiver {
-
-        public MessageRecieved() {
-        }
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            /*if (chatListView != null) {
-                ArrayList<SportsUnityDBHelper.Chats> chatList = SportsUnityDBHelper.getInstance(context).getChatScreenList();
-                ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
-                adapter.updateList(chatList);
-                chatListView.setAdapter(adapter);
-                Toast.makeText(context, "refreshing list", Toast.LENGTH_SHORT).show();
-
-            }*/
-        }
-    }
+//    public static class MessageRecieved extends BroadcastReceiver {
+//
+//        public MessageRecieved() {
+//        }
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            /*if (chatListView != null) {
+//                ArrayList<SportsUnityDBHelper.Chats> chatList = SportsUnityDBHelper.getInstance(context).getChatScreenList();
+//                ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
+//                adapter.updateList(chatList);
+//                chatListView.setAdapter(adapter);
+//                Toast.makeText(context, "refreshing list", Toast.LENGTH_SHORT).show();
+//
+//            }*/
+//        }
+//    }
 
 }

@@ -15,6 +15,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.crittercism.app.Crittercism;
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.common.model.ContactsHandler;
@@ -29,6 +30,8 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(com.sports.unity.R.layout.activity_splash);
+
+        Crittercism.initialize(getApplicationContext(), "564059fcd224ac0a00ed42a3");
 
         UserUtil.init(this);
 
