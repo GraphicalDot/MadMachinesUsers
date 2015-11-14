@@ -7,9 +7,9 @@
     <TextView
         android:id="@+id/simple_menu_option"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="@dimen/menu_item_height"
         android:gravity="center_vertical"
-        android:paddingLeft="16dp"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
         android:textColor="@color/popup_menu_options" />
 
 </LinearLayout>

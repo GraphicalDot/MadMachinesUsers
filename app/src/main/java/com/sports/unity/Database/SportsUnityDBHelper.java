@@ -71,6 +71,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             ChatEntry.COLUMN_GROUP_SERVER_ID + " " + " VARCHAR " + COMMA_SEP +
             ChatEntry.COLUMN_LAST_MESSAGE_ID + " INTEGER " + COMMA_SEP +
             ChatEntry.COLUMN_CONTACT_ID + " INTEGER " + COMMA_SEP +
+            ChatEntry.COLUMN_MUTE_CONVERSATION + " boolean DEFAULT false " + COMMA_SEP +
             ChatEntry.COLUMN_UNREAD_COUNT + " boolean );";
 
 //    private static final String CREATE_GROUP_TABLE = "CREATE TABLE IF NOT EXISTS " +
@@ -598,7 +599,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             do {
                 boolean value = c.getInt(6) > 0;
                 int id = c.getInt(9);
-                if( id != DUMMY_MESSAGE_ROW_ID ) {
+                if (id != DUMMY_MESSAGE_ROW_ID) {
                     list.add(new Message(c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8)));
                 } else {
                     //nothing
@@ -686,8 +687,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         public String sent;
         public String recieved;
 
+        public boolean mute;
+
         public Chats(int unread, String name, int contactId, int lastMessageId, String dataText, byte[] dataMedia,
-                     String dataType, String sentTime, String recieveTime, int chatId, String groupServerId, byte[] groupImage, byte[] userImage) {
+                     String dataType, String sentTime, String recieveTime, int chatId, String groupServerId, byte[] groupImage, boolean muteValue, byte[] userImage) {
 
             this.unreadCount = unread;
             this.name = name;
@@ -703,6 +706,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
             this.groupServerId = groupServerId;
             this.groupImage = groupImage;
+
+            this.mute = muteValue;
         }
 
     }
@@ -936,7 +941,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             String subQuery = "( SELECT " + ChatEntry.COLUMN_UNREAD_COUNT + " ," + ChatEntry.COLUMN_NAME + " ," + ChatEntry.COLUMN_CONTACT_ID + " ," +
                     ChatEntry.COLUMN_LAST_MESSAGE_ID + " ," + MessagesEntry.COLUMN_DATA_TEXT + " ," + MessagesEntry.COLUMN_DATA_MEDIA + " ," +
                     MessagesEntry.COLUMN_MIME_TYPE + " ," + MessagesEntry.COLUMN_SEND_TIMESTAMP + " ," + MessagesEntry.COLUMN_RECEIVE_TIMESTAMP + " , A." +
-                    ChatEntry.COLUMN_CHAT_ID + " ," + ChatEntry.COLUMN_GROUP_SERVER_ID + " ," + ChatEntry.COLUMN_IMAGE +
+                    ChatEntry.COLUMN_CHAT_ID + " ," + ChatEntry.COLUMN_GROUP_SERVER_ID + " ," + ChatEntry.COLUMN_IMAGE + "," + ChatEntry.COLUMN_MUTE_CONVERSATION +
                     " FROM " + ChatEntry.TABLE_NAME + " A INNER JOIN " + MessagesEntry.TABLE_NAME + " B ON " + ChatEntry.COLUMN_LAST_MESSAGE_ID + " = " + MessagesEntry.COLUMN_ID + " ) ";
 
             String selectQuery = " SELECT B.* , A." + ContactsEntry.COLUMN_USER_IMAGE + " FROM " +
@@ -945,10 +950,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             Cursor cursor = db.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
                 do {
+                    boolean value = cursor.getInt(12) == 1;
                     list.add(new Chats(cursor.getInt(0), cursor.getString(1), cursor.getInt(2),
                             cursor.getInt(3), cursor.getString(4), cursor.getBlob(5),
                             cursor.getString(6), cursor.getString(7), cursor.getString(8),
-                            cursor.getInt(9), cursor.getString(10), cursor.getBlob(11), cursor.getBlob(12)));
+                            cursor.getInt(9), cursor.getString(10), cursor.getBlob(11), value, cursor.getBlob(13)));
                 } while (cursor.moveToNext());
             }
 
@@ -969,6 +975,65 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             db.delete(MessagesEntry.TABLE_NAME, selection, selectionArgs);
             updateChatEntry(getDummyMessageRowId(), chatId, groupServerId);
         }
+    }
+
+    public void clearChatEntry(long chatId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String selection = ChatEntry.COLUMN_CHAT_ID + " = ? ";
+        String[] selectionArgs = {String.valueOf(chatId)};
+
+        if (chatId != DEFAULT_ENTRY_ID) {
+            db.delete(ChatEntry.TABLE_NAME, selection, selectionArgs);
+        }
+    }
+
+    public void muteConversation(long chatId, boolean mute) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ChatEntry.COLUMN_MUTE_CONVERSATION, mute);
+
+        String selection = ChatEntry.COLUMN_CHAT_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(chatId)};
+
+        int count = db.update(
+                ChatEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+
+    }
+
+    public boolean isMute(long chatId) {
+
+        boolean mute = false;
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String projection[] = {
+                ChatEntry.COLUMN_MUTE_CONVERSATION
+        };
+
+        String selection = ChatEntry.COLUMN_CHAT_ID + " LIKE ? ";
+        String[] selectionArgs = {String.valueOf(chatId)};
+
+        Cursor c = db.query(
+                ChatEntry.TABLE_NAME,  // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                // The sort order
+        );
+
+        if (c.moveToFirst()) {
+            boolean value = c.getInt(0) == 1;
+            return value;
+        }
+
+        c.close();
+        return mute;
     }
 
     public static class GroupParticipants {

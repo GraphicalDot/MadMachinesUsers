@@ -30,4 +30,6 @@
 
     <dimen name="round_edge_radius">3dp</dimen>
 
+    <dimen name="menu_item_height">55dp</dimen>
+
 </resources>

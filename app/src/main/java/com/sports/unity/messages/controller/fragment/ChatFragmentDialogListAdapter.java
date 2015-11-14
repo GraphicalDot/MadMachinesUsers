@@ -2,6 +2,7 @@ package com.sports.unity.messages.controller.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 
@@ -27,12 +29,15 @@ public class ChatFragmentDialogListAdapter extends BaseAdapter {
     private ArrayList<String> chatMenuOptions;
     private Activity activity;
 
+    private SportsUnityDBHelper.Chats chat;
 
-    public ChatFragmentDialogListAdapter(ArrayList<String> menuOptions, Activity context) {
+
+    public ChatFragmentDialogListAdapter(ArrayList<String> menuOptions, Activity context, SportsUnityDBHelper.Chats chatObject) {
         this.chatMenuOptions = menuOptions;
         inflater = (LayoutInflater) context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.activity = context;
+        this.chat = chatObject;
 
     }
 
@@ -82,6 +87,7 @@ public class ChatFragmentDialogListAdapter extends BaseAdapter {
                     holder.textOption.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
                     holder.textOption.setText(chatMenuOptions.get(position));
                     holder.muteSwitch = null;
+                    vi.setTag(holder);
                     break;
                 case 1:
                     vi = inflater.inflate(R.layout.fragment_chat_mute_switcher, parent, false);
@@ -89,7 +95,20 @@ public class ChatFragmentDialogListAdapter extends BaseAdapter {
                     holder.muteSwitch.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
                     holder.muteSwitch.setText(chatMenuOptions.get(position));
                     holder.textOption = null;
+                    vi.setTag(holder);
                     break;
+            }
+        }else {
+            holder = (ViewHolder) vi.getTag();
+        }
+
+        if (null == holder.muteSwitch) {
+            //nothing
+        } else {
+            if (chat.mute) {
+                holder.muteSwitch.setChecked(true);
+            } else {
+                holder.muteSwitch.setChecked(false);
             }
         }
 

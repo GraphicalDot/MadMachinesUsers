@@ -383,6 +383,7 @@ public class XMPPService extends Service {
             addToDatabase(message, value, chatId, isGroupChat, fromId, groupServerId);
         }
 
+
         if (success == true && chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
 
             if (ChatScreenApplication.isActivityVisible()) {
@@ -391,6 +392,8 @@ public class XMPPService extends Service {
                     sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, null);
                 } else {
                     try {
+                        sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
+                        sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
                         DisplayNotification(message.getBody(), messageFrom, chatId, isGroupChat, groupServerId);
                     } catch (XMPPException.XMPPErrorException e) {
                         e.printStackTrace();
@@ -402,6 +405,8 @@ public class XMPPService extends Service {
                 }
             } else {
                 try {
+                    sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
+                    sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
                     DisplayNotification(message.getBody(), messageFrom, chatId, isGroupChat, groupServerId);
                 } catch (XMPPException.XMPPErrorException e) {
                     e.printStackTrace();
@@ -531,51 +536,48 @@ public class XMPPService extends Service {
     public void DisplayNotification(String message, String from, long chatId, boolean isGroupChat, String groupServerId) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
 
 //        String number = message.getFrom().substring(0, message.getFrom().indexOf("@"));
-        String name = sportsUnityDBHelper.getJabberName(from);
 
-        SportsUnityDBHelper.Contacts contact = sportsUnityDBHelper.getContact(from);
-
-        Intent notificationIntent = new Intent(this, ChatScreenActivity.class);
-        notificationIntent.putExtra("name", name);
-        notificationIntent.putExtra("number", from);
-        notificationIntent.putExtra("chatId", chatId);
-        notificationIntent.putExtra("contactId", contact.id);
-        notificationIntent.putExtra("groupServerId", groupServerId);
-        notificationIntent.putExtra("userpicture", contact.image);
-
-        Intent backIntent = new Intent(this, MainActivity.class);
-        backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        UserUtil.init(this);
-
-        PendingIntent pendingIntent = PendingIntent.getActivities(this, mNotificationId, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
-        builder.setSmallIcon(R.drawable.ic_stat_notification);
-        builder.setContentText(message);
-        if (name != null && !name.isEmpty()) {
-            builder.setContentTitle(name);
+        if (sportsUnityDBHelper.isMute(chatId)) {
+            //nothing
         } else {
+            String name = sportsUnityDBHelper.getJabberName(from);
+
+            SportsUnityDBHelper.Contacts contact = sportsUnityDBHelper.getContact(from);
+
+            Intent notificationIntent = new Intent(this, ChatScreenActivity.class);
+            notificationIntent.putExtra("name", name);
+            notificationIntent.putExtra("number", from);
+            notificationIntent.putExtra("chatId", chatId);
+            notificationIntent.putExtra("contactId", contact.id);
+            notificationIntent.putExtra("groupServerId", groupServerId);
+            notificationIntent.putExtra("userpicture", contact.image);
+
+            Intent backIntent = new Intent(this, MainActivity.class);
+            backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+            UserUtil.init(this);
+
+            PendingIntent pendingIntent = PendingIntent.getActivities(this, mNotificationId, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+            builder.setSmallIcon(R.drawable.ic_stat_notification);
+            builder.setContentText(message);
+            if (name != null && !name.isEmpty()) {
+                builder.setContentTitle(name);
+            } else {
             /*builder.setContentTitle(jabberID);
             VCard card = new VCard();
             card.load(XMPPClient.getConnection(), jabberID + "@mm.io");
             sportsUnityDBHelper.addToContacts(jabberID, jabberID, true, true, card.getMiddleName());*/
 
-        }
-        builder.setContentIntent(pendingIntent);
-        builder.setPriority(Notification.PRIORITY_HIGH);
-        builder.setDefaults(Notification.DEFAULT_ALL);
-        builder.setAutoCancel(true);
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(mNotificationId, builder.build());
-
-        if (isGroupChat) {
-//            long chatId = sportsUnityDBHelper.getChatEntryID(groupServerId);
-            sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
-        } else {
-            sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
+            }
+            builder.setContentIntent(pendingIntent);
+            builder.setPriority(Notification.PRIORITY_HIGH);
+            builder.setDefaults(Notification.DEFAULT_ALL);
+            builder.setAutoCancel(true);
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.notify(mNotificationId, builder.build());
         }
 
-        sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
     }
 
     private class Users extends AsyncTask {

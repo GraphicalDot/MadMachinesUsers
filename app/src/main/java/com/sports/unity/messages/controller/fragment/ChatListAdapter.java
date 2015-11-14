@@ -47,6 +47,14 @@ public class ChatListAdapter extends ArrayAdapter<SportsUnityDBHelper.Chats> {
         LayoutInflater inflater = context.getLayoutInflater();
         View rowView = inflater.inflate(R.layout.list_chats_item, null, true);
 
+        SportsUnityDBHelper.Chats chats = chatArrayList.get(position);
+
+        if( chats.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID) ){
+            rowView.setTag(0);
+        } else {
+            rowView.setTag(1);
+        }
+
         TextView name = (TextView) rowView.findViewById(R.id.contact_name);
         name.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
 
