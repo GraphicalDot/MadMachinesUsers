@@ -44,6 +44,7 @@
     <string name="default_status">Available</string>
 
     <string name="message_login_failed">Login failed, try again.</string>
+    <string name="message_submit_vcard_failed">Unable to save your info, try again.</string>
     <string name="title_activity_demo">demo</string>
     <string name="title_activity_news_details">NewsDetailsActivity</string>
     <string name="title_activity_filter">FilterActivity</string>

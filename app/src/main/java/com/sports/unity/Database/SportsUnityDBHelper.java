@@ -521,14 +521,14 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    public void updateChatEntryName(int contactId, String name) {
+    public void updateChatEntryName(int contactId, String name, String groupServerId) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(ChatEntry.COLUMN_NAME, name);
 
-        String selection = ChatEntry.COLUMN_CONTACT_ID + " = ?";
-        String selectionArgs[] = {String.valueOf(contactId)};
+        String selection = ChatEntry.COLUMN_CONTACT_ID + " = ? and " + ChatEntry.COLUMN_GROUP_SERVER_ID + " = ? ";
+        String selectionArgs[] = {String.valueOf(contactId), groupServerId};
 
         int count = db.update(
                 ChatEntry.TABLE_NAME,

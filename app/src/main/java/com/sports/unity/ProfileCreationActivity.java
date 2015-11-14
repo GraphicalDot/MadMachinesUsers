@@ -300,7 +300,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
     }
 
     private void onUnSuccessfulVCardSubmit(){
-        //TODO
+        Toast.makeText(ProfileCreationActivity.this, R.string.message_submit_vcard_failed, Toast.LENGTH_SHORT).show();
     }
 
     private void beforeAsyncCall(){
@@ -360,10 +360,10 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         @Override
         public void run() {
-            boolean success = XMPPClient.reconnectConnection();
+            boolean success = XMPPClient.getInstance().reconnectConnection();
 
             if( success ) {
-                success = XMPPClient.authenticateConnection(ProfileCreationActivity.this);
+                success = XMPPClient.getInstance().authenticateConnection(ProfileCreationActivity.this);
             }
 
             if( success == true ) {

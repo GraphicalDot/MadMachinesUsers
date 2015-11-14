@@ -17,7 +17,7 @@ public class CustomAppCompatActivity extends AppCompatActivity {
         activityCounter++;
 
         if (activityCounter == 1) {
-            XMPPClient.sendOnlinePresence();
+            XMPPClient.getInstance().sendOnlinePresence();
         }
     }
 
@@ -27,7 +27,7 @@ public class CustomAppCompatActivity extends AppCompatActivity {
         activityCounter--;
 
         if (activityCounter == 0) {
-            XMPPClient.sendOfflinePresence();
+            XMPPClient.getInstance().sendOfflinePresence();
         }
 
     }

@@ -32,6 +32,8 @@ public class TinyDB {
     public static final String KEY_USERNAME = "username";
     public static final String KEY_PASSWORD = "password";
 
+    public static final String KEY_CONTACTS_COPIED_SUCESSFULLY = "contacts_copied";
+
     public static final String KEY_PROFILE_NAME = "name";
 
 

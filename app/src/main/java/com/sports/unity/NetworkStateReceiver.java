@@ -7,6 +7,7 @@ import android.net.ConnectivityManager;
 import android.net.wifi.WifiManager;
 
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.util.CommonUtil;
 
 /**
@@ -19,9 +20,13 @@ public class NetworkStateReceiver extends BroadcastReceiver {
 
         boolean connected = CommonUtil.isInternetConnectionAvailable(context);
         if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
-            XMPPClient.getInstance().internetStateChangeEvent( context, connected);
+            if( connected == true ) {
+                XMPPService.startService(context);
+            } else {
+                //nothing
+            }
         } else {
-
+            //nothing
         }
 
     }

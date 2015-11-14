@@ -1,28 +1,17 @@
 package com.sports.unity.common.controller;
 
-import android.app.ActionBar;
-import android.app.Activity;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.crittercism.app.Crittercism;
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.common.model.ContactsHandler;
-import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
-import com.sports.unity.util.Constants;
-import com.sports.unity.util.SystemUiHider;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
@@ -63,7 +52,8 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     private void show() {
         initViews();
-        new fetch().execute();
+
+        ContactsHandler.getInstance().copyAllContacts_OnThread(getApplicationContext());
     }
 
     private void initViews() {
@@ -88,16 +78,6 @@ public class SplashScreenActivity extends AppCompatActivity {
                 overridePendingTransition(R.anim.f1, R.anim.f2);
             }
         }, 2000);
-    }
-
-    public class fetch extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            Log.i("contacts : ", "fetching");
-            ContactsHandler.getInstance().getAllContacts(SplashScreenActivity.this);
-            return null;
-        }
     }
 
 }
