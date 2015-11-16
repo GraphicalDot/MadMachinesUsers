@@ -18,6 +18,7 @@ import com.sports.unity.R;
 import com.sports.unity.common.controller.RetainDataFragment;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.Constants;
 
 import org.w3c.dom.Text;
@@ -34,8 +35,8 @@ public class ContactsFragment extends Fragment {
 
     private int usageIn = 0;
 
-    private ArrayList<SportsUnityDBHelper.Contacts> contactList = null;
-    private ArrayList<SportsUnityDBHelper.Contacts> selectedMembersList = new ArrayList<>();
+    private ArrayList<Contacts> contactList = null;
+    private ArrayList<Contacts> selectedMembersList = new ArrayList<>();
 
     private ListView contacts;
     private ViewGroup titleLayout = null;
@@ -73,7 +74,7 @@ public class ContactsFragment extends Fragment {
             CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
             Boolean flag = (Boolean) checkBox.getTag();
 
-            SportsUnityDBHelper.Contacts contacts = contactList.get(position);
+            Contacts contacts = contactList.get(position);
 
             if (flag == null || flag == false) {
                 checkBox.setTag(true);
@@ -135,7 +136,7 @@ public class ContactsFragment extends Fragment {
         return v;
     }
 
-    public ArrayList<SportsUnityDBHelper.Contacts> getSelectedMembersList () {
+    public ArrayList<Contacts> getSelectedMembersList () {
         return selectedMembersList;
     }
 

@@ -28,6 +28,8 @@ import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.activity.ChatScreenAdapter;
+import com.sports.unity.messages.controller.model.Chats;
+import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 
@@ -58,22 +60,22 @@ public class ChatFragment extends Fragment {
     private void initContent(View view) {
         chatListView = (ListView) view.findViewById(R.id.chats);
 
-        ChatListAdapter chatListAdapter = new ChatListAdapter(getActivity(), 0, new ArrayList<SportsUnityDBHelper.Chats>());
+        ChatListAdapter chatListAdapter = new ChatListAdapter(getActivity(), 0, new ArrayList<Chats>());
         chatListView.setAdapter(chatListAdapter);
         chatListView.setEmptyView(view.findViewById(R.id.empty));
 
         chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ArrayList<SportsUnityDBHelper.Chats> chatList = ((ChatListAdapter) chatListView.getAdapter()).getChatArrayList();
-                SportsUnityDBHelper.Chats chatObject = chatList.get(position);
+                ArrayList<Chats> chatList = ((ChatListAdapter) chatListView.getAdapter()).getChatArrayList();
+                Chats chatObject = chatList.get(position);
 
                 Intent chatScreen = new Intent(getActivity(), ChatScreenActivity.class);
 
                 String groupSeverId = chatObject.groupServerId;
                 if (groupSeverId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
                     long contactId = chatObject.contactId;
-                    SportsUnityDBHelper.Contacts contact = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
+                    Contacts contact = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
 
                     String number = contact.jid;
                     String name = chatObject.name;
@@ -88,7 +90,7 @@ public class ChatFragment extends Fragment {
                     chatScreen.putExtra("userpicture", userpicture);
                 } else {
                     long contactId = chatObject.contactId;
-                    SportsUnityDBHelper.Contacts contacts = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
+                    Contacts contacts = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
                     String number = groupSeverId;
                     String name = chatObject.name;
                     long chatId = chatObject.chatid;
@@ -110,8 +112,8 @@ public class ChatFragment extends Fragment {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 int tag = (Integer) view.getTag();
-                ArrayList<SportsUnityDBHelper.Chats> chatList = ((ChatListAdapter) chatListView.getAdapter()).getChatArrayList();
-                SportsUnityDBHelper.Chats chatObject = chatList.get(position);
+                ArrayList<Chats> chatList = ((ChatListAdapter) chatListView.getAdapter()).getChatArrayList();
+                Chats chatObject = chatList.get(position);
                 showDialogWindow(position, tag, chatObject);
                 return true;
             }
@@ -119,7 +121,7 @@ public class ChatFragment extends Fragment {
 
     }
 
-    private void showDialogWindow(final int position, final int tag, final SportsUnityDBHelper.Chats chatObject) {
+    private void showDialogWindow(final int position, final int tag, final Chats chatObject) {
         ArrayList<String> menuOptions = new ArrayList<>();
         if (tag == 0) {
             menuOptions.add("View Contact");
@@ -158,6 +160,7 @@ public class ChatFragment extends Fragment {
                         }
                         SportsUnityDBHelper.getInstance(getActivity()).muteConversation(chatObject.chatid, chatObject.mute);
                         switchView.setChecked(chatObject.mute);
+                        updateContent();
                         break;
                 }
             }
@@ -165,7 +168,7 @@ public class ChatFragment extends Fragment {
 
     }
 
-    private void deleteChat(int position, int tag, SportsUnityDBHelper.Chats chatObject) {
+    private void deleteChat(int position, int tag, Chats chatObject) {
         Log.i("deletechat", "true");
         if (tag == 0) {
             SportsUnityDBHelper.getInstance(getActivity()).clearChat(chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
@@ -188,7 +191,7 @@ public class ChatFragment extends Fragment {
                 @Override
                 public void run() {
                     if (chatListView != null) {
-                        ArrayList<SportsUnityDBHelper.Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList();
+                        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList();
                         ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
                         adapter.updateList(chatList);
                         chatListView.setAdapter(adapter);
@@ -200,7 +203,7 @@ public class ChatFragment extends Fragment {
 
 
     private void updateContent() {
-        ArrayList<SportsUnityDBHelper.Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList();
+        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList();
         if (chatList != null) {
             ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
             adapter.updateList(chatList);

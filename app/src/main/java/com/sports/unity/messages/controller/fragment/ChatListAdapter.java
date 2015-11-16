@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.messages.controller.model.Chats;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -26,15 +27,15 @@ import java.util.ArrayList;
 /**
  * Created by madmachines on 23/9/15.
  */
-public class ChatListAdapter extends ArrayAdapter<SportsUnityDBHelper.Chats> {
+public class ChatListAdapter extends ArrayAdapter<Chats> {
 
     private final Activity context;
-    private ArrayList<SportsUnityDBHelper.Chats> chatArrayList;
+    private ArrayList<Chats> chatArrayList;
     private SimpleDateFormat formatter;
     private DateTime dateTime;
     private DateTime dateTime1;
 
-    public ChatListAdapter(Activity context, int resource, ArrayList<SportsUnityDBHelper.Chats> chatList) {
+    public ChatListAdapter(Activity context, int resource, ArrayList<Chats> chatList) {
         super(context, R.layout.list_chats_item, chatList);
         this.context = context;
         this.chatArrayList = chatList;
@@ -47,7 +48,7 @@ public class ChatListAdapter extends ArrayAdapter<SportsUnityDBHelper.Chats> {
         LayoutInflater inflater = context.getLayoutInflater();
         View rowView = inflater.inflate(R.layout.list_chats_item, null, true);
 
-        SportsUnityDBHelper.Chats chats = chatArrayList.get(position);
+        Chats chats = chatArrayList.get(position);
 
         if( chats.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID) ){
             rowView.setTag(0);
@@ -70,6 +71,15 @@ public class ChatListAdapter extends ArrayAdapter<SportsUnityDBHelper.Chats> {
             } else {
                 userPic.setImageBitmap(BitmapFactory.decodeByteArray(chatArrayList.get(position).groupImage, 0, chatArrayList.get(position).groupImage.length));
             }
+        }
+
+        ImageView mute_icon = (ImageView) rowView.findViewById(R.id.mute_icon);
+
+        if(chats.mute) {
+           mute_icon.setVisibility(View.VISIBLE);
+
+        } else {
+            mute_icon.setVisibility(View.GONE);
         }
 
 
@@ -113,8 +123,9 @@ public class ChatListAdapter extends ArrayAdapter<SportsUnityDBHelper.Chats> {
         }
 
         if (chatArrayList.get(position).unreadCount == 0) {
-            unread.setVisibility(View.INVISIBLE);
+            unread.setVisibility(View.GONE);
         } else {
+            unread.setVisibility(View.VISIBLE);
             unread.setText(String.valueOf(chatArrayList.get(position).unreadCount));
             lastMsgTime.setTextColor(Color.parseColor("#2c84cc"));
 
@@ -124,13 +135,13 @@ public class ChatListAdapter extends ArrayAdapter<SportsUnityDBHelper.Chats> {
         return rowView;
     }
 
-    public void updateList(ArrayList<SportsUnityDBHelper.Chats> chatList) {
+    public void updateList(ArrayList<Chats> chatList) {
         this.chatArrayList.clear();
         this.chatArrayList.addAll(chatList);
         super.notifyDataSetChanged();
     }
 
-    public ArrayList<SportsUnityDBHelper.Chats> getChatArrayList() {
+    public ArrayList<Chats> getChatArrayList() {
         return chatArrayList;
     }
 

@@ -158,7 +158,7 @@ public class GroupMessaging {
 //        return roomInfo;
     }
 
-    public void inviteMembers(String roomName, ArrayList<SportsUnityDBHelper.Contacts> members, String message) {
+    public void inviteMembers(String roomName, ArrayList<Contacts> members, String message) {
         MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(XMPPClient.getConnection());
         MultiUserChat multiUserChat = manager.getMultiUserChat(roomName + "@conference.mm.io");
 

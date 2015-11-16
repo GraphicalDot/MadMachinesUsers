@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.messages.controller.model.Chats;
 
 import java.util.ArrayList;
 
@@ -29,10 +30,10 @@ public class ChatFragmentDialogListAdapter extends BaseAdapter {
     private ArrayList<String> chatMenuOptions;
     private Activity activity;
 
-    private SportsUnityDBHelper.Chats chat;
+    private Chats chat;
 
 
-    public ChatFragmentDialogListAdapter(ArrayList<String> menuOptions, Activity context, SportsUnityDBHelper.Chats chatObject) {
+    public ChatFragmentDialogListAdapter(ArrayList<String> menuOptions, Activity context, Chats chatObject) {
         this.chatMenuOptions = menuOptions;
         inflater = (LayoutInflater) context.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);

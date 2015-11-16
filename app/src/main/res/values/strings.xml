@@ -120,5 +120,6 @@ Carrier SMS charges may apply.</string>
     <string name="chat_receive_time">9:00 am</string>
     <string name="dummy_text_message">Hi There! i am using Sports Unity</string>
     <string name="chat_sent_time">2:39 PM</string>
+    <string name="title_activity_user_profile">UserProfileActivity</string>
 
 </resources>

@@ -14,21 +14,22 @@ import android.widget.Toast;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.messages.controller.model.Contacts;
 
 import java.util.ArrayList;
 
 /**
  * Created by madmachines on 2/9/15.
  */
-public class ContactListAdapter extends ArrayAdapter<SportsUnityDBHelper.Contacts> implements View.OnClickListener {
+public class ContactListAdapter extends ArrayAdapter<Contacts> implements View.OnClickListener {
 
     private final Activity context;
-    private ArrayList<SportsUnityDBHelper.Contacts> contactsArrayList;
+    private ArrayList<Contacts> contactsArrayList;
     private Button invite;
 
     private int itemLayoutId = 0;
 
-    public ContactListAdapter(Activity context, int resource, ArrayList<SportsUnityDBHelper.Contacts> list) {
+    public ContactListAdapter(Activity context, int resource, ArrayList<Contacts> list) {
         super(context, resource, list);
         this.context = context;
         this.contactsArrayList = list;

@@ -34,7 +34,9 @@ import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.GroupMessaging;
+import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
@@ -42,13 +44,13 @@ import com.sports.unity.util.ActivityActionListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
-import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.privacy.PrivacyListManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,7 +59,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class ChatScreenActivity extends CustomAppCompatActivity {
 
-    private static ArrayList<SportsUnityDBHelper.Message> messageList;
+    private static ArrayList<Message> messageList;
     private static ChatScreenAdapter chatScreenAdapter;
     private static GroupChatScreenAdapter groupChatScreenAdapter;
     private static String JABBERID;
@@ -109,13 +111,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                         status.setText("Online");
                     } else if (object.toString().equals("unavailable")) {
                         status.setText("");
-                        Message msg = new Message("gettimedev@mm.io", Message.Type.headline);
-                        msg.setBody(JABBERID);
-                        try {
-                            con.sendPacket(msg);
-                        } catch (SmackException.NotConnectedException e) {
-                            e.printStackTrace();
-                        }
+                        personalMessaging.getLastTime(JABBERID);
                     } else {
                         status.setText("Active " + object.toString() + " ago");
                     }
@@ -289,8 +285,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             //TODO
             String s = "";
             SportsUnityDBHelper.GroupParticipants participants = sportsUnityDBHelper.getGroupParticipants(chatID);
-            ArrayList<SportsUnityDBHelper.Contacts> users = participants.usersInGroup;
-            for (SportsUnityDBHelper.Contacts c : users) {
+            ArrayList<Contacts> users = participants.usersInGroup;
+            for (Contacts c : users) {
                 s += c.name;
                 s += ", ";
             }
@@ -402,13 +398,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             return userState;
         } else {
             userState = 0;
-            Message msg = new Message("gettimedev@mm.io", Message.Type.headline);
-            msg.setBody(JABBERID);
-            try {
-                con.sendPacket(msg);
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            }
+            personalMessaging.getLastTime(JABBERID);
             return userState;
         }
     }
@@ -645,16 +635,27 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_view_contact) {
             return true;
+        }
+
+        if (id == R.id.action_block_user) {
+
+           if( sportsUnityDBHelper.isChatBlocked(chatID)) {
+               item.setTitle("Unblock User");
+           } else {
+               item.setTitle("Block User");
+           }
+
         }
         if (id == R.id.action_clear_chat) {
             sportsUnityDBHelper.clearChat(chatID, groupServerId);
             messageList = sportsUnityDBHelper.getMessages(chatID);
             chatScreenAdapter.notifydataset(messageList);
-
         }
-
+        if (id == R.id.action_search) {
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

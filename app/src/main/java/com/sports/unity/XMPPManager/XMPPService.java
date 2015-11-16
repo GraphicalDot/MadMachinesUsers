@@ -22,6 +22,7 @@ import com.sports.unity.common.model.ContactsObserver;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
+import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.GroupMessaging;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.util.ActivityActionHandler;
@@ -186,7 +187,7 @@ public class XMPPService extends Service {
 
                     SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(getApplicationContext());
 
-                    SportsUnityDBHelper.Contacts owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
+                    Contacts owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
                     if (owner == null) {
                         createContact(ownerPhoneNumber);
                         owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
@@ -466,7 +467,7 @@ public class XMPPService extends Service {
         long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
 
         if (!isGroupChat) {
-            SportsUnityDBHelper.Contacts contact = sportsUnityDBHelper.getContact(from);
+            Contacts contact = sportsUnityDBHelper.getContact(from);
             if (contact == null) {
                 createContact(from);
                 contact = sportsUnityDBHelper.getContact(from);
@@ -540,7 +541,7 @@ public class XMPPService extends Service {
         } else {
             String name = sportsUnityDBHelper.getJabberName(from);
 
-            SportsUnityDBHelper.Contacts contact = sportsUnityDBHelper.getContact(from);
+            Contacts contact = sportsUnityDBHelper.getContact(from);
 
             Intent notificationIntent = new Intent(this, ChatScreenActivity.class);
             notificationIntent.putExtra("name", name);

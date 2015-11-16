@@ -25,6 +25,7 @@ import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.fragment.ContactsFragment;
 import com.sports.unity.messages.controller.fragment.GroupDetailFragment;
+import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.GroupMessaging;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -112,13 +113,13 @@ public class CreateGroup extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    private void createGroup(ArrayList<SportsUnityDBHelper.Contacts> selectedMembers) {
+    private void createGroup(ArrayList<Contacts> selectedMembers){
         GroupMessaging groupMessaging = GroupMessaging.getInstance(this);
         String roomName = currentUserPhoneNumber + "" + System.currentTimeMillis();
         String subject = groupName;
 
         boolean success = groupMessaging.createGroup(roomName, currentUserPhoneNumber, subject);
-        SportsUnityDBHelper.Contacts owner = SportsUnityDBHelper.getInstance(this).getContact(currentUserPhoneNumber);
+        Contacts owner = SportsUnityDBHelper.getInstance(this).getContact(currentUserPhoneNumber);
         if (success) {
             groupMessaging.setGroupConfigDetail(roomName, groupName, groupDescription);
             groupMessaging.joinGroup(roomName, currentUserPhoneNumber);
@@ -128,7 +129,7 @@ public class CreateGroup extends AppCompatActivity {
             SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, roomName);
 
             ArrayList<Long> members = new ArrayList<>();
-            for (SportsUnityDBHelper.Contacts c :
+            for (Contacts c :
                     selectedMembers) {
                 members.add(c.id);
             }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.messages.controller.model.Message;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -21,11 +22,11 @@ import java.util.ArrayList;
  */
 public class ChatScreenAdapter extends BaseAdapter {
 
-    ArrayList<SportsUnityDBHelper.Message> messageList;
+    ArrayList<Message> messageList;
     private static LayoutInflater inflater = null;
     public Activity activity;
 
-    public ChatScreenAdapter(ChatScreenActivity chatScreenActivity, ArrayList<SportsUnityDBHelper.Message> messagelist) {
+    public ChatScreenAdapter(ChatScreenActivity chatScreenActivity, ArrayList<Message> messagelist) {
         this.messageList = messagelist;
         activity = chatScreenActivity;
         inflater = (LayoutInflater) activity.
@@ -76,7 +77,7 @@ public class ChatScreenAdapter extends BaseAdapter {
         View vi = convertView;
         ViewHolder holder;
 
-        SportsUnityDBHelper.Message message = messageList.get(position);
+        Message message = messageList.get(position);
         if (convertView == null) {
             holder = new ViewHolder();
             switch (getItemViewType(position)) {
@@ -134,7 +135,7 @@ public class ChatScreenAdapter extends BaseAdapter {
         return vi;
     }
 
-    public void notifydataset(ArrayList<SportsUnityDBHelper.Message> messagelist) {
+    public void notifydataset(ArrayList<Message> messagelist) {
 
         this.messageList = messagelist;
         notifyDataSetChanged();

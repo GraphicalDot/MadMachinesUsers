@@ -3,19 +3,26 @@ package com.sports.unity.messages.controller.model;
 import android.content.Context;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
 import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
+import org.jivesoftware.smackx.privacy.PrivacyListManager;
+import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 import org.joda.time.DateTime;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 import java.util.WeakHashMap;
 
 /**
@@ -101,6 +108,43 @@ public class PersonalMessaging {
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         }
+    }
+
+    public void getLastTime(String jid){
+        Message msg = new Message("gettimedev@mm.io", Message.Type.headline);
+        msg.setBody(jid);
+        try {
+            XMPPClient.getConnection().sendPacket(msg);
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void blockUser(XMPPConnection connection, String phoneNumber) {
+
+        String listName = "newList";
+        List<PrivacyItem> privacyItems = new Vector<PrivacyItem>();
+
+        PrivacyItem item = new PrivacyItem(PrivacyItem.Type.jid,
+                phoneNumber,false, 1);
+        privacyItems.add(item);
+
+        try {
+            PrivacyListManager privacyManager;
+            privacyManager = PrivacyListManager
+                    .getInstanceFor(connection);
+            privacyManager.createPrivacyList(listName, privacyItems);
+
+        } catch (Exception e) {
+            System.out.println("PRIVACY_ERROR: " + e);
+        }
+
+    }
+
+    public void unBlockUser(ChatState newState, Chat chat) {
+
+
+
     }
 
     public void setReceivedReceipts(String fromJid, String receiptId, Context applicationContext) {
