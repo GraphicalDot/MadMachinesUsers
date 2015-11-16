@@ -83,7 +83,7 @@ public class XMPPService extends Service {
                 @Override
                 public void run() {
                     XMPPService service = XMPPService.getXMPP_SERVICE();
-                    if( service != null ) {
+                    if (service != null) {
                         XMPPClient.getInstance().reconnectConnection(service.connectionListener);
                     } else {
                         //nothing
@@ -155,7 +155,7 @@ public class XMPPService extends Service {
     private void attachChatRelatedListeners(final XMPPTCPConnection connection) {
         XMPPClient xmppClient = XMPPClient.getInstance();
 
-        if( xmppClient.isChatRelatedListenersAdded() == false ) {
+        if (xmppClient.isChatRelatedListenersAdded() == false) {
             xmppClient.setChatRelatedListenersAdded(true);
 
             Log.i("XMPP Connection", "attaching chat related listeners");
@@ -181,6 +181,8 @@ public class XMPPService extends Service {
 
                     String groupServerId = multiUserChat.getRoom().substring(0, multiUserChat.getRoom().indexOf("@conference.mm.io"));
                     String ownerPhoneNumber = inviter.substring(0, inviter.indexOf("@mm.io"));
+                    String subject = multiUserChat.getSubject();
+
 
                     SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(getApplicationContext());
 
@@ -190,13 +192,13 @@ public class XMPPService extends Service {
                         owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
                     }
 
-                    long chatId = sportsUnityDBHelper.createGroupChatEntry(reason, owner.id, null, groupServerId);
+                    long chatId = sportsUnityDBHelper.createGroupChatEntry(subject, owner.id, null, groupServerId);
                     sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupServerId);
 
                     String currentUserPhoneNumber = TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME);
                     GroupMessaging.getInstance(getApplicationContext()).joinGroup(groupServerId, currentUserPhoneNumber);
-
                 }
+
 
             });
 
@@ -238,7 +240,9 @@ public class XMPPService extends Service {
 
             }, new PacketTypeFilter(Presence.class));
 
-        } else {
+        } else
+
+        {
             //nothing
         }
     }
@@ -268,7 +272,7 @@ public class XMPPService extends Service {
         public void connected(XMPPConnection connection) {
             Log.i("XMPP Connection", "connected");
 
-            if( UserUtil.isProfileCreated() ) {
+            if (UserUtil.isProfileCreated()) {
                 XMPPClient.getInstance().authenticateConnection(XMPPService.this);
             } else {
                 //nothing
@@ -282,24 +286,29 @@ public class XMPPService extends Service {
 
                 attachChatRelatedListeners((XMPPTCPConnection) connection);
                 getForms((XMPPTCPConnection) connection);
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
         @Override
         public void connectionClosed() {
-            Log.i("XMPP Connection", "closed");
+//            XMPPClient.reconnectAndAuthenticate_OnThread(XMPPService.this);
+            Log.i("connection", "closed");
+
         }
 
         @Override
         public void connectionClosedOnError(Exception e) {
-            Log.i("XMPP Connection", "closed on error");
+//            XMPPClient.reconnectAndAuthenticate_OnThread(XMPPService.this);
+            Log.i("connection", "closed on error");
         }
 
         @Override
         public void reconnectionSuccessful() {
-            Log.i("XMPP Connection", "reconnection succesful");
+//            XMPPClient.reconnectAndAuthenticate_OnThread(XMPPService.this);
+            Log.i("reconnection", "succesful");
+
         }
 
         @Override
@@ -308,7 +317,9 @@ public class XMPPService extends Service {
 
         @Override
         public void reconnectionFailed(Exception e) {
-            Log.i("XMPP Connection", "reconnection failed");
+//            XMPPClient.reconnectAndAuthenticate_OnThread(XMPPService.this);
+            Log.i("reconnection", "failed");
+
         }
     }
 
@@ -480,7 +491,7 @@ public class XMPPService extends Service {
 
         long messageId = sportsUnityDBHelper.addTextMessage(message.getBody().toString(), from, false,
                 String.valueOf(dateTime.getMillis()), message.getStanzaId(), null, null,
-                chatId);
+                chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
         sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
     }
 
@@ -572,7 +583,7 @@ public class XMPPService extends Service {
         @Override
         public void run() {
             try {
-                Log.i( "VCard Update", "Started");
+                Log.i("VCard Update", "Started");
                 ContactsHandler.getInstance().updateRegisteredUsers(XMPPService.this);
                 Log.i("VCard Update", "Ended");
             } catch (XMPPException e) {

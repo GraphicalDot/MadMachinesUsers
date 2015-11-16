@@ -27,5 +27,6 @@
     <color name="tour_people_color">#3fba91</color>
     <color name="tour_details_color">#666</color>
     <color name="popup_menu_options">#222222</color>
+    <color name="group_receive_name">#808080</color>
 
 </resources>

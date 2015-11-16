@@ -59,9 +59,19 @@ public class ChatListAdapter extends ArrayAdapter<SportsUnityDBHelper.Chats> {
         name.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
 
         ImageView userPic = (ImageView) rowView.findViewById(R.id.user_pic);
-        if (chatArrayList.get(position).userImage != null) {
-            userPic.setImageBitmap(BitmapFactory.decodeByteArray(chatArrayList.get(position).userImage, 0, chatArrayList.get(position).userImage.length));
+        if (chatArrayList.get(position).groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+            if (chatArrayList.get(position).userImage != null) {
+                userPic.setImageBitmap(BitmapFactory.decodeByteArray(chatArrayList.get(position).userImage, 0, chatArrayList.get(position).userImage.length));
+            }
+
+        } else {
+            if (chatArrayList.get(position).groupImage == null) {
+                userPic.setImageResource(R.drawable.ic_group);
+            } else {
+                userPic.setImageBitmap(BitmapFactory.decodeByteArray(chatArrayList.get(position).groupImage, 0, chatArrayList.get(position).groupImage.length));
+            }
         }
+
 
         TextView lastMsg = (TextView) rowView.findViewById(R.id.last_msg);
 
@@ -75,7 +85,6 @@ public class ChatListAdapter extends ArrayAdapter<SportsUnityDBHelper.Chats> {
 
         if (chatArrayList.get(position).sent != null && !chatArrayList.get(position).sent.equals("")) {
             dateTime = new DateTime(Long.valueOf(chatArrayList.get(position).sent));
-            Log.i("dateTime", String.valueOf(dateTime));
             int days = Days.daysBetween(dateTime, dateTime1).getDays();
             if (days > 0) {
                 if (days == 1) {

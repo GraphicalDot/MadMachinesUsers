@@ -34,8 +34,8 @@ public class ContactsHandler {
 
     private static ContactsHandler CONTACT_HANDLER = null;
 
-    public static ContactsHandler getInstance(){
-        if( CONTACT_HANDLER == null ){
+    public static ContactsHandler getInstance() {
+        if (CONTACT_HANDLER == null) {
             CONTACT_HANDLER = new ContactsHandler();
         }
         return CONTACT_HANDLER;
@@ -117,6 +117,7 @@ public class ContactsHandler {
                 } else {
                     phoneNumber = phoneNumber.replaceAll("\\s+", "");
                     phoneNumber = phoneNumber.replaceAll("[-+.^:,]", "");
+                    phoneNumber = phoneNumber.replaceAll("\\p{P}", "");
                     if (phoneNumber.startsWith("91")) {
                         //Do nothing
                     } else {

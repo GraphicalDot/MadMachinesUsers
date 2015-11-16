@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.View;
 import android.widget.AbsListView;
@@ -30,7 +31,7 @@ import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 
-public class  CreateGroup extends AppCompatActivity {
+public class CreateGroup extends AppCompatActivity {
 
     private String groupName = null;
     private String groupDescription = null;
@@ -47,19 +48,19 @@ public class  CreateGroup extends AppCompatActivity {
         addGroupDetailFragment();
     }
 
-    private void addGroupDetailFragment(){
+    private void addGroupDetailFragment() {
         GroupDetailFragment groupDetailFragment = new GroupDetailFragment();
 
         getSupportFragmentManager().beginTransaction()
                 .add(R.id.fragment_container, groupDetailFragment).commit();
     }
 
-    public void moveToMembersListFragment(){
+    public void moveToMembersListFragment() {
         Bundle bundle = new Bundle();
-        bundle.putInt( Constants.INTENT_KEY_CONTACT_FRAGMENT_USAGE, ContactsFragment.USAGE_FOR_MEMBERS);
+        bundle.putInt(Constants.INTENT_KEY_CONTACT_FRAGMENT_USAGE, ContactsFragment.USAGE_FOR_MEMBERS);
 
         ContactsFragment fragment = new ContactsFragment();
-        fragment.setArguments( bundle);
+        fragment.setArguments(bundle);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -71,16 +72,16 @@ public class  CreateGroup extends AppCompatActivity {
         setToolBarForMembersList();
     }
 
-    public void setGroupDetails(String groupName, String groupDescription){
+    public void setGroupDetails(String groupName, String groupDescription) {
         this.groupName = groupName;
         this.groupDescription = groupDescription;
     }
 
-    private void setToolBarForMembersList(){
+    private void setToolBarForMembersList() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
-        ((ImageView)toolbar.findViewById(R.id.backImage)).setImageResource( R.drawable.ic_menu_back_blk);
+        ((ImageView) toolbar.findViewById(R.id.backImage)).setImageResource(R.drawable.ic_menu_back_blk);
         toolbar.findViewById(R.id.backImage).setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -90,10 +91,10 @@ public class  CreateGroup extends AppCompatActivity {
         });
 
         TextView title = (TextView) toolbar.findViewById(R.id.title);
-        title.setText( R.string.group_title_add_members);
+        title.setText(R.string.group_title_add_members);
 
         TextView actionView = (TextView) toolbar.findViewById(R.id.actionButton);
-        actionView.setText( R.string.done);
+        actionView.setText(R.string.done);
         actionView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
         actionView.setOnClickListener(new View.OnClickListener() {
 
@@ -101,7 +102,7 @@ public class  CreateGroup extends AppCompatActivity {
             public void onClick(View view) {
                 //TODO
                 FragmentManager fragmentManager = getSupportFragmentManager();
-                ContactsFragment fragment = (ContactsFragment)fragmentManager.findFragmentByTag("as_member");
+                ContactsFragment fragment = (ContactsFragment) fragmentManager.findFragmentByTag("as_member");
 
                 createGroup(fragment.getSelectedMembersList());
             }
@@ -111,25 +112,33 @@ public class  CreateGroup extends AppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    private void createGroup(ArrayList<SportsUnityDBHelper.Contacts> selectedMembers){
+    private void createGroup(ArrayList<SportsUnityDBHelper.Contacts> selectedMembers) {
         GroupMessaging groupMessaging = GroupMessaging.getInstance(this);
         String roomName = currentUserPhoneNumber + "" + System.currentTimeMillis();
+        String subject = groupName;
 
-        boolean success = groupMessaging.createGroup(roomName, currentUserPhoneNumber);
+        boolean success = groupMessaging.createGroup(roomName, currentUserPhoneNumber, subject);
         SportsUnityDBHelper.Contacts owner = SportsUnityDBHelper.getInstance(this).getContact(currentUserPhoneNumber);
-        if( success ){
-            groupMessaging.setGroupConfigDetail( roomName, groupName, groupDescription);
+        if (success) {
+            groupMessaging.setGroupConfigDetail(roomName, groupName, groupDescription);
             groupMessaging.joinGroup(roomName, currentUserPhoneNumber);
             groupMessaging.inviteMembers(roomName, selectedMembers, "");
 
-            long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry( groupName, owner.id, null, roomName);
+            long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry(subject, owner.id, null, roomName);
             SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, roomName);
+
+            ArrayList<Long> members = new ArrayList<>();
+            for (SportsUnityDBHelper.Contacts c :
+                    selectedMembers) {
+                members.add(c.id);
+            }
+            SportsUnityDBHelper.getInstance(getApplicationContext()).createGroupUserEntry(chatId, members);
 
             finish();
         } else {
             Toast.makeText(this, R.string.group_message_try_again, Toast.LENGTH_SHORT).show();
         }
-
+        
     }
 
 }

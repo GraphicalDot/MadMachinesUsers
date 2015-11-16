@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
+import com.sports.unity.common.model.FontTypeface;
 
 public class NewsDetailsActivity extends CustomAppCompatActivity {
 
@@ -48,13 +49,13 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         TextView tv = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        tv.setText("Sports Unity");
+        tv.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
     }
 
     private void initViews() {
         WebView webview = (WebView) findViewById(R.id.webview);
 
-        ImageView img=(ImageView) findViewById(R.id.img);
+        ImageView img = (ImageView) findViewById(R.id.img);
         img.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 finish();
@@ -99,7 +100,7 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
                 sharingIntent.putExtra(Intent.EXTRA_SUBJECT, title);
-                sharingIntent.putExtra(Intent.EXTRA_TEXT,content);
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, content);
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 return true;
             default:

@@ -50,7 +50,7 @@
     <string name="title_activity_filter">FilterActivity</string>
     <string name="title_activity_tour">TourActivity</string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="tour_score_details">Class aptent taciti sociosqu ad litora torquent per conubia nostra.</string>
@@ -115,5 +115,10 @@ message to verify your phone number.
 Carrier SMS charges may apply.</string>
     <string name="chat_activity_username">chat_username</string>
     <string name="chat_activity_status">status</string>
+    <string name="group_chat_receive_time">8:02 pm</string>
+    <string name="group_receive_name">Andrew Scott</string>
+    <string name="chat_receive_time">9:00 am</string>
+    <string name="dummy_text_message">Hi There! i am using Sports Unity</string>
+    <string name="chat_sent_time">2:39 PM</string>
 
 </resources>

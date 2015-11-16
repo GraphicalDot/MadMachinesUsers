@@ -48,7 +48,7 @@ public class GroupMessaging {
         sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
     }
 
-    public boolean createGroup(String roomName, String owner){
+    public boolean createGroup(String roomName, String owner, String subject) {
         boolean success = false;
 
         MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(XMPPClient.getConnection());
@@ -56,6 +56,7 @@ public class GroupMessaging {
 
         try {
             multiUserChat.create(owner);
+            multiUserChat.changeSubject(subject);
 
             success = true;
         } catch (XMPPException.XMPPErrorException e) {
@@ -67,18 +68,18 @@ public class GroupMessaging {
         return success;
     }
 
-    public boolean setGroupConfigDetail(String roomName, String groupName, String groupDescription){
+    public boolean setGroupConfigDetail(String roomName, String groupName, String groupDescription) {
         boolean success = false;
 
         MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(XMPPClient.getConnection());
         MultiUserChat multiUserChat = manager.getMultiUserChat(roomName + "@conference.mm.io");
 
-        try{
+        try {
             Form form = multiUserChat.getConfigurationForm();
             Form submitForm = form.createAnswerForm();
 
-            for(FormField field : form.getFields() ){
-                if(!FormField.Type.hidden.name().equals(field.getType()) && field.getVariable() != null) {
+            for (FormField field : form.getFields()) {
+                if (!FormField.Type.hidden.name().equals(field.getType()) && field.getVariable() != null) {
                     submitForm.setDefaultAnswer(field.getVariable());
                 }
             }
@@ -103,14 +104,14 @@ public class GroupMessaging {
         return success;
     }
 
-    public boolean setGroupDetails(String roomName, String groupname, String groupDescription){
+    public boolean setGroupDetails(String roomName, String groupname, String groupDescription) {
         MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(XMPPClient.getConnection());
         MultiUserChat multiUserChat = manager.getMultiUserChat(roomName + "@conference.mm.io");
 
-        return setGroupDetails( multiUserChat, groupname, groupDescription);
+        return setGroupDetails(multiUserChat, groupname, groupDescription);
     }
 
-    public boolean setGroupDetails(MultiUserChat multiUserChat, String groupName, String groupDescription){
+    public boolean setGroupDetails(MultiUserChat multiUserChat, String groupName, String groupDescription) {
         boolean success = false;
         try {
             Form form = multiUserChat.getConfigurationForm();
@@ -130,7 +131,7 @@ public class GroupMessaging {
         return success;
     }
 
-    public boolean joinGroup(String roomName, String phoneNumber){
+    public boolean joinGroup(String roomName, String phoneNumber) {
         boolean success = false;
 
         MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(XMPPClient.getConnection());
@@ -163,7 +164,7 @@ public class GroupMessaging {
 
         for (int i = 0; i < members.size(); i++) {
             try {
-                multiUserChat.invite( members.get(i).jid + "@mm.io", message);
+                multiUserChat.invite(members.get(i).jid + "@mm.io", message);
             } catch (SmackException.NotConnectedException e) {
                 e.printStackTrace();
             }
@@ -190,7 +191,7 @@ public class GroupMessaging {
          * SportsUnityDBHelper.getInstance(context).addMessageToDatabase();
          */
 
-        long messageId = sportsUnityDBHelper.addTextMessage(msg, from, true, null, id, null, null, chatId);
+        long messageId = sportsUnityDBHelper.addTextMessage(msg, from, true, null, id, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
         sportsUnityDBHelper.updateChatEntry(messageId, chatId, groupServerId);
 
     }

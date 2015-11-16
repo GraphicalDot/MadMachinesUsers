@@ -39,6 +39,7 @@ public final class SportsUnityContract {
         public static final String COLUMN_SERVER_RECEIPT = "receive_server_timestamp";
         public static final String COLUMN_RECIPIENT_RECEIPT = "receive_recipient_timestamp";
         public static final String COLUMN_NAME_I_AM_SENDER = "i_am_sender";
+        public static final String COLUMN_READ_STATUS = "message_read";
 
     }
 

@@ -40,10 +40,6 @@ public class ChatFragment extends Fragment {
 
     static ListView chatListView;
 
-    private View popupView;
-    private PopupWindow popupWindow;
-
-    private ListView popupScreenOptions;
     private View view;
 
     private ChatFragmentDialogListAdapter chatFragmentDialogListAdapter;
@@ -76,7 +72,6 @@ public class ChatFragment extends Fragment {
 
                 String groupSeverId = chatObject.groupServerId;
                 if (groupSeverId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
-
                     long contactId = chatObject.contactId;
                     SportsUnityDBHelper.Contacts contact = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
 
@@ -93,16 +88,18 @@ public class ChatFragment extends Fragment {
                     chatScreen.putExtra("userpicture", userpicture);
                 } else {
                     long contactId = chatObject.contactId;
-
+                    SportsUnityDBHelper.Contacts contacts = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
                     String number = groupSeverId;
                     String name = chatObject.name;
                     long chatId = chatObject.chatid;
+                    byte[] groupImage = chatObject.groupImage;
 
                     chatScreen.putExtra("number", number);
                     chatScreen.putExtra("name", name);
                     chatScreen.putExtra("contactId", contactId);
                     chatScreen.putExtra("chatId", chatId);
                     chatScreen.putExtra("groupServerId", groupSeverId);
+                    chatScreen.putExtra("userpicture", groupImage);
                 }
 
                 startActivity(chatScreen);

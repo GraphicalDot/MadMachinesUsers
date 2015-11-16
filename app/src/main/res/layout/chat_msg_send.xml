@@ -20,11 +20,11 @@
             android:id="@+id/singleMessageRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:textSize="16sp"
             android:autoLink="all"
+            android:text="@string/dummy_text_message"
+            android:textColor="@android:color/white"
             android:textColorLink="@android:color/white"
-            />
+            android:textSize="@dimen/font_size_small" />
 
     </LinearLayout>
 
@@ -38,20 +38,21 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="16dp">
 
+        <ImageView
+            android:id="@+id/receivedStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="4dp"
+            android:src="@drawable/ic_msg_pending" />
+
         <TextView
             android:id="@+id/timestampRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|end"
             android:layout_marginRight="16dp"
-            android:text="Enter"
-            android:textSize="10sp" />
-
-        <ImageView
-            android:id="@+id/receivedStatus"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_msg_pending" />
+            android:text="@string/chat_sent_time"
+            android:textSize="@dimen/font_size_very_small" />
 
     </LinearLayout>
 

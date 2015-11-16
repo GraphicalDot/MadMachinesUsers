@@ -17,15 +17,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
- * Created by madmachines on 8/9/15.
+ * Created by madmachines on 12/11/15.
  */
-public class ChatScreenAdapter extends BaseAdapter {
+public class GroupChatScreenAdapter extends BaseAdapter {
 
     ArrayList<SportsUnityDBHelper.Message> messageList;
     private static LayoutInflater inflater = null;
     public Activity activity;
 
-    public ChatScreenAdapter(ChatScreenActivity chatScreenActivity, ArrayList<SportsUnityDBHelper.Message> messagelist) {
+    public GroupChatScreenAdapter(ChatScreenActivity chatScreenActivity, ArrayList<SportsUnityDBHelper.Message> messagelist) {
         this.messageList = messagelist;
         activity = chatScreenActivity;
         inflater = (LayoutInflater) activity.
@@ -66,6 +66,7 @@ public class ChatScreenAdapter extends BaseAdapter {
 
     public static class ViewHolder {
 
+        public TextView sender;
         public TextView message;
         public TextView timeStamp;
         public ImageView receivedStatus;
@@ -81,22 +82,26 @@ public class ChatScreenAdapter extends BaseAdapter {
             holder = new ViewHolder();
             switch (getItemViewType(position)) {
                 case 0:
-                    vi = inflater.inflate(R.layout.chat_msg_recieve, parent, false);
+                    vi = inflater.inflate(R.layout.group_chat_receive, parent, false);
                     holder.message = (TextView) vi.findViewById(R.id.singleMessageLeft);
-                    holder.message.setTypeface(FontTypeface.getInstance(activity.getApplicationContext()).getRobotoRegular());
+                    holder.message.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
                     holder.timeStamp = (TextView) vi.findViewById(R.id.timestampLeft);
-                    holder.timeStamp.setTypeface(FontTypeface.getInstance(activity.getApplicationContext()).getRobotoCondensedRegular());
+                    holder.timeStamp.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+                    holder.sender = (TextView) vi.findViewById(R.id.group_sender_name);
+                    holder.sender.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
                     holder.receivedStatus = null;
+
                     vi.setTag(holder);
                     break;
                 case 1:
                     vi = inflater.inflate(R.layout.chat_msg_send, parent, false);
                     holder.message = (TextView) vi.findViewById(R.id.singleMessageRight);
-                    holder.message.setTypeface(FontTypeface.getInstance(activity.getApplicationContext()).getRobotoRegular());
+                    holder.message.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
                     holder.timeStamp = (TextView) vi.findViewById(R.id.timestampRight);
-                    holder.timeStamp.setTypeface(FontTypeface.getInstance(activity.getApplicationContext()).getRobotoCondensedRegular());
+                    holder.timeStamp.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
                     holder.receivedStatus = (ImageView) vi.findViewById(R.id.receivedStatus);
                     vi.setTag(holder);
+                    holder.sender = null;
                     break;
             }
 
@@ -114,6 +119,14 @@ public class ChatScreenAdapter extends BaseAdapter {
                 holder.timeStamp.setText(String.valueOf(new java.text.SimpleDateFormat("HH:mm").format(Long.valueOf(message.recieveTime))));
                 break;
 
+        }
+        if (holder.sender != null) {
+            String name = SportsUnityDBHelper.getInstance(activity).getName(messageList.get(position).number);
+            if (name == null) {
+                holder.sender.setText(messageList.get(position).number);
+            } else {
+                holder.sender.setText(name);
+            }
         }
 
         if (holder.receivedStatus == null) {

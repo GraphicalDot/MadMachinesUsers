@@ -76,7 +76,7 @@ public class PersonalMessaging {
          * SportsUnityDBHelper.getInstance(context).addMessageToDatabase();
          */
 
-        long messageId = sportsUnityDBHelper.addTextMessage(msg, number, true, null, id, null, null, chatId);
+        long messageId = sportsUnityDBHelper.addTextMessage(msg, number, true, null, id, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
         sportsUnityDBHelper.updateChatEntry(messageId, chatId, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
     }

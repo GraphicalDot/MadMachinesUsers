@@ -59,6 +59,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
     private static ArrayList<SportsUnityDBHelper.Message> messageList;
     private static ChatScreenAdapter chatScreenAdapter;
+    private static GroupChatScreenAdapter groupChatScreenAdapter;
     private static String JABBERID;
     private static String JABBERNAME;
     private static byte[] userImageBytes;
@@ -69,9 +70,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     private String groupServerId = null;
     private boolean isGroupChat = false;
 
-    private EditText mMsg;
+    private EditText messageText;
     private Chat chat;
     private TextView status;
+    private ImageButton back;
 
     private ViewGroup parentLayout;
 
@@ -127,12 +129,51 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             ChatScreenActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
-                    chatScreenAdapter.notifydataset(messageList);
+                    if (isGroupChat) {
+                        messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
+                        groupChatScreenAdapter.notifydataset(messageList);
+                    } else {
+                        messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
+                        chatScreenAdapter.notifydataset(messageList);
+                    }
                 }
             });
         }
     };
+
+    @Override
+    protected void onDestroy() {
+        ChatScreenApplication.activityDestroyed();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onPause() {
+        ChatScreenApplication.activityPaused();
+        super.onPause();
+    }
+
+    @Override
+    public void onStop() {
+        ChatScreenApplication.activityStopped();
+        super.onStop();
+        ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.CHAT_SCREEN_KEY);
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, activityActionListener);
+        ChatScreenApplication.activityResumed();
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,44 +194,50 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         final Handler mHandler = new Handler();
 
-        JABBERID = getIntent().getStringExtra("number");                       //name of the user you are messaging with
-        JABBERNAME = getIntent().getStringExtra("name");                  //phone number or jid of the user you are chatting with
-        contactID = getIntent().getLongExtra("contactId", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
-        chatID = getIntent().getLongExtra("chatId", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
-        userImageBytes = getIntent().getByteArrayExtra("userpicture");
+        /**
+         * Declarations ofr all the textviews and other ui elements
+         */
 
-        groupServerId = getIntent().getStringExtra("groupServerId");
+        back = (ImageButton) toolbar.findViewById(R.id.backarrow);
+        messageText = (EditText) findViewById(R.id.msg);
+        status = (TextView) toolbar.findViewById(R.id.status_active);
+        Button mSend = (Button) findViewById(R.id.send);
+
+        /**
+         * getting all the extras in the intent neccesary for communicating in chat and layout
+         */
+        getIntentExtras();
 
         if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
-            //nothing
+            ChatManager chatManager = ChatManager.getInstanceFor(con);
+            chat = chatManager.getThreadChat(JABBERID);
+            if (chat == null) {
+                chat = chatManager.createChat(JABBERID + "@mm.io");
+            }
+
+            initChatId();
         } else {
             isGroupChat = true;
-
             MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(con);
             multiUserChat = manager.getMultiUserChat(groupServerId + "@conference.mm.io");
+
         }
 
-        ListView mChatView = (ListView) findViewById(R.id.msgview);                // List for messages
+        initUI(toolbar);
 
-        TextView user = (TextView) toolbar.findViewById(R.id.chat_username);
+        clearUnreadCount();
 
-        user.setText(JABBERNAME);
-        user.setTypeface(FontTypeface.getInstance(this).getRobotoRegular());
+        /**
+         * Adding custom font to views
+         */
+        mSend.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
 
-        userPic = (CircleImageView) toolbar.findViewById(R.id.user_picture);
-        if (userImageBytes != null) {
-            userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
-        }
-
-        ImageButton back = (ImageButton) toolbar.findViewById(R.id.backarrow);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-
-        mMsg = (EditText) findViewById(R.id.msg);
 
         final Runnable userStoppedTyping = new Runnable() {
 
@@ -202,7 +249,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             }
         };
 
-        mMsg.addTextChangedListener(new TextWatcher() {
+        messageText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -226,47 +273,86 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             }
         });
 
-
-        status = (TextView) toolbar.findViewById(R.id.status_active);
-
-        try {
-            getLastSeen();
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
-        }
-
-        Button mSend = (Button) findViewById(R.id.send);
-        mSend.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
-
-        ChatManager chatManager = ChatManager.getInstanceFor(con);
-
-//        if (mMsg.getText().toString() != null)
-        {
-            if (isGroupChat) {
-                //nothing
-            } else {
-                chat = chatManager.getThreadChat(JABBERID);
-                if (chat == null) {
-                    chat = chatManager.createChat(JABBERID + "@mm.io");
-                }
-
-                initChatId();
+        populateMessagesOnScreen();
+        mSend.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendMessage();
             }
+        });
 
+    }
+
+    private void populateMessagesOnScreen() {
+        ListView mChatView = (ListView) findViewById(R.id.msgview);               // List for messages
+        if (isGroupChat) {
+            //TODO
+            String s = "";
+            SportsUnityDBHelper.GroupParticipants participants = sportsUnityDBHelper.getGroupParticipants(chatID);
+            ArrayList<SportsUnityDBHelper.Contacts> users = participants.usersInGroup;
+            for (SportsUnityDBHelper.Contacts c : users) {
+                s += c.name;
+                s += ", ";
+            }
+            s += "You";
+            status.setText(s);
+            messageList = sportsUnityDBHelper.getMessages(chatID);
+            groupChatScreenAdapter = new GroupChatScreenAdapter(ChatScreenActivity.this, messageList);
+            mChatView.setAdapter(groupChatScreenAdapter);
+        } else {
             messageList = sportsUnityDBHelper.getMessages(chatID);
             chatScreenAdapter = new ChatScreenAdapter(ChatScreenActivity.this, messageList);
             mChatView.setAdapter(chatScreenAdapter);
-            mSend.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    sendMessage();
-                }
-            });
         }
+    }
+
+    private void clearUnreadCount() {
 
         if (chatID != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
             sportsUnityDBHelper.clearUnreadCount(chatID, groupServerId);
         }
+
+    }
+
+    private void initUI(Toolbar toolbar) {
+        TextView user = (TextView) toolbar.findViewById(R.id.chat_username);
+        user.setText(JABBERNAME);
+        user.setTypeface(FontTypeface.getInstance(this).getRobotoRegular());
+
+        userPic = (CircleImageView) toolbar.findViewById(R.id.user_picture);
+        if (isGroupChat) {
+            if (userImageBytes == null) {
+                userPic.setImageResource(R.drawable.ic_group);
+            } else {
+                userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
+            }
+
+        } else if (userImageBytes != null) {
+            userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
+        }
+
+        if (isGroupChat) {
+            status.setText("");
+            //get group participants
+            //TODO
+        } else {
+            try {
+                getLastSeen();
+            } catch (SmackException.NotConnectedException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private void getIntentExtras() {
+        JABBERID = getIntent().getStringExtra("number");                                                 //name of the user you are messaging with
+        JABBERNAME = getIntent().getStringExtra("name");                                                 //phone number or jid of the user you are chatting with
+        contactID = getIntent().getLongExtra("contactId", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
+        chatID = getIntent().getLongExtra("chatId", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
+        userImageBytes = getIntent().getByteArrayExtra("userpicture");
+
+        groupServerId = getIntent().getStringExtra("groupServerId");
 
     }
 
@@ -330,27 +416,24 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     private void sendMessage() {
         createChatEntryifNotExists();
 
-        if (mMsg.getText().toString().equals("")) {
+        if (messageText.getText().toString().equals("")) {
             //Do nothing
         } else {
             Log.i("Message Entry", "adding message chat " + chatID);
 
             if (isGroupChat) {
-                groupMessaging.sendMessageToGroup(mMsg.getText().toString(), multiUserChat, chatID, groupServerId, TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME));
+                groupMessaging.sendMessageToGroup(messageText.getText().toString(), multiUserChat, chatID, groupServerId, TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME));
+                messageList = sportsUnityDBHelper.getMessages(chatID);
+                groupChatScreenAdapter.notifydataset(messageList);
             } else {
-                personalMessaging.sendMessageToPeer(mMsg.getText().toString(), chat, JABBERID, chatID, JABBERNAME);
+                personalMessaging.sendMessageToPeer(messageText.getText().toString(), chat, JABBERID, chatID, JABBERNAME);
                 personalMessaging.sendStatus(ChatState.paused, chat);
+                messageList = sportsUnityDBHelper.getMessages(chatID);
+                chatScreenAdapter.notifydataset(messageList);
             }
-
-            /**
-             *  update the chatscreen list of messages
-             */
-
-            messageList = sportsUnityDBHelper.getMessages(chatID);
-            chatScreenAdapter.notifydataset(messageList);
         }
 
-        mMsg.setText("");
+        messageText.setText("");
     }
 
     /**
@@ -548,19 +631,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, activityActionListener);
-        ChatScreenApplication.activityResumed();
-
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_chat_screen, menu);
@@ -588,25 +658,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    protected void onDestroy() {
-        ChatScreenApplication.activityDestroyed();
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onPause() {
-        ChatScreenApplication.activityPaused();
-        super.onPause();
-    }
-
-    @Override
-    public void onStop() {
-        ChatScreenApplication.activityStopped();
-        super.onStop();
-        ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.CHAT_SCREEN_KEY);
-
-    }
 
     public static String getJABBERID() {
         return JABBERID;
