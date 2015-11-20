@@ -28,7 +28,7 @@ public class Chats implements Parcelable{
     public boolean block;
 
     public Chats(int unread, String name, int contactId, int lastMessageId, String dataText, byte[] dataMedia,
-                 String dataType, String sentTime, String recieveTime, int chatId, String groupServerId, byte[] groupImage, boolean muteValue, boolean blockValue, byte[] userImage) {
+                 String dataType, String sentTime, String recieveTime, int chatId, String groupServerId, byte[] groupImage, boolean muteValue, byte[] userImage, boolean blockValue) {
 
         this.unreadCount = unread;
         this.name = name;

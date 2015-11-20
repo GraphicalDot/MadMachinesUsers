@@ -2,37 +2,82 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/ColorPrimary"
     tools:context="com.sports.unity.common.controller.UserProfileActivity">
 
-    <android.support.design.widget.CoordinatorLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-        <android.support.design.widget.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
             <include
                 android:id="@+id/tool_bar"
-                layout="@layout/tool_bar_webview"
+                layout="@layout/profile_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?android:attr/actionBarSize"
-                android:minHeight="?android:attr/actionBarSize"
-                app:layout_scrollFlags="scroll|enterAlways" />
+                android:minHeight="?android:attr/actionBarSize"/>
 
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/user_picture"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/ic_user" />
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="#000"
+            android:textSize="25dp"
+            android:text="Hello"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/member"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#999999"
+                android:text="Member of 0 groups"
+                android:textSize="14sp"
+                android:layout_gravity="center"
+                android:textStyle="normal"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="3dp"
+                android:text="•"
+                android:textSize="30dp"
+                android:layout_gravity="center"
+                android:textColor="#999999" />
+
+            <TextView
+                android:id="@+id/admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#999999"
+                android:text="Admin of 0 groups"
+                android:textSize="14sp"
+                android:layout_gravity="center"
+                android:textStyle="normal"
+                />
+        </LinearLayout>
             <com.sports.unity.common.view.SlidingTabLayout
                 android:id="@+id/tabs"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/ColorPrimary"
-                android:elevation="2dp"
-                app:layout_scrollFlags="scroll|enterAlways" />
+                android:elevation="2dp"/>
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="2dp"
@@ -42,9 +87,8 @@
                 android:id="@+id/pager"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"></android.support.v4.view.ViewPager>
+                android:layout_weight="1" />
 
-        </android.support.design.widget.AppBarLayout>
-    </android.support.design.widget.CoordinatorLayout>
 
+    </LinearLayout>
 </RelativeLayout>

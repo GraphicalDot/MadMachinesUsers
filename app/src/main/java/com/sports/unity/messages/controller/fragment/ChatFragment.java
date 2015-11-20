@@ -1,33 +1,20 @@
 package com.sports.unity.messages.controller.fragment;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
-import android.view.Display;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.Switch;
-import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
-import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
-import com.sports.unity.messages.controller.activity.ChatScreenAdapter;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.ActivityActionHandler;
@@ -40,17 +27,14 @@ import java.util.ArrayList;
  */
 public class ChatFragment extends Fragment {
 
-    static ListView chatListView;
-
+    private ListView chatListView;
     private View view;
 
     private ChatFragmentDialogListAdapter chatFragmentDialogListAdapter;
 
-    //  MessageRecieved messageRecieved;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        //  messageRecieved = new MessageRecieved();
         view = inflater.inflate(com.sports.unity.R.layout.fragment_chats, container, false);
         initContent(view);
 
@@ -65,47 +49,12 @@ public class ChatFragment extends Fragment {
         chatListView.setEmptyView(view.findViewById(R.id.empty));
 
         chatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ArrayList<Chats> chatList = ((ChatListAdapter) chatListView.getAdapter()).getChatArrayList();
-                Chats chatObject = chatList.get(position);
-
-                Intent chatScreen = new Intent(getActivity(), ChatScreenActivity.class);
-
-                String groupSeverId = chatObject.groupServerId;
-                if (groupSeverId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
-                    long contactId = chatObject.contactId;
-                    Contacts contact = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
-
-                    String number = contact.jid;
-                    String name = chatObject.name;
-                    long chatId = chatObject.chatid;
-                    byte[] userpicture = chatList.get(position).userImage;
-
-                    chatScreen.putExtra("number", number);
-                    chatScreen.putExtra("name", name);
-                    chatScreen.putExtra("contactId", contactId);
-                    chatScreen.putExtra("chatId", chatId);
-                    chatScreen.putExtra("groupServerId", groupSeverId);
-                    chatScreen.putExtra("userpicture", userpicture);
-                } else {
-                    long contactId = chatObject.contactId;
-                    Contacts contacts = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
-                    String number = groupSeverId;
-                    String name = chatObject.name;
-                    long chatId = chatObject.chatid;
-                    byte[] groupImage = chatObject.groupImage;
-
-                    chatScreen.putExtra("number", number);
-                    chatScreen.putExtra("name", name);
-                    chatScreen.putExtra("contactId", contactId);
-                    chatScreen.putExtra("chatId", chatId);
-                    chatScreen.putExtra("groupServerId", groupSeverId);
-                    chatScreen.putExtra("userpicture", groupImage);
-                }
-
-                startActivity(chatScreen);
+                moveToNextActivity(position, ChatScreenActivity.class);
             }
+
         });
 
         chatListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -145,10 +94,22 @@ public class ChatFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
+                        if( chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID) ) {
+                            ChatScreenActivity.viewProfile(getActivity(), chatObject.userImage, chatObject.name, chatObject.groupServerId);
+                        } else {
+                            ChatScreenActivity.viewProfile(getActivity(), chatObject.groupImage, chatObject.name, chatObject.groupServerId);
+                        }
                         alert.dismiss();
                         break;
                     case 1:
-                        deleteChat(position, tag, chatObject);
+                        if( chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID) ) {
+                            deleteSingleChat(chatObject);
+                        } else {
+                            /*
+                             * Exit Group
+                             */
+                            //TODO
+                        }
                         alert.dismiss();
                         break;
                     case 2:
@@ -168,15 +129,55 @@ public class ChatFragment extends Fragment {
 
     }
 
-    private void deleteChat(int position, int tag, Chats chatObject) {
-        Log.i("deletechat", "true");
-        if (tag == 0) {
-            SportsUnityDBHelper.getInstance(getActivity()).clearChat(chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
-            SportsUnityDBHelper.getInstance(getActivity()).clearChatEntry(chatObject.chatid);
-            updateContent();
-        } else {
+    private void moveToNextActivity(int position, Class<?> cls){
+        ArrayList<Chats> chatList = ((ChatListAdapter) chatListView.getAdapter()).getChatArrayList();
+        Chats chatObject = chatList.get(position);
+        moveToNextActivity(chatObject, cls);
+    }
 
+    private void moveToNextActivity(Chats chatObject, Class<?> cls){
+        Intent intent = new Intent(getActivity(), cls);
+
+        String groupSeverId = chatObject.groupServerId;
+        if (groupSeverId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+            long contactId = chatObject.contactId;
+            Contacts contact = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
+
+            String number = contact.jid;
+            String name = chatObject.name;
+            Boolean blockStatus = chatObject.block;
+            long chatId = chatObject.chatid;
+            byte[] userpicture = chatObject.userImage;
+
+            intent.putExtra("number", number);
+            intent.putExtra("name", name);
+            intent.putExtra("contactId", contactId);
+            intent.putExtra("chatId", chatId);
+            intent.putExtra("groupServerId", groupSeverId);
+            intent.putExtra("userpicture", userpicture);
+            intent.putExtra("blockStatus", blockStatus);
+        } else {
+            long contactId = chatObject.contactId;
+            String number = groupSeverId;
+            String name = chatObject.name;
+            long chatId = chatObject.chatid;
+            byte[] groupImage = chatObject.groupImage;
+
+            intent.putExtra("number", number);
+            intent.putExtra("name", name);
+            intent.putExtra("contactId", contactId);
+            intent.putExtra("chatId", chatId);
+            intent.putExtra("groupServerId", groupSeverId);
+            intent.putExtra("userpicture", groupImage);
         }
+
+        startActivity(intent);
+    }
+
+    private void deleteSingleChat(Chats chatObject) {
+        SportsUnityDBHelper.getInstance(getActivity()).clearChat(chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+        SportsUnityDBHelper.getInstance(getActivity()).clearChatEntry(chatObject.chatid);
+        updateContent();
     }
 
     private ActivityActionListener activityActionListener = new ActivityActionListener() {
@@ -211,10 +212,6 @@ public class ChatFragment extends Fragment {
         }
     }
 
-    private void clearStaticContent() {
-        chatListView = null;
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -243,25 +240,6 @@ public class ChatFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        clearStaticContent();
     }
-
-//    public static class MessageRecieved extends BroadcastReceiver {
-//
-//        public MessageRecieved() {
-//        }
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            /*if (chatListView != null) {
-//                ArrayList<SportsUnityDBHelper.Chats> chatList = SportsUnityDBHelper.getInstance(context).getChatScreenList();
-//                ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
-//                adapter.updateList(chatList);
-//                chatListView.setAdapter(adapter);
-//                Toast.makeText(context, "refreshing list", Toast.LENGTH_SHORT).show();
-//
-//            }*/
-//        }
-//    }
 
 }

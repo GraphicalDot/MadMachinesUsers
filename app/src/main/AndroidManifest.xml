@@ -113,7 +113,8 @@
         </activity>
         <activity
             android:name=".common.controller.UserProfileActivity"
-            android:label="@string/title_activity_user_profile" >
+            android:label="@string/title_activity_user_profile"
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

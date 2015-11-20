@@ -285,8 +285,11 @@ public class XMPPService extends Service {
             try {
                 Log.i("XMPP Connection", "authenticated");
 
+                PersonalMessaging.getInstance(XMPPService.this).updateBlockList(XMPPService.this);
+
                 attachChatRelatedListeners((XMPPTCPConnection) connection);
                 getForms((XMPPTCPConnection) connection);
+
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

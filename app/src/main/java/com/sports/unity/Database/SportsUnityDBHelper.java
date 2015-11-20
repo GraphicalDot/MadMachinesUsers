@@ -51,7 +51,9 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             ContactsEntry.COLUMN_USER_IMAGE + " BLOB " + COMMA_SEP +
             ContactsEntry.COLUMN_STATUS + " VARCHAR " + COMMA_SEP +
             ContactsEntry.COLUMN_AVAILABLE + " boolean DEFAULT true " + COMMA_SEP +
-            ContactsEntry.COLUMN_REGISTERED + " boolean);";
+            ContactsEntry.COLUMN_REGISTERED + " boolean" + COMMA_SEP +
+            ContactsEntry.COLUMN_BLOCK_USER + " boolean DEFAULT false " +
+            ");";
 
     private static final String CREATE_MESSAGES_TABLE = "CREATE TABLE IF NOT EXISTS " +
             MessagesEntry.TABLE_NAME + "( " +
@@ -78,7 +80,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             ChatEntry.COLUMN_LAST_MESSAGE_ID + " INTEGER " + COMMA_SEP +
             ChatEntry.COLUMN_CONTACT_ID + " INTEGER " + COMMA_SEP +
             ChatEntry.COLUMN_MUTE_CONVERSATION + " boolean DEFAULT false " + COMMA_SEP +
-            ChatEntry.COLUMN_BLOCK_USER + " boolean DEFAULT false " + COMMA_SEP +
             ChatEntry.COLUMN_UNREAD_COUNT + " boolean );";
 
 //    private static final String CREATE_GROUP_TABLE = "CREATE TABLE IF NOT EXISTS " +
@@ -920,21 +921,21 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             String subQuery = "( SELECT " + ChatEntry.COLUMN_UNREAD_COUNT + " ," + ChatEntry.COLUMN_NAME + " ," + ChatEntry.COLUMN_CONTACT_ID + " ," +
                     ChatEntry.COLUMN_LAST_MESSAGE_ID + " ," + MessagesEntry.COLUMN_DATA_TEXT + " ," + MessagesEntry.COLUMN_DATA_MEDIA + " ," +
                     MessagesEntry.COLUMN_MIME_TYPE + " ," + MessagesEntry.COLUMN_SEND_TIMESTAMP + " ," + MessagesEntry.COLUMN_RECEIVE_TIMESTAMP + " , A." +
-                    ChatEntry.COLUMN_CHAT_ID + " ," + ChatEntry.COLUMN_GROUP_SERVER_ID + " ," + ChatEntry.COLUMN_IMAGE + "," + ChatEntry.COLUMN_MUTE_CONVERSATION + "," + ChatEntry.COLUMN_BLOCK_USER +
+                    ChatEntry.COLUMN_CHAT_ID + " ," + ChatEntry.COLUMN_GROUP_SERVER_ID + " ," + ChatEntry.COLUMN_IMAGE + "," + ChatEntry.COLUMN_MUTE_CONVERSATION +
                     " FROM " + ChatEntry.TABLE_NAME + " A INNER JOIN " + MessagesEntry.TABLE_NAME + " B ON " + ChatEntry.COLUMN_LAST_MESSAGE_ID + " = " + MessagesEntry.COLUMN_ID + " ) ";
 
-            String selectQuery = " SELECT B.* , A." + ContactsEntry.COLUMN_USER_IMAGE + " FROM " +
+            String selectQuery = " SELECT B.* , A." + ContactsEntry.COLUMN_USER_IMAGE + "," + ContactsEntry.COLUMN_BLOCK_USER +" FROM " +
                     ContactsEntry.TABLE_NAME + " A INNER JOIN " + subQuery + " B  ON A." + ContactsEntry.COLUMN_CONTACT_ID + " = B." + ChatEntry.COLUMN_CONTACT_ID;
 
             Cursor cursor = db.rawQuery(selectQuery, null);
             if (cursor.moveToFirst()) {
                 do {
                     boolean value_mute = cursor.getInt(12) == 1;
-                    boolean value_block = cursor.getInt(13) == 1;
+                    boolean value_block = cursor.getInt(14) == 1;
                     list.add(new Chats(cursor.getInt(0), cursor.getString(1), cursor.getInt(2),
                             cursor.getInt(3), cursor.getString(4), cursor.getBlob(5),
                             cursor.getString(6), cursor.getString(7), cursor.getString(8),
-                            cursor.getInt(9), cursor.getString(10), cursor.getBlob(11), value_mute, value_block, cursor.getBlob(14)));
+                            cursor.getInt(9), cursor.getString(10), cursor.getBlob(11), value_mute, cursor.getBlob(13), value_block));
                 } while (cursor.moveToNext());
             }
 
@@ -943,6 +944,26 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         return list;
 
+    }
+
+    public ArrayList<String> getUserBlockedList() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectQuery = "SELECT " + ContactsEntry.COLUMN_PHONENUMBER + " FROM " + ContactsEntry.TABLE_NAME + " where " + ContactsEntry.COLUMN_BLOCK_USER + " = ? ";
+
+        ArrayList<String> userBlockedList = new ArrayList<>();
+
+        String[] args = { String.valueOf(1)};
+        Cursor cursor = db.rawQuery( selectQuery, args);
+
+        if(cursor.moveToFirst()) {
+            do {
+                userBlockedList.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        return userBlockedList;
     }
 
     public void clearChat(long chatId, String groupServerId) {
@@ -968,38 +989,37 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         }
     }
 
-
-    public void updateUserBlockStatus(long chatId, boolean blockStatus) {
+    public void updateUserBlockStatus(long contactId, boolean blockStatus) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(ChatEntry.COLUMN_BLOCK_USER, blockStatus);
+        values.put(ContactsEntry.COLUMN_BLOCK_USER, blockStatus);
 
-        String selection = ChatEntry.COLUMN_CHAT_ID + " = ?";
-        String[] selectionArgs = {String.valueOf(chatId)};
+        String selection = ContactsEntry.COLUMN_CONTACT_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(contactId)};
 
         int count = db.update(
-                ChatEntry.TABLE_NAME,
+                ContactsEntry.TABLE_NAME,
                 values,
                 selection,
                 selectionArgs);
 
     }
 
-    public boolean isChatBlocked(long chatId) {
+    public boolean isChatBlocked(long contactId) {
 
         boolean block = false;
         SQLiteDatabase db = this.getWritableDatabase();
 
         String projection[] = {
-                ChatEntry.COLUMN_BLOCK_USER
+                ContactsEntry.COLUMN_BLOCK_USER
         };
 
-        String selection = ChatEntry.COLUMN_CHAT_ID + " LIKE ? ";
-        String[] selectionArgs = {String.valueOf(chatId)};
+        String selection = ContactsEntry.COLUMN_CONTACT_ID + " LIKE ? ";
+        String[] selectionArgs = {String.valueOf(contactId)};
 
         Cursor c = db.query(
-                ChatEntry.TABLE_NAME,  // The table to query
+                ContactsEntry.TABLE_NAME,  // The table to query
                 projection,                               // The columns to return
                 selection,                                // The columns for the WHERE clause
                 selectionArgs,                            // The values for the WHERE clause

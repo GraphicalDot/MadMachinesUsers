@@ -1,6 +1,7 @@
 package com.sports.unity.messages.controller.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -8,27 +9,29 @@ import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
 import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
+import org.jivesoftware.smackx.privacy.PrivacyList;
 import org.jivesoftware.smackx.privacy.PrivacyListManager;
 import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.WeakHashMap;
 
 /**
  * Created by madmachines on 16/10/15.
  */
 public class PersonalMessaging {
+
+    private static final String PRIVACY_LIST_NAME = "spuBlockedList";
 
     private static PersonalMessaging pmessaging = null;
 
@@ -120,31 +123,88 @@ public class PersonalMessaging {
         }
     }
 
-    public void blockUser(XMPPConnection connection, String phoneNumber) {
+    public void updateBlockList(Context context){
+        List<PrivacyItem> privacyItems = getPrivacyList();
 
-        String listName = "newList";
-        List<PrivacyItem> privacyItems = new Vector<PrivacyItem>();
+        if( privacyItems.size() > -1 ) {
+            ArrayList<String> blockedUserList = SportsUnityDBHelper.getInstance(context).getUserBlockedList();
+            if( blockedUserList.size() != 0 ) {
+                privacyItems = new ArrayList<>();
+                for (String phoneNumber : blockedUserList ) {
+                    phoneNumber += "@mm.io";
+                    privacyItems.add( new PrivacyItem(PrivacyItem.Type.jid, phoneNumber, false, 1));
+                    Log.i("Privacy" , phoneNumber);
+                }
+                sendPrivacyList(privacyItems);
+            } else {
+                //nothing
+            }
 
-        PrivacyItem item = new PrivacyItem(PrivacyItem.Type.jid,
-                phoneNumber,false, 1);
-        privacyItems.add(item);
-
-        try {
-            PrivacyListManager privacyManager;
-            privacyManager = PrivacyListManager
-                    .getInstanceFor(connection);
-            privacyManager.createPrivacyList(listName, privacyItems);
-
-        } catch (Exception e) {
-            System.out.println("PRIVACY_ERROR: " + e);
+        } else {
+            //nothing
         }
-
     }
 
-    public void unBlockUser(ChatState newState, Chat chat) {
+    public boolean changeUserBlockStatus(String phoneNumber, boolean status) {
+        boolean success = false;
+        phoneNumber += "@mm.io";
 
+        List<PrivacyItem> privacyItems = getPrivacyList();
 
+        /*
+         * remove item if already exist.
+         */
+        for (PrivacyItem item : privacyItems) {
+            String from = item.getValue();
+            if (from.equalsIgnoreCase(phoneNumber)) {
+                privacyItems.remove(item);
+                break;
+            }
+        }
 
+        /*
+         * add new privacy item
+         */
+        PrivacyItem item = new PrivacyItem(PrivacyItem.Type.jid, phoneNumber, !status, 1);
+        privacyItems.add(item);
+
+        success = sendPrivacyList(privacyItems);
+
+        return success;
+    }
+
+    private List<PrivacyItem> getPrivacyList(){
+        List<PrivacyItem> privacyItems = new ArrayList<>();
+
+        PrivacyListManager privacyManager = PrivacyListManager.getInstanceFor(XMPPClient.getConnection());
+        try {
+            PrivacyList plist = privacyManager.getPrivacyList(PRIVACY_LIST_NAME);
+            privacyItems = plist.getItems();
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        }
+
+        return privacyItems;
+    }
+
+    private boolean sendPrivacyList(List<PrivacyItem> privacyItems){
+        boolean success = false;
+        PrivacyListManager privacyManager = PrivacyListManager.getInstanceFor(XMPPClient.getConnection());
+
+        try{
+            privacyManager.updatePrivacyList(PRIVACY_LIST_NAME, privacyItems);
+            privacyManager.setActiveListName(PRIVACY_LIST_NAME);
+
+            success = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return success;
     }
 
     public void setReceivedReceipts(String fromJid, String receiptId, Context applicationContext) {
@@ -197,8 +257,6 @@ public class PersonalMessaging {
          */
 
         sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, null);
-
-
     }
 
 }

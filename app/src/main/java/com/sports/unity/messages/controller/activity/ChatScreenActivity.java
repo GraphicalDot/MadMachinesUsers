@@ -1,13 +1,19 @@
 package com.sports.unity.messages.controller.activity;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -32,8 +38,10 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
+import com.sports.unity.common.controller.UserProfileActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.messages.controller.BlockUnblockUserHelper;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.GroupMessaging;
 import com.sports.unity.messages.controller.model.Message;
@@ -50,7 +58,6 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
-import org.jivesoftware.smackx.privacy.PrivacyListManager;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -67,6 +74,16 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     private static byte[] userImageBytes;
 
     private static long chatID = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
+
+    public static void viewProfile(Activity activity, byte[] profilePicture, String name, String groupServerId) {
+
+        Intent intent = new Intent(activity, UserProfileActivity.class);
+
+        intent.putExtra("name", name);
+        intent.putExtra("profilePicture", profilePicture);
+        intent.putExtra("groupServerId", groupServerId);
+        activity.startActivity(intent);
+    }
 
     private long contactID = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
     private String groupServerId = null;
@@ -89,13 +106,16 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
     private CircleImageView userPic;
 
-
     private SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
 
     private PersonalMessaging personalMessaging = PersonalMessaging.getInstance(this);
 
     private GroupMessaging groupMessaging = GroupMessaging.getInstance(this);
     private MultiUserChat multiUserChat = null;
+
+    private BlockUnblockUserHelper blockUnblockUserHelper = null;
+
+    private Menu menu = null;
 
     private ActivityActionListener activityActionListener = new ActivityActionListener() {
         @Override
@@ -197,12 +217,26 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         back = (ImageButton) toolbar.findViewById(R.id.backarrow);
         messageText = (EditText) findViewById(R.id.msg);
         status = (TextView) toolbar.findViewById(R.id.status_active);
+        LinearLayout profile_link = (LinearLayout)  toolbar.findViewById(R.id.profile);
+
+        profile_link.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+               viewProfile(ChatScreenActivity.this, userImageBytes, JABBERNAME, groupServerId);
+            }
+        });
         Button mSend = (Button) findViewById(R.id.send);
 
-        /**
-         * getting all the extras in the intent neccesary for communicating in chat and layout
-         */
-        getIntentExtras();
+        {
+            /**
+             * getting all the extras in the intent neccesary for communicating in chat and layout
+             */
+            getIntentExtras();
+
+            boolean blockStatus = getIntent() .getBooleanExtra("blockStatus", false);
+            blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus);
+        }
 
         if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
             ChatManager chatManager = ChatManager.getInstanceFor(con);
@@ -210,8 +244,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             if (chat == null) {
                 chat = chatManager.createChat(JABBERID + "@mm.io");
             }
-
-            initChatId();
         } else {
             isGroupChat = true;
             MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(con);
@@ -278,6 +310,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         });
 
     }
+
 
     private void populateMessagesOnScreen() {
         ListView mChatView = (ListView) findViewById(R.id.msgview);               // List for messages
@@ -352,14 +385,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
     }
 
-    private void initChatId() {
-        if (chatID == SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
-            chatID = sportsUnityDBHelper.getChatEntryID(contactID, groupServerId);
-        } else {
-            //nothing
-        }
-    }
-
     private void createChatEntryifNotExists() {
         if (!isGroupChat) {
             if (chatID == SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
@@ -404,6 +429,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     }
 
     private void sendMessage() {
+        if( blockUnblockUserHelper.isBlockStatus() ){
+            blockUnblockUserHelper.showAlert_ToSendMessage_UnblockUser(this, contactID, JABBERID, menu);
+            return;
+        }
+
         createChatEntryifNotExists();
 
         if (messageText.getText().toString().equals("")) {
@@ -624,8 +654,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_chat_screen, menu);
+
+        this.menu = menu;
+
+        blockUnblockUserHelper.initViewBasedOnBlockStatus(menu);
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -636,24 +672,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_view_contact) {
+            viewProfile(ChatScreenActivity.this, userImageBytes, JABBERNAME, groupServerId);
             return true;
-        }
-
-        if (id == R.id.action_block_user) {
-
-           if( sportsUnityDBHelper.isChatBlocked(chatID)) {
-               item.setTitle("Unblock User");
-           } else {
-               item.setTitle("Block User");
-           }
-
-        }
-        if (id == R.id.action_clear_chat) {
+        } else if (id == R.id.action_block_user) {
+            blockUnblockUserHelper.onMenuItemSelected( this, contactID, JABBERID, menu);
+        } else if (id == R.id.action_clear_chat) {
             sportsUnityDBHelper.clearChat(chatID, groupServerId);
             messageList = sportsUnityDBHelper.getMessages(chatID);
             chatScreenAdapter.notifydataset(messageList);
-        }
-        if (id == R.id.action_search) {
+        } else if (id == R.id.action_search) {
             return true;
         }
         return super.onOptionsItemSelected(item);
