@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
@@ -18,19 +17,15 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.sports.unity.ChatScreenApplication;
@@ -46,6 +41,7 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.GroupMessaging;
 import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
+import com.sports.unity.messages.controller.viewhelper.ChatKeyboardHelper;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 
@@ -59,7 +55,6 @@ import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -69,6 +64,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     private static ArrayList<Message> messageList;
     private static ChatScreenAdapter chatScreenAdapter;
     private static GroupChatScreenAdapter groupChatScreenAdapter;
+
     private static String JABBERID;
     private static String JABBERNAME;
     private static byte[] userImageBytes;
@@ -85,6 +81,12 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         activity.startActivity(intent);
     }
 
+    private static XMPPTCPConnection con;
+
+    public static String getJABBERID() {
+        return JABBERID;
+    }
+
     private long contactID = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
     private String groupServerId = null;
     private boolean isGroupChat = false;
@@ -95,27 +97,20 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     private ImageButton back;
 
     private ViewGroup parentLayout;
-
-    private View popUpView;
-    private PopupWindow popupWindow;
-
-    private int keyboardHeight;
-    private boolean isKeyBoardVisible;
-    private static XMPPTCPConnection con;
-
-
     private CircleImageView userPic;
 
     private SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
 
     private PersonalMessaging personalMessaging = PersonalMessaging.getInstance(this);
-
     private GroupMessaging groupMessaging = GroupMessaging.getInstance(this);
+
     private MultiUserChat multiUserChat = null;
 
     private BlockUnblockUserHelper blockUnblockUserHelper = null;
 
     private Menu menu = null;
+
+    private ChatKeyboardHelper chatKeyboardHelper = null;
 
     private ActivityActionListener activityActionListener = new ActivityActionListener() {
         @Override
@@ -197,8 +192,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         setContentView(R.layout.activity_chat_screen);
 
         parentLayout = (ViewGroup) findViewById(R.id.list_parent);
-        checkKeyboardHeight(parentLayout);
-        createPopupWindowOnKeyBoard();
+
+        chatKeyboardHelper = new ChatKeyboardHelper();
+        chatKeyboardHelper.checkKeyboardHeight(parentLayout);
+        chatKeyboardHelper.createPopupWindowOnKeyBoard(this);
 
         con = XMPPClient.getConnection();
 
@@ -336,11 +333,9 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     }
 
     private void clearUnreadCount() {
-
         if (chatID != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
             sportsUnityDBHelper.clearUnreadCount(chatID, groupServerId);
         }
-
     }
 
     private void initUI(Toolbar toolbar) {
@@ -456,198 +451,43 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         messageText.setText("");
     }
 
-    /**
-     * Overriding onKeyDown for dismissing keyboard on key down
-     */
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (popupWindow.isShowing()) {
-            popupWindow.dismiss();
-            return false;
-        } else {
-            return super.onKeyDown(keyCode, event);
-        }
-    }
-
-    /**
-     * Checking keyboard height and keyboard visibility
-     */
-    int previousHeightDiffrence = 0;
-
-    private void checkKeyboardHeight(final View parentLayout) {
-
-        parentLayout.getViewTreeObserver().addOnGlobalLayoutListener(
-                new ViewTreeObserver.OnGlobalLayoutListener() {
-
-                    @Override
-                    public void onGlobalLayout() {
-
-                        Rect r = new Rect();
-                        parentLayout.getWindowVisibleDisplayFrame(r);
-
-                        int screenHeight = parentLayout.getRootView()
-                                .getHeight();
-                        int heightDifference = screenHeight - (r.bottom);
-
-                        if (previousHeightDiffrence - heightDifference > 50) {
-                            popupWindow.dismiss();
-                        }
-
-                        previousHeightDiffrence = heightDifference;
-                        if (heightDifference > 100) {
-
-                            isKeyBoardVisible = true;
-                            changeKeyboardHeight(heightDifference);
-
-                        } else {
-
-                            isKeyBoardVisible = false;
-
-                        }
-
-                    }
-                });
-
-    }
-
-    /**
-     * change height of emoticons keyboard according to height of actual
-     * keyboard
-     *
-     * @param height minimum height by which we can make sure actual keyboard is
-     *               open or not
-     */
-    private void changeKeyboardHeight(int height) {
-
-        if (height > 100) {
-            keyboardHeight = height;
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT, keyboardHeight);
-//            emoticonsCover.setLayoutParams(params);
-        }
-
-    }
-
     public void openCamera(View view) {
-        if (isKeyBoardVisible) {
-            enablePopupWindowOnKeyBoard();
-            ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_camera);
-            viewGroup.setVisibility(View.VISIBLE);
-            Intent intent = new Intent(ChatScreenActivity.this, CameraActivity.class);
-            startActivity(intent);
-
-        }
-
+        chatKeyboardHelper.openCamera(view, parentLayout, this);
     }
-
 
     public void emojipopup(View view) {
-        if (isKeyBoardVisible) {
-            enablePopupWindowOnKeyBoard();
-            ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_emoji);
-            viewGroup.setVisibility(View.VISIBLE);
-        }
+        chatKeyboardHelper.openEmoji(view, parentLayout, this);
     }
 
 
     public void galleryPopup(View view) {
-        if (isKeyBoardVisible) {
-            enablePopupWindowOnKeyBoard();
-            ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_gallery);
-            viewGroup.setVisibility(View.VISIBLE);
-            Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
-            photoPickerIntent.setType("image/*");
-            startActivityForResult(photoPickerIntent, 1);
-        }
+        chatKeyboardHelper.openGallery(view, parentLayout, this);
+    }
+
+    public void voicePopup(View view) {
+        chatKeyboardHelper.openVoiceRecorder(view, parentLayout, this);
+    }
+
+    public void openKeyBoard(View view) {
+        chatKeyboardHelper.openTextKeyBoard(view, parentLayout, this);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            Uri chosenImageUri = data.getData();
-            //File imageFile = new File(getRealPathFromURI(chosenImageUri));
-
-
-            Bitmap mBitmap = null;
-            try {
-                mBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), chosenImageUri);
-                Log.i("getBitmap? :", "yes");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            //      convertTobyteArray(mBitmap, imageFile);
-        }
-    }
-
-    /*private String getRealPathFromURI(Uri contentURI) {
-        String result;
-        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) { // Source is Dropbox or other similar local file path
-            result = contentURI.getPath();
-        } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            result = cursor.getString(idx);
-            cursor.close();
-        }
-        return result;
-    }*/
-
-/*    private void convertTobyteArray(Bitmap mBitmap, File imageFile) {
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        mBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-        byte[] byteArray = stream.toByteArray();
-        getMD5checksum(byteArray, imageFile);
-    }
-
-    private void getMD5checksum(byte[] s, File imageFile) {
-
-        byte[] hash = new byte[0];
-        try {
-            MessageDigest messageDigest = MessageDigest.getInstance("MD5");
-            messageDigest.update(s);
-            hash = messageDigest.digest();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        Log.i("hash", String.valueOf(hash));
-        HttpManager.getInstance().HttpPostImageRequest(hash, imageFile);
-    }*/
-
-    public void voicePopup(View view) {
-        if (isKeyBoardVisible) {
-            enablePopupWindowOnKeyBoard();
-            ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_voice);
-            viewGroup.setVisibility(View.VISIBLE);
-        }
-    }
-
-    public void showKeyboard(View view) {
-
-        if (popupWindow.isShowing())
-            popupWindow.dismiss();
-
-    }
-
-    private void createPopupWindowOnKeyBoard() {
-
-        popUpView = getLayoutInflater().inflate(R.layout.parent_layout_media_keyboard, null);
-        popupWindow = new PopupWindow(popUpView, ViewGroup.LayoutParams.MATCH_PARENT, (int) keyboardHeight, false);
-
-    }
-
-    private void enablePopupWindowOnKeyBoard() {
-        if (!popupWindow.isShowing()) {
-            popupWindow.setHeight((int) (keyboardHeight));
-            popupWindow.showAtLocation(parentLayout, Gravity.BOTTOM, 0, 0);
-        } else {
-            //nothing
-        }
-
-        ViewGroup contentView = ((ViewGroup) popupWindow.getContentView());
-        for (int loop = 0; loop < contentView.getChildCount(); loop++) {
-            contentView.getChildAt(loop).setVisibility(View.GONE);
-        }
+//        if (resultCode == RESULT_OK) {
+//            Uri chosenImageUri = data.getData();
+//            //File imageFile = new File(getRealPathFromURI(chosenImageUri));
+//
+//
+//            Bitmap mBitmap = null;
+//            try {
+//                mBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), chosenImageUri);
+//                Log.i("getBitmap? :", "yes");
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            //      convertTobyteArray(mBitmap, imageFile);
+//        }
     }
 
     @Override
@@ -684,11 +524,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-
-    public static String getJABBERID() {
-        return JABBERID;
     }
 
 }

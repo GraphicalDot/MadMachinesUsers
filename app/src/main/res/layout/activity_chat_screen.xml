@@ -39,6 +39,7 @@
             android:background="@color/horizontal_line_grey"/>
 
         <LinearLayout
+            android:id="@+id/send_message_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
@@ -79,7 +80,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:onClick="showKeyboard"
+                android:onClick="openKeyBoard"
                 android:src="@drawable/ic_keyboard_selected" />
 
             <ImageButton
@@ -121,4 +122,11 @@
 
         </LinearLayout>
     </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        />
+
 </RelativeLayout>

@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
@@ -32,7 +33,7 @@ import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 
-public class CreateGroup extends AppCompatActivity {
+public class CreateGroup extends CustomAppCompatActivity {
 
     private String groupName = null;
     private String groupDescription = null;
