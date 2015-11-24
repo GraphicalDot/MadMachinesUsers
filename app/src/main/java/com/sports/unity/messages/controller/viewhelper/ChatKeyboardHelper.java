@@ -3,7 +3,17 @@ package com.sports.unity.messages.controller.viewhelper;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
@@ -12,8 +22,7 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.Gallery;
 import android.widget.PopupWindow;
 
 import com.sports.unity.R;
@@ -21,6 +30,8 @@ import com.sports.unity.messages.controller.activity.NativeCameraActivity;
 
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
+
+import java.util.ArrayList;
 
 /**
  * Created by amandeep on 17/11/15.
@@ -48,6 +59,8 @@ public class ChatKeyboardHelper {
     private boolean isKeyBoardVisible = false;
 
     private ViewGroup parentLayout;
+
+    private KeyboardOpenedListener keyboardOpenedListener = null;
 
     private ChatKeyboardHelper(){
 
@@ -204,6 +217,12 @@ public class ChatKeyboardHelper {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_gallery);
         int visibility = viewGroup.getVisibility();
 
+        RecyclerView gallery = (RecyclerView) viewGroup.findViewById(com.sports.unity.R.id.my_recycler_view);
+        gallery.setHasFixedSize(true);
+
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL, false);
+        gallery.setLayoutManager(mLayoutManager);
+
         hideAllInputLayouts();
         if ( isKeyBoardVisible ) {
             if( visibility == View.VISIBLE ){
@@ -212,14 +231,15 @@ public class ChatKeyboardHelper {
                 viewGroup.setVisibility(View.VISIBLE);
                 showPopupWindow(parentLayout);
 
-                postActionOnOpeningGalleryKeyboard(activity);
+                postActionOnOpeningGalleryKeyboard(gallery, activity);
             }
 
         } else {
             toggleSystemKeyboard(parentLayout, activity.getApplicationContext());
 
             viewGroup.setVisibility(View.VISIBLE);
-            postActionOnOpeningGalleryKeyboard(activity);
+
+            postActionOnOpeningGalleryKeyboard(gallery, activity);
         }
     }
 
@@ -270,13 +290,23 @@ public class ChatKeyboardHelper {
         //TODO
     }
 
-    private void postActionOnOpeningGalleryKeyboard(Activity activity){
+    private void postActionOnOpeningGalleryKeyboard(final RecyclerView gallery, final Activity activity){
         ViewGroup sendMessageLayout = (ViewGroup)activity.findViewById(R.id.send_message_layout);
         sendMessageLayout.setVisibility(View.GONE);
 
-//      Intent photoPickerIntent = new Intent(Intent.ACTION_GET_CONTENT);
-//      photoPickerIntent.setType("image/*");
-//      activity.startActivityForResult(photoPickerIntent, 1);
+        if( isKeyBoardVisible ){
+            showGalleryView( activity, gallery);
+        } else {
+            keyboardOpenedListener = new KeyboardOpenedListener(){
+
+                @Override
+                public void keyboardOpened(int keyboardHeight) {
+                    showGalleryView( activity, gallery);
+                    keyboardOpenedListener = null;
+                }
+
+            };
+        }
     }
 
     private void postActionOnOpeningVoiceKeyboard(Activity activity){
@@ -317,11 +347,25 @@ public class ChatKeyboardHelper {
             keyboardHeight = height;
             popupWindow.setHeight(keyboardHeight);
 
+            if( keyboardOpenedListener != null){
+                keyboardOpenedListener.keyboardOpened(keyboardHeight);
+            }
+
             if( popupWindow.isShowing() ) {
                 popupWindow.dismiss();
                 showPopupWindow(parentLayout);
             }
         }
+    }
+
+    private void showGalleryView(Activity activity, RecyclerView recyclerView){
+        ArrayList<String> path = getAllShownImagesPath(activity);
+        Bitmap bMap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.images);
+        Bitmap bMapScaled = Bitmap.createScaledBitmap(bMap, keyboardHeight, keyboardHeight, true);
+        Drawable placeholder = new BitmapDrawable(activity.getResources(), bMapScaled);
+
+        RecyclerView.Adapter mAdapter = new ImageAdapterForGallery(activity, path, keyboardHeight, placeholder);
+        recyclerView.setAdapter(mAdapter);
     }
 
     private void showPopupWindow(View parentLayout){
@@ -330,6 +374,39 @@ public class ChatKeyboardHelper {
         } else {
             //nothing
         }
+    }
+
+    public static ArrayList<String> getAllShownImagesPath(Activity activity) {
+        Uri uri;
+        Cursor cursor;
+        int column_index_data;
+
+        ArrayList<String> listOfAllImages = new ArrayList<String>();
+        String absolutePathOfImage = null;
+
+        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+        // String path = android.os.Environment.DIRECTORY_DCIM;
+
+        String[] projection = { MediaStore.MediaColumns.DATA };
+
+        cursor = activity.getContentResolver().query(uri, projection, null,
+                null, null);
+
+        // column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
+        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+
+        while (cursor.moveToNext()) {
+            absolutePathOfImage = cursor.getString(column_index_data);
+            listOfAllImages.add(absolutePathOfImage);
+        }
+        cursor.close();
+        return listOfAllImages;
+    }
+
+    private interface KeyboardOpenedListener {
+
+        public void keyboardOpened(int keyboardHeight);
+
     }
 
 }
