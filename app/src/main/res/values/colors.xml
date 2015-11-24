@@ -29,4 +29,6 @@
     <color name="popup_menu_options">#222222</color>
     <color name="group_receive_name">#808080</color>
 
+    <color name="semi_transparent">#44000000</color>
+
 </resources>

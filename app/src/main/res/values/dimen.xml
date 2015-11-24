@@ -32,4 +32,6 @@
 
     <dimen name="menu_item_height">55dp</dimen>
 
+    <dimen name="camera_ring_button_size">70dp</dimen>
+
 </resources>

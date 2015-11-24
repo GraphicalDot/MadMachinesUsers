@@ -1,18 +1,12 @@
 package com.sports.unity.messages.controller.viewhelper;
 
 import android.app.Activity;
-import android.app.Fragment;
-import android.app.FragmentManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
-import android.hardware.Camera;
-import android.hardware.camera2.CameraDevice;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -23,12 +17,28 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 
 import com.sports.unity.R;
-import com.sports.unity.messages.controller.activity.CameraActivity;
+import com.sports.unity.messages.controller.activity.NativeCameraActivity;
+
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 /**
  * Created by amandeep on 17/11/15.
  */
 public class ChatKeyboardHelper {
+
+    private static ChatKeyboardHelper CHAT_KEYBOARD_HELPER = null;
+
+    public static ChatKeyboardHelper getInstance(boolean newInstance){
+        if( CHAT_KEYBOARD_HELPER == null || newInstance ){
+            CHAT_KEYBOARD_HELPER = new ChatKeyboardHelper();
+        }
+        return CHAT_KEYBOARD_HELPER;
+    }
+
+    public static void clean(){
+        CHAT_KEYBOARD_HELPER = null;
+    }
 
     private View popUpView;
     private PopupWindow popupWindow;
@@ -37,11 +47,15 @@ public class ChatKeyboardHelper {
     private int previuosKeyboardHeight;
     private boolean isKeyBoardVisible = false;
 
-    public ChatKeyboardHelper(){
+    private ViewGroup parentLayout;
+
+    private ChatKeyboardHelper(){
 
     }
 
-    public void createPopupWindowOnKeyBoard(Activity activity) {
+    public void createPopupWindowOnKeyBoard(ViewGroup parentLayout, Activity activity) {
+        this.parentLayout = parentLayout;
+
         popUpView = activity.getLayoutInflater().inflate(R.layout.parent_layout_media_keyboard, null);
         popupWindow = new PopupWindow(popUpView, ViewGroup.LayoutParams.MATCH_PARENT, (int) keyboardHeight, false);
     }
@@ -49,9 +63,9 @@ public class ChatKeyboardHelper {
     /**
      * Checking keyboard height and keyboard visibility
      */
-    public void checkKeyboardHeight(final View parentLayout) {
+    public void checkKeyboardHeight() {
 
-        parentLayout.getViewTreeObserver().addOnGlobalLayoutListener(
+        parentLayout.findViewById(R.id.type_msg).getViewTreeObserver().addOnGlobalLayoutListener(
 
                 new ViewTreeObserver.OnGlobalLayoutListener() {
 
@@ -69,6 +83,8 @@ public class ChatKeyboardHelper {
                         }
                         previuosKeyboardHeight = heightDifference;
 
+                        Log.i("Height Diff ", "" + heightDifference);
+
                         if (heightDifference > 100) {
 
                             if (!isKeyBoardVisible) {
@@ -81,11 +97,13 @@ public class ChatKeyboardHelper {
 
                                     if (visibility == View.VISIBLE) {
                                         popupWindow.dismiss();
+
                                     } else {
                                         if (isAnyInputLayoutVisible()) {
                                             showPopupWindow(parentLayout);
                                         } else {
                                             viewGroup.setVisibility(View.VISIBLE);
+
                                             popupWindow.dismiss();
                                         }
                                     }
@@ -97,6 +115,7 @@ public class ChatKeyboardHelper {
                                 isKeyBoardVisible = false;
 
                                 popupWindow.dismiss();
+
                                 hideAllInputLayouts();
 
                                 ViewGroup sendMessageLayout = (ViewGroup) parentLayout.findViewById(R.id.send_message_layout);
@@ -108,7 +127,7 @@ public class ChatKeyboardHelper {
                 });
     }
 
-    public void openTextKeyBoard(View view, ViewGroup parentLayout, Activity activity) {
+    public void openTextKeyBoard(Activity activity) {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_text);
         int visibility = viewGroup.getVisibility();
 
@@ -132,7 +151,7 @@ public class ChatKeyboardHelper {
 
     }
 
-    public void openCamera(View view, ViewGroup parentLayout, Activity activity) {
+    public void openCamera(Activity activity) {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_camera);
         int visibility = viewGroup.getVisibility();
 
@@ -145,17 +164,19 @@ public class ChatKeyboardHelper {
                 showPopupWindow(parentLayout);
 
                 postActionOnOpeningCameraKeyboard(activity);
+                toggleSystemKeyboard(parentLayout, activity.getApplicationContext());
             }
 
         } else {
-            toggleSystemKeyboard(parentLayout, activity.getApplicationContext());
+//            viewGroup.setVisibility(View.VISIBLE);
+//            postActionOnOpeningCameraKeyboard(activity);
 
-            viewGroup.setVisibility(View.VISIBLE);
-            postActionOnOpeningCameraKeyboard(activity);
+            Intent intent = new Intent(activity, NativeCameraActivity.class);
+            activity.startActivity(intent);
         }
     }
 
-    public void openEmoji(View view, ViewGroup parentLayout, Activity activity) {
+    public void openEmoji(Activity activity) {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_emoji);
         int visibility = viewGroup.getVisibility();
 
@@ -179,7 +200,7 @@ public class ChatKeyboardHelper {
     }
 
 
-    public void openGallery(View view, ViewGroup parentLayout, Activity activity) {
+    public void openGallery(Activity activity) {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_gallery);
         int visibility = viewGroup.getVisibility();
 
@@ -202,7 +223,7 @@ public class ChatKeyboardHelper {
         }
     }
 
-    public void openVoiceRecorder(View view, ViewGroup parentLayout, Activity activity) {
+    public void openVoiceRecorder(Activity activity) {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_voice);
         int visibility = viewGroup.getVisibility();
 
@@ -238,27 +259,8 @@ public class ChatKeyboardHelper {
         ViewGroup sendMessageLayout = (ViewGroup)activity.findViewById(R.id.send_message_layout);
         sendMessageLayout.setVisibility(View.GONE);
 
-//        {
-//            // update the main content by replacing fragments
-//            FragmentManager fragmentManager = activity.getFragmentManager();
-//            Fragment targetFragment = NativeCameraFragment.newInstance();
-//            fragmentManager.beginTransaction()
-//                    .replace(R.id.container, targetFragment)
-//                    .commit();
-//        }
-
-//        {
-//            NativeCameraFragment nativeCameraFragment = NativeCameraFragment.newInstance();
-//            nativeCameraFragment.onCreateView(LayoutInflater.from(activity.getBaseContext()),
-//                    (ViewGroup)popupWindow.getContentView().findViewById(R.id.popup_window_camera),
-//                    activity.getBaseContext());
-//        }
-
-
-//        CameraPreview.safeCameraOpenInView( popupWindow.getContentView(), activity.getBaseContext());
-
-//      Intent intent = new Intent(activity, CameraActivity.class);
-//      activity.startActivity(intent);
+        Intent intent = new Intent(activity, NativeCameraActivity.class);
+        activity.startActivity(intent);
     }
 
     private void postActionOnOpeningEmojiKeyboard(Activity activity){

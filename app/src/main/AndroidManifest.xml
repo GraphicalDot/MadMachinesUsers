@@ -107,13 +107,12 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".messages.controller.activity.CameraActivity"
-            android:label="@string/title_activity_camera"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
             android:name=".common.controller.UserProfileActivity"
             android:label="@string/title_activity_user_profile"
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".messages.controller.activity.NativeCameraActivity"
             android:screenOrientation="portrait">
         </activity>
     </application>

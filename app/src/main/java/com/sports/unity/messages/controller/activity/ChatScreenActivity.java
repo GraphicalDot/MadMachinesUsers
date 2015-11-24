@@ -1,18 +1,10 @@
 package com.sports.unity.messages.controller.activity;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.Rect;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -191,11 +183,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_screen);
 
-        parentLayout = (ViewGroup) findViewById(R.id.list_parent);
+        parentLayout = (ViewGroup) findViewById(R.id.chat_layout_root_view);
 
-        chatKeyboardHelper = new ChatKeyboardHelper();
-        chatKeyboardHelper.checkKeyboardHeight(parentLayout);
-        chatKeyboardHelper.createPopupWindowOnKeyBoard(this);
+        chatKeyboardHelper = ChatKeyboardHelper.getInstance(true);
+        chatKeyboardHelper.createPopupWindowOnKeyBoard( parentLayout, this);
+        chatKeyboardHelper.checkKeyboardHeight();
 
         con = XMPPClient.getConnection();
 
@@ -452,24 +444,24 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     }
 
     public void openCamera(View view) {
-        chatKeyboardHelper.openCamera(view, parentLayout, this);
+        chatKeyboardHelper.openCamera(this);
     }
 
     public void emojipopup(View view) {
-        chatKeyboardHelper.openEmoji(view, parentLayout, this);
+        chatKeyboardHelper.openEmoji(this);
     }
 
 
     public void galleryPopup(View view) {
-        chatKeyboardHelper.openGallery(view, parentLayout, this);
+        chatKeyboardHelper.openGallery(this);
     }
 
     public void voicePopup(View view) {
-        chatKeyboardHelper.openVoiceRecorder(view, parentLayout, this);
+        chatKeyboardHelper.openVoiceRecorder(this);
     }
 
     public void openKeyBoard(View view) {
-        chatKeyboardHelper.openTextKeyBoard(view, parentLayout, this);
+        chatKeyboardHelper.openTextKeyBoard(this);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

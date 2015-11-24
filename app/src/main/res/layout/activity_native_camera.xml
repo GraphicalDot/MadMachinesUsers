@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/black"
+    >
+
+    <FrameLayout
+        android:id="@+id/camera_preview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@android:color/transparent"
+        />
+
+    <ImageView
+        android:id="@+id/taken_picture"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone"
+        android:scaleType="centerInside"
+        />
+
+    <RelativeLayout
+        android:id="@+id/camera_config_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/semi_transparent"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/vertical_padding_very_small"
+        android:paddingBottom="@dimen/vertical_padding_very_small"
+        android:visibility="visible"
+        >
+        <ImageView
+            android:id="@+id/flash"
+            android:layout_width="@dimen/camera_ring_button_size"
+            android:layout_height="@dimen/camera_ring_button_size"
+            android:src="@drawable/ic_flash_auto"
+            android:scaleType="center"
+            android:layout_alignParentLeft="true"
+            android:visibility="gone"
+            />
+        <ImageView
+            android:id="@+id/switch_camera"
+            android:layout_width="@dimen/camera_ring_button_size"
+            android:layout_height="@dimen/camera_ring_button_size"
+            android:src="@drawable/ic_flip_camera"
+            android:scaleType="center"
+            android:layout_alignParentRight="true"
+            />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/send_discard_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/semi_transparent"
+        android:gravity="bottom|center_horizontal"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingTop="@dimen/vertical_padding_very_small"
+        android:paddingBottom="@dimen/vertical_padding_very_small"
+        android:visibility="gone"
+        >
+        <ImageView
+            android:id="@+id/discard_camera_picture"
+            android:layout_width="@dimen/camera_ring_button_size"
+            android:layout_height="@dimen/camera_ring_button_size"
+            android:background="@drawable/white_ring"
+            android:src="@drawable/ic_cancel"
+            android:scaleType="center"
+            android:layout_marginRight="@dimen/horizontal_padding_very_small"
+            />
+        <ImageView
+            android:id="@+id/send_camera_picture"
+            android:layout_width="@dimen/camera_ring_button_size"
+            android:layout_height="@dimen/camera_ring_button_size"
+            android:background="@drawable/white_ring"
+            android:src="@drawable/ic_send"
+            android:scaleType="center"
+            />
+    </LinearLayout>
+
+
+</FrameLayout>
