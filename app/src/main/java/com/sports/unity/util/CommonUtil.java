@@ -8,8 +8,20 @@ import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Days;
+import org.joda.time.Hours;
+import org.joda.time.Minutes;
+import org.joda.time.Seconds;
+
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TimeZone;
 
 /**
  * Created by amandeep on 15/10/15.
@@ -65,18 +77,51 @@ public class CommonUtil {
         return (info != null && info.isConnected() && info.getType() == ConnectivityManager.TYPE_MOBILE);
     }
 
-    public static int getStack(Context context) {
-        int numOfActivities = 0;
-        ActivityManager m = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
-        List<ActivityManager.AppTask> list = m.getAppTasks();
-        numOfActivities = list.size();
+    public static long getCurrentGMTTimeInEpoch() {
 
-        for(ActivityManager.AppTask taskInfo : list){
-            Log.i( "Activity Info" , "" + taskInfo.getTaskInfo().origActivity.getClassName());
+        DateTime dateTimeInUtc = new DateTime(DateTime.now(), DateTimeZone.UTC);
+        long epoch = (dateTimeInUtc.getMillis() / 1000);
+        return epoch;
+    }
+
+    public static String getDefaultTimezoneTime(long gmtEpoch) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss zzz");
+        simpleDateFormat.setTimeZone(TimeZone.getDefault());
+        String time = String.valueOf(simpleDateFormat.format(gmtEpoch * 1000));
+        return time;
+    }
+
+    public static String getDefaultTimezoneTimeInAMANDPM(long gmtEpoch) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("K:mm a");
+        simpleDateFormat.setTimeZone(TimeZone.getDefault());
+        String time = String.valueOf(simpleDateFormat.format(gmtEpoch * 1000));
+        return time;
+    }
+
+    public static String getTimeDifference(long epochTime) {
+        long currentTime = getCurrentGMTTimeInEpoch();
+        DateTime dateTime = new DateTime(epochTime);
+        DateTime dateTimenow = new DateTime(currentTime);
+        int days = Days.daysBetween(dateTime, dateTimenow).getDays();
+        if (days > 0) {
+            return String.valueOf(days + " days");
         }
 
-        return numOfActivities;
+        return String.valueOf(0);
     }
+
+//    public static int getStack(Context context) {
+//        int numOfActivities = 0;
+//        ActivityManager m = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
+//        List<ActivityManager.AppTask> list = m.getAppTasks();
+//        numOfActivities = list.size();
+//
+//        for (ActivityManager.AppTask taskInfo : list) {
+//            Log.i("Activity Info", "" + taskInfo.getTaskInfo().origActivity.getClassName());
+//        }
+//
+//        return numOfActivities;
+//    }
 
     /** Check if this device has a camera */
     public static boolean checkCameraHardware(Context context) {

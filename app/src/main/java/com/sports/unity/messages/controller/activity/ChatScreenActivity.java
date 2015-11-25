@@ -5,6 +5,9 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -33,6 +37,7 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.GroupMessaging;
 import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
+import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.messages.controller.viewhelper.ChatKeyboardHelper;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
@@ -80,7 +85,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     }
 
     private long contactID = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
-    private String groupServerId = null;
+    private static String groupServerId = null;
     private boolean isGroupChat = false;
 
     private EditText messageText;
@@ -107,23 +112,28 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     private ActivityActionListener activityActionListener = new ActivityActionListener() {
         @Override
         public void handleAction(int id, final Object object) {
-            ChatScreenActivity.this.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    if (object.toString().equals("composing")) {
-                        status.setText("typing...");
-                    } else if (object.toString().equals("paused")) {
-                        status.setText("Online");
-                    } else if (object.toString().equals("available")) {
-                        status.setText("Online");
-                    } else if (object.toString().equals("unavailable")) {
-                        status.setText("");
-                        personalMessaging.getLastTime(JABBERID);
-                    } else {
-                        status.setText("Active " + object.toString() + " ago");
+            if (isGroupChat) {
+                //TODO
+            } else {
+                ChatScreenActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (object.toString().equals("composing")) {
+                            status.setText("typing...");
+                        } else if (object.toString().equals("paused")) {
+                            status.setText("Online");
+                        } else if (object.toString().equals("available")) {
+                            status.setText("Online");
+                        } else if (object.toString().equals("unavailable")) {
+                            status.setText("");
+                            personalMessaging.getLastTime(JABBERID);
+                        } else {
+                            status.setText("last seen at " + object.toString());
+                        }
                     }
-                }
-            });
+                });
+            }
+
         }
 
         @Override
@@ -186,7 +196,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         parentLayout = (ViewGroup) findViewById(R.id.chat_layout_root_view);
 
         chatKeyboardHelper = ChatKeyboardHelper.getInstance(true);
-        chatKeyboardHelper.createPopupWindowOnKeyBoard( parentLayout, this);
+        chatKeyboardHelper.createPopupWindowOnKeyBoard(parentLayout, this);
         chatKeyboardHelper.checkKeyboardHeight();
 
         con = XMPPClient.getConnection();
@@ -206,13 +216,13 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         back = (ImageButton) toolbar.findViewById(R.id.backarrow);
         messageText = (EditText) findViewById(R.id.msg);
         status = (TextView) toolbar.findViewById(R.id.status_active);
-        LinearLayout profile_link = (LinearLayout)  toolbar.findViewById(R.id.profile);
+        LinearLayout profile_link = (LinearLayout) toolbar.findViewById(R.id.profile);
 
         profile_link.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-               viewProfile(ChatScreenActivity.this, userImageBytes, JABBERNAME, groupServerId);
+                viewProfile(ChatScreenActivity.this, userImageBytes, JABBERNAME, groupServerId);
             }
         });
         Button mSend = (Button) findViewById(R.id.send);
@@ -223,7 +233,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
              */
             getIntentExtras();
 
-            boolean blockStatus = getIntent() .getBooleanExtra("blockStatus", false);
+            boolean blockStatus = getIntent().getBooleanExtra("blockStatus", false);
             blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus);
         }
 
@@ -416,7 +426,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     }
 
     private void sendMessage() {
-        if( blockUnblockUserHelper.isBlockStatus() ){
+        if (blockUnblockUserHelper.isBlockStatus()) {
             blockUnblockUserHelper.showAlert_ToSendMessage_UnblockUser(this, contactID, JABBERID, menu);
             return;
         }
@@ -429,9 +439,13 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             Log.i("Message Entry", "adding message chat " + chatID);
 
             if (isGroupChat) {
-                groupMessaging.sendMessageToGroup(messageText.getText().toString(), multiUserChat, chatID, groupServerId, TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME));
-                messageList = sportsUnityDBHelper.getMessages(chatID);
-                groupChatScreenAdapter.notifydataset(messageList);
+//                groupMessaging.sendMessageToGroup(messageText.getText().toString(), multiUserChat, chatID, groupServerId, TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME));
+                PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance(this);
+                boolean success = pubSubMessaging.publishMessage(messageText.getText().toString(), chatID, groupServerId, this);
+                if (success) {
+                    messageList = sportsUnityDBHelper.getMessages(chatID);
+                    groupChatScreenAdapter.notifydataset(messageList);
+                }
             } else {
                 personalMessaging.sendMessageToPeer(messageText.getText().toString(), chat, JABBERID, chatID, JABBERNAME);
                 personalMessaging.sendStatus(ChatState.paused, chat);
@@ -490,10 +504,27 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         this.menu = menu;
 
         blockUnblockUserHelper.initViewBasedOnBlockStatus(menu);
+
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        int searchImgId = android.support.v7.appcompat.R.id.search_button;
+        ImageView v = (ImageView) searchView.findViewById(searchImgId);
+        v.setImageResource(R.drawable.ic_menu_search_blk);
+        searchView.setQueryHint("Search...");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                return false;
+            }
+        });
         return true;
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -507,7 +538,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             viewProfile(ChatScreenActivity.this, userImageBytes, JABBERNAME, groupServerId);
             return true;
         } else if (id == R.id.action_block_user) {
-            blockUnblockUserHelper.onMenuItemSelected( this, contactID, JABBERID, menu);
+            blockUnblockUserHelper.onMenuItemSelected(this, contactID, JABBERID, menu);
         } else if (id == R.id.action_clear_chat) {
             sportsUnityDBHelper.clearChat(chatID, groupServerId);
             messageList = sportsUnityDBHelper.getMessages(chatID);
@@ -516,6 +547,13 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public static String getGroupServerId() {
+        if (groupServerId != null) {
+            return groupServerId;
+        }
+        return null;
     }
 
 }

@@ -11,6 +11,7 @@ import android.util.Log;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.Message;
+import com.sports.unity.util.CommonUtil;
 
 import org.joda.time.DateTime;
 
@@ -578,7 +579,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             do {
                 boolean value = c.getInt(6) > 0;
                 int id = c.getInt(9);
-                if( id != DUMMY_MESSAGE_ROW_ID ) {
+                if (id != DUMMY_MESSAGE_ROW_ID) {
                     boolean read = c.getInt(10) > 0;
                     list.add(new Message(c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8), read, id));
                 } else {
@@ -596,7 +597,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
-        DateTime dateTime = DateTime.now();
         values.put(MessagesEntry.COLUMN_PHONENUMBER, number);
         values.put(MessagesEntry.COLUMN_DATA_TEXT, msg);
         values.put(MessagesEntry.COLUMN_MESSAGE_ID, messageId);
@@ -606,7 +606,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         values.put(MessagesEntry.COLUMN_SEND_TIMESTAMP, sentTime);
         values.put(MessagesEntry.COLUMN_SERVER_RECEIPT, serverTime);
         values.put(MessagesEntry.COLUMN_RECIPIENT_RECEIPT, recipientTime);
-        values.put(MessagesEntry.COLUMN_RECEIVE_TIMESTAMP, String.valueOf(dateTime.getMillis()));
+        values.put(MessagesEntry.COLUMN_RECEIVE_TIMESTAMP, CommonUtil.getCurrentGMTTimeInEpoch());
         values.put(MessagesEntry.COLUMN_READ_STATUS, read);
 
         long lastMessageId = db.insert(MessagesEntry.TABLE_NAME, null, values);
@@ -649,7 +649,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 selectionArgs);
         Log.i("RecipientReceipt :", String.valueOf(count));
     }
-    
+
     public void updateUnreadCount(long chatId, String groupServerId) {
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -1083,6 +1083,36 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         c.close();
         return mute;
+    }
+
+    public String getGroupSubject(String groupServerId) {
+
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {
+                ChatEntry.COLUMN_NAME,
+        };
+
+        String selection = ChatEntry.COLUMN_GROUP_SERVER_ID + " LIKE ? ";
+        String[] selectionArgs = {groupServerId};
+
+
+        Cursor c = db.query(
+                ChatEntry.TABLE_NAME,                 // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                      // The sort order
+        );
+
+        if (c.moveToFirst()) {
+            String name = c.getString(0);
+            return name;
+        }
+
+        c.close();
+        return null;
     }
 
     public static class GroupParticipants {

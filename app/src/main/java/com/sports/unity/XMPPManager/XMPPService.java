@@ -23,10 +23,10 @@ import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Contacts;
-import com.sports.unity.messages.controller.model.GroupMessaging;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
+import com.sports.unity.util.CommonUtil;
 
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
@@ -34,10 +34,14 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.IQTypeFilter;
+import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
@@ -47,20 +51,16 @@ import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.pubsub.LeafNode;
+import org.jivesoftware.smackx.pubsub.PayloadItem;
+import org.jivesoftware.smackx.pubsub.PubSubManager;
+import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
 import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.xdata.Form;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Days;
-import org.joda.time.Hours;
-import org.joda.time.LocalDate;
-import org.joda.time.Minutes;
-import org.joda.time.Seconds;
-
-import java.text.SimpleDateFormat;
 
 public class XMPPService extends Service {
 
@@ -153,6 +153,29 @@ public class XMPPService extends Service {
         return connectionListener;
     }
 
+    /*class ItemEventCoordinator implements ItemEventListener {
+        @Override
+        public void handlePublishedItems(ItemPublishEvent items) {
+            ArrayList<PayloadItem> list = new ArrayList<>();
+            System.out.println("Event " + items);
+            List<Item> l = items.getItems();
+            for (Item i :
+                    l) {
+                Log.i("elementName ", i.getElementName());
+                Log.i("elementName ", i.getNamespace());
+                Log.i("elementName ", i.getId());
+
+                list.add((PayloadItem) i);
+            }
+            for (PayloadItem p :
+                    list) {
+                Log.i("payloadelement ", list.get(0).getPayload().getElementName());
+                Log.i("payloadelement ", list.get(0).getPayload().getNamespace());
+            }
+
+        }
+    }*/
+
     private void attachChatRelatedListeners(final XMPPTCPConnection connection) {
         XMPPClient xmppClient = XMPPClient.getInstance();
 
@@ -165,7 +188,6 @@ public class XMPPService extends Service {
              * Make a filter for message packets
              */
             StanzaFilter filter = new StanzaTypeFilter(Message.class);
-
             /**
              * attach a packet listener to listen for incoming messages packets and status packet(active,typing etc)
              */
@@ -178,12 +200,12 @@ public class XMPPService extends Service {
 
                 @Override
                 public void invitationReceived(XMPPConnection conn, MultiUserChat multiUserChat, String inviter, String reason, String password, Message message) {
-                    Log.i("Group Chat", "new invitation from server");
+                    String subject = "";
+                    /*Log.i("Group Chat", "new invitation from server");
 
                     String groupServerId = multiUserChat.getRoom().substring(0, multiUserChat.getRoom().indexOf("@conference.mm.io"));
                     String ownerPhoneNumber = inviter.substring(0, inviter.indexOf("@mm.io"));
                     String subject = multiUserChat.getSubject();
-
 
                     SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(getApplicationContext());
 
@@ -197,11 +219,40 @@ public class XMPPService extends Service {
                     sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupServerId);
 
                     String currentUserPhoneNumber = TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME);
-                    GroupMessaging.getInstance(getApplicationContext()).joinGroup(groupServerId, currentUserPhoneNumber);
+                    GroupMessaging.getInstance(getApplicationContext()).joinGroup(groupServerId, currentUserPhoneNumber);*/
+
+                    String ownerPhoneNumber = inviter.substring(0, inviter.indexOf("@mm.io"));
+
+                    Contacts owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
+                    if (owner == null) {
+                        createContact(ownerPhoneNumber);
+                        owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
+                    }
+
+                    String groupServerId = multiUserChat.getRoom().substring(0, multiUserChat.getRoom().indexOf("@"));
+
+                    Log.i("invitation recv", "true");
+                    PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
+                    try {
+                        LeafNode node = pubSubManager.getNode(groupServerId);
+                        //node.addItemEventListener(new ItemEventCoordinator());
+                        node.subscribe(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME) + "@mm.io");
+                        //node.discoverInfo();
+                    } catch (SmackException.NoResponseException e) {
+                        e.printStackTrace();
+                    } catch (XMPPException.XMPPErrorException e) {
+                        e.printStackTrace();
+                    } catch (SmackException.NotConnectedException e) {
+                        e.printStackTrace();
+                    }
+                    subject = groupServerId.substring(groupServerId.indexOf("%") + 1, groupServerId.indexOf("%%"));
+                    long chatId = sportsUnityDBHelper.createGroupChatEntry(subject, owner.id, null, groupServerId);
+                    sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupServerId);
+                    sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
                 }
 
-
             });
+
 
             /**
              * Listener for acknowledging recieved receipts
@@ -217,6 +268,19 @@ public class XMPPService extends Service {
                     PersonalMessaging.getInstance(getApplicationContext()).setReceivedReceipts(fromJid, receiptId, getApplicationContext());
                 }
             });
+
+            /**
+             *  packet filter to see if messages are published to the node or not
+             */
+
+            /*connection.addPacketListener(new PacketListener() {
+
+                @Override
+                public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
+
+                }
+            }, new IQTypeFilter(IQ.Type.result));*/
+
 
             /**
              * Listen for subscription packets to read status
@@ -332,7 +396,11 @@ public class XMPPService extends Service {
         @Override
         public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
             Message message = (Message) packet;
+            if (message.getFrom().equals("pubsub.mm.io")) {
+                handlePubSubMessage(message);
+            }
             if (message.getType().equals(Message.Type.chat)) {
+
                 if (message.getBody() == null) {
                     handleStatus(message);
                 } else {
@@ -341,12 +409,27 @@ public class XMPPService extends Service {
                 }
 
             } else if (message.getType().equals(Message.Type.headline)) {
-                String lastSeen = message.getBody();
-                DateTime dateTimenow = new DateTime(LocalDate.now(DateTimeZone.forID("Asia/Kolkata")).toDateTimeAtCurrentTime());
-                DateTime dateTime = new DateTime(Long.valueOf(lastSeen));
-                lastSeen = getTimeBetween(dateTime, dateTimenow);
+                if (message.getFrom().equals("pubsub.mm.io")) {
+                    //TODO
+                } else {
+                    String gmtEpoch = message.getBody();
+                    int days = Integer.parseInt(CommonUtil.getTimeDifference(Long.parseLong(gmtEpoch)));
+                    if (days > 0) {
+                        if (days == 1) {
+                            String lastSeen = CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(gmtEpoch));
+                            lastSeen = "Yesterday at " + lastSeen;
+                            sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, lastSeen);
+                        } else {
+                            String lastSeen = days + " ago";
+                            sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, lastSeen);
+                        }
+                    } else {
+                        String lastSeen = CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(gmtEpoch));
+                        sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, lastSeen);
+                    }
 
-                sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, lastSeen);
+                }
+
             } else if (message.getType().equals(Message.Type.groupchat)) {
                 if (message.getBody() == null) {
                     handleStatus(message);
@@ -355,11 +438,71 @@ public class XMPPService extends Service {
                     handleChatMessage(message, true);
                 }
             } else if (((Message) packet).getType().equals(Presence.Type.subscribe)) {
+
             }
         }
 
     }
 
+    private void handlePubSubMessage(Message message) {
+
+        Log.i("MessageRecv", "true");
+        /*List<ExtensionElement> list = message.getExtensions();
+        for (ExtensionElement e :
+                list) {
+            Log.i(" extension elements", e.getNamespace());
+            Log.i(" extension elements", e.getElementName());
+        }*/
+        String messageXML = message.toString();
+        Log.i("messagexml", messageXML);
+        String from = messageXML.substring(messageXML.indexOf("!") + 1, messageXML.indexOf("!!"));
+        if (from.equals(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME))) {
+            //Do nothing
+
+        } else {
+            String groupServerId = null;
+            long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
+            String time = messageXML.substring(messageXML.indexOf("*") + 1, messageXML.indexOf("**"));
+            String text = messageXML.substring(messageXML.indexOf("$") + 1, messageXML.indexOf("$$"));
+            String nodeid = messageXML.substring(messageXML.indexOf("node='") + 6, messageXML.indexOf("'><item id='"));
+            groupServerId = nodeid;
+            chatId = getChatIdOrCreateIfNotExist(true, from, groupServerId);
+            long messageId = sportsUnityDBHelper.addTextMessage(text, from, false, time, null, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+            sportsUnityDBHelper.updateChatEntry(messageId, chatId, groupServerId);
+            if (ChatScreenApplication.isActivityVisible()) {
+                if (nodeid.equals(ChatScreenActivity.getGroupServerId())) {
+                    sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, null);
+                } else {
+                    sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
+                    sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
+                    try {
+                        DisplayNotification(text, from, chatId, true, groupServerId);
+                    } catch (SmackException.NotConnectedException e) {
+                        e.printStackTrace();
+                    } catch (XMPPException.XMPPErrorException e) {
+                        e.printStackTrace();
+                    } catch (SmackException.NoResponseException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
+                sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
+                try {
+                    DisplayNotification(text, from, chatId, true, groupServerId);
+                } catch (SmackException.NotConnectedException e) {
+                    e.printStackTrace();
+                } catch (XMPPException.XMPPErrorException e) {
+                    e.printStackTrace();
+                } catch (SmackException.NoResponseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+/*
     private String getTimeBetween(DateTime dateTime, DateTime dateTimenow) {
         int days = Days.daysBetween(dateTime, dateTimenow).getDays();
         int hours = Hours.hoursBetween(dateTime, dateTimenow).getHours();
@@ -375,6 +518,7 @@ public class XMPPService extends Service {
             return String.valueOf(seconds + " seconds");
         }
     }
+*/
 
     private void handleChatMessage(Message message, boolean isGroupChat) {
 
@@ -454,15 +598,9 @@ public class XMPPService extends Service {
             Log.i("status :", "gone");
         } else if (message.hasExtension(ChatState.paused.toString(), ChatStateExtension.NAMESPACE)) {
             Log.i("status :", "paused");
-
             sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, ChatState.paused.toString());
         } else if (message.hasExtension(ChatState.inactive.toString(), ChatStateExtension.NAMESPACE)) {
             Log.i("status :", "inactive");
-
-            Object value = JivePropertiesManager.getProperty(message, "time");
-            DateTime dateTime = new DateTime(value);
-            SimpleDateFormat formatter = new SimpleDateFormat("k:mm");
-            //sportsUnityDBHelper.getInstance(getApplicationContext()).updateStatus(String.valueOf(formatter.format(dateTime.getMillis()), getChatId()));
         }
     }
 
@@ -491,10 +629,9 @@ public class XMPPService extends Service {
     }
 
     public void addToDatabase(Message message, Object value, long chatId, String from, String fromGroup) {
-        DateTime dateTime = new DateTime(value);
 
         long messageId = sportsUnityDBHelper.addTextMessage(message.getBody().toString(), from, false,
-                String.valueOf(dateTime.getMillis()), message.getStanzaId(), null, null,
+                value.toString(), message.getStanzaId(), null, null,
                 chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
         sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
     }
@@ -562,16 +699,15 @@ public class XMPPService extends Service {
             PendingIntent pendingIntent = PendingIntent.getActivities(this, mNotificationId, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
             builder.setSmallIcon(R.drawable.ic_stat_notification);
-            builder.setContentText(message);
-            if (name != null && !name.isEmpty()) {
-                builder.setContentTitle(name);
+            if (isGroupChat) {
+                builder.setContentText(name + " sent a Message");
+                builder.setContentTitle(sportsUnityDBHelper.getGroupSubject(groupServerId));
             } else {
-            /*builder.setContentTitle(jabberID);
-            VCard card = new VCard();
-            card.load(XMPPClient.getConnection(), jabberID + "@mm.io");
-            sportsUnityDBHelper.addToContacts(jabberID, jabberID, true, true, card.getMiddleName());*/
-
+                builder.setContentText(message);
+                builder.setContentTitle(name);
             }
+
+
             builder.setContentIntent(pendingIntent);
             builder.setPriority(Notification.PRIORITY_HIGH);
             builder.setDefaults(Notification.DEFAULT_ALL);

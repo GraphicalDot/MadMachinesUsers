@@ -1,20 +1,11 @@
 package com.sports.unity.messages.controller.activity;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,12 +14,11 @@ import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
-import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.fragment.ContactsFragment;
 import com.sports.unity.messages.controller.fragment.GroupDetailFragment;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.GroupMessaging;
-import com.sports.unity.util.CommonUtil;
+import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
@@ -114,9 +104,10 @@ public class CreateGroup extends CustomAppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    private void createGroup(ArrayList<Contacts> selectedMembers){
+    private void createGroup(ArrayList<Contacts> selectedMembers) {
         GroupMessaging groupMessaging = GroupMessaging.getInstance(this);
         String roomName = currentUserPhoneNumber + "" + System.currentTimeMillis();
+        roomName = roomName + "%" + groupName + "%%";
         String subject = groupName;
 
         boolean success = groupMessaging.createGroup(roomName, currentUserPhoneNumber, subject);
@@ -125,6 +116,24 @@ public class CreateGroup extends CustomAppCompatActivity {
             groupMessaging.setGroupConfigDetail(roomName, groupName, groupDescription);
             groupMessaging.joinGroup(roomName, currentUserPhoneNumber);
             groupMessaging.inviteMembers(roomName, selectedMembers, "");
+
+            /*long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry(subject, owner.id, null, roomName);
+            SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, roomName);
+
+            ArrayList<Long> members = new ArrayList<>();
+            for (Contacts c :
+                    selectedMembers) {
+                members.add(c.id);
+            }
+            SportsUnityDBHelper.getInstance(getApplicationContext()).createGroupUserEntry(chatId, members);*/
+
+        } else {
+            Toast.makeText(this, R.string.group_message_try_again, Toast.LENGTH_SHORT).show();
+        }
+
+        PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance(this);
+        boolean nodesuccess = pubSubMessaging.createNode(roomName, this);
+        if (nodesuccess) {
 
             long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry(subject, owner.id, null, roomName);
             SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, roomName);
@@ -135,12 +144,13 @@ public class CreateGroup extends CustomAppCompatActivity {
                 members.add(c.id);
             }
             SportsUnityDBHelper.getInstance(getApplicationContext()).createGroupUserEntry(chatId, members);
-
+            Toast.makeText(this, "node created", Toast.LENGTH_SHORT).show();
             finish();
         } else {
             Toast.makeText(this, R.string.group_message_try_again, Toast.LENGTH_SHORT).show();
         }
-        
+
+
     }
 
 }

@@ -15,6 +15,7 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.model.Chats;
+import com.sports.unity.util.CommonUtil;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -32,16 +33,12 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
     private final Activity context;
     private ArrayList<Chats> chatArrayList;
     private SimpleDateFormat formatter;
-    private DateTime dateTime;
-    private DateTime dateTime1;
 
     public ChatListAdapter(Activity context, int resource, ArrayList<Chats> chatList) {
         super(context, R.layout.list_chats_item, chatList);
         this.context = context;
         this.chatArrayList = chatList;
         formatter = new SimpleDateFormat("k:mm");
-        dateTime1 = new DateTime(LocalDate.now(DateTimeZone.forID("Asia/Kolkata")).toDateTimeAtCurrentTime());
-
     }
 
     public View getView(int position, View view, ViewGroup parent) {
@@ -50,7 +47,7 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
 
         Chats chats = chatArrayList.get(position);
 
-        if( chats.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID) ){
+        if (chats.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
             rowView.setTag(0);
         } else {
             rowView.setTag(1);
@@ -75,8 +72,8 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
 
         ImageView mute_icon = (ImageView) rowView.findViewById(R.id.mute_icon);
 
-        if(chats.mute) {
-           mute_icon.setVisibility(View.VISIBLE);
+        if (chats.mute) {
+            mute_icon.setVisibility(View.VISIBLE);
 
         } else {
             mute_icon.setVisibility(View.GONE);
@@ -91,11 +88,9 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
         TextView unread = (TextView) rowView.findViewById(R.id.unread_count);
         unread.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoMedium());
 
-        //DateTime currentDateTime = new DateTime(LocalDate.now(DateTimeZone.forID("Asia/Kolkata")).toDateTimeAtCurrentTime());
 
         if (chatArrayList.get(position).sent != null && !chatArrayList.get(position).sent.equals("")) {
-            dateTime = new DateTime(Long.valueOf(chatArrayList.get(position).sent));
-            int days = Days.daysBetween(dateTime, dateTime1).getDays();
+            int days = Integer.parseInt(CommonUtil.getTimeDifference(Long.parseLong(chatArrayList.get(position).sent)));
             if (days > 0) {
                 if (days == 1) {
                     lastMsgTime.setText("YESTERDAY");
@@ -104,12 +99,11 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
                 }
             } else {
 
-                lastMsgTime.setText(String.valueOf(new java.text.SimpleDateFormat("HH:mm").format(Long.valueOf(chatArrayList.get(position).sent))));
+                lastMsgTime.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(chatArrayList.get(position).sent)));
             }
 
         } else {
-            dateTime = new DateTime(Long.valueOf(chatArrayList.get(position).recieved));
-            int days = Days.daysBetween(dateTime, dateTime1).getDays();
+            int days = Integer.parseInt(CommonUtil.getTimeDifference(Long.parseLong(chatArrayList.get(position).recieved)));
             if (days > 0) {
                 if (days == 1) {
                     lastMsgTime.setText("YESTERDAY");
@@ -118,7 +112,7 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
                 }
             } else {
 
-                lastMsgTime.setText(String.valueOf(new java.text.SimpleDateFormat("HH:mm").format(Long.valueOf(chatArrayList.get(position).recieved))));
+                lastMsgTime.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(chatArrayList.get(position).recieved)));
             }
         }
 

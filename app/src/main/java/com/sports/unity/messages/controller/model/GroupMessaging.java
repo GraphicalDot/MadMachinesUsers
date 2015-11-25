@@ -21,6 +21,7 @@ import org.jivesoftware.smackx.xdata.FormField;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -84,10 +85,11 @@ public class GroupMessaging {
                 }
             }
 
-//            submitForm.setAnswer("muc#roomconfig_privateroom", true);
+//            submitForm.setAnswer("muc#roomconfig_publicroom", true);
             submitForm.setAnswer("muc#roomconfig_persistentroom", true);
 //            submitForm.setAnswer("muc#roomconfig_roomowners", owner.jid);
 
+//            submitForm.setAnswer("muc#roomconfig_whois", Arrays.asList("none"));
             submitForm.setAnswer("muc#roomconfig_roomname", groupName);
             submitForm.setAnswer("muc#roomconfig_roomdesc", groupDescription);
 

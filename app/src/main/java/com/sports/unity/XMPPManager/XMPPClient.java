@@ -4,12 +4,14 @@ import android.content.Context;
 import android.util.Log;
 
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.util.CommonUtil;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
@@ -38,9 +40,9 @@ public class XMPPClient {
 
     public static XMPPTCPConnection getConnection() {
         XMPPClient xmppClient = getInstance();
-        if ( xmppClient.connection == null) {
+        if (xmppClient.connection == null) {
             XMPPService service = XMPPService.getXMPP_SERVICE();
-            if( service != null ) {
+            if (service != null) {
                 XMPPClient.getInstance().reconnectConnection(service.getConnectionListener());
             } else {
                 //nothing
@@ -65,7 +67,7 @@ public class XMPPClient {
         boolean success = false;
 
         XMPPService xmppService = XMPPService.getXMPP_SERVICE();
-        if( xmppService != null ) {
+        if (xmppService != null) {
             ConnectionListener connectionListener = xmppService.getConnectionListener();
             success = XMPPClient.getInstance().reconnectConnection(connectionListener);
         } else {
@@ -112,8 +114,7 @@ public class XMPPClient {
             }
 
             Message message = new Message("settimedev@mm.io", Message.Type.headline);
-            DateTime dateTime = DateTime.now();
-            message.setBody(String.valueOf(dateTime.getMillis()));
+            message.setBody(String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()));
             try {
                 connection.sendPacket(message);
             } catch (SmackException.NotConnectedException e) {
@@ -128,8 +129,11 @@ public class XMPPClient {
         if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
             Presence presence = new Presence(Presence.Type.available);
             presence.setStatus("Online");
+            Message message = new Message("settimedev@mm.io", Message.Type.headline);
+            message.setBody(String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()));
             try {
                 connection.sendPacket(presence);
+                connection.sendPacket(message);
             } catch (SmackException.NotConnectedException e) {
                 e.printStackTrace();
             }
@@ -204,7 +208,7 @@ public class XMPPClient {
                 //nothing
             }
 
-            if( ! connection.isConnected() ){
+            if (!connection.isConnected()) {
                 connection.connect();
             } else {
                 //nothing

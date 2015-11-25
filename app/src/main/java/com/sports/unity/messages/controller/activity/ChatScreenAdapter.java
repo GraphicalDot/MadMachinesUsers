@@ -13,6 +13,7 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.model.Message;
+import com.sports.unity.util.CommonUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -105,14 +106,13 @@ public class ChatScreenAdapter extends BaseAdapter {
             holder = (ViewHolder) vi.getTag();
         }
 
-        SimpleDateFormat formatter = new SimpleDateFormat("k:mm");
         holder.message.setText(message.textData);
         switch (getItemViewType(position)) {
             case 0:
-                holder.timeStamp.setText(String.valueOf(new java.text.SimpleDateFormat("HH:mm").format(Long.valueOf(message.recieveTime))));
+                holder.timeStamp.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(message.sendTime)));
                 break;
             case 1:
-                holder.timeStamp.setText(String.valueOf(new java.text.SimpleDateFormat("HH:mm").format(Long.valueOf(message.recieveTime))));
+                holder.timeStamp.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(message.sendTime)));
                 break;
 
         }

@@ -7,6 +7,7 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
+import com.sports.unity.util.CommonUtil;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -70,8 +71,8 @@ public class PersonalMessaging {
     public void sendMessageToPeer(String msg, Chat chat, String number, long chatId, String name) {
         Message message = new Message();
         message.setBody(msg);
-        DateTime dateTime = DateTime.now();
-        JivePropertiesManager.addProperty(message, "time", dateTime.getMillis());
+        long time = CommonUtil.getCurrentGMTTimeInEpoch();
+        JivePropertiesManager.addProperty(message, "time", time);
         JivePropertiesManager.addProperty(message, "isGroupChat", "F");
         DeliveryReceiptRequest.addTo(message);                                            //Request delivery receipts for this message
         String id = message.getStanzaId();
@@ -86,7 +87,7 @@ public class PersonalMessaging {
          * SportsUnityDBHelper.getInstance(context).addMessageToDatabase();
          */
 
-        long messageId = sportsUnityDBHelper.addTextMessage(msg, number, true, null, id, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+        long messageId = sportsUnityDBHelper.addTextMessage(msg, number, true, String.valueOf(time), id, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
         sportsUnityDBHelper.updateChatEntry(messageId, chatId, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
     }
@@ -102,8 +103,8 @@ public class PersonalMessaging {
         }
 
         Message message = new Message();
-        DateTime dateTime = DateTime.now();
-        JivePropertiesManager.addProperty(message, "time", dateTime.getMillis());
+        long time = CommonUtil.getCurrentGMTTimeInEpoch();
+        JivePropertiesManager.addProperty(message, "time", time);
         ChatStateExtension extension = new ChatStateExtension(newState);
         message.addExtension(extension);
         try {
@@ -113,7 +114,7 @@ public class PersonalMessaging {
         }
     }
 
-    public void getLastTime(String jid){
+    public void getLastTime(String jid) {
         Message msg = new Message("gettimedev@mm.io", Message.Type.headline);
         msg.setBody(jid);
         try {
