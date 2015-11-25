@@ -217,7 +217,7 @@ public class ChatKeyboardHelper {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_gallery);
         int visibility = viewGroup.getVisibility();
 
-        RecyclerView gallery = (RecyclerView) viewGroup.findViewById(com.sports.unity.R.id.my_recycler_view);
+        final RecyclerView gallery = (RecyclerView) viewGroup.findViewById(com.sports.unity.R.id.my_recycler_view);
         gallery.setHasFixedSize(true);
 
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL, false);
@@ -360,11 +360,7 @@ public class ChatKeyboardHelper {
 
     private void showGalleryView(Activity activity, RecyclerView recyclerView){
         ArrayList<String> path = getAllShownImagesPath(activity);
-        Bitmap bMap = BitmapFactory.decodeResource(activity.getResources(), R.drawable.images);
-        Bitmap bMapScaled = Bitmap.createScaledBitmap(bMap, keyboardHeight, keyboardHeight, true);
-        Drawable placeholder = new BitmapDrawable(activity.getResources(), bMapScaled);
-
-        RecyclerView.Adapter mAdapter = new ImageAdapterForGallery(activity, path, keyboardHeight, placeholder);
+        RecyclerView.Adapter mAdapter = new ImageAdapterForGallery(activity, recyclerView, path, keyboardHeight);
         recyclerView.setAdapter(mAdapter);
     }
 

@@ -15,11 +15,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.FrameLayout;
 import android.widget.Gallery;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
@@ -43,25 +45,48 @@ import static android.support.v7.internal.widget.TintTypedArray.obtainStyledAttr
 /**
  * Created by madmachines on 20/11/15.
  */
-public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterForGallery.ViewHolder> {
+public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterForGallery.ViewHolder> implements View.OnClickListener {
+
+    private Activity activity;
+    private RecyclerView recyclerView = null;
+
+    private int keyboardHeight;
 
     private ArrayList<String> filePath = null;
-    private Activity activity;
-    private int keyboardHeight;
-    Drawable placeholder;
-
-
     private HashMap<Integer,Bitmap> imageContent = new HashMap<>();
 
-    public ImageAdapterForGallery(Activity activity, ArrayList<String> path, int keyboardHeight, Drawable placeholder) {
+    private View selectedViewForSend = null;
+
+    private View.OnClickListener sendClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            int position = (Integer)view.getTag();
+
+            //TODO send content
+
+            deactivateSendOverlay();
+        }
+
+    };
+
+    private RecyclerView.OnScrollListener scrollListener = new RecyclerView.OnScrollListener() {
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+
+            deactivateSendOverlay();
+        }
+
+    };
+
+    public ImageAdapterForGallery(Activity activity, RecyclerView recyclerView, ArrayList<String> path, int keyboardHeight) {
         this.filePath = path;
         this.activity = activity;
         this.keyboardHeight = keyboardHeight;
-        this.placeholder = placeholder;
+        this.recyclerView = recyclerView;
     }
-
-
-
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
@@ -70,22 +95,22 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
             super(v);
 
             imageView = (ImageView) v.findViewById(com.sports.unity.R.id.img);
-//            LinearLayout.LayoutParams parms = new LinearLayout.LayoutParams(keyboardHeight,keyboardHeight);
-//            imageView.setLayoutParams(parms);
-            imageView.setPadding(0, 0, 2, 0);
-
+            imageView.setLayoutParams(new FrameLayout.LayoutParams(keyboardHeight,keyboardHeight));
         }
     }
 
     @Override
     public ImageAdapterForGallery.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_gallery, parent, false);
+        v.setLayoutParams(new FrameLayout.LayoutParams(keyboardHeight,keyboardHeight));
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ImageAdapterForGallery.ViewHolder holder, final int position) {
         holder.imageView.setTag( position);
+        holder.imageView.setOnClickListener(this);
+
 //        boolean available = fetchImage(position, holder);
 //        if( available ){
 //            holder.imageView.setImageBitmap( imageContent.get(position));
@@ -98,20 +123,55 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
                   .load(new File(filePath.get(position)))
                   .centerCrop()
                   .resize(keyboardHeight,keyboardHeight)
-                  .placeholder(placeholder)
+                  .placeholder(R.drawable.grey_bg_rectangle)
                   .into(holder.imageView);
 
-
-//        RequestCreator requestCreator = Picasso.with(activity).load( imagePath);
-//        requestCreator = requestCreator.centerCrop();
-//        requestCreator = requestCreator.resize(keyboardHeight, keyboardHeight);
-//        requestCreator.into(holder.imageView);
     }
 
 
     @Override
     public int getItemCount() {
         return filePath.size();
+    }
+
+    @Override
+    public void onClick(View view) {
+        activateSendOverlay(view);
+    }
+
+    private void activateSendOverlay(View view){
+        if( selectedViewForSend != null ){
+            deactivateSendOverlay();
+        }
+
+        selectedViewForSend = view;
+        int position = (Integer)view.getTag();
+
+        FrameLayout parentLayout = ((FrameLayout) view.getParent());
+        FrameLayout overlayLayout = (FrameLayout)activity.getLayoutInflater().inflate(R.layout.send_overlay_gallery, parentLayout, false);
+        overlayLayout.setLayoutParams(new FrameLayout.LayoutParams(keyboardHeight,keyboardHeight));
+
+        parentLayout.addView(overlayLayout);
+
+        ImageView sendImageView = (ImageView)overlayLayout.getChildAt(0);
+        sendImageView.setTag(position);
+        sendImageView.setOnClickListener(sendClickListener);
+
+        recyclerView.clearOnScrollListeners();
+        recyclerView.addOnScrollListener( scrollListener);
+    }
+
+    private void deactivateSendOverlay(){
+        if( selectedViewForSend != null ) {
+            FrameLayout parentLayout = ((FrameLayout) selectedViewForSend.getParent());
+            while( parentLayout.getChildCount() > 1 ){
+                parentLayout.removeViewAt(1);
+            }
+
+            selectedViewForSend = null;
+        }
+
+        recyclerView.clearOnScrollListeners();
     }
 
 //    private boolean fetchImage(final int position, final ImageAdapterForGallery.ViewHolder viewHolder){
