@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -31,7 +30,6 @@ import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.UserProfileActivity;
 import com.sports.unity.common.model.FontTypeface;
-import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.messages.controller.BlockUnblockUserHelper;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.GroupMessaging;
@@ -464,7 +462,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     public void emojipopup(View view) {
         chatKeyboardHelper.openEmoji(this);
     }
-
 
     public void galleryPopup(View view) {
         chatKeyboardHelper.openGallery(this);

@@ -3,35 +3,44 @@ package com.sports.unity.messages.controller.viewhelper;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Rect;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
+import android.media.MediaRecorder;
 import android.net.Uri;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Gallery;
+import android.widget.ImageButton;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.sports.unity.R;
+import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.messages.controller.activity.NativeCameraActivity;
+import com.sports.unity.messages.controller.model.Stickers;
 
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by amandeep on 17/11/15.
@@ -40,14 +49,15 @@ public class ChatKeyboardHelper {
 
     private static ChatKeyboardHelper CHAT_KEYBOARD_HELPER = null;
 
-    public static ChatKeyboardHelper getInstance(boolean newInstance){
-        if( CHAT_KEYBOARD_HELPER == null || newInstance ){
+
+    public static ChatKeyboardHelper getInstance(boolean newInstance) {
+        if (CHAT_KEYBOARD_HELPER == null || newInstance) {
             CHAT_KEYBOARD_HELPER = new ChatKeyboardHelper();
         }
         return CHAT_KEYBOARD_HELPER;
     }
 
-    public static void clean(){
+    public static void clean() {
         CHAT_KEYBOARD_HELPER = null;
     }
 
@@ -62,7 +72,9 @@ public class ChatKeyboardHelper {
 
     private KeyboardOpenedListener keyboardOpenedListener = null;
 
-    private ChatKeyboardHelper(){
+    private AudioRecordingHelper audioRecordingHelper = null;
+
+    private ChatKeyboardHelper() {
 
     }
 
@@ -133,6 +145,8 @@ public class ChatKeyboardHelper {
 
                                 ViewGroup sendMessageLayout = (ViewGroup) parentLayout.findViewById(R.id.send_message_layout);
                                 sendMessageLayout.setVisibility(View.VISIBLE);
+
+                                cleanUp();
                             }
                         }
                     }
@@ -145,8 +159,8 @@ public class ChatKeyboardHelper {
         int visibility = viewGroup.getVisibility();
 
         hideAllInputLayouts();
-        if ( isKeyBoardVisible ) {
-            if( visibility == View.VISIBLE ){
+        if (isKeyBoardVisible) {
+            if (visibility == View.VISIBLE) {
                 toggleSystemKeyboard(parentLayout, activity.getApplicationContext());
             } else {
                 viewGroup.setVisibility(View.VISIBLE);
@@ -169,8 +183,8 @@ public class ChatKeyboardHelper {
         int visibility = viewGroup.getVisibility();
 
         hideAllInputLayouts();
-        if ( isKeyBoardVisible ) {
-            if( visibility == View.VISIBLE ){
+        if (isKeyBoardVisible) {
+            if (visibility == View.VISIBLE) {
                 toggleSystemKeyboard(parentLayout, activity.getApplicationContext());
             } else {
                 viewGroup.setVisibility(View.VISIBLE);
@@ -193,22 +207,27 @@ public class ChatKeyboardHelper {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_emoji);
         int visibility = viewGroup.getVisibility();
 
+
+        ViewPager pager = (ViewPager) viewGroup.findViewById(R.id.emojipager);
+        SlidingTabLayout tabs = (SlidingTabLayout) viewGroup.findViewById(com.sports.unity.R.id.tabs);
+
+
         hideAllInputLayouts();
-        if ( isKeyBoardVisible ) {
-            if( visibility == View.VISIBLE ){
-                 toggleSystemKeyboard(parentLayout, activity.getApplicationContext());
+        if (isKeyBoardVisible) {
+            if (visibility == View.VISIBLE) {
+                toggleSystemKeyboard(parentLayout, activity.getApplicationContext());
             } else {
                 viewGroup.setVisibility(View.VISIBLE);
                 showPopupWindow(parentLayout);
 
-                postActionOnOpeningEmojiKeyboard(activity);
+                postActionOnOpeningEmojiKeyboard(activity, pager, tabs);
             }
 
         } else {
             toggleSystemKeyboard(parentLayout, activity.getApplicationContext());
 
             viewGroup.setVisibility(View.VISIBLE);
-            postActionOnOpeningEmojiKeyboard(activity);
+            postActionOnOpeningEmojiKeyboard(activity, pager, tabs);
         }
     }
 
@@ -220,12 +239,12 @@ public class ChatKeyboardHelper {
         final RecyclerView gallery = (RecyclerView) viewGroup.findViewById(com.sports.unity.R.id.my_recycler_view);
         gallery.setHasFixedSize(true);
 
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity,LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
         gallery.setLayoutManager(mLayoutManager);
 
         hideAllInputLayouts();
-        if ( isKeyBoardVisible ) {
-            if( visibility == View.VISIBLE ){
+        if (isKeyBoardVisible) {
+            if (visibility == View.VISIBLE) {
                 toggleSystemKeyboard(parentLayout, activity.getApplicationContext());
             } else {
                 viewGroup.setVisibility(View.VISIBLE);
@@ -248,60 +267,75 @@ public class ChatKeyboardHelper {
         int visibility = viewGroup.getVisibility();
 
         hideAllInputLayouts();
-        if ( isKeyBoardVisible ) {
-            if( visibility == View.VISIBLE ){
+        if (isKeyBoardVisible) {
+            if (visibility == View.VISIBLE) {
                 toggleSystemKeyboard(parentLayout, activity.getApplicationContext());
             } else {
                 viewGroup.setVisibility(View.VISIBLE);
                 showPopupWindow(parentLayout);
 
-                postActionOnOpeningVoiceKeyboard(activity);
+                postActionOnOpeningVoiceKeyboard(activity, viewGroup);
             }
 
         } else {
             toggleSystemKeyboard(parentLayout, activity.getApplicationContext());
 
             viewGroup.setVisibility(View.VISIBLE);
-            postActionOnOpeningVoiceKeyboard(activity);
+            postActionOnOpeningVoiceKeyboard(activity, viewGroup);
         }
 
     }
 
-    private void postActionOnOpeningTextKeyboard(Activity activity){
-        ViewGroup sendMessageLayout = (ViewGroup)activity.findViewById(R.id.send_message_layout);
+    private void postActionOnOpeningTextKeyboard(Activity activity) {
+        ViewGroup sendMessageLayout = (ViewGroup) activity.findViewById(R.id.send_message_layout);
         sendMessageLayout.setVisibility(View.VISIBLE);
 
-        EditText editText = (EditText)sendMessageLayout.findViewById(R.id.msg);
+        EditText editText = (EditText) sendMessageLayout.findViewById(R.id.msg);
         editText.requestFocus();
     }
 
-    private void postActionOnOpeningCameraKeyboard(Activity activity){
-        ViewGroup sendMessageLayout = (ViewGroup)activity.findViewById(R.id.send_message_layout);
+    private void postActionOnOpeningCameraKeyboard(Activity activity) {
+        ViewGroup sendMessageLayout = (ViewGroup) activity.findViewById(R.id.send_message_layout);
         sendMessageLayout.setVisibility(View.GONE);
 
         Intent intent = new Intent(activity, NativeCameraActivity.class);
         activity.startActivity(intent);
     }
 
-    private void postActionOnOpeningEmojiKeyboard(Activity activity){
-        ViewGroup sendMessageLayout = (ViewGroup)activity.findViewById(R.id.send_message_layout);
+    private void postActionOnOpeningEmojiKeyboard(final Activity activity, ViewPager pager, SlidingTabLayout tabs) {
+        ViewGroup sendMessageLayout = (ViewGroup) activity.findViewById(R.id.send_message_layout);
         sendMessageLayout.setVisibility(View.GONE);
 
-        //TODO
+        Stickers.getInstance().loadAllStickers(activity.getBaseContext());
+
+        pager.setAdapter(new AdapterForEmoji(activity));
+
+        tabs.setDistributeEvenly(true);
+
+        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return activity.getResources().getColor(com.sports.unity.R.color.tabsScrollColor);
+            }
+        });
+        tabs.setCustomTabView(R.layout.custom_tab_view, 0);
+        tabs.setViewPager(pager);
+
+
     }
 
-    private void postActionOnOpeningGalleryKeyboard(final RecyclerView gallery, final Activity activity){
-        ViewGroup sendMessageLayout = (ViewGroup)activity.findViewById(R.id.send_message_layout);
+    private void postActionOnOpeningGalleryKeyboard(final RecyclerView gallery, final Activity activity) {
+        ViewGroup sendMessageLayout = (ViewGroup) activity.findViewById(R.id.send_message_layout);
         sendMessageLayout.setVisibility(View.GONE);
 
-        if( isKeyBoardVisible ){
-            showGalleryView( activity, gallery);
+        if (isKeyBoardVisible) {
+            showGalleryView(activity, gallery);
         } else {
-            keyboardOpenedListener = new KeyboardOpenedListener(){
+            keyboardOpenedListener = new KeyboardOpenedListener() {
 
                 @Override
                 public void keyboardOpened(int keyboardHeight) {
-                    showGalleryView( activity, gallery);
+                    showGalleryView(activity, gallery);
                     keyboardOpenedListener = null;
                 }
 
@@ -309,31 +343,32 @@ public class ChatKeyboardHelper {
         }
     }
 
-    private void postActionOnOpeningVoiceKeyboard(Activity activity){
-        ViewGroup sendMessageLayout = (ViewGroup)activity.findViewById(R.id.send_message_layout);
+    private void postActionOnOpeningVoiceKeyboard(Activity activity, ViewGroup viewGroup) {
+        ViewGroup sendMessageLayout = (ViewGroup) activity.findViewById(R.id.send_message_layout);
         sendMessageLayout.setVisibility(View.GONE);
 
-        //TODO
+        audioRecordingHelper = new AudioRecordingHelper();
+        audioRecordingHelper.initView(viewGroup);
     }
 
-    private void toggleSystemKeyboard(ViewGroup layout, Context context){
-        InputMethodManager inputMethodManager=(InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+    private void toggleSystemKeyboard(ViewGroup layout, Context context) {
+        InputMethodManager inputMethodManager = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
         inputMethodManager.toggleSoftInputFromWindow(layout.getApplicationWindowToken(), InputMethodManager.SHOW_FORCED, 0);
     }
 
-    private void hideAllInputLayouts(){
+    private void hideAllInputLayouts() {
         ViewGroup contentView = ((ViewGroup) popupWindow.getContentView());
         for (int loop = 0; loop < contentView.getChildCount(); loop++) {
             contentView.getChildAt(loop).setVisibility(View.GONE);
         }
     }
 
-    private boolean isAnyInputLayoutVisible(){
+    private boolean isAnyInputLayoutVisible() {
         boolean visible = false;
 
         ViewGroup contentView = ((ViewGroup) popupWindow.getContentView());
         for (int loop = 0; loop < contentView.getChildCount(); loop++) {
-            if( contentView.getChildAt(loop).getVisibility() == View.VISIBLE ){
+            if (contentView.getChildAt(loop).getVisibility() == View.VISIBLE) {
                 visible = true;
                 break;
             }
@@ -347,29 +382,33 @@ public class ChatKeyboardHelper {
             keyboardHeight = height;
             popupWindow.setHeight(keyboardHeight);
 
-            if( keyboardOpenedListener != null){
+            if (keyboardOpenedListener != null) {
                 keyboardOpenedListener.keyboardOpened(keyboardHeight);
             }
 
-            if( popupWindow.isShowing() ) {
+            if (popupWindow.isShowing()) {
                 popupWindow.dismiss();
                 showPopupWindow(parentLayout);
             }
         }
     }
 
-    private void showGalleryView(Activity activity, RecyclerView recyclerView){
+    private void showGalleryView(Activity activity, RecyclerView recyclerView) {
         ArrayList<String> path = getAllShownImagesPath(activity);
         RecyclerView.Adapter mAdapter = new ImageAdapterForGallery(activity, recyclerView, path, keyboardHeight);
         recyclerView.setAdapter(mAdapter);
     }
 
-    private void showPopupWindow(View parentLayout){
-        if( ! popupWindow.isShowing() ) {
+    private void showPopupWindow(View parentLayout) {
+        if (!popupWindow.isShowing()) {
             popupWindow.showAtLocation(parentLayout, Gravity.BOTTOM, 0, 0);
         } else {
             //nothing
         }
+    }
+
+    private void cleanUp(){
+        audioRecordingHelper = null;
     }
 
     public static ArrayList<String> getAllShownImagesPath(Activity activity) {
@@ -381,14 +420,11 @@ public class ChatKeyboardHelper {
         String absolutePathOfImage = null;
 
         uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-        // String path = android.os.Environment.DIRECTORY_DCIM;
 
-        String[] projection = { MediaStore.MediaColumns.DATA };
+        String[] projection = {MediaStore.MediaColumns.DATA};
 
         cursor = activity.getContentResolver().query(uri, projection, null,
                 null, null);
-
-        // column_index = cursor.getColumnIndexOrThrow(MediaColumns.DATA);
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
         while (cursor.moveToNext()) {

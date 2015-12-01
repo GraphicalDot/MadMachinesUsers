@@ -7,10 +7,22 @@
     android:visibility="gone">
 
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="emojis"
-        android:id="@+id/textView3"
-        android:layout_gravity="center_horizontal" />
+        <com.sports.unity.common.view.SlidingTabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/ColorPrimary"
+            android:elevation="2dp" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="@color/app_theme_blue" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/emojipager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"></android.support.v4.view.ViewPager>
+
 </LinearLayout>
