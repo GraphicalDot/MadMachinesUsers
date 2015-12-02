@@ -18,7 +18,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:visibility="gone"
-        android:scaleType="centerInside"
+        android:scaleType="center"
         />
 
     <RelativeLayout
@@ -34,17 +34,25 @@
         >
         <ImageView
             android:id="@+id/flash"
-            android:layout_width="@dimen/camera_ring_button_size"
-            android:layout_height="@dimen/camera_ring_button_size"
-            android:src="@drawable/ic_flash_auto"
+            android:layout_width="@dimen/camera_button_size"
+            android:layout_height="@dimen/camera_button_size"
+            android:src="@drawable/ic_flash_on"
             android:scaleType="center"
             android:layout_alignParentLeft="true"
-            android:visibility="gone"
+            android:visibility="visible"
+            />
+        <ImageView
+            android:id="@+id/capture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_capture"
+            android:scaleType="center"
+            android:layout_centerInParent="true"
             />
         <ImageView
             android:id="@+id/switch_camera"
-            android:layout_width="@dimen/camera_ring_button_size"
-            android:layout_height="@dimen/camera_ring_button_size"
+            android:layout_width="@dimen/camera_button_size"
+            android:layout_height="@dimen/camera_button_size"
             android:src="@drawable/ic_flip_camera"
             android:scaleType="center"
             android:layout_alignParentRight="true"
@@ -65,18 +73,18 @@
         >
         <ImageView
             android:id="@+id/discard_camera_picture"
-            android:layout_width="@dimen/camera_ring_button_size"
-            android:layout_height="@dimen/camera_ring_button_size"
-            android:background="@drawable/white_ring"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_circle"
             android:src="@drawable/ic_cancel"
             android:scaleType="center"
-            android:layout_marginRight="@dimen/horizontal_padding_very_small"
+            android:layout_marginRight="@dimen/camera_button_size"
             />
         <ImageView
             android:id="@+id/send_camera_picture"
-            android:layout_width="@dimen/camera_ring_button_size"
-            android:layout_height="@dimen/camera_ring_button_size"
-            android:background="@drawable/white_ring"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_circle"
             android:src="@drawable/ic_send"
             android:scaleType="center"
             />

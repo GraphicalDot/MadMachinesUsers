@@ -32,7 +32,7 @@
 
     <dimen name="menu_item_height">55dp</dimen>
 
-    <dimen name="camera_ring_button_size">70dp</dimen>
+    <dimen name="camera_button_size">70dp</dimen>
 
     <dimen name="stickers_size">90dp</dimen>
 

@@ -23,8 +23,10 @@ public class Message {
     public String recieveTime;
     public boolean messagesRead;
     int contactID;
+    public String mediaFileName;
 
-    public Message(String number, String textData, byte[] blob, String mimeType, String serverReceipt, String recipientReceipt, Boolean iamsender, String recievetime, String sendtime, boolean read, int id) {
+    public Message(String number, String textData, byte[] blob, String mimeType, String serverReceipt, String recipientReceipt,
+                   Boolean iamsender, String recievetime, String sendtime, boolean read, int id, String mediaFileName) {
         this.number = number;
         this.textData = textData;
         this.media = blob;
@@ -36,7 +38,7 @@ public class Message {
         this.recieveTime = recievetime;
         this.messagesRead = read;
         this.contactID = id;
-
+        this.mediaFileName = mediaFileName;
     }
 
 }

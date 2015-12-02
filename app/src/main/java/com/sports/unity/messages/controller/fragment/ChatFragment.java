@@ -181,6 +181,7 @@ public class ChatFragment extends Fragment {
     }
 
     private ActivityActionListener activityActionListener = new ActivityActionListener() {
+
         @Override
         public void handleAction(int id, Object object) {
 
@@ -200,6 +201,12 @@ public class ChatFragment extends Fragment {
                 }
             });
         }
+
+        @Override
+        public void handleMediaContent(String mimeType, Object content) {
+            //nothing
+        }
+
     };
 
 

@@ -5,15 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.text.format.Time;
 import android.util.Log;
 
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.util.CommonUtil;
-
-import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 
@@ -33,10 +30,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     public static final String DEFAULT_GROUP_SERVER_ID = "NOT_GROUP_CHAT";
 
-    private static final String MIME_TYPE_TEXT = "text";
-    private static final String MIME_TYPE_VIDEO = "video";
-    private static final String MIME_TYPE_AUDIO = "audio";
-    private static final String MIME_TYPE_VOICE = "voice";
+    public static final String MIME_TYPE_TEXT = "text";
+    public static final String MIME_TYPE_IMAGE = "image";
+    public static final String MIME_TYPE_VIDEO = "video";
+    public static final String MIME_TYPE_AUDIO = "audio";
+    public static final String MIME_TYPE_VOICE = "voice";
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "spu.db";
@@ -70,7 +68,9 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             MessagesEntry.COLUMN_SEND_TIMESTAMP + "  DATETIME " + COMMA_SEP +
             MessagesEntry.COLUMN_NAME_I_AM_SENDER + " boolean " + COMMA_SEP +
             MessagesEntry.COLUMN_RECEIVE_TIMESTAMP + " DATETIME DEFAULT CURRENT_TIMESTAMP " + COMMA_SEP +
-            MessagesEntry.COLUMN_READ_STATUS + " boolean);";
+            MessagesEntry.COLUMN_READ_STATUS + " boolean" + COMMA_SEP +
+            MessagesEntry.COLUMN_MEDIA_FILE_NAME + " VARCHAR default NULL " +
+            ");";
 
     private static final String CREATE_CHAT_TABLE = "CREATE TABLE IF NOT EXISTS " +
             ChatEntry.TABLE_NAME + "( " +
@@ -559,7 +559,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 MessagesEntry.COLUMN_RECEIVE_TIMESTAMP,                         //7th column
                 MessagesEntry.COLUMN_SEND_TIMESTAMP,                            //8th column
                 MessagesEntry.COLUMN_ID,                                        //9th column
-                MessagesEntry.COLUMN_READ_STATUS                                //10th column
+                MessagesEntry.COLUMN_READ_STATUS,                               //10th column
+                MessagesEntry.COLUMN_MEDIA_FILE_NAME
         };
 
         String selection = MessagesEntry.COLUMN_CHAT_ID + " = ?";
@@ -581,7 +582,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 int id = c.getInt(9);
                 if (id != DUMMY_MESSAGE_ROW_ID) {
                     boolean read = c.getInt(10) > 0;
-                    list.add(new Message(c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8), read, id));
+                    list.add(new Message(c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8), read, id, c.getString(11)));
                 } else {
                     //nothing
                 }
@@ -611,6 +612,30 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         long lastMessageId = db.insert(MessagesEntry.TABLE_NAME, null, values);
         Log.i("Added", " Message");
+        return lastMessageId;
+
+    }
+
+    public long addMediaMessage(String message, byte[] mediaThumbnail, String number, boolean iamsender, String sentTime, String messageId, String serverTime, String recipientTime,
+                               long chatID, boolean read, String mediaFileName) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(MessagesEntry.COLUMN_PHONENUMBER, number);
+        values.put(MessagesEntry.COLUMN_DATA_TEXT, message);
+        values.put(MessagesEntry.COLUMN_DATA_MEDIA, mediaThumbnail);
+        values.put(MessagesEntry.COLUMN_MESSAGE_ID, messageId);
+        values.put(MessagesEntry.COLUMN_MIME_TYPE, MIME_TYPE_IMAGE);
+        values.put(MessagesEntry.COLUMN_NAME_I_AM_SENDER, iamsender);
+        values.put(MessagesEntry.COLUMN_CHAT_ID, chatID);
+        values.put(MessagesEntry.COLUMN_SEND_TIMESTAMP, sentTime);
+        values.put(MessagesEntry.COLUMN_SERVER_RECEIPT, serverTime);
+        values.put(MessagesEntry.COLUMN_RECIPIENT_RECEIPT, recipientTime);
+        values.put(MessagesEntry.COLUMN_RECEIVE_TIMESTAMP, CommonUtil.getCurrentGMTTimeInEpoch());
+        values.put(MessagesEntry.COLUMN_READ_STATUS, read);
+        values.put(MessagesEntry.COLUMN_MEDIA_FILE_NAME, mediaFileName);
+
+        long lastMessageId = db.insert(MessagesEntry.TABLE_NAME, null, values);
         return lastMessageId;
 
     }

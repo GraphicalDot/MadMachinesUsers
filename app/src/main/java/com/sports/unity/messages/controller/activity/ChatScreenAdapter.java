@@ -2,6 +2,7 @@ package com.sports.unity.messages.controller.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,19 +18,24 @@ import com.sports.unity.util.CommonUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by madmachines on 8/9/15.
  */
 public class ChatScreenAdapter extends BaseAdapter {
 
-    ArrayList<Message> messageList;
+    private ArrayList<Message> messageList;
     private static LayoutInflater inflater = null;
-    public Activity activity;
+    private Activity activity;
+
+    private HashMap<String, byte[]> mediaMap = null;
 
     public ChatScreenAdapter(ChatScreenActivity chatScreenActivity, ArrayList<Message> messagelist) {
         this.messageList = messagelist;
         activity = chatScreenActivity;
+        mediaMap = chatScreenActivity.getMediaMap();
+
         inflater = (LayoutInflater) activity.
                 getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -71,6 +77,8 @@ public class ChatScreenAdapter extends BaseAdapter {
         public TextView message;
         public TextView timeStamp;
         public ImageView receivedStatus;
+        public ImageView messageAsMedia;
+
     }
 
     @Override
@@ -86,6 +94,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                     vi = inflater.inflate(R.layout.chat_msg_recieve, parent, false);
                     holder.message = (TextView) vi.findViewById(R.id.singleMessageLeft);
                     holder.message.setTypeface(FontTypeface.getInstance(activity.getApplicationContext()).getRobotoRegular());
+                    holder.messageAsMedia = (ImageView) vi.findViewById(R.id.image_message);
                     holder.timeStamp = (TextView) vi.findViewById(R.id.timestampLeft);
                     holder.timeStamp.setTypeface(FontTypeface.getInstance(activity.getApplicationContext()).getRobotoCondensedRegular());
                     holder.receivedStatus = null;
@@ -95,6 +104,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                     vi = inflater.inflate(R.layout.chat_msg_send, parent, false);
                     holder.message = (TextView) vi.findViewById(R.id.singleMessageRight);
                     holder.message.setTypeface(FontTypeface.getInstance(activity.getApplicationContext()).getRobotoRegular());
+                    holder.messageAsMedia = (ImageView) vi.findViewById(R.id.image_message);
                     holder.timeStamp = (TextView) vi.findViewById(R.id.timestampRight);
                     holder.timeStamp.setTypeface(FontTypeface.getInstance(activity.getApplicationContext()).getRobotoCondensedRegular());
                     holder.receivedStatus = (ImageView) vi.findViewById(R.id.receivedStatus);
@@ -106,7 +116,27 @@ public class ChatScreenAdapter extends BaseAdapter {
             holder = (ViewHolder) vi.getTag();
         }
 
-        holder.message.setText(message.textData);
+        if( message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT) ){
+            holder.message.setText(message.textData);
+            holder.messageAsMedia.setVisibility(View.GONE);
+        } else if( message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
+            holder.message.setText("");
+
+            byte[] content = null;
+            if( mediaMap.containsKey(message.mediaFileName) ) {
+                content = mediaMap.get(message.mediaFileName);
+            } else {
+                content = message.media;
+            }
+
+            if( content != null ) {
+                holder.messageAsMedia.setImageBitmap(BitmapFactory.decodeByteArray(content, 0, content.length));
+                holder.messageAsMedia.setVisibility(View.VISIBLE);
+            } else {
+                holder.messageAsMedia.setVisibility(View.GONE);
+            }
+        }
+
         switch (getItemViewType(position)) {
             case 0:
                 holder.timeStamp.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(message.sendTime)));

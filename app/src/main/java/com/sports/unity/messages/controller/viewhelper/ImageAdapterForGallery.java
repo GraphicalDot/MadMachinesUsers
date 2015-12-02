@@ -25,9 +25,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.sports.unity.Database.DBUtil;
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.util.ActivityActionHandler;
+import com.sports.unity.util.ActivityActionListener;
+import com.sports.unity.util.ThreadTask;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
@@ -37,6 +42,7 @@ import org.jivesoftware.smackx.si.packet.StreamInitiation;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -61,10 +67,7 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
 
         @Override
         public void onClick(View view) {
-            int position = (Integer)view.getTag();
-
-            //TODO send content
-
+            handleSendMedia();
             deactivateSendOverlay();
         }
 
@@ -210,5 +213,52 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
 //        }
 //        return available;
 //    }
+
+    private void handleSendMedia(){
+        ImageView imageView = (ImageView)selectedViewForSend;
+        Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
+
+        new ThreadTask( bitmap){
+
+            @Override
+            public Object process() {
+                Bitmap bitmap = (Bitmap)object;
+                String fileName = String.valueOf(System.currentTimeMillis());
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+
+//                int bytes = bitmap.getByteCount();
+//                ByteBuffer buffer = ByteBuffer.allocate(bytes);
+//                bitmap.copyPixelsToBuffer(buffer);
+//                byte[] byteArray = buffer.array();
+
+                DBUtil.writeContentToFile( activity.getBaseContext(), fileName, byteArray, false);
+                return fileName;
+            }
+
+            @Override
+            public void postAction(Object object) {
+                String fileName = (String)object;
+                sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName);
+            }
+
+        }.start();
+
+    }
+
+    private boolean sendActionToCorrespondingActivityListener(String key, String mimeType, Object data) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+
+        if (actionListener != null) {
+            actionListener.handleMediaContent( mimeType, data);
+            success = true;
+        }
+        return success;
+    }
 
 }

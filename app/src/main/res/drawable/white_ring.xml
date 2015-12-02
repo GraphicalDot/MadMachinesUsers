@@ -7,8 +7,8 @@
         android:color="@android:color/white"
         />
     <size
-        android:width="@dimen/camera_ring_button_size"
-        android:height="@dimen/camera_ring_button_size"
+        android:width="@dimen/camera_button_size"
+        android:height="@dimen/camera_button_size"
         />
 
 </shape>

@@ -7,8 +7,8 @@
 
     <ImageView
         android:id="@+id/send_gallery_image"
-        android:layout_width="@dimen/camera_ring_button_size"
-        android:layout_height="@dimen/camera_ring_button_size"
+        android:layout_width="@dimen/camera_button_size"
+        android:layout_height="@dimen/camera_button_size"
         android:background="@drawable/white_ring"
         android:src="@drawable/ic_send"
         android:scaleType="center"

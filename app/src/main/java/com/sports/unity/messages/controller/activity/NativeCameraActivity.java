@@ -27,9 +27,12 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.Log;
 import android.view.Display;
 import android.view.Surface;
@@ -37,14 +40,24 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
+import com.sports.unity.Database.DBUtil;
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
+import com.sports.unity.util.ActivityActionHandler;
+import com.sports.unity.util.ActivityActionListener;
+import com.sports.unity.util.ThreadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
@@ -52,9 +65,6 @@ import java.util.Date;
 import java.util.List;
 
 public class NativeCameraActivity extends CustomAppCompatActivity implements View.OnClickListener {
-
-    private String flashStatus = Camera.Parameters.FLASH_MODE_AUTO;
-    private int cameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
 
     /**
      * Safe method for getting a camera instance.
@@ -70,14 +80,15 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         return c; // returns null if camera is unavailable
     }
 
-    // Native camera.
+    private String flashStatus = Camera.Parameters.FLASH_MODE_ON;
+    private int cameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
+
     private Camera mCamera;
 
-    // View to display the camera output.
     private CameraPreview mPreview;
-
-    // Reference to the containing view.
     private View mCameraView;
+
+    private byte[] content = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,7 +234,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
 
         {
-            View view = findViewById(R.id.camera_preview);
+            View view = findViewById(R.id.capture);
             view.setOnClickListener(this);
         }
     }
@@ -232,13 +243,15 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         if( id == R.id.discard_camera_picture ) {
             discardPictureTaken();
         } else if( id == R.id.send_camera_picture ) {
-            //TODO
+            handleSendMedia();
+            finish();
         } else if( id == R.id.flash ) {
             changeFlashStatus();
             changeFlashContent();
         } else if( id == R.id.switch_camera ) {
+            animateCamera(view);
             changeCamera();
-        } else if( id == R.id.camera_preview ){
+        } else if( id == R.id.capture ){
 
             {
                 View tempView = findViewById(R.id.camera_preview);
@@ -253,6 +266,34 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
     }
 
+    private void animateCamera(final View view){
+        final RotateAnimation rotate = new RotateAnimation( 0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        rotate.setDuration(300);
+        rotate.setInterpolator(new FastOutSlowInInterpolator());
+        rotate.setAnimationListener(new Animation.AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                view.setClickable(true);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+
+        });
+
+        view.startAnimation(rotate);
+        view.setClickable(false);
+
+    }
+
     private void changeCamera(){
         if( cameraId == Camera.CameraInfo.CAMERA_FACING_BACK ){
             cameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
@@ -264,20 +305,16 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
     }
 
     private void changeFlashStatus(){
-        if( flashStatus.equals(Camera.Parameters.FLASH_MODE_AUTO) ) {
-            flashStatus = Camera.Parameters.FLASH_MODE_ON;
-        } else if( flashStatus.equals(Camera.Parameters.FLASH_MODE_ON) ) {
+        if( flashStatus.equals(Camera.Parameters.FLASH_MODE_ON) ) {
             flashStatus = Camera.Parameters.FLASH_MODE_OFF;
         } else if( flashStatus.equals(Camera.Parameters.FLASH_MODE_OFF) ) {
-            flashStatus = Camera.Parameters.FLASH_MODE_AUTO;
+            flashStatus = Camera.Parameters.FLASH_MODE_ON;
         }
     }
 
     private void changeFlashContent(){
         ImageView flash = (ImageView)findViewById(R.id.flash);
-        if( flashStatus.equals(Camera.Parameters.FLASH_MODE_AUTO) ) {
-            flash.setImageResource( R.drawable.ic_flash_auto);
-        } else if( flashStatus.equals(Camera.Parameters.FLASH_MODE_ON) ) {
+        if( flashStatus.equals(Camera.Parameters.FLASH_MODE_ON) ) {
             flash.setImageResource( R.drawable.ic_flash_on);
         } else if( flashStatus.equals(Camera.Parameters.FLASH_MODE_OFF) ) {
             flash.setImageResource( R.drawable.ic_flash_disabled);
@@ -304,7 +341,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             /*
              * rotate image content came from camera.
              */
-            Bitmap originalBitmap = BitmapFactory.decodeByteArray( pictureContent, 0, pictureContent.length);
+            Bitmap originalBitmap = BitmapFactory.decodeByteArray(pictureContent, 0, pictureContent.length);
 
             Matrix matrix = new Matrix();
             if( cameraId == Camera.CameraInfo.CAMERA_FACING_BACK ) {
@@ -314,16 +351,26 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
                 matrix.postRotate(90);
             }
 
+            Log.i("Captured Image Size ", originalBitmap.getWidth() + " : " + originalBitmap.getHeight());
+
             Bitmap rotatedBitMap = Bitmap.createBitmap( originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getHeight(), matrix, false);
             originalBitmap.recycle();
 
             ImageView imageView = (ImageView)findViewById(R.id.taken_picture);
             imageView.setVisibility(View.VISIBLE);
-            imageView.setImageBitmap( rotatedBitMap);
+            imageView.setImageBitmap(rotatedBitMap);
+
+            {
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                rotatedBitMap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                content = byteArrayOutputStream.toByteArray();
+            }
         }
     }
 
     private void discardPictureTaken() {
+        content = null;
+
         {
             View view = findViewById(R.id.send_discard_layout);
             view.setVisibility(View.GONE);
@@ -356,25 +403,38 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         public void onPictureTaken(byte[] data, Camera camera) {
 
             showPictureViewsToSend(data);
-
-//            File pictureFile = getOutputMediaFile();
-//            if (pictureFile == null){
-//                Toast.makeText( NativeCameraActivity.this, "Image retrieval failed.", Toast.LENGTH_SHORT)
-//                        .show();
-//                return;
-//            }
-//
-//            try {
-//                FileOutputStream fos = new FileOutputStream(pictureFile);
-//                fos.write(data);
-//                fos.close();
-//            } catch (FileNotFoundException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
         }
     };
+
+    private void handleSendMedia(){
+        new ThreadTask( content){
+
+            @Override
+            public Object process() {
+                byte[] byteArray = (byte[])object;
+                String fileName = String.valueOf(System.currentTimeMillis());
+
+                DBUtil.writeContentToFile(getBaseContext(), fileName, byteArray, false);
+                return fileName;
+            }
+
+            @Override
+            public void postAction(Object object) {
+                String fileName = (String)object;
+                addActionToCorrespondingActivity(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName);
+            }
+
+        }.start();
+
+    }
+
+    private boolean addActionToCorrespondingActivity(String key, String mimeType, String fileName) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        activityActionHandler.addActionOnHold( ActivityActionHandler.CHAT_SCREEN_KEY, new ActivityActionHandler.ActionItem( mimeType, fileName));
+        return success;
+    }
 
     /**
      * Used to return the camera File output.
@@ -465,13 +525,18 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
             computeCameraOrientation();
 
-            mSupportedPreviewSizes = mCamera.getParameters().getSupportedPreviewSizes();
+            Display display = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
-            if (flashStatus != null) {
-                Camera.Parameters parameters = mCamera.getParameters();
-                parameters.setFlashMode(flashStatus);
-                mCamera.setParameters(parameters);
-            }
+            mSupportedPreviewSizes = mCamera.getParameters().getSupportedPreviewSizes();
+            mPreviewSize = getBestAspectPreviewSize( display.getWidth(), display.getHeight(), mCamera.getParameters());
+
+            Camera.Parameters parameters = mCamera.getParameters();
+            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+            parameters.setFlashMode(flashStatus);
+            parameters.setPictureSize( mPreviewSize.width, mPreviewSize.height);
+            parameters.setPictureFormat(PixelFormat.JPEG);
+            parameters.setJpegQuality(85);
+            mCamera.setParameters(parameters);
 
             requestLayout();
         }
@@ -517,100 +582,91 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
                 return;
             }
 
-            // stop preview before making changes
-            try {
-                Camera.Parameters parameters = mCamera.getParameters();
-
-                // Set the auto-focus mode to "continuous"
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-
-                // Preview size must exist.
-                if (mPreviewSize != null) {
-                    Camera.Size previewSize = mPreviewSize;
-                    parameters.setPreviewSize(previewSize.width, previewSize.height);
-                    parameters.setPictureSize(previewSize.width, previewSize.height);
-                }
-
-                mCamera.setParameters(parameters);
-                mCamera.startPreview();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+//            // stop preview before making changes
+//            try {
+//                mCamera.stopPreview();
+//
+//                //change camera settings
+//
+//                mCamera.startPreview();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
         }
 
-        /**
-         * Calculate the measurements of the layout
-         *
-         * @param widthMeasureSpec
-         * @param heightMeasureSpec
-         */
-        @Override
-        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-            final int width = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
-            final int height = resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
+//        /**
+//         * Calculate the measurements of the layout
+//         *
+//         * @param widthMeasureSpec
+//         * @param heightMeasureSpec
+//         */
+//        @Override
+//        protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+//            final int width = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
+//            final int height = resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
+//
+//            setMeasuredDimension(width, height);
+//
+//            if (mSupportedPreviewSizes != null) {
+//                mPreviewSize = getBestAspectPreviewSize(width, height, mCamera.getParameters());
+//            }
+//        }
 
-            setMeasuredDimension(width, height);
-
-            if (mSupportedPreviewSizes != null) {
-                mPreviewSize = getBestAspectPreviewSize(width, height, mCamera.getParameters());
-            }
-        }
-
-        /**
-         * Update the layout based on rotation and orientation changes.
-         *
-         * @param changed
-         * @param left
-         * @param top
-         * @param right
-         * @param bottom
-         */
-        @Override
-        protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-            if (changed) {
-                final int width = right - left;
-                final int height = bottom - top;
-
-                int previewWidth = width;
-                int previewHeight = height;
-
-                Display display = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
-                int displayOrientation = display.getRotation();
-
-                if (mPreviewSize != null) {
-                    switch (displayOrientation) {
-                        case Surface.ROTATION_0:
-                            previewWidth = mPreviewSize.height;
-                            previewHeight = mPreviewSize.width;
-
-                            cameraOrientation = 90;
-                            mCamera.setDisplayOrientation(cameraOrientation);
-                            break;
-                        case Surface.ROTATION_90:
-                            previewWidth = mPreviewSize.width;
-                            previewHeight = mPreviewSize.height;
-                            break;
-                        case Surface.ROTATION_180:
-                            previewWidth = mPreviewSize.height;
-                            previewHeight = mPreviewSize.width;
-                            break;
-                        case Surface.ROTATION_270:
-                            previewWidth = mPreviewSize.width;
-                            previewHeight = mPreviewSize.height;
-
-                            cameraOrientation = 180;
-                            mCamera.setDisplayOrientation(cameraOrientation);
-                            break;
-                    }
-                }
-
-                final int scaledChildHeight = previewHeight * width / previewWidth;
-                mCameraView.layout(0, height - scaledChildHeight, width, height);
-            }
-        }
+//        /**
+//         * Update the layout based on rotation and orientation changes.
+//         *
+//         * @param changed
+//         * @param left
+//         * @param top
+//         * @param right
+//         * @param bottom
+//         */
+//        @Override
+//        protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+//            if (changed) {
+//                final int width = right - left;
+//                final int height = bottom - top;
+//
+//                int previewWidth = width;
+//                int previewHeight = height;
+//
+//                Display display = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
+//                int displayOrientation = display.getRotation();
+//
+//                if (mPreviewSize != null) {
+//                    switch (displayOrientation) {
+//                        case Surface.ROTATION_0:
+//                            previewWidth = mPreviewSize.height;
+//                            previewHeight = mPreviewSize.width;
+//
+//                            cameraOrientation = 90;
+//                            mCamera.setDisplayOrientation(cameraOrientation);
+//                            break;
+//                        case Surface.ROTATION_90:
+//                            previewWidth = mPreviewSize.width;
+//                            previewHeight = mPreviewSize.height;
+//                            break;
+//                        case Surface.ROTATION_180:
+//                            previewWidth = mPreviewSize.height;
+//                            previewHeight = mPreviewSize.width;
+//                            break;
+//                        case Surface.ROTATION_270:
+//                            previewWidth = mPreviewSize.width;
+//                            previewHeight = mPreviewSize.height;
+//
+//                            cameraOrientation = 180;
+//                            mCamera.setDisplayOrientation(cameraOrientation);
+//                            break;
+//                    }
+//                }
+//
+//                final int scaledChildHeight = previewHeight * width / previewWidth;
+//                mCameraView.layout(0, height - scaledChildHeight, width, height);
+//            }
+//        }
 
         public Camera.Size getBestAspectPreviewSize( int width, int height, Camera.Parameters parameters) {
-            Log.i("Display Size", width + " : " + height);
+            Log.i("Native Camera", "Display Size " + width + " : " + height);
 
             Camera.Size optimalSize = null;
             double minDiff = Double.MAX_VALUE;
@@ -636,15 +692,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
             }
 
-            if (cameraOrientation == 90 || cameraOrientation == 270) {
-                int temp = optimalSize.width;
-                optimalSize.width = optimalSize.height;
-                optimalSize.height = temp;
-            } else {
-                //nothing
-            }
-
-            Log.i("Optimal Size", optimalSize.width + " : " + optimalSize.height);
+            Log.i("Native Camera", "Optimal Size " + optimalSize.width + " : " + optimalSize.height);
             return (optimalSize);
         }
 
