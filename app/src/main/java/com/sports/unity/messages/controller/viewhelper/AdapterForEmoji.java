@@ -36,7 +36,7 @@ public class AdapterForEmoji extends PagerAdapter {
     private Activity activity;
 
     private int titles[] = {R.drawable.ic_football, R.drawable.ic_basketball, R.drawable.ic_cricket, R.drawable.ic_tennis, R.drawable.ic_f1};
-   // private int resource[]= {R.layout.football_emoji,R.layout.basketball_emoji,R.layout.cricket_emoji,R.layout.tennis_emoji,R.layout.f1_emoji};
+    private int SelectedTitles[] = {R.drawable.ic_football, R.drawable.ic_basketball, R.drawable.ic_cricket, R.drawable.ic_tennis, R.drawable.ic_f1};
 
 
     public AdapterForEmoji(Activity activity) {
@@ -79,19 +79,6 @@ public class AdapterForEmoji extends PagerAdapter {
 
         return viewgroup;
     }
-
-//    private ArrayList<Bitmap> getImage(String folderName) throws IOException
-//    {
-//        AssetManager assetManager = activity.getAssets();
-//        String[] fileNames =assetManager.list(folderName);
-//        ArrayList<Bitmap> emoji = new ArrayList<>();
-//        for(String name:fileNames){
-//            InputStream is = assetManager.open(folderName+"/"+name);
-//            Bitmap bitmap = BitmapFactory.decodeStream(is);
-//            emoji.add(bitmap);
-//        }
-//     return emoji;
-//    }
 
     public ViewGroup LoadFootballEmoji(int resId, ViewGroup collection, LayoutInflater inflater) {
 

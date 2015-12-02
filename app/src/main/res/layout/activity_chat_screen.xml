@@ -81,7 +81,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="openKeyBoard"
-                android:src="@drawable/ic_keyboard_selected" />
+                android:src="@drawable/ic_keyboard_disabled" />
 
             <ImageButton
                 android:id="@+id/btn_camera"

@@ -3,44 +3,32 @@ package com.sports.unity.messages.controller.viewhelper;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.AssetManager;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Rect;
-import android.media.MediaRecorder;
 import android.net.Uri;
-import android.os.CountDownTimer;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
-import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.messages.controller.activity.NativeCameraActivity;
 import com.sports.unity.messages.controller.model.Stickers;
+import com.sports.unity.util.Constants;
 
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
  * Created by amandeep on 17/11/15.
@@ -73,6 +61,8 @@ public class ChatKeyboardHelper {
     private KeyboardOpenedListener keyboardOpenedListener = null;
 
     private AudioRecordingHelper audioRecordingHelper = null;
+
+    private View lastTappedView = null;
 
     private ChatKeyboardHelper() {
 
@@ -130,6 +120,10 @@ public class ChatKeyboardHelper {
                                             viewGroup.setVisibility(View.VISIBLE);
 
                                             popupWindow.dismiss();
+
+                                            View view = parentLayout.findViewById(R.id.btn_text);
+                                            lastTappedView = view;
+                                            highlightTappedItem( view);
                                         }
                                     }
                                 }
@@ -140,6 +134,7 @@ public class ChatKeyboardHelper {
                                 isKeyBoardVisible = false;
 
                                 popupWindow.dismiss();
+                                unhighlightTappedItem(lastTappedView);
 
                                 hideAllInputLayouts();
 
@@ -154,7 +149,64 @@ public class ChatKeyboardHelper {
                 });
     }
 
-    public void openTextKeyBoard(Activity activity) {
+    public void tapOnTab(View view, Activity activity){
+        unhighlightTappedItem(lastTappedView);
+        highlightTappedItem(view);
+        lastTappedView = view;
+
+        int id = view.getId();
+        if( id == R.id.btn_text ){
+            tapOnTextKeyBoard(activity);
+        } else if( id == R.id.btn_camera ){
+            tapOnCamera(activity);
+        } else if( id == R.id.btn_gallery ){
+            tapOnGallery(activity);
+        } else if( id == R.id.btn_emoticons ){
+            tapOnEmoji(activity);
+        } else if( id == R.id.btn_audiomsg ){
+            tapOnAudio(activity);
+        }
+    }
+
+    private void unhighlightTappedItem(View view){
+        if( view != null ){
+            int id = view.getId();
+            ImageButton imageButton = (ImageButton)view;
+
+            if( id == R.id.btn_text ){
+                imageButton.setImageResource(R.drawable.ic_keyboard_disabled);
+            } else if( id == R.id.btn_camera ){
+                imageButton.setImageResource( R.drawable.ic_camera_disabled);
+            } else if( id == R.id.btn_gallery ){
+                imageButton.setImageResource( R.drawable.ic_gallery_disabled);
+            } else if( id == R.id.btn_emoticons ){
+                imageButton.setImageResource( R.drawable.ic_emojis_disabled);
+            } else if( id == R.id.btn_audiomsg ){
+                imageButton.setImageResource( R.drawable.ic_mic_disabled);
+            }
+        }
+    }
+
+    private void highlightTappedItem(View view){
+        if( view != null ){
+            int id = view.getId();
+            ImageButton imageButton = (ImageButton)view;
+
+            if( id == R.id.btn_text ){
+                imageButton.setImageResource(R.drawable.ic_keyboard_selected);
+            } else if( id == R.id.btn_camera ){
+                imageButton.setImageResource( R.drawable.ic_camera_pressed);
+            } else if( id == R.id.btn_gallery ){
+                imageButton.setImageResource( R.drawable.ic_gallery_pressed);
+            } else if( id == R.id.btn_emoticons ){
+                imageButton.setImageResource( R.drawable.ic_emojis_pressed);
+            } else if( id == R.id.btn_audiomsg ){
+                imageButton.setImageResource( R.drawable.ic_mic_pressed);
+            }
+        }
+    }
+
+    public void tapOnTextKeyBoard(Activity activity) {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_text);
         int visibility = viewGroup.getVisibility();
 
@@ -178,7 +230,7 @@ public class ChatKeyboardHelper {
 
     }
 
-    public void openCamera(Activity activity) {
+    public void tapOnCamera(Activity activity) {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_camera);
         int visibility = viewGroup.getVisibility();
 
@@ -195,15 +247,13 @@ public class ChatKeyboardHelper {
             }
 
         } else {
-//            viewGroup.setVisibility(View.VISIBLE);
-//            postActionOnOpeningCameraKeyboard(activity);
-
+            unhighlightTappedItem(lastTappedView);
             Intent intent = new Intent(activity, NativeCameraActivity.class);
             activity.startActivity(intent);
         }
     }
 
-    public void openEmoji(Activity activity) {
+    public void tapOnEmoji(Activity activity) {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_emoji);
         int visibility = viewGroup.getVisibility();
 
@@ -232,7 +282,7 @@ public class ChatKeyboardHelper {
     }
 
 
-    public void openGallery(Activity activity) {
+    public void tapOnGallery(Activity activity) {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_gallery);
         int visibility = viewGroup.getVisibility();
 
@@ -262,7 +312,7 @@ public class ChatKeyboardHelper {
         }
     }
 
-    public void openVoiceRecorder(Activity activity) {
+    public void tapOnAudio(Activity activity) {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_voice);
         int visibility = viewGroup.getVisibility();
 
@@ -318,6 +368,7 @@ public class ChatKeyboardHelper {
                 return activity.getResources().getColor(com.sports.unity.R.color.tabsScrollColor);
             }
         });
+
         tabs.setCustomTabView(R.layout.custom_tab_view, 0);
         tabs.setViewPager(pager);
 

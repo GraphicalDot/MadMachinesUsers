@@ -3,6 +3,8 @@ package com.sports.unity.messages.controller.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
@@ -497,23 +499,23 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     }
 
     public void openCamera(View view) {
-        chatKeyboardHelper.openCamera(this);
+        chatKeyboardHelper.tapOnTab(view, this);
     }
 
     public void emojipopup(View view) {
-        chatKeyboardHelper.openEmoji(this);
+        chatKeyboardHelper.tapOnTab(view, this);
     }
 
     public void galleryPopup(View view) {
-        chatKeyboardHelper.openGallery(this);
+        chatKeyboardHelper.tapOnTab(view, this);
     }
 
     public void voicePopup(View view) {
-        chatKeyboardHelper.openVoiceRecorder(this);
+        chatKeyboardHelper.tapOnTab(view, this);
     }
 
     public void openKeyBoard(View view) {
-        chatKeyboardHelper.openTextKeyBoard(this);
+        chatKeyboardHelper.tapOnTab(view, this);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
