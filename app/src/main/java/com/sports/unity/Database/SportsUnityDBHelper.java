@@ -382,7 +382,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         String selection = ContactsEntry.COLUMN_REGISTERED + " LIKE ? and " + ContactsEntry.COLUMN_AVAILABLE + " LIKE ?";
         String[] selectionArgs = {"1", "1"};
 
-        String sortOrder = ContactsEntry.COLUMN_NAME + " ASC ";
+        String sortOrder = ContactsEntry.COLUMN_NAME + " COLLATE NOCASE ASC ";
 
         Cursor c = db.query(
                 ContactsEntry.TABLE_NAME,  // The table to query
@@ -966,7 +966,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                     ChatEntry.COLUMN_CHAT_ID + " ," + ChatEntry.COLUMN_GROUP_SERVER_ID + " ," + ChatEntry.COLUMN_IMAGE + "," + ChatEntry.COLUMN_MUTE_CONVERSATION +
                     " FROM " + ChatEntry.TABLE_NAME + " A INNER JOIN " + MessagesEntry.TABLE_NAME + " B ON " + ChatEntry.COLUMN_LAST_MESSAGE_ID + " = " + MessagesEntry.COLUMN_ID + " ) ";
 
-            String selectQuery = " SELECT B.* , A." + ContactsEntry.COLUMN_USER_IMAGE + "," + ContactsEntry.COLUMN_BLOCK_USER +" FROM " +
+            String selectQuery = " SELECT B.* , A." + ContactsEntry.COLUMN_USER_IMAGE + "," + ContactsEntry.COLUMN_BLOCK_USER + " FROM " +
                     ContactsEntry.TABLE_NAME + " A INNER JOIN " + subQuery + " B  ON A." + ContactsEntry.COLUMN_CONTACT_ID + " = B." + ChatEntry.COLUMN_CONTACT_ID;
 
             Cursor cursor = db.rawQuery(selectQuery, null);
@@ -995,10 +995,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         ArrayList<String> userBlockedList = new ArrayList<>();
 
-        String[] args = { String.valueOf(1)};
-        Cursor cursor = db.rawQuery( selectQuery, args);
+        String[] args = {String.valueOf(1)};
+        Cursor cursor = db.rawQuery(selectQuery, args);
 
-        if(cursor.moveToFirst()) {
+        if (cursor.moveToFirst()) {
             do {
                 userBlockedList.add(cursor.getString(0));
             } while (cursor.moveToNext());

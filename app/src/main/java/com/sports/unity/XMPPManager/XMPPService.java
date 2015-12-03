@@ -50,13 +50,18 @@ import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.pubsub.Item;
+import org.jivesoftware.smackx.pubsub.ItemPublishEvent;
 import org.jivesoftware.smackx.pubsub.LeafNode;
 import org.jivesoftware.smackx.pubsub.PubSubManager;
+import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
 import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.xdata.Form;
+
+import java.util.List;
 
 public class XMPPService extends Service {
 
@@ -149,28 +154,19 @@ public class XMPPService extends Service {
         return connectionListener;
     }
 
-    /*class ItemEventCoordinator implements ItemEventListener {
+    class ItemEventCoordinator implements ItemEventListener {
         @Override
         public void handlePublishedItems(ItemPublishEvent items) {
-            ArrayList<PayloadItem> list = new ArrayList<>();
-            System.out.println("Event " + items);
+            Log.i("nodeId", items.getNodeId());
+
             List<Item> l = items.getItems();
             for (Item i :
                     l) {
-                Log.i("elementName ", i.getElementName());
-                Log.i("elementName ", i.getNamespace());
-                Log.i("elementName ", i.getId());
-
-                list.add((PayloadItem) i);
-            }
-            for (PayloadItem p :
-                    list) {
-                Log.i("payloadelement ", list.get(0).getPayload().getElementName());
-                Log.i("payloadelement ", list.get(0).getPayload().getNamespace());
+                Log.i("payload ", i.toXML());
             }
 
         }
-    }*/
+    }
 
     private void attachChatRelatedListeners(final XMPPTCPConnection connection) {
         XMPPClient xmppClient = XMPPClient.getInstance();
@@ -221,7 +217,7 @@ public class XMPPService extends Service {
 
                     Contacts owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
                     if (owner == null) {
-                        createContact(ownerPhoneNumber);
+                        createContact(ownerPhoneNumber, getApplicationContext());
                         owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
                     }
 
@@ -232,8 +228,11 @@ public class XMPPService extends Service {
                     try {
                         LeafNode node = pubSubManager.getNode(groupServerId);
                         //node.addItemEventListener(new ItemEventCoordinator());
+//                        Log.i("DiscoverInfo", "true");
+//                        node.discoverInfo();
+                        Log.i("Subscribing", "true");
                         node.subscribe(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME) + "@mm.io");
-                        //node.discoverInfo();
+                        Log.i("getconfigureform", "true");
                     } catch (SmackException.NoResponseException e) {
                         e.printStackTrace();
                     } catch (XMPPException.XMPPErrorException e) {
@@ -606,7 +605,7 @@ public class XMPPService extends Service {
         if (!isGroupChat) {
             Contacts contact = sportsUnityDBHelper.getContact(from);
             if (contact == null) {
-                createContact(from);
+                createContact(from, getApplicationContext());
                 contact = sportsUnityDBHelper.getContact(from);
             }
 
@@ -672,7 +671,7 @@ public class XMPPService extends Service {
         return success;
     }
 
-    private boolean createContact(String number) {
+    public static boolean createContact(String number, Context context) {
         boolean success = false;
         try {
             XMPPTCPConnection connection = XMPPClient.getInstance().getConnection();
@@ -681,8 +680,8 @@ public class XMPPService extends Service {
             String status = card.getMiddleName();
             byte[] image = card.getAvatar();
 
-            sportsUnityDBHelper.addToContacts(number, number, true, ContactsHandler.getInstance().defaultStatus, true);
-            sportsUnityDBHelper.updateContacts(number, image, status);
+            SportsUnityDBHelper.getInstance(context).addToContacts(number, number, true, ContactsHandler.getInstance().defaultStatus, true);
+            SportsUnityDBHelper.getInstance(context).updateContacts(number, image, status);
 
             success = true;
         } catch (Throwable throwable) {

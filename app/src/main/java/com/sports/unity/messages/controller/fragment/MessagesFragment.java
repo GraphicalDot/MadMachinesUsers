@@ -1,12 +1,13 @@
 package com.sports.unity.messages.controller.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Layout;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,18 +25,30 @@ import android.widget.Toast;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.activity.CreateGroup;
+import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.Constants;
 
 /**
  * Created by Agupta on 8/13/2015.
  */
 public class MessagesFragment extends Fragment implements View.OnClickListener {
+
+    private OnSearchViewQueryListener mListener = null;
+
+    private static final String CURRENT_FRAGMENT = "current_fragment";
+
     FrameLayout frame;
     Button contacts;
     Button chats;
     Button others;
     LinearLayout buttonContainerLayout;
+    Activity activity;
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        this.activity = activity;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -69,7 +83,9 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
         TextView pplAroundMe = (TextView) v.findViewById(R.id.ppl_around_me_txt);
         pplAroundMe.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
 
-        getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, new ChatFragment()).commit();
+        ChatFragment fragment = new ChatFragment();
+        mListener = fragment;
+        getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
         return v;
     }
 
@@ -83,18 +99,22 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.btn_chat:
-                getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, new ChatFragment()).commit();
+            case R.id.btn_chat: {
+                ChatFragment fragment = new ChatFragment();
+                mListener = fragment;
+                getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
                 buttonContainerLayout.setBackgroundResource(R.drawable.btn_chat_focused);
                 chats.setTextColor(Color.parseColor("#FFFFFF"));
                 contacts.setTextColor(Color.parseColor("#2C84CC"));
                 others.setTextColor(Color.parseColor("#2C84CC"));
                 break;
-            case R.id.btn_contacts:
+            }
+            case R.id.btn_contacts: {
                 Bundle bundle = new Bundle();
                 bundle.putInt(Constants.INTENT_KEY_CONTACT_FRAGMENT_USAGE, ContactsFragment.USAGE_FOR_CONTACTS);
 
                 ContactsFragment fragment = new ContactsFragment();
+                mListener = fragment;
                 fragment.setArguments(bundle);
 
                 getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
@@ -103,13 +123,18 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
                 chats.setTextColor(Color.parseColor("#2C84CC"));
                 others.setTextColor(Color.parseColor("#2C84CC"));
                 break;
-            case R.id.btn_others:
-                getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, new OthersFragment()).commit();
+            }
+            case R.id.btn_others: {
+                OthersFragment fragment = new OthersFragment();
+                mListener = fragment;
+
+                getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
                 buttonContainerLayout.setBackgroundResource(R.drawable.btn_others_focused);
                 others.setTextColor(Color.parseColor("#FFFFFF"));
                 contacts.setTextColor(Color.parseColor("#2C84CC"));
                 chats.setTextColor(Color.parseColor("#2C84CC"));
                 break;
+            }
             case R.id.create_group:
                 Intent intent = new Intent(getActivity(), CreateGroup.class);
                 startActivity(intent);
@@ -130,5 +155,31 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_messages_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        int searchImgId = android.support.v7.appcompat.R.id.search_button;
+        ImageView v = (ImageView) searchView.findViewById(searchImgId);
+        v.setImageResource(R.drawable.ic_menu_search);
+        searchView.setQueryHint("Search...");
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (mListener != null) {
+                    mListener.onSearchQuery(newText);
+                }
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        mListener = null;
     }
 }

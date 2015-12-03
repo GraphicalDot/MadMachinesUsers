@@ -20,7 +20,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(com.sports.unity.R.layout.activity_splash);
 
-        Crittercism.initialize(getApplicationContext(), "564059fcd224ac0a00ed42a3");
+//        Crittercism.initialize(getApplicationContext(), "564059fcd224ac0a00ed42a3");
 
         UserUtil.init(this);
 

@@ -1,5 +1,6 @@
 package com.sports.unity.messages.controller.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Switch;
 
@@ -17,6 +19,7 @@ import com.sports.unity.R;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 
@@ -25,7 +28,7 @@ import java.util.ArrayList;
 /**
  * Created by madmachines on 24/8/15.
  */
-public class ChatFragment extends Fragment {
+public class ChatFragment extends Fragment implements OnSearchViewQueryListener {
 
     private ListView chatListView;
     private View view;
@@ -94,7 +97,7 @@ public class ChatFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
-                        if( chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID) ) {
+                        if (chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
                             ChatScreenActivity.viewProfile(getActivity(), chatObject.userImage, chatObject.name, chatObject.groupServerId);
                         } else {
                             ChatScreenActivity.viewProfile(getActivity(), chatObject.groupImage, chatObject.name, chatObject.groupServerId);
@@ -102,7 +105,7 @@ public class ChatFragment extends Fragment {
                         alert.dismiss();
                         break;
                     case 1:
-                        if( chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID) ) {
+                        if (chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
                             deleteSingleChat(chatObject);
                         } else {
                             /*
@@ -129,13 +132,22 @@ public class ChatFragment extends Fragment {
 
     }
 
-    private void moveToNextActivity(int position, Class<?> cls){
+    public void filterResults(String filter) {
+        ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
+        ArrayList<Chats> chatList = adapter.getChatArrayList();
+        if (chatList != null) {
+            adapter.filter(filter);
+            chatListView.setAdapter(adapter);
+        }
+    }
+
+    private void moveToNextActivity(int position, Class<?> cls) {
         ArrayList<Chats> chatList = ((ChatListAdapter) chatListView.getAdapter()).getChatArrayList();
         Chats chatObject = chatList.get(position);
         moveToNextActivity(chatObject, cls);
     }
 
-    private void moveToNextActivity(Chats chatObject, Class<?> cls){
+    private void moveToNextActivity(Chats chatObject, Class<?> cls) {
         Intent intent = new Intent(getActivity(), cls);
 
         String groupSeverId = chatObject.groupServerId;
@@ -249,4 +261,8 @@ public class ChatFragment extends Fragment {
         super.onDestroy();
     }
 
+    @Override
+    public void onSearchQuery(String filterText) {
+        filterResults(filterText);
+    }
 }

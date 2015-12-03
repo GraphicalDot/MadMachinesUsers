@@ -5,17 +5,20 @@ import android.util.Log;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.util.CommonUtil;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.pubsub.AccessModel;
+import org.jivesoftware.smackx.pubsub.Affiliation;
 import org.jivesoftware.smackx.pubsub.LeafNode;
 import org.jivesoftware.smackx.pubsub.PayloadItem;
 import org.jivesoftware.smackx.pubsub.PubSubManager;
 import org.jivesoftware.smackx.pubsub.PublishModel;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
+import org.jivesoftware.smackx.pubsub.SubscribeForm;
 import org.jivesoftware.smackx.pubsub.Subscription;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
@@ -49,6 +52,49 @@ public class PubSubMessaging {
         return pubsubMessaging;
     }
 
+    public void getJoinedGroups(Context context) {
+
+        String subject = "";
+        boolean isProcessedBefore = tinyDB.getBoolean(TinyDB.KEY_GET_JOINED_GROUPS_ON_REGISTRATION, true);
+        if (!isProcessedBefore) {
+            try {
+                List<Subscription> subscriptions = pubSubManager.getSubscriptions();
+                for (Subscription s :
+                        subscriptions) {
+                    Log.i("node", s.getNode());
+                    String groupServerId = s.getNode();
+                    LeafNode node = pubSubManager.getNode(groupServerId);
+                    List<Affiliation> affiliations = node.getAffiliations();
+                    Log.i("affiliations", affiliations.toString());
+                    List<Subscription> owners = node.getSubscriptionsAsOwner();
+                    Log.i("owners", owners.toString());
+                    for (Subscription owner :
+                            owners) {
+                        subject = groupServerId.substring(groupServerId.indexOf("%") + 1, groupServerId.indexOf("%%"));
+                        String ownerPhoneNumber = owner.getJid().substring(0, owner.getJid().indexOf("@"));
+                        Contacts ownerContact = sportsUnityDBHelper.getContact(ownerPhoneNumber);
+                        if (owner == null) {
+                            XMPPService.createContact(ownerPhoneNumber, context);
+                            ownerContact = sportsUnityDBHelper.getContact(ownerPhoneNumber);
+                        }
+                        long chatId = sportsUnityDBHelper.createGroupChatEntry(subject, ownerContact.id, null, groupServerId);
+                        sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupServerId);
+                    }
+                }
+                tinyDB.putBoolean(TinyDB.KEY_GET_JOINED_GROUPS_ON_REGISTRATION, true);
+            } catch (SmackException.NoResponseException e) {
+                e.printStackTrace();
+            } catch (XMPPException.XMPPErrorException e) {
+                e.printStackTrace();
+            } catch (SmackException.NotConnectedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            //do nothing
+        }
+
+    }
+
     public boolean createNode(String roomName, Context context) {
         boolean success = false;
         PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
@@ -65,8 +111,14 @@ public class PubSubMessaging {
         form.addField("pubsub#notification_type", FormField.Type.text_single);
         form.setAnswer("pubsub#notification_type", "normal");
 
+        form.addField("pubsub#description", FormField.Type.text_single);
+        form.setAnswer("pubsub#description", "groupname");
+
         form.addField("pubsub#send_last_published_item", FormField.Type.text_single);
         form.setAnswer("pubsub#send_last_published_item", "never");
+
+        SubscribeForm subscribeForm = new SubscribeForm(form);
+        subscribeForm.setDeliverOn(true);
 
         try {
             LeafNode leaf = (LeafNode) pubSubManager.createNode(roomName, form);

@@ -21,4 +21,9 @@ public class Contacts {
         this.id = cId;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
+
 }

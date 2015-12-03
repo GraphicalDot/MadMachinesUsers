@@ -20,6 +20,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
+import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
@@ -94,6 +95,7 @@ public class EnterOtpActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+        editNumberButton.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
         final Button sendOtpButton = (Button) findViewById(com.sports.unity.R.id.sendOtpButton);
         sendOtpButton.setVisibility(View.INVISIBLE);
@@ -101,9 +103,11 @@ public class EnterOtpActivity extends AppCompatActivity {
 
         Button resendButton = (Button) findViewById(R.id.resend);
         resendButton.setOnClickListener(resendOtpButtonClickListener);
+        resendButton.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
         TextView otpText = (TextView) findViewById(com.sports.unity.R.id.enterotpText);
         otpText.setText(getString(R.string.otp_message_verification) + getPhoneNumber());
+        otpText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
         EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         otpEditText.addTextChangedListener(new TextWatcher() {
@@ -130,7 +134,7 @@ public class EnterOtpActivity extends AppCompatActivity {
         });
     }
 
-    private String getPhoneNumber(){
+    private String getPhoneNumber() {
         String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
         phoneNumber = phoneNumber.substring(2);
         return phoneNumber;
@@ -244,7 +248,7 @@ public class EnterOtpActivity extends AppCompatActivity {
         });
     }
 
-    private void onFailure_OnSendingOTP(){
+    private void onFailure_OnSendingOTP() {
 //                afterAsyncCall();
         Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
         UserUtil.setOtpSent(EnterOtpActivity.this, false);

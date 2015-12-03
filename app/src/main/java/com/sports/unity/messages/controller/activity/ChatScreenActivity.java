@@ -559,7 +559,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
+                
                 return false;
             }
 

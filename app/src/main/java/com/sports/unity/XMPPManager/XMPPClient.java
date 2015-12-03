@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.util.CommonUtil;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
@@ -154,6 +155,8 @@ public class XMPPClient {
                     connection.login(tinyDB.getString(TinyDB.KEY_USERNAME), tinyDB.getString(TinyDB.KEY_PASSWORD));
 
                     success = true;
+
+                    PubSubMessaging.getInstance(context).getJoinedGroups(context);
                 } catch (XMPPException e) {
                     e.printStackTrace();
                 } catch (SmackException e) {
@@ -192,6 +195,8 @@ public class XMPPClient {
                 connection = new XMPPTCPConnection(configuration.build());
                 connection.setUseStreamManagement(true);
                 connection.setUseStreamManagementResumption(true);
+
+                connection.setPacketReplyTimeout(20000);
 
                 Log.i("XMPP Connection", "adding connection listener");
                 connection.addConnectionListener(connectionListener);

@@ -3,7 +3,6 @@ package com.sports.unity.messages.controller.fragment;
 import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,11 +15,6 @@ import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.util.CommonUtil;
-
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Days;
-import org.joda.time.LocalDate;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -132,6 +126,22 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
     public void updateList(ArrayList<Chats> chatList) {
         this.chatArrayList.clear();
         this.chatArrayList.addAll(chatList);
+        super.notifyDataSetChanged();
+    }
+
+    public void filter(String filterText) {
+        if (filterText.length() == 0) {
+            //do nothing
+        } else {
+            ArrayList<Chats> chats = getChatArrayList();
+            chatArrayList.clear();
+            for (Chats c :
+                    chats) {
+                if (c.name.contains(filterText)) {
+                    chatArrayList.add(c);
+                }
+            }
+        }
         super.notifyDataSetChanged();
     }
 

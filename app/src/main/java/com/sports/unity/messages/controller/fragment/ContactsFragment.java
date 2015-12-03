@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,28 +13,25 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sports.unity.R;
-import com.sports.unity.common.controller.RetainDataFragment;
-import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.R;
+import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.Constants;
-
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
 /**
  * Created by madmachines on 24/8/15.
  */
-public class ContactsFragment extends Fragment {
+public class ContactsFragment extends Fragment implements OnSearchViewQueryListener {
 
     public static int USAGE_FOR_CONTACTS = 0;
     public static int USAGE_FOR_MEMBERS = 1;
 
     private int usageIn = 0;
 
-    private ArrayList<Contacts> contactList = null;
     private ArrayList<Contacts> selectedMembersList = new ArrayList<>();
 
     private ListView contacts;
@@ -45,6 +41,10 @@ public class ContactsFragment extends Fragment {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            ContactListAdapter contactListAdapter = (ContactListAdapter) contacts.getAdapter();
+            ArrayList<Contacts> contactList = contactListAdapter.getInUseContactListForAdapter();
+
             if (contactList.get(position).registered) {
                 String number = contactList.get(position).jid;
                 String name = contactList.get(position).name;
@@ -78,7 +78,8 @@ public class ContactsFragment extends Fragment {
             CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
             Boolean flag = (Boolean) checkBox.getTag();
 
-            Contacts contacts = contactList.get(position);
+            ContactListAdapter contactListAdapter = (ContactListAdapter) contacts.getAdapter();
+            Contacts contacts = contactListAdapter.getInUseContactListForAdapter().get(position);
 
             if (flag == null || flag == false) {
                 checkBox.setTag(true);
@@ -109,27 +110,29 @@ public class ContactsFragment extends Fragment {
 
         View v = inflater.inflate(com.sports.unity.R.layout.fragment_contacts, container, false);
         contacts = (ListView) v.findViewById(R.id.list_contacts);
+        contacts.setTextFilterEnabled(true);
 
         int resource = 0;
         AdapterView.OnItemClickListener itemListener = null;
-        if( usageIn == USAGE_FOR_MEMBERS ){
+        ArrayList<Contacts> contactList = null;
+        if (usageIn == USAGE_FOR_MEMBERS) {
             resource = R.layout.list_item_members;
             itemListener = memberItemListener;
 
             contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true);
 
-            titleLayout = (ViewGroup)v.findViewById(R.id.title_layout_for_members_list);
+            titleLayout = (ViewGroup) v.findViewById(R.id.title_layout_for_members_list);
             titleLayout.setVisibility(View.VISIBLE);
 
-            ViewGroup searchLayout = (ViewGroup)v.findViewById(R.id.search_layout);
+            ViewGroup searchLayout = (ViewGroup) v.findViewById(R.id.search_layout);
             searchLayout.setVisibility(View.VISIBLE);
-        } else if( usageIn == USAGE_FOR_CONTACTS ){
+        } else if (usageIn == USAGE_FOR_CONTACTS) {
             resource = R.layout.list_contact_msgs;
             itemListener = contactItemListener;
 
             contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList_AvailableOnly();
 
-            ViewGroup searchLayout = (ViewGroup)v.findViewById(R.id.search_layout);
+            ViewGroup searchLayout = (ViewGroup) v.findViewById(R.id.search_layout);
             searchLayout.setVisibility(View.GONE);
         }
 
@@ -140,8 +143,18 @@ public class ContactsFragment extends Fragment {
         return v;
     }
 
-    public ArrayList<Contacts> getSelectedMembersList () {
+    public void filterResults(String filter) {
+        ContactListAdapter adapter = (ContactListAdapter) contacts.getAdapter();
+        adapter.getFilter().filter(filter);
+    }
+
+    public ArrayList<Contacts> getSelectedMembersList() {
         return selectedMembersList;
+    }
+
+    @Override
+    public void onSearchQuery(String filterText) {
+        filterResults(filterText);
     }
 
 }

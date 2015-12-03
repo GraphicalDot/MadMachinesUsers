@@ -13,5 +13,4 @@ public class CustomSearchView extends SearchView {
     }
 
 
-
 }

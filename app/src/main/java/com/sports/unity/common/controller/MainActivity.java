@@ -1,12 +1,10 @@
 package com.sports.unity.common.controller;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,21 +13,9 @@ import android.widget.TextView;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
-import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
-import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FontTypeface;
-import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.view.SlidingTabLayout;
-
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.tcp.XMPPTCPConnection;
-import org.jivesoftware.smackx.search.UserSearchManager;
-import org.jivesoftware.smackx.xdata.Form;
-
-import java.io.IOException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -144,26 +130,5 @@ public class MainActivity extends CustomAppCompatActivity {
         return toolbar;
     }
 
-//    private class CheckConnection extends AsyncTask<Void, Void, XMPPTCPConnection> {
-//        boolean success;
-//
-//        @Override
-//        protected XMPPTCPConnection doInBackground(Void... params) {
-//            success = XMPPClient.reconnectConnection();
-//            if (success) {
-//                success = XMPPClient.authenticateConnection(MainActivity.this);
-//            } else {
-//                //nothing
-//            }
-//
-//            return XMPPClient.getConnection();
-//        }
-//
-//        @Override
-//        protected void onPostExecute(XMPPTCPConnection con) {
-//            //getForms(con);
-//        }
-//
-//    }
 
 }
