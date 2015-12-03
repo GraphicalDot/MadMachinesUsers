@@ -2,18 +2,21 @@ package com.sports.unity.messages.controller.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.model.Message;
+import com.sports.unity.messages.controller.model.Stickers;
 import com.sports.unity.util.CommonUtil;
 
 import java.text.SimpleDateFormat;
@@ -116,11 +119,24 @@ public class ChatScreenAdapter extends BaseAdapter {
             holder = (ViewHolder) vi.getTag();
         }
 
+        if( ! message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER) ) {
+            if (message.iAmSender) {
+                ((LinearLayout) holder.message.getParent()).setBackgroundResource(R.drawable.chat_blue);
+            } else {
+                ((LinearLayout) holder.message.getParent()).setBackgroundResource(R.drawable.chat_grey);
+            }
+        } else {
+            ((LinearLayout) holder.message.getParent()).setBackgroundResource(android.R.color.transparent);
+        }
+
         if( message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT) ){
             holder.message.setText(message.textData);
+            holder.message.setVisibility(View.VISIBLE);
+
             holder.messageAsMedia.setVisibility(View.GONE);
         } else if( message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
             holder.message.setText("");
+            holder.message.setVisibility(View.GONE);
 
             byte[] content = null;
             if( mediaMap.containsKey(message.mediaFileName) ) {
@@ -132,6 +148,30 @@ public class ChatScreenAdapter extends BaseAdapter {
             if( content != null ) {
                 holder.messageAsMedia.setImageBitmap(BitmapFactory.decodeByteArray(content, 0, content.length));
                 holder.messageAsMedia.setVisibility(View.VISIBLE);
+                int size = activity.getResources().getDimensionPixelSize(R.dimen.media_msg_content_size);
+                holder.messageAsMedia.setLayoutParams( new LinearLayout.LayoutParams( size, size));
+                holder.messageAsMedia.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            } else {
+                holder.messageAsMedia.setVisibility(View.GONE);
+            }
+        } else if( message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER) ){
+            holder.message.setText("");
+            holder.message.setVisibility(View.GONE);
+
+            String content = message.textData;
+            int separatorIndex = content.indexOf('/');
+            String folderName = content.substring( 0 , separatorIndex);
+            String name = content.substring( separatorIndex + 1);
+
+            //TODO remove this call from here
+            Stickers.getInstance().loadStickerFromAsset( activity, folderName, name);
+
+            Bitmap bitmap = Stickers.getInstance().getStickerBitmap( folderName, name);
+            if( bitmap != null ) {
+                holder.messageAsMedia.setImageBitmap(bitmap);
+                holder.messageAsMedia.setVisibility(View.VISIBLE);
+                holder.messageAsMedia.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+                holder.messageAsMedia.setScaleType(ImageView.ScaleType.CENTER);
             } else {
                 holder.messageAsMedia.setVisibility(View.GONE);
             }

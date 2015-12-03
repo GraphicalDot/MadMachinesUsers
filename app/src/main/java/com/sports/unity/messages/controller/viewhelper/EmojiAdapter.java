@@ -9,26 +9,31 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.sports.unity.R;
+import com.sports.unity.messages.controller.model.Stickers;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 /**
  * Created by madmachines on 26/11/15.
  */
 public class EmojiAdapter extends BaseAdapter {
 
-    private  Activity activity;
-    private ArrayList<Bitmap> icon;
+    private Activity activity;
+    private String stickersCategory;
 
-    public EmojiAdapter(Activity activity, ArrayList<Bitmap> mThumbIds) {
+    private ArrayList<String> stickersName = null;
+
+    public EmojiAdapter(Activity activity, String stickersCategory) {
         this.activity = activity;
-        this.icon = mThumbIds;
+        this.stickersCategory = stickersCategory;
 
+        stickersName = Stickers.getInstance().getStickers(stickersCategory);
     }
 
     public int getCount() {
-        return icon.size();
+        return stickersName.size();
     }
 
     public Object getItem(int position) {
@@ -53,7 +58,8 @@ public class EmojiAdapter extends BaseAdapter {
             imageView = (ImageView) convertView;
         }
         imageView.setImageResource(R.drawable.grey_bg_rectangle);
-        imageView.setImageBitmap(icon.get(position));
+        imageView.setImageBitmap(Stickers.getInstance().getStickerBitmap(stickersCategory, stickersName.get(position)));
+        imageView.setTag( stickersCategory + "/" + stickersName.get(position));
         return imageView;
     }
 }

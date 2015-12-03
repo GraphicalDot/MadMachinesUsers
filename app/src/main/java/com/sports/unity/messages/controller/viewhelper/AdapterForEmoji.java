@@ -15,23 +15,28 @@ import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.messages.controller.model.Stickers;
+import com.sports.unity.util.ActivityActionHandler;
+import com.sports.unity.util.ActivityActionListener;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.SortedMap;
 import java.util.zip.Inflater;
 
 /**
  * Created by madmachines on 26/11/15.
  */
 
-public class AdapterForEmoji extends PagerAdapter {
+public class AdapterForEmoji extends PagerAdapter implements AdapterView.OnItemClickListener {
 
     private Activity activity;
 
@@ -47,32 +52,33 @@ public class AdapterForEmoji extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup collection, int position) {
         LayoutInflater inflater = (LayoutInflater) collection.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        int resId = position;
+
+        int resId = 0;
         ViewGroup viewgroup = null;
         switch (position) {
             case 0:
                 resId = R.layout.football_emoji;
-                viewgroup = LoadFootballEmoji(resId, collection, inflater);
+                viewgroup = loadStickersGridView(resId, collection, inflater, "footballStickers");
                 collection.addView(viewgroup);
                 break;
             case 1:
                 resId = R.layout.basketball_emoji;
-                viewgroup = LoadBasketballEmoji(resId, collection, inflater);
+                viewgroup = loadStickersGridView(resId, collection, inflater, "basketballStickers");
                 collection.addView(viewgroup);
                 break;
             case 2:
                 resId = R.layout.cricket_emoji;
-                viewgroup = LoadCricketEmoji(resId, collection, inflater);
+                viewgroup = loadStickersGridView(resId, collection, inflater, "cricketStickers");
                 collection.addView(viewgroup);
                 break;
             case 3:
                 resId = R.layout.tennis_emoji;
-                viewgroup = LoadTennisEmoji(resId, collection, inflater);
+                viewgroup = loadStickersGridView(resId, collection, inflater, "tennisStickers");
                 collection.addView(viewgroup);
                 break;
             case 4:
                 resId = R.layout.f1_emoji;
-                viewgroup = LoadF1Emoji(resId, collection, inflater);
+                viewgroup = loadStickersGridView(resId, collection, inflater, "f1Stickers");
                 collection.addView(viewgroup);
                 break;
         }
@@ -80,61 +86,12 @@ public class AdapterForEmoji extends PagerAdapter {
         return viewgroup;
     }
 
-    public ViewGroup LoadFootballEmoji(int resId, ViewGroup collection, LayoutInflater inflater) {
-
-        ArrayList<Bitmap> emoji = Stickers.getInstance().getStickers("footballStickers");
+    public ViewGroup loadStickersGridView(int resId, ViewGroup collection, LayoutInflater inflater, String stickerCategory) {
         ViewGroup layout = (ViewGroup) inflater.inflate(resId, collection, false);
-        GridView football_emoji = (GridView) layout.findViewById(R.id.emoji);
 
-        football_emoji.setAdapter(new EmojiAdapter(activity, emoji));
-
-        return layout;
-
-    }
-
-    public ViewGroup LoadBasketballEmoji(int resId, ViewGroup collection, LayoutInflater inflater) {
-
-        ArrayList<Bitmap> emoji = Stickers.getInstance().getStickers("basketballStickers");
-        ViewGroup layout = (ViewGroup) inflater.inflate(resId, collection, false);
-        GridView football_emoji = (GridView) layout.findViewById(R.id.emoji);
-
-        football_emoji.setAdapter(new EmojiAdapter(activity, emoji));
-
-        return layout;
-
-    }
-
-    public ViewGroup LoadCricketEmoji(int resId, ViewGroup collection, LayoutInflater inflater) {
-
-        ArrayList<Bitmap> emoji = Stickers.getInstance().getStickers("cricketStickers");
-        ViewGroup layout = (ViewGroup) inflater.inflate(resId, collection, false);
-        GridView football_emoji = (GridView) layout.findViewById(R.id.emoji);
-
-        football_emoji.setAdapter(new EmojiAdapter(activity, emoji));
-
-        return layout;
-
-    }
-
-    public ViewGroup LoadTennisEmoji(int resId, ViewGroup collection, LayoutInflater inflater) {
-
-        ArrayList<Bitmap> emoji = Stickers.getInstance().getStickers("tennisStickers");
-        ViewGroup layout = (ViewGroup) inflater.inflate(resId, collection, false);
-        GridView football_emoji = (GridView) layout.findViewById(R.id.emoji);
-
-        football_emoji.setAdapter(new EmojiAdapter(activity, emoji));
-
-        return layout;
-
-    }
-
-    public ViewGroup LoadF1Emoji(int resId, ViewGroup collection, LayoutInflater inflater) {
-
-        ArrayList<Bitmap> emoji = Stickers.getInstance().getStickers("f1Stickers");
-        ViewGroup layout = (ViewGroup) inflater.inflate(resId, collection, false);
-        GridView football_emoji = (GridView) layout.findViewById(R.id.emoji);
-
-        football_emoji.setAdapter(new EmojiAdapter(activity, emoji));
+        GridView gridView = (GridView) layout.findViewById(R.id.emoji);
+        gridView.setAdapter(new EmojiAdapter(activity, stickerCategory));
+        gridView.setOnItemClickListener( this);
 
         return layout;
     }
@@ -162,6 +119,26 @@ public class AdapterForEmoji extends PagerAdapter {
         ImageSpan imageSpan = new ImageSpan(image, ImageSpan.ALIGN_BOTTOM);
         sb.setSpan(imageSpan, 0, 1, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return sb;
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        String selectedStickerPath = (String)view.getTag();
+
+        sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_STICKER, selectedStickerPath);
+    }
+
+    private boolean sendActionToCorrespondingActivityListener(String key, String mimeType, Object data) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+
+        if (actionListener != null) {
+            actionListener.handleMediaContent( mimeType, data, null);
+            success = true;
+        }
+        return success;
     }
 
 }

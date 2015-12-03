@@ -11,6 +11,7 @@ import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 
@@ -30,11 +31,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     public static final String DEFAULT_GROUP_SERVER_ID = "NOT_GROUP_CHAT";
 
-    public static final String MIME_TYPE_TEXT = "text";
-    public static final String MIME_TYPE_IMAGE = "image";
-    public static final String MIME_TYPE_VIDEO = "video";
-    public static final String MIME_TYPE_AUDIO = "audio";
-    public static final String MIME_TYPE_VOICE = "voice";
+    public static final String MIME_TYPE_TEXT = "t";
+    public static final String MIME_TYPE_STICKER = "s";
+    public static final String MIME_TYPE_IMAGE = "i";
+    public static final String MIME_TYPE_VIDEO = "v";
+    public static final String MIME_TYPE_AUDIO = "a";
 
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "spu.db";
@@ -593,15 +594,15 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     }
 
-    public long addTextMessage(String msg, String number, boolean iamsender, String sentTime, String messageId, String serverTime, String recipientTime,
-                               long chatID, boolean read) {
+    public long addMessage(String msg, String mimeType, String number, boolean iamsender, String sentTime, String messageId, String serverTime, String recipientTime,
+                           long chatID, boolean read) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
         values.put(MessagesEntry.COLUMN_PHONENUMBER, number);
         values.put(MessagesEntry.COLUMN_DATA_TEXT, msg);
         values.put(MessagesEntry.COLUMN_MESSAGE_ID, messageId);
-        values.put(MessagesEntry.COLUMN_MIME_TYPE, MIME_TYPE_TEXT);
+        values.put(MessagesEntry.COLUMN_MIME_TYPE, mimeType);
         values.put(MessagesEntry.COLUMN_NAME_I_AM_SENDER, iamsender);
         values.put(MessagesEntry.COLUMN_CHAT_ID, chatID);
         values.put(MessagesEntry.COLUMN_SEND_TIMESTAMP, sentTime);
@@ -611,13 +612,12 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         values.put(MessagesEntry.COLUMN_READ_STATUS, read);
 
         long lastMessageId = db.insert(MessagesEntry.TABLE_NAME, null, values);
-        Log.i("Added", " Message");
         return lastMessageId;
 
     }
 
-    public long addMediaMessage(String message, byte[] mediaThumbnail, String number, boolean iamsender, String sentTime, String messageId, String serverTime, String recipientTime,
-                               long chatID, boolean read, String mediaFileName) {
+    public long addMediaMessage(String message, String mimeType, String number, boolean iamsender, String sentTime, String messageId, String serverTime, String recipientTime,
+                               long chatID, boolean read, String mediaFileName, byte[] mediaThumbnail) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -625,7 +625,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         values.put(MessagesEntry.COLUMN_DATA_TEXT, message);
         values.put(MessagesEntry.COLUMN_DATA_MEDIA, mediaThumbnail);
         values.put(MessagesEntry.COLUMN_MESSAGE_ID, messageId);
-        values.put(MessagesEntry.COLUMN_MIME_TYPE, MIME_TYPE_IMAGE);
+        values.put(MessagesEntry.COLUMN_MIME_TYPE, mimeType);
         values.put(MessagesEntry.COLUMN_NAME_I_AM_SENDER, iamsender);
         values.put(MessagesEntry.COLUMN_CHAT_ID, chatID);
         values.put(MessagesEntry.COLUMN_SEND_TIMESTAMP, sentTime);
@@ -638,6 +638,23 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         long lastMessageId = db.insert(MessagesEntry.TABLE_NAME, null, values);
         return lastMessageId;
 
+    }
+
+    public void updateMediaMessage_ContentUploaded(long messageId, String stanzaId, String checksum){
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(MessagesEntry.COLUMN_MESSAGE_ID, stanzaId);
+        values.put(MessagesEntry.COLUMN_DATA_TEXT, checksum);
+
+        String selection = MessagesEntry.COLUMN_ID + " LIKE ? ";
+        String[] selectionArgs = { String.valueOf(messageId)};
+
+        int count = db.update(
+                MessagesEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
     }
 
     public void updateServerReceived(String receiptId) {
@@ -1182,7 +1199,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             c.close();
 
             if (!exist) {
-                DUMMY_MESSAGE_ROW_ID = addTextMessage("", "", false, "", "", "", "", DEFAULT_ENTRY_ID, DEFAULT_READ_STATUS);
+                DUMMY_MESSAGE_ROW_ID = addMessage("", MIME_TYPE_TEXT, "", false, "", "", "", "", DEFAULT_ENTRY_ID, DEFAULT_READ_STATUS);
             } else {
                 //nothing
             }

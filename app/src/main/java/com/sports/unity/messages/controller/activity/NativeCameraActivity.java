@@ -421,18 +421,18 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             @Override
             public void postAction(Object object) {
                 String fileName = (String)object;
-                addActionToCorrespondingActivity(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName);
+                addActionToCorrespondingActivity(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName, object);
             }
 
         }.start();
 
     }
 
-    private boolean addActionToCorrespondingActivity(String key, String mimeType, String fileName) {
+    private boolean addActionToCorrespondingActivity(String key, String mimeType, String fileName, Object bytes) {
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        activityActionHandler.addActionOnHold( ActivityActionHandler.CHAT_SCREEN_KEY, new ActivityActionHandler.ActionItem( mimeType, fileName));
+        activityActionHandler.addActionOnHold( ActivityActionHandler.CHAT_SCREEN_KEY, new ActivityActionHandler.ActionItem( mimeType, fileName, bytes));
         return success;
     }
 

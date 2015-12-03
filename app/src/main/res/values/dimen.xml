@@ -36,4 +36,6 @@
 
     <dimen name="stickers_size">90dp</dimen>
 
+    <dimen name="media_msg_content_size">200dp</dimen>
+
 </resources>

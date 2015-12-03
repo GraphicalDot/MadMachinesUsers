@@ -1,11 +1,11 @@
 package com.sports.unity.messages.controller.model;
 
 import android.content.Context;
-import android.content.Intent;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.util.ActivityActionHandler;
+import com.sports.unity.util.Constants;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -21,9 +21,6 @@ import org.jivesoftware.smackx.xdata.FormField;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -179,8 +176,7 @@ public class GroupMessaging {
         message.setType(Message.Type.groupchat);
         message.setBody(msg);
         DateTime dateTime = DateTime.now();
-        JivePropertiesManager.addProperty(message, "time", dateTime.getMillis());
-        JivePropertiesManager.addProperty(message, "isGroupChat", "T");
+        JivePropertiesManager.addProperty(message, Constants.PARAM_TIME, dateTime.getMillis());
         String id = message.getStanzaId();
         try {
             multiUserChat.sendMessage(message);
@@ -193,7 +189,7 @@ public class GroupMessaging {
          * SportsUnityDBHelper.getInstance(context).addMessageToDatabase();
          */
 
-        long messageId = sportsUnityDBHelper.addTextMessage(msg, from, true, null, id, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+        long messageId = sportsUnityDBHelper.addMessage(msg, SportsUnityDBHelper.MIME_TYPE_TEXT, from, true, null, id, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
         sportsUnityDBHelper.updateChatEntry(messageId, chatId, groupServerId);
 
     }
@@ -210,7 +206,7 @@ public class GroupMessaging {
 
         Message message = new Message();
         DateTime dateTime = DateTime.now();
-        JivePropertiesManager.addProperty(message, "time", dateTime.getMillis());
+        JivePropertiesManager.addProperty(message, Constants.PARAM_TIME, dateTime.getMillis());
         ChatStateExtension extension = new ChatStateExtension(newState);
         message.addExtension(extension);
         try {

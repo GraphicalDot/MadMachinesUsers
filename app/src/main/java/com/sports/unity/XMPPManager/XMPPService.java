@@ -14,6 +14,7 @@ import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.sports.unity.ChatScreenApplication;
+import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.MainActivity;
@@ -27,6 +28,8 @@ import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
+import com.sports.unity.util.FileOnCloudHandler;
 
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
@@ -34,14 +37,10 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.IQTypeFilter;
-import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
-import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
@@ -52,15 +51,12 @@ import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.pubsub.LeafNode;
-import org.jivesoftware.smackx.pubsub.PayloadItem;
 import org.jivesoftware.smackx.pubsub.PubSubManager;
-import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
 import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.xdata.Form;
-import org.joda.time.DateTime;
 
 public class XMPPService extends Service {
 
@@ -467,7 +463,7 @@ public class XMPPService extends Service {
             String nodeid = messageXML.substring(messageXML.indexOf("node='") + 6, messageXML.indexOf("'><item id='"));
             groupServerId = nodeid;
             chatId = getChatIdOrCreateIfNotExist(true, from, groupServerId);
-            long messageId = sportsUnityDBHelper.addTextMessage(text, from, false, time, null, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+            long messageId = sportsUnityDBHelper.addMessage(text, SportsUnityDBHelper.MIME_TYPE_TEXT, from, false, time, null, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, groupServerId);
             if (ChatScreenApplication.isActivityVisible()) {
                 if (nodeid.equals(ChatScreenActivity.getGroupServerId())) {
@@ -522,7 +518,7 @@ public class XMPPService extends Service {
 
     private void handleChatMessage(Message message, boolean isGroupChat) {
 
-        Object value = JivePropertiesManager.getProperty(message, "time");
+        Object value = JivePropertiesManager.getProperty(message, Constants.PARAM_TIME);
         String fromId = message.getFrom().substring(0, message.getFrom().indexOf("@"));
         String to = message.getTo().substring(0, message.getTo().indexOf("@"));
 
@@ -537,7 +533,7 @@ public class XMPPService extends Service {
 
             if (!to.equals(messageFrom)) {
                 chatId = getChatIdOrCreateIfNotExist(isGroupChat, messageFrom, groupServerId);
-                addToDatabase(message, value, chatId, messageFrom, groupServerId);
+                handleMessage(message, value, chatId, messageFrom, groupServerId);
             } else {
                 success = false;
             }
@@ -546,7 +542,7 @@ public class XMPPService extends Service {
             messageFrom = fromId;
 
             chatId = getChatIdOrCreateIfNotExist(isGroupChat, fromId, groupServerId);
-            addToDatabase(message, value, chatId, fromId, groupServerId);
+            handleMessage(message, value, chatId, fromId, groupServerId);
         }
 
 
@@ -628,12 +624,35 @@ public class XMPPService extends Service {
         return chatId;
     }
 
-    public void addToDatabase(Message message, Object value, long chatId, String from, String fromGroup) {
+    public void handleMessage(Message message, Object value, long chatId, String from, String fromGroup) {
+        String mimeType = (String)JivePropertiesManager.getProperty(message, Constants.PARAM_MIME_TYPE);
 
-        long messageId = sportsUnityDBHelper.addTextMessage(message.getBody().toString(), from, false,
-                value.toString(), message.getStanzaId(), null, null,
-                chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-        sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
+        if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
+            String checksum = message.getBody();
+            byte[] content = FileOnCloudHandler.downloadContent(checksum);
+
+            String fileName = String.valueOf(System.currentTimeMillis());
+            DBUtil.writeContentToFile( this, fileName, content, false);
+
+            sportsUnityDBHelper.addMediaMessage( checksum, mimeType, from, false,
+                    value.toString(), message.getStanzaId(), null, null,
+                    chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, fileName, null);
+
+        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT) ){
+            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
+                    value.toString(), message.getStanzaId(), null, null,
+                    chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
+        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO) ){
+
+        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ){
+
+        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER) ){
+            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
+                    value.toString(), message.getStanzaId(), null, null,
+                    chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
+        }
     }
 
     private boolean sendActionToCorrespondingActivityListener(String key, int id, Object data) {

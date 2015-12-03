@@ -203,7 +203,7 @@ public class ChatFragment extends Fragment {
         }
 
         @Override
-        public void handleMediaContent(String mimeType, Object content) {
+        public void handleMediaContent(String mimeType, Object messageContent, Object mediaContent) {
             //nothing
         }
 

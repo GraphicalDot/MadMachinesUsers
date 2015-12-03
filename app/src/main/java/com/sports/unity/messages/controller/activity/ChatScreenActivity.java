@@ -3,8 +3,6 @@ package com.sports.unity.messages.controller.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
@@ -42,6 +40,7 @@ import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.messages.controller.viewhelper.ChatKeyboardHelper;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.FileOnCloudHandler;
 import com.sports.unity.util.ThreadTask;
 
@@ -161,13 +160,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         }
 
         @Override
-        public void handleMediaContent(String mimeType, Object object) {
-            String mediaFileName = (String)object;
-
-            byte[] content = DBUtil.loadContentFromFile( ChatScreenActivity.this.getBaseContext(), mediaFileName);
-            mediaMap.put( mediaFileName, content);
-
-            sendMedia(mimeType, mediaFileName);
+        public void handleMediaContent(String mimeType, Object messageContent, Object mediaContent) {
+            handleSendingMediaContent(mimeType, messageContent, mediaContent);
 
             ChatScreenActivity.this.runOnUiThread(new Runnable() {
                 @Override
@@ -480,7 +474,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                     groupChatScreenAdapter.notifydataset(messageList);
                 }
             } else {
-                personalMessaging.sendMessageToPeer(messageText.getText().toString(), chat, JABBERID, chatID, JABBERNAME);
+                personalMessaging.sendTextMessage(messageText.getText().toString(), chat, JABBERID, chatID);
                 personalMessaging.sendStatus(ChatState.paused, chat);
                 messageList = sportsUnityDBHelper.getMessages(chatID);
                 chatScreenAdapter.notifydataset(messageList);
@@ -490,11 +484,23 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         messageText.setText("");
     }
 
-    private void sendMedia(String mimeType, String fileName){
+    private void handleSendingMediaContent(String mimeType, Object messageContent, Object mediaContent){
         if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
-            sportsUnityDBHelper.addMediaMessage( "", null, "", true, String.valueOf(System.currentTimeMillis()), null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, fileName);
-        } else {
+            String mediaFileName = (String)messageContent;
 
+            mediaMap.put( mediaFileName, (byte[])mediaContent);
+
+            long messageId = sportsUnityDBHelper.addMediaMessage("", mimeType, "", true, String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()),
+                    null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
+
+            FileOnCloudHandler.uploadAndSendMedia( (byte[])mediaContent, mimeType, chat, messageId, getBaseContext());
+        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER) ) {
+            String stickerAssetPath = (String)messageContent;
+            personalMessaging.sendStickerMessage(stickerAssetPath, chat, JABBERID, chatID);
+        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO) ) {
+            //TODO
+        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ) {
+            //TODO
         }
     }
 
@@ -612,13 +618,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                         byte [] content = DBUtil.loadContentFromFile( ChatScreenActivity.this.getBaseContext(), message.mediaFileName);
                         mediaMap.put( message.mediaFileName, content);
                     }
-                }
-
-                Iterator<byte[]> it = mediaMap.values().iterator();
-                if( it.hasNext() ){
-                    String filename = FileOnCloudHandler.uploadContent(it.next());
-                    byte [] downloadedContent = FileOnCloudHandler.downloadContent(filename);
-                    mediaMap.put( filename, downloadedContent);
                 }
 
                 return null;

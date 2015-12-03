@@ -1,7 +1,6 @@
 package com.sports.unity.messages.controller.model;
 
 import android.content.Context;
-import android.content.res.Configuration;
 import android.util.Log;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
@@ -12,14 +11,12 @@ import com.sports.unity.util.CommonUtil;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.pubsub.AccessModel;
-import org.jivesoftware.smackx.pubsub.ConfigureForm;
 import org.jivesoftware.smackx.pubsub.LeafNode;
 import org.jivesoftware.smackx.pubsub.PayloadItem;
 import org.jivesoftware.smackx.pubsub.PubSubManager;
 import org.jivesoftware.smackx.pubsub.PublishModel;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.Subscription;
-import org.jivesoftware.smackx.xdata.Form;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
 
@@ -121,7 +118,7 @@ public class PubSubMessaging {
          */
 
         message = message.replaceAll(Pattern.quote("$"), "");
-        long messageId = sportsUnityDBHelper.addTextMessage(message, from, true, time, null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+        long messageId = sportsUnityDBHelper.addMessage(message, SportsUnityDBHelper.MIME_TYPE_TEXT, from, true, time, null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS);
         sportsUnityDBHelper.updateChatEntry(messageId, chatID, groupServerId);
 
         return success;

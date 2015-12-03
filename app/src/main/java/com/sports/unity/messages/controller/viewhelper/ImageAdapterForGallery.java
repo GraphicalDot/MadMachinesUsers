@@ -219,6 +219,7 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
         Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
 
         new ThreadTask( bitmap){
+            private byte[] mediaContent = null;
 
             @Override
             public Object process() {
@@ -227,35 +228,30 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
 
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byte[] byteArray = stream.toByteArray();
+                mediaContent = stream.toByteArray();
 
-//                int bytes = bitmap.getByteCount();
-//                ByteBuffer buffer = ByteBuffer.allocate(bytes);
-//                bitmap.copyPixelsToBuffer(buffer);
-//                byte[] byteArray = buffer.array();
-
-                DBUtil.writeContentToFile( activity.getBaseContext(), fileName, byteArray, false);
+                DBUtil.writeContentToFile( activity.getBaseContext(), fileName, mediaContent, false);
                 return fileName;
             }
 
             @Override
             public void postAction(Object object) {
                 String fileName = (String)object;
-                sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName);
+                sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName, mediaContent);
             }
 
         }.start();
 
     }
 
-    private boolean sendActionToCorrespondingActivityListener(String key, String mimeType, Object data) {
+    private boolean sendActionToCorrespondingActivityListener(String key, String mimeType, Object messageContent, Object mediaContent) {
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
         ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
 
         if (actionListener != null) {
-            actionListener.handleMediaContent( mimeType, data);
+            actionListener.handleMediaContent( mimeType, messageContent, mediaContent);
             success = true;
         }
         return success;

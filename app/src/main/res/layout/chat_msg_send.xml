@@ -18,9 +18,8 @@
 
         <ImageView
             android:id="@+id/image_message"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:scaleType="centerCrop"
+            android:layout_width="@dimen/media_msg_content_size"
+            android:layout_height="@dimen/media_msg_content_size"
             />
 
         <TextView

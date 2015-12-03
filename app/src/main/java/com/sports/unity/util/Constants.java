@@ -26,6 +26,9 @@ public class Constants {
     public static final String GAME_KEY_TENNIS = "tennis";
     public static final String GAME_KEY_F1 = "f1";
 
+    public static final String PARAM_TIME = "time";
+    public static final String PARAM_MIME_TYPE = "mime_type";
+
     public static final String NEWS_REQUEST_TAG = "news_tag";
 
     public static final int CONNECTION_TIME_OUT = 20*1000;
@@ -40,7 +43,6 @@ public class Constants {
     public static final String PHOTO_ALBUM = "image";
 
     // supported file formats
-    public static final List<String> FILE_EXTN = Arrays.asList("jpg", "jpeg",
-            "png");
+    public static final List<String> FILE_EXTN = Arrays.asList( "jpg", "jpeg", "png");
 
 }

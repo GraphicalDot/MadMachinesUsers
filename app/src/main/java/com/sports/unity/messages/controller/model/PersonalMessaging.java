@@ -8,6 +8,7 @@ import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -20,7 +21,6 @@ import org.jivesoftware.smackx.privacy.PrivacyList;
 import org.jivesoftware.smackx.privacy.PrivacyListManager;
 import org.jivesoftware.smackx.privacy.packet.PrivacyItem;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest;
-import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,28 +68,52 @@ public class PersonalMessaging {
         sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
     }
 
-    public void sendMessageToPeer(String msg, Chat chat, String number, long chatId, String name) {
+    public void sendTextMessage(String msg, Chat chat, String number, long chatId) {
         Message message = new Message();
         message.setBody(msg);
+
+        String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
+        String stanzaId = sendMessage(message, chat, time, SportsUnityDBHelper.MIME_TYPE_TEXT);
+
+        long messageId = sportsUnityDBHelper.addMessage(message.getBody(), SportsUnityDBHelper.MIME_TYPE_TEXT, number, true, time,
+                stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+        sportsUnityDBHelper.updateChatEntry(messageId, chatId, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+    }
+
+    public void sendStickerMessage(String msg, Chat chat, String number, long chatId) {
+        Message message = new Message();
+        message.setBody(msg);
+
+        String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
+        String stanzaId = sendMessage(message, chat, time, SportsUnityDBHelper.MIME_TYPE_STICKER);
+
+        long messageId = sportsUnityDBHelper.addMessage(message.getBody(), SportsUnityDBHelper.MIME_TYPE_STICKER, number, true, time,
+                stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+        sportsUnityDBHelper.updateChatEntry(messageId, chatId, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+    }
+
+    public void sendMediaMessage(String checksum, Chat chat, long messageId, String mimeType) {
+        Message message = new Message();
+        message.setBody(checksum);
+
         long time = CommonUtil.getCurrentGMTTimeInEpoch();
-        JivePropertiesManager.addProperty(message, "time", time);
-        JivePropertiesManager.addProperty(message, "isGroupChat", "F");
-        DeliveryReceiptRequest.addTo(message);                                            //Request delivery receipts for this message
+        String stanzaId = sendMessage(message, chat, String.valueOf(time), mimeType);
+
+        sportsUnityDBHelper.updateMediaMessage_ContentUploaded( messageId, stanzaId, checksum);
+    }
+
+    private String sendMessage(Message message, Chat chat, String currentTime, String mimeType){
+        JivePropertiesManager.addProperty(message, Constants.PARAM_TIME, currentTime);
+        JivePropertiesManager.addProperty(message, Constants.PARAM_MIME_TYPE, mimeType);
+
+        DeliveryReceiptRequest.addTo(message);
         String id = message.getStanzaId();
         try {
             chat.sendMessage(message);
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         }
-
-        /**
-         * query to insert this message into database
-         * SportsUnityDBHelper.getInstance(context).addMessageToDatabase();
-         */
-
-        long messageId = sportsUnityDBHelper.addTextMessage(msg, number, true, String.valueOf(time), id, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-        sportsUnityDBHelper.updateChatEntry(messageId, chatId, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
-
+        return id;
     }
 
     public void sendStatus(ChatState newState, Chat chat) {
@@ -104,7 +128,7 @@ public class PersonalMessaging {
 
         Message message = new Message();
         long time = CommonUtil.getCurrentGMTTimeInEpoch();
-        JivePropertiesManager.addProperty(message, "time", time);
+        JivePropertiesManager.addProperty(message, Constants.PARAM_TIME, time);
         ChatStateExtension extension = new ChatStateExtension(newState);
         message.addExtension(extension);
         try {
