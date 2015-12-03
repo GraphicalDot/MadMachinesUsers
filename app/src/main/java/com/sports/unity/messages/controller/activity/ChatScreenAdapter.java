@@ -168,10 +168,11 @@ public class ChatScreenAdapter extends BaseAdapter {
 
             Bitmap bitmap = Stickers.getInstance().getStickerBitmap( folderName, name);
             if( bitmap != null ) {
+                int size = activity.getResources().getDimensionPixelSize(R.dimen.sticker_msg_content_size);
                 holder.messageAsMedia.setImageBitmap(bitmap);
                 holder.messageAsMedia.setVisibility(View.VISIBLE);
-                holder.messageAsMedia.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-                holder.messageAsMedia.setScaleType(ImageView.ScaleType.CENTER);
+                holder.messageAsMedia.setLayoutParams(new LinearLayout.LayoutParams(size, size));
+                holder.messageAsMedia.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             } else {
                 holder.messageAsMedia.setVisibility(View.GONE);
             }

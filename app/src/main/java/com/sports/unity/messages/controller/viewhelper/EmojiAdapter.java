@@ -1,6 +1,7 @@
 package com.sports.unity.messages.controller.viewhelper;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,13 +21,13 @@ import java.util.TreeMap;
  */
 public class EmojiAdapter extends BaseAdapter {
 
-    private Activity activity;
+    private Context context;
     private String stickersCategory;
 
     private ArrayList<String> stickersName = null;
 
-    public EmojiAdapter(Activity activity, String stickersCategory) {
-        this.activity = activity;
+    public EmojiAdapter(Context context, String stickersCategory) {
+        this.context = context;
         this.stickersCategory = stickersCategory;
 
         stickersName = Stickers.getInstance().getStickers(stickersCategory);
@@ -49,9 +50,9 @@ public class EmojiAdapter extends BaseAdapter {
         ImageView imageView;
 
         if (convertView == null) {
-            int stickerSize = (int)activity.getResources().getDimension(R.dimen.stickers_size);
+            int stickerSize = (int)context.getResources().getDimension(R.dimen.stickers_size);
 
-            imageView = new ImageView(activity);
+            imageView = new ImageView(context);
             imageView.setLayoutParams( new GridView.LayoutParams( stickerSize, stickerSize));
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         } else {

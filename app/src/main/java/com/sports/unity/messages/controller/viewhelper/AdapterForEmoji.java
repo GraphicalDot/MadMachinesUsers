@@ -6,6 +6,7 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.Layout;
@@ -17,6 +18,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ListAdapter;
+import android.widget.ProgressBar;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
@@ -38,16 +41,17 @@ import java.util.zip.Inflater;
 
 public class AdapterForEmoji extends PagerAdapter implements AdapterView.OnItemClickListener {
 
-    private Activity activity;
+    private Context context;
+    private GridView gridView;
+    private ViewGroup layout;
 
     private int titles[] = {R.drawable.ic_football, R.drawable.ic_basketball, R.drawable.ic_cricket, R.drawable.ic_tennis, R.drawable.ic_f1};
     private int SelectedTitles[] = {R.drawable.ic_football, R.drawable.ic_basketball, R.drawable.ic_cricket, R.drawable.ic_tennis, R.drawable.ic_f1};
 
 
-    public AdapterForEmoji(Activity activity) {
-        this.activity = activity;
+    public AdapterForEmoji(Context context) {
+        this.context = context;
     }
-
 
     @Override
     public Object instantiateItem(ViewGroup collection, int position) {
@@ -58,7 +62,7 @@ public class AdapterForEmoji extends PagerAdapter implements AdapterView.OnItemC
         switch (position) {
             case 0:
                 resId = R.layout.football_emoji;
-                viewgroup = loadStickersGridView(resId, collection, inflater, "footballStickers");
+               viewgroup = loadStickersGridView(resId, collection, inflater, "footballStickers");
                 collection.addView(viewgroup);
                 break;
             case 1:
@@ -86,12 +90,14 @@ public class AdapterForEmoji extends PagerAdapter implements AdapterView.OnItemC
         return viewgroup;
     }
 
-    public ViewGroup loadStickersGridView(int resId, ViewGroup collection, LayoutInflater inflater, String stickerCategory) {
-        ViewGroup layout = (ViewGroup) inflater.inflate(resId, collection, false);
 
-        GridView gridView = (GridView) layout.findViewById(R.id.emoji);
-        gridView.setAdapter(new EmojiAdapter(activity, stickerCategory));
-        gridView.setOnItemClickListener( this);
+    public ViewGroup loadStickersGridView(int resId, ViewGroup collection, LayoutInflater inflater, String stickerCategory) {
+        layout = (ViewGroup) inflater.inflate(resId, collection, false);
+
+        gridView = (GridView) layout.findViewById(R.id.emoji);
+
+        gridView.setAdapter(new EmojiAdapter(context, stickerCategory));
+        gridView.setOnItemClickListener(this);
 
         return layout;
     }
@@ -113,7 +119,7 @@ public class AdapterForEmoji extends PagerAdapter implements AdapterView.OnItemC
 
     @Override
     public CharSequence getPageTitle(int position) {
-        Drawable image = activity.getResources().getDrawable(titles[position]);
+        Drawable image = context.getResources().getDrawable(titles[position]);
         image.setBounds(0, 0, image.getIntrinsicWidth(), image.getIntrinsicHeight());
         SpannableString sb = new SpannableString(" ");
         ImageSpan imageSpan = new ImageSpan(image, ImageSpan.ALIGN_BOTTOM);

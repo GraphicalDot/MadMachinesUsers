@@ -9,7 +9,9 @@ import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
+import com.bumptech.glide.Glide;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.ProfileCreationActivity;
@@ -33,6 +36,7 @@ import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.ThreadTask;
+import com.squareup.picasso.MemoryPolicy;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.RequestCreator;
 
@@ -59,7 +63,7 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
     private int keyboardHeight;
 
     private ArrayList<String> filePath = null;
-    private HashMap<Integer,Bitmap> imageContent = new HashMap<>();
+    private HashMap<Integer, Bitmap> imageContent = new HashMap<>();
 
     private View selectedViewForSend = null;
 
@@ -98,22 +102,28 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
             super(v);
 
             imageView = (ImageView) v.findViewById(com.sports.unity.R.id.img);
-            imageView.setLayoutParams(new FrameLayout.LayoutParams(keyboardHeight,keyboardHeight));
+            imageView.setLayoutParams(new FrameLayout.LayoutParams(keyboardHeight, keyboardHeight));
         }
     }
 
     @Override
     public ImageAdapterForGallery.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_gallery, parent, false);
-        v.setLayoutParams(new FrameLayout.LayoutParams(keyboardHeight,keyboardHeight));
+        v.setLayoutParams(new FrameLayout.LayoutParams(keyboardHeight, keyboardHeight));
         return new ViewHolder(v);
     }
 
     @Override
     public void onBindViewHolder(ImageAdapterForGallery.ViewHolder holder, final int position) {
-        holder.imageView.setTag( position);
+        holder.imageView.setTag(position);
         holder.imageView.setOnClickListener(this);
 
+//        Glide.with(activity)
+//                .load(filePath.get(position))
+//                .centerCrop()
+//                .placeholder(R.drawable.grey_bg_rectangle)
+//                .crossFade()
+//                .into(holder.imageView);
 //        boolean available = fetchImage(position, holder);
 //        if( available ){
 //            holder.imageView.setImageBitmap( imageContent.get(position));
@@ -121,16 +131,22 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
 //            holder.imageView.setImageResource( R.drawable.images);
 //        }
 
-
-          Picasso.with(activity)
-                  .load(new File(filePath.get(position)))
-                  .centerCrop()
-                  .resize(keyboardHeight,keyboardHeight)
-                  .placeholder(R.drawable.grey_bg_rectangle)
-                  .into(holder.imageView);
+//        Bitmap image = ProfileCreationActivity.decodeSampleImage(new File(filePath.get(position)), keyboardHeight, keyboardHeight);
+//
+//        holder.imageView.setImageBitmap(image);
+//        try {
+            Picasso.with(activity)
+                    .load(new File(filePath.get(position)))
+//                    .transform(new BitmapTransform(keyboardHeight, keyboardHeight))
+                    .resize(keyboardHeight, keyboardHeight)
+                    .centerCrop()
+                    .placeholder(R.drawable.grey_bg_rectangle)
+                    .into(holder.imageView);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 
     }
-
 
     @Override
     public int getItemCount() {

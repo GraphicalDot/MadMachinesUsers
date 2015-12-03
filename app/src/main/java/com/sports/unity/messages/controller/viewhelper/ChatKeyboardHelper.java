@@ -7,7 +7,9 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.provider.MediaStore;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
+import android.widget.ProgressBar;
 
 import com.sports.unity.R;
 import com.sports.unity.common.view.SlidingTabLayout;
@@ -257,11 +260,6 @@ public class ChatKeyboardHelper {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_emoji);
         int visibility = viewGroup.getVisibility();
 
-
-        ViewPager pager = (ViewPager) viewGroup.findViewById(R.id.emojipager);
-        SlidingTabLayout tabs = (SlidingTabLayout) viewGroup.findViewById(com.sports.unity.R.id.tabs);
-
-
         hideAllInputLayouts();
         if (isKeyBoardVisible) {
             if (visibility == View.VISIBLE) {
@@ -270,14 +268,14 @@ public class ChatKeyboardHelper {
                 viewGroup.setVisibility(View.VISIBLE);
                 showPopupWindow(parentLayout);
 
-                postActionOnOpeningEmojiKeyboard(activity, pager, tabs);
+                postActionOnOpeningEmojiKeyboard(activity,viewGroup);
             }
 
         } else {
             toggleSystemKeyboard(parentLayout, activity.getApplicationContext());
 
             viewGroup.setVisibility(View.VISIBLE);
-            postActionOnOpeningEmojiKeyboard(activity, pager, tabs);
+            postActionOnOpeningEmojiKeyboard(activity, viewGroup);
         }
     }
 
@@ -352,26 +350,63 @@ public class ChatKeyboardHelper {
         activity.startActivity(intent);
     }
 
-    private void postActionOnOpeningEmojiKeyboard(final Activity activity, ViewPager pager, SlidingTabLayout tabs) {
+    private void postActionOnOpeningEmojiKeyboard(final Activity activity, ViewGroup viewGroup) {
         ViewGroup sendMessageLayout = (ViewGroup) activity.findViewById(R.id.send_message_layout);
         sendMessageLayout.setVisibility(View.GONE);
 
-        Stickers.getInstance().loadAllStickers(activity.getBaseContext());
+        new LoadStickers( activity.getBaseContext(), viewGroup).execute();
 
-        pager.setAdapter(new AdapterForEmoji(activity));
+    }
 
-        tabs.setDistributeEvenly(true);
+    private class LoadStickers extends AsyncTask {
 
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                return activity.getResources().getColor(com.sports.unity.R.color.tabsScrollColor);
-            }
-        });
+        private Context context;
+        private ViewGroup viewGroup;
+        private ProgressBar progressBar;
 
-        tabs.setCustomTabView(R.layout.custom_tab_view, 0);
-        tabs.setViewPager(pager);
+        LoadStickers(Context context, ViewGroup viewGroup){
+            this.context = context;
+            this.viewGroup = viewGroup;
+        }
 
+        @Override
+        protected void onPreExecute() {
+            progressBar = (ProgressBar) viewGroup.findViewById(R.id.progress);
+            progressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#2C84CC"), android.graphics.PorterDuff.Mode.MULTIPLY);
+            progressBar.setVisibility(View.VISIBLE);
+            super.onPreExecute();
+
+        }
+
+        @Override
+        protected Object doInBackground(Object[] params) {
+            Stickers.getInstance().loadAllStickers(context);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+
+            ViewPager pager = (ViewPager) viewGroup.findViewById(R.id.emojipager);
+            SlidingTabLayout tabs = (SlidingTabLayout) viewGroup.findViewById(com.sports.unity.R.id.tabs);
+
+            progressBar.setVisibility(View.GONE);
+            pager.setAdapter( new AdapterForEmoji(context));
+
+            tabs.setDistributeEvenly(true);
+            tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+
+                @Override
+                public int getIndicatorColor(int position) {
+                    return context.getResources().getColor(com.sports.unity.R.color.tabsScrollColor);
+                }
+
+            });
+
+            tabs.setCustomTabView(R.layout.custom_tab_view, 0);
+            tabs.setViewPager(pager);
+        }
 
     }
 
@@ -446,6 +481,7 @@ public class ChatKeyboardHelper {
 
     private void showGalleryView(Activity activity, RecyclerView recyclerView) {
         ArrayList<String> path = getAllShownImagesPath(activity);
+
         RecyclerView.Adapter mAdapter = new ImageAdapterForGallery(activity, recyclerView, path, keyboardHeight);
         recyclerView.setAdapter(mAdapter);
     }
@@ -475,7 +511,7 @@ public class ChatKeyboardHelper {
         String[] projection = {MediaStore.MediaColumns.DATA};
 
         cursor = activity.getContentResolver().query(uri, projection, null,
-                null, null);
+                null, MediaStore.MediaColumns.DATE_MODIFIED + " DESC");
         column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
         while (cursor.moveToNext()) {
