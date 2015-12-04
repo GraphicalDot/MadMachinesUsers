@@ -160,8 +160,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         }
 
         @Override
-        public void handleMediaContent(String mimeType, Object messageContent, Object mediaContent) {
-            handleSendingMediaContent(mimeType, messageContent, mediaContent);
+        public void handleMediaContent(int id, String mimeType, Object messageContent, Object mediaContent) {
+            if( id == 1 ){
+                handleSendingMediaContent(mimeType, messageContent, mediaContent);
+            } else if ( id == 2 ) {
+                mediaMap.put( (String)messageContent, (byte[])mediaContent);
+            } else if ( id == 3 ) {
+                FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload( (String)messageContent, mimeType, (Long)mediaContent);
+            }
 
             ChatScreenActivity.this.runOnUiThread(new Runnable() {
                 @Override
@@ -488,12 +494,12 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
             String mediaFileName = (String)messageContent;
 
-            mediaMap.put( mediaFileName, (byte[])mediaContent);
+            mediaMap.put(mediaFileName, (byte[]) mediaContent);
 
             long messageId = sportsUnityDBHelper.addMediaMessage("", mimeType, "", true, String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()),
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
 
-            FileOnCloudHandler.uploadAndSendMedia( (byte[])mediaContent, mimeType, chat, messageId, getBaseContext());
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload( (byte[])mediaContent, mimeType, chat, messageId);
         } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER) ) {
             String stickerAssetPath = (String)messageContent;
             personalMessaging.sendStickerMessage(stickerAssetPath, chat, JABBERID, chatID);
@@ -614,9 +620,20 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                 ArrayList<Message> messageList = (ArrayList<Message>)object;
 
                 for(Message message : messageList){
-                    if( message.mediaFileName != null ){
-                        byte [] content = DBUtil.loadContentFromFile( ChatScreenActivity.this.getBaseContext(), message.mediaFileName);
-                        mediaMap.put( message.mediaFileName, content);
+                    if( message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ) {
+                        if (message.mediaFileName != null) {
+                            if( ! mediaMap.containsKey(message.mediaFileName) ) {
+                                byte[] content = DBUtil.loadContentFromFile(ChatScreenActivity.this.getBaseContext(), message.mediaFileName);
+                                mediaMap.put(message.mediaFileName, content);
+                            } else {
+                                //nothing
+                            }
+                        } else {
+                            String checksum = message.textData;
+                            FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload( checksum, message.mimeType, message.id);
+                        }
+                    } else {
+                        //TODO
                     }
                 }
 

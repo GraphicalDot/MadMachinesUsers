@@ -421,7 +421,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             @Override
             public void postAction(Object object) {
                 String fileName = (String)object;
-                addActionToCorrespondingActivity(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName, object);
+                addActionToCorrespondingActivity(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName, this.object);
             }
 
         }.start();
@@ -432,7 +432,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        activityActionHandler.addActionOnHold( ActivityActionHandler.CHAT_SCREEN_KEY, new ActivityActionHandler.ActionItem( mimeType, fileName, bytes));
+        activityActionHandler.addActionOnHold( ActivityActionHandler.CHAT_SCREEN_KEY, new ActivityActionHandler.ActionItem( 1, mimeType, fileName, bytes));
         return success;
     }
 

@@ -215,7 +215,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
         }
 
         @Override
-        public void handleMediaContent(String mimeType, Object messageContent, Object mediaContent) {
+        public void handleMediaContent(int id, String mimeType, Object messageContent, Object mediaContent) {
             //nothing
         }
 

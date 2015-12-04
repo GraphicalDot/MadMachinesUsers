@@ -12,6 +12,7 @@ import java.util.ArrayList;
  */
 public class Message {
 
+    public int id;
     public String number;
     public String textData;
     public byte[] media;
@@ -25,8 +26,9 @@ public class Message {
     int contactID;
     public String mediaFileName;
 
-    public Message(String number, String textData, byte[] blob, String mimeType, String serverReceipt, String recipientReceipt,
-                   Boolean iamsender, String recievetime, String sendtime, boolean read, int id, String mediaFileName) {
+    public Message(int id, String number, String textData, byte[] blob, String mimeType, String serverReceipt, String recipientReceipt,
+                   Boolean iamsender, String recievetime, String sendtime, boolean read, int contactId, String mediaFileName) {
+        this.id = id;
         this.number = number;
         this.textData = textData;
         this.media = blob;
@@ -37,7 +39,7 @@ public class Message {
         this.sendTime = sendtime;
         this.recieveTime = recievetime;
         this.messagesRead = read;
-        this.contactID = id;
+        this.contactID = contactId;
         this.mediaFileName = mediaFileName;
     }
 

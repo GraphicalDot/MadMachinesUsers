@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -51,6 +52,7 @@ public class DBUtil {
     }
 
     public static void writeContentToFile( Context context, String fileName, byte[] content, boolean append){
+        Log.d("File I/O", "start writing");
         if( content != null ){
             FileOutputStream fos = null;
             try{
@@ -69,9 +71,11 @@ public class DBUtil {
                 }catch (Exception e) {}
             }
         }
+        Log.d("File I/O", "end writing");
     }
 
     public static byte[] loadContentFromFile( Context context, String fileName){
+        Log.d("File I/O", "start reading");
         byte [] content = null;
         InputStream is = null;
         ByteArrayOutputStream byteArrayOutputStream = null;
@@ -96,6 +100,7 @@ public class DBUtil {
                 is.close();
             }catch (Exception e) {}
         }
+        Log.d("File I/O", "end reading");
         return content;
     }
 

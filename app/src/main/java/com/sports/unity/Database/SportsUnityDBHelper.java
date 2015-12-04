@@ -583,7 +583,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 int id = c.getInt(9);
                 if (id != DUMMY_MESSAGE_ROW_ID) {
                     boolean read = c.getInt(10) > 0;
-                    list.add(new Message(c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8), read, id, c.getString(11)));
+                    list.add(new Message( c.getInt(9), c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8), read, id, c.getString(11)));
                 } else {
                     //nothing
                 }
@@ -646,6 +646,22 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(MessagesEntry.COLUMN_MESSAGE_ID, stanzaId);
         values.put(MessagesEntry.COLUMN_DATA_TEXT, checksum);
+
+        String selection = MessagesEntry.COLUMN_ID + " LIKE ? ";
+        String[] selectionArgs = { String.valueOf(messageId)};
+
+        int count = db.update(
+                MessagesEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+    }
+
+    public void updateMediaMessage_ContentDownloaded(long messageId, String filename){
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(MessagesEntry.COLUMN_MEDIA_FILE_NAME, filename);
 
         String selection = MessagesEntry.COLUMN_ID + " LIKE ? ";
         String[] selectionArgs = { String.valueOf(messageId)};

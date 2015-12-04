@@ -32,7 +32,7 @@ public class ActivityActionHandler {
 
         if( actionItemOnHoldMap.containsKey(key) ){
             ActionItem actionItem = actionItemOnHoldMap.get(key);
-            listener.handleMediaContent( actionItem.getMimeType(), actionItem.getMessageContent(), actionItem.getMediaContent());
+            listener.handleMediaContent( actionItem.id, actionItem.getMimeType(), actionItem.getMessageContent(), actionItem.getMediaContent());
             actionItemOnHoldMap.remove(key);
         }
     }
@@ -51,15 +51,21 @@ public class ActivityActionHandler {
 
     public static class ActionItem {
 
+        private int id = 0;
         private String mimeType = null;
         private Object messageContent = null;
         private Object mediaContent = null;
 
 
-        public ActionItem(String mimeType, Object messageContent, Object mediaContent){
+        public ActionItem(int id, String mimeType, Object messageContent, Object mediaContent){
+            this.id = id;
             this.mimeType = mimeType;
             this.messageContent = messageContent;
             this.mediaContent = mediaContent;
+        }
+
+        public int getId() {
+            return id;
         }
 
         public Object getMediaContent() {

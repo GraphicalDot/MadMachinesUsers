@@ -26,8 +26,6 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.ImageLoader;
-import com.bumptech.glide.Glide;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.ProfileCreationActivity;
@@ -253,21 +251,21 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
             @Override
             public void postAction(Object object) {
                 String fileName = (String)object;
-                sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName, mediaContent);
+                sendActionToCorrespondingActivityListener( 1, ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName, mediaContent);
             }
 
         }.start();
 
     }
 
-    private boolean sendActionToCorrespondingActivityListener(String key, String mimeType, Object messageContent, Object mediaContent) {
+    private boolean sendActionToCorrespondingActivityListener(int id, String key, String mimeType, Object messageContent, Object mediaContent) {
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
         ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
 
         if (actionListener != null) {
-            actionListener.handleMediaContent( mimeType, messageContent, mediaContent);
+            actionListener.handleMediaContent( id, mimeType, messageContent, mediaContent);
             success = true;
         }
         return success;

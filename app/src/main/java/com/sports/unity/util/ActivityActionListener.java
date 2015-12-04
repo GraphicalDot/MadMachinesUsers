@@ -9,6 +9,6 @@ public interface ActivityActionListener {
 
     public void handleAction(int id);
 
-    public void handleMediaContent(String mimeType, Object messageContent, Object mediaContent);
+    public void handleMediaContent(int id, String mimeType, Object messageContent, Object mediaContent);
 
 }

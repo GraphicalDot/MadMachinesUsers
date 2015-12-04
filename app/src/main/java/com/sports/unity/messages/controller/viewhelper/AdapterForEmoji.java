@@ -141,7 +141,7 @@ public class AdapterForEmoji extends PagerAdapter implements AdapterView.OnItemC
         ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
 
         if (actionListener != null) {
-            actionListener.handleMediaContent( mimeType, data, null);
+            actionListener.handleMediaContent( 1, mimeType, data, null);
             success = true;
         }
         return success;

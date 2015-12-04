@@ -628,19 +628,14 @@ public class XMPPService extends Service {
 
         if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
             String checksum = message.getBody();
-            byte[] content = FileOnCloudHandler.downloadContent(checksum);
 
-            String fileName = String.valueOf(System.currentTimeMillis());
-            DBUtil.writeContentToFile( this, fileName, content, false);
+            long messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
+                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, null);
 
-            sportsUnityDBHelper.addMediaMessage( checksum, mimeType, from, false,
-                    value.toString(), message.getStanzaId(), null, null,
-                    chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, fileName, null);
-
+            sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
         } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT) ){
             long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
-                    value.toString(), message.getStanzaId(), null, null,
-                    chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
         } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO) ){
 
@@ -666,6 +661,19 @@ public class XMPPService extends Service {
             } else {
                 actionListener.handleAction(id, data);
             }
+            success = true;
+        }
+        return success;
+    }
+
+    private boolean sendActionToCorrespondingActivityListener(int id, String key, String mimeType, Object messageContent, Object mediaContent) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+
+        if (actionListener != null) {
+            actionListener.handleMediaContent(id, mimeType, messageContent, mediaContent);
             success = true;
         }
         return success;
