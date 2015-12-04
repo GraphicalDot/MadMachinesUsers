@@ -491,6 +491,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     }
 
     private void handleSendingMediaContent(String mimeType, Object messageContent, Object mediaContent){
+        createChatEntryifNotExists();
+
         if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
             String mediaFileName = (String)messageContent;
 
@@ -498,6 +500,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
             long messageId = sportsUnityDBHelper.addMediaMessage("", mimeType, "", true, String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()),
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
+            sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
             FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload( (byte[])mediaContent, mimeType, chat, messageId);
         } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER) ) {

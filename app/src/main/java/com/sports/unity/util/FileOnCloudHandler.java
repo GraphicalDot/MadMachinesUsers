@@ -58,7 +58,9 @@ public class FileOnCloudHandler {
         processRequests();
     }
 
-    public void requestForDownload(String checksum, String mimeType, long messageId){
+    public void requestForDownload(String checksum, String mimeType, long messageId) {
+
+        //TODO dont add request which already added.
         CloudContentRequest request = new CloudContentRequest( false, mimeType, messageId, checksum, null, null);
         requests.add(request);
 
@@ -100,8 +102,9 @@ public class FileOnCloudHandler {
 
     private void handleUploadRequest( CloudContentRequest request, Context context){
         String checksum = uploadContent(request.getContent());
-
         PersonalMessaging.getInstance( context).sendMediaMessage(checksum, (Chat)request.extra, request.messageId, request.mimeType);
+
+        sendActionToCorrespondingActivityListener( 0, ActivityActionHandler.CHAT_SCREEN_KEY);
 
         requests.remove(request);
     }
@@ -113,7 +116,7 @@ public class FileOnCloudHandler {
         DBUtil.writeContentToFile(context, fileName, content, false);
         SportsUnityDBHelper.getInstance(context).updateMediaMessage_ContentDownloaded(request.messageId, fileName);
 
-        sendActionToCorrespondingActivityListener( 2, ActivityActionHandler.CHAT_SCREEN_KEY, request.mimeType, fileName, content);
+        sendActionToCorrespondingActivityListener(2, ActivityActionHandler.CHAT_SCREEN_KEY, request.mimeType, fileName, content);
 
         requests.remove(request);
     }
@@ -197,6 +200,19 @@ public class FileOnCloudHandler {
 
         if (actionListener != null) {
             actionListener.handleMediaContent( id, mimeType, messageContent, mediaContent);
+            success = true;
+        }
+        return success;
+    }
+
+    private boolean sendActionToCorrespondingActivityListener(int id, String key) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+
+        if (actionListener != null) {
+            actionListener.handleAction(id);
             success = true;
         }
         return success;
