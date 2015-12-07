@@ -433,7 +433,7 @@ public class ChatKeyboardHelper {
         ViewGroup sendMessageLayout = (ViewGroup) activity.findViewById(R.id.send_message_layout);
         sendMessageLayout.setVisibility(View.GONE);
 
-        audioRecordingHelper = new AudioRecordingHelper();
+        audioRecordingHelper = new AudioRecordingHelper(activity);
         audioRecordingHelper.initView(viewGroup);
     }
 

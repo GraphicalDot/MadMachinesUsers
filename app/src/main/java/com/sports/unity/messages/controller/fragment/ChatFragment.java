@@ -16,12 +16,20 @@ import android.widget.Switch;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
+
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.pubsub.LeafNode;
+import org.jivesoftware.smackx.pubsub.PubSubManager;
 
 import java.util.ArrayList;
 
@@ -111,7 +119,18 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
                             /*
                              * Exit Group
                              */
-                            //TODO
+                            PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
+                            try {
+                                LeafNode leafNode = pubSubManager.getNode(chatObject.groupServerId);
+                                leafNode.unsubscribe(TinyDB.KEY_USERNAME);
+                            } catch (SmackException.NoResponseException e) {
+                                e.printStackTrace();
+                            } catch (XMPPException.XMPPErrorException e) {
+                                e.printStackTrace();
+                            } catch (SmackException.NotConnectedException e) {
+                                e.printStackTrace();
+                            }
+
                         }
                         alert.dismiss();
                         break;

@@ -1,5 +1,7 @@
 package com.sports.unity.messages.controller.viewhelper;
 
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Rect;
 import android.media.MediaRecorder;
 import android.os.Environment;
@@ -12,9 +14,17 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.sports.unity.Database.DBUtil;
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.util.ActivityActionHandler;
+import com.sports.unity.util.ActivityActionListener;
+import com.sports.unity.util.ThreadTask;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,18 +41,24 @@ public class AudioRecordingHelper {
     private static final String AUDIO_RECORDER_FOLDER = "SportsUnityAudioRecorder";
 
     private int currentFormat = 0;
-    private int output_formats[] = { MediaRecorder.OutputFormat.MPEG_4,MediaRecorder.OutputFormat.THREE_GPP };
-    private String file_exts[] = { AUDIO_RECORDER_FILE_EXT_MP4, AUDIO_RECORDER_FILE_EXT_3GP };
+    private int output_formats[] = {MediaRecorder.OutputFormat.MPEG_4, MediaRecorder.OutputFormat.THREE_GPP};
+    private String file_exts[] = {AUDIO_RECORDER_FILE_EXT_MP4, AUDIO_RECORDER_FILE_EXT_3GP};
 
     private ImageButton record_button;
     private TextView counter_time;
 
     private MediaRecorder recorder = null;
     private Timer timer = null;
+    private String mFilename = null;
 
     private ViewGroup rootLayout = null;
+    private Context context;
 
-    public void initView(ViewGroup viewGroup){
+    public AudioRecordingHelper(Activity activity) {
+        this.context = (Context) activity;
+    }
+
+    public void initView(ViewGroup viewGroup) {
         rootLayout = viewGroup;
 
         record_button = (ImageButton) rootLayout.findViewById(R.id.record_button);
@@ -126,18 +142,19 @@ public class AudioRecordingHelper {
         });
     }
 
-    private void startRecording(){
+    private void startRecording() {
         startCounter();
 
-        counter_time = (TextView)rootLayout.findViewById(R.id.time_counter);
+        counter_time = (TextView) rootLayout.findViewById(R.id.time_counter);
         counter_time.setText("00:00");
         counter_time.setTextColor(rootLayout.getResources().getColor(android.R.color.holo_red_light));
 
+        mFilename = getFilename();
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(output_formats[currentFormat]);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        recorder.setOutputFile(getFilename());
+        recorder.setOutputFile(mFilename);
         recorder.setOnErrorListener(errorListener);
         recorder.setOnInfoListener(infoListener);
 
@@ -152,10 +169,10 @@ public class AudioRecordingHelper {
     }
 
     private void stopRecording() {
-        if(null != recorder){
-            try{
+        if (null != recorder) {
+            try {
                 recorder.stop();
-            }catch(RuntimeException stopException){
+            } catch (RuntimeException stopException) {
                 //handle cleanup here
             }
             recorder.reset();
@@ -167,7 +184,7 @@ public class AudioRecordingHelper {
         reset();
     }
 
-    private void cancelVoiceRecord(){
+    private void cancelVoiceRecord() {
         {
             View button = rootLayout.findViewById(R.id.record_button);
 
@@ -176,19 +193,51 @@ public class AudioRecordingHelper {
         }
     }
 
-    private void sendVoiceRecord(){
-        //TODO
+    private void sendVoiceRecord() {
+
+        new ThreadTask(mFilename) {
+
+            File file = new File(mFilename);
+            int size = (int) file.length();
+            byte[] voiceContent = new byte[size];
+
+            @Override
+            public Object process() {
+                try {
+                    BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+                    buf.read(voiceContent, 0, voiceContent.length);
+                    buf.close();
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                DBUtil.writeContentToFile(context, mFilename, voiceContent, false);
+                return null;
+            }
+
+            @Override
+            public void postAction(Object object) {
+                String fileName = (String) object;
+                sendActionToCorrespondingActivityListener(1, ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_AUDIO, mFilename, voiceContent);
+
+            }
+        }.start();
+
+
     }
 
-    private void reset(){
-        counter_time = (TextView)rootLayout.findViewById(R.id.time_counter);
+    private void reset() {
+        counter_time = (TextView) rootLayout.findViewById(R.id.time_counter);
         counter_time.setText("00:00");
         counter_time.setTextColor(rootLayout.getResources().getColor(R.color.messages_bg));
 
         changeLayout_InRecordButton();
     }
 
-    private void changeLayout_InRecordButton(){
+    private void changeLayout_InRecordButton() {
         rootLayout.findViewById(R.id.time_counter).setVisibility(View.VISIBLE);
 
         rootLayout.findViewById(R.id.record_button_white).setVisibility(View.GONE);
@@ -196,7 +245,7 @@ public class AudioRecordingHelper {
         rootLayout.findViewById(R.id.release_text).setVisibility(View.GONE);
     }
 
-    private void changeLayout_OutRecordButton(){
+    private void changeLayout_OutRecordButton() {
         rootLayout.findViewById(R.id.time_counter).setVisibility(View.GONE);
 
         rootLayout.findViewById(R.id.record_button_white).setVisibility(View.VISIBLE);
@@ -204,7 +253,7 @@ public class AudioRecordingHelper {
         rootLayout.findViewById(R.id.release_text).setVisibility(View.VISIBLE);
     }
 
-    private void insideOfRecordButton(){
+    private void insideOfRecordButton() {
         changeLayout_InRecordButton();
 
         {
@@ -215,11 +264,11 @@ public class AudioRecordingHelper {
         }
 
         String lastTimeText = counter_time.getText().toString();
-        counter_time = (TextView)rootLayout.findViewById(R.id.time_counter);
+        counter_time = (TextView) rootLayout.findViewById(R.id.time_counter);
         counter_time.setText(lastTimeText);
     }
 
-    private void outsideOfRecordButton(){
+    private void outsideOfRecordButton() {
         changeLayout_OutRecordButton();
 
         {
@@ -236,7 +285,7 @@ public class AudioRecordingHelper {
         }
 
         String lastTimeText = counter_time.getText().toString();
-        counter_time = (TextView)rootLayout.findViewById(R.id.time_counter1);
+        counter_time = (TextView) rootLayout.findViewById(R.id.time_counter1);
         counter_time.setText(lastTimeText);
     }
 
@@ -257,14 +306,14 @@ public class AudioRecordingHelper {
                 }
 
                 final StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append( (minutes > 9 ? minutes : "0" + minutes));
-                stringBuilder.append( ":");
-                stringBuilder.append( (seconds > 9 ? seconds : "0" + seconds));
+                stringBuilder.append((minutes > 9 ? minutes : "0" + minutes));
+                stringBuilder.append(":");
+                stringBuilder.append((seconds > 9 ? seconds : "0" + seconds));
 
                 counter_time.post(new Runnable() {
 
                     public void run() {
-                        counter_time.setText( stringBuilder.toString());
+                        counter_time.setText(stringBuilder.toString());
                     }
                 });
 
@@ -275,28 +324,28 @@ public class AudioRecordingHelper {
     private void cancelTimeCounter() {
         counter_time.setText("00:00");
 
-        if( timer != null ) {
+        if (timer != null) {
             timer.cancel();
             timer = null;
         }
     }
 
-    private String getFilename(){
-        String filepath = Environment.getExternalStorageDirectory().getPath();
-        File file = new File(filepath,AUDIO_RECORDER_FOLDER);
-
-        if(!file.exists()){
-            file.mkdirs();
-        }
-        Log.i("", "" + file.getAbsolutePath() + "/" + System.currentTimeMillis() + file_exts[currentFormat]);
-        return (file.getAbsolutePath() + "/" + System.currentTimeMillis() + file_exts[currentFormat]);
+    private String getFilename() {
+//        String filepath = Environment.getExternalStorageDirectory().getPath();
+//        File file = new File(filepath, AUDIO_RECORDER_FOLDER);
+//
+//        if (!file.exists()) {
+//            file.mkdirs();
+//        }
+//        Log.i("", "" + file.getAbsolutePath() + "/" + System.currentTimeMillis() + file_exts[currentFormat]);
+        return String.valueOf(System.currentTimeMillis());
     }
 
     private MediaRecorder.OnErrorListener errorListener = new MediaRecorder.OnErrorListener() {
 
         @Override
         public void onError(MediaRecorder mr, int what, int extra) {
-            Log.i("Error: ", + what + ", " + extra);
+            Log.i("Error: ", +what + ", " + extra);
         }
 
     };
@@ -305,9 +354,22 @@ public class AudioRecordingHelper {
 
         @Override
         public void onInfo(MediaRecorder mr, int what, int extra) {
-            Log.i("Warning: " ,+ what + ", " + extra);
+            Log.i("Warning: ", +what + ", " + extra);
         }
 
     };
+
+    private boolean sendActionToCorrespondingActivityListener(int id, String key, String mimeType, Object messageContent, Object mediaContent) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+
+        if (actionListener != null) {
+            actionListener.handleMediaContent(id, mimeType, messageContent, mediaContent);
+            success = true;
+        }
+        return success;
+    }
 
 }

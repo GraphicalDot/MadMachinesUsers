@@ -11,6 +11,8 @@ import com.sports.unity.util.CommonUtil;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.smackx.pubsub.AccessModel;
 import org.jivesoftware.smackx.pubsub.Affiliation;
 import org.jivesoftware.smackx.pubsub.LeafNode;
@@ -20,6 +22,7 @@ import org.jivesoftware.smackx.pubsub.PublishModel;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.SubscribeForm;
 import org.jivesoftware.smackx.pubsub.Subscription;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
 
@@ -140,6 +143,8 @@ public class PubSubMessaging {
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         }
+
+        ServiceDiscoveryManager serviceDiscoveryManager = ServiceDiscoveryManager.getInstanceFor(XMPPClient.getConnection());
 
         return success;
     }

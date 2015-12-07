@@ -161,12 +161,12 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
         @Override
         public void handleMediaContent(int id, String mimeType, Object messageContent, Object mediaContent) {
-            if( id == 1 ){
+            if (id == 1) {
                 handleSendingMediaContent(mimeType, messageContent, mediaContent);
-            } else if ( id == 2 ) {
-                mediaMap.put( (String)messageContent, (byte[])mediaContent);
-            } else if ( id == 3 ) {
-                FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload( (String)messageContent, mimeType, (Long)mediaContent);
+            } else if (id == 2) {
+                mediaMap.put((String) messageContent, (byte[]) mediaContent);
+            } else if (id == 3) {
+                FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent);
             }
 
             ChatScreenActivity.this.runOnUiThread(new Runnable() {
@@ -490,11 +490,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         messageText.setText("");
     }
 
-    private void handleSendingMediaContent(String mimeType, Object messageContent, Object mediaContent){
+    private void handleSendingMediaContent(String mimeType, Object messageContent, Object mediaContent) {
         createChatEntryifNotExists();
 
-        if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
-            String mediaFileName = (String)messageContent;
+        if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
+            String mediaFileName = (String) messageContent;
 
             mediaMap.put(mediaFileName, (byte[]) mediaContent);
 
@@ -502,13 +502,21 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
-            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload( (byte[])mediaContent, mimeType, chat, messageId);
-        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER) ) {
-            String stickerAssetPath = (String)messageContent;
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload((byte[]) mediaContent, mimeType, chat, messageId);
+        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
+            String stickerAssetPath = (String) messageContent;
             personalMessaging.sendStickerMessage(stickerAssetPath, chat, JABBERID, chatID);
-        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO) ) {
-            //TODO
-        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ) {
+
+        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
+
+            String mediaFileName = (String) messageContent;
+
+            long messageId = sportsUnityDBHelper.addMediaMessage("", mimeType, "", true, String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()),
+                    null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
+
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload((byte[]) mediaContent, mimeType, chat, messageId);
+
+        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
             //TODO
         }
     }
@@ -568,7 +576,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                
+
                 return false;
             }
 
@@ -615,17 +623,20 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         return mediaMap;
     }
 
-    private void loadAllMediaContent(){
-        new ThreadTask(messageList){
+    private void loadAllMediaContent() {
+        new ThreadTask(messageList) {
 
             @Override
             public Object process() {
-                ArrayList<Message> messageList = (ArrayList<Message>)object;
+                ArrayList<Message> messageList = (ArrayList<Message>) object;
 
-                for(Message message : messageList){
-                    if( message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ) {
+                for (Message message : messageList) {
+                    if (
+                            message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ||
+                            message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)
+                    ) {
                         if (message.mediaFileName != null) {
-                            if( ! mediaMap.containsKey(message.mediaFileName) ) {
+                            if (!mediaMap.containsKey(message.mediaFileName)) {
                                 byte[] content = DBUtil.loadContentFromFile(ChatScreenActivity.this.getBaseContext(), message.mediaFileName);
                                 mediaMap.put(message.mediaFileName, content);
                             } else {
@@ -633,7 +644,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                             }
                         } else {
                             String checksum = message.textData;
-                            FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload( checksum, message.mimeType, message.id);
+                            FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload(checksum, message.mimeType, message.id);
                         }
                     } else {
                         //TODO

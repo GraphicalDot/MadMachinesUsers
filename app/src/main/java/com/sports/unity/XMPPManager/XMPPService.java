@@ -585,7 +585,6 @@ public class XMPPService extends Service {
 
         if (message.hasExtension(ChatState.composing.toString(), ChatStateExtension.NAMESPACE)) {
             Log.i("status :", "composing");
-
             sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, ChatState.composing.toString());
         } else if (message.hasExtension(ChatState.active.toString(), ChatStateExtension.NAMESPACE)) {
             Log.i("status :", "active");
@@ -624,9 +623,9 @@ public class XMPPService extends Service {
     }
 
     public void handleMessage(Message message, Object value, long chatId, String from, String fromGroup) {
-        String mimeType = (String)JivePropertiesManager.getProperty(message, Constants.PARAM_MIME_TYPE);
+        String mimeType = (String) JivePropertiesManager.getProperty(message, Constants.PARAM_MIME_TYPE);
 
-        if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
+        if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
             String checksum = message.getBody();
 
             long messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
@@ -634,15 +633,23 @@ public class XMPPService extends Service {
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
 
             sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
-        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT) ){
+        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
             long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
                     value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
-        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO) ){
+        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
 
-        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ){
+            String checksum = message.getBody();
 
-        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER) ){
+            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
+                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+
+
+            sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
+
+        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
+
+        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
                     value.toString(), message.getStanzaId(), null, null,
                     chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);

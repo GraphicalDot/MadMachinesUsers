@@ -11,6 +11,8 @@ public abstract class ThreadTask extends Thread {
         this.object = object;
     }
 
+
+
     abstract public Object process();
     abstract public void postAction(Object object);
 

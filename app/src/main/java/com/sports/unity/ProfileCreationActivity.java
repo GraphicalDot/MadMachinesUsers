@@ -74,13 +74,13 @@ public class ProfileCreationActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            Log.i("name","entered"+nameText.getText().toString());
-            if(!nameText.getText().toString().isEmpty()) {
+            Log.i("name", "entered" + nameText.getText().toString());
+            if (!nameText.getText().toString().isEmpty()) {
                 beforeAsyncCall();
                 TinyDB.getInstance(ProfileCreationActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nameText.getText().toString());
                 new LoginAndPushVCardThread().start();
             } else {
-                Toast.makeText(getApplicationContext(),"Please enter your name", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Please enter your name", Toast.LENGTH_SHORT).show();
             }
         }
     };
@@ -92,7 +92,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
                     Intent.ACTION_PICK,
                     android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             intent.setType("image/* video/*");
-            startActivityForResult(Intent.createChooser(intent, "select image"),LOAD_IMAGE_GALLERY);
+            startActivityForResult(Intent.createChooser(intent, "select image"), LOAD_IMAGE_GALLERY);
         }
     };
 
@@ -112,29 +112,28 @@ public class ProfileCreationActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == LOAD_IMAGE_GALLERY && resultCode == RESULT_OK && null != data)  {
+        if (requestCode == LOAD_IMAGE_GALLERY && resultCode == RESULT_OK && null != data) {
 
             Uri selectedImage = data.getData();
-            String [] filePathColumn = {MediaStore.Images.Media.DATA};
+            String[] filePathColumn = {MediaStore.Images.Media.DATA};
             Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
             cursor.moveToFirst();
             int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
             String filePath = cursor.getString(columnIndex);
-            File file=new File(filePath);
+            File file = new File(filePath);
             cursor.close();
-          //  Bitmap selectedphoto = BitmapFactory.decodeFile(filePath);
+            //  Bitmap selectedphoto = BitmapFactory.decodeFile(filePath);
 
 //            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 //            selectedphoto.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
 //            byteArray = byteArrayOutputStream.toByteArray();
 
 
-            Bitmap bmp=decodeSampleImage(file,150,150);
+            Bitmap bmp = decodeSampleImage(file, 150, 150);
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             bmp.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
@@ -188,7 +187,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         super.onResume();
 
         paused = false;
-        if ( vCardSaved ) {
+        if (vCardSaved) {
             moveOn();
         }
 
@@ -202,17 +201,17 @@ public class ProfileCreationActivity extends AppCompatActivity {
     }
 
 
-    private  void addListnerToProfilePicture() {
+    private void addListnerToProfilePicture() {
         CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
         circleImageView.setOnClickListener(profilePictureonOnClickListener);
     }
 
-    private void addListenerToContinueButton(){
+    private void addListenerToContinueButton() {
         Button continueButton = (Button) findViewById(R.id.continue_button);
         continueButton.setOnClickListener(continueButtonOnClickListener);
     }
 
-    private void initFacebookLogin(){
+    private void initFacebookLogin() {
         FacebookSdk.sdkInitialize(getApplicationContext());
         try {
             PackageInfo info = getPackageManager().getPackageInfo("com.sports.unity", PackageManager.GET_SIGNATURES);
@@ -228,7 +227,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         }
     }
 
-    private void addFacebookCallback(){
+    private void addFacebookCallback() {
         callbackManager = CallbackManager.Factory.create();
         nameText = (EditText) findViewById(R.id.nameView);
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
@@ -276,7 +275,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         });
     }
 
-    private void setProfileImage(Bitmap image){
+    private void setProfileImage(Bitmap image) {
         CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
         circleImageView.setImageBitmap(image);
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -284,47 +283,47 @@ public class ProfileCreationActivity extends AppCompatActivity {
         byteArray = byteArrayOutputStream.toByteArray();
     }
 
-    private void onSuccessfulLogin(){
+    private void onSuccessfulLogin() {
         vCardSaved = true;
 //        TinyDB.getInstance(ProfileCreationActivity.this).putBoolean(TinyDB.KEY_REGISTERED, true);
 
-        if( ! paused ) {
+        if (!paused) {
             moveOn();
         } else {
             //nothing
         }
     }
 
-    private void onUnSuccessfulLogin(){
+    private void onUnSuccessfulLogin() {
         Toast.makeText(ProfileCreationActivity.this, R.string.message_login_failed, Toast.LENGTH_SHORT).show();
     }
 
-    private void onUnSuccessfulVCardSubmit(){
+    private void onUnSuccessfulVCardSubmit() {
         Toast.makeText(ProfileCreationActivity.this, R.string.message_submit_vcard_failed, Toast.LENGTH_SHORT).show();
     }
 
-    private void beforeAsyncCall(){
+    private void beforeAsyncCall() {
         Button continueButton = (Button) findViewById(R.id.continue_button);
-        continueButton.setOnClickListener( null);
+        continueButton.setOnClickListener(null);
 
         findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
     }
 
-    private void afterAsyncCall(){
+    private void afterAsyncCall() {
         Button continueButton = (Button) findViewById(R.id.continue_button);
-        continueButton.setOnClickListener( continueButtonOnClickListener);
+        continueButton.setOnClickListener(continueButtonOnClickListener);
 
         findViewById(R.id.progressBar).setVisibility(View.GONE);
     }
 
-    private void moveOn(){
-        if( ! moved ) {
+    private void moveOn() {
+        if (!moved) {
             moved = true;
 
-            UserUtil.setProfileCreated( this, true);
+            UserUtil.setProfileCreated(this, true);
 //            XMPPService.startService(ProfileCreationActivity.this);
 
-            if( UserUtil.isSportsSelected() ) {
+            if (UserUtil.isSportsSelected()) {
                 Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);
                 startActivity(intent);
             } else {
@@ -362,11 +361,11 @@ public class ProfileCreationActivity extends AppCompatActivity {
         public void run() {
             boolean success = XMPPClient.getInstance().reconnectConnection();
 
-            if( success ) {
+            if (success) {
                 success = XMPPClient.getInstance().authenticateConnection(ProfileCreationActivity.this);
             }
 
-            if( success == true ) {
+            if (success == true) {
                 new SubmitVCardAsyncTask().execute();
             } else {
                 runOnUiThread(new Runnable() {
@@ -389,15 +388,15 @@ public class ProfileCreationActivity extends AppCompatActivity {
         protected Void doInBackground(Void... params) {
             try {
 
-                    VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
-                    VCard vCard = new VCard();
-                    vCard.setNickName(TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_PROFILE_NAME));
-                    vCard.setAvatar(byteArray);
-                    vCard.setMiddleName(getResources().getString(R.string.default_status));
-                    vCard.setJabberId(XMPPClient.getConnection().getUser());
-                    manager.saveVCard(vCard);
+                VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
+                VCard vCard = new VCard();
+                vCard.setNickName(TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_PROFILE_NAME));
+                vCard.setAvatar(byteArray);
+                vCard.setMiddleName(getResources().getString(R.string.default_status));
+                vCard.setJabberId(XMPPClient.getConnection().getUser());
+                manager.saveVCard(vCard);
 
-                    success = true;
+                success = true;
             } catch (SmackException.NoResponseException e) {
                 e.printStackTrace();
             } catch (XMPPException.XMPPErrorException e) {
@@ -412,7 +411,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void o) {
             afterAsyncCall();
-            if( success ){
+            if (success) {
                 onSuccessfulLogin();
             } else {
                 onUnSuccessfulVCardSubmit();

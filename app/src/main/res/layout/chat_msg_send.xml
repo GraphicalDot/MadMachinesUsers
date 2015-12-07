@@ -16,6 +16,24 @@
         android:background="@drawable/chat_blue"
         android:orientation="vertical">
 
+        <LinearLayout
+            android:id="@+id/mediaPlayer"
+            android:layout_width="200dp"
+            android:layout_height="36dip">
+
+            <ImageButton
+                android:id="@+id/playAndPause"
+                style="@android:style/MediaButton.Play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <SeekBar
+                android:id="@+id/seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+        
         <FrameLayout
             android:id="@+id/image_message_parent"
             android:layout_width="@dimen/media_msg_content_size"

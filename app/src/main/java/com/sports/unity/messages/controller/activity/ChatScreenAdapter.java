@@ -4,16 +4,23 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
@@ -21,6 +28,9 @@ import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.Stickers;
 import com.sports.unity.util.CommonUtil;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +43,7 @@ public class ChatScreenAdapter extends BaseAdapter {
     private ArrayList<Message> messageList;
     private static LayoutInflater inflater = null;
     private Activity activity;
+    private MediaPlayer player;
 
     private HashMap<String, byte[]> mediaMap = null;
 
@@ -83,6 +94,9 @@ public class ChatScreenAdapter extends BaseAdapter {
         public TextView timeStamp;
         public ImageView receivedStatus;
         private FrameLayout mediaContentLayout;
+        public LinearLayout mediaPlayer;
+        public ImageButton playandPause;
+        public SeekBar seekBar;
 
     }
 
@@ -102,6 +116,9 @@ public class ChatScreenAdapter extends BaseAdapter {
                     holder.mediaContentLayout = (FrameLayout) vi.findViewById(R.id.image_message_parent);
                     holder.timeStamp = (TextView) vi.findViewById(R.id.timestampLeft);
                     holder.timeStamp.setTypeface(FontTypeface.getInstance(activity.getApplicationContext()).getRobotoCondensedRegular());
+                    holder.playandPause = (ImageButton) vi.findViewById(R.id.playAndPause);
+                    holder.seekBar = (SeekBar) vi.findViewById(R.id.seekbar);
+                    holder.mediaPlayer = (LinearLayout) vi.findViewById(R.id.mediaPlayer);
                     holder.receivedStatus = null;
                     vi.setTag(holder);
                     break;
@@ -113,6 +130,9 @@ public class ChatScreenAdapter extends BaseAdapter {
                     holder.timeStamp = (TextView) vi.findViewById(R.id.timestampRight);
                     holder.timeStamp.setTypeface(FontTypeface.getInstance(activity.getApplicationContext()).getRobotoCondensedRegular());
                     holder.receivedStatus = (ImageView) vi.findViewById(R.id.receivedStatus);
+                    holder.playandPause = (ImageButton) vi.findViewById(R.id.playAndPause);
+                    holder.seekBar = (SeekBar) vi.findViewById(R.id.seekbar);
+                    holder.mediaPlayer = (LinearLayout) vi.findViewById(R.id.mediaPlayer);
                     vi.setTag(holder);
                     break;
             }
@@ -121,7 +141,7 @@ public class ChatScreenAdapter extends BaseAdapter {
             holder = (ViewHolder) vi.getTag();
         }
 
-        if( ! message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER) ) {
+        if (!message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             if (message.iAmSender) {
                 ((LinearLayout) holder.message.getParent()).setBackgroundResource(R.drawable.chat_blue);
             } else {
@@ -131,25 +151,56 @@ public class ChatScreenAdapter extends BaseAdapter {
             ((LinearLayout) holder.message.getParent()).setBackgroundResource(android.R.color.transparent);
         }
 
-        if( message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT) ){
+        if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
+            holder.mediaContentLayout.setVisibility(View.GONE);
+            holder.message.setVisibility(View.GONE);
+
+            holder.mediaPlayer.setVisibility(View.VISIBLE);
+
+            if(  message.mediaFileName == null ){
+                //TODO loading audio file
+            } else {
+                File file = new File(message.mediaFileName);
+                player = MediaPlayer.create(activity, Uri.fromFile(file));
+                try {
+                    player.setDataSource( activity.openFileInput(message.mediaFileName).getFD());
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                }
+                Log.i("time", String.valueOf(player.getDuration()));
+                holder.seekBar.setMax(player.getDuration());
+                holder.seekBar.setProgress(player.getCurrentPosition());
+
+                holder.playandPause.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        player.start();
+                    }
+                });
+            }
+        }
+
+        if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
             holder.message.setText(message.textData);
             holder.message.setVisibility(View.VISIBLE);
+            holder.mediaPlayer.setVisibility(View.GONE);
 
             holder.mediaContentLayout.setVisibility(View.GONE);
-        } else if( message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
+        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
             holder.message.setText("");
             holder.message.setVisibility(View.GONE);
+            holder.mediaPlayer.setVisibility(View.GONE);
             holder.mediaContentLayout.setVisibility(View.VISIBLE);
 
             byte[] content = null;
-            if( mediaMap.containsKey(message.mediaFileName) ) {
+            if (mediaMap.containsKey(message.mediaFileName)) {
                 content = mediaMap.get(message.mediaFileName);
             } else {
                 content = message.media;
             }
 
-            ImageView image = (ImageView)holder.mediaContentLayout.findViewById(R.id.image_message);
-            ProgressBar progressBar = (ProgressBar)holder.mediaContentLayout.findViewById(R.id.progressBar);
+            ImageView image = (ImageView) holder.mediaContentLayout.findViewById(R.id.image_message);
+            ProgressBar progressBar = (ProgressBar) holder.mediaContentLayout.findViewById(R.id.progressBar);
 
             progressBar.setVisibility(View.GONE);
             image.setVisibility(View.VISIBLE);
@@ -157,38 +208,38 @@ public class ChatScreenAdapter extends BaseAdapter {
             int size = activity.getResources().getDimensionPixelSize(R.dimen.media_msg_content_size);
             holder.mediaContentLayout.setLayoutParams(new LinearLayout.LayoutParams(size, size));
 
-            if( content != null ) {
+            if (content != null) {
                 image.setImageBitmap(BitmapFactory.decodeByteArray(content, 0, content.length));
                 image.setScaleType(ImageView.ScaleType.CENTER_CROP);
             } else {
                 image.setImageResource(R.drawable.grey_bg_rectangle);
             }
 
-            if( (message.textData.length() == 0 && message.iAmSender == true) || (message.mediaFileName == null && message.iAmSender == false) ) {
+            if ((message.textData.length() == 0 && message.iAmSender == true) || (message.mediaFileName == null && message.iAmSender == false)) {
                 progressBar.setVisibility(View.VISIBLE);
             } else {
                 progressBar.setVisibility(View.GONE);
             }
-        } else if( message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER) ){
+        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             holder.message.setText("");
             holder.message.setVisibility(View.GONE);
 
-            ImageView image = (ImageView)holder.mediaContentLayout.findViewById(R.id.image_message);
-            ProgressBar progressBar = (ProgressBar)holder.mediaContentLayout.findViewById(R.id.progressBar);
+            ImageView image = (ImageView) holder.mediaContentLayout.findViewById(R.id.image_message);
+            ProgressBar progressBar = (ProgressBar) holder.mediaContentLayout.findViewById(R.id.progressBar);
 
             progressBar.setVisibility(View.GONE);
             image.setVisibility(View.VISIBLE);
 
             String content = message.textData;
             int separatorIndex = content.indexOf('/');
-            String folderName = content.substring( 0 , separatorIndex);
-            String name = content.substring( separatorIndex + 1);
+            String folderName = content.substring(0, separatorIndex);
+            String name = content.substring(separatorIndex + 1);
 
             //TODO remove this call from here
-            Stickers.getInstance().loadStickerFromAsset( activity, folderName, name);
+            Stickers.getInstance().loadStickerFromAsset(activity, folderName, name);
 
-            Bitmap bitmap = Stickers.getInstance().getStickerBitmap( folderName, name);
-            if( bitmap != null ) {
+            Bitmap bitmap = Stickers.getInstance().getStickerBitmap(folderName, name);
+            if (bitmap != null) {
                 int size = activity.getResources().getDimensionPixelSize(R.dimen.sticker_msg_content_size);
                 image.setImageBitmap(bitmap);
                 image.setVisibility(View.VISIBLE);
