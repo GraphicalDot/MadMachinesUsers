@@ -2,7 +2,10 @@ package com.sports.unity.news.controller.activity;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -11,7 +14,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
@@ -28,13 +34,16 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
     private String content = "";
     private String url = "";
     private String title = "";
+    ProgressBar progressBar;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_news_details);
+
         setToolBar();
 
         url = getIntent().getStringExtra("Url");
@@ -54,6 +63,9 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
 
     private void initViews() {
         WebView webview = (WebView) findViewById(R.id.webview);
+        progressBar = (ProgressBar) findViewById(R.id.progress);
+
+
 
         ImageView img = (ImageView) findViewById(R.id.img);
         img.setOnClickListener(new View.OnClickListener() {
@@ -63,11 +75,13 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
         });
         final Activity activity = this;
 
-        webview.setWebViewClient(new WebViewClient() {
-            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-                Toast.makeText(activity, "Oh no! " + description, Toast.LENGTH_SHORT).show();
-            }
-        });
+        webview.setWebViewClient(new MyWebViewClient());
+
+//        webview.setWebViewClient(new WebViewClient() {
+//            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+//                Toast.makeText(activity, "Oh no! " + description, Toast.LENGTH_SHORT).show();
+//            }
+//        });
         webview.getSettings().setJavaScriptEnabled(true);
         webview.getSettings().setLoadWithOverviewMode(true);
         webview.getSettings().setUseWideViewPort(true);
@@ -108,5 +122,37 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
         }
 
 
+    }
+
+    private class MyWebViewClient extends WebViewClient {
+
+
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+
+            super.onPageStarted(view, url, favicon);
+            progressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#2C84CC"), android.graphics.PorterDuff.Mode.MULTIPLY);
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            progressBar.setVisibility(View.GONE);
+        }
+
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.loadUrl(url);
+
+            progressBar.setVisibility(View.GONE);
+
+            return true;
+        }
+
+        @Override
+        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+            super.onReceivedError(view, errorCode, description, failingUrl);
+
+        }
     }
 }

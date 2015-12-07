@@ -23,6 +23,7 @@ import com.sports.unity.common.model.ContactsObserver;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
+import com.sports.unity.messages.controller.fragment.MessagesFragment;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.util.ActivityActionHandler;
@@ -69,6 +70,8 @@ public class XMPPService extends Service {
     public static Form searchForm = null;
     public static Form answerForm = null;
 
+    public static final int NOTIFICATION_ID = 1;
+
     private static XMPPService XMPP_SERVICE = null;
 
     public static XMPPService getXMPP_SERVICE() {
@@ -109,8 +112,6 @@ public class XMPPService extends Service {
 
     private SportsUnityDBHelper sportsUnityDBHelper = null;
     private XmppConnectionListener connectionListener = null;
-
-    private int mNotificationId = 1;
 
     @Override
     public void onCreate() {
@@ -726,11 +727,13 @@ public class XMPPService extends Service {
             notificationIntent.putExtra("userpicture", contact.image);
 
             Intent backIntent = new Intent(this, MainActivity.class);
+            backIntent.putExtra("tab_index", 2);
             backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
 
             UserUtil.init(this);
 
-            PendingIntent pendingIntent = PendingIntent.getActivities(this, mNotificationId, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
+            PendingIntent pendingIntent = PendingIntent.getActivities(this, NOTIFICATION_ID, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
             NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
             builder.setSmallIcon(R.drawable.ic_stat_notification);
             if (isGroupChat) {
@@ -747,7 +750,8 @@ public class XMPPService extends Service {
             builder.setDefaults(Notification.DEFAULT_ALL);
             builder.setAutoCancel(true);
             NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            notificationManager.notify(mNotificationId, builder.build());
+            notificationManager.notify(NOTIFICATION_ID, builder.build());
+
         }
 
     }

@@ -1,28 +1,46 @@
 package com.sports.unity.messages.controller.viewhelper;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.TransitionDrawable;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
+import android.widget.Gallery;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.ThreadTask;
-import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-
 /**
  * Created by madmachines on 20/11/15.
  */
@@ -74,6 +92,7 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
 
             imageView = (ImageView) v.findViewById(com.sports.unity.R.id.img);
             imageView.setLayoutParams(new FrameLayout.LayoutParams(keyboardHeight, keyboardHeight));
+            imageView.setDrawingCacheEnabled(true);
         }
     }
 
@@ -86,37 +105,15 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
 
     @Override
     public void onBindViewHolder(ImageAdapterForGallery.ViewHolder holder, final int position) {
-        holder.imageView.setTag(position);
+       // holder.imageView.setTag(position);
         holder.imageView.setOnClickListener(this);
 
-//        Glide.with(activity)
-//                .load(filePath.get(position))
-//                .centerCrop()
-//                .placeholder(R.drawable.grey_bg_rectangle)
-//                .crossFade()
-//                .into(holder.imageView);
-//        boolean available = fetchImage(position, holder);
-//        if( available ){
-//            holder.imageView.setImageBitmap( imageContent.get(position));
-//        } else {
-//            holder.imageView.setImageResource( R.drawable.images);
-//        }
-
-//        Bitmap image = ProfileCreationActivity.decodeSampleImage(new File(filePath.get(position)), keyboardHeight, keyboardHeight);
-//
-//        holder.imageView.setImageBitmap(image);
-//        try {
-            Picasso.with(activity)
-                    .load(new File(filePath.get(position)))
-//                    .transform(new BitmapTransform(keyboardHeight, keyboardHeight))
-                    .resize(keyboardHeight, keyboardHeight)
-                    .centerCrop()
-                    .placeholder(R.drawable.grey_bg_rectangle)
-                    .into(holder.imageView);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
+        Glide.with(activity)
+                .load(filePath.get(position))
+                .centerCrop()
+                .placeholder(R.drawable.grey_bg_rectangle)
+                .crossFade()
+                .into(holder.imageView);
     }
 
     @Override
@@ -135,7 +132,7 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
         }
 
         selectedViewForSend = view;
-        int position = (Integer)view.getTag();
+       // int position = (Integer)view.getTag();
 
         FrameLayout parentLayout = ((FrameLayout) view.getParent());
         FrameLayout overlayLayout = (FrameLayout)activity.getLayoutInflater().inflate(R.layout.send_overlay_gallery, parentLayout, false);
@@ -144,7 +141,6 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
         parentLayout.addView(overlayLayout);
 
         ImageView sendImageView = (ImageView)overlayLayout.getChildAt(0);
-        sendImageView.setTag(position);
         sendImageView.setOnClickListener(sendClickListener);
 
         recyclerView.clearOnScrollListeners();
@@ -164,47 +160,10 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
         recyclerView.clearOnScrollListeners();
     }
 
-//    private boolean fetchImage(final int position, final ImageAdapterForGallery.ViewHolder viewHolder){
-//        boolean available = false;
-//        if( imageContent.containsKey(position)){
-//            available = true;
-//        } else {
-//
-//            Thread thread = new Thread(new Runnable() {
-//
-//                @Override
-//                public void run() {
-//                    try {
-//                        Bitmap imagebitmap = ProfileCreationActivity.decodeSampleImage( new File(filePath.get(position)), keyboardHeight, keyboardHeight);
-//                        imageContent.put(position, imagebitmap);
-//
-//                        if( viewHolder.imageView.getTag() == position){
-//                            activity.runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    viewHolder.imageView.setImageBitmap( imageContent.get(position));
-//                                }
-//                            });
-//                        } else {
-//                            //nothing
-//                        }
-//
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                        ;
-//                    }
-//                }
-//
-//            });
-//            thread.start();
-//        }
-//        return available;
-//    }
-
     private void handleSendMedia(){
         ImageView imageView = (ImageView)selectedViewForSend;
-        Bitmap bitmap = ((BitmapDrawable)imageView.getDrawable()).getBitmap();
 
+        Bitmap bitmap = imageView.getDrawingCache();
         new ThreadTask( bitmap){
             private byte[] mediaContent = null;
 

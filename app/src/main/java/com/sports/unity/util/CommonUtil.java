@@ -1,12 +1,15 @@
 package com.sports.unity.util;
 
 import android.app.ActivityManager;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+
+import com.sports.unity.XMPPManager.XMPPService;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -151,6 +154,11 @@ public class CommonUtil {
             md5 = "0"+md5;
         }
         return md5;
+    }
+
+    public static void dismissNotification(Context context){
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(XMPPService.NOTIFICATION_ID);
     }
 
 }

@@ -88,7 +88,7 @@
         android:id="@+id/nameView"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="Name"
+        android:hint="Enter your name"
         android:background="@drawable/text"
         android:ems="10"
         android:inputType="textNoSuggestions"

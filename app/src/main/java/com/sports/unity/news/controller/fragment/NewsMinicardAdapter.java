@@ -13,12 +13,12 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.news.controller.activity.NewsDetailsActivity;
 import com.sports.unity.news.model.News;
 import com.sports.unity.util.CommonUtil;
-import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -27,12 +27,7 @@ import org.joda.time.Hours;
 import org.joda.time.LocalDate;
 import org.joda.time.Minutes;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.TimeZone;
 
 /**
  * Created by madmachines on 23/9/15.
@@ -100,9 +95,8 @@ public class NewsMinicardAdapter extends RecyclerView.Adapter<NewsMinicardAdapte
 
         if (news.get(position).getImage_link() != null && !news.get(position).getImage_link().equals("null")) {
             holder.imageView.setVisibility(View.VISIBLE);
-            holder.imageView.setTag(news.get(position).getImage_link());
             String myUri = news.get(position).getImage_link();
-            Picasso.with(activity).load(myUri).into(holder.imageView);
+            Glide.with(activity).load(myUri).into(holder.imageView);
         } else {
             holder.imageView.setVisibility(View.GONE);
         }

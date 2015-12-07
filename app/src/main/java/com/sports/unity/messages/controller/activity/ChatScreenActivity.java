@@ -339,6 +339,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             }
         });
 
+        CommonUtil.dismissNotification(getBaseContext());
     }
 
 

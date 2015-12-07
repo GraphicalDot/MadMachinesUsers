@@ -10,10 +10,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.scores.model.football.FootballLiveScoreResult;
-import com.squareup.picasso.Picasso;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -98,8 +98,8 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder
             holder.team2.setText(footballLiveScoreResult.getAwayTeam());
             holder.matchDay.setText(isttime);
             holder.venue.setText(footballLiveScoreResult.getStadium());
-            Picasso.with(context).load(footballLiveScoreResult.getHomeTeamFlag()).into(holder.t1flag);
-            Picasso.with(context).load(footballLiveScoreResult.getAwayTeamFlag()).into(holder.t2flag);
+            Glide.with(context).load(footballLiveScoreResult.getHomeTeamFlag()).into(holder.t1flag);
+            Glide.with(context).load(footballLiveScoreResult.getAwayTeamFlag()).into(holder.t2flag);
             holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
 
 
@@ -111,8 +111,8 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder
             holder.t2score.setText(footballLiveScoreResult.getAwayTeamScore());
             holder.matchDay.setText(footballLiveScoreResult.getMatchStatus());
             holder.venue.setText(footballLiveScoreResult.getStadium());
-            Picasso.with(context).load(footballLiveScoreResult.getHomeTeamFlag()).into(holder.t1flag);
-            Picasso.with(context).load(footballLiveScoreResult.getAwayTeamFlag()).into(holder.t2flag);
+            Glide.with(context).load(footballLiveScoreResult.getHomeTeamFlag()).into(holder.t1flag);
+            Glide.with(context).load(footballLiveScoreResult.getAwayTeamFlag()).into(holder.t2flag);
             holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
         }
 

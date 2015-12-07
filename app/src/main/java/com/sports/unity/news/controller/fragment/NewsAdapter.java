@@ -14,12 +14,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.news.controller.activity.NewsDetailsActivity;
 import com.sports.unity.news.model.News;
-import com.sports.unity.util.CommonUtil;
-import com.squareup.picasso.Picasso;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -93,10 +92,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
             if (text.length() > 135) {
                 text = text.substring(0, 135) + "...";
             }
-            //result.setText(Html.fromHtml(text+"<font color='red'> <u>View More</u></font>"));
+
             holder.info.setText(Html.fromHtml(text + " " + "<font color='#2c84cc'><u>Read More</u></font>"));
             holder.title.setText(news.get(position).getTitle());
-         //   holder.type.setText(CommonUtil.capitalize(news.get(position).getType()));
             holder.source.setText(news.get(position).getWebsite());
             DateTime dateTime = new DateTime(news.get(position).getPublishEpoch() * 1000);
             DateTime dateTime1 = new DateTime(LocalDate.now(DateTimeZone.forID("Asia/Kolkata")).toDateTimeAtCurrentTime());
@@ -115,9 +113,9 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
 
             if (news.get(position).getImage_link() != null && !news.get(position).getImage_link().equals("null")) {
                 holder.imageView.setVisibility(View.VISIBLE);
-                holder.imageView.setTag(news.get(position).getImage_link());
                 String myUri = news.get(position).getImage_link();
-                Picasso.with(activity).load(myUri).into(holder.imageView);
+                Glide.with(activity).load(myUri).into(holder.imageView);
+
             } else {
                 holder.imageView.setVisibility(View.GONE);
             }

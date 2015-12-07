@@ -1,5 +1,6 @@
 package com.sports.unity.common.controller;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -87,6 +88,8 @@ public class MainActivity extends CustomAppCompatActivity {
             }
         };
 
+        int tab_index = getIntent().getIntExtra("tab_index",1);
+
         mDrawer.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
@@ -115,7 +118,7 @@ public class MainActivity extends CustomAppCompatActivity {
         tabs.setViewPager(pager);
 
         //set news pager as default
-        pager.setCurrentItem(1);
+        pager.setCurrentItem(tab_index);
     }
 
     private Toolbar initToolBar() {
