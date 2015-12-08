@@ -25,6 +25,7 @@ import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
+import com.sports.unity.util.NotificationHandler;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -258,9 +259,11 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
     @Override
     public void onResume() {
         super.onResume();
+
         updateContent();
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_LIST_KEY, activityActionListener);
 
+        NotificationHandler.dismissNotification(getActivity());
     }
 
     @Override
