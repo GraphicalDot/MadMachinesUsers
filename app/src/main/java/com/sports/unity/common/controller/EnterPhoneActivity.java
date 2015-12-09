@@ -1,5 +1,6 @@
 package com.sports.unity.common.controller;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +9,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -87,6 +89,11 @@ public class EnterPhoneActivity extends AppCompatActivity {
 
         });
 
+        /*
+         * to set initial focus to edit text view and open keyboard.
+         */
+        phoneNumberEditText.requestFocus();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     private void setUserPhoneNumber(EditText phoneNumberEditText, Button continueButton) {

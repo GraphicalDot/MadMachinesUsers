@@ -132,6 +132,12 @@ public class EnterOtpActivity extends AppCompatActivity {
             }
 
         });
+
+        /*
+         * to set initial focus to edit text view and open keyboard.
+         */
+        otpEditText.requestFocus();
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     private String getPhoneNumber() {
