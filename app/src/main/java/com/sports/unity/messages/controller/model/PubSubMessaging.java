@@ -114,14 +114,8 @@ public class PubSubMessaging {
         form.addField("pubsub#notification_type", FormField.Type.text_single);
         form.setAnswer("pubsub#notification_type", "normal");
 
-        form.addField("pubsub#description", FormField.Type.text_single);
-        form.setAnswer("pubsub#description", "groupname");
-
         form.addField("pubsub#send_last_published_item", FormField.Type.text_single);
         form.setAnswer("pubsub#send_last_published_item", "never");
-
-        SubscribeForm subscribeForm = new SubscribeForm(form);
-        subscribeForm.setDeliverOn(true);
 
         try {
             LeafNode leaf = (LeafNode) pubSubManager.createNode(roomName, form);

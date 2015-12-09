@@ -3,7 +3,9 @@ package com.sports.unity.messages.controller.viewhelper;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Rect;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -17,6 +19,8 @@ import android.widget.TextView;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.messages.controller.activity.ChatScreenAdapter;
+import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.ThreadTask;
@@ -28,6 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by madmachines on 27/11/15.
@@ -53,6 +58,20 @@ public class AudioRecordingHelper {
 
     private ViewGroup rootLayout = null;
     private Context context;
+    private MediaPlayer mediaPlayer = null;
+
+    private static AudioRecordingHelper audioRecordingHelper = null;
+
+    public AudioRecordingHelper() {
+
+    }
+
+    public static AudioRecordingHelper getInstance() {
+        if (audioRecordingHelper == null) {
+            audioRecordingHelper = new AudioRecordingHelper();
+        }
+        return audioRecordingHelper;
+    }
 
     public AudioRecordingHelper(Activity activity) {
         this.context = (Context) activity;
@@ -370,6 +389,103 @@ public class AudioRecordingHelper {
             success = true;
         }
         return success;
+    }
+
+    public boolean isPlaying() {
+        return mediaPlayer.isPlaying();
+    }
+
+    private class MediaplayerCompletionListener implements MediaPlayer.OnCompletionListener {
+
+        private ChatScreenAdapter.ViewHolder holder = null;
+
+        MediaplayerCompletionListener(ChatScreenAdapter.ViewHolder holder) {
+
+            this.holder = holder;
+        }
+
+        @Override
+        public void onCompletion(MediaPlayer mp) {
+            cancelTimer();
+            holder.seekBar.setProgress(0);
+            holder.seekBar.refreshDrawableState();
+            mediaPlayer.stop();
+            mediaPlayer.seekTo(0);
+        }
+    }
+
+    public void createMediaPlayer(String filename, Activity activity) {
+        if (filename == null) {
+            //TODO
+        } else {
+            File file = new File(DBUtil.getFilePath( activity.getBaseContext(), filename));
+            mediaPlayer = new MediaPlayer();
+            mediaPlayer = MediaPlayer.create(activity, Uri.parse(file.getAbsolutePath()));
+        }
+    }
+
+    public void initUI(final ChatScreenAdapter.ViewHolder holder) {
+        holder.seekBar.setMax(mediaPlayer.getDuration());
+        holder.duration.setText(String.format("%d:%02d",
+                TimeUnit.MILLISECONDS.toMinutes(mediaPlayer.getDuration()),
+                TimeUnit.MILLISECONDS.toSeconds(mediaPlayer.getDuration()) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(mediaPlayer.getDuration()))
+        ));
+        mediaPlayer.setOnCompletionListener(new MediaplayerCompletionListener(holder));
+    }
+
+    public void startTimer(int initialDelay, int interval, ChatScreenAdapter.ViewHolder holder, Activity activity) {
+        cancelTimer();
+
+        SeekTimerTask timerTask = new SeekTimerTask(holder, activity);
+        timer = new Timer();
+        timer.scheduleAtFixedRate(timerTask, initialDelay, interval);
+    }
+
+    private void cancelTimer() {
+        if (timer != null) {
+            timer.cancel();
+            timer.purge();
+            timer = null;
+        }
+    }
+
+    public void pauseMediaPlayer() {
+        mediaPlayer.pause();
+    }
+
+    public void startMediaPlayer() {
+        mediaPlayer.start();
+    }
+
+    private class SeekTimerTask extends TimerTask {
+
+        private ChatScreenAdapter.ViewHolder holder = null;
+        private Activity activity = null;
+
+        private SeekTimerTask(ChatScreenAdapter.ViewHolder viewHolder, Activity activity) {
+            holder = viewHolder;
+            this.activity = activity;
+        }
+
+        @Override
+        public void run() {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    int sec = mediaPlayer.getCurrentPosition();
+                    Log.i("sec", String.valueOf(sec));
+                    holder.seekBar.setProgress(sec);
+                    int progress = holder.seekBar.getProgress();
+                    holder.duration.setText(String.format("%d:%02d",
+                            TimeUnit.MILLISECONDS.toMinutes(progress),
+                            TimeUnit.MILLISECONDS.toSeconds(progress) -
+                                    TimeUnit.MINUTES.toSeconds(progress)
+                    ));
+                }
+            });
+        }
+
     }
 
 }

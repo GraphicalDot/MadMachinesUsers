@@ -6,6 +6,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +18,7 @@ import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.util.CommonUtil;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -88,7 +90,7 @@ public class MainActivity extends CustomAppCompatActivity {
             }
         };
 
-        int tab_index = getIntent().getIntExtra("tab_index",1);
+        int tab_index = getIntent().getIntExtra("tab_index", 1);
 
         mDrawer.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();

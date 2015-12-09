@@ -209,7 +209,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, activityActionListener);
         ChatScreenApplication.activityResumed();
 

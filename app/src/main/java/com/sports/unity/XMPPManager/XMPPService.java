@@ -56,6 +56,7 @@ import org.jivesoftware.smackx.muc.MultiUserChatManager;
 import org.jivesoftware.smackx.pubsub.Item;
 import org.jivesoftware.smackx.pubsub.ItemPublishEvent;
 import org.jivesoftware.smackx.pubsub.LeafNode;
+import org.jivesoftware.smackx.pubsub.PayloadItem;
 import org.jivesoftware.smackx.pubsub.PubSubManager;
 import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
@@ -442,15 +443,8 @@ public class XMPPService extends Service {
 
     private void handlePubSubMessage(Message message) {
 
-        Log.i("MessageRecv", "true");
-        /*List<ExtensionElement> list = message.getExtensions();
-        for (ExtensionElement e :
-                list) {
-            Log.i(" extension elements", e.getNamespace());
-            Log.i(" extension elements", e.getElementName());
-        }*/
+        Log.i("pubsubmessagerecv", "true");
         String messageXML = message.toString();
-        Log.i("messagexml", messageXML);
         String from = messageXML.substring(messageXML.indexOf("!") + 1, messageXML.indexOf("!!"));
         if (from.equals(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME))) {
             //Do nothing
@@ -497,24 +491,6 @@ public class XMPPService extends Service {
         }
 
     }
-
-/*
-    private String getTimeBetween(DateTime dateTime, DateTime dateTimenow) {
-        int days = Days.daysBetween(dateTime, dateTimenow).getDays();
-        int hours = Hours.hoursBetween(dateTime, dateTimenow).getHours();
-        int minutes = Minutes.minutesBetween(dateTime, dateTimenow).getMinutes();
-        int seconds = Seconds.secondsBetween(dateTime, dateTimenow).getSeconds();
-        if (days > 0) {
-            return String.valueOf(days + " days");
-        } else if (hours > 0) {
-            return String.valueOf(hours + " hours");
-        } else if (minutes > 0) {
-            return String.valueOf(minutes + " minutes");
-        } else {
-            return String.valueOf(seconds + " seconds");
-        }
-    }
-*/
 
     private void handleChatMessage(Message message, boolean isGroupChat) {
 
