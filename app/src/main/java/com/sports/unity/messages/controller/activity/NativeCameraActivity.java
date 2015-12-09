@@ -412,9 +412,9 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             @Override
             public Object process() {
                 byte[] byteArray = (byte[])object;
-                String fileName = String.valueOf(System.currentTimeMillis());
+                String fileName = DBUtil.getUniqueFileName(getBaseContext(), SportsUnityDBHelper.MIME_TYPE_IMAGE);
 
-                DBUtil.writeContentToFile(getBaseContext(), fileName, byteArray, false);
+                DBUtil.writeContentToExternalFileStorage(getBaseContext(), fileName, byteArray);
                 return fileName;
             }
 

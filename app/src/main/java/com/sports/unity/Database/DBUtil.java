@@ -5,10 +5,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -18,7 +20,9 @@ import java.util.ArrayList;
  */
 public class DBUtil {
 
-    private static final String mediaDirectoryName = "SportsUnity_Media";
+    private static final String DIRECTORY_AUDIO = "audio";
+    private static final String DIRECTORY_VIDEO = "video";
+    private static final String DIRECTORY_IMAGE = "image";
 
     static long insertContentValuesInTable( SQLiteOpenHelper sqLiteOpenHelper, String tableName, ContentValues contentValues){
         long rowId = -1;
@@ -51,7 +55,7 @@ public class DBUtil {
         db.delete(table, null, null);
     }
 
-    public static void writeContentToFile( Context context, String fileName, byte[] content, boolean append){
+    public static void writeContentToInternalFileStorage( Context context, String fileName, byte[] content, boolean append){
         Log.d("File I/O", "start writing");
         if( content != null ){
             FileOutputStream fos = null;
@@ -60,6 +64,7 @@ public class DBUtil {
                 if( append ){
                     mode = Context.MODE_APPEND;
                 }
+                context.getExternalFilesDir(null);
                 fos = context.openFileOutput( fileName, mode);
                 fos.write( content);
                 fos.close();
@@ -74,7 +79,7 @@ public class DBUtil {
         Log.d("File I/O", "end writing");
     }
 
-    public static byte[] loadContentFromFile( Context context, String fileName){
+    public static byte[] loadContentFromInternalFileStorage( Context context, String fileName){
         Log.d("File I/O", "start reading");
         byte [] content = null;
         InputStream is = null;
@@ -104,8 +109,88 @@ public class DBUtil {
         return content;
     }
 
-    private static File createMediaDirectoryIfNotExist(Context context){
-        return context.getDir( mediaDirectoryName, Context.MODE_PRIVATE);
+    public static void writeContentToExternalFileStorage( Context context, String fileName, byte[] content){
+        Log.d("File I/O", "start writing");
+        File dirPath = new File(getExternalStorageDirectoryPath(context));
+        if( ! dirPath.exists() ){
+            dirPath.mkdir();
+        }
+
+        File file = new File ( getFilePath( context, fileName));
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(file);
+            out.write(content);
+            out.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            }catch (Exception ex){}
+        }
+
+        Log.d("File I/O", "end writing");
+    }
+
+    public static byte[] loadContentFromExternalFileStorage( Context context, String fileName){
+        Log.d("File I/O", "start reading");
+        byte [] content = null;
+        File dirPath = new File(getExternalStorageDirectoryPath(context));
+        if( ! dirPath.exists() ){
+            dirPath.mkdir();
+        }
+
+        File file = new File ( getFilePath( context, fileName));
+        FileInputStream in = null;
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        try {
+            in = new FileInputStream(file);
+            byteArrayOutputStream = new ByteArrayOutputStream();
+
+            byte[] chunk = new byte[1024];
+            int read = 0;
+            while( (read = in.read(chunk) ) != -1 ){
+                byteArrayOutputStream.write( chunk, 0, read);
+            }
+
+            content = byteArrayOutputStream.toByteArray();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try{
+                byteArrayOutputStream.close();
+            }catch (Exception e) {}
+            try {
+                in.close();
+            }catch (Exception ex){}
+        }
+        Log.d("File I/O", "end reading");
+        return content;
+    }
+
+    public static String getUniqueFileName(Context context, String mimeType){
+        String fileName = String.valueOf(System.currentTimeMillis());
+        if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
+            fileName += ".png";
+        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO) ){
+            fileName += ".mp4";
+        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ){
+            fileName += ".mp4";
+        }
+        return fileName;
+    }
+
+    public static String getFilePath(Context context, String fileName){
+        String dirPath = getExternalStorageDirectoryPath(context);
+        return dirPath + "/" + fileName;
+    }
+
+    private static String getExternalStorageDirectoryPath(Context context){
+        StringBuilder stringBuilder = new StringBuilder( context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath());
+        return stringBuilder.toString();
     }
 
 }

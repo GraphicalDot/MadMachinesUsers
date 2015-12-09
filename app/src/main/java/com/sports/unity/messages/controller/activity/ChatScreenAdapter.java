@@ -160,13 +160,13 @@ public class ChatScreenAdapter extends BaseAdapter {
             if(  message.mediaFileName == null ){
                 //TODO loading audio file
             } else {
-                File file = new File(message.mediaFileName);
-                player = MediaPlayer.create(activity, Uri.fromFile(file));
-                try {
-                    player.setDataSource( activity.openFileInput(message.mediaFileName).getFD());
-                }catch (Exception ex){
-                    ex.printStackTrace();
-                }
+                File file = new File(DBUtil.getFilePath( activity.getBaseContext(), message.mediaFileName));
+                player = MediaPlayer.create(activity, Uri.parse(file.getAbsolutePath()));
+//                try {
+//                    player.setDataSource( activity.openFileInput(message.mediaFileName).getFD());
+//                }catch (Exception ex){
+//                    ex.printStackTrace();
+//                }
                 Log.i("time", String.valueOf(player.getDuration()));
                 holder.seekBar.setMax(player.getDuration());
                 holder.seekBar.setProgress(player.getCurrentPosition());
@@ -199,14 +199,11 @@ public class ChatScreenAdapter extends BaseAdapter {
                 content = message.media;
             }
 
-            ImageView image = (ImageView) holder.mediaContentLayout.findViewById(R.id.image_message);
-            ProgressBar progressBar = (ProgressBar) holder.mediaContentLayout.findViewById(R.id.progressBar);
-
-            progressBar.setVisibility(View.GONE);
+            ImageView image = (ImageView)holder.mediaContentLayout.findViewById(R.id.image_message);
             image.setVisibility(View.VISIBLE);
 
             int size = activity.getResources().getDimensionPixelSize(R.dimen.media_msg_content_size);
-            holder.mediaContentLayout.setLayoutParams(new LinearLayout.LayoutParams(size, size));
+            image.setLayoutParams(new FrameLayout.LayoutParams(size, size));
 
             if (content != null) {
                 image.setImageBitmap(BitmapFactory.decodeByteArray(content, 0, content.length));
@@ -215,7 +212,8 @@ public class ChatScreenAdapter extends BaseAdapter {
                 image.setImageResource(R.drawable.grey_bg_rectangle);
             }
 
-            if ((message.textData.length() == 0 && message.iAmSender == true) || (message.mediaFileName == null && message.iAmSender == false)) {
+            ProgressBar progressBar = (ProgressBar)holder.mediaContentLayout.findViewById(R.id.progressBar);
+            if( (message.textData.length() == 0 && message.iAmSender == true) || (message.mediaFileName == null && message.iAmSender == false) ) {
                 progressBar.setVisibility(View.VISIBLE);
             } else {
                 progressBar.setVisibility(View.GONE);
@@ -243,7 +241,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                 int size = activity.getResources().getDimensionPixelSize(R.dimen.sticker_msg_content_size);
                 image.setImageBitmap(bitmap);
                 image.setVisibility(View.VISIBLE);
-                holder.mediaContentLayout.setLayoutParams(new LinearLayout.LayoutParams(size, size));
+                image.setLayoutParams(new FrameLayout.LayoutParams(size, size));
                 image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             } else {
                 image.setVisibility(View.GONE);

@@ -634,11 +634,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                 for (Message message : messageList) {
                     if (
                             message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ||
-                            message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)
+                            message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)
                     ) {
                         if (message.mediaFileName != null) {
                             if (!mediaMap.containsKey(message.mediaFileName)) {
-                                byte[] content = DBUtil.loadContentFromFile(ChatScreenActivity.this.getBaseContext(), message.mediaFileName);
+                                byte[] content = DBUtil.loadContentFromExternalFileStorage(ChatScreenActivity.this.getBaseContext(), message.mediaFileName);
                                 mediaMap.put(message.mediaFileName, content);
                             } else {
                                 //nothing

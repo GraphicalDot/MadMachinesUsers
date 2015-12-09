@@ -170,13 +170,13 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
             @Override
             public Object process() {
                 Bitmap bitmap = (Bitmap)object;
-                String fileName = String.valueOf(System.currentTimeMillis());
+                String fileName = DBUtil.getUniqueFileName(activity.getBaseContext(), SportsUnityDBHelper.MIME_TYPE_IMAGE);
 
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
                 mediaContent = stream.toByteArray();
 
-                DBUtil.writeContentToFile( activity.getBaseContext(), fileName, mediaContent, false);
+                DBUtil.writeContentToExternalFileStorage(activity.getBaseContext(), fileName, mediaContent);
                 return fileName;
             }
 

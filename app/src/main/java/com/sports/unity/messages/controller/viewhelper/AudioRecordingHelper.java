@@ -154,7 +154,7 @@ public class AudioRecordingHelper {
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(output_formats[currentFormat]);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        recorder.setOutputFile(mFilename);
+        recorder.setOutputFile( DBUtil.getFilePath( context, mFilename));
         recorder.setOnErrorListener(errorListener);
         recorder.setOnInfoListener(infoListener);
 
@@ -195,35 +195,35 @@ public class AudioRecordingHelper {
 
     private void sendVoiceRecord() {
 
-        new ThreadTask(mFilename) {
+        new ThreadTask(null) {
 
-            File file = new File(mFilename);
-            int size = (int) file.length();
-            byte[] voiceContent = new byte[size];
+            private File file = new File(DBUtil.getFilePath( context, mFilename));
+            private int size = (int) file.length();
+            private byte[] voiceContent = new byte[size];
 
             @Override
             public Object process() {
-                try {
-                    BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
-                    buf.read(voiceContent, 0, voiceContent.length);
-                    buf.close();
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                DBUtil.writeContentToFile(context, mFilename, voiceContent, false);
+                voiceContent = DBUtil.loadContentFromExternalFileStorage( context, mFilename);
+//                try {
+//                    BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
+//                    buf.read(voiceContent, 0, voiceContent.length);
+//                    buf.close();
+//                } catch (FileNotFoundException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    // TODO Auto-generated catch block
+//                    e.printStackTrace();
+//                }
+//                DBUtil.writeContentToExternalFileStorage(context, mFilename, voiceContent);
                 return null;
             }
 
             @Override
             public void postAction(Object object) {
-                String fileName = (String) object;
                 sendActionToCorrespondingActivityListener(1, ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_AUDIO, mFilename, voiceContent);
-
             }
+
         }.start();
 
 
@@ -338,7 +338,7 @@ public class AudioRecordingHelper {
 //            file.mkdirs();
 //        }
 //        Log.i("", "" + file.getAbsolutePath() + "/" + System.currentTimeMillis() + file_exts[currentFormat]);
-        return String.valueOf(System.currentTimeMillis());
+        return DBUtil.getUniqueFileName( context, SportsUnityDBHelper.MIME_TYPE_AUDIO);
     }
 
     private MediaRecorder.OnErrorListener errorListener = new MediaRecorder.OnErrorListener() {

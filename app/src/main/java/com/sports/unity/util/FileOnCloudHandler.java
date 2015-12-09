@@ -112,8 +112,8 @@ public class FileOnCloudHandler {
     private void handleDownloadRequest( CloudContentRequest request, Context context){
         byte[] content = downloadContent(request.checksum);
 
-        String fileName = String.valueOf(System.currentTimeMillis());
-        DBUtil.writeContentToFile(context, fileName, content, false);
+        String fileName = DBUtil.getUniqueFileName(context, request.mimeType);
+        DBUtil.writeContentToExternalFileStorage(context, fileName, content);
         SportsUnityDBHelper.getInstance(context).updateMediaMessage_ContentDownloaded(request.messageId, fileName);
 
         sendActionToCorrespondingActivityListener(2, ActivityActionHandler.CHAT_SCREEN_KEY, request.mimeType, fileName, content);
