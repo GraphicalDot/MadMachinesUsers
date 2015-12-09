@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.ContactsContract;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
@@ -31,6 +32,7 @@ import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.FileOnCloudHandler;
+import com.sports.unity.util.NotificationHandler;
 
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
@@ -69,8 +71,6 @@ public class XMPPService extends Service {
     public static UserSearchManager searchManager;
     public static Form searchForm = null;
     public static Form answerForm = null;
-
-    public static final int NOTIFICATION_ID = 1;
 
     private static XMPPService XMPP_SERVICE = null;
 
@@ -707,53 +707,110 @@ public class XMPPService extends Service {
         return success;
     }
 
+//    public void DisplayNotification(String message, String from, long chatId, boolean isGroupChat, String groupServerId) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+//
+////        String number = message.getFrom().substring(0, message.getFrom().indexOf("@"));
+//
+//        final  String GROUP_KEY_CHATS = "group_key_chats";
+//        if (sportsUnityDBHelper.isMute(chatId)) {
+//            //nothing
+//        } else {
+//            String name = sportsUnityDBHelper.getJabberName(from);
+//
+//            Contacts contact = sportsUnityDBHelper.getContact(from);
+//
+//            Intent notificationIntent = new Intent(this, ChatScreenActivity.class);
+//            notificationIntent.putExtra("name", name);
+//            notificationIntent.putExtra("number", from);
+//            notificationIntent.putExtra("chatId", chatId);
+//            notificationIntent.putExtra("contactId", contact.id);
+//            notificationIntent.putExtra("groupServerId", groupServerId);
+//            notificationIntent.putExtra("userpicture", contact.image);
+//
+//            Intent backIntent = new Intent(this, MainActivity.class);
+//            backIntent.putExtra("tab_index", 2);
+//            backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//
+//
+//            UserUtil.init(this);
+//
+//            PendingIntent pendingIntent = PendingIntent.getActivities(this, NotificationHandler.NOTIFICATION_ID, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
+//            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
+//            builder.setSmallIcon(R.drawable.ic_stat_notification);
+//            if (isGroupChat) {
+//                builder.setContentText(name + " sent a Message");
+//                builder.setContentTitle(sportsUnityDBHelper.getGroupSubject(groupServerId));
+//            } else {
+//                builder.setContentText(message);
+//                builder.setContentTitle(name);
+//            }
+//
+//
+//            builder.setContentIntent(pendingIntent);
+//            builder.setPriority(Notification.PRIORITY_HIGH);
+//            builder.setDefaults(Notification.DEFAULT_ALL);
+//            builder.setAutoCancel(true);
+//
+//            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//            notificationManager.notify(NotificationHandler.NOTIFICATION_ID, builder.build());
+//
+//        }
+//
+//    }
+
     public void DisplayNotification(String message, String from, long chatId, boolean isGroupChat, String groupServerId) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
-
-//        String number = message.getFrom().substring(0, message.getFrom().indexOf("@"));
-
         if (sportsUnityDBHelper.isMute(chatId)) {
             //nothing
         } else {
-            String name = sportsUnityDBHelper.getJabberName(from);
-
-            Contacts contact = sportsUnityDBHelper.getContact(from);
-
-            Intent notificationIntent = new Intent(this, ChatScreenActivity.class);
-            notificationIntent.putExtra("name", name);
-            notificationIntent.putExtra("number", from);
-            notificationIntent.putExtra("chatId", chatId);
-            notificationIntent.putExtra("contactId", contact.id);
-            notificationIntent.putExtra("groupServerId", groupServerId);
-            notificationIntent.putExtra("userpicture", contact.image);
-
-            Intent backIntent = new Intent(this, MainActivity.class);
-            backIntent.putExtra("tab_index", 2);
-            backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-
             UserUtil.init(this);
 
-            PendingIntent pendingIntent = PendingIntent.getActivities(this, NOTIFICATION_ID, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
-            builder.setSmallIcon(R.drawable.ic_stat_notification);
+            String name = sportsUnityDBHelper.getJabberName(from);
             if (isGroupChat) {
-                builder.setContentText(name + " sent a Message");
-                builder.setContentTitle(sportsUnityDBHelper.getGroupSubject(groupServerId));
+                name = name + "@" + sportsUnityDBHelper.getGroupSubject(groupServerId);
             } else {
-                builder.setContentText(message);
-                builder.setContentTitle(name);
+                //nothing
             }
 
+            NotificationHandler notificationHandler = NotificationHandler.getInstance();
+            notificationHandler.addNotificationMessage( chatId, name, message);
 
-            builder.setContentIntent(pendingIntent);
-            builder.setPriority(Notification.PRIORITY_HIGH);
-            builder.setDefaults(Notification.DEFAULT_ALL);
-            builder.setAutoCancel(true);
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            notificationManager.notify(NOTIFICATION_ID, builder.build());
+            int chatCount = notificationHandler.getNotificationChatCount();
+            PendingIntent pendingIntent = null;
+            if( chatCount > 1 ){
+                pendingIntent = getPendingIntentForMainActivity();
+            } else if( chatCount == 1 ){
+                Contacts contact = sportsUnityDBHelper.getContact(from);
+                pendingIntent = getPendingIntentForChatActivity( name, from, chatId, contact.id, groupServerId, contact.image);
+            }
 
+            notificationHandler.showNotification(getApplicationContext(), pendingIntent, chatId);
         }
+    }
 
+    private PendingIntent getPendingIntentForMainActivity(){
+        Intent mainIntent = new Intent(this, MainActivity.class);
+        mainIntent.putExtra("tab_index", 2);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivities(this, NotificationHandler.NOTIFICATION_ID, new Intent[]{mainIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
+        return pendingIntent;
+    }
+
+    private PendingIntent getPendingIntentForChatActivity(String name, String from, long chatId, long contactId, String groupServerId, byte[] contactImage){
+        Intent notificationIntent = new Intent(this, ChatScreenActivity.class);
+        notificationIntent.putExtra("name", name);
+        notificationIntent.putExtra("number", from);
+        notificationIntent.putExtra("chatId", chatId);
+        notificationIntent.putExtra("contactId", contactId);
+        notificationIntent.putExtra("groupServerId", groupServerId);
+        notificationIntent.putExtra("userpicture", contactImage);
+
+        Intent backIntent = new Intent(this, MainActivity.class);
+        backIntent.putExtra("tab_index", 2);
+        backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivities(this, NotificationHandler.NOTIFICATION_ID, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
+        return pendingIntent;
     }
 
     private class UpdateUserDetails extends Thread {

@@ -42,6 +42,7 @@ import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.FileOnCloudHandler;
+import com.sports.unity.util.NotificationHandler;
 import com.sports.unity.util.ThreadTask;
 
 import org.jivesoftware.smack.SmackException;
@@ -208,9 +209,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, activityActionListener);
         ChatScreenApplication.activityResumed();
 
+        NotificationHandler.dismissNotification(getBaseContext());
+        NotificationHandler.getInstance().clearNotificationMessages(chatID);
+
+        //update message list
+//        activityActionListener.handleAction(0);
     }
 
     @Override
@@ -338,8 +345,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                 sendMessage();
             }
         });
-
-        CommonUtil.dismissNotification(getBaseContext());
     }
 
 

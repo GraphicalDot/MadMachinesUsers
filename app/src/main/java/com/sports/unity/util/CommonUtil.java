@@ -156,9 +156,4 @@ public class CommonUtil {
         return md5;
     }
 
-    public static void dismissNotification(Context context){
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.cancel(XMPPService.NOTIFICATION_ID);
-    }
-
 }
