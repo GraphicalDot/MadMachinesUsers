@@ -149,10 +149,10 @@ public class ChatScreenAdapter extends BaseAdapter {
         }
 
         if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
-            holder.mediaContentLayout.setVisibility(View.GONE);
             holder.message.setVisibility(View.GONE);
-
+            holder.mediaContentLayout.setVisibility(View.GONE);
             holder.mediaPlayer.setVisibility(View.VISIBLE);
+
             final AudioRecordingHelper audioRecordingHelper = AudioRecordingHelper.getInstance();
 
             final String filename = message.mediaFileName;
@@ -171,24 +171,18 @@ public class ChatScreenAdapter extends BaseAdapter {
                     }
                 }
             });
-        }
-
-
-        if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT))
-
-        {
-            holder.message.setText(message.textData);
+        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
             holder.message.setVisibility(View.VISIBLE);
             holder.mediaPlayer.setVisibility(View.GONE);
-
             holder.mediaContentLayout.setVisibility(View.GONE);
-        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE))
 
-        {
-            holder.message.setText("");
+            holder.message.setText(message.textData);
+        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
             holder.message.setVisibility(View.GONE);
             holder.mediaPlayer.setVisibility(View.GONE);
             holder.mediaContentLayout.setVisibility(View.VISIBLE);
+
+            holder.message.setText("");
 
             byte[] content = null;
             if (mediaMap.containsKey(message.mediaFileName)) {
@@ -216,11 +210,11 @@ public class ChatScreenAdapter extends BaseAdapter {
             } else {
                 progressBar.setVisibility(View.GONE);
             }
-        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER))
-
-        {
+        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             holder.message.setText("");
             holder.message.setVisibility(View.GONE);
+            holder.mediaPlayer.setVisibility(View.GONE);
+            holder.mediaContentLayout.setVisibility(View.VISIBLE);
 
             ImageView image = (ImageView) holder.mediaContentLayout.findViewById(R.id.image_message);
             ProgressBar progressBar = (ProgressBar) holder.mediaContentLayout.findViewById(R.id.progressBar);

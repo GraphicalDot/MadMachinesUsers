@@ -1,5 +1,6 @@
 package com.sports.unity.common.controller;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import com.crittercism.app.Crittercism;
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.common.model.ContactsHandler;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 
 public class SplashScreenActivity extends AppCompatActivity {
@@ -20,9 +22,11 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(com.sports.unity.R.layout.activity_splash);
 
-//        Crittercism.initialize(getApplicationContext(), "564059fcd224ac0a00ed42a3");
+        Crittercism.initialize(getApplicationContext(), "564059fcd224ac0a00ed42a3");
 
         UserUtil.init(this);
+
+//        cachedFlow( "9717261060", "641970");
 
         if (UserUtil.isUserRegistered()) {
             if (UserUtil.isProfileCreated()) {
@@ -42,6 +46,19 @@ public class SplashScreenActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    private void cachedFlow(String phoneNumber, String password){
+        Context context = getApplicationContext();
+
+        TinyDB.getInstance(context).putString(TinyDB.KEY_USERNAME, "91" + phoneNumber);
+        UserUtil.setOtpSent(getBaseContext(), true);
+
+        TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
+        UserUtil.setOtpSent(context, false);
+        UserUtil.setUserRegistered(context, true);
+
+        ContactsHandler.getInstance().copyAllContacts_OnThread(getApplicationContext());
     }
 
     private void moveToNextActivity(Class nextActivityClass) {
