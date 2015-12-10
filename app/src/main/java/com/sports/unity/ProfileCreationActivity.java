@@ -72,35 +72,42 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private boolean moved = false;
 
     private View.OnClickListener continueButtonOnClickListener = new View.OnClickListener() {
+
         @Override
         public void onClick(View v) {
-
-            Log.i("name", "entered" + nameText.getText().toString());
-            if (!nameText.getText().toString().isEmpty()) {
-                beforeAsyncCall();
-                TinyDB.getInstance(ProfileCreationActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nameText.getText().toString());
-                new LoginAndPushVCardThread().start();
-            } else {
-                Toast.makeText(getApplicationContext(), "Please enter your name", Toast.LENGTH_SHORT).show();
+            if(findViewById(R.id.progressBar).getVisibility() == View.GONE) {
+                if (!nameText.getText().toString().isEmpty()) {
+                    beforeAsyncCall();
+                    TinyDB.getInstance(ProfileCreationActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nameText.getText().toString());
+                    new LoginAndPushVCardThread().start();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please enter your name", Toast.LENGTH_SHORT).show();
+                }
             }
         }
+
     };
 
     private View.OnClickListener profilePictureonOnClickListener = new View.OnClickListener() {
+
         @Override
         public void onClick(View v) {
-            Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            galleryIntent.setType("image/*");
 
-            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            if(findViewById(R.id.progressBar).getVisibility() == View.GONE) {
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                galleryIntent.setType("image/*");
 
-            Intent chooser = new Intent(Intent.ACTION_CHOOSER);
-            chooser.putExtra(Intent.EXTRA_INTENT, galleryIntent);
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 
-            Intent[] intentArray = {cameraIntent};
-            chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
-            startActivityForResult(chooser, LOAD_IMAGE_GALLERY_CAMERA);
+                Intent chooser = new Intent(Intent.ACTION_CHOOSER);
+                chooser.putExtra(Intent.EXTRA_INTENT, galleryIntent);
+
+                Intent[] intentArray = {cameraIntent};
+                chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+                startActivityForResult(chooser, LOAD_IMAGE_GALLERY_CAMERA);
+            }
         }
+
     };
 
     @Override
@@ -145,7 +152,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
             System.gc(); // First of all free some memory
 
             // Decode image size
-
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(new FileInputStream(f), null, o);
@@ -166,10 +172,10 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = sampleScaleSize;
-
             return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
+
         } catch (Exception e) {
-            Log.d("error", e.getMessage()); // We don't want the application to just throw an exception
+            Log.d("error", e.getMessage());
         }
 
         return null;
@@ -317,15 +323,16 @@ public class ProfileCreationActivity extends AppCompatActivity {
     }
 
     private void beforeAsyncCall() {
-        Button continueButton = (Button) findViewById(R.id.continue_button);
-        continueButton.setOnClickListener(null);
+        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton.setVisibility(View.GONE);
 
         findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
     }
 
     private void afterAsyncCall() {
-        Button continueButton = (Button) findViewById(R.id.continue_button);
-        continueButton.setOnClickListener(continueButtonOnClickListener);
+
+        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
+        loginButton.setVisibility(View.VISIBLE);
 
         findViewById(R.id.progressBar).setVisibility(View.GONE);
     }
