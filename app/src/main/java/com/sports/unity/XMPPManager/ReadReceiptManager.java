@@ -94,7 +94,8 @@ public class ReadReceiptManager extends Manager {
                 ReadReceipt dr = ReadReceipt.from((Message) packet);
                 // notify listeners of incoming receipt
                 for (ReadReceiptReceivedListener l : receiptReceivedListeners) {
-                    l.onReceiptReceived(packet.getFrom(), packet.getTo(), packet.getStanzaId());
+                    ReadReceipt readReceipt = (ReadReceipt)packet.getExtension(ReadReceipt.NAMESPACE);
+                    l.onReceiptReceived(packet.getFrom(), packet.getTo(), readReceipt.getId());
                 }
             }
         }, MESSAGES_WITH_READ_RECEIPT);
