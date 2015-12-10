@@ -1,5 +1,6 @@
 package com.sports.unity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -49,6 +50,7 @@ import org.json.JSONObject;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.MessageDigest;
@@ -64,12 +66,10 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private String profilePicUrl;
     private byte[] byteArray;
 
-    private static final int LOAD_IMAGE_GALLERY = 1;
+    private static final int LOAD_IMAGE_GALLERY_CAMERA = 1;
     private boolean paused = false;
     private boolean vCardSaved = false;
     private boolean moved = false;
-
-    private static int RESULT_LOAD_IMAGE = 1;
 
     private View.OnClickListener continueButtonOnClickListener = new View.OnClickListener() {
         @Override
@@ -89,66 +89,52 @@ public class ProfileCreationActivity extends AppCompatActivity {
     private View.OnClickListener profilePictureonOnClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(
-                    Intent.ACTION_PICK,
-                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-            intent.setType("image/* video/*");
-            startActivityForResult(Intent.createChooser(intent, "select image"), LOAD_IMAGE_GALLERY);
+            Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            galleryIntent.setType("image/*");
+
+            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+
+            Intent chooser = new Intent(Intent.ACTION_CHOOSER);
+            chooser.putExtra(Intent.EXTRA_INTENT, galleryIntent);
+
+            Intent[] intentArray = {cameraIntent};
+            chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+            startActivityForResult(chooser, LOAD_IMAGE_GALLERY_CAMERA);
         }
     };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        XMPPService.startService(this);
-        initFacebookLogin();
-
-        setContentView(R.layout.activity_profile_creation);
-
-        addFacebookCallback();
-        addListenerToContinueButton();
-        addListnerToProfilePicture();
-
-
-        /*
-         * to set initial focus to edit text view and open keyboard.
-         */
-//        nameText.requestFocus();
-//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-    }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == LOAD_IMAGE_GALLERY && resultCode == RESULT_OK && null != data) {
+        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
+        if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
+            Bitmap bitmap = null;
+            if (data.getData() != null) {
 
-            Uri selectedImage = data.getData();
-            String[] filePathColumn = {MediaStore.Images.Media.DATA};
-            Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-            cursor.moveToFirst();
-            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-            String filePath = cursor.getString(columnIndex);
-            File file = new File(filePath);
-            cursor.close();
-            //  Bitmap selectedphoto = BitmapFactory.decodeFile(filePath);
-
-//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//            selectedphoto.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-//            byteArray = byteArrayOutputStream.toByteArray();
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String filePath = cursor.getString(columnIndex);
+                File file = new File(filePath);
+                cursor.close();
 
 
-            Bitmap bmp = decodeSampleImage(file, 150, 150);
+                bitmap = decodeSampleImage(file, 150, 150);
 
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-            byteArray = byteArrayOutputStream.toByteArray();
-            CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
-            // circleImageView.setImageBitmap(selectedphoto);
-
-            circleImageView.setImageBitmap(bmp);
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                byteArray = byteArrayOutputStream.toByteArray();
+                circleImageView.setImageBitmap(bitmap);
+            } else {
+                bitmap = (Bitmap) data.getExtras().get("data");
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                byteArray = byteArrayOutputStream.toByteArray();
+                circleImageView.setImageBitmap(bitmap);
+            }
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
@@ -187,6 +173,27 @@ public class ProfileCreationActivity extends AppCompatActivity {
         }
 
         return null;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        XMPPService.startService(this);
+        initFacebookLogin();
+
+        setContentView(R.layout.activity_profile_creation);
+
+        addFacebookCallback();
+        addListenerToContinueButton();
+        addListnerToProfilePicture();
+
+
+        /*
+         * to set initial focus to edit text view and open keyboard.
+         */
+//        nameText.requestFocus();
+//        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
     @Override
