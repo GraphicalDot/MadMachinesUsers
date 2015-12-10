@@ -145,6 +145,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
         @Override
         public void handleAction(int id) {
+            sendReadStatus();
 
             ChatScreenActivity.this.runOnUiThread(new Runnable() {
                 @Override
@@ -370,6 +371,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         }
 
         loadAllMediaContent();
+        sendReadStatus();
     }
 
     private void clearUnreadCount() {
@@ -665,6 +667,16 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             }
 
         }.start();
+    }
+
+    private void sendReadStatus(){
+        for (Message message : messageList) {
+            if( !(message.iAmSender || message.messagesRead) ){
+                personalMessaging.sendReadStatus( message.number, message.messageStanzaId);
+            } else {
+                //nothing
+            }
+        }
     }
 
     private boolean sendActionToCorrespondingActivityListener() {

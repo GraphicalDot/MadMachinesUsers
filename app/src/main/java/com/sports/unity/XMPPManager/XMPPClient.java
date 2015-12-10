@@ -12,9 +12,11 @@ import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.joda.time.DateTime;
@@ -99,6 +101,14 @@ public class XMPPClient {
             } else {
                 success = true;
             }
+        }
+
+        addCustomExtensions();
+
+        if( success ) {
+            ReadReceiptManager.getInstanceFor(connection);
+        } else {
+
         }
 
         return success;
@@ -229,6 +239,28 @@ public class XMPPClient {
         }
 
         return success;
+    }
+
+    public boolean sendReadStatus(String to, String messagePacketID){
+        boolean success = false;
+        try {
+            if (connection != null && connection.isAuthenticated()) {
+                Message message = new Message(to);
+                ReadReceipt read = new ReadReceipt(messagePacketID);
+                message.addExtension(read);
+
+                connection.sendPacket(message);
+
+                success = true;
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return success;
+    }
+
+    private void addCustomExtensions(){
+        ProviderManager.addExtensionProvider(ReadReceipt.ELEMENT, ReadReceipt.NAMESPACE, new ReadReceipt.Provider());
     }
 
     private void closeConnection() {

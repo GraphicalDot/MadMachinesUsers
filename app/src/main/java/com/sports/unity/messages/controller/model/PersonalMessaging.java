@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.XMPPManager.ReadReceipt;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
@@ -99,7 +100,7 @@ public class PersonalMessaging {
         long time = CommonUtil.getCurrentGMTTimeInEpoch();
         String stanzaId = sendMessage(message, chat, String.valueOf(time), mimeType);
 
-        sportsUnityDBHelper.updateMediaMessage_ContentUploaded( messageId, stanzaId, checksum);
+        sportsUnityDBHelper.updateMediaMessage_ContentUploaded(messageId, stanzaId, checksum);
     }
 
     private String sendMessage(Message message, Chat chat, String currentTime, String mimeType){
@@ -244,7 +245,22 @@ public class PersonalMessaging {
             sportsUnityDBHelper.updateClientReceived(receiptId);
         }
 
-        updateReadreceipts(applicationContext);
+        updateReadreceipts();
+    }
+
+    public void readReceiptReceived(String fromJid, String toJid, String packetId){
+        sportsUnityDBHelper.updateReadStatus(packetId);
+
+        updateReadreceipts();
+    }
+
+    public void sendReadStatus(String to, String messageStanzaId){
+        boolean success = XMPPClient.getInstance().sendReadStatus( to+"@mm.io", messageStanzaId);
+        if( success ) {
+            sportsUnityDBHelper.updateReadStatus(messageStanzaId);
+        } else {
+            //nothing
+        }
     }
 
     public void setActiveStatus(String phoneNumber, String status) {
@@ -275,7 +291,7 @@ public class PersonalMessaging {
         return false;
     }
 
-    public void updateReadreceipts(Context applicationContext) {
+    public void updateReadreceipts() {
 
         /**
          * get read receipts in database and then update the double ticks in the corresponding chats

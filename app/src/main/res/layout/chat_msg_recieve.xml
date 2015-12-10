@@ -20,7 +20,7 @@
         <LinearLayout
             android:id="@+id/mediaPlayer"
             android:layout_width="200dp"
-            android:layout_height="36dip">
+            android:layout_height="48dip">
 
             <ImageButton
                 android:id="@+id/playAndPause"

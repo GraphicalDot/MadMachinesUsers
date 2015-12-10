@@ -266,6 +266,19 @@ public class XMPPService extends Service {
                 }
             });
 
+
+            /*
+             * Listener for read status
+             */
+            ReadReceiptManager.getInstanceFor(connection).addReadReceiptReceivedListener(new ReadReceiptReceivedListener() {
+
+                @Override
+                public void onReceiptReceived(String fromJid, String toJid, String packetId) {
+                    PersonalMessaging.getInstance(getApplicationContext()).readReceiptReceived( fromJid, toJid, packetId);
+                }
+
+            });
+
             /**
              *  packet filter to see if messages are published to the node or not
              */

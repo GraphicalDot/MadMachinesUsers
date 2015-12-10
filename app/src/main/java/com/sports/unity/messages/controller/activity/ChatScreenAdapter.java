@@ -142,7 +142,7 @@ public class ChatScreenAdapter extends BaseAdapter {
             if (message.iAmSender) {
                 ((LinearLayout) holder.message.getParent()).setBackgroundResource(R.drawable.chat_blue);
             } else {
-                ((LinearLayout) holder.message.getParent()).setBackgroundResource(R.drawable.chat_grey);
+                ((LinearLayout) holder.message.getParent()).setBackgroundResource(R.drawable.chat_white);
             }
         } else {
             ((LinearLayout) holder.message.getParent()).setBackgroundResource(android.R.color.transparent);
@@ -256,15 +256,16 @@ public class ChatScreenAdapter extends BaseAdapter {
             //do nothing
         } else {
 
-            if (message.serverR != null) {
-                holder.receivedStatus.setImageResource(R.drawable.ic_msg_sent);
-            }
-            if (message.recipientR != null) {
+            if ( message.messagesRead == true ) {
+                holder.receivedStatus.setImageResource(R.drawable.ic_msg_read);
+            } else if (message.recipientR != null) {
                 holder.receivedStatus.setImageResource(R.drawable.ic_msg_delivered);
-            }
-            if (message.serverR == null && message.recipientR == null) {
+            } else if (message.serverR != null) {
+                holder.receivedStatus.setImageResource(R.drawable.ic_msg_sent);
+            } else {
                 holder.receivedStatus.setImageResource(R.drawable.ic_msg_pending);
             }
+
         }
 
         return vi;

@@ -561,7 +561,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 MessagesEntry.COLUMN_SEND_TIMESTAMP,                            //8th column
                 MessagesEntry.COLUMN_ID,                                        //9th column
                 MessagesEntry.COLUMN_READ_STATUS,                               //10th column
-                MessagesEntry.COLUMN_MEDIA_FILE_NAME
+                MessagesEntry.COLUMN_MEDIA_FILE_NAME,
+                MessagesEntry.COLUMN_MESSAGE_ID
         };
 
         String selection = MessagesEntry.COLUMN_CHAT_ID + " = ?";
@@ -583,7 +584,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 int id = c.getInt(9);
                 if (id != DUMMY_MESSAGE_ROW_ID) {
                     boolean read = c.getInt(10) > 0;
-                    list.add(new Message( c.getInt(9), c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8), read, id, c.getString(11)));
+                    list.add(new Message( c.getInt(9), c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8), read, id, c.getString(11), c.getString(12)));
                 } else {
                     //nothing
                 }
@@ -638,6 +639,22 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         long lastMessageId = db.insert(MessagesEntry.TABLE_NAME, null, values);
         return lastMessageId;
 
+    }
+
+    public void updateReadStatus(String messageStanzaId){
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(MessagesEntry.COLUMN_READ_STATUS, "1");
+
+        String selection = MessagesEntry.COLUMN_MESSAGE_ID + " LIKE ? ";
+        String[] selectionArgs = { String.valueOf(messageStanzaId)};
+
+        int count = db.update(
+                MessagesEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
     }
 
     public void updateMediaMessage_ContentUploaded(long messageId, String stanzaId, String checksum){
