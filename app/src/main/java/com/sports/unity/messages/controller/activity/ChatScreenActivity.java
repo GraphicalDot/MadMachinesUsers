@@ -37,6 +37,7 @@ import com.sports.unity.messages.controller.model.GroupMessaging;
 import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
+import com.sports.unity.messages.controller.viewhelper.AudioRecordingHelper;
 import com.sports.unity.messages.controller.viewhelper.ChatKeyboardHelper;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
@@ -196,6 +197,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     @Override
     protected void onPause() {
         ChatScreenApplication.activityPaused();
+        AudioRecordingHelper.getInstance(this).stopAndReleaseMediaPlayer();
         super.onPause();
     }
 
@@ -613,6 +615,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             sportsUnityDBHelper.clearChat(chatID, groupServerId);
             messageList = sportsUnityDBHelper.getMessages(chatID);
             chatScreenAdapter.notifydataset(messageList);
+            AudioRecordingHelper.getInstance(this).clearProgressMap();
         } else if (id == R.id.action_search) {
             return true;
         }
@@ -640,8 +643,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                 for (Message message : messageList) {
                     if (
                             message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ||
-                            message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)
-                    ) {
+                                    message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)
+                            ) {
                         if (message.mediaFileName != null) {
                             if (!mediaMap.containsKey(message.mediaFileName)) {
                                 byte[] content = DBUtil.loadContentFromExternalFileStorage(ChatScreenActivity.this.getBaseContext(), message.mediaFileName);

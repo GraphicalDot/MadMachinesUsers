@@ -28,6 +28,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
+            <ProgressBar
+                android:id="@+id/progressBarAudio"
+                style="@android:style/Widget.Holo.Light.ProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -52,13 +60,13 @@
             android:id="@+id/image_message_parent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            >
+            android:layout_gravity="center">
+
             <ImageView
                 android:id="@+id/image_message"
                 android:layout_width="@dimen/media_msg_content_size"
-                android:layout_height="@dimen/media_msg_content_size"
-                />
+                android:layout_height="@dimen/media_msg_content_size" />
+
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="@android:style/Widget.Holo.Light.ProgressBar"
