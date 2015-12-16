@@ -1,6 +1,7 @@
 package com.sports.unity.common.controller;
 
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -8,6 +9,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.sports.unity.messages.controller.fragment.MessagesFragment;
 import com.sports.unity.news.controller.fragment.NewsFragment;
 import com.sports.unity.scores.controller.fragment.ScoresFragment;
+import com.sports.unity.util.Constants;
 
 /**
  * Created by Edwin on 15/02/2015.
@@ -39,6 +41,9 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         } else if (position == 1)            // As we are having 2 tabs if the position is now 0 it must be 1 so we are returning second tab
         {
             NewsFragment newsFragment = new NewsFragment();
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(Constants.INTENT_KEY_SEARCH_ON, false);
+            newsFragment.setArguments(bundle);
             return newsFragment;
         } else {
             MessagesFragment messagesFragment = new MessagesFragment();

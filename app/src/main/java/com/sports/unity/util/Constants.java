@@ -11,6 +11,7 @@ public class Constants {
     public static final String INTENT_KEY_PHONE_NUMBER = "PHONE_NUMBER";
     public static final String INTENT_KEY_ROOM_NAME = "ROOM_NAME";
     public static final String INTENT_KEY_CONTACT_FRAGMENT_USAGE = "CONTACT_FRAGMENT_USAGE";
+    public static final String INTENT_KEY_SEARCH_ON = "SEARCH_ON";
 
     public static final String URL_REGISTER = "http://54.169.217.88/register?";
     public static final String URL_CREATE = "http://54.169.217.88/create?";

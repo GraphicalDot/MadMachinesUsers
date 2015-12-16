@@ -21,99 +21,57 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.sports.unity.Database.NewsDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
-import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.news.controller.activity.NewsSearchActivity;
 import com.sports.unity.news.model.News;
-import com.sports.unity.news.model.NewsList;
-import com.sports.unity.news.model.NewsResponseListener;
-import com.sports.unity.util.CommonUtil;
-import com.sports.unity.Database.NewsDBHelper;
+import com.sports.unity.news.model.NewsContentHandler;
+import com.sports.unity.util.Constants;
+
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
-/**
- * Created by Edwin on 15/02/2015.
- */
-public class NewsFragment extends Fragment {
+public class NewsFragment extends Fragment implements NewsContentHandler.ContentListener{
 
-    private static final String REQUEST_CONTENT_TAG = "RequestContent";
-    private static final String REQUEST_MORE_CONTENT_TAG = "RequestContentMore";
+    private NewsContentHandler newsContentHandler;
 
-    private HashSet<String> requestInProcess = new HashSet<>();
-
-    private NewsResponseListener responseListener_ForLoadContent = new NewsResponseListener() {
-
-        @Override
-        public void onErrorResponse(VolleyError volleyError) {
-            requestInProcess.remove(REQUEST_CONTENT_TAG);
-            NewsFragment.this.onErrorResponse(volleyError);
-        }
-
-        @Override
-        public void onResponse(String s) {
-            requestInProcess.remove(REQUEST_CONTENT_TAG);
-            NewsFragment.this.onResponse(s);
-        }
-
-    };
-
-    private NewsResponseListener responseListener_ForLoadMoreContent = new NewsResponseListener() {
-
-        @Override
-        public void onErrorResponse(VolleyError volleyError) {
-            requestInProcess.remove(REQUEST_MORE_CONTENT_TAG);
-            NewsFragment.this.onErrorResponse(volleyError);
-        }
-
-        @Override
-        public void onResponse(String s) {
-            requestInProcess.remove(REQUEST_MORE_CONTENT_TAG);
-            NewsFragment.this.onResponse(s);
-        }
-
-    };
+    private BaseNewsAdapter mAdapter;
+    private LinearLayoutManager mLayoutManager;
 
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
-    private LinearLayoutManager mLayoutManager;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private String type_1 = "";
-    private Long timestampFirst;
-    private Long timestampLast;
     private LinearLayout error;
-
-    private boolean loading = true;
-    private int visibleThreshold = 5;
-    private int previousTotal = 0;
     private ProgressBar progressBar;
 
-    private ArrayList<News> filteredNewsArticle = new ArrayList<>();
-    private ArrayList<String> filter = null;
+    private boolean loading = true;
+
+    private boolean searchOn = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+
+        searchOn = getArguments().getBoolean(Constants.INTENT_KEY_SEARCH_ON);
+
         View v = inflater.inflate(com.sports.unity.R.layout.news, container, false);
-
-        filter = UserUtil.getSportsSelected();
-
         initViews(v);
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        newsContentHandler.addContentListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        newsContentHandler.removeContentListener();
     }
 
     private void initViews(View v) {
@@ -129,8 +87,6 @@ public class NewsFragment extends Fragment {
         progressBar = (ProgressBar) v.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#2C84CC"), android.graphics.PorterDuff.Mode.MULTIPLY);
 
-        Log.i("NewsFragment", "initial request call");
-
         error = (LinearLayout) v.findViewById(R.id.error);
         error.setVisibility(View.GONE);
 
@@ -139,32 +95,49 @@ public class NewsFragment extends Fragment {
         oops.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
         something_wrong.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
 
-        if( CommonUtil.isInternetConnectionAvailable(getActivity()) ) {
-            progressBar.setVisibility(View.VISIBLE);
-            requestContent();
+        if( searchOn == false ) {
+            newsContentHandler = NewsContentHandler.getInstance(getActivity().getBaseContext(), NewsContentHandler.KEY_BASE_CONTENT);
+        } else {
+            something_wrong.setText("No search results found for this search");
+            newsContentHandler = NewsContentHandler.getInstance(getActivity().getBaseContext(), NewsContentHandler.KEY_SEARCH_CONTENT);
+        }
+
+        addOrUpdateAdapter();
+
+        progressBar.setVisibility(View.VISIBLE);
+
+        if( searchOn == false ) {
+            progressBar.setVisibility(View.GONE);
+            newsContentHandler.refreshNews(false);
         } else {
             progressBar.setVisibility(View.GONE);
-            filteredNewsArticle=NewsDBHelper.getInstance(getActivity()).fetchNewsArticles();
-            displayResult();
         }
 
-        if (mSwipeRefreshLayout != null) {
 
-            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            Log.i("NewsFragment" , "refresh and request content");
-                            requestContent();
-                            mSwipeRefreshLayout.setRefreshing(false);
-                        }
-                    }, 2000);
-                }
-            });
-        }
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                new Handler().post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        Log.i("News Content", "Refresh Call");
+
+                        newsContentHandler.refreshNews(true);
+                        mSwipeRefreshLayout.setRefreshing(false);
+                    }
+
+                });
+            }
+
+        });
+
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            private int visibleThreshold = 5;
+            private int previousTotal = 0;
+
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
@@ -172,7 +145,6 @@ public class NewsFragment extends Fragment {
                 int visibleItemCount = mRecyclerView.getChildCount();
                 int totalItemCount = mLayoutManager.getItemCount();
                 int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
-
 
                 if (loading) {
                     if (totalItemCount > previousTotal) {
@@ -183,9 +155,9 @@ public class NewsFragment extends Fragment {
 
                 if (!loading && (totalItemCount - visibleItemCount)
                         <= (firstVisibleItem + visibleThreshold)) {
-                    Log.i("NewsFragment", "request content on load more");
+                    Log.i("News Content", "Load More Call");
 
-                    requestContentLoadMore();
+                    newsContentHandler.loadMoreNews();
                     loading = true;
                 } else {
                     //nothing
@@ -193,195 +165,90 @@ public class NewsFragment extends Fragment {
             }
         });
 
-
     }
 
     private void resetScrollFlag(){
         loading = false;
     }
 
-    private void requestContentLoadMore() {
-        if( ! requestInProcess.contains(REQUEST_MORE_CONTENT_TAG) ) {
-            Log.i("requestContentLoadMore", "Filter size" + filter.size());
-
-            RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-
-            StringRequest stringRequest = null;
-            String url = null;
-            if (timestampLast != null) {
-                url = "http://52.74.250.156:8000//mixed?skip=0&limit=10&image_size=hdpi" + type_1 + "&direction=down&timestamp=" + timestampLast;
-            } else {
-                url = null;
-                //nothing
-            }
-
-            if( url != null ) {
-                Log.i("filter", "type" + type_1);
-                Log.i("filter", "type" + url);
-                stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadMoreContent, responseListener_ForLoadMoreContent);
-                queue.add(stringRequest);
-
-                requestInProcess.add(REQUEST_MORE_CONTENT_TAG);
-            } else {
-                //nothing
-            }
-
-        } else {
-            //nothing
-        }
-    }
-
-    private void requestContent() {
-        if( ! requestInProcess.contains(REQUEST_CONTENT_TAG) ) {
-            Log.i("NewsFragment", "requestContent : Filter size" + filter.size());
-
-            StringRequest stringRequest = null;
-            RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-            type_1 = "";
-            for (int i = 0; i < filter.size(); i++) {
-                //url = "http://52.74.250.156:8000//mixed?skip=" + skipLimit + "&limit=" + loadLimit + "&image_size=hdpi&type="+filter.get(i)+"";
-                String temp = "&type_1=" + filter.get(i);
-                type_1 = type_1 + temp;
-
-            }
-
-            Log.i("filter", "type" + type_1);
-            Log.i("timestamp First", "timestampfirst" + timestampFirst);
-
-            String url = null;
-            if (timestampFirst == null) {
-                url = "http://52.74.250.156:8000//mixed?skip=0&limit=10&image_size=hdpi" + type_1;
-            } else {
-                url = "http://52.74.250.156:8000//mixed?skip=0&limit=10&image_size=hdpi" + type_1 + "&direction=up&timestamp=" + timestampFirst;
-            }
-
-            if( url != null ) {
-                Log.i("filter", "type" + url);
-
-                stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent, responseListener_ForLoadContent);
-                queue.add(stringRequest);
-
-                requestInProcess.add(REQUEST_CONTENT_TAG);
-            } else {
-                //nothing
-            }
-
-        } else {
-            //nothing
-        }
-    }
-
-    public void onResponse(String response) {
-        Log.i("NewsFragment" , "response on request call");
-
-        resetScrollFlag();
-        progressBar.setVisibility(View.GONE);
-
-        NewsList newsList = new Gson().fromJson(response, NewsList.class);
-        ArrayList<News> list = (ArrayList<News>) newsList.getResult();
-
-        News newsItem = null;
-
-        for (int index = 0; index < list.size(); index++) {
-            newsItem = list.get(index);
-            if (newsItem.getSummary() == null) {
-                list.remove(index);
-                index--;
-            } else {
-                //nothing
-            }
-        }
-
-        Log.i("On Response List.size()", "" + list.size());
-
-        if(!list.isEmpty()) {
-            filteredNewsArticle.addAll(list);
-            timestampFirst=filteredNewsArticle.get(0).getPublishEpoch();
-            timestampLast=filteredNewsArticle.get(filteredNewsArticle.size()-1).getPublishEpoch();
-        } else {
-          //nothing
-        }
-
-        Log.i("Timestamp Last", "" + timestampLast);
-       // Collections.sort(filteredNewsArticle);
-
-        insertIntoDb();
-
-        displayResult();
-    }
-
-    public void insertIntoDb() {
-        if(filteredNewsArticle.size() > 50) {
-            ArrayList<News> newsListForInsert = new ArrayList<>();
-            for(int i = 0; i < 50; i++) {
-                if( ! filteredNewsArticle.isEmpty() ) {
-                    newsListForInsert.add(filteredNewsArticle.get(i));
-                } else {
-                    //nothing
-                }
-
-            }
-            NewsDBHelper.getInstance(getActivity()).saveNewsArticles(newsListForInsert);
-        } else {
-            NewsDBHelper.getInstance(getActivity()).saveNewsArticles(filteredNewsArticle);
-        }
-    }
-
-    public void onErrorResponse(VolleyError volleyError) {
-        resetScrollFlag();
-        progressBar.setVisibility(View.GONE);
-    }
-
-
     private void displayResult() {
-        Log.i("Filtered list size ", "" + filteredNewsArticle.size());
-        {
-            mRecyclerView.post(new Runnable() {
-                @Override
-                public void run() {
-                    if(filteredNewsArticle.size()==0) {
-                        error.setVisibility(View.VISIBLE);
-                        Toast.makeText(getActivity(),"Check your internet connection",Toast.LENGTH_LONG).show();
-                    } else{
-                        error.setVisibility(View.GONE);
-                        if ((TinyDB.getInstance(getActivity()).getBoolean("check", false))) {
-                            if (mAdapter == null) {
-                                mAdapter = new NewsMinicardAdapter(NewsFragment.this.filteredNewsArticle, getActivity());
-                                mRecyclerView.setAdapter(mAdapter);
-                            } else {
-                                if (mAdapter instanceof NewsMinicardAdapter) {
-                                    Log.i("sportunity", "no change in mini adapter");
-//                                mRecyclerView.setAdapter(mAdapter);
-                                } else {
-                                    Log.i("sportunity", "creating mini adapter");
-                                    mAdapter = new NewsMinicardAdapter(NewsFragment.this.filteredNewsArticle, getActivity());
-                                    mRecyclerView.setAdapter(mAdapter);
+        Log.i("News Content", "Display Result");
 
-                                }
-                            }
-                            mAdapter.notifyDataSetChanged();
+        getActivity().runOnUiThread(new Runnable() {
 
-                        } else {
-                            if (mAdapter == null) {
-                                Log.i("sportunity", "creating news adapter");
-                                mAdapter = new NewsAdapter(NewsFragment.this.filteredNewsArticle, getActivity());
-                                mRecyclerView.setAdapter(mAdapter);
-                            } else {
-                                if (mAdapter instanceof NewsAdapter) {
-                                    Log.i("sportunity", "no change in news adapter");
-//                                mRecyclerView.setAdapter(mAdapter);
-                                } else {
-                                    Log.i("sportunity", "creating news adapter");
-                                    mAdapter = new NewsAdapter(NewsFragment.this.filteredNewsArticle, getActivity());
-                                    mRecyclerView.setAdapter(mAdapter);
-                                }
-                            }
-                            mAdapter.notifyDataSetChanged();
-                        }
+            @Override
+            public void run() {
+                progressBar.setVisibility(View.GONE);
+                ArrayList<News> list = mAdapter.getNews();
+                Log.i("Adapter size","Count:" + list.size());
+                if(list.size() == 0) {
+                    error.setVisibility(View.VISIBLE);
+                    if(!searchOn) {
+                        Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_LONG).show();
+                    } else {
+                        //nothing
                     }
+                } else{
+                   error.setVisibility(View.GONE);
+                    addOrUpdateAdapter();
+                }
+
+            }
+
+        });
+    }
+
+    private void  addOrUpdateAdapter(){
+        boolean flag = TinyDB.getInstance(getActivity()).getBoolean("check", false);
+
+        ArrayList list = null;
+        if( flag ){
+            if (mAdapter == null) {
+                Log.d("News Content", "creating mini adapter");
+                list = new ArrayList();
+                mAdapter = new NewsMinicardAdapter( list, getActivity());
+                mRecyclerView.setAdapter(mAdapter);
+
+                newsContentHandler.init( list, searchOn);
+            } else {
+                if (mAdapter instanceof NewsMinicardAdapter) {
+                    Log.d("News Content", "no change in mini adapter");
+                } else {
+                    Log.d("News Content", "creating mini adapter");
+
+                    list = mAdapter.getNews();
+
+                    mAdapter = new NewsMinicardAdapter(list, getActivity());
+                    mRecyclerView.setAdapter(mAdapter);
 
                 }
-            });
+            }
+            mAdapter.notifyDataSetChanged();
+        } else {
+            if (mAdapter == null) {
+                Log.d("News Content", "creating news adapter");
+                list = new ArrayList();
+                mAdapter = new NewsAdapter(list, getActivity());
+                mRecyclerView.setAdapter(mAdapter);
+
+                newsContentHandler.init( list, searchOn);
+            } else {
+                if (mAdapter instanceof NewsAdapter) {
+                    Log.d("News Content", "no change in news adapter");
+                } else {
+                    Log.d("News Content", "creating news adapter");
+
+                    list = mAdapter.getNews();
+
+                    mAdapter = new NewsAdapter(list, getActivity());
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+            }
+
+            list = mAdapter.getNews();
+            Log.d( "News Content", "Update Adapter List Object ID " + list);
+
+            mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -402,21 +269,20 @@ public class NewsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         if( requestCode == 999 && data != null ) {
-            filter = UserUtil.getSportsSelected();
-            type_1 = "";
-            timestampFirst = null;
-            timestampLast = null;
 
-            filteredNewsArticle.clear();
+            newsContentHandler.clearContent();
             mAdapter.notifyDataSetChanged();
 
-            NewsDBHelper.getInstance(getActivity()).saveNewsArticles(filteredNewsArticle);
-            if(CommonUtil.isInternetConnectionAvailable(getActivity())) {
-                requestContent();
-            }else{
+            newsContentHandler.selectedSportsChanged();
+            boolean success = newsContentHandler.refreshNews(true);
 
-                displayResult();
+            if(success == false) {
+                error.setVisibility(View.VISIBLE);
+                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_LONG).show();
+            } else {
+                error.setVisibility(View.GONE);
             }
+
 
         } else {
             //nothing
@@ -431,6 +297,12 @@ public class NewsFragment extends Fragment {
             return true;
         }
 
+        if (id == R.id.action_search) {
+            Intent intent = new Intent(getActivity(), NewsSearchActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
         if (id == com.sports.unity.R.id.action_filter) {
             Intent i = new Intent(getActivity(), FilterActivity.class);
             startActivityForResult(i, 999);
@@ -441,16 +313,12 @@ public class NewsFragment extends Fragment {
             if (item.isChecked()) {
                 item.setChecked(false);
                 TinyDB.getInstance(getActivity()).putBoolean("check", false);
-                mAdapter = new NewsAdapter(NewsFragment.this.filteredNewsArticle, getActivity());
-                mRecyclerView.setAdapter(mAdapter);
-                mAdapter.notifyDataSetChanged();
             } else {
                 item.setChecked(true);
                 TinyDB.getInstance(getActivity()).putBoolean("check", true);
-                mAdapter = new NewsMinicardAdapter(NewsFragment.this.filteredNewsArticle, getActivity());
-                mRecyclerView.setAdapter(mAdapter);
-                mAdapter.notifyDataSetChanged();
             }
+
+            addOrUpdateAdapter();
             displayResult();
             return true;
         }
@@ -458,4 +326,25 @@ public class NewsFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void handleContent(int responseCode) {
+        resetScrollFlag();
+        if(responseCode == 1) {
+            Log.i("News Content", "Handle Response");
+            displayResult();
+        } else if(responseCode == 0) {
+            Log.i("News Content", "Handle Error");
+
+            getActivity().runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getActivity(),"Check your internet connection",Toast.LENGTH_SHORT).show();
+                }
+
+            });
+
+        }
+    }
 }

@@ -9,6 +9,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -32,14 +33,10 @@ import java.util.ArrayList;
 /**
  * Created by madmachines on 21/8/15.
  */
-public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
-
-    private ArrayList<News> news = null;
-    private Activity activity;
+public class NewsAdapter extends BaseNewsAdapter {
 
     public NewsAdapter(ArrayList<News> news, Activity activity) {
-        this.news = news;
-        this.activity = activity;
+        super( news, activity);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -77,13 +74,15 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
     }
 
     @Override
-    public NewsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(com.sports.unity.R.layout.news_cards, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(NewsAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
+        ViewHolder holder = (ViewHolder)viewHolder;
+
         if ( news.size() <= 0 ) {
             Toast.makeText(activity, "Some error occured Please try later", Toast.LENGTH_LONG).show();
         } else {
@@ -129,10 +128,6 @@ public class NewsAdapter extends RecyclerView.Adapter<NewsAdapter.ViewHolder> {
                 activity.startActivity(browserIntent);
             }
         });
-    }
-    @Override
-    public int getItemCount() {
-        return news.size();
     }
 
 }

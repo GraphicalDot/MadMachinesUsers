@@ -32,14 +32,10 @@ import java.util.ArrayList;
 /**
  * Created by madmachines on 23/9/15.
  */
-public class NewsMinicardAdapter extends RecyclerView.Adapter<NewsMinicardAdapter.ViewHolder> {
-
-    private ArrayList<News> news = null;
-    private Activity activity;
+public class NewsMinicardAdapter extends BaseNewsAdapter {
 
     public NewsMinicardAdapter(ArrayList<News> news, Activity activity) {
-        this.activity = activity;
-        this.news = news;
+        super( news, activity);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -72,7 +68,9 @@ public class NewsMinicardAdapter extends RecyclerView.Adapter<NewsMinicardAdapte
     }
 
     @Override
-    public void onBindViewHolder(NewsMinicardAdapter.ViewHolder holder, final int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
+        NewsMinicardAdapter.ViewHolder holder = (NewsMinicardAdapter.ViewHolder)viewHolder;
+
         holder.title.setText(news.get(position).getTitle());
         holder.type.setText(CommonUtil.capitalize(news.get(position).getType()));
 
@@ -111,11 +109,6 @@ public class NewsMinicardAdapter extends RecyclerView.Adapter<NewsMinicardAdapte
             }
         });
 
-    }
-
-    @Override
-    public int getItemCount() {
-        return news.size();
     }
 
 }

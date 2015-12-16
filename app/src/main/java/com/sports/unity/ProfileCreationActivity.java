@@ -75,7 +75,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-            if(findViewById(R.id.progressBar).getVisibility() == View.GONE) {
                 if (!nameText.getText().toString().isEmpty()) {
                     beforeAsyncCall();
                     TinyDB.getInstance(ProfileCreationActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nameText.getText().toString());
@@ -83,7 +82,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(getApplicationContext(), "Please enter your name", Toast.LENGTH_SHORT).show();
                 }
-            }
         }
 
     };
@@ -93,7 +91,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-            if(findViewById(R.id.progressBar).getVisibility() == View.GONE) {
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 galleryIntent.setType("image/*");
 
@@ -106,7 +103,6 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
                 startActivityForResult(chooser, LOAD_IMAGE_GALLERY_CAMERA);
             }
-        }
 
     };
 
@@ -152,6 +148,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
             System.gc(); // First of all free some memory
 
             // Decode image size
+
             BitmapFactory.Options o = new BitmapFactory.Options();
             o.inJustDecodeBounds = true;
             BitmapFactory.decodeStream(new FileInputStream(f), null, o);
@@ -172,10 +169,10 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
             BitmapFactory.Options o2 = new BitmapFactory.Options();
             o2.inSampleSize = sampleScaleSize;
-            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
 
+            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
         } catch (Exception e) {
-            Log.d("error", e.getMessage());
+            Log.d("error", e.getMessage()); // We don't want the application to just throw an exception
         }
 
         return null;
@@ -323,13 +320,23 @@ public class ProfileCreationActivity extends AppCompatActivity {
     }
 
     private void beforeAsyncCall() {
+        Button continueButton = (Button) findViewById(R.id.continue_button);
+        continueButton.setClickable(false);
+        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
+        circleImageView.setClickable(false);
+
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setVisibility(View.GONE);
+
 
         findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
     }
 
     private void afterAsyncCall() {
+        Button continueButton = (Button) findViewById(R.id.continue_button);
+        continueButton.setClickable(true);
+        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
+        circleImageView.setClickable(true);
 
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setVisibility(View.VISIBLE);
