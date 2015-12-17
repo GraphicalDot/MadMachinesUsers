@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/chat_msg_bg">
+    android:background="@android:color/transparent">
 
     <LinearLayout
         android:id="@+id/message_Sent"
@@ -51,7 +51,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/default_audio_duration"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_size_very_small"
+                    android:paddingLeft="@dimen/font_size_very_small"/>
 
             </LinearLayout>
 
@@ -67,7 +69,10 @@
                 android:id="@+id/image_message"
                 android:layout_width="@dimen/media_msg_content_size"
                 android:layout_height="@dimen/media_msg_content_size"
-                />
+                android:paddingLeft="5dp"
+                android:paddingRight="8dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"/>
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="@android:style/Widget.Holo.Light.ProgressBar"
@@ -82,13 +87,17 @@
             android:id="@+id/singleMessageRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:paddingRight="8dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
             android:autoLink="all"
             android:text="@string/dummy_text_message"
             android:textColor="@android:color/white"
             android:textColorLink="@android:color/white"
             android:textSize="@dimen/font_size_small" />
+        </LinearLayout>
 
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/message_send"

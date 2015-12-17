@@ -118,7 +118,18 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
             lastMsgTime.setTextColor(Color.parseColor("#2c84cc"));
 
         }
-        lastMsg.setText(chatArrayList.get(position).data);
+        if (chatArrayList.get(position).mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
+            lastMsg.setText(chatArrayList.get(position).data);
+        } else if (chatArrayList.get(position).mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
+            lastMsg.setText(R.string.sent_an_image);
+        } else if (chatArrayList.get(position).mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
+            lastMsg.setText(R.string.sent_a_video);
+        } else if (chatArrayList.get(position).mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
+            lastMsg.setText(R.string.sent_a_sticker);
+        } else if (chatArrayList.get(position).mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
+            lastMsg.setText(R.string.sent_an_audio);
+        }
+
         name.setText(chatArrayList.get(position).name);
         return rowView;
     }

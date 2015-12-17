@@ -3,12 +3,14 @@ package com.sports.unity.messages.controller.viewhelper;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.messages.controller.model.Stickers;
 
@@ -58,9 +60,18 @@ public class EmojiAdapter extends BaseAdapter {
         } else {
             imageView = (ImageView) convertView;
         }
-        imageView.setImageResource(R.drawable.grey_bg_rectangle);
-        imageView.setImageBitmap(Stickers.getInstance().getStickerBitmap(stickersCategory, stickersName.get(position)));
-        imageView.setTag( stickersCategory + "/" + stickersName.get(position));
+
+        Glide.with(context)
+                .load(Uri.parse("file:///android_asset/"+stickersCategory + "/" + stickersName.get(position)))
+                .asBitmap()
+                .placeholder(R.drawable.grey_bg_rectangle)
+                .into(imageView);
+
+        imageView.setTag( R.id.emoji, stickersCategory + "/" + stickersName.get(position));
+
+//        imageView.setImageResource(R.drawable.grey_bg_rectangle);
+//        imageView.setImageBitmap(Stickers.getInstance().getStickerBitmap(stickersCategory, stickersName.get(position)));
+//        imageView.setTag( stickersCategory + "/" + stickersName.get(position));
         return imageView;
     }
 }

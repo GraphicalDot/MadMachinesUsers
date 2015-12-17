@@ -46,7 +46,6 @@ public class AdapterForEmoji extends PagerAdapter implements AdapterView.OnItemC
     private ViewGroup layout;
 
     private int titles[] = {R.drawable.ic_football, R.drawable.ic_basketball, R.drawable.ic_cricket, R.drawable.ic_tennis, R.drawable.ic_f1};
-    private int SelectedTitles[] = {R.drawable.ic_football, R.drawable.ic_basketball, R.drawable.ic_cricket, R.drawable.ic_tennis, R.drawable.ic_f1};
 
 
     public AdapterForEmoji(Context context) {
@@ -62,7 +61,7 @@ public class AdapterForEmoji extends PagerAdapter implements AdapterView.OnItemC
         switch (position) {
             case 0:
                 resId = R.layout.football_emoji;
-               viewgroup = loadStickersGridView(resId, collection, inflater, "footballStickers");
+                viewgroup = loadStickersGridView(resId, collection, inflater, "footballStickers");
                 collection.addView(viewgroup);
                 break;
             case 1:
@@ -129,7 +128,7 @@ public class AdapterForEmoji extends PagerAdapter implements AdapterView.OnItemC
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        String selectedStickerPath = (String)view.getTag();
+        String selectedStickerPath = (String)view.getTag(R.id.emoji);
 
         sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_STICKER, selectedStickerPath);
     }

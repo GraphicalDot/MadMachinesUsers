@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/grey_chat_bg"
+    android:background="@drawable/img_chat"
     android:id="@+id/chat_layout_root_view"
     tools:context="com.sports.unity.messages.controller.activity.ChatScreenActivity">
 
@@ -41,7 +41,7 @@
         <LinearLayout
             android:id="@+id/send_message_layout"
             android:layout_width="match_parent"
-            android:layout_height="@dimen/keyboard_tab_height"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:weightSum="5">
 
@@ -59,7 +59,7 @@
 
             <Button
                 android:id="@+id/send"
-                android:background="@color/ColorPrimary"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:layout_weight="1"
@@ -71,50 +71,50 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/keyboard_tab_height"
+            android:layout_height="wrap_content"
             android:weightSum="5">
 
             <ImageButton
                 android:id="@+id/btn_text"
-                android:background="@color/ColorPrimary"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="openKeyBoard"
                 android:src="@drawable/ic_keyboard_disabled" />
 
             <ImageButton
                 android:id="@+id/btn_camera"
-                android:background="@color/ColorPrimary"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="openCamera"
                 android:src="@drawable/ic_camera_disabled"/>
 
             <ImageButton
                 android:id="@+id/btn_emoticons"
-                android:background="@color/ColorPrimary"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="emojipopup"
                 android:src="@drawable/ic_emojis_disabled"/>
 
             <ImageButton
                 android:id="@+id/btn_gallery"
-                android:background="@color/ColorPrimary"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="galleryPopup"
                 android:src="@drawable/ic_gallery_disabled"/>
 
             <ImageButton
                 android:id="@+id/btn_audiomsg"
-                android:background="@color/ColorPrimary"
+                style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="voicePopup"
                 android:src="@drawable/ic_mic_disabled"/>

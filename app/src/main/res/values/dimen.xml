@@ -6,11 +6,13 @@
 
     <dimen name="keyboard_height">230dip</dimen>
 
+    <dimen name="horizontal_padding_very_very_small">4dp</dimen>
     <dimen name="horizontal_padding_very_small">10dp</dimen>
     <dimen name="horizontal_padding_small">16dp</dimen>
     <dimen name="horizontal_padding_medium">30dp</dimen>
     <dimen name="horizontal_padding_large">45dp</dimen>
 
+    <dimen name="vertical_padding_very_very_small">5dp</dimen>
     <dimen name="vertical_padding_very_small">10dp</dimen>
     <dimen name="vertical_padding_small">16dp</dimen>
     <dimen name="vertical_padding_medium">30dp</dimen>

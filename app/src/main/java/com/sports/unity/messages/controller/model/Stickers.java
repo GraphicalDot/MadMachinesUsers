@@ -83,17 +83,17 @@ public class Stickers {
                 //nothing
             }
 
-            ArrayList<String> stickersName = stickersMap.get(folderName);
-            HashMap<String,Bitmap> stickers = stickersBitmapHashMap.get(folderName);
-            for (String name : stickersName) {
-                if ( ! stickers.containsKey(name) ) {
-                    InputStream is = assetManager.open(folderName + "/" + name);
-                    Bitmap bitmap = BitmapFactory.decodeStream(is);
-                    stickers.put(name, bitmap);
-                } else {
-                    //nothing
-                }
-            }
+//            ArrayList<String> stickersName = stickersMap.get(folderName);
+//            HashMap<String,Bitmap> stickers = stickersBitmapHashMap.get(folderName);
+//            for (String name : stickersName) {
+//                if ( ! stickers.containsKey(name) ) {
+//                    InputStream is = assetManager.open(folderName + "/" + name);
+//                    Bitmap bitmap = BitmapFactory.decodeStream(is);
+//                    stickers.put(name, bitmap);
+//                } else {
+//                    //nothing
+//                }
+//            }
         }catch (Exception ex){
             ex.printStackTrace();
         }
