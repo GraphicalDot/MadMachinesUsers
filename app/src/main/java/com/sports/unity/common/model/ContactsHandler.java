@@ -79,6 +79,13 @@ public class ContactsHandler {
         SportsUnityDBHelper.getInstance(context).addToContacts(currentUserPhoneNumber, currentUserPhoneNumber, true, ContactsHandler.getInstance().defaultStatus, false);
 
         ArrayList<String> contactNumberList = SportsUnityDBHelper.getInstance(context).readContactNumbers();
+        syncContacts(context, contactNumberList);
+
+        imgs = null;
+        status = null;
+    }
+
+    void syncContacts(Context context, ArrayList<String> contactNumberList) throws XMPPException {
         for (int i = 0; i < contactNumberList.size(); i++) {
             String number = contactNumberList.get(i);
             XMPPService.answerForm.setAnswer("user", number);
@@ -86,9 +93,6 @@ public class ContactsHandler {
                 SportsUnityDBHelper.getInstance(context).updateContacts(number, imgs, status);
             }
         }
-
-        imgs = null;
-        status = null;
     }
 
     HashMap readLatestUpdatedContactsFromSystem(Context context) {
@@ -139,6 +143,9 @@ public class ContactsHandler {
             String phoneNumber = keyIterator.next();
             String name = androidContacts.get(phoneNumber);
             name = name.trim();
+
+            sportsUnityDBHelper.addToContacts( name, phoneNumber, false, defaultStatus, true);
+
             if ( ! name.isEmpty() ) {
                 sportsUnityDBHelper.updateUserName(phoneNumber, name);
                 sportsUnityDBHelper.updateChatEntryName(sportsUnityDBHelper.getContactId(phoneNumber), name, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);

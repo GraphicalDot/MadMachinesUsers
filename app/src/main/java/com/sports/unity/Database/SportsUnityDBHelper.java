@@ -321,8 +321,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     }
 
-    public ArrayList<Contacts> getContactList_AvailableOnly() {
-        if (allContacts == null) {
+    public ArrayList<Contacts> getContactList_AvailableOnly(boolean forceLoad) {
+        if ( forceLoad == true || allContacts == null) {
             ArrayList<Contacts> list = new ArrayList<>();
             SQLiteDatabase db = this.getReadableDatabase();
 

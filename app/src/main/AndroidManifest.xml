@@ -83,7 +83,8 @@
         <activity
             android:name=".messages.controller.activity.ChatScreenActivity"
             android:label="@string/title_activity_chat_screen"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize|stateAlwaysHidden"/>
         <activity
             android:name=".messages.controller.activity.CreateGroup"
             android:label="@string/title_activity_create_group"

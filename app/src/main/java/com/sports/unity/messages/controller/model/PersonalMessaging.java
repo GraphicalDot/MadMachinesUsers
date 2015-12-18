@@ -202,16 +202,12 @@ public class PersonalMessaging {
     private List<PrivacyItem> getPrivacyList(){
         List<PrivacyItem> privacyItems = new ArrayList<>();
 
-        PrivacyListManager privacyManager = PrivacyListManager.getInstanceFor(XMPPClient.getConnection());
         try {
+            PrivacyListManager privacyManager = PrivacyListManager.getInstanceFor(XMPPClient.getConnection());
             PrivacyList plist = privacyManager.getPrivacyList(PRIVACY_LIST_NAME);
             privacyItems = plist.getItems();
-        } catch (XMPPException.XMPPErrorException e) {
-            e.printStackTrace();
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
-        } catch (SmackException.NoResponseException e) {
-            e.printStackTrace();
+        } catch (Exception ex){
+            ex.printStackTrace();
         }
 
         return privacyItems;

@@ -130,7 +130,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             resource = R.layout.list_contact_msgs;
             itemListener = contactItemListener;
 
-            contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList_AvailableOnly();
+            contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList_AvailableOnly(false);
 
             ViewGroup searchLayout = (ViewGroup) v.findViewById(R.id.search_layout);
             searchLayout.setVisibility(View.GONE);

@@ -9,6 +9,7 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Created by madmachines on 13/10/15.
@@ -64,6 +65,23 @@ public class ContactsObserver extends ContentObserver {
             HashMap<String, String> androidContacts = contactsHandler.readLatestUpdatedContactsFromSystem(ContactsObserver.this.context);
 
             contactsHandler.matchAndUpdate(androidContacts, context);
+
+            try {
+                ArrayList<String> contactNumberList = new ArrayList<>();
+                Iterator<String> iterator = androidContacts.keySet().iterator();
+
+                String phoneNumber = null;
+                while ( iterator.hasNext() ) {
+                    phoneNumber = iterator.next();
+                    contactNumberList.add(phoneNumber);
+                }
+
+                contactsHandler.syncContacts(context, contactNumberList);
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+
+            SportsUnityDBHelper.getInstance(context).getContactList_AvailableOnly(true);
 
             contactSyncInProgress = false;
             Log.i("Contact Sync:", "Ended");

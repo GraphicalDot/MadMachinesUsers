@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.support.v7.app.NotificationCompat;
 
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 
 import java.util.ArrayList;
@@ -42,8 +43,8 @@ public class NotificationHandler {
 
     }
 
-    synchronized public void addNotificationMessage( long chatId, String from, String message){
-        NotificationMessage notificationMessage = new NotificationMessage(chatId, from, message);
+    synchronized public void addNotificationMessage( long chatId, String from, String message, String mimeType){
+        NotificationMessage notificationMessage = new NotificationMessage(chatId, from, message, mimeType);
         notificationMessageList.add(notificationMessage);
 
         chatIdSet.add(chatId);
@@ -88,7 +89,7 @@ public class NotificationHandler {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.drawable.ic_stat_notification);
 
-        builder.setContentText(messageArrived.message);
+        builder.setContentText(messageArrived.getTitleMessage());
         builder.setContentTitle(messageArrived.from);
 
         builder.setContentIntent(pendingIntent);
@@ -104,7 +105,7 @@ public class NotificationHandler {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.drawable.ic_stat_notification);
 
-        builder.setContentText(messageArrived.message);
+        builder.setContentText(messageArrived.getTitleMessage());
         builder.setContentTitle(messageArrived.from);
 
         NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
@@ -116,7 +117,7 @@ public class NotificationHandler {
                 index = 0;
             }
             for( ; index < notificationMessageList.size(); index++ ){
-                style.addLine( notificationMessageList.get(index).getString(false));
+                style.addLine( notificationMessageList.get(index).getMessageLine(false));
             }
 
             style.setSummaryText(messageCount + " messages");
@@ -128,7 +129,7 @@ public class NotificationHandler {
                 index = 0;
             }
             for( ; index < notificationMessageList.size(); index++ ){
-                style.addLine( notificationMessageList.get(index).getString(true));
+                style.addLine( notificationMessageList.get(index).getMessageLine(true));
             }
 
             style.setSummaryText(messageCount + " messages from " + chatCount + " chats");
@@ -148,29 +149,49 @@ public class NotificationHandler {
         private long chatId;
         private String from;
         private String message;
+        private String mimeType;
 
-        NotificationMessage(long chatId, String from, String message){
+        NotificationMessage(long chatId, String from, String message, String mimeType){
             this.chatId = chatId;
             this.from = from;
             this.message = message;
+            this.mimeType = mimeType;
         }
 
-        private String getString(boolean fromRequired){
+        private String getTitleMessage(){
+            String message = null;
+            if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT) ){
+                message = this.message;
+            } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO) ){
+                message = "Voice message";
+            } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
+                message = "Image";
+            } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ){
+                message = "Video";
+            } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER) ){
+                message = "Sticker";
+            }
+            return message;
+        }
+
+        private String getMessageLine(boolean fromRequired){
+            String returnMessage = null;
             if( fromRequired ){
-                return from + " : " + message;
+                returnMessage = from + " : " + getTitleMessage();
             } else {
                 if( from.indexOf('@') > 0 ){
-                    return from.substring( 0, from.indexOf('@')) + " : " + message;
+                    returnMessage = from.substring( 0, from.indexOf('@')) + " : " + getTitleMessage();
                 } else {
-                    return message;
+                    returnMessage = getTitleMessage();
                 }
             }
+            return returnMessage;
         }
 
-        @Override
-        public String toString() {
-            return from + " : " + message;
-        }
+//        @Override
+//        public String toString() {
+//            return from + " : " + message;
+//        }
     }
 
 }
