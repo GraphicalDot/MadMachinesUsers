@@ -136,7 +136,7 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
             mediaIcon.setVisibility(View.GONE);
             lastMsg.setText(R.string.sent_a_sticker);
         } else if (chatArrayList.get(position).mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
-            mediaIcon.setImageResource(R.drawable.ic_audio);
+            mediaIcon.setImageResource(R.drawable.ic_audio_s);
             mediaIcon.setVisibility(View.VISIBLE);
             lastMsg.setText(R.string.sent_an_audio);
         }

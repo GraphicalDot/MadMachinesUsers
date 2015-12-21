@@ -131,5 +131,7 @@ Carrier SMS charges may apply.</string>
 
     <string name="message_to_hold_button_for_video">Hold for video, Tap for photo</string>
     <string name="message_video_recoding_on">Drag out, to cancel recording</string>
+    <string name="copy_text_to_clipboard">Message copied</string>
+    <string name="copy_text_multiple_to_clipboard">Messages copied</string>
 
 </resources>

@@ -1,6 +1,8 @@
 package com.sports.unity.messages.controller.activity;
 
 import android.app.Activity;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -24,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sports.unity.ChatScreenApplication;
 import com.sports.unity.Database.DBUtil;
@@ -77,6 +80,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     private ArrayList<Integer> selectedItemsList = new ArrayList<>();
 
     boolean selectedFlag = false;
+    boolean mediaSelected = false;
+    int mediaSelectedItems = 0;
     int selecteditems = 0;
     private ListView mChatView;
 
@@ -249,15 +254,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     @Override
     public void onBackPressed() {
         if (selecteditems != 0) {
-            selecteditems = 0;
-            selectedItemsList.clear();
-            selectedFlag = false;
-            invalidateOptionsMenu();
-            for (int i = 0; i < mChatView.getChildCount();
-                 i++) {
-                View view = mChatView.getChildAt(i);
-                view.setBackgroundColor(Color.TRANSPARENT);
-            }
+            resetList();
         } else {
             super.onBackPressed();
         }
@@ -339,15 +336,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (selecteditems != 0) {
-                    selecteditems = 0;
-                    selectedItemsList.clear();
-                    selectedFlag = false;
-                    invalidateOptionsMenu();
-                    for (int i = 0; i < mChatView.getChildCount();
-                         i++) {
-                        View view = mChatView.getChildAt(i);
-                        view.setBackgroundColor(Color.TRANSPARENT);
-                    }
+                    resetList();
                 } else {
                     onBackPressed();
                 }
@@ -404,8 +393,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
     private void ForwardMessages(ArrayList<Integer> intArrayExtra) {
         ArrayList<Message> listOfMessages = new ArrayList<>();
-        for (int id :
-                intArrayExtra) {
+        for (int id : intArrayExtra) {
             Message message = sportsUnityDBHelper.getMessage(id);
             listOfMessages.add(message);
         }
@@ -418,6 +406,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                 for (Message message : listOfMessages) {
                     if (message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
                         sendMessage(message.textData);
+                    } else if (message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_STICKER)) {
+                        handleSendingMediaContent(message.mimeType, message.textData, null);
                     } else {
                         handleSendingMediaContent(message.mimeType, message.mediaFileName, mediaMap.get(message.mediaFileName));
                     }
@@ -461,11 +451,21 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                         view.setBackgroundColor(Color.TRANSPARENT);
                         selecteditems--;
                         selectedItemsList.remove(Integer.valueOf(position));
+                        if (!messageList.get(position).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
+                            mediaSelectedItems--;
+                            if (mediaSelectedItems == 0) {
+                                mediaSelected = false;
+                            }
+                        }
                         Log.i("view", "selected");
                     } else {
-                        view.setBackgroundColor(Color.parseColor("#80004d99"));
+                        view.setBackgroundColor(getResources().getColor(R.color.list_selector));
                         selecteditems++;
                         selectedItemsList.add(position);
+                        if (!messageList.get(position).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
+                            mediaSelected = true;
+                            mediaSelectedItems++;
+                        }
                         Log.i("view", "notselected");
                     }
                 } else {
@@ -478,10 +478,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 if (selectedFlag == false) {
-                    view.setBackgroundColor(Color.parseColor("#80004d99"));
+                    view.setBackgroundColor(getResources().getColor(R.color.list_selector));
                     selectedFlag = true;
                     selecteditems++;
                     selectedItemsList.add(position);
+                    if (!messageList.get(position).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
+                        mediaSelected = true;
+                        mediaSelectedItems++;
+                    }
                 } else {
                     //do nothing
                 }
@@ -515,7 +519,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         TextView user = (TextView) toolbar.findViewById(R.id.chat_username);
         user.setText(JABBERNAME);
         user.setTypeface(FontTypeface.getInstance(this).getRobotoRegular());
-        getWindow().setBackgroundDrawableResource(R.drawable.img_chat) ;
+        getWindow().setBackgroundDrawableResource(R.drawable.img_chat);
         userPic = (CircleImageView) toolbar.findViewById(R.id.user_picture);
         if (isGroupChat) {
             if (userImageBytes == null) {
@@ -648,7 +652,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
-            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload( mediaFileName, mimeType, chat, messageId);
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, mimeType, chat, messageId);
 
             //TODO download button, play video
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
@@ -723,7 +727,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             noOfSelectedItems.setVisibility(View.VISIBLE);
             noOfSelectedItems.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
             noOfSelectedItems.setText(String.valueOf(selecteditems));
-            if (selecteditems > 1) {
+            if (mediaSelected) {
                 copyMessage.setVisible(false);
             }
 
@@ -802,59 +806,82 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             messageList = sportsUnityDBHelper.getMessages(chatID);
             chatScreenAdapter.notifydataset(messageList);
         } else if (id == R.id.forward) {
-
-            Intent forwardIntent = new Intent(getApplicationContext(), ForwardSelectedItems.class);
-            ArrayList<Integer> idList = new ArrayList<>();
-            for (int selectedItemIds :
-                    selectedItemsList) {
-                idList.add(messageList.get(selectedItemIds).id);
-            }
-            forwardIntent.putIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS, idList);
-            startActivity(forwardIntent);
+            forwardMessages();
 
         } else if (id == R.id.delete) {
-            Collections.sort(selectedItemsList, Collections.reverseOrder());
-            for (int a :
-                    selectedItemsList) {
-                sportsUnityDBHelper.deleteMessageFromTable(messageList.get(a).id);
-                messageList.remove(messageList.get(a));
-            }
-            chatScreenAdapter.notifydataset(messageList);
-            selectedFlag = false;
-            selecteditems = 0;
-            selectedItemsList.clear();
-            if (messageList.isEmpty()) {
-                sportsUnityDBHelper.updateChatEntry(sportsUnityDBHelper.getDummyMessageRowId(), chatID, sportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
-            } else {
-                sportsUnityDBHelper.updateChatEntry(messageList.get(messageList.size() - 1).id, chatID, sportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
-            }
-
-            for (int i = 0; i < mChatView.getChildCount();
-                 i++) {
-                View v = mChatView.getChildAt(i);
-                v.setBackgroundColor(Color.TRANSPARENT);
-            }
-            invalidateOptionsMenu();
+            deleteMessages();
+            resetList();
         } else if (id == R.id.copy) {
-            if (messageList.get(selectedItemsList.get(0)).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_AUDIO)) {
-
-            }
-            if (messageList.get(selectedItemsList.get(0)).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_IMAGE)) {
-
-            }
-            if (messageList.get(selectedItemsList.get(0)).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
-
-            }
-            if (messageList.get(selectedItemsList.get(0)).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_STICKER)) {
-
-            }
-            if (messageList.get(selectedItemsList.get(0)).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_VIDEO)) {
-
-            }
+            copyMessages();
         } else if (id == R.id.action_search) {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void copyMessages() {
+        String label = "spu";
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        ClipData clip = null;
+        String clipText = "";
+        for (int i = 0; i < selectedItemsList.size(); i++) {
+            String time = "[" + CommonUtil.getTime(Long.parseLong(messageList.get(selectedItemsList.get(i)).sendTime)) + "]";
+            String name = sportsUnityDBHelper.getName(messageList.get(selectedItemsList.get(i)).number);
+            String text = messageList.get(selectedItemsList.get(i)).textData;
+            if (i == selectedItemsList.size() - 1) {
+                clipText += time + " " + name + ": " + text;
+            } else {
+                clipText += time + " " + name + ": " + text + "\n";
+            }
+        }
+        clip = ClipData.newPlainText(label, clipText);
+        clipboard.setPrimaryClip(clip);
+        if (selecteditems == 1) {
+            Toast.makeText(getApplicationContext(), R.string.copy_text_to_clipboard, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(getApplicationContext(), selecteditems + " " + getString(R.string.copy_text_multiple_to_clipboard), Toast.LENGTH_SHORT).show();
+        }
+        resetList();
+    }
+
+    private void forwardMessages() {
+        Intent forwardIntent = new Intent(getApplicationContext(), ForwardSelectedItems.class);
+        ArrayList<Integer> idList = new ArrayList<>();
+        for (int selectedItemIds :
+                selectedItemsList) {
+            idList.add(messageList.get(selectedItemIds).id);
+        }
+        forwardIntent.putIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS, idList);
+        startActivity(forwardIntent);
+    }
+
+    private void deleteMessages() {
+        Collections.sort(selectedItemsList, Collections.reverseOrder());
+        for (int a :
+                selectedItemsList) {
+            sportsUnityDBHelper.deleteMessageFromTable(messageList.get(a).id);
+            messageList.remove(messageList.get(a));
+        }
+        chatScreenAdapter.notifydataset(messageList);
+        if (messageList.isEmpty()) {
+            sportsUnityDBHelper.updateChatEntry(sportsUnityDBHelper.getDummyMessageRowId(), chatID, sportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+        } else {
+            sportsUnityDBHelper.updateChatEntry(messageList.get(messageList.size() - 1).id, chatID, sportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+        }
+    }
+
+    private void resetList() {
+        selectedFlag = false;
+        selecteditems = 0;
+        selectedItemsList.clear();
+
+
+        for (int i = 0; i < mChatView.getChildCount();
+             i++) {
+            View v = mChatView.getChildAt(i);
+            v.setBackgroundColor(Color.TRANSPARENT);
+        }
+        invalidateOptionsMenu();
     }
 
     public static String getGroupServerId() {

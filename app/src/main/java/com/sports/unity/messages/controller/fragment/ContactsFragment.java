@@ -1,9 +1,11 @@
 package com.sports.unity.messages.controller.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -108,38 +110,59 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             ContactListAdapter contactListAdapter = (ContactListAdapter) contacts.getAdapter();
-            Contacts contact = contactListAdapter.getInUseContactListForAdapter().get(position);
+            final Contacts contact = contactListAdapter.getInUseContactListForAdapter().get(position);
 
-            if (contact.registered) {
-                String number = contact.jid;
-                String name = contact.name;
-                long contactId = contact.id;
-                byte[] userPicture = contact.image;
-
-                String groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
-                long chatId = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatEntryID(contactId, groupServerId);
-                boolean blockStatus = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).isChatBlocked(contactId);
-
-                Intent chatScreenIntent = new Intent(getActivity(), ChatScreenActivity.class);
-                chatScreenIntent.putExtra("number", number);
-                chatScreenIntent.putExtra("name", name);
-                chatScreenIntent.putExtra("contactId", contactId);
-                chatScreenIntent.putExtra("chatId", chatId);
-                chatScreenIntent.putExtra("groupServerId", groupServerId);
-                chatScreenIntent.putExtra("userpicture", userPicture);
-                chatScreenIntent.putExtra("blockStatus", blockStatus);
-
-                ArrayList<Integer> selectedIds = getArguments().getIntegerArrayList(Constants.INTENT_FORWARD_SELECTED_IDS);
-                chatScreenIntent.putIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS, selectedIds);
-
-                chatScreenIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(chatScreenIntent);
-                getActivity().finish();
-            }
+            AlertDialog.Builder build = new AlertDialog.Builder(
+                    getActivity());
+            build.setMessage(
+                    "Forward to " + contact.name + " ?");
+            build.setPositiveButton("ok",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            forward(contact);
+                        }
+                    });
+            build.setNegativeButton("Cancel",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Do nothing
+                        }
+                    });
+            AlertDialog dialog = build.create();
+            dialog.show();
 
         }
 
     };
+
+    private void forward(Contacts contact) {
+        if (contact.registered) {
+            String number = contact.jid;
+            String name = contact.name;
+            long contactId = contact.id;
+            byte[] userPicture = contact.image;
+
+            String groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
+            long chatId = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatEntryID(contactId, groupServerId);
+            boolean blockStatus = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).isChatBlocked(contactId);
+
+            Intent chatScreenIntent = new Intent(getActivity(), ChatScreenActivity.class);
+            chatScreenIntent.putExtra("number", number);
+            chatScreenIntent.putExtra("name", name);
+            chatScreenIntent.putExtra("contactId", contactId);
+            chatScreenIntent.putExtra("chatId", chatId);
+            chatScreenIntent.putExtra("groupServerId", groupServerId);
+            chatScreenIntent.putExtra("userpicture", userPicture);
+            chatScreenIntent.putExtra("blockStatus", blockStatus);
+
+            ArrayList<Integer> selectedIds = getArguments().getIntegerArrayList(Constants.INTENT_FORWARD_SELECTED_IDS);
+            chatScreenIntent.putIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS, selectedIds);
+
+            chatScreenIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(chatScreenIntent);
+            getActivity().finish();
+        }
+    }
 
     public ContactsFragment() {
 
