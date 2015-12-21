@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.sports.unity.Database.DBUtil;
 import com.sports.unity.XMPPManager.XMPPService;
 
 import org.joda.time.DateTime;
@@ -18,7 +19,10 @@ import org.joda.time.Hours;
 import org.joda.time.Minutes;
 import org.joda.time.Seconds;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.math.BigInteger;
+import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
@@ -40,11 +44,15 @@ public class CommonUtil {
         TelephonyManager telephonyManager;
         telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         if (telephonyManager.getSimState() == TelephonyManager.SIM_STATE_ABSENT) {
-            Log.i("Sports Unity", "Phone number not found through sim api");
+            Log.i("Common", "Phone number not found through sim api");
         } else {
             phoneNumber = telephonyManager.getLine1Number();
+            if( phoneNumber != null && phoneNumber.length() > 10 ){
+                phoneNumber = phoneNumber.substring( phoneNumber.length()-10);
+            } else {
+                //nothing
+            }
         }
-
         return phoneNumber;
     }
 
@@ -141,19 +149,54 @@ public class CommonUtil {
     }
 
     public static String getMD5EncryptedString(byte[] content){
+        String checksum = null;
         MessageDigest mdEnc = null;
         try {
             mdEnc = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            System.out.println("Exception while encrypting to md5");
+
+            mdEnc.update(content, 0, content.length);
+            checksum = new BigInteger(1, mdEnc.digest()).toString(16);
+            while ( checksum.length() < 32 ) {
+                checksum = "0"+checksum;
+            }
+        } catch (Exception e) {
             e.printStackTrace();
-        } // Encryption algorithm
-        mdEnc.update(content, 0, content.length);
-        String md5 = new BigInteger(1, mdEnc.digest()).toString(16);
-        while ( md5.length() < 32 ) {
-            md5 = "0"+md5;
         }
-        return md5;
+
+        return checksum;
+    }
+
+    public static String getMD5EncryptedString(Context context, String fileName){
+        String checksum = null;
+        MessageDigest mdEnc = null;
+
+        File file = new File ( DBUtil.getFilePath(context, fileName));
+        FileInputStream fileInputStream = null;
+        try {
+            mdEnc = MessageDigest.getInstance("MD5");
+
+            fileInputStream = new FileInputStream(file);
+
+            byte chunk[] = new byte[4096];
+            int read = 0;
+            while( (read = fileInputStream.read(chunk)) != -1 ){
+                mdEnc.update(chunk, 0, read);
+            }
+
+            checksum = new BigInteger(1, mdEnc.digest()).toString(16);
+            while (checksum.length() < 32) {
+                checksum = "0" + checksum;
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            try{
+                fileInputStream.close();
+            }catch (Exception ex){}
+        }
+
+        return checksum;
     }
 
 }

@@ -28,43 +28,52 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.PixelFormat;
-import android.graphics.drawable.BitmapDrawable;
+import android.graphics.Rect;
 import android.hardware.Camera;
+import android.media.CamcorderProfile;
+import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.Log;
 import android.view.Display;
+import android.view.MotionEvent;
 import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.MediaController;
+import android.widget.TextView;
+import android.widget.VideoView;
 
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.util.ActivityActionHandler;
-import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.ThreadTask;
+
+import org.w3c.dom.Text;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class NativeCameraActivity extends CustomAppCompatActivity implements View.OnClickListener {
+public class NativeCameraActivity extends CustomAppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
     /**
      * Safe method for getting a camera instance.
@@ -80,6 +89,8 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         return c; // returns null if camera is unavailable
     }
 
+    private static final int VIDEO_MAX_DURATION = 15;
+
     private String flashStatus = Camera.Parameters.FLASH_MODE_ON;
     private int cameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
 
@@ -89,6 +100,12 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
     private View mCameraView;
 
     private byte[] content = null;
+    private String videoContentOutputFilename = null;
+    private String contentMimeType = null;
+
+    private MediaRecorder recorder = null;
+    private Timer timer = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,12 +139,19 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
     protected void onStop() {
         super.onStop();
 
+        cancelVideoRecording();
         closeCameraAndView();
     }
 
     @Override
     public void onClick(View view) {
         handleClickEvent(view, view.getId());
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        handleLongClickEvent(v);
+        return false;
     }
 
     private void initView(){
@@ -224,25 +248,26 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
 
         {
-            View view = findViewById(R.id.send_camera_picture);
+            View view = findViewById(R.id.send_camera_content);
             view.setOnClickListener(this);
         }
 
         {
-            View view = findViewById(R.id.discard_camera_picture);
+            View view = findViewById(R.id.discard_camera_content);
             view.setOnClickListener(this);
         }
 
         {
             View view = findViewById(R.id.capture);
             view.setOnClickListener(this);
+            view.setOnLongClickListener(this);
         }
     }
 
     private void handleClickEvent(View view, int id){
-        if( id == R.id.discard_camera_picture ) {
-            discardPictureTaken();
-        } else if( id == R.id.send_camera_picture ) {
+        if( id == R.id.discard_camera_content ) {
+            discardContent();
+        } else if( id == R.id.send_camera_content ) {
             handleSendMedia();
             finish();
         } else if( id == R.id.flash ) {
@@ -252,17 +277,175 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             animateCamera(view);
             changeCamera();
         } else if( id == R.id.capture ){
-
-            {
-                View tempView = findViewById(R.id.camera_preview);
-                tempView.setVisibility(View.GONE);
-            }
-            {
-                View tempView = findViewById(R.id.camera_config_layout);
-                tempView.setVisibility(View.GONE);
-            }
-
             mCamera.takePicture(null, null, mPicture);
+        }
+    }
+
+    private void handleLongClickEvent(final View view) {
+        int id = view.getId();
+        if( id == R.id.capture ){
+
+            view.setOnTouchListener(new CustomTouchListener(view));
+
+            prepareLayoutForVideo();
+            prepareForVideoRecording();
+
+            startTimer();
+        }
+    }
+
+    private void prepareForVideoRecording(){
+        recorder = new MediaRecorder();
+        recorder.setOrientationHint(90);
+
+        mCamera.unlock();
+        recorder.setCamera(mCamera);
+
+        recorder.setAudioSource(MediaRecorder.AudioSource.CAMCORDER);
+        recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+
+        recorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
+
+        videoContentOutputFilename = DBUtil.getUniqueFileName(this, SportsUnityDBHelper.MIME_TYPE_VIDEO);
+        recorder.setOutputFile(DBUtil.getFilePath(this, videoContentOutputFilename));
+
+        boolean success = false;
+        try {
+            recorder.prepare();
+
+            success = true;
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        if( success ) {
+            recorder.start();
+        } else {
+            //TODO
+        }
+
+    }
+
+    private void cancelVideoRecording() {
+        cancelTimer();
+
+        TextView holdMessage = (TextView)findViewById(R.id.hold_message);
+        holdMessage.setText(R.string.message_to_hold_button_for_video);
+
+        releaseMediaRecorder();
+
+        discardLayoutForVideo();
+
+        //TODO
+    }
+
+    private void doneVideoRecording() {
+        contentMimeType = SportsUnityDBHelper.MIME_TYPE_VIDEO;
+
+        cancelTimer();
+
+        TextView holdMessage = (TextView)findViewById(R.id.hold_message);
+        holdMessage.setText(R.string.message_to_hold_button_for_video);
+
+        releaseMediaRecorder();
+        closeCameraAndView();
+
+        discardLayoutForVideo();
+        prepareLayoutToSendContent();
+
+        playVideo();
+    }
+
+    private void prepareLayoutForVideo(){
+        {
+            View tempView = findViewById(R.id.flash);
+            tempView.setVisibility(View.GONE);
+        }
+
+        {
+            View tempView = findViewById(R.id.switch_camera);
+            tempView.setVisibility(View.GONE);
+        }
+
+        {
+            TextView holdMessage = (TextView)findViewById(R.id.hold_message);
+            holdMessage.setText(R.string.message_video_recoding_on);
+        }
+
+        {
+            TextView view = (TextView)findViewById(R.id.video_recording_time);
+            view.setText("00:" + VIDEO_MAX_DURATION);
+            view.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void discardLayoutForVideo(){
+        {
+            View tempView = findViewById(R.id.camera_config_layout);
+            tempView.setBackgroundColor(getResources().getColor(R.color.semi_transparent));
+        }
+
+        {
+            View tempView = findViewById(R.id.flash);
+            tempView.setVisibility(View.VISIBLE);
+        }
+
+        {
+            View tempView = findViewById(R.id.switch_camera);
+            tempView.setVisibility(View.VISIBLE);
+        }
+
+        {
+            TextView view = (TextView)findViewById(R.id.video_recording_time);
+            view.setVisibility(View.GONE);
+        }
+    }
+
+    private void insideOfRecordButton() {
+        {
+            View view = findViewById(R.id.camera_config_layout);
+            view.setBackgroundColor( getResources().getColor(R.color.semi_transparent));
+        }
+        //TODO
+    }
+
+    private void outsideOfRecordButton() {
+        {
+            View view = findViewById(R.id.camera_config_layout);
+            view.setBackgroundColor( getResources().getColor(R.color.red_semi_transparent));
+        }
+        //TODO
+    }
+
+    private void playVideo(){
+        try {
+            Uri uri = Uri.parse(DBUtil.getFilePath(this.getBaseContext(), videoContentOutputFilename));
+
+            FrameLayout videoContainer = (FrameLayout)findViewById(R.id.video_container);
+            videoContainer.setVisibility(View.VISIBLE);
+            videoContainer.removeAllViews();
+
+            VideoView videoView = new VideoView(this);
+            videoView.setLayoutParams( new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+            videoView.setZOrderOnTop(true);
+
+            videoContainer.addView(videoView);
+
+            videoView.setMediaController(new MediaController(this));
+            videoView.setVideoURI(uri);
+            videoView.requestFocus();
+            videoView.start();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    private void releaseMediaRecorder(){
+        if (recorder != null) {
+            recorder.reset();
+            recorder.release();
+            recorder = null;
+            mCamera.lock();
         }
     }
 
@@ -330,12 +513,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
     }
 
     private void showPictureViewsToSend(byte [] pictureContent) {
-        closeCameraAndView();
-
-        {
-            View view = findViewById(R.id.send_discard_layout);
-            view.setVisibility(View.VISIBLE);
-        }
+        prepareLayoutToSendContent();
 
         {
             /*
@@ -368,11 +546,38 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
     }
 
-    private void discardPictureTaken() {
-        content = null;
+    private void prepareLayoutToSendContent(){
+        closeCameraAndView();
+
+        {
+            View tempView = findViewById(R.id.camera_preview);
+            tempView.setVisibility(View.GONE);
+        }
+
+        {
+            View tempView = findViewById(R.id.camera_config_layout);
+            tempView.setVisibility(View.GONE);
+        }
 
         {
             View view = findViewById(R.id.send_discard_layout);
+            view.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+    private void discardContent() {
+        content = null;
+        //TODO remove video file content
+
+        {
+            View view = findViewById(R.id.send_discard_layout);
+            view.setVisibility(View.GONE);
+        }
+
+        {
+            ViewGroup view = (ViewGroup)findViewById(R.id.video_container);
+            view.removeAllViews();
             view.setVisibility(View.GONE);
         }
 
@@ -401,9 +606,10 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
         @Override
         public void onPictureTaken(byte[] data, Camera camera) {
-
+            contentMimeType = SportsUnityDBHelper.MIME_TYPE_IMAGE;
             showPictureViewsToSend(data);
         }
+
     };
 
     private void handleSendMedia(){
@@ -411,17 +617,22 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
             @Override
             public Object process() {
-                byte[] byteArray = (byte[])object;
-                String fileName = DBUtil.getUniqueFileName(getBaseContext(), SportsUnityDBHelper.MIME_TYPE_IMAGE);
+                String fileName = null;
+                if( contentMimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ) {
+                    byte[] byteArray = (byte[]) object;
+                    fileName = DBUtil.getUniqueFileName(getBaseContext(), SportsUnityDBHelper.MIME_TYPE_IMAGE);
 
-                DBUtil.writeContentToExternalFileStorage(getBaseContext(), fileName, byteArray);
+                    DBUtil.writeContentToExternalFileStorage(getBaseContext(), fileName, byteArray);
+                } else if( contentMimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ) {
+                    fileName = videoContentOutputFilename;
+                }
                 return fileName;
             }
 
             @Override
             public void postAction(Object object) {
                 String fileName = (String)object;
-                addActionToCorrespondingActivity(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName, this.object);
+                addActionToCorrespondingActivity(ActivityActionHandler.CHAT_SCREEN_KEY, contentMimeType, fileName, this.object);
             }
 
         }.start();
@@ -432,37 +643,51 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        activityActionHandler.addActionOnHold( ActivityActionHandler.CHAT_SCREEN_KEY, new ActivityActionHandler.ActionItem( 1, mimeType, fileName, bytes));
+        activityActionHandler.addActionOnHold(ActivityActionHandler.CHAT_SCREEN_KEY, new ActivityActionHandler.ActionItem(1, mimeType, fileName, bytes));
         return success;
     }
 
-    /**
-     * Used to return the camera File output.
-     * @return
-     */
-    private File getOutputMediaFile() {
+    private void startTimer(){
+        cancelTimer();
 
-        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "UltimateCameraGuideApp");
-
-        if (! mediaStorageDir.exists()){
-            if (! mediaStorageDir.mkdirs()){
-                Log.d("Camera Guide", "Required media storage does not exist");
-                return null;
-            }
-        }
-
-        // Create a media file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        File mediaFile;
-        mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                "IMG_"+ timeStamp + ".jpg");
-
-//        DialogHelper.showDialog( "Success!","Your picture has been saved!",getActivity());
-
-        return mediaFile;
+        timer = new Timer();
+        timer.schedule( new VideoTimerTask((TextView)findViewById(R.id.video_recording_time)), 1000, 1000);
     }
 
+    private void cancelTimer(){
+        if( timer != null ){
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    private class VideoTimerTask extends TimerTask {
+
+        private TextView textView = null;
+        private int count = VIDEO_MAX_DURATION;
+
+        private VideoTimerTask(TextView textView){
+            this.textView = textView;
+        }
+
+        @Override
+        public void run() {
+            count--;
+
+            if( count > -1 ) {
+                NativeCameraActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        textView.setText(count < 10 ? "00:0" + count : "00:" + count);
+                    }
+                });
+            } else {
+                releaseMediaRecorder();
+            }
+
+        }
+
+    }
 
     class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
@@ -737,6 +962,77 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             }
 
         }
+    }
+
+    class CustomTouchListener implements View.OnTouchListener {
+
+        private static final int INSIDE_STATUS = 0;
+        private static final int OUTSIDE_STATUS = 1;
+
+        private Rect recordButtonRect = null;
+        private int[] location = null;
+
+        private int lastTouchStatus = INSIDE_STATUS;
+
+
+        private CustomTouchListener(View view){
+            location = new int[2];
+            view.getLocationOnScreen(location);
+            recordButtonRect = new Rect(location[0], location[1], location[0] + view.getWidth(), location[1] + view.getHeight());
+        }
+
+        @Override
+        public boolean onTouch(View view, MotionEvent event) {
+            boolean success = false;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN: {
+
+                    break;
+                }
+                case MotionEvent.ACTION_UP: {
+
+
+                    int pointX = location[0] + (int) event.getX();
+                    int pointY = location[1] + (int) event.getY();
+
+                    if (recordButtonRect.contains(pointX, pointY)) {
+                        doneVideoRecording();
+                    } else {
+                        cancelVideoRecording();
+                    }
+
+                    view.setOnTouchListener(null);
+
+                    success = true;
+                    break;
+                }
+                case MotionEvent.ACTION_MOVE: {
+                    int pointX = location[0] + (int) event.getX();
+                    int pointY = location[1] + (int) event.getY();
+
+                    Log.i("Native Camera", "Move " + pointX + " : " + pointY);
+
+                    if (recordButtonRect.contains(pointX, pointY)) {
+                        if (lastTouchStatus == OUTSIDE_STATUS) {
+                            lastTouchStatus = INSIDE_STATUS;
+                            insideOfRecordButton();
+                        } else {
+                            //nothing
+                        }
+                    } else {
+                        if (lastTouchStatus == INSIDE_STATUS) {
+                            lastTouchStatus = OUTSIDE_STATUS;
+                            outsideOfRecordButton();
+                        } else {
+                            //nothing
+                        }
+                    }
+                    break;
+                }
+            }
+            return success;
+        }
+
     }
 
 }

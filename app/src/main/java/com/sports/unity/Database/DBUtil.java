@@ -171,6 +171,16 @@ public class DBUtil {
         return content;
     }
 
+    public static boolean deleteContentFromExternalFileStorage(Context context, String fileName){
+        File dirPath = new File(getExternalStorageDirectoryPath(context));
+        if( ! dirPath.exists() ){
+            dirPath.mkdir();
+        }
+
+        File file = new File ( getFilePath( context, fileName));
+        return file.delete();
+    }
+
     public static String getUniqueFileName(Context context, String mimeType){
         String fileName = String.valueOf(System.currentTimeMillis());
         if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){

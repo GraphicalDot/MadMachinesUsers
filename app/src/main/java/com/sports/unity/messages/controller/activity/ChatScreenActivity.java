@@ -154,6 +154,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
         @Override
         public void handleAction(int id) {
+            //id is 0, for media content uploaded.
+
             sendReadStatus();
 
             ChatScreenActivity.this.runOnUiThread(new Runnable() {
@@ -173,10 +175,13 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         @Override
         public void handleMediaContent(int id, String mimeType, Object messageContent, Object mediaContent) {
             if (id == 1) {
+                //handle send request for media content
                 handleSendingMediaContent(mimeType, messageContent, mediaContent);
             } else if (id == 2) {
+                //download completed
                 mediaMap.put((String) messageContent, (byte[]) mediaContent);
             } else if (id == 3) {
+                //handle incoming media message
                 FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent);
             }
 
@@ -199,6 +204,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     @Override
     protected void onDestroy() {
         ChatScreenApplication.activityDestroyed();
+        AudioRecordingHelper.cleanUp();
+
         super.onDestroy();
     }
 
@@ -206,28 +213,37 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     protected void onPause() {
         ChatScreenApplication.activityPaused();
         AudioRecordingHelper.getInstance(this).stopAndReleaseMediaPlayer();
+
         super.onPause();
     }
 
     @Override
     public void onStop() {
         ChatScreenApplication.activityStopped();
-        super.onStop();
         ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.CHAT_SCREEN_KEY);
 
+        super.onStop();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, activityActionListener);
         ChatScreenApplication.activityResumed();
 
         NotificationHandler.dismissNotification(getBaseContext());
         NotificationHandler.getInstance().clearNotificationMessages(chatID);
 
-        //update message list
+        //TODO update message list
 //        activityActionListener.handleAction(0);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+
     }
 
     @Override
@@ -625,6 +641,16 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
             FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload((byte[]) mediaContent, mimeType, chat, messageId);
+        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
+            String mediaFileName = (String) messageContent;
+
+            long messageId = sportsUnityDBHelper.addMediaMessage("", mimeType, "", true, String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()),
+                    null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
+            sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload( mediaFileName, mimeType, chat, messageId);
+
+            //TODO download button, play video
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             String stickerAssetPath = (String) messageContent;
             personalMessaging.sendStickerMessage(stickerAssetPath, chat, JABBERID, chatID);
@@ -641,8 +667,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
             FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload((byte[]) mediaContent, mimeType, chat, messageId);
 
-        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
-            //TODO
         }
     }
 
@@ -771,9 +795,12 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             blockUnblockUserHelper.onMenuItemSelected(this, contactID, JABBERID, menu);
         } else if (id == R.id.action_clear_chat) {
             sportsUnityDBHelper.clearChat(chatID, groupServerId);
+
+            AudioRecordingHelper.getInstance(this).stopAndReleaseMediaPlayer();
+            AudioRecordingHelper.getInstance(this).clearProgressMap();
+
             messageList = sportsUnityDBHelper.getMessages(chatID);
             chatScreenAdapter.notifydataset(messageList);
-            AudioRecordingHelper.getInstance(this).clearProgressMap();
         } else if (id == R.id.forward) {
 
             Intent forwardIntent = new Intent(getApplicationContext(), ForwardSelectedItems.class);

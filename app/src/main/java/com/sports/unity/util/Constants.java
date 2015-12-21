@@ -14,6 +14,9 @@ public class Constants {
     public static final String INTENT_KEY_SEARCH_ON = "SEARCH_ON";
     public static final String INTENT_FORWARD_SELECTED_IDS = "get_the _selected_ids";
 
+    public static final String INTENT_KEY_FILENAME = "FILE_NAME";
+    public static final String INTENT_KEY_MIMETYPE = "MIME_TYPE";
+
     public static final String URL_REGISTER = "http://54.169.217.88/register?";
     public static final String URL_CREATE = "http://54.169.217.88/create?";
     public static final String URL_NEWS_CONTENT = "http://52.74.250.156:8000//mixed?";

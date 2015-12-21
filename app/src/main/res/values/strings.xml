@@ -79,8 +79,9 @@
 
     <string name="otp_message_verification">Enter the verification number we sent to +91&#160;</string>
     <string name="otp_message_resending">Resending...</string>
+    <string name="otp_message_otp_sent">Otp sent.</string>
     <string name="otp_message_resending_failed">Failed in sending otp, please try again.</string>
-    <string name="otp_message_wrong_expired_token">Wrong or expired token</string>
+    <string name="otp_message_wrong_expired_token">Wrong or Expired token</string>
     <string name="otp_message_create_user_failed">oops, please try again.</string>
 
     <string name="profile_facebook_login_failed">Login failed</string>
@@ -127,5 +128,8 @@ Carrier SMS charges may apply.</string>
     <string name="sent_a_video">Video</string>
     <string name="sent_a_sticker">Sent a Sticker</string>
     <string name="sent_an_audio">Audio</string>
+
+    <string name="message_to_hold_button_for_video">Hold for video, Tap for photo</string>
+    <string name="message_video_recoding_on">Drag out, to cancel recording</string>
 
 </resources>

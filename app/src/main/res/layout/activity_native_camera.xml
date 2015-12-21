@@ -21,6 +21,24 @@
         android:scaleType="center"
         />
 
+    <TextView
+        android:id="@+id/video_recording_time"
+        android:text="00"
+        android:textSize="@dimen/font_size_small"
+        android:textColor="@android:color/white"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="@dimen/vertical_padding_very_small"
+        android:visibility="gone"
+        />
+    <FrameLayout
+        android:id="@+id/video_container"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:visibility="gone"
+        />
+
     <RelativeLayout
         android:id="@+id/camera_config_layout"
         android:layout_width="fill_parent"
@@ -32,6 +50,17 @@
         android:paddingBottom="@dimen/vertical_padding_very_small"
         android:visibility="visible"
         >
+        <TextView
+            android:id="@+id/hold_message"
+            android:text="@string/message_to_hold_button_for_video"
+            android:textSize="@dimen/font_size_small"
+            android:textColor="@android:color/white"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/vertical_padding_very_small"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            />
         <ImageView
             android:id="@+id/flash"
             android:layout_width="@dimen/camera_button_size"
@@ -39,6 +68,7 @@
             android:src="@drawable/ic_flash_on"
             android:scaleType="center"
             android:layout_alignParentLeft="true"
+            android:layout_below="@id/hold_message"
             android:visibility="visible"
             />
         <ImageView
@@ -48,6 +78,7 @@
             android:src="@drawable/ic_capture"
             android:scaleType="center"
             android:layout_centerInParent="true"
+            android:layout_below="@id/hold_message"
             />
         <ImageView
             android:id="@+id/switch_camera"
@@ -56,6 +87,7 @@
             android:src="@drawable/ic_flip_camera"
             android:scaleType="center"
             android:layout_alignParentRight="true"
+            android:layout_below="@id/hold_message"
             />
     </RelativeLayout>
 
@@ -72,7 +104,7 @@
         android:visibility="gone"
         >
         <ImageView
-            android:id="@+id/discard_camera_picture"
+            android:id="@+id/discard_camera_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/ic_circle"
@@ -81,7 +113,7 @@
             android:layout_marginRight="@dimen/camera_button_size"
             />
         <ImageView
-            android:id="@+id/send_camera_picture"
+            android:id="@+id/send_camera_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/ic_circle"

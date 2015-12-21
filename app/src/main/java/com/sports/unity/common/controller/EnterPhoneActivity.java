@@ -127,10 +127,17 @@ public class EnterPhoneActivity extends AppCompatActivity {
         asyncHttpClient.get(Constants.URL_REGISTER, requestParams, new JsonHttpResponseHandler() {
 
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.i("Success", "Sent Data");
-
                 try {
-                    Log.i("Info  : ", response.getString("info"));
+                    String info = response.getString("info");
+
+                    if( info.equalsIgnoreCase("Success")){
+//                        UserUtil.setOtpSent(EnterPhoneActivity.this, true);
+                        Toast.makeText(EnterPhoneActivity.this, R.string.otp_message_otp_sent, Toast.LENGTH_SHORT).show();
+                    } else {
+                        onFailure_OnSendingOTP();
+                    }
+
+                    Log.i("Enter Phone", "otp sent response info : " + info);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -140,8 +147,7 @@ public class EnterPhoneActivity extends AppCompatActivity {
             public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                 super.onFailure(statusCode, headers, throwable, errorResponse);
 
-                Toast.makeText(EnterPhoneActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
-                UserUtil.setOtpSent(EnterPhoneActivity.this, false);
+                onFailure_OnSendingOTP();
             }
 
         });
@@ -152,6 +158,10 @@ public class EnterPhoneActivity extends AppCompatActivity {
 
     }
 
+    private void onFailure_OnSendingOTP() {
+        Toast.makeText(EnterPhoneActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+        UserUtil.setOtpSent(EnterPhoneActivity.this, false);
+    }
 
     private void moveToNextActivity() {
         Intent intent = new Intent(EnterPhoneActivity.this, EnterOtpActivity.class);

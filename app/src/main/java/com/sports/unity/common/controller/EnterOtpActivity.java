@@ -151,7 +151,7 @@ public class EnterOtpActivity extends AppCompatActivity {
         String otp = otpEditText.getText().toString();
         String phoneNumber = getPhoneNumber();
 
-        final RequestParams requestParams = new RequestParams();
+        RequestParams requestParams = new RequestParams();
         requestParams.add(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, "91" + phoneNumber);
 
         requestParams.add(Constants.REQUEST_PARAMETER_KEY_AUTH_CODE, otp);
@@ -161,13 +161,12 @@ public class EnterOtpActivity extends AppCompatActivity {
         asyncHttpClient.get(Constants.URL_CREATE, requestParams, new JsonHttpResponseHandler() {
 
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.i("Success", "Sent Data");
-                Log.i("url", Constants.URL_CREATE + requestParams);
+                Log.i("Enter Otp", "Create user call is successful");
 
                 try {
                     afterAsyncCall();
 
-                    Log.i("Info  : ", response.getString("info"));
+                    Log.i("Enter Otp", "create user call response info : " + response.getString("info"));
                     if (response.getString("status").equals("200")) {
                         String password = response.getString(Constants.REQUEST_PARAMETER_KEY_PASSWORD);
                         TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
@@ -200,16 +199,17 @@ public class EnterOtpActivity extends AppCompatActivity {
                 afterAsyncCall();
 
                 String resp = String.valueOf(statusCode);
-                resp = resp + "   Failed";
-                Log.i("Response ", resp);
+                Log.i("Enter Otp ", "On Failure, response : " + resp);
 
-                Toast.makeText(getApplicationContext(), R.string.otp_message_wrong_expired_token, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), R.string.otp_message_create_user_failed, Toast.LENGTH_LONG).show();
             }
 
         });
     }
 
     private void resendOtp() {
+        Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending, Toast.LENGTH_SHORT).show();
+
         String phoneNumber = getPhoneNumber();
 
         RequestParams requestParams = new RequestParams();
@@ -221,12 +221,18 @@ public class EnterOtpActivity extends AppCompatActivity {
 
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
 //                afterAsyncCall();
-                Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending, Toast.LENGTH_SHORT).show();
-                UserUtil.setOtpSent(EnterOtpActivity.this, true);
 
                 try {
-                    Log.i("Success", "Sent Data");
-                    Log.i("Info  : ", response.getString("info"));
+                    String info = response.getString("info");
+
+                    if( info.equalsIgnoreCase("Success")){
+                        UserUtil.setOtpSent(EnterOtpActivity.this, true);
+                        Toast.makeText(EnterOtpActivity.this, R.string.otp_message_otp_sent, Toast.LENGTH_SHORT).show();
+                    } else {
+                        onFailure_OnSendingOTP();
+                    }
+
+                    Log.i("Enter Otp", "resend response info : " + info);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

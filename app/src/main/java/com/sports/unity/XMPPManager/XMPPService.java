@@ -640,9 +640,14 @@ public class XMPPService extends Service {
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
 
             sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
-
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
+            String checksum = message.getBody();
 
+            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
+                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
+
+            sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
                     value.toString(), message.getStanzaId(), null, null,

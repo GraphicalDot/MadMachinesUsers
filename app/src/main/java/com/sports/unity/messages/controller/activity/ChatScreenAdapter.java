@@ -2,8 +2,10 @@ package com.sports.unity.messages.controller.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +15,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.VideoView;
 
+import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
@@ -25,6 +29,7 @@ import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.Stickers;
 import com.sports.unity.messages.controller.viewhelper.AudioRecordingHelper;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,20 +40,19 @@ import java.util.HashMap;
 public class ChatScreenAdapter extends BaseAdapter {
 
     private ArrayList<Message> messageList;
-    private static LayoutInflater inflater = null;
     private Activity activity;
 
     private HashMap<String, byte[]> mediaMap = null;
-    AudioRecordingHelper audioRecordingHelper = null;
-//    SoundPoolHelper soundPoolHelper = null;
+    private AudioRecordingHelper audioRecordingHelper = null;
+
+    private AudioEventListener audioEventListener = new AudioEventListener();
+    private ImageOrVideoClickListener imageOrVideoClickListener = new ImageOrVideoClickListener();
 
     public ChatScreenAdapter(ChatScreenActivity chatScreenActivity, ArrayList<Message> messagelist) {
         this.messageList = messagelist;
         activity = chatScreenActivity;
         mediaMap = chatScreenActivity.getMediaMap();
-        inflater = (LayoutInflater) activity.
-                getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        soundPoolHelper = SoundPoolHelper.getInstance(activity);
+
         audioRecordingHelper = AudioRecordingHelper.getInstance(activity);
         audioRecordingHelper.clearProgressMap();
     }
@@ -84,27 +88,38 @@ public class ChatScreenAdapter extends BaseAdapter {
         return flag;
     }
 
-
     public static class ViewHolder {
 
-        public TextView message;
-        public TextView timeStamp;
-        public ImageView receivedStatus;
+        private TextView message;
+        private TextView timeStamp;
+        private ImageView receivedStatus;
         private FrameLayout mediaContentLayout;
-        public LinearLayout mediaPlayer;
-        public ImageButton playandPause;
-        public SeekBar seekBar;
-        public TextView duration;
+        private LinearLayout mediaPlayer;
+        private ImageButton playandPause;
+        private SeekBar seekBar;
+        private TextView duration;
 
+        public SeekBar getSeekBar() {
+            return seekBar;
+        }
+
+        public ImageButton getPlayandPause() {
+            return playandPause;
+        }
+
+        public TextView getDuration() {
+            return duration;
+        }
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View vi = convertView;
-        final ViewHolder holder;
+        ViewHolder holder;
 
         Message message = messageList.get(position);
         if (convertView == null) {
+            LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             holder = new ViewHolder();
             switch (getItemViewType(position)) {
                 case 0:
@@ -140,6 +155,7 @@ public class ChatScreenAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) vi.getTag();
         }
+        holder.playandPause.setTag( R.id.playAndPause, holder);
 
         if (!message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             if (message.iAmSender) {
@@ -152,70 +168,39 @@ public class ChatScreenAdapter extends BaseAdapter {
         }
 
         if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
+
+            Integer lastTag = (Integer)holder.seekBar.getTag();
+            if( lastTag != null && audioRecordingHelper.getCurrentPlayingMessageId() == lastTag &&
+                    lastTag != message.id ){
+                audioRecordingHelper.pauseAudio();
+            } else {
+                //nothing
+            }
+
             holder.mediaContentLayout.setVisibility(View.GONE);
             holder.message.setVisibility(View.GONE);
-
             holder.mediaPlayer.setVisibility(View.VISIBLE);
 
-
-            final String filename = message.mediaFileName;
             ProgressBar progressBar = (ProgressBar) holder.mediaPlayer.findViewById(R.id.progressBarAudio);
             if (message.textData.length() == 0 && message.iAmSender == true || message.mediaFileName == null && message.iAmSender == false) {
-                Log.i("Progressbar", "true");
-                /*RelativeLayout relativeLayout = new RelativeLayout(activity);
-                ProgressBar progressBar = new ProgressBar(activity, null, android.R.attr.progressBarStyleSmall);
-                progressBar.setIndeterminate(true);
-                progressBar.setVisibility(View.VISIBLE);
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(holder.playandPause.getHeight(), holder.playandPause.getWidth());
-                params.addRule(RelativeLayout.CENTER_IN_PARENT);
-                relativeLayout.addView(progressBar, params);*/
                 holder.playandPause.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
             } else {
                 progressBar.setVisibility(View.GONE);
                 holder.playandPause.setVisibility(View.VISIBLE);
-
             }
 
-            final int id = message.id;
-            final Object messageObject = message;
+            if( message.mediaFileName != null ) {
+                audioRecordingHelper.initUI(message.mediaFileName, holder, message.id);
+            } else {
+                //nothing
+            }
 
-            holder.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            holder.seekBar.setTag(message.id);
+            holder.seekBar.setOnSeekBarChangeListener(audioEventListener);
 
-                }
-
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-                    audioRecordingHelper.setProgress(id, seekBar.getProgress());
-                }
-            });
-
-            audioRecordingHelper.addMediaBarProgress(message.id, 0);
-            audioRecordingHelper.createMediaPlayer(filename, id, holder);
-            audioRecordingHelper.initUI(holder);
-
-            holder.playandPause.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (audioRecordingHelper.isPlaying()) {
-                        Log.i("isPlaying", "true");
-                        audioRecordingHelper.pauseMediaPlayer((Message) messageObject, id, holder);
-                    } else {
-                        Log.i("isPlaying", "false");
-                        audioRecordingHelper.createMediaPlayer(filename, id, holder);
-                        audioRecordingHelper.startMediaPlayer();
-                        holder.playandPause.setImageResource(android.R.drawable.ic_media_pause);
-                        audioRecordingHelper.startTimer(0, 10, holder);
-                    }
-                }
-            });
+            holder.playandPause.setTag(position);
+            holder.playandPause.setOnClickListener(audioEventListener);
 
         } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
             holder.message.setVisibility(View.VISIBLE);
@@ -245,12 +230,51 @@ public class ChatScreenAdapter extends BaseAdapter {
             if (content != null) {
                 image.setImageBitmap(BitmapFactory.decodeByteArray(content, 0, content.length));
                 image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                image.setOnClickListener(imageOrVideoClickListener);
+                image.setTag(message.mediaFileName + ":" + message.mimeType);
             } else {
                 image.setImageResource(R.drawable.grey_bg_rectangle);
+                image.setOnClickListener(null);
+                image.setTag(null);
             }
 
             ProgressBar progressBar = (ProgressBar) holder.mediaContentLayout.findViewById(R.id.progressBar);
             if ((message.textData.length() == 0 && message.iAmSender == true) || (message.mediaFileName == null && message.iAmSender == false)) {
+                progressBar.setVisibility(View.VISIBLE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+            }
+        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
+            holder.message.setVisibility(View.GONE);
+            holder.mediaPlayer.setVisibility(View.GONE);
+            holder.mediaContentLayout.setVisibility(View.VISIBLE);
+
+            holder.message.setText("");
+
+            ImageView image = (ImageView) holder.mediaContentLayout.findViewById(R.id.image_message);
+            image.setVisibility(View.VISIBLE);
+
+            int size = activity.getResources().getDimensionPixelSize(R.dimen.media_msg_content_size);
+            image.setLayoutParams(new FrameLayout.LayoutParams(size, size));
+
+            boolean inProgress = false;
+            if ((message.textData.length() == 0 && message.iAmSender == true) || (message.mediaFileName == null && message.iAmSender == false)) {
+                inProgress = true;
+            } else {
+                //nothing
+            }
+
+            if( inProgress ){
+                image.setOnClickListener(null);
+                image.setTag(null);
+            } else {
+                image.setOnClickListener(imageOrVideoClickListener);
+                image.setTag(message.mediaFileName + ":" + message.mimeType);
+            }
+            image.setImageResource(R.drawable.grey_bg_rectangle);
+
+            ProgressBar progressBar = (ProgressBar) holder.mediaContentLayout.findViewById(R.id.progressBar);
+            if ( inProgress ) {
                 progressBar.setVisibility(View.VISIBLE);
             } else {
                 progressBar.setVisibility(View.GONE);
@@ -317,10 +341,53 @@ public class ChatScreenAdapter extends BaseAdapter {
     }
 
     public void notifydataset(ArrayList<Message> messagelist) {
-
         this.messageList = messagelist;
         notifyDataSetChanged();
     }
 
+    private class ImageOrVideoClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            String tag = (String)v.getTag();
+            int index = tag.indexOf(':');
+            String filename = tag.substring(0, index);
+            String mimeType = tag.substring( index+1);
+
+            Intent intent = new Intent(activity, ImageOrVideoViewActivity.class);
+            intent.putExtra(Constants.INTENT_KEY_FILENAME, filename);
+            intent.putExtra(Constants.INTENT_KEY_MIMETYPE, mimeType);
+            activity.startActivity(intent);
+
+        }
+
+    }
+
+    private class AudioEventListener implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
+
+        @Override
+        public void onClick(View v) {
+            ViewHolder holder = (ViewHolder)v.getTag(R.id.playAndPause);
+            int position = (Integer)v.getTag();
+            Message message = messageList.get(position);
+            audioRecordingHelper.handlePlayOrPauseEvent(message, holder);
+        }
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            audioRecordingHelper.setProgress((Integer)seekBar.getTag(), seekBar.getProgress());
+        }
+
+    }
 
 }

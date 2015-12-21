@@ -1,7 +1,6 @@
 package com.sports.unity.messages.controller.viewhelper;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -37,13 +36,24 @@ public class AudioRecordingHelper {
 
     private static final int DURATION = 1000;
 
-    private static final String AUDIO_RECORDER_FILE_EXT_3GP = ".3gp";
-    private static final String AUDIO_RECORDER_FILE_EXT_MP4 = ".mp4";
-    private static final String AUDIO_RECORDER_FOLDER = "SportsUnityAudioRecorder";
+    private static AudioRecordingHelper audioRecordingHelper = null;
+
+    synchronized public static AudioRecordingHelper getInstance(Activity activity) {
+        if (audioRecordingHelper == null) {
+            audioRecordingHelper = new AudioRecordingHelper(activity);
+        }
+        return audioRecordingHelper;
+    }
+
+    public static void cleanUp() {
+        if( audioRecordingHelper != null ){
+            audioRecordingHelper.cleanup();
+        }
+        audioRecordingHelper = null;
+    }
 
     private int currentFormat = 0;
     private int output_formats[] = {MediaRecorder.OutputFormat.MPEG_4, MediaRecorder.OutputFormat.THREE_GPP};
-    private String file_exts[] = {AUDIO_RECORDER_FILE_EXT_MP4, AUDIO_RECORDER_FILE_EXT_3GP};
 
     private ImageButton record_button;
     private TextView counter_time;
@@ -56,21 +66,12 @@ public class AudioRecordingHelper {
     private Activity activity;
     private MediaPlayer mediaPlayer = null;
 
-    int seekbarId = 0;
-    private HashMap<Integer, Integer> seekBarProgressMap = null;
+    private int currentPlayingMessageId = -1;
+    private ImageButton playPauseButton = null;
+    private HashMap<Integer, ProgressState> seekBarProgressMap = new HashMap<>();
 
-    private static AudioRecordingHelper audioRecordingHelper = null;
-
-    synchronized public static AudioRecordingHelper getInstance(Activity activity) {
-        if (audioRecordingHelper == null) {
-            audioRecordingHelper = new AudioRecordingHelper(activity);
-        }
-        return audioRecordingHelper;
-    }
-
-    public AudioRecordingHelper(Activity activity) {
+    private AudioRecordingHelper(Activity activity) {
         this.activity = activity;
-        seekBarProgressMap = new HashMap<>();
         mediaPlayer = new MediaPlayer();
     }
 
@@ -84,95 +85,284 @@ public class AudioRecordingHelper {
         setOnClickListener();
     }
 
-    private void setOnClickListener() {
+    public void putSeekProgress(int id, int duration, int maxDuration) {
+        ProgressState progressState = null;
+        if( seekBarProgressMap.containsKey(id) ) {
+            progressState = seekBarProgressMap.get(id);
+            progressState.setDuration(duration);
+            progressState.setMaxDuration(maxDuration);
+        } else {
+            progressState = new ProgressState( duration, maxDuration);
+            seekBarProgressMap.put(id, progressState);
+        }
+    }
 
-        record_button.setOnTouchListener(new View.OnTouchListener() {
+    public int getSeekProgress(int id){
+        int progress = 0;
+        if( seekBarProgressMap.containsKey(id) ){
+            progress = seekBarProgressMap.get(id).getDuration();
+        } else {
+            progress = 0;
+        }
+        return progress;
+    }
 
-            private static final int INSIDE_STATUS = 0;
-            private static final int OUTSIDE_STATUS = 1;
+    public void setProgress(int id, int progress) {
+        ProgressState progressState = seekBarProgressMap.get(id);
+        progressState.setDuration(progress);
 
-            private Rect recordButtonRect = null;
-            private int[] location = null;
+        if (id == currentPlayingMessageId) {
+            mediaPlayer.seekTo(progress);
+        } else {
+            //TODO
+        }
+    }
 
-            private int lastTouchStatus = INSIDE_STATUS;
+    public void clearProgressMap() {
+        seekBarProgressMap.clear();
+    }
 
-            @Override
-            public boolean onTouch(View view, MotionEvent event) {
+    public boolean isPlaying() {
+        return mediaPlayer.isPlaying();
+    }
 
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN: {
-                        Log.i("Audio", "Start Recording");
+    public int getCurrentPlayingMessageId() {
+        return currentPlayingMessageId;
+    }
 
-                        startRecording();
+    public void initUI(String fileName, ChatScreenAdapter.ViewHolder holder, int messageId) {
+        ProgressState progressState = seekBarProgressMap.get(messageId);
 
-                        location = new int[2];
-                        view.getLocationOnScreen(location);
-                        recordButtonRect = new Rect(location[0], location[1], location[0] + view.getWidth(), location[1] + view.getHeight());
+        if( progressState != null ) {
+            holder.getSeekBar().setMax(progressState.getMaxDuration());
+            holder.getSeekBar().setProgress(progressState.getDuration());
 
-                        break;
-                    }
-                    case MotionEvent.ACTION_UP: {
-                        Log.i("Audio", "Stop Recording");
+            setDurationOnTimeView(holder.getDuration(), progressState);
+        } else {
+            boolean success = false;
+            try {
+                pauseAudio();
 
-                        stopRecording();
+                File file = new File(DBUtil.getFilePath(activity.getBaseContext(), fileName));
+                mediaPlayer = MediaPlayer.create(activity, Uri.parse(file.getAbsolutePath()));
 
-                        int pointX = location[0] + (int) event.getX();
-                        int pointY = location[1] + (int) event.getY();
-
-                        if (recordButtonRect.contains(pointX, pointY)) {
-                            sendVoiceRecord();
-                        } else {
-                            cancelVoiceRecord();
-                        }
-
-                        break;
-                    }
-                    case MotionEvent.ACTION_MOVE: {
-                        int pointX = location[0] + (int) event.getX();
-                        int pointY = location[1] + (int) event.getY();
-
-                        Log.i("Audio", "Move " + pointX + " : " + pointY);
-
-                        if (recordButtonRect.contains(pointX, pointY)) {
-                            if (lastTouchStatus == OUTSIDE_STATUS) {
-                                lastTouchStatus = INSIDE_STATUS;
-                                insideOfRecordButton();
-                            } else {
-                                //nothing
-                            }
-                        } else {
-                            if (lastTouchStatus == INSIDE_STATUS) {
-                                lastTouchStatus = OUTSIDE_STATUS;
-                                outsideOfRecordButton();
-                            } else {
-                                //nothing
-                            }
-                        }
-
-                        break;
-                    }
-
+                if( mediaPlayer != null ) {
+                    success = true;
+                } else {
+                    //nothing
                 }
-                return false;
+            }catch (Exception ex){
+                ex.printStackTrace();
             }
-        });
+
+            if( success ) {
+                putSeekProgress(messageId, -1, mediaPlayer.getDuration());
+                progressState = seekBarProgressMap.get(messageId);
+
+                holder.getSeekBar().setMax(progressState.getMaxDuration());
+                holder.getSeekBar().setProgress(0);
+
+                setDurationOnTimeView(holder.getDuration(), progressState);
+            } else {
+                //nothing
+            }
+        }
+    }
+
+    public void handlePlayOrPauseEvent(Message message, ChatScreenAdapter.ViewHolder holder){
+        handlePlayPauseEvent(message, holder);
+    }
+
+    public void stopAndReleaseMediaPlayer() {
+        try {
+            pauseAudio();
+            mediaPlayer.stop();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        cancelTimerOnPlaying();
+    }
+
+    public void pauseAudio(){
+        if( currentPlayingMessageId != -1 && mediaPlayer.isPlaying() ) {
+            try {
+                mediaPlayer.pause();
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+            putSeekProgress(currentPlayingMessageId, mediaPlayer.getCurrentPosition(), mediaPlayer.getDuration());
+            cancelTimerOnPlaying();
+
+            if (playPauseButton != null) {
+                playPauseButton.setImageResource(android.R.drawable.ic_media_play);
+            } else {
+                //nothing
+            }
+        } else {
+            //nothing
+        }
+    }
+
+    private void handlePlayPauseEvent(Message message, ChatScreenAdapter.ViewHolder holder) {
+        int seekbarId = message.id;
+        if (this.currentPlayingMessageId != seekbarId) {
+            pauseAudio();
+            playAudio(message, holder);
+        } else {
+            if( isPlaying() ) {
+                pauseAudio();
+            } else {
+                playAudio(message, holder);
+            }
+        }
+
+    }
+
+    private void playAudio(Message message, ChatScreenAdapter.ViewHolder holder){
+        boolean success = createMediaPlayer(message.mediaFileName, message.id, holder);
+        if( success ) {
+            try {
+                startMediaPlayer();
+                startTimer(0, 100, holder);
+
+                this.currentPlayingMessageId = message.id;
+                this.playPauseButton = holder.getPlayandPause();
+
+                putSeekProgress( message.id, 0, mediaPlayer.getDuration());
+
+                holder.getPlayandPause().setImageResource(android.R.drawable.ic_media_pause);
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+        } else {
+            //nothing
+        }
+    }
+
+    private boolean createMediaPlayer(String filename, int seekbarId, ChatScreenAdapter.ViewHolder holder) {
+        boolean success = false;
+        try {
+            if (filename == null) {
+               //nothing
+            } else {
+                File file = new File(DBUtil.getFilePath(activity.getBaseContext(), filename));
+
+                mediaPlayer.reset();
+                mediaPlayer = MediaPlayer.create(activity, Uri.parse(file.getAbsolutePath()));
+
+                if( mediaPlayer != null ) {
+
+                    if (getSeekProgress(seekbarId) > 0) {
+                        mediaPlayer.seekTo(getSeekProgress(seekbarId));
+                    }
+
+                    mediaPlayer.setOnCompletionListener(new MediaPlayerCompletionListener(holder));
+                    this.currentPlayingMessageId = seekbarId;
+
+                    success = true;
+                } else {
+                    //nothing
+                }
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return success;
+    }
+
+    private void startMediaPlayer() throws IllegalStateException {
+        mediaPlayer.start();
+    }
+
+    private void startTimer(int initialDelay, int interval, ChatScreenAdapter.ViewHolder holder) {
+        cancelTimerOnPlaying();
+
+        SeekTimerTask timerTask = new SeekTimerTask(holder, activity);
+        timer = new Timer();
+        timer.scheduleAtFixedRate(timerTask, initialDelay, interval);
+    }
+
+    private void setDurationOnTimeView(TextView textView, ProgressState progressState) {
+        int time = progressState.getDuration() == -1 ? progressState.getMaxDuration() : progressState.getDuration();
+        textView.setText(String.format("%d:%02d", (time / 1000) / (60), (time / 1000) % 60));
+    }
+
+    private void setDurationOnTimeView(TextView textView, int time) {
+        textView.setText(String.format("%d:%02d", (time / 1000) / (60), (time / 1000) % 60));
+    }
+
+    private void sendVoiceRecord() {
+        Integer time = (Integer)counter_time.getTag();
+        if( time != null && time > 0 ) {
+
+            new ThreadTask(null) {
+
+                private File file = new File(DBUtil.getFilePath(activity, mFilename));
+                private int size = (int) file.length();
+                private byte[] voiceContent = new byte[size];
+
+                @Override
+                public Object process() {
+                    voiceContent = DBUtil.loadContentFromExternalFileStorage(activity, mFilename);
+                    Log.d("Audio Helper", "content size " + voiceContent.length);
+                    return null;
+                }
+
+                @Override
+                public void postAction(Object object) {
+                    sendActionToCorrespondingActivityListener(1, ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_AUDIO, mFilename, voiceContent);
+                }
+
+            }.start();
+        } else {
+            //nothing
+            Log.d("Audio", "Audio is too small to handle");
+        }
+    }
+
+    private boolean sendActionToCorrespondingActivityListener(int id, String key, String mimeType, Object messageContent, Object mediaContent) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+
+        if (actionListener != null) {
+            actionListener.handleMediaContent(id, mimeType, messageContent, mediaContent);
+            success = true;
+        }
+        return success;
     }
 
     private void startRecording() {
-        startCounter();
+        startTimerForRecording();
 
         counter_time = (TextView) rootLayout.findViewById(R.id.time_counter);
-        counter_time.setText("00:00");
+        setDurationOnTimeView(counter_time, 0);
+        counter_time.setTag(0);
         counter_time.setTextColor(rootLayout.getResources().getColor(android.R.color.holo_red_light));
 
-        mFilename = getFilename();
+        mFilename = DBUtil.getUniqueFileName(activity, SportsUnityDBHelper.MIME_TYPE_AUDIO);
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(output_formats[currentFormat]);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
         recorder.setOutputFile(DBUtil.getFilePath(activity, mFilename));
-        recorder.setOnErrorListener(errorListener);
-        recorder.setOnInfoListener(infoListener);
+        recorder.setOnErrorListener(new MediaRecorder.OnErrorListener() {
+
+            @Override
+            public void onError(MediaRecorder mr, int what, int extra) {
+                Log.d("Audio", "On Error");
+            }
+
+        });
+        recorder.setOnInfoListener(new MediaRecorder.OnInfoListener() {
+
+            @Override
+            public void onInfo(MediaRecorder mr, int what, int extra) {
+                Log.d("Audio", "On Info");
+            }
+
+        });
 
         try {
             recorder.prepare();
@@ -196,7 +386,7 @@ public class AudioRecordingHelper {
             recorder = null;
         }
 
-        cancelTimeCounter();
+        cancelTimerOnRecording();
         reset();
     }
 
@@ -207,50 +397,60 @@ public class AudioRecordingHelper {
             Animation animation = AnimationUtils.loadAnimation(rootLayout.getContext(), R.anim.enlarge_unlimited_reverse);
             button.startAnimation(animation);
         }
-    }
 
-    private void sendVoiceRecord() {
-
-        new ThreadTask(null) {
-
-            private File file = new File(DBUtil.getFilePath(activity, mFilename));
-            private int size = (int) file.length();
-            private byte[] voiceContent = new byte[size];
-
-            @Override
-            public Object process() {
-                voiceContent = DBUtil.loadContentFromExternalFileStorage(activity, mFilename);
-//                try {
-//                    BufferedInputStream buf = new BufferedInputStream(new FileInputStream(file));
-//                    buf.read(voiceContent, 0, voiceContent.length);
-//                    buf.close();
-//                } catch (FileNotFoundException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                } catch (IOException e) {
-//                    // TODO Auto-generated catch block
-//                    e.printStackTrace();
-//                }
-//                DBUtil.writeContentToExternalFileStorage(context, mFilename, voiceContent);
-                return null;
-            }
-
-            @Override
-            public void postAction(Object object) {
-                sendActionToCorrespondingActivityListener(1, ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_AUDIO, mFilename, voiceContent);
-            }
-
-        }.start();
-
-
+        //TODO delete saved file content
     }
 
     private void reset() {
         counter_time = (TextView) rootLayout.findViewById(R.id.time_counter);
-        counter_time.setText("00:00");
+        setDurationOnTimeView(counter_time, 0);
         counter_time.setTextColor(rootLayout.getResources().getColor(R.color.messages_bg));
 
         changeLayout_InRecordButton();
+    }
+
+    private void startTimerForRecording() {
+        cancelTimerOnRecording();
+        setDurationOnTimeView(counter_time, 0);
+
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+
+            private int seconds = 0;
+
+            @Override
+            public void run() {
+                seconds++;
+
+                counter_time.post(new Runnable() {
+
+                    public void run() {
+                        setDurationOnTimeView(counter_time, seconds*1000);
+                        counter_time.setTag(seconds);
+                    }
+                });
+
+            }
+        }, DURATION, DURATION);
+    }
+
+    private void cancelTimerOnRecording() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
+    }
+
+    private void cancelTimerOnPlaying() {
+        if (timer != null) {
+            timer.cancel();
+            timer.purge();
+            timer = null;
+        }
+    }
+
+    private void cleanup(){
+        stopAndReleaseMediaPlayer();
     }
 
     private void changeLayout_InRecordButton() {
@@ -305,214 +505,107 @@ public class AudioRecordingHelper {
         counter_time.setText(lastTimeText);
     }
 
-    private void startCounter() {
-        cancelTimeCounter();
+    private void setOnClickListener() {
 
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
+        record_button.setOnTouchListener(new View.OnTouchListener() {
 
-            private int minutes = 0, seconds = 0;
+            private static final int INSIDE_STATUS = 0;
+            private static final int OUTSIDE_STATUS = 1;
+
+            private Rect recordButtonRect = null;
+            private int[] location = null;
+
+            private int lastTouchStatus = INSIDE_STATUS;
 
             @Override
-            public void run() {
-                seconds++;
-                if (seconds == 60) {
-                    seconds = 0;
-                    minutes++;
-                }
+            public boolean onTouch(View view, MotionEvent event) {
 
-                final StringBuilder stringBuilder = new StringBuilder();
-                stringBuilder.append((minutes > 9 ? minutes : "0" + minutes));
-                stringBuilder.append(":");
-                stringBuilder.append((seconds > 9 ? seconds : "0" + seconds));
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN: {
+                        Log.i("Audio", "Start Recording");
 
-                counter_time.post(new Runnable() {
+                        pauseAudio();
+                        startRecording();
 
-                    public void run() {
-                        counter_time.setText(stringBuilder.toString());
+                        location = new int[2];
+                        view.getLocationOnScreen(location);
+                        recordButtonRect = new Rect(location[0], location[1], location[0] + view.getWidth(), location[1] + view.getHeight());
+
+                        break;
                     }
-                });
+                    case MotionEvent.ACTION_UP: {
+                        Log.i("Audio", "Stop Recording");
 
-            }
-        }, DURATION, DURATION);
-    }
+                        stopRecording();
 
-    private void cancelTimeCounter() {
-        counter_time.setText("00:00");
+                        int pointX = location[0] + (int) event.getX();
+                        int pointY = location[1] + (int) event.getY();
 
-        if (timer != null) {
-            timer.cancel();
-            timer = null;
-        }
-    }
+                        if (recordButtonRect.contains(pointX, pointY)) {
+                            sendVoiceRecord();
+                        } else {
+                            cancelVoiceRecord();
+                        }
 
-    private String getFilename() {
-//        String filepath = Environment.getExternalStorageDirectory().getPath();
-//        File file = new File(filepath, AUDIO_RECORDER_FOLDER);
-//
-//        if (!file.exists()) {
-//            file.mkdirs();
-//        }
-//        Log.i("", "" + file.getAbsolutePath() + "/" + System.currentTimeMillis() + file_exts[currentFormat]);
-        return DBUtil.getUniqueFileName(activity, SportsUnityDBHelper.MIME_TYPE_AUDIO);
-    }
+                        break;
+                    }
+                    case MotionEvent.ACTION_MOVE: {
+                        int pointX = location[0] + (int) event.getX();
+                        int pointY = location[1] + (int) event.getY();
 
-    private MediaRecorder.OnErrorListener errorListener = new MediaRecorder.OnErrorListener() {
+                        Log.d("Audio", "Moving " + pointX + " : " + pointY);
 
-        @Override
-        public void onError(MediaRecorder mr, int what, int extra) {
-            Log.i("Error: ", +what + ", " + extra);
-        }
+                        if (recordButtonRect.contains(pointX, pointY)) {
+                            if (lastTouchStatus == OUTSIDE_STATUS) {
+                                lastTouchStatus = INSIDE_STATUS;
+                                insideOfRecordButton();
+                            } else {
+                                //nothing
+                            }
+                        } else {
+                            if (lastTouchStatus == INSIDE_STATUS) {
+                                lastTouchStatus = OUTSIDE_STATUS;
+                                outsideOfRecordButton();
+                            } else {
+                                //nothing
+                            }
+                        }
 
-    };
+                        break;
+                    }
 
-    private MediaRecorder.OnInfoListener infoListener = new MediaRecorder.OnInfoListener() {
-
-        @Override
-        public void onInfo(MediaRecorder mr, int what, int extra) {
-            Log.i("Warning: ", +what + ", " + extra);
-        }
-
-    };
-
-    private boolean sendActionToCorrespondingActivityListener(int id, String key, String mimeType, Object messageContent, Object mediaContent) {
-        boolean success = false;
-
-        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
-
-        if (actionListener != null) {
-            actionListener.handleMediaContent(id, mimeType, messageContent, mediaContent);
-            success = true;
-        }
-        return success;
-    }
-
-    public void addMediaBarProgress(int id, int progress) {
-        seekBarProgressMap.put(id, progress);
-    }
-
-    public int getProgress(int id) {
-        return seekBarProgressMap.get(id);
-    }
-
-    public void clearProgressMap() {
-        seekBarProgressMap.clear();
-    }
-
-    public boolean isPlaying() {
-        return mediaPlayer.isPlaying();
-    }
-
-    public void setProgress(int id, int progress) {
-
-        seekBarProgressMap.put(id, progress);
-        if (id == seekbarId) {
-            mediaPlayer.seekTo(progress);
-        }
-    }
-
-
-    private class MediaplayerCompletionListener implements MediaPlayer.OnCompletionListener {
-
-        private ChatScreenAdapter.ViewHolder holder = null;
-
-        MediaplayerCompletionListener(ChatScreenAdapter.ViewHolder holder) {
-
-            this.holder = holder;
-        }
-
-        @Override
-        public void onCompletion(MediaPlayer mp) {
-            cancelTimer();
-//            taskThread.interrupt();
-            holder.seekBar.setProgress(0);
-            holder.seekBar.refreshDrawableState();
-            mediaPlayer.pause();
-            mediaPlayer.seekTo(0);
-            holder.playandPause.setImageResource(android.R.drawable.ic_media_play);
-            seekBarProgressMap.put(seekbarId, 0);
-
-            int time = mediaPlayer.getDuration();
-            setDurationOnTimeView(holder, time);
-            Log.i("Audio", "Completion");
-        }
-    }
-
-    private void setDurationOnTimeView(ChatScreenAdapter.ViewHolder holder, int time) {
-        holder.duration.setText(String.format("%d:%02d", (time / 1000) / (60), (time / 1000) % 60));
-    }
-
-    public void createMediaPlayer(String filename, int seekbarId, ChatScreenAdapter.ViewHolder holder) {
-        if (filename == null) {
-            //TODO
-        } else {
-            if (this.seekbarId != seekbarId || this.seekbarId == 0) {
-                mediaPlayer.reset();
-                File file = new File(DBUtil.getFilePath(activity.getBaseContext(), filename));
-                mediaPlayer = MediaPlayer.create(activity, Uri.parse(file.getAbsolutePath()));
-                if (getProgress(seekbarId) > 0) {
-                    mediaPlayer.seekTo(getProgress(seekbarId));
-                    Log.i("seekbarprogress", String.valueOf(getProgress(seekbarId)));
                 }
-                mediaPlayer.setOnCompletionListener(new MediaplayerCompletionListener(holder));
-                this.seekbarId = seekbarId;
-            } else {
-                // do nothing
+                return false;
             }
-        }
+        });
     }
 
-    public void initUI(final ChatScreenAdapter.ViewHolder holder) {
-        holder.seekBar.setMax(mediaPlayer.getDuration());
-        setDurationOnTimeView(holder, mediaPlayer.getDuration());
-    }
+    private class ProgressState {
 
-    public void startTimer(int initialDelay, int interval, ChatScreenAdapter.ViewHolder holder) {
-        cancelTimer();
+        private int duration = 0;
+        private int maxDuration = 0;
 
-        SeekTimerTask timerTask = new SeekTimerTask(holder, activity);
-        timer = new Timer();
-        timer.scheduleAtFixedRate(timerTask, initialDelay, interval);
-    }
-
-    private void cancelTimer() {
-        if (timer != null) {
-            timer.cancel();
-            timer.purge();
-            timer = null;
-//            taskThread.interrupt();
-        }
-    }
-
-    public void pauseMediaPlayer(Message message, int seekbarId, ChatScreenAdapter.ViewHolder holder) {
-        if (this.seekbarId != seekbarId) {
-            mediaPlayer.pause();
-            addMediaBarProgress(this.seekbarId, mediaPlayer.getCurrentPosition());
-            cancelTimer();
-            createMediaPlayer(message.mediaFileName, seekbarId, holder);
-            startMediaPlayer();
-            holder.playandPause.setImageResource(android.R.drawable.ic_media_pause);
-        } else {
-            mediaPlayer.pause();
-            addMediaBarProgress(this.seekbarId, mediaPlayer.getCurrentPosition());
-            holder.playandPause.setImageResource(android.R.drawable.ic_media_play);
-            cancelTimer();
+        public ProgressState(int duration, int maxDuration){
+            this.duration = duration;
+            this.maxDuration = maxDuration;
         }
 
-    }
+        public int getDuration() {
+            return duration;
+        }
 
-    public static void cleanInstance() {
-        audioRecordingHelper = null;
-    }
+        public int getMaxDuration() {
+            return maxDuration;
+        }
 
-    public void stopAndReleaseMediaPlayer() {
-        mediaPlayer.stop();
-        cancelTimer();
-    }
+        public void setDuration(int duration) {
+            this.duration = duration;
+        }
 
-    public void startMediaPlayer() {
-        mediaPlayer.start();
+        public void setMaxDuration(int maxDuration) {
+            this.maxDuration = maxDuration;
+        }
+
     }
 
     private class SeekTimerTask extends TimerTask {
@@ -528,19 +621,50 @@ public class AudioRecordingHelper {
         @Override
         public void run() {
             activity.runOnUiThread(new Runnable() {
+
                 @Override
                 public void run() {
                     if (timer != null) {
-//                    taskThread = Thread.currentThread();
                         int time = mediaPlayer.getCurrentPosition();
-                        Log.i("Audio time", String.valueOf(time));
-                        holder.seekBar.setProgress(time);
-                        setDurationOnTimeView(holder, time);
+
+                        Log.d("Audio", "Media Player Seek Time " + String.valueOf(time));
+
+                        holder.getSeekBar().setProgress(time);
+                        setDurationOnTimeView(holder.getDuration(), time);
                     }
                 }
+
             });
         }
 
+    }
+
+    private class MediaPlayerCompletionListener implements MediaPlayer.OnCompletionListener {
+
+        private ChatScreenAdapter.ViewHolder holder = null;
+
+        private MediaPlayerCompletionListener(ChatScreenAdapter.ViewHolder holder) {
+            this.holder = holder;
+        }
+
+        @Override
+        public void onCompletion(MediaPlayer mp) {
+            Log.d("Audio", "Media Player Completion Event");
+
+            cancelTimerOnPlaying();
+
+            holder.getSeekBar().setProgress(0);
+            holder.getSeekBar().refreshDrawableState();
+
+            mediaPlayer.pause();
+            mediaPlayer.seekTo(0);
+
+            holder.getPlayandPause().setImageResource(android.R.drawable.ic_media_play);
+            putSeekProgress(currentPlayingMessageId, -1, mediaPlayer.getDuration());
+
+            int time = mediaPlayer.getDuration();
+            setDurationOnTimeView(holder.getDuration(), time);
+        }
     }
 
 }
