@@ -12,6 +12,7 @@ public class Constants {
     public static final String INTENT_KEY_ROOM_NAME = "ROOM_NAME";
     public static final String INTENT_KEY_CONTACT_FRAGMENT_USAGE = "CONTACT_FRAGMENT_USAGE";
     public static final String INTENT_KEY_SEARCH_ON = "SEARCH_ON";
+    public static final String INTENT_FORWARD_SELECTED_IDS = "get_the _selected_ids";
 
     public static final String URL_REGISTER = "http://54.169.217.88/register?";
     public static final String URL_CREATE = "http://54.169.217.88/create?";
@@ -32,7 +33,8 @@ public class Constants {
 
     public static final String NEWS_REQUEST_TAG = "news_tag";
 
-    public static final int CONNECTION_TIME_OUT = 20*1000;
+    public static final int CONNECTION_TIME_OUT = 20 * 1000;
+
 
     // Number of columns of Grid View
     public static final int NUM_OF_COLUMNS = 3;
@@ -44,6 +46,6 @@ public class Constants {
     public static final String PHOTO_ALBUM = "image";
 
     // supported file formats
-    public static final List<String> FILE_EXTN = Arrays.asList( "jpg", "jpeg", "png");
+    public static final List<String> FILE_EXTN = Arrays.asList("jpg", "jpeg", "png");
 
 }

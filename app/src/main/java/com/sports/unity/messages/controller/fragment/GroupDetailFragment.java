@@ -1,6 +1,12 @@
 package com.sports.unity.messages.controller.fragment;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -25,12 +31,22 @@ import com.sports.unity.messages.controller.activity.CreateGroup;
 import com.sports.unity.messages.controller.model.GroupMessaging;
 import com.sports.unity.util.CommonUtil;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static com.sports.unity.ProfileCreationActivity.decodeSampleImage;
 
 /**
  * Created by amandeep on 30/10/15.
  */
 public class GroupDetailFragment extends Fragment {
+
+    static final int LOAD_IMAGE_GALLERY_CAMERA = 1;
+    private CircleImageView groupAvatar;
+    private byte[] groupImageArray;
 
     @Nullable
     @Override
@@ -44,11 +60,11 @@ public class GroupDetailFragment extends Fragment {
         return view;
     }
 
-    private void setToolBar(){
+    private void setToolBar() {
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.tool_bar);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
-        ((ImageView)toolbar.findViewById(R.id.backImage)).setImageResource(R.drawable.ic_close_blk);
+        ((ImageView) toolbar.findViewById(R.id.backImage)).setImageResource(R.drawable.ic_close_blk);
         toolbar.findViewById(R.id.backImage).setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -58,10 +74,10 @@ public class GroupDetailFragment extends Fragment {
         });
 
         TextView title = (TextView) toolbar.findViewById(R.id.title);
-        title.setText( R.string.group_title_create);
+        title.setText(R.string.group_title_create);
 
         TextView actionView = (TextView) toolbar.findViewById(R.id.actionButton);
-        actionView.setText( R.string.next);
+        actionView.setText(R.string.next);
         actionView.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedBold());
         actionView.setOnClickListener(new View.OnClickListener() {
 
@@ -71,23 +87,78 @@ public class GroupDetailFragment extends Fragment {
             }
         });
 
-        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
+        ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    private void initView(View view){
+
+    private void initView(View view) {
+
+        groupAvatar = (CircleImageView) view.findViewById(R.id.group_image);
+        groupAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                galleryIntent.setType("image/*");
+
+                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+
+                Intent chooser = new Intent(Intent.ACTION_CHOOSER);
+                chooser.putExtra(Intent.EXTRA_INTENT, galleryIntent);
+
+                Intent[] intentArray = {cameraIntent};
+                chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+                startActivityForResult(chooser, LOAD_IMAGE_GALLERY_CAMERA);
+            }
+        });
 
     }
 
-    private void moveOn(View view){
-        EditText groupNameEditText = (EditText)getView().findViewById(R.id.groupName);
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
+            Bitmap bitmap = null;
+            if (data.getData() != null) {
+
+                Uri selectedImage = data.getData();
+                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+                Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+                cursor.moveToFirst();
+                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+                String filePath = cursor.getString(columnIndex);
+                File file = new File(filePath);
+                cursor.close();
+
+
+                bitmap = decodeSampleImage(file, 150, 150);
+
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                groupImageArray = byteArrayOutputStream.toByteArray();
+                groupAvatar.setImageBitmap(bitmap);
+            } else {
+                bitmap = (Bitmap) data.getExtras().get("data");
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                groupImageArray = byteArrayOutputStream.toByteArray();
+                groupAvatar.setImageBitmap(bitmap);
+            }
+        } else {
+            //callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    private void moveOn(View view) {
+        EditText groupNameEditText = (EditText) getView().findViewById(R.id.groupName);
 
         String groupName = groupNameEditText.getText().toString().trim();
 
-        if( groupName.isEmpty() ) {
+        if (groupName.isEmpty()) {
             Toast.makeText(getActivity(), R.string.group_message_provide_group_name, Toast.LENGTH_SHORT).show();
         } else {
             CreateGroup createGroupActivity = ((CreateGroup) getActivity());
-            createGroupActivity.setGroupDetails(groupName, "");
+            createGroupActivity.setGroupDetails(groupName, "", groupImageArray);
 
             createGroupActivity.moveToMembersListFragment();
         }

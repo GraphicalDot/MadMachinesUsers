@@ -18,54 +18,59 @@
         android:layout_height="fill_parent"
         android:layout_above="@+id/type_msg"
         android:layout_below="@+id/tool_bar_chat"
+        android:layout_marginTop="@dimen/activity_vertical_margin_small"
+        android:choiceMode="multipleChoice"
         android:divider="@null"
         android:dividerHeight="0dp"
         android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll"
-        />
+        android:transcriptMode="alwaysScroll" />
 
     <LinearLayout
         android:id="@+id/type_msg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical"
         android:background="@android:color/white"
-        android:weightSum="3">
+        android:orientation="vertical">
 
         <View
             android:layout_width="match_parent"
             android:layout_height="0.3dp"
-            android:background="@color/horizontal_line_grey"/>
+            android:background="@color/horizontal_line_grey" />
 
         <LinearLayout
             android:id="@+id/send_message_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
             android:weightSum="5">
 
             <EditText
                 android:id="@+id/msg"
                 android:layout_width="0dp"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="fill"
                 android:layout_weight="4"
                 android:background="@android:color/transparent"
-                android:maxLength="700"
-                android:hint="Write a message"
                 android:focusable="true"
+                android:hint="Write a message"
+                android:inputType="textMultiLine"
+                android:maxLength="2000"
                 android:paddingLeft="16dp"
+                android:paddingTop="16dp"
+                android:scrollbars="vertical"
                 android:textColor="@android:color/black" />
 
             <Button
                 android:id="@+id/send"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
-                android:layout_height="fill_parent"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:textColor="@color/app_theme_blue"
-                android:text="SEND" />
+                android:text="SEND"
+                android:textColor="@color/app_theme_blue" />
         </LinearLayout>
 
 
@@ -90,7 +95,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="openCamera"
-                android:src="@drawable/ic_camera_disabled"/>
+                android:src="@drawable/ic_camera_disabled" />
 
             <ImageButton
                 android:id="@+id/btn_emoticons"
@@ -99,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="emojipopup"
-                android:src="@drawable/ic_emojis_disabled"/>
+                android:src="@drawable/ic_emojis_disabled" />
 
             <ImageButton
                 android:id="@+id/btn_gallery"
@@ -108,7 +113,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="galleryPopup"
-                android:src="@drawable/ic_gallery_disabled"/>
+                android:src="@drawable/ic_gallery_disabled" />
 
             <ImageButton
                 android:id="@+id/btn_audiomsg"
@@ -117,7 +122,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="voicePopup"
-                android:src="@drawable/ic_mic_disabled"/>
+                android:src="@drawable/ic_mic_disabled" />
 
 
         </LinearLayout>

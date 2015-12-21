@@ -301,7 +301,7 @@ public class ChatScreenAdapter extends BaseAdapter {
             //do nothing
         } else {
 
-            if ( message.messagesRead == true ) {
+            if (message.messagesRead == true) {
                 holder.receivedStatus.setImageResource(R.drawable.ic_msg_read);
             } else if (message.recipientR != null) {
                 holder.receivedStatus.setImageResource(R.drawable.ic_msg_delivered);
@@ -315,7 +315,6 @@ public class ChatScreenAdapter extends BaseAdapter {
 
         return vi;
     }
-
 
     public void notifydataset(ArrayList<Message> messagelist) {
 

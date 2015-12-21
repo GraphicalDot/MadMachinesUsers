@@ -75,13 +75,13 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View v) {
-                if (!nameText.getText().toString().isEmpty()) {
-                    beforeAsyncCall();
-                    TinyDB.getInstance(ProfileCreationActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nameText.getText().toString());
-                    new LoginAndPushVCardThread().start();
-                } else {
-                    Toast.makeText(getApplicationContext(), "Please enter your name", Toast.LENGTH_SHORT).show();
-                }
+            if (!nameText.getText().toString().isEmpty()) {
+                beforeAsyncCall();
+                TinyDB.getInstance(ProfileCreationActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nameText.getText().toString());
+                new LoginAndPushVCardThread().start();
+            } else {
+                Toast.makeText(getApplicationContext(), "Please enter your name", Toast.LENGTH_SHORT).show();
+            }
         }
 
     };
@@ -91,18 +91,18 @@ public class ProfileCreationActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 
-                Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                galleryIntent.setType("image/*");
+            Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            galleryIntent.setType("image/*");
 
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 
-                Intent chooser = new Intent(Intent.ACTION_CHOOSER);
-                chooser.putExtra(Intent.EXTRA_INTENT, galleryIntent);
+            Intent chooser = new Intent(Intent.ACTION_CHOOSER);
+            chooser.putExtra(Intent.EXTRA_INTENT, galleryIntent);
 
-                Intent[] intentArray = {cameraIntent};
-                chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
-                startActivityForResult(chooser, LOAD_IMAGE_GALLERY_CAMERA);
-            }
+            Intent[] intentArray = {cameraIntent};
+            chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+            startActivityForResult(chooser, LOAD_IMAGE_GALLERY_CAMERA);
+        }
 
     };
 
@@ -448,3 +448,4 @@ public class ProfileCreationActivity extends AppCompatActivity {
     }
 
 }
+

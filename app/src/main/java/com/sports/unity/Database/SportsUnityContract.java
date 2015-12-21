@@ -76,6 +76,7 @@ public final class SportsUnityContract {
 
         public static final String COLUMN_CHAT_ID = "chat_id";
         public static final String COLUMN_CONTACT_ID = "contact_id";
+        public static final String COLUMN_ADMIN = "group_admin";
 
     }
 

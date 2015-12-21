@@ -47,6 +47,8 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
             rowView.setTag(1);
         }
 
+        ImageView mediaIcon = (ImageView) rowView.findViewById(R.id.sentMediaIcon);
+
         TextView name = (TextView) rowView.findViewById(R.id.contact_name);
         name.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
 
@@ -116,17 +118,26 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
             unread.setVisibility(View.VISIBLE);
             unread.setText(String.valueOf(chatArrayList.get(position).unreadCount));
             lastMsgTime.setTextColor(Color.parseColor("#2c84cc"));
-
         }
+
+
         if (chatArrayList.get(position).mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
+            mediaIcon.setVisibility(View.GONE);
             lastMsg.setText(chatArrayList.get(position).data);
         } else if (chatArrayList.get(position).mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
+            mediaIcon.setVisibility(View.VISIBLE);
+            mediaIcon.setImageResource(R.drawable.ic_img);
             lastMsg.setText(R.string.sent_an_image);
         } else if (chatArrayList.get(position).mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
+            mediaIcon.setVisibility(View.VISIBLE);
+            mediaIcon.setImageResource(R.drawable.ic_video);
             lastMsg.setText(R.string.sent_a_video);
         } else if (chatArrayList.get(position).mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
+            mediaIcon.setVisibility(View.GONE);
             lastMsg.setText(R.string.sent_a_sticker);
         } else if (chatArrayList.get(position).mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
+            mediaIcon.setImageResource(R.drawable.ic_audio);
+            mediaIcon.setVisibility(View.VISIBLE);
             lastMsg.setText(R.string.sent_an_audio);
         }
 

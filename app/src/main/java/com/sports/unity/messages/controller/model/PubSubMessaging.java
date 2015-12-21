@@ -12,12 +12,14 @@ import com.sports.unity.util.CommonUtil;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.disco.packet.DiscoverItems;
 import org.jivesoftware.smackx.pubsub.AccessModel;
 import org.jivesoftware.smackx.pubsub.Affiliation;
 import org.jivesoftware.smackx.pubsub.LeafNode;
 import org.jivesoftware.smackx.pubsub.PayloadItem;
 import org.jivesoftware.smackx.pubsub.PubSubManager;
+import org.jivesoftware.smackx.pubsub.PublishItem;
 import org.jivesoftware.smackx.pubsub.PublishModel;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.SubscribeForm;
@@ -117,11 +119,16 @@ public class PubSubMessaging {
         form.addField("pubsub#send_last_published_item", FormField.Type.text_single);
         form.setAnswer("pubsub#send_last_published_item", "never");
 
+
         try {
             LeafNode leaf = (LeafNode) pubSubManager.createNode(roomName, form);
             leaf.subscribe(TinyDB.getInstance(context).getString(TinyDB.KEY_USERNAME) + "@mm.io");
             Log.i("discoverinfo", "true");
-            leaf.discoverInfo();
+
+            ServiceDiscoveryManager serviceDiscoveryManager = ServiceDiscoveryManager.getInstanceFor(XMPPClient.getConnection());
+            DiscoverInfo info = leaf.discoverInfo();
+            info.addIdentity(new DiscoverInfo.Identity("account", "test", "admin"));
+
             List<Subscription> subscriptions = leaf.getSubscriptions();
             for (Subscription s :
                     subscriptions) {

@@ -22,7 +22,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(com.sports.unity.R.layout.activity_splash);
 
-        Crittercism.initialize(getApplicationContext(), "564059fcd224ac0a00ed42a3");
+        //  Crittercism.initialize(getApplicationContext(), "564059fcd224ac0a00ed42a3");
 
         UserUtil.init(this);
 
@@ -39,7 +39,7 @@ public class SplashScreenActivity extends AppCompatActivity {
                 moveToNextActivity(ProfileCreationActivity.class);
             }
         } else {
-            if( UserUtil.isOtpSent() ){
+            if (UserUtil.isOtpSent()) {
                 moveToNextActivity(EnterOtpActivity.class);
             } else {
                 show();
@@ -48,7 +48,7 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     }
 
-    private void cachedFlow(String phoneNumber, String password){
+    private void cachedFlow(String phoneNumber, String password) {
         Context context = getApplicationContext();
 
         TinyDB.getInstance(context).putString(TinyDB.KEY_USERNAME, "91" + phoneNumber);

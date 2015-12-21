@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -29,6 +30,7 @@ public class CreateGroup extends CustomAppCompatActivity {
     private String groupDescription = null;
 
     private String currentUserPhoneNumber = null;
+    private byte[] groupImageArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +66,10 @@ public class CreateGroup extends CustomAppCompatActivity {
         setToolBarForMembersList();
     }
 
-    public void setGroupDetails(String groupName, String groupDescription) {
+    public void setGroupDetails(String groupName, String groupDescription, byte[] groupImageArray) {
         this.groupName = groupName;
         this.groupDescription = groupDescription;
+        this.groupImageArray = groupImageArray;
     }
 
     private void setToolBarForMembersList() {
@@ -115,7 +118,6 @@ public class CreateGroup extends CustomAppCompatActivity {
         if (success) {
             groupMessaging.setGroupConfigDetail(roomName, groupName, groupDescription);
             groupMessaging.joinGroup(roomName, currentUserPhoneNumber);
-            groupMessaging.inviteMembers(roomName, selectedMembers, "");
 
             /*long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry(subject, owner.id, null, roomName);
             SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, roomName);
@@ -138,13 +140,17 @@ public class CreateGroup extends CustomAppCompatActivity {
             long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry(subject, owner.id, null, roomName);
             SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, roomName);
 
+            String groupmembersnumbers = "";
             ArrayList<Long> members = new ArrayList<>();
             for (Contacts c :
                     selectedMembers) {
                 members.add(c.id);
+                groupmembersnumbers += c.id + ",";
             }
             SportsUnityDBHelper.getInstance(getApplicationContext()).createGroupUserEntry(chatId, members);
-            Toast.makeText(this, "node created", Toast.LENGTH_SHORT).show();
+            SportsUnityDBHelper.getInstance(getApplicationContext()).updateAdmin(TinyDB.getInstance(getApplicationContext()).KEY_USERNAME, roomName);
+            Log.i("sendinggroupinvitation", "true");
+            groupMessaging.inviteMembers(roomName, selectedMembers, "");
             finish();
         } else {
             Toast.makeText(this, R.string.group_message_try_again, Toast.LENGTH_SHORT).show();

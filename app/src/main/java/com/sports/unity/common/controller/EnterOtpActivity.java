@@ -151,7 +151,7 @@ public class EnterOtpActivity extends AppCompatActivity {
         String otp = otpEditText.getText().toString();
         String phoneNumber = getPhoneNumber();
 
-        RequestParams requestParams = new RequestParams();
+        final RequestParams requestParams = new RequestParams();
         requestParams.add(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, "91" + phoneNumber);
 
         requestParams.add(Constants.REQUEST_PARAMETER_KEY_AUTH_CODE, otp);
@@ -162,6 +162,7 @@ public class EnterOtpActivity extends AppCompatActivity {
 
             public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                 Log.i("Success", "Sent Data");
+                Log.i("url", Constants.URL_CREATE + requestParams);
 
                 try {
                     afterAsyncCall();

@@ -3,6 +3,7 @@ package com.sports.unity.messages.controller.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
@@ -15,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -42,6 +44,7 @@ import com.sports.unity.messages.controller.viewhelper.ChatKeyboardHelper;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 import com.sports.unity.util.FileOnCloudHandler;
 import com.sports.unity.util.NotificationHandler;
 import com.sports.unity.util.ThreadTask;
@@ -57,8 +60,8 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -71,6 +74,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     private static String JABBERID;
     private static String JABBERNAME;
     private static byte[] userImageBytes;
+    private ArrayList<Integer> selectedItemsList = new ArrayList<>();
+
+    boolean selectedFlag = false;
+    int selecteditems = 0;
+    private ListView mChatView;
 
     private static long chatID = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
 
@@ -224,7 +232,19 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if (selecteditems != 0) {
+            selecteditems = 0;
+            selectedItemsList.clear();
+            selectedFlag = false;
+            invalidateOptionsMenu();
+            for (int i = 0; i < mChatView.getChildCount();
+                 i++) {
+                View view = mChatView.getChildAt(i);
+                view.setBackgroundColor(Color.TRANSPARENT);
+            }
+        } else {
+            super.onBackPressed();
+        }
     }
 
 
@@ -302,7 +322,19 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onBackPressed();
+                if (selecteditems != 0) {
+                    selecteditems = 0;
+                    selectedItemsList.clear();
+                    selectedFlag = false;
+                    invalidateOptionsMenu();
+                    for (int i = 0; i < mChatView.getChildCount();
+                         i++) {
+                        View view = mChatView.getChildAt(i);
+                        view.setBackgroundColor(Color.TRANSPARENT);
+                    }
+                } else {
+                    onBackPressed();
+                }
             }
         });
 
@@ -344,14 +376,46 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         mSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendMessage();
+                sendMessage(messageText.getText().toString());
             }
         });
+
+        ArrayList<Integer> selectedMessageIds = getIntent().getIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS);
+        if (selectedMessageIds != null) {
+            ForwardMessages(selectedMessageIds);
+        }
+    }
+
+    private void ForwardMessages(ArrayList<Integer> intArrayExtra) {
+        ArrayList<Message> listOfMessages = new ArrayList<>();
+        for (int id :
+                intArrayExtra) {
+            Message message = sportsUnityDBHelper.getMessage(id);
+            listOfMessages.add(message);
+        }
+
+        loadAllMediaContent(listOfMessages, new CustomTask(listOfMessages) {
+
+            @Override
+            public void run() {
+                ArrayList<Message> listOfMessages = (ArrayList<Message>) getContent();
+                for (Message message : listOfMessages) {
+                    if (message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
+                        sendMessage(message.textData);
+                    } else {
+                        handleSendingMediaContent(message.mimeType, message.mediaFileName, mediaMap.get(message.mediaFileName));
+                    }
+                }
+            }
+
+        });
+
+
     }
 
 
     private void populateMessagesOnScreen() {
-        ListView mChatView = (ListView) findViewById(R.id.msgview);               // List for messages
+        mChatView = (ListView) findViewById(R.id.msgview);               // List for messages
         if (isGroupChat) {
             //TODO
             String s = "";
@@ -372,8 +436,57 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             mChatView.setAdapter(chatScreenAdapter);
         }
 
-        loadAllMediaContent();
+        loadAllMediaContent(messageList, null);
+        mChatView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if (selectedFlag == true) {
+                    if (selectedItemsList.contains(position)) {
+                        view.setBackgroundColor(Color.TRANSPARENT);
+                        selecteditems--;
+                        selectedItemsList.remove(Integer.valueOf(position));
+                        Log.i("view", "selected");
+                    } else {
+                        view.setBackgroundColor(Color.parseColor("#80004d99"));
+                        selecteditems++;
+                        selectedItemsList.add(position);
+                        Log.i("view", "notselected");
+                    }
+                } else {
+                    //do nothing
+                }
+                checkSelectedItems();
+            }
+        });
+        mChatView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                if (selectedFlag == false) {
+                    view.setBackgroundColor(Color.parseColor("#80004d99"));
+                    selectedFlag = true;
+                    selecteditems++;
+                    selectedItemsList.add(position);
+                } else {
+                    //do nothing
+                }
+                checkSelectedItems();
+                return true;
+            }
+        });
         sendReadStatus();
+    }
+
+    private void checkSelectedItems() {
+        if (selecteditems == 0) {
+            selectedFlag = false;
+            invalidateOptionsMenu();
+        } else {
+            if (selecteditems > 0) {
+                invalidateOptionsMenu();
+            } else {
+                //do nothing
+            }
+        }
     }
 
     private void clearUnreadCount() {
@@ -467,7 +580,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         }
     }
 
-    private void sendMessage() {
+    private void sendMessage(String message) {
         if (blockUnblockUserHelper.isBlockStatus()) {
             blockUnblockUserHelper.showAlert_ToSendMessage_UnblockUser(this, contactID, JABBERID, menu);
             return;
@@ -475,7 +588,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
         createChatEntryifNotExists();
 
-        if (messageText.getText().toString().equals("")) {
+        if (message.equals("") || message == null) {
             //Do nothing
         } else {
             Log.i("Message Entry", "adding message chat " + chatID);
@@ -483,13 +596,13 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             if (isGroupChat) {
 //                groupMessaging.sendMessageToGroup(messageText.getText().toString(), multiUserChat, chatID, groupServerId, TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME));
                 PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance(this);
-                boolean success = pubSubMessaging.publishMessage(messageText.getText().toString(), chatID, groupServerId, this);
+                boolean success = pubSubMessaging.publishMessage(message, chatID, groupServerId, this);
                 if (success) {
                     messageList = sportsUnityDBHelper.getMessages(chatID);
                     groupChatScreenAdapter.notifydataset(messageList);
                 }
             } else {
-                personalMessaging.sendTextMessage(messageText.getText().toString(), chat, JABBERID, chatID);
+                personalMessaging.sendTextMessage(message, chat, JABBERID, chatID);
                 personalMessaging.sendStatus(ChatState.paused, chat);
                 messageList = sportsUnityDBHelper.getMessages(chatID);
                 chatScreenAdapter.notifydataset(messageList);
@@ -520,8 +633,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
             String mediaFileName = (String) messageContent;
 
+            mediaMap.put(mediaFileName, (byte[]) mediaContent);
+
             long messageId = sportsUnityDBHelper.addMediaMessage("", mimeType, "", true, String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()),
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
+            sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
             FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload((byte[]) mediaContent, mimeType, chat, messageId);
 
@@ -552,20 +668,55 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-//        if (resultCode == RESULT_OK) {
-//            Uri chosenImageUri = data.getData();
-//            //File imageFile = new File(getRealPathFromURI(chosenImageUri));
-//
-//
-//            Bitmap mBitmap = null;
-//            try {
-//                mBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), chosenImageUri);
-//                Log.i("getBitmap? :", "yes");
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            //      convertTobyteArray(mBitmap, imageFile);
-//        }
+        if (requestCode == 333) {
+            //TODO handle forward
+        } else {
+            //nothing
+        }
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        Log.i("onprepareoptionsmeu", "true");
+        Toolbar mtoolbar = (Toolbar) findViewById(R.id.tool_bar_chat);
+        if (selectedFlag) {
+            mtoolbar.findViewById(R.id.profile).setVisibility(View.GONE);
+            MenuItem deleteMessage = menu.findItem(R.id.delete);
+            deleteMessage.setVisible(true);
+            MenuItem copyMessage = menu.findItem(R.id.copy);
+            copyMessage.setVisible(true);
+            MenuItem forwardMessage = menu.findItem(R.id.forward);
+            forwardMessage.setVisible(true);
+            MenuItem searchMessages = menu.findItem(R.id.action_search);
+            searchMessages.setVisible(false);
+            MenuItem blockUser = menu.findItem(R.id.action_block_user);
+            blockUser.setVisible(false);
+            MenuItem viewContact = menu.findItem(R.id.action_view_contact);
+            viewContact.setVisible(false);
+            MenuItem clearChat = menu.findItem(R.id.action_clear_chat);
+            clearChat.setVisible(false);
+            TextView noOfSelectedItems = (TextView) mtoolbar.findViewById(R.id.selectedItems);
+            noOfSelectedItems.setVisibility(View.VISIBLE);
+            noOfSelectedItems.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+            noOfSelectedItems.setText(String.valueOf(selecteditems));
+            if (selecteditems > 1) {
+                copyMessage.setVisible(false);
+            }
+
+        } else {
+            mtoolbar.findViewById(R.id.selectedItems).setVisibility(View.GONE);
+            MenuItem deleteMessage = menu.findItem(R.id.delete);
+            deleteMessage.setVisible(false);
+            MenuItem copyMessage = menu.findItem(R.id.copy);
+            copyMessage.setVisible(false);
+            MenuItem forwardMessage = menu.findItem(R.id.forward);
+            forwardMessage.setVisible(false);
+            MenuItem searchMessages = menu.findItem(R.id.action_search);
+            searchMessages.setVisible(true);
+            mtoolbar.findViewById(R.id.profile).setVisibility(View.VISIBLE);
+        }
+
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -575,12 +726,19 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
         this.menu = menu;
 
+        MenuItem deleteMessage = menu.findItem(R.id.delete);
+        deleteMessage.setVisible(false);
+        MenuItem copyMessage = menu.findItem(R.id.copy);
+        copyMessage.setVisible(false);
+        MenuItem forwardMessage = menu.findItem(R.id.forward);
+        forwardMessage.setVisible(false);
+
         blockUnblockUserHelper.initViewBasedOnBlockStatus(menu);
 
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
         int searchImgId = android.support.v7.appcompat.R.id.search_button;
         ImageView v = (ImageView) searchView.findViewById(searchImgId);
-        v.setImageResource(R.drawable.ic_menu_search_blk);
+        v.setImageResource(R.drawable.ic_menu_search);
         searchView.setQueryHint("Search...");
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -616,6 +774,56 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             messageList = sportsUnityDBHelper.getMessages(chatID);
             chatScreenAdapter.notifydataset(messageList);
             AudioRecordingHelper.getInstance(this).clearProgressMap();
+        } else if (id == R.id.forward) {
+
+            Intent forwardIntent = new Intent(getApplicationContext(), ForwardSelectedItems.class);
+            ArrayList<Integer> idList = new ArrayList<>();
+            for (int selectedItemIds :
+                    selectedItemsList) {
+                idList.add(messageList.get(selectedItemIds).id);
+            }
+            forwardIntent.putIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS, idList);
+            startActivity(forwardIntent);
+
+        } else if (id == R.id.delete) {
+            Collections.sort(selectedItemsList, Collections.reverseOrder());
+            for (int a :
+                    selectedItemsList) {
+                sportsUnityDBHelper.deleteMessageFromTable(messageList.get(a).id);
+                messageList.remove(messageList.get(a));
+            }
+            chatScreenAdapter.notifydataset(messageList);
+            selectedFlag = false;
+            selecteditems = 0;
+            selectedItemsList.clear();
+            if (messageList.isEmpty()) {
+                sportsUnityDBHelper.updateChatEntry(sportsUnityDBHelper.getDummyMessageRowId(), chatID, sportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+            } else {
+                sportsUnityDBHelper.updateChatEntry(messageList.get(messageList.size() - 1).id, chatID, sportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+            }
+
+            for (int i = 0; i < mChatView.getChildCount();
+                 i++) {
+                View v = mChatView.getChildAt(i);
+                v.setBackgroundColor(Color.TRANSPARENT);
+            }
+            invalidateOptionsMenu();
+        } else if (id == R.id.copy) {
+            if (messageList.get(selectedItemsList.get(0)).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_AUDIO)) {
+
+            }
+            if (messageList.get(selectedItemsList.get(0)).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_IMAGE)) {
+
+            }
+            if (messageList.get(selectedItemsList.get(0)).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
+
+            }
+            if (messageList.get(selectedItemsList.get(0)).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_STICKER)) {
+
+            }
+            if (messageList.get(selectedItemsList.get(0)).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_VIDEO)) {
+
+            }
         } else if (id == R.id.action_search) {
             return true;
         }
@@ -633,8 +841,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         return mediaMap;
     }
 
-    private void loadAllMediaContent() {
-        new ThreadTask(messageList) {
+    private void loadAllMediaContent(ArrayList<Message> list, final CustomTask laterTask) {
+        new ThreadTask(list) {
 
             @Override
             public Object process() {
@@ -661,6 +869,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                     }
                 }
 
+                if (laterTask != null) {
+                    ChatScreenActivity.this.runOnUiThread(laterTask);
+                }
+
                 return null;
             }
 
@@ -672,10 +884,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         }.start();
     }
 
-    private void sendReadStatus(){
+    private void sendReadStatus() {
         for (Message message : messageList) {
-            if( !(message.iAmSender || message.messagesRead) ){
-                personalMessaging.sendReadStatus( message.number, message.messageStanzaId);
+            if (!(message.iAmSender || message.messagesRead)) {
+                personalMessaging.sendReadStatus(message.number, message.messageStanzaId);
             } else {
                 //nothing
             }
@@ -693,6 +905,20 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             success = true;
         }
         return success;
+    }
+
+    private abstract class CustomTask implements Runnable {
+
+        private Object content;
+
+        private CustomTask(Object content) {
+            this.content = content;
+        }
+
+        public Object getContent() {
+            return content;
+        }
+
     }
 
 }

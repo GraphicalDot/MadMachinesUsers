@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
+import com.sports.unity.messages.controller.activity.ForwardSelectedItems;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.Constants;
@@ -29,6 +30,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
     public static int USAGE_FOR_CONTACTS = 0;
     public static int USAGE_FOR_MEMBERS = 1;
+    public static int USAGE_FOR_FORWARD = 2;
 
     private int usageIn = 0;
 
@@ -55,21 +57,22 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
                 long chatId = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatEntryID(contactId, groupServerId);
                 boolean blockStatus = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).isChatBlocked(contactId);
 
-                Intent chatScreen = new Intent(getActivity(), ChatScreenActivity.class);
-                chatScreen.putExtra("number", number);
-                chatScreen.putExtra("name", name);
-                chatScreen.putExtra("contactId", contactId);
-                chatScreen.putExtra("chatId", chatId);
-                chatScreen.putExtra("groupServerId", groupServerId);
-                chatScreen.putExtra("userpicture", userPicture);
-                chatScreen.putExtra("blockStatus", blockStatus);
-                startActivity(chatScreen);
+                Intent chatScreenIntent = new Intent(getActivity(), ChatScreenActivity.class);
+                chatScreenIntent.putExtra("number", number);
+                chatScreenIntent.putExtra("name", name);
+                chatScreenIntent.putExtra("contactId", contactId);
+                chatScreenIntent.putExtra("chatId", chatId);
+                chatScreenIntent.putExtra("groupServerId", groupServerId);
+                chatScreenIntent.putExtra("userpicture", userPicture);
+                chatScreenIntent.putExtra("blockStatus", blockStatus);
+                startActivity(chatScreenIntent);
             } else {
                 Toast.makeText(getActivity().getApplicationContext(), "Invite him to sports Unity!", Toast.LENGTH_SHORT).show();
             }
         }
 
     };
+
 
     private AdapterView.OnItemClickListener memberItemListener = new AdapterView.OnItemClickListener() {
 
@@ -95,6 +98,45 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
             TextView textView = (TextView) titleLayout.findViewById(R.id.members_count);
             textView.setText(selectedMembersList.size() + "/100");
+        }
+
+    };
+
+    private AdapterView.OnItemClickListener forwardToContactMemberListener = new AdapterView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            ContactListAdapter contactListAdapter = (ContactListAdapter) contacts.getAdapter();
+            Contacts contact = contactListAdapter.getInUseContactListForAdapter().get(position);
+
+            if (contact.registered) {
+                String number = contact.jid;
+                String name = contact.name;
+                long contactId = contact.id;
+                byte[] userPicture = contact.image;
+
+                String groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
+                long chatId = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatEntryID(contactId, groupServerId);
+                boolean blockStatus = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).isChatBlocked(contactId);
+
+                Intent chatScreenIntent = new Intent(getActivity(), ChatScreenActivity.class);
+                chatScreenIntent.putExtra("number", number);
+                chatScreenIntent.putExtra("name", name);
+                chatScreenIntent.putExtra("contactId", contactId);
+                chatScreenIntent.putExtra("chatId", chatId);
+                chatScreenIntent.putExtra("groupServerId", groupServerId);
+                chatScreenIntent.putExtra("userpicture", userPicture);
+                chatScreenIntent.putExtra("blockStatus", blockStatus);
+
+                ArrayList<Integer> selectedIds = getArguments().getIntegerArrayList(Constants.INTENT_FORWARD_SELECTED_IDS);
+                chatScreenIntent.putIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS, selectedIds);
+
+                chatScreenIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(chatScreenIntent);
+                getActivity().finish();
+            }
+
         }
 
     };
@@ -134,6 +176,15 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
             ViewGroup searchLayout = (ViewGroup) v.findViewById(R.id.search_layout);
             searchLayout.setVisibility(View.GONE);
+        } else if (usageIn == USAGE_FOR_FORWARD) {
+            resource = R.layout.list_item_members;
+            itemListener = forwardToContactMemberListener;
+
+            contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList_AvailableOnly(false);
+
+            ViewGroup searchLayout = (ViewGroup) v.findViewById(R.id.search_layout);
+            searchLayout.setVisibility(View.GONE);
+
         }
 
         ContactListAdapter adapter = new ContactListAdapter(getActivity(), resource, contactList);

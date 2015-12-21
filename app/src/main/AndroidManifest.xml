@@ -122,6 +122,10 @@
             android:name=".news.controller.activity.NewsSearchActivity"
             android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name=".messages.controller.activity.ForwardSelectedItems"
+            android:screenOrientation="portrait" >
+        </activity>
     </application>
 
 </manifest>

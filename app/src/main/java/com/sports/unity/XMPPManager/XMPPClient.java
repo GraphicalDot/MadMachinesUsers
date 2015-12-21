@@ -105,7 +105,7 @@ public class XMPPClient {
 
         addCustomExtensions();
 
-        if( success ) {
+        if (success) {
             ReadReceiptManager.getInstanceFor(connection);
         } else {
 
@@ -166,7 +166,7 @@ public class XMPPClient {
 
                     success = true;
 
-                    PubSubMessaging.getInstance(context).getJoinedGroups(context);
+                    //PubSubMessaging.getInstance(context).getJoinedGroups(context);
                 } catch (XMPPException e) {
                     e.printStackTrace();
                 } catch (SmackException e) {
@@ -241,7 +241,7 @@ public class XMPPClient {
         return success;
     }
 
-    public boolean sendReadStatus(String to, String messagePacketID){
+    public boolean sendReadStatus(String to, String messagePacketID) {
         boolean success = false;
         try {
             if (connection != null && connection.isAuthenticated()) {
@@ -253,13 +253,13 @@ public class XMPPClient {
 
                 success = true;
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return success;
     }
 
-    private void addCustomExtensions(){
+    private void addCustomExtensions() {
         ProviderManager.addExtensionProvider(ReadReceipt.ELEMENT, ReadReceipt.NAMESPACE, new ReadReceipt.Provider());
     }
 

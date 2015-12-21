@@ -18,6 +18,24 @@
         android:title="Clear chat"
         app:showAsAction="never" />
     <item
+        android:id="@+id/delete"
+        android:icon="@drawable/ic_del"
+        android:orderInCategory="200"
+        android:title="delete"
+        app:showAsAction="ifRoom"></item>
+    <item
+        android:id="@+id/copy"
+        android:icon="@drawable/ic_copy"
+        android:orderInCategory="200"
+        android:title="copy"
+        app:showAsAction="ifRoom"></item>
+    <item
+        android:id="@+id/forward"
+        android:icon="@drawable/ic_fwd"
+        android:orderInCategory="200"
+        android:title="forward"
+        app:showAsAction="ifRoom"></item>
+    <item
         android:id="@+id/action_search"
         android:orderInCategory="200"
         android:title="Search"

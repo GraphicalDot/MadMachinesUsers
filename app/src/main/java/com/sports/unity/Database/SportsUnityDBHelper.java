@@ -96,6 +96,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     private static final String CREATE_GROUP_USER_TABLE = "CREATE TABLE IF NOT EXISTS " +
             GroupUserEntry.TABLE_NAME + "( " +
             GroupUserEntry.COLUMN_CHAT_ID + " INTEGER " + COMMA_SEP +
+            GroupUserEntry.COLUMN_ADMIN + " INTEGER " + COMMA_SEP +
             GroupUserEntry.COLUMN_CONTACT_ID + " " + " INTEGER );";
 
     private static final String DROP_CONTACTS_TABLE = "DROP TABLE IF EXISTS " + ContactsEntry.TABLE_NAME;
@@ -137,6 +138,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(GroupUserEntry.COLUMN_CHAT_ID, chatId);
             values.put(GroupUserEntry.COLUMN_CONTACT_ID, String.valueOf(id));
+            values.put(GroupUserEntry.COLUMN_ADMIN, 0);
 
             db.insert(GroupUserEntry.TABLE_NAME, null, values);
         }
@@ -584,7 +586,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 int id = c.getInt(9);
                 if (id != DUMMY_MESSAGE_ROW_ID) {
                     boolean read = c.getInt(10) > 0;
-                    list.add(new Message( c.getInt(9), c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8), read, id, c.getString(11), c.getString(12)));
+                    list.add(new Message(c.getInt(9), c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8), read, id, c.getString(11), c.getString(12)));
                 } else {
                     //nothing
                 }
@@ -618,7 +620,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     }
 
     public long addMediaMessage(String message, String mimeType, String number, boolean iamsender, String sentTime, String messageId, String serverTime, String recipientTime,
-                               long chatID, boolean read, String mediaFileName, byte[] mediaThumbnail) {
+                                long chatID, boolean read, String mediaFileName, byte[] mediaThumbnail) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -641,14 +643,14 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     }
 
-    public void updateReadStatus(String messageStanzaId){
+    public void updateReadStatus(String messageStanzaId) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(MessagesEntry.COLUMN_READ_STATUS, "1");
 
         String selection = MessagesEntry.COLUMN_MESSAGE_ID + " LIKE ? ";
-        String[] selectionArgs = { String.valueOf(messageStanzaId)};
+        String[] selectionArgs = {String.valueOf(messageStanzaId)};
 
         int count = db.update(
                 MessagesEntry.TABLE_NAME,
@@ -657,7 +659,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 selectionArgs);
     }
 
-    public void updateMediaMessage_ContentUploaded(long messageId, String stanzaId, String checksum){
+    public void updateMediaMessage_ContentUploaded(long messageId, String stanzaId, String checksum) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -665,7 +667,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         values.put(MessagesEntry.COLUMN_DATA_TEXT, checksum);
 
         String selection = MessagesEntry.COLUMN_ID + " LIKE ? ";
-        String[] selectionArgs = { String.valueOf(messageId)};
+        String[] selectionArgs = {String.valueOf(messageId)};
 
         int count = db.update(
                 MessagesEntry.TABLE_NAME,
@@ -674,14 +676,14 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 selectionArgs);
     }
 
-    public void updateMediaMessage_ContentDownloaded(long messageId, String filename){
+    public void updateMediaMessage_ContentDownloaded(long messageId, String filename) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(MessagesEntry.COLUMN_MEDIA_FILE_NAME, filename);
 
         String selection = MessagesEntry.COLUMN_ID + " LIKE ? ";
-        String[] selectionArgs = { String.valueOf(messageId)};
+        String[] selectionArgs = {String.valueOf(messageId)};
 
         int count = db.update(
                 MessagesEntry.TABLE_NAME,
@@ -1186,6 +1188,76 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             return name;
         }
 
+        c.close();
+        return null;
+    }
+
+    public void updateAdmin(String user, String groupname) {
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(GroupUserEntry.COLUMN_ADMIN, 1);
+
+        String selection = GroupUserEntry.COLUMN_CONTACT_ID + " = ? and " + GroupUserEntry.COLUMN_CHAT_ID + " LIKE ? ";
+        String[] selectionArgs = {user, String.valueOf(getChatEntryID(groupname))};
+
+        int update = db.update(GroupUserEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+
+    }
+
+    public void deleteMessageFromTable(int id) {
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        String selection = MessagesEntry.COLUMN_ID + " LIKE ?";
+        String[] selectionArgs = {String.valueOf(id)};
+        db.delete(MessagesEntry.TABLE_NAME, selection, selectionArgs);
+
+    }
+
+    public Message getMessage(int messageId) {
+
+        SQLiteDatabase db = getReadableDatabase();
+
+        String[] projection = {
+                MessagesEntry.COLUMN_PHONENUMBER,                               //0th column
+                MessagesEntry.COLUMN_DATA_TEXT,                                 //1th column
+                MessagesEntry.COLUMN_DATA_MEDIA,                                //2th column
+                MessagesEntry.COLUMN_MIME_TYPE,                                 //3th column
+                MessagesEntry.COLUMN_SERVER_RECEIPT,                            //4th column
+                MessagesEntry.COLUMN_RECIPIENT_RECEIPT,                         //5th column
+                MessagesEntry.COLUMN_NAME_I_AM_SENDER,                          //6th column
+                MessagesEntry.COLUMN_RECEIVE_TIMESTAMP,                         //7th column
+                MessagesEntry.COLUMN_SEND_TIMESTAMP,                            //8th column
+                MessagesEntry.COLUMN_ID,                                        //9th column
+                MessagesEntry.COLUMN_READ_STATUS,                               //10th column
+                MessagesEntry.COLUMN_MEDIA_FILE_NAME,
+                MessagesEntry.COLUMN_MESSAGE_ID
+        };
+
+        String selection = MessagesEntry.COLUMN_ID + " = ? ";
+        String[] selectionArgs = {String.valueOf(messageId)};
+
+        Cursor c = db.query(
+                MessagesEntry.TABLE_NAME,                 // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                      // The sort order
+        );
+
+        if (c.moveToFirst()) {
+            boolean value = c.getInt(6) > 0;
+            int id = c.getInt(9);
+            boolean read = c.getInt(10) > 0;
+            return new Message(c.getInt(9), c.getString(0), c.getString(1), c.getBlob(2), c.getString(3), c.getString(4), c.getString(5), value, c.getString(7), c.getString(8), read, id, c.getString(11), c.getString(12));
+        }
         c.close();
         return null;
     }

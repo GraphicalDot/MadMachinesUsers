@@ -49,6 +49,8 @@ import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
+import org.jivesoftware.smackx.disco.ServiceDiscoveryManager;
+import org.jivesoftware.smackx.disco.packet.DiscoverInfo;
 import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -65,6 +67,8 @@ import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.xdata.Form;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class XMPPService extends Service {
@@ -224,17 +228,16 @@ public class XMPPService extends Service {
                     }
 
                     String groupServerId = multiUserChat.getRoom().substring(0, multiUserChat.getRoom().indexOf("@"));
+                    Log.i("groupserverId", groupServerId);
 
                     Log.i("invitation recv", "true");
                     PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
                     try {
                         LeafNode node = pubSubManager.getNode(groupServerId);
-                        //node.addItemEventListener(new ItemEventCoordinator());
-//                        Log.i("DiscoverInfo", "true");
-//                        node.discoverInfo();
                         Log.i("Subscribing", "true");
                         node.subscribe(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME) + "@mm.io");
-                        Log.i("getconfigureform", "true");
+                        Log.i("fetchingaffiliations", "true");
+                        node.getAffiliations();
                     } catch (SmackException.NoResponseException e) {
                         e.printStackTrace();
                     } catch (XMPPException.XMPPErrorException e) {
@@ -274,7 +277,7 @@ public class XMPPService extends Service {
 
                 @Override
                 public void onReceiptReceived(String fromJid, String toJid, String packetId) {
-                    PersonalMessaging.getInstance(getApplicationContext()).readReceiptReceived( fromJid, toJid, packetId);
+                    PersonalMessaging.getInstance(getApplicationContext()).readReceiptReceived(fromJid, toJid, packetId);
                 }
 
             });
@@ -321,6 +324,7 @@ public class XMPPService extends Service {
             //nothing
         }
     }
+
 
     private void getForms(XMPPTCPConnection con) {
         searchManager = new UserSearchManager(con);
@@ -765,18 +769,18 @@ public class XMPPService extends Service {
 
             int chatCount = notificationHandler.getNotificationChatCount();
             PendingIntent pendingIntent = null;
-            if( chatCount > 1 ){
+            if (chatCount > 1) {
                 pendingIntent = getPendingIntentForMainActivity();
-            } else if( chatCount == 1 ){
+            } else if (chatCount == 1) {
                 Contacts contact = sportsUnityDBHelper.getContact(from);
-                pendingIntent = getPendingIntentForChatActivity( name, from, chatId, contact.id, groupServerId, contact.image);
+                pendingIntent = getPendingIntentForChatActivity(name, from, chatId, contact.id, groupServerId, contact.image);
             }
 
             notificationHandler.showNotification(getApplicationContext(), pendingIntent, chatId);
         }
     }
 
-    private PendingIntent getPendingIntentForMainActivity(){
+    private PendingIntent getPendingIntentForMainActivity() {
         Intent mainIntent = new Intent(this, MainActivity.class);
         mainIntent.putExtra("tab_index", 2);
         mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -785,7 +789,7 @@ public class XMPPService extends Service {
         return pendingIntent;
     }
 
-    private PendingIntent getPendingIntentForChatActivity(String name, String from, long chatId, long contactId, String groupServerId, byte[] contactImage){
+    private PendingIntent getPendingIntentForChatActivity(String name, String from, long chatId, long contactId, String groupServerId, byte[] contactImage) {
         Intent notificationIntent = new Intent(this, ChatScreenActivity.class);
         notificationIntent.putExtra("name", name);
         notificationIntent.putExtra("number", from);

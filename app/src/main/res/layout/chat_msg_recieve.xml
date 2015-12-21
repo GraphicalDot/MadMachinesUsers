@@ -9,7 +9,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/activity_horizontal_margin"
-        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_vertical_margin_small"
+        android:layout_marginRight="@dimen/activity_vertical_margin_large"
         android:background="@drawable/chat_white"
         android:orientation="vertical"
         android:padding="@dimen/vertical_padding_very_very_small">
@@ -90,8 +91,8 @@
             android:id="@+id/timestampLeft"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/horizontal_padding_very_very_small"
             android:gravity="bottom|right"
+            android:paddingTop="@dimen/horizontal_padding_very_very_small"
             android:text="@string/chat_receive_time"
             android:textColor="@color/gray1"
             android:textSize="@dimen/font_size_very_small" />
