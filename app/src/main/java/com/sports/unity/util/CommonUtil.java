@@ -47,8 +47,8 @@ public class CommonUtil {
             Log.i("Common", "Phone number not found through sim api");
         } else {
             phoneNumber = telephonyManager.getLine1Number();
-            if( phoneNumber != null && phoneNumber.length() > 10 ){
-                phoneNumber = phoneNumber.substring( phoneNumber.length()-10);
+            if (phoneNumber != null && phoneNumber.length() > 10) {
+                phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
             } else {
                 //nothing
             }
@@ -105,6 +105,13 @@ public class CommonUtil {
         return time;
     }
 
+    public static String getTime(long gmtEpoch) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM HH:mm:ss");
+        simpleDateFormat.setTimeZone(TimeZone.getDefault());
+        String time = String.valueOf(simpleDateFormat.format(gmtEpoch * 1000));
+        return time;
+    }
+
     public static String getDefaultTimezoneTimeInAMANDPM(long gmtEpoch) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("K:mm a");
         simpleDateFormat.setTimeZone(TimeZone.getDefault());
@@ -137,9 +144,11 @@ public class CommonUtil {
 //        return numOfActivities;
 //    }
 
-    /** Check if this device has a camera */
+    /**
+     * Check if this device has a camera
+     */
     public static boolean checkCameraHardware(Context context) {
-        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)){
+        if (context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             // this device has a camera
             return true;
         } else {
@@ -148,7 +157,7 @@ public class CommonUtil {
         }
     }
 
-    public static String getMD5EncryptedString(byte[] content){
+    public static String getMD5EncryptedString(byte[] content) {
         String checksum = null;
         MessageDigest mdEnc = null;
         try {
@@ -156,8 +165,8 @@ public class CommonUtil {
 
             mdEnc.update(content, 0, content.length);
             checksum = new BigInteger(1, mdEnc.digest()).toString(16);
-            while ( checksum.length() < 32 ) {
-                checksum = "0"+checksum;
+            while (checksum.length() < 32) {
+                checksum = "0" + checksum;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -166,11 +175,11 @@ public class CommonUtil {
         return checksum;
     }
 
-    public static String getMD5EncryptedString(Context context, String fileName){
+    public static String getMD5EncryptedString(Context context, String fileName) {
         String checksum = null;
         MessageDigest mdEnc = null;
 
-        File file = new File ( DBUtil.getFilePath(context, fileName));
+        File file = new File(DBUtil.getFilePath(context, fileName));
         FileInputStream fileInputStream = null;
         try {
             mdEnc = MessageDigest.getInstance("MD5");
@@ -179,7 +188,7 @@ public class CommonUtil {
 
             byte chunk[] = new byte[4096];
             int read = 0;
-            while( (read = fileInputStream.read(chunk)) != -1 ){
+            while ((read = fileInputStream.read(chunk)) != -1) {
                 mdEnc.update(chunk, 0, read);
             }
 
@@ -190,10 +199,11 @@ public class CommonUtil {
 
         } catch (Exception ex) {
             ex.printStackTrace();
-        }finally {
-            try{
+        } finally {
+            try {
                 fileInputStream.close();
-            }catch (Exception ex){}
+            } catch (Exception ex) {
+            }
         }
 
         return checksum;
