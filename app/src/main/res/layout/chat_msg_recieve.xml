@@ -18,13 +18,15 @@
         <LinearLayout
             android:id="@+id/mediaPlayer"
             android:layout_width="200dp"
-            android:layout_height="48dip">
+            android:layout_height="48dip"
+            android:orientation="horizontal">
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/playAndPause"
                 style="@android:style/MediaButton.Play"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                />
 
             <ProgressBar
                 android:id="@+id/progressBarAudio"
@@ -42,7 +44,8 @@
                 <SeekBar
                     android:id="@+id/seekbar"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:focusable="false"/>
 
                 <TextView
                     android:id="@+id/duration"

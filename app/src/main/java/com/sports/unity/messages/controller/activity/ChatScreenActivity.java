@@ -740,7 +740,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             MenuItem forwardMessage = menu.findItem(R.id.forward);
             forwardMessage.setVisible(false);
             MenuItem searchMessages = menu.findItem(R.id.action_search);
-            searchMessages.setVisible(true);
+            searchMessages.setVisible(false);
             mtoolbar.findViewById(R.id.profile).setVisibility(View.VISIBLE);
         }
 
@@ -764,24 +764,71 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         blockUnblockUserHelper.initViewBasedOnBlockStatus(menu);
 
         SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        int searchImgId = android.support.v7.appcompat.R.id.search_button;
-        ImageView v = (ImageView) searchView.findViewById(searchImgId);
-        v.setImageResource(R.drawable.ic_menu_search);
-        searchView.setQueryHint("Search...");
+        searchView.setVisibility(View.GONE);
+        setCustomSearchViewbutton(searchView);
+        setSubmitAreaNull(searchView);
+        addCustomButtonsToSearchView(searchView);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
+                chatScreenAdapter.filterSearchQuery(newText);
                 return false;
             }
         });
         return true;
+    }
+
+    private void addCustomButtonsToSearchView(SearchView searchView) {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+
+        ImageButton up = new ImageButton(getApplicationContext());
+        up.setImageResource(R.drawable.ic_up_arrow);
+        up.setLayoutParams(params);
+        up.setBackgroundColor(Color.TRANSPARENT);
+        up.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "up", Toast.LENGTH_SHORT).show();
+            }
+        });
+        ImageButton down = new ImageButton(getApplicationContext());
+        down.setImageResource(R.drawable.ic_down_arrow);
+        down.setLayoutParams(params);
+        down.setBackgroundColor(Color.TRANSPARENT);
+        down.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "down", Toast.LENGTH_SHORT).show();
+            }
+        });
+        LinearLayout linearLayoutOfSearchView = (LinearLayout) searchView.findViewById(R.id.submit_area);
+        linearLayoutOfSearchView.addView(up);
+        linearLayoutOfSearchView.addView(down);
+
+    }
+
+    private void setSubmitAreaNull(SearchView searchView) {
+//        int submit_areaId = searchView.getContext().getResources().getIdentifier("android:id/submit_area", null, null);
+        ImageView mCloseButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
+        mCloseButton.setEnabled(false);
+        mCloseButton.setImageAlpha(00);
+        ImageView submitImage = (ImageView) searchView.findViewById(R.id.search_go_btn);
+        searchView.setSubmitButtonEnabled(true);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, 0);
+        submitImage.setLayoutParams(layoutParams);
+    }
+
+    private void setCustomSearchViewbutton(SearchView searchView) {
+        int searchImgId = android.support.v7.appcompat.R.id.search_button;
+        ImageView v = (ImageView) searchView.findViewById(searchImgId);
+        v.setImageResource(R.drawable.ic_menu_search);
+        searchView.setQueryHint("Search...");
     }
 
     @Override
@@ -960,6 +1007,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         }
         return success;
     }
+
 
     private abstract class CustomTask implements Runnable {
 

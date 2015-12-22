@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sports.unity.Database.DBUtil;
@@ -67,7 +68,7 @@ public class AudioRecordingHelper {
     private MediaPlayer mediaPlayer = null;
 
     private int currentPlayingMessageId = -1;
-    private ImageButton playPauseButton = null;
+    private ImageView playPauseButton = null;
     private HashMap<Integer, ProgressState> seekBarProgressMap = new HashMap<>();
 
     private AudioRecordingHelper(Activity activity) {
