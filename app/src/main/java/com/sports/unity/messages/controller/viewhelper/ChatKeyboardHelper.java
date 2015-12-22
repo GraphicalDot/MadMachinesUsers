@@ -152,7 +152,7 @@ public class ChatKeyboardHelper {
                 });
     }
 
-    public void tapOnTab(View view, Activity activity){
+    public void tapOnTab(String sendToIdentity, View view, Activity activity){
         unhighlightTappedItem(lastTappedView);
         highlightTappedItem(view);
         lastTappedView = view;
@@ -161,7 +161,7 @@ public class ChatKeyboardHelper {
         if( id == R.id.btn_text ){
             tapOnTextKeyBoard(activity);
         } else if( id == R.id.btn_camera ){
-            tapOnCamera(activity);
+            tapOnCamera( sendToIdentity, activity);
         } else if( id == R.id.btn_gallery ){
             tapOnGallery(activity);
         } else if( id == R.id.btn_emoticons ){
@@ -233,7 +233,7 @@ public class ChatKeyboardHelper {
 
     }
 
-    public void tapOnCamera(Activity activity) {
+    public void tapOnCamera(String sendToIdentity, Activity activity) {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_camera);
         int visibility = viewGroup.getVisibility();
 
@@ -245,14 +245,13 @@ public class ChatKeyboardHelper {
                 viewGroup.setVisibility(View.VISIBLE);
                 showPopupWindow(parentLayout);
 
-                postActionOnOpeningCameraKeyboard(activity);
+                postActionOnOpeningCameraKeyboard(sendToIdentity, activity);
                 toggleSystemKeyboard(parentLayout, activity.getApplicationContext());
             }
 
         } else {
             unhighlightTappedItem(lastTappedView);
-            Intent intent = new Intent(activity, NativeCameraActivity.class);
-            activity.startActivity(intent);
+            openNativeCameraActivity(sendToIdentity, activity);
         }
     }
 
@@ -268,7 +267,7 @@ public class ChatKeyboardHelper {
                 viewGroup.setVisibility(View.VISIBLE);
                 showPopupWindow(parentLayout);
 
-                postActionOnOpeningEmojiKeyboard(activity,viewGroup);
+                postActionOnOpeningEmojiKeyboard(activity, viewGroup);
             }
 
         } else {
@@ -342,12 +341,11 @@ public class ChatKeyboardHelper {
         editText.requestFocus();
     }
 
-    private void postActionOnOpeningCameraKeyboard(Activity activity) {
+    private void postActionOnOpeningCameraKeyboard(String sendToIdentity, Activity activity) {
         ViewGroup sendMessageLayout = (ViewGroup) activity.findViewById(R.id.send_message_layout);
         sendMessageLayout.setVisibility(View.GONE);
 
-        Intent intent = new Intent(activity, NativeCameraActivity.class);
-        activity.startActivity(intent);
+        openNativeCameraActivity(sendToIdentity, activity);
     }
 
     private void postActionOnOpeningEmojiKeyboard(final Activity activity, ViewGroup viewGroup) {
@@ -356,6 +354,12 @@ public class ChatKeyboardHelper {
 
         new LoadStickers( activity.getBaseContext(), viewGroup).execute();
 
+    }
+
+    private void openNativeCameraActivity(String sendToIdentity, Activity activity){
+        Intent intent = new Intent(activity, NativeCameraActivity.class);
+        intent.putExtra(Constants.INTENT_KEY_PHONE_NUMBER, sendToIdentity);
+        activity.startActivity(intent);
     }
 
     private class LoadStickers extends AsyncTask {

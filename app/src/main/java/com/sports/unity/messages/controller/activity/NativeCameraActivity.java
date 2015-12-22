@@ -58,6 +58,7 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.util.ActivityActionHandler;
+import com.sports.unity.util.Constants;
 import com.sports.unity.util.ThreadTask;
 
 import org.w3c.dom.Text;
@@ -144,6 +145,13 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
     }
 
     @Override
+    public void onBackPressed() {
+        clearDiscardedContent();
+
+        super.onBackPressed();
+    }
+
+    @Override
     public void onClick(View view) {
         handleClickEvent(view, view.getId());
     }
@@ -155,6 +163,12 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
     }
 
     private void initView(){
+
+        {
+            String sendTo = getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
+            TextView sendToView = (TextView)findViewById(R.id.identity);
+            sendToView.setText(sendTo);
+        }
 
         {
             /*
@@ -296,7 +310,12 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
     private void prepareForVideoRecording(){
         recorder = new MediaRecorder();
-        recorder.setOrientationHint(90);
+
+        if( cameraId == Camera.CameraInfo.CAMERA_FACING_BACK ) {
+            recorder.setOrientationHint(90);
+        } else {
+            recorder.setOrientationHint(270);
+        }
 
         mCamera.unlock();
         recorder.setCamera(mCamera);
@@ -373,9 +392,16 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
 
         {
-            TextView view = (TextView)findViewById(R.id.video_recording_time);
+            ImageView view = (ImageView)findViewById(R.id.capture);
+            view.setImageResource(R.drawable.ic_record_video);
+        }
+
+        {
+            View tempView = findViewById(R.id.top_recording_layout);
+            tempView.setVisibility(View.VISIBLE);
+
+            TextView view = (TextView)tempView.findViewById(R.id.video_recording_time);
             view.setText("00:" + VIDEO_MAX_DURATION);
-            view.setVisibility(View.VISIBLE);
         }
     }
 
@@ -396,17 +422,21 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
 
         {
-            TextView view = (TextView)findViewById(R.id.video_recording_time);
-            view.setVisibility(View.GONE);
+            ImageView view = (ImageView)findViewById(R.id.capture);
+            view.setImageResource(R.drawable.ic_capture);
+        }
+
+        {
+            View tempView = findViewById(R.id.top_recording_layout);
+            tempView.setVisibility(View.GONE);
         }
     }
 
     private void insideOfRecordButton() {
         {
             View view = findViewById(R.id.camera_config_layout);
-            view.setBackgroundColor( getResources().getColor(R.color.semi_transparent));
+            view.setBackgroundColor(getResources().getColor(R.color.semi_transparent));
         }
-        //TODO
     }
 
     private void outsideOfRecordButton() {
@@ -414,7 +444,6 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             View view = findViewById(R.id.camera_config_layout);
             view.setBackgroundColor( getResources().getColor(R.color.red_semi_transparent));
         }
-        //TODO
     }
 
     private void playVideo(){
@@ -531,7 +560,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
             Log.i("Captured Image Size ", originalBitmap.getWidth() + " : " + originalBitmap.getHeight());
 
-            Bitmap rotatedBitMap = Bitmap.createBitmap( originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getHeight(), matrix, false);
+            Bitmap rotatedBitMap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getHeight(), matrix, false);
             originalBitmap.recycle();
 
             ImageView imageView = (ImageView)findViewById(R.id.taken_picture);
@@ -568,7 +597,8 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
     private void discardContent() {
         content = null;
-        //TODO remove video file content
+
+        clearDiscardedContent();
 
         {
             View view = findViewById(R.id.send_discard_layout);
@@ -597,6 +627,10 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
 
         safeCameraOpenInView(mCameraView);
+    }
+
+    private void clearDiscardedContent(){
+        DBUtil.deleteContentFromExternalFileStorage(this, videoContentOutputFilename);
     }
 
     /**
@@ -650,8 +684,11 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
     private void startTimer(){
         cancelTimer();
 
+        TextView textView = (TextView)findViewById(R.id.video_recording_time);
+        textView.setTag(VIDEO_MAX_DURATION);
+
         timer = new Timer();
-        timer.schedule( new VideoTimerTask((TextView)findViewById(R.id.video_recording_time)), 1000, 1000);
+        timer.schedule( new VideoTimerTask(textView), 1000, 1000);
     }
 
     private void cancelTimer(){
@@ -679,6 +716,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
                     @Override
                     public void run() {
                         textView.setText(count < 10 ? "00:0" + count : "00:" + count);
+                        textView.setTag(count);
                     }
                 });
             } else {
@@ -995,7 +1033,10 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
                     int pointX = location[0] + (int) event.getX();
                     int pointY = location[1] + (int) event.getY();
 
-                    if (recordButtonRect.contains(pointX, pointY)) {
+                    TextView textView = (TextView)NativeCameraActivity.this.findViewById(R.id.video_recording_time);
+                    Integer videoDuration = VIDEO_MAX_DURATION - (Integer)textView.getTag();
+
+                    if (recordButtonRect.contains(pointX, pointY) && videoDuration > 0) {
                         doneVideoRecording();
                     } else {
                         cancelVideoRecording();

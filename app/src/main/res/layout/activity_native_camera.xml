@@ -21,17 +21,58 @@
         android:scaleType="center"
         />
 
-    <TextView
-        android:id="@+id/video_recording_time"
-        android:text="00"
-        android:textSize="@dimen/font_size_small"
-        android:textColor="@android:color/white"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:id="@+id/top_recording_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:layout_marginTop="@dimen/vertical_padding_very_small"
+        android:background="@color/semi_transparent"
+        android:orientation="horizontal"
+        android:padding="@dimen/vertical_padding_very_very_small"
         android:visibility="gone"
-        />
+        >
+        <TextView
+            android:id="@+id/send_to_label"
+            android:text="Send to"
+            android:textSize="@dimen/font_size_small"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/horizontal_padding_very_small"
+            />
+        <TextView
+            android:id="@+id/identity"
+            android:text="Amandeep"
+            android:textSize="@dimen/font_size_medium"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/horizontal_padding_very_small"
+            />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal"
+            android:gravity="right"
+            >
+            <ImageView
+                android:src="@drawable/red_circle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                />
+            <TextView
+                android:id="@+id/video_recording_time"
+                android:text="00:00"
+                android:textSize="@dimen/font_size_small"
+                android:textColor="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/horizontal_padding_very_small"
+                />
+        </LinearLayout>
+    </LinearLayout>
+
     <FrameLayout
         android:id="@+id/video_container"
         android:layout_width="fill_parent"

@@ -140,6 +140,7 @@ public class AudioRecordingHelper {
 
             setDurationOnTimeView(holder.getDuration(), progressState);
         } else {
+            MediaPlayer mediaPlayer = null;
             boolean success = false;
             try {
                 pauseAudio();
@@ -164,6 +165,7 @@ public class AudioRecordingHelper {
                 holder.getSeekBar().setProgress(0);
 
                 setDurationOnTimeView(holder.getDuration(), progressState);
+                mediaPlayer.release();
             } else {
                 //nothing
             }
@@ -392,14 +394,14 @@ public class AudioRecordingHelper {
     }
 
     private void cancelVoiceRecord() {
+        DBUtil.deleteContentFromExternalFileStorage(activity, mFilename);
+
         {
             View button = rootLayout.findViewById(R.id.record_button);
 
             Animation animation = AnimationUtils.loadAnimation(rootLayout.getContext(), R.anim.enlarge_unlimited_reverse);
             button.startAnimation(animation);
         }
-
-        //TODO delete saved file content
     }
 
     private void reset() {

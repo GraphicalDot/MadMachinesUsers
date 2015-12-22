@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.util.network.ContentRequest;
 
@@ -38,15 +39,18 @@ import java.util.Queue;
  */
 public class FileOnCloudHandler {
 
+    public static final int STATUS_NONE = 1;
+
+    public static final int STATUS_DOWNLOADING = 2;
+    public static final int STATUS_DOWNLOAD_FAILED = 3;
+    public static final int STATUS_DOWNLOADED = 4;
+
+    public static final int STATUS_UPLOADING = 5;
+    public static final int STATUS_UPLOADED = 6;
+    public static final int STATUS_UPLOAD_FAILED = 7;
+
+
     private static final String CONTENT_CLOUD_URL = "http://54.169.217.88/media?";
-
-    private static final int STATUS_NONE = 1;
-    private static final int STATUS_DOWNLOADING = 2;
-    private static final int STATUS_DOWNLOAD_FAILED = 3;
-    private static final int STATUS_DOWNLOADED = 4;
-
-    private static final int STATUS_UPLOADING = 5;
-    private static final int STATUS_UPLOADED = 6;
 
     private static FileOnCloudHandler FILE_ON_CLOUD_HANDLER = null;
 
@@ -59,7 +63,7 @@ public class FileOnCloudHandler {
 
     private Context context = null;
     private PriorityQueue<CloudContentRequest> requests = new PriorityQueue<>();
-    private HashMap<Long, Integer> requestMapWithStatus = new HashMap<>();
+    private HashMap<String, Integer> requestMapWithStatus = new HashMap<String, Integer>();
 
     private Thread threadToHandleRequests = null;
 
@@ -68,27 +72,28 @@ public class FileOnCloudHandler {
     }
 
     public void requestForUpload(byte[] content, String mimeType, Chat chat, long messageId){
-        if( ! requestMapWithStatus.containsKey(messageId) ) {
+        if( ! requestMapWithStatus.containsKey(String.valueOf(messageId)) ) {
             CloudContentRequest request = new CloudContentRequest(true, mimeType, messageId, null, content, true, chat);
             requests.add(request);
-            requestMapWithStatus.put(messageId, STATUS_UPLOADING);
+            requestMapWithStatus.put(String.valueOf(messageId), STATUS_UPLOADING);
 
             processRequests();
         }
     }
 
     public void requestForUpload(String fileName, String mimeType, Chat chat, long messageId){
-        if( ! requestMapWithStatus.containsKey(messageId) ) {
+        if( ! requestMapWithStatus.containsKey(String.valueOf(messageId)) ) {
+            Log.i("File on cloud" , "upload request message id "+messageId);
             CloudContentRequest request = new CloudContentRequest(true, mimeType, messageId, null, fileName, false, chat);
             requests.add(request);
-            requestMapWithStatus.put(messageId, STATUS_UPLOADING);
+            requestMapWithStatus.put(String.valueOf(messageId), STATUS_UPLOADING);
 
             processRequests();
         }
     }
 
     public void requestForDownload(String checksum, String mimeType, long messageId) {
-        if( ! requestMapWithStatus.containsKey(messageId) ) {
+        if( ! requestMapWithStatus.containsKey(String.valueOf(messageId)) ) {
             boolean isContentInBytes = true;
             if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
                 isContentInBytes = false;
@@ -96,10 +101,35 @@ public class FileOnCloudHandler {
 
             CloudContentRequest request = new CloudContentRequest(false, mimeType, messageId, checksum, null, isContentInBytes, null);
             requests.add(request);
-            requestMapWithStatus.put(messageId, STATUS_DOWNLOADING);
+            requestMapWithStatus.put(String.valueOf(messageId), STATUS_DOWNLOADING);
 
             processRequests();
         }
+    }
+
+    public int getMediaContentStatus(Message message){
+        int status = STATUS_NONE;
+        if( requestMapWithStatus.containsKey(String.valueOf(message.id)) ){
+            status = requestMapWithStatus.get(String.valueOf(message.id));
+        }
+
+        if( status == STATUS_NONE ){
+            if( message.iAmSender ){
+                if( message.textData.length() == 0 ){
+                    status = STATUS_UPLOAD_FAILED;
+                } else {
+                    status = STATUS_UPLOADED;
+                }
+            } else {
+                if( message.mediaFileName == null ){
+                    status = STATUS_DOWNLOAD_FAILED;
+                } else {
+                    status = STATUS_DOWNLOADED;
+                }
+            }
+        }
+
+        return status;
     }
 
     private void processRequests(){
@@ -143,7 +173,7 @@ public class FileOnCloudHandler {
             sendActionToCorrespondingActivityListener(0, ActivityActionHandler.CHAT_SCREEN_KEY);
 
             requests.remove(request);
-            requestMapWithStatus.remove(request.getMessageId());
+            requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
         } else {
             String checksum = uploadContent((String)request.getContent());
             PersonalMessaging.getInstance(context).sendMediaMessage(checksum, (Chat) request.extra, request.messageId, request.mimeType);
@@ -151,7 +181,7 @@ public class FileOnCloudHandler {
             sendActionToCorrespondingActivityListener(0, ActivityActionHandler.CHAT_SCREEN_KEY);
 
             requests.remove(request);
-            requestMapWithStatus.remove(request.getMessageId());
+            requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
         }
     }
 
@@ -166,7 +196,7 @@ public class FileOnCloudHandler {
             sendActionToCorrespondingActivityListener(2, ActivityActionHandler.CHAT_SCREEN_KEY, request.mimeType, fileName, content);
 
             requests.remove(request);
-            requestMapWithStatus.remove(request.getMessageId());
+            requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
         } else {
             String fileName = DBUtil.getUniqueFileName(context, request.mimeType);
             downloadContentFromFile(request.checksum, fileName);
@@ -176,7 +206,7 @@ public class FileOnCloudHandler {
             sendActionToCorrespondingActivityListener( 0, ActivityActionHandler.CHAT_SCREEN_KEY);
 
             requests.remove(request);
-            requestMapWithStatus.remove(request.getMessageId());
+            requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
         }
     }
 

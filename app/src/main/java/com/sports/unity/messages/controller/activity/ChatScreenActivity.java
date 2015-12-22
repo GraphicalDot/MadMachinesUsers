@@ -187,7 +187,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                 mediaMap.put((String) messageContent, (byte[]) mediaContent);
             } else if (id == 3) {
                 //handle incoming media message
-                FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent);
+                if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) || mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO) ) {
+                    FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent);
+                } else {
+                    //nothing
+                }
             }
 
             ChatScreenActivity.this.runOnUiThread(new Runnable() {
@@ -653,8 +657,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
             FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, mimeType, chat, messageId);
-
-            //TODO download button, play video
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             String stickerAssetPath = (String) messageContent;
             personalMessaging.sendStickerMessage(stickerAssetPath, chat, JABBERID, chatID);
@@ -675,23 +677,23 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     }
 
     public void openCamera(View view) {
-        chatKeyboardHelper.tapOnTab(view, this);
+        chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
     }
 
     public void emojipopup(View view) {
-        chatKeyboardHelper.tapOnTab(view, this);
+        chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
     }
 
     public void galleryPopup(View view) {
-        chatKeyboardHelper.tapOnTab(view, this);
+        chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
     }
 
     public void voicePopup(View view) {
-        chatKeyboardHelper.tapOnTab(view, this);
+        chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
     }
 
     public void openKeyBoard(View view) {
-        chatKeyboardHelper.tapOnTab(view, this);
+        chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -172,13 +172,17 @@ public class DBUtil {
     }
 
     public static boolean deleteContentFromExternalFileStorage(Context context, String fileName){
-        File dirPath = new File(getExternalStorageDirectoryPath(context));
-        if( ! dirPath.exists() ){
-            dirPath.mkdir();
-        }
+        if( fileName != null ) {
+            File dirPath = new File(getExternalStorageDirectoryPath(context));
+            if (!dirPath.exists()) {
+                dirPath.mkdir();
+            }
 
-        File file = new File ( getFilePath( context, fileName));
-        return file.delete();
+            File file = new File(getFilePath(context, fileName));
+            return file.delete();
+        } else {
+            return false;
+        }
     }
 
     public static String getUniqueFileName(Context context, String mimeType){
