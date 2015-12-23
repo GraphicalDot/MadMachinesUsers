@@ -8,7 +8,8 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/vertical_padding_very_small"
+        android:layout_marginBottom="@dimen/vertical_space_between_chats"
+        android:layout_marginTop="@dimen/vertical_space_between_chats"
         android:layout_marginLeft="@dimen/horizontal_padding_very_small"
         android:layout_marginRight="@dimen/horizontal_padding_large"
         android:background="@drawable/chat_white"

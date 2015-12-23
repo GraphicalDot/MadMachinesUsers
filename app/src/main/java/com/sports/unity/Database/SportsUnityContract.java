@@ -56,6 +56,7 @@ public final class SportsUnityContract {
         public static final String COLUMN_LAST_MESSAGE_ID = "last_message";
         public static final String COLUMN_UNREAD_COUNT = "unread_count";
         public static final String COLUMN_MUTE_CONVERSATION = "mute_conversation";
+        public static final String COLUMN_LAST_USED = "last_used";
 
     }
 
