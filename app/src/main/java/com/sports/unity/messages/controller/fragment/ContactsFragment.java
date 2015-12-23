@@ -20,6 +20,7 @@ import com.sports.unity.R;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.activity.ForwardSelectedItems;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.messages.controller.model.ToolbarActionsForChatScreen;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.Constants;
 
@@ -137,6 +138,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
     private void forward(Contacts contact) {
         if (contact.registered) {
+            ToolbarActionsForChatScreen.getInstance(getActivity().getApplicationContext()).resetVariables();
             String number = contact.jid;
             String name = contact.name;
             long contactId = contact.id;

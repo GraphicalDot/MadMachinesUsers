@@ -51,7 +51,7 @@ import java.util.Locale;
 public class ChatScreenAdapter extends BaseAdapter {
 
     private ArrayList<Message> messageList;
-    private ArrayList<Message> messageListForFilter = new ArrayList<>();
+    private ArrayList<Integer> messageListForFilter = new ArrayList<>();
     private Activity activity;
     private String searchString = "";
 
@@ -65,7 +65,6 @@ public class ChatScreenAdapter extends BaseAdapter {
         this.messageList = messagelist;
         activity = chatScreenActivity;
         mediaMap = chatScreenActivity.getMediaMap();
-        this.messageListForFilter.addAll(messagelist);
 
         audioRecordingHelper = AudioRecordingHelper.getInstance(activity);
         audioRecordingHelper.clearProgressMap();
@@ -102,21 +101,22 @@ public class ChatScreenAdapter extends BaseAdapter {
         return flag;
     }
 
-    public void filterSearchQuery(String searchString) {
+    public ArrayList<Integer> filterSearchQuery(String searchString) {
         this.searchString = searchString;
-        searchString = searchString.toLowerCase();
-        /*messageList.clear();
+        this.searchString = searchString.toLowerCase();
+        messageListForFilter.clear();
         if (searchString.length() == 0) {
-            messageList.addAll(messageListForFilter);
+            //do nothing
         } else {
 
-            for (Message message : messageListForFilter) {
+            for (Message message : messageList) {
                 if (message.textData.toLowerCase().contains(searchString)) {
-                    messageList.add(message);
+                    messageListForFilter.add(message.id);
                 }
             }
-        }*/
+        }
         notifyDataSetChanged();
+        return messageListForFilter;
     }
 
     public static class ViewHolder {
