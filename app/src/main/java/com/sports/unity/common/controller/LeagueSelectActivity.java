@@ -19,7 +19,7 @@ public class LeagueSelectActivity extends AppCompatActivity {
 
     Toolbar toolbar;
     ViewPager pager;
-    ViewPagerAdapter1 adapter;
+    //ViewPagerAdapter1 adapter;
     SlidingTabLayout tabs;
     ArrayList<String> sports;
 
@@ -41,12 +41,12 @@ public class LeagueSelectActivity extends AppCompatActivity {
 
 
         // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter = new ViewPagerAdapter1(getSupportFragmentManager(),sports,Numboftabs);
+       // adapter = new ViewPagerAdapter1(getSupportFragmentManager(),sports,Numboftabs);
 
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) findViewById(com.sports.unity.R.id.pager);
 
-        pager.setAdapter(adapter);
+     //   pager.setAdapter(adapter);
 
         // Assiging the Sliding Tab Layout View
         tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);

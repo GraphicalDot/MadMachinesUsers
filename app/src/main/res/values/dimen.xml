@@ -3,9 +3,6 @@
 
     <!-- Default screen margins, per the Android Design guidelines. -->
 
-
-    <dimen name="keyboard_height">230dip</dimen>
-
     <dimen name="horizontal_padding_very_very_small">4dp</dimen>
     <dimen name="horizontal_padding_very_small">10dp</dimen>
     <dimen name="horizontal_padding_small">16dp</dimen>

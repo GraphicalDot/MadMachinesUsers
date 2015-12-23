@@ -22,6 +22,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -186,6 +187,12 @@ public class ProfileCreationActivity extends AppCompatActivity {
         initFacebookLogin();
 
         setContentView(R.layout.activity_profile_creation);
+
+        getWindow().setBackgroundDrawableResource(R.drawable.splash_bg);
+
+        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.progress_light), android.graphics.PorterDuff.Mode.MULTIPLY);
+
 
         addFacebookCallback();
         addListenerToContinueButton();

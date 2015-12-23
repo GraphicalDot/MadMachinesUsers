@@ -76,7 +76,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
     private void initViews(View v) {
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
-        mSwipeRefreshLayout.setColorSchemeColors(Color.parseColor("#2C84CC"));
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.app_theme_blue));
 
         mRecyclerView = (RecyclerView) v.findViewById(com.sports.unity.R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -85,7 +85,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         progressBar = (ProgressBar) v.findViewById(R.id.progress);
-        progressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#2C84CC"), android.graphics.PorterDuff.Mode.MULTIPLY);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
 
         error = (LinearLayout) v.findViewById(R.id.error);
         error.setVisibility(View.GONE);
@@ -258,8 +258,10 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
         if ((TinyDB.getInstance(getActivity()).getBoolean("check", false))) {
             menu.findItem(R.id.mini_cards).setChecked(true);
+            menu.findItem(R.id.mini_cards).setIcon(R.drawable.ic_thumb);
         } else {
             menu.findItem(R.id.mini_cards).setChecked(false);
+            menu.findItem(R.id.mini_cards).setIcon(R.drawable.ic_list);
         }
 
         super.onCreateOptionsMenu(menu, inflater);
@@ -293,9 +295,6 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
-        if (id == com.sports.unity.R.id.action_settings) {
-            return true;
-        }
 
         if (id == R.id.action_search) {
             Intent intent = new Intent(getActivity(), NewsSearchActivity.class);
@@ -312,9 +311,11 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         if (id == R.id.mini_cards) {
             if (item.isChecked()) {
                 item.setChecked(false);
+                item.setIcon(R.drawable.ic_list);
                 TinyDB.getInstance(getActivity()).putBoolean("check", false);
             } else {
                 item.setChecked(true);
+                item.setIcon(R.drawable.ic_thumb);
                 TinyDB.getInstance(getActivity()).putBoolean("check", true);
             }
 

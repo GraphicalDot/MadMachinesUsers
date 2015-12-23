@@ -53,7 +53,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerInParent="true"
         android:layout_marginRight="16dp"
-        android:background="@drawable/invite_button"
+        android:background="@drawable/round_edge_box_blue"
         android:focusable="false"
         android:minHeight="24dp"
         android:stateListAnimator="@null"

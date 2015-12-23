@@ -66,22 +66,22 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
         others.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
         buttonContainerLayout = (LinearLayout) v.findViewById(com.sports.unity.R.id.fragmentChangeButtonLayout);
 
-        ImageButton createGroup = (ImageButton) v.findViewById(R.id.create_group);
-        createGroup.setOnClickListener(this);
-        ImageButton joinGroup = (ImageButton) v.findViewById(R.id.join_group);
-        joinGroup.setOnClickListener(this);
-        ImageButton peopleAroundMe = (ImageButton) v.findViewById(R.id.people_around_me);
-        peopleAroundMe.setOnClickListener(this);
-
-        TextView createGrp = (TextView) v.findViewById(R.id.create_group_txt);
-        createGrp.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
-        createGrp.setOnClickListener(this);
-
-        TextView joinGrp = (TextView) v.findViewById(R.id.join_group_txt);
-        joinGrp.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
-
-        TextView pplAroundMe = (TextView) v.findViewById(R.id.ppl_around_me_txt);
-        pplAroundMe.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
+//        ImageButton createGroup = (ImageButton) v.findViewById(R.id.create_group);
+//        createGroup.setOnClickListener(this);
+//        ImageButton joinGroup = (ImageButton) v.findViewById(R.id.join_group);
+//        joinGroup.setOnClickListener(this);
+//        ImageButton peopleAroundMe = (ImageButton) v.findViewById(R.id.people_around_me);
+//        peopleAroundMe.setOnClickListener(this);
+//
+//        TextView createGrp = (TextView) v.findViewById(R.id.create_group_txt);
+//        createGrp.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
+//        createGrp.setOnClickListener(this);
+//
+//        TextView joinGrp = (TextView) v.findViewById(R.id.join_group_txt);
+//        joinGrp.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
+//
+//        TextView pplAroundMe = (TextView) v.findViewById(R.id.ppl_around_me_txt);
+//        pplAroundMe.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
 
         ChatFragment fragment = new ChatFragment();
         mListener = fragment;
@@ -104,9 +104,9 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
                 mListener = fragment;
                 getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
                 buttonContainerLayout.setBackgroundResource(R.drawable.btn_chat_focused);
-                chats.setTextColor(Color.parseColor("#FFFFFF"));
-                contacts.setTextColor(Color.parseColor("#2C84CC"));
-                others.setTextColor(Color.parseColor("#2C84CC"));
+                chats.setTextColor(getResources().getColor(R.color.ColorPrimary));
+                contacts.setTextColor(getResources().getColor(R.color.app_theme_blue));
+                others.setTextColor(getResources().getColor(R.color.app_theme_blue));
                 break;
             }
             case R.id.btn_contacts: {
@@ -119,9 +119,9 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
 
                 getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
                 buttonContainerLayout.setBackgroundResource(R.drawable.btn_contacts_focused);
-                contacts.setTextColor(Color.parseColor("#FFFFFF"));
-                chats.setTextColor(Color.parseColor("#2C84CC"));
-                others.setTextColor(Color.parseColor("#2C84CC"));
+                contacts.setTextColor(getResources().getColor(R.color.ColorPrimary));
+                chats.setTextColor(getResources().getColor(R.color.app_theme_blue));
+                others.setTextColor(getResources().getColor(R.color.app_theme_blue));
                 break;
             }
             case R.id.btn_others: {
@@ -130,24 +130,24 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
 
                 getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
                 buttonContainerLayout.setBackgroundResource(R.drawable.btn_others_focused);
-                others.setTextColor(Color.parseColor("#FFFFFF"));
-                contacts.setTextColor(Color.parseColor("#2C84CC"));
-                chats.setTextColor(Color.parseColor("#2C84CC"));
+                others.setTextColor(getResources().getColor(R.color.ColorPrimary));
+                contacts.setTextColor(getResources().getColor(R.color.app_theme_blue));
+                chats.setTextColor(getResources().getColor(R.color.app_theme_blue));
                 break;
             }
-            case R.id.create_group:
-                Intent intent = new Intent(getActivity(), CreateGroup.class);
-                startActivity(intent);
-                Log.i("createGroupActivity : ", "shown");
-                break;
-            case R.id.join_group:
-                //TODO
-                Toast.makeText(getActivity(), "Not implemented yet", Toast.LENGTH_SHORT).show();
-                break;
-            case R.id.people_around_me:
-                //TODO
-                Toast.makeText(getActivity(), "Not implemented yet", Toast.LENGTH_SHORT).show();
-                break;
+//            case R.id.create_group:
+//                Intent intent = new Intent(getActivity(), CreateGroup.class);
+//                startActivity(intent);
+//                Log.i("createGroupActivity : ", "shown");
+//                break;
+//            case R.id.join_group:
+//                //TODO
+//                Toast.makeText(getActivity(), "Not implemented yet", Toast.LENGTH_SHORT).show();
+//                break;
+//            case R.id.people_around_me:
+//                //TODO
+//                Toast.makeText(getActivity(), "Not implemented yet", Toast.LENGTH_SHORT).show();
+//                break;
         }
     }
 

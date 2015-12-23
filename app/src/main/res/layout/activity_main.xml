@@ -19,23 +19,30 @@
             android:layout_height="?android:attr/actionBarSize"
             android:minHeight="?android:attr/actionBarSize" />
 
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/tab_seperator" />
+
         <com.sports.unity.common.view.SlidingTabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/ColorPrimary"
+            android:background="@color/app_theme_blue"
             android:elevation="2dp" />
 
         <View
             android:layout_width="fill_parent"
             android:layout_height="2dp"
-            android:background="@color/app_theme_blue" />
+            android:background="@color/ColorPrimary" />
 
         <android.support.v4.view.ViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"></android.support.v4.view.ViewPager>
+            android:layout_weight="1">
+
+        </android.support.v4.view.ViewPager>
 
     </LinearLayout>
 
@@ -44,7 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#ffffff"
+        android:background="@color/ColorPrimary"
         app:headerLayout="@layout/navigation_header"/>
 
 </android.support.v4.widget.DrawerLayout>

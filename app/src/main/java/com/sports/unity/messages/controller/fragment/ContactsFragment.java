@@ -70,7 +70,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
                 chatScreenIntent.putExtra("blockStatus", blockStatus);
                 startActivity(chatScreenIntent);
             } else {
-                Toast.makeText(getActivity().getApplicationContext(), "Invite him to sports Unity!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity().getApplicationContext(), "Invite to sports Unity!", Toast.LENGTH_SHORT).show();
             }
         }
 

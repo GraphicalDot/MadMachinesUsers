@@ -48,27 +48,6 @@ public class MainActivity extends CustomAppCompatActivity {
         name.setText("Hello");
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(com.sports.unity.R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == com.sports.unity.R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
     private void initViews() {
         Toolbar toolbar = initToolBar();
@@ -113,7 +92,7 @@ public class MainActivity extends CustomAppCompatActivity {
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return getResources().getColor(com.sports.unity.R.color.tabsScrollColor);
+                return getResources().getColor(R.color.ColorPrimary);
             }
         });
         // Setting the ViewPager For the SlidingTabsLayout

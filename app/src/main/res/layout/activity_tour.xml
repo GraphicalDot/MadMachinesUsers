@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#fff"
+    android:background="@color/ColorPrimary"
     tools:context=".MainActivity">
 
     <android.support.v4.view.ViewPager
@@ -53,8 +53,8 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_gravity="bottom"
-        android:background="#2c84cc"
-        android:textColor="#fff"
+        android:background="@color/app_theme_blue"
+        android:textColor="@color/ColorPrimary"
         android:textSize="20dp"
        />
     </LinearLayout>

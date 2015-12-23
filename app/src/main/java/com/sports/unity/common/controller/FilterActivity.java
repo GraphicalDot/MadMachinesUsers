@@ -137,9 +137,9 @@ public class FilterActivity extends AppCompatActivity {
     private void initTextViewBasedOnCheckFlag(LinearLayout layout, boolean checked){
         TextView title = (TextView)layout.getChildAt(1);
         if ( checked ) {
-            title.setTextColor(Color.parseColor("#2c84cc"));
+            title.setTextColor(getResources().getColor(R.color.app_theme_blue));
         } else {
-            title.setTextColor(Color.parseColor("#7d7d7d"));
+            title.setTextColor(getResources().getColor(R.color.gray1));
         }
     }
 

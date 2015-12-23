@@ -376,7 +376,8 @@ public class ChatKeyboardHelper {
         @Override
         protected void onPreExecute() {
             progressBar = (ProgressBar) viewGroup.findViewById(R.id.progress);
-            progressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#2C84CC"), android.graphics.PorterDuff.Mode.MULTIPLY);
+            progressBar.getIndeterminateDrawable().setColorFilter( popUpView.getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+
             progressBar.setVisibility(View.VISIBLE);
             super.onPreExecute();
 

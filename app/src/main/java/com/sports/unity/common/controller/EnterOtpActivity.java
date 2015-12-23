@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -88,6 +89,11 @@ public class EnterOtpActivity extends AppCompatActivity {
     }
 
     private void initViews() {
+        getWindow().setBackgroundDrawableResource(R.drawable.splash_bg) ;
+
+        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.gray1), android.graphics.PorterDuff.Mode.MULTIPLY);
+
         Button editNumberButton = (Button) findViewById(R.id.editnumber);
         editNumberButton.setOnClickListener(new View.OnClickListener() {
             @Override

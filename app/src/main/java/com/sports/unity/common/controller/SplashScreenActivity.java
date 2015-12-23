@@ -21,7 +21,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(com.sports.unity.R.layout.activity_splash);
-
+        getWindow().setBackgroundDrawableResource(R.drawable.splash_bg) ;
 //        Crittercism.initialize(getApplicationContext(), "564059fcd224ac0a00ed42a3");
 
         UserUtil.init(this);

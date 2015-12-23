@@ -131,7 +131,7 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
 
             super.onPageStarted(view, url, favicon);
-            progressBar.getIndeterminateDrawable().setColorFilter(Color.parseColor("#2C84CC"), android.graphics.PorterDuff.Mode.MULTIPLY);
+            progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
             progressBar.setVisibility(View.VISIBLE);
         }
 

@@ -89,12 +89,13 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         // Assiging the Sliding Tab Layout View
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
         tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
+        tabs.setTabTextColor( R.color.profile_tab_selector);
 
         // Setting Custom Color for the Scroll bar indicator of the Tab View
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return getResources().getColor(com.sports.unity.R.color.tabsScrollColor);
+                return getResources().getColor(R.color.app_theme_blue);
             }
         });
         // Setting the ViewPager For the SlidingTabsLayout
