@@ -197,7 +197,7 @@ public class AudioRecordingHelper {
             cancelTimerOnPlaying();
 
             if (playPauseButton != null) {
-                playPauseButton.setImageResource(android.R.drawable.ic_media_play);
+                playPauseButton.setImageResource(R.drawable.ic_play_blue);
             } else {
                 //nothing
             }
@@ -233,7 +233,7 @@ public class AudioRecordingHelper {
 
                 putSeekProgress( message.id, 0, mediaPlayer.getDuration());
 
-                holder.getPlayandPause().setImageResource(android.R.drawable.ic_media_pause);
+                holder.getPlayandPause().setImageResource(R.drawable.ic_pause);
             }catch (Exception ex){
                 ex.printStackTrace();
             }
@@ -662,7 +662,7 @@ public class AudioRecordingHelper {
             mediaPlayer.pause();
             mediaPlayer.seekTo(0);
 
-            holder.getPlayandPause().setImageResource(android.R.drawable.ic_media_play);
+            holder.getPlayandPause().setImageResource(R.drawable.ic_play_blue);
             putSeekProgress(currentPlayingMessageId, -1, mediaPlayer.getDuration());
 
             int time = mediaPlayer.getDuration();

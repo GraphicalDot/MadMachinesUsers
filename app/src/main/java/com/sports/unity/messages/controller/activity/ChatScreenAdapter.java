@@ -6,29 +6,24 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.Uri;
+import android.graphics.PorterDuff;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
-import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.VideoView;
 
-import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -169,7 +164,7 @@ public class ChatScreenAdapter extends BaseAdapter {
         private TextView timeStamp;
         private ImageView receivedStatus;
         private FrameLayout mediaContentLayout;
-        private LinearLayout mediaPlayer;
+        private RelativeLayout mediaPlayerLayout;
         private ImageView playandPause;
         private SeekBar seekBar;
         private TextView duration;
@@ -207,7 +202,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                     holder.timeStamp.setTypeface(FontTypeface.getInstance(activity.getApplicationContext()).getRobotoCondensedRegular());
                     holder.playandPause = (ImageView) vi.findViewById(R.id.playAndPause);
                     holder.seekBar = (SeekBar) vi.findViewById(R.id.seekbar);
-                    holder.mediaPlayer = (LinearLayout) vi.findViewById(R.id.mediaPlayer);
+                    holder.mediaPlayerLayout = (RelativeLayout) vi.findViewById(R.id.mediaPlayer);
                     holder.duration = (TextView) vi.findViewById(R.id.duration);
                     holder.receivedStatus = null;
                     vi.setTag(holder);
@@ -222,7 +217,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                     holder.receivedStatus = (ImageView) vi.findViewById(R.id.receivedStatus);
                     holder.playandPause = (ImageView) vi.findViewById(R.id.playAndPause);
                     holder.seekBar = (SeekBar) vi.findViewById(R.id.seekbar);
-                    holder.mediaPlayer = (LinearLayout) vi.findViewById(R.id.mediaPlayer);
+                    holder.mediaPlayerLayout = (RelativeLayout) vi.findViewById(R.id.mediaPlayer);
                     holder.duration = (TextView) vi.findViewById(R.id.duration);
                     vi.setTag(holder);
                     break;
@@ -255,9 +250,9 @@ public class ChatScreenAdapter extends BaseAdapter {
 
             holder.mediaContentLayout.setVisibility(View.GONE);
             holder.message.setVisibility(View.GONE);
-            holder.mediaPlayer.setVisibility(View.VISIBLE);
+            holder.mediaPlayerLayout.setVisibility(View.VISIBLE);
 
-            ProgressBar progressBar = (ProgressBar) holder.mediaPlayer.findViewById(R.id.progressBarAudio);
+            ProgressBar progressBar = (ProgressBar) holder.mediaPlayerLayout.findViewById(R.id.progressBarAudio);
             if (message.textData.length() == 0 && message.iAmSender == true || message.mediaFileName == null && message.iAmSender == false) {
                 holder.playandPause.setVisibility(View.GONE);
                 progressBar.setVisibility(View.VISIBLE);
@@ -273,6 +268,7 @@ public class ChatScreenAdapter extends BaseAdapter {
             }
 
             holder.seekBar.setTag(message.id);
+            holder.seekBar.getThumb().setColorFilter( activity.getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
             holder.seekBar.setOnSeekBarChangeListener(audioEventListener);
 
             holder.playandPause.setTag(position);
@@ -280,7 +276,7 @@ public class ChatScreenAdapter extends BaseAdapter {
 
         } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
             holder.message.setVisibility(View.VISIBLE);
-            holder.mediaPlayer.setVisibility(View.GONE);
+            holder.mediaPlayerLayout.setVisibility(View.GONE);
             holder.mediaContentLayout.setVisibility(View.GONE);
 
             if (searchString.length() != 0) {
@@ -302,11 +298,9 @@ public class ChatScreenAdapter extends BaseAdapter {
                 holder.message.setText(message.textData);
             }
 
-        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE))
-
-        {
+        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
             holder.message.setVisibility(View.GONE);
-            holder.mediaPlayer.setVisibility(View.GONE);
+            holder.mediaPlayerLayout.setVisibility(View.GONE);
             holder.mediaContentLayout.setVisibility(View.VISIBLE);
 
             holder.message.setText("");
@@ -342,11 +336,9 @@ public class ChatScreenAdapter extends BaseAdapter {
             } else {
                 progressBar.setVisibility(View.GONE);
             }
-        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO))
-
-        {
+        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
             holder.message.setVisibility(View.GONE);
-            holder.mediaPlayer.setVisibility(View.GONE);
+            holder.mediaPlayerLayout.setVisibility(View.GONE);
             holder.mediaContentLayout.setVisibility(View.VISIBLE);
 
             holder.message.setText("");
@@ -381,12 +373,10 @@ public class ChatScreenAdapter extends BaseAdapter {
             } else {
                 progressBar.setVisibility(View.GONE);
             }
-        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER))
-
-        {
+        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             holder.message.setText("");
             holder.message.setVisibility(View.GONE);
-            holder.mediaPlayer.setVisibility(View.GONE);
+            holder.mediaPlayerLayout.setVisibility(View.GONE);
             holder.mediaContentLayout.setVisibility(View.VISIBLE);
 
             ImageView image = (ImageView) holder.mediaContentLayout.findViewById(R.id.image_message);

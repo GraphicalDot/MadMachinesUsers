@@ -1,12 +1,14 @@
 package com.sports.unity.common.controller;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -58,19 +60,17 @@ public class MainActivity extends CustomAppCompatActivity {
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
-                // open I am not going to put anything here)
+                invalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                // Code here will execute once drawer is closed
+                invalidateOptionsMenu();
             }
         };
 
-        int tab_index = getIntent().getIntExtra("tab_index", 1);
-
+        mDrawerToggle.setDrawerIndicatorEnabled(true);
         mDrawer.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
@@ -99,6 +99,7 @@ public class MainActivity extends CustomAppCompatActivity {
         tabs.setViewPager(pager);
 
         //set news pager as default
+        int tab_index = getIntent().getIntExtra("tab_index", 1);
         pager.setCurrentItem(tab_index);
     }
 
@@ -114,5 +115,14 @@ public class MainActivity extends CustomAppCompatActivity {
         return toolbar;
     }
 
+    @Override
+    public void onBackPressed() {
+        DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if( mDrawerLayout.isDrawerOpen( Gravity.LEFT) ){
+            mDrawerLayout.closeDrawer( Gravity.LEFT);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
 }
