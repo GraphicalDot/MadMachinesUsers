@@ -47,7 +47,6 @@ public class EnterPhoneActivity extends AppCompatActivity {
     };
 
     private void init() {
-        getWindow().setBackgroundDrawableResource(R.drawable.splash_bg) ;
         TextView entr_ph_no=(TextView) findViewById(R.id.entr_ph_no);
         entr_ph_no.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
 

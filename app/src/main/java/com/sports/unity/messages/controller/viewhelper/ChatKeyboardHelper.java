@@ -404,7 +404,7 @@ public class ChatKeyboardHelper {
 
                 @Override
                 public int getIndicatorColor(int position) {
-                    return context.getResources().getColor(com.sports.unity.R.color.tabsScrollColor);
+                    return context.getResources().getColor(R.color.app_theme_blue);
                 }
 
             });

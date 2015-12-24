@@ -89,8 +89,6 @@ public class EnterOtpActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        getWindow().setBackgroundDrawableResource(R.drawable.splash_bg) ;
-
         ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.gray1), android.graphics.PorterDuff.Mode.MULTIPLY);
 

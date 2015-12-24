@@ -536,7 +536,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         TextView user = (TextView) toolbar.findViewById(R.id.chat_username);
         user.setText(JABBERNAME);
         user.setTypeface(FontTypeface.getInstance(this).getRobotoRegular());
-        getWindow().setBackgroundDrawableResource(R.drawable.img_chat);
+
         userPic = (CircleImageView) toolbar.findViewById(R.id.user_picture);
         if (isGroupChat) {
             if (userImageBytes == null) {

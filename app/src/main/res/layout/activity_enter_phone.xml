@@ -1,151 +1,164 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.sports.unity.common.controller.EnterPhoneActivity"
+    >
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="com.sports.unity.common.controller.EnterPhoneActivity">
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/splash_bg"
+        android:scaleType="centerCrop"
+        />
 
-    <LinearLayout
-        android:id="@+id/logo"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="10dp">
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_centerInParent="true"
-            android:src="@drawable/white_circle"/>
-        <ImageView
-            android:id="@+id/imageView1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_centerInParent="true"
-            android:src="@drawable/logo"/>
-    </RelativeLayout>
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        >
+
         <LinearLayout
+            android:id="@+id/logo"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:orientation="vertical"
-            android:gravity="center">
-        <TextView
-            android:id="@+id/entr_ph_no"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/enter_phone_number_text"
-            android:textColor="@color/ColorPrimary"
-            android:textSize="25dp"
-            android:layout_centerHorizontal="true"
-            android:gravity="center"/>
-        <TextView
-            android:id="@+id/txt_details"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/enter_phone_number_text_details"
-            android:textColor="#b7cfe9"
-            android:layout_marginTop="4dp"
-            android:layout_marginStart="@dimen/horizontal_padding_medium"
-            android:layout_marginEnd="@dimen/horizontal_padding_medium"
+            >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
             android:gravity="center"
-            android:paddingBottom="20dp"/>
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="10dp">
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_centerInParent="true"
+                android:src="@drawable/white_circle"/>
+            <ImageView
+                android:id="@+id/imageView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:layout_centerInParent="true"
+                android:src="@drawable/logo"/>
+        </RelativeLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:orientation="vertical"
+                android:gravity="center">
+            <TextView
+                android:id="@+id/entr_ph_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enter_phone_number_text"
+                android:textColor="@color/ColorPrimary"
+                android:textSize="25dp"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/txt_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/enter_phone_number_text_details"
+                android:textColor="#b7cfe9"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="@dimen/horizontal_padding_medium"
+                android:layout_marginEnd="@dimen/horizontal_padding_medium"
+                android:gravity="center"
+                android:paddingBottom="20dp"/>
+            </LinearLayout>
+
         </LinearLayout>
 
-    </LinearLayout>
-
-
-<LinearLayout
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:id="@+id/editContent"
-    android:layout_below="@+id/logo"
-    android:orientation="vertical"
-    >
-       <RelativeLayout
-
-        android:layout_width="fill_parent"
-        android:layout_height="@dimen/edit_view_height"
-        android:layout_centerVertical="true"
-        android:layout_marginStart="@dimen/horizontal_padding_medium"
-        android:layout_marginEnd="@dimen/horizontal_padding_medium"
-        android:background="@drawable/number_bg"
-        android:layout_marginTop="5dp"
-           >
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/countryCode"
-            android:text="@string/country_code"
-            android:padding="@dimen/horizontal_padding_very_small"
-            android:editable="false"
-            android:textColor="@android:color/white"
-            android:background="@android:color/transparent"
-            android:layout_alignParentLeft="true"/>
-
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/phoneNumber"
-            android:inputType="phone"
-            android:padding="@dimen/horizontal_padding_very_small"
-            android:background="@android:color/transparent"
-            android:gravity="left"
-            android:maxLength="10"
-            android:textColor="@android:color/white"
-            android:textCursorDrawable="@null"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/getOtp"
-            android:layout_toRightOf="@+id/countryCode" />
-
-        <Button
-            android:layout_width="@dimen/edit_view_height"
-            android:layout_height="@dimen/edit_view_height"
-            android:background="@drawable/next"
-            android:id="@+id/getOtp"
-            android:onClick="NavigateToEnterOtp"
-            android:layout_alignParentRight="true"/>
-    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:id="@+id/editContent"
+        android:layout_below="@+id/logo"
         android:orientation="vertical"
-        android:layout_centerHorizontal="true"
-        android:gravity="center">
+        >
+           <RelativeLayout
 
-        <TextView
-            android:id="@+id/take_a_minut"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="@dimen/edit_view_height"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="@dimen/horizontal_padding_medium"
+            android:layout_marginEnd="@dimen/horizontal_padding_medium"
+            android:background="@drawable/number_bg"
+            android:layout_marginTop="5dp"
+               >
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/countryCode"
+                android:text="@string/country_code"
+                android:padding="@dimen/horizontal_padding_very_small"
+                android:editable="false"
+                android:textColor="@android:color/white"
+                android:background="@android:color/transparent"
+                android:layout_alignParentLeft="true"/>
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/phoneNumber"
+                android:inputType="phone"
+                android:padding="@dimen/horizontal_padding_very_small"
+                android:background="@android:color/transparent"
+                android:gravity="left"
+                android:maxLength="10"
+                android:textColor="@android:color/white"
+                android:textCursorDrawable="@null"
+                android:layout_alignParentTop="true"
+                android:layout_toLeftOf="@+id/getOtp"
+                android:layout_toRightOf="@+id/countryCode" />
+
+            <Button
+                android:layout_width="@dimen/edit_view_height"
+                android:layout_height="@dimen/edit_view_height"
+                android:background="@drawable/next"
+                android:id="@+id/getOtp"
+                android:onClick="NavigateToEnterOtp"
+                android:layout_alignParentRight="true"/>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="Take a minute to review our"
-            android:textColor="#b7cfe9"
-            android:layout_marginTop="10dp"
-            android:gravity="center"/>
-        <TextView
-            android:id="@+id/privacy_policy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Privacy Policy"
-            android:textColor="@color/ColorPrimary"
-            android:gravity="center"/>
+            android:orientation="vertical"
+            android:layout_centerHorizontal="true"
+            android:gravity="center">
+
+            <TextView
+                android:id="@+id/take_a_minut"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Take a minute to review our"
+                android:textColor="#b7cfe9"
+                android:layout_marginTop="10dp"
+                android:gravity="center"/>
+            <TextView
+                android:id="@+id/privacy_policy"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Privacy Policy"
+                android:textColor="@color/ColorPrimary"
+                android:gravity="center"/>
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+    </RelativeLayout>
 
-
-
-</RelativeLayout>
+</FrameLayout>
