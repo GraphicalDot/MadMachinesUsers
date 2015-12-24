@@ -8,6 +8,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
@@ -43,7 +45,10 @@ import org.jivesoftware.smack.chat.ChatManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by madmachines on 8/9/15.
@@ -51,12 +56,16 @@ import java.util.Locale;
 public class ChatScreenAdapter extends BaseAdapter {
 
     private ArrayList<Message> messageList;
-    private ArrayList<Integer> messageListForFilter = new ArrayList<>();
+//    private ArrayList<Integer> messageListForFilter = new ArrayList<>();
+
     private Activity activity;
     private String searchString = "";
 
     private HashMap<String, byte[]> mediaMap = null;
     private AudioRecordingHelper audioRecordingHelper = null;
+
+    private ArrayList<Integer> positions = new ArrayList<>();
+    private int currentPosition = 0;
 
     private AudioEventListener audioEventListener = new AudioEventListener();
     private ImageOrVideoClickListener imageOrVideoClickListener = new ImageOrVideoClickListener();
@@ -101,22 +110,57 @@ public class ChatScreenAdapter extends BaseAdapter {
         return flag;
     }
 
-    public ArrayList<Integer> filterSearchQuery(String searchString) {
+    public void filterSearchQuery(String searchString) {
         this.searchString = searchString;
-        this.searchString = searchString.toLowerCase();
-        messageListForFilter.clear();
-        if (searchString.length() == 0) {
+        this.searchString.toLowerCase();
+
+        positions.clear();
+        currentPosition = 0;
+//        messageListForFilter.clear();
+        if (searchString.length() == 0 || messageList.size() == 0) {
             //do nothing
         } else {
 
-            for (Message message : messageList) {
-                if (message.textData.toLowerCase().contains(searchString)) {
-                    messageListForFilter.add(message.id);
+            for (int position = 0; position < messageList.size(); position++) {
+                if (messageList.get(position).textData.toLowerCase().contains(searchString)) {
+                    positions.add(position);
                 }
             }
         }
+
         notifyDataSetChanged();
-        return messageListForFilter;
+    }
+
+    public int getPosition(String nav) {
+        int size = positions.size();
+        int nextPosition = -1;
+        Log.i("size", String.valueOf(size));
+        if (size == 0) {
+            return nextPosition;
+        } else {
+
+            switch (nav) {
+                case "up":
+                    currentPosition--;
+                    if (currentPosition < 0) {
+                        currentPosition = size - 1;
+                        nextPosition = positions.get(currentPosition);
+                    } else {
+                        nextPosition = positions.get(currentPosition);
+                    }
+                    break;
+                case "down":
+                    currentPosition++;
+                    if (currentPosition > size - 1) {
+                        currentPosition = 0;
+                        nextPosition = positions.get(currentPosition);
+                    } else {
+                        nextPosition = positions.get(currentPosition);
+                    }
+                    break;
+            }
+        }
+        return nextPosition;
     }
 
     public static class ViewHolder {
@@ -142,6 +186,7 @@ public class ChatScreenAdapter extends BaseAdapter {
             return duration;
         }
     }
+
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -200,9 +245,9 @@ public class ChatScreenAdapter extends BaseAdapter {
 
         if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
 
-            Integer lastTag = (Integer)holder.seekBar.getTag();
-            if( lastTag != null && audioRecordingHelper.getCurrentPlayingMessageId() == lastTag &&
-                    lastTag != message.id ){
+            Integer lastTag = (Integer) holder.seekBar.getTag();
+            if (lastTag != null && audioRecordingHelper.getCurrentPlayingMessageId() == lastTag &&
+                    lastTag != message.id) {
                 audioRecordingHelper.pauseAudio();
             } else {
                 //nothing
@@ -221,7 +266,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                 holder.playandPause.setVisibility(View.VISIBLE);
             }
 
-            if( message.mediaFileName != null ) {
+            if (message.mediaFileName != null) {
                 audioRecordingHelper.initUI(message.mediaFileName, holder, message.id);
             } else {
                 //nothing
@@ -238,23 +283,28 @@ public class ChatScreenAdapter extends BaseAdapter {
             holder.mediaPlayer.setVisibility(View.GONE);
             holder.mediaContentLayout.setVisibility(View.GONE);
 
-            String textData = message.textData;
             if (searchString.length() != 0) {
-                if (textData.toLowerCase().contains(searchString)) {
-                    int startPos = textData.indexOf(searchString);
-                    int endPos = startPos + searchString.length();
-                    Spannable spanText = Spannable.Factory.getInstance().newSpannable(message.textData);
-                    spanText.setSpan(new BackgroundColorSpan(Color.YELLOW), startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-                    holder.message.setText(spanText, TextView.BufferType.SPANNABLE);
-                } else {
-                    holder.message.setText(message.textData);
+                String textData = message.textData.toLowerCase();
+                SpannableStringBuilder linkifiedText = new SpannableStringBuilder(textData);
+                Pattern p = Pattern.compile(searchString);
+                Matcher m = p.matcher(textData);
+                while (m.find()) {
+                    int start = m.start();
+                    int end = m.end();
+                    String hashtag = textData.substring(start, end);
+                    BackgroundColorSpan span = new BackgroundColorSpan(Color.YELLOW);
+                    linkifiedText.setSpan(span, 0, hashtag.length(), 0);
+//                    Spannable spanText = Spannable.Factory.getInstance().newSpannable(message.textData);
+//                    spanText.setSpan(new BackgroundColorSpan(Color.YELLOW), startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }
+                holder.message.setText(linkifiedText, TextView.BufferType.SPANNABLE);
             } else {
                 holder.message.setText(message.textData);
             }
 
-        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
+        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE))
+
+        {
             holder.message.setVisibility(View.GONE);
             holder.mediaPlayer.setVisibility(View.GONE);
             holder.mediaContentLayout.setVisibility(View.VISIBLE);
@@ -292,7 +342,9 @@ public class ChatScreenAdapter extends BaseAdapter {
             } else {
                 progressBar.setVisibility(View.GONE);
             }
-        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
+        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO))
+
+        {
             holder.message.setVisibility(View.GONE);
             holder.mediaPlayer.setVisibility(View.GONE);
             holder.mediaContentLayout.setVisibility(View.VISIBLE);
@@ -308,13 +360,13 @@ public class ChatScreenAdapter extends BaseAdapter {
 
             boolean inProgress = false;
             int status = FileOnCloudHandler.getInstance(activity).getMediaContentStatus(message);
-            if( status == FileOnCloudHandler.STATUS_NONE ){
+            if (status == FileOnCloudHandler.STATUS_NONE) {
                 //nothing
-            } else if( status == FileOnCloudHandler.STATUS_DOWNLOADING || status == FileOnCloudHandler.STATUS_UPLOADING ) {
+            } else if (status == FileOnCloudHandler.STATUS_DOWNLOADING || status == FileOnCloudHandler.STATUS_UPLOADING) {
                 inProgress = true;
             }
 
-            if( inProgress ){
+            if (inProgress) {
                 image.setOnClickListener(null);
                 image.setTag(null);
             } else {
@@ -324,12 +376,14 @@ public class ChatScreenAdapter extends BaseAdapter {
             image.setImageResource(R.drawable.grey_bg_rectangle);
 
             ProgressBar progressBar = (ProgressBar) holder.mediaContentLayout.findViewById(R.id.progressBar);
-            if ( inProgress ) {
+            if (inProgress) {
                 progressBar.setVisibility(View.VISIBLE);
             } else {
                 progressBar.setVisibility(View.GONE);
             }
-        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
+        } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER))
+
+        {
             holder.message.setText("");
             holder.message.setVisibility(View.GONE);
             holder.mediaPlayer.setVisibility(View.GONE);
@@ -362,9 +416,15 @@ public class ChatScreenAdapter extends BaseAdapter {
 
         }
 
-        showMediaContentStatus( message, holder.mediaContentLayout);
+        showMediaContentStatus(message, holder.mediaContentLayout);
 
-        switch (getItemViewType(position)) {
+        switch (
+
+                getItemViewType(position)
+
+                )
+
+        {
             case 0:
                 holder.timeStamp.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(message.sendTime)));
                 break;
@@ -374,9 +434,13 @@ public class ChatScreenAdapter extends BaseAdapter {
 
         }
 
-        if (holder.receivedStatus == null) {
+        if (holder.receivedStatus == null)
+
+        {
             //do nothing
-        } else {
+        } else
+
+        {
 
             if (message.messagesRead == true) {
                 holder.receivedStatus.setImageResource(R.drawable.ic_msg_read);
@@ -402,18 +466,18 @@ public class ChatScreenAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View v) {
-            int position = (Integer)v.getTag();
+            int position = (Integer) v.getTag();
 
             Message message = messageList.get(position);
 
             int contentStatus = FileOnCloudHandler.getInstance(activity).getMediaContentStatus(message);
 
-            if( contentStatus == FileOnCloudHandler.STATUS_DOWNLOADED || contentStatus == FileOnCloudHandler.STATUS_UPLOADED ) {
+            if (contentStatus == FileOnCloudHandler.STATUS_DOWNLOADED || contentStatus == FileOnCloudHandler.STATUS_UPLOADED) {
                 Intent intent = new Intent(activity, ImageOrVideoViewActivity.class);
                 intent.putExtra(Constants.INTENT_KEY_FILENAME, message.mediaFileName);
                 intent.putExtra(Constants.INTENT_KEY_MIMETYPE, message.mimeType);
                 activity.startActivity(intent);
-            } else if( contentStatus == FileOnCloudHandler.STATUS_DOWNLOAD_FAILED ){
+            } else if (contentStatus == FileOnCloudHandler.STATUS_DOWNLOAD_FAILED) {
                 FileOnCloudHandler.getInstance(activity).requestForDownload(message.textData, message.mimeType, message.id);
 
                 activity.runOnUiThread(new Runnable() {
@@ -422,7 +486,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                         notifyDataSetChanged();
                     }
                 });
-            } else if( contentStatus == FileOnCloudHandler.STATUS_UPLOAD_FAILED ){
+            } else if (contentStatus == FileOnCloudHandler.STATUS_UPLOAD_FAILED) {
                 ChatManager chatManager = ChatManager.getInstanceFor(XMPPClient.getConnection());
                 Chat chat = chatManager.getThreadChat(ChatScreenActivity.getJABBERID());
                 if (chat == null) {
@@ -442,39 +506,39 @@ public class ChatScreenAdapter extends BaseAdapter {
 
     }
 
-    private void showMediaContentStatus(Message message, ViewGroup imageContentLayout){
-        if( message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_STICKER) ){
+    private void showMediaContentStatus(Message message, ViewGroup imageContentLayout) {
+        if (message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             imageContentLayout.findViewById(R.id.image_content_status).setVisibility(View.GONE);
-        } else if( message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_TEXT) ){
+        } else if (message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
             //nothing
-        } else if( message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_AUDIO) ){
+        } else if (message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
             //TODO
-        } else if( message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
+        } else if (message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
             imageContentLayout.findViewById(R.id.image_content_status).setVisibility(View.GONE);
-        } else if( message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_VIDEO) ){
+        } else if (message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
             int status = FileOnCloudHandler.getInstance(activity).getMediaContentStatus(message);
-            showVideoContentStatus( status, message.mediaFileName, imageContentLayout);
+            showVideoContentStatus(status, message.mediaFileName, imageContentLayout);
         }
     }
 
-    private void showVideoContentStatus(int status, String fileName, ViewGroup imageContentLayout){
-        ImageView imageView = (ImageView)imageContentLayout.findViewById(R.id.image_content_status);
-        if( status == FileOnCloudHandler.STATUS_NONE ){
+    private void showVideoContentStatus(int status, String fileName, ViewGroup imageContentLayout) {
+        ImageView imageView = (ImageView) imageContentLayout.findViewById(R.id.image_content_status);
+        if (status == FileOnCloudHandler.STATUS_NONE) {
             //nothing
-        } else if( status == FileOnCloudHandler.STATUS_UPLOADING ){
+        } else if (status == FileOnCloudHandler.STATUS_UPLOADING) {
             imageView.setVisibility(View.GONE);
-        } else if( status == FileOnCloudHandler.STATUS_UPLOADED ){
+        } else if (status == FileOnCloudHandler.STATUS_UPLOADED) {
             imageView.setVisibility(View.VISIBLE);
             imageView.setImageResource(R.drawable.ic_play);
-        } else if( status == FileOnCloudHandler.STATUS_UPLOAD_FAILED ){
+        } else if (status == FileOnCloudHandler.STATUS_UPLOAD_FAILED) {
             imageView.setVisibility(View.VISIBLE);
             imageView.setImageResource(R.drawable.ic_retry);
-        } else if( status == FileOnCloudHandler.STATUS_DOWNLOADING ){
+        } else if (status == FileOnCloudHandler.STATUS_DOWNLOADING) {
             imageView.setVisibility(View.GONE);
-        } else if( status == FileOnCloudHandler.STATUS_DOWNLOADED ){
+        } else if (status == FileOnCloudHandler.STATUS_DOWNLOADED) {
             imageView.setVisibility(View.VISIBLE);
             imageView.setImageResource(R.drawable.ic_play);
-        } else if( status == FileOnCloudHandler.STATUS_DOWNLOAD_FAILED ){
+        } else if (status == FileOnCloudHandler.STATUS_DOWNLOAD_FAILED) {
             imageView.setVisibility(View.VISIBLE);
             imageView.setImageResource(R.drawable.ic_download);
         }
@@ -484,8 +548,8 @@ public class ChatScreenAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View v) {
-            ViewHolder holder = (ViewHolder)v.getTag(R.id.playAndPause);
-            int position = (Integer)v.getTag();
+            ViewHolder holder = (ViewHolder) v.getTag(R.id.playAndPause);
+            int position = (Integer) v.getTag();
             Message message = messageList.get(position);
             audioRecordingHelper.handlePlayOrPauseEvent(message, holder);
         }
@@ -502,7 +566,7 @@ public class ChatScreenAdapter extends BaseAdapter {
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
-            audioRecordingHelper.setProgress((Integer)seekBar.getTag(), seekBar.getProgress());
+            audioRecordingHelper.setProgress((Integer) seekBar.getTag(), seekBar.getProgress());
         }
 
     }

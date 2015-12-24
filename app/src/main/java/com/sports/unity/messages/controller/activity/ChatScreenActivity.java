@@ -3,11 +3,9 @@ package com.sports.unity.messages.controller.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,11 +18,9 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sports.unity.ChatScreenApplication;
 import com.sports.unity.Database.DBUtil;
@@ -77,14 +73,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     private static byte[] userImageBytes;
     private ArrayList<Integer> selectedItemsList = new ArrayList<>();
 
-    boolean selectedFlag = false;
-    boolean mediaSelected = false;
-    int mediaSelectedItems = 0;
-    int selecteditems = 0;
     private ListView mChatView;
 
+
     private ToolbarActionsForChatScreen toolbarActionsForChatScreen = null;
-    private ArrayList<Integer> positions = new ArrayList<>();
+//    private ArrayList<Integer> positions = new ArrayList<>();
 
     private static long chatID = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
 
@@ -261,6 +254,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         if (toolbarActionsForChatScreen.getSelecteditems() != 0) {
             toolbarActionsForChatScreen.resetList(mChatView);
             invalidateOptionsMenu();
+        } else if (toolbarActionsForChatScreen.getSearchFlag()) {
+            toolbarActionsForChatScreen.setSearchFlag(false);
+            invalidateOptionsMenu();
+            chatScreenAdapter.filterSearchQuery("");
         } else {
             super.onBackPressed();
         }
@@ -456,75 +453,25 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 boolean invalidate = toolbarActionsForChatScreen.onClickSelectView(view, position, messageList);
-//                if (selectedFlag == true) {
-//                    if (selectedItemsList.contains(position)) {
-//                        view.setBackgroundColor(Color.TRANSPARENT);
-//                        selecteditems--;
-//                        selectedItemsList.remove(Integer.valueOf(position));
-//                        if (!messageList.get(position).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
-//                            mediaSelectedItems--;
-//                            if (mediaSelectedItems == 0) {
-//                                mediaSelected = false;
-//                            }
-//                        }
-//                        Log.i("view", "selected");
-//                    } else {
-//                        view.setBackgroundColor(getResources().getColor(R.color.list_selector));
-//                        selecteditems++;
-//                        selectedItemsList.add(position);
-//                        if (!messageList.get(position).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
-//                            mediaSelected = true;
-//                            mediaSelectedItems++;
-//                        }
-//                        Log.i("view", "notselected");
-//                    }
-//                } else {
-//                    //do nothing
-//                }
                 if (invalidate) {
                     invalidateOptionsMenu();
                 }
-//                checkSelectedItems();
             }
         });
         mChatView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 boolean invalidate = toolbarActionsForChatScreen.onLongClickSelectView(view, messageList.get(position), position);
-//                if (selectedFlag == false) {
-//                    view.setBackgroundColor(getResources().getColor(R.color.list_selector));
-//                    selectedFlag = true;
-//                    selecteditems++;
-//                    selectedItemsList.add(position);
-//                    if (!messageList.get(position).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
-//                        mediaSelected = true;
-//                        mediaSelectedItems++;
-//                    }
-//                } else {
-//                    //do nothing
-//                }
                 if (invalidate) {
                     invalidateOptionsMenu();
                 }
-//                checkSelectedItems();
+                chatScreenAdapter.filterSearchQuery("");
                 return true;
             }
         });
         sendReadStatus();
     }
 
-//    private void checkSelectedItems() {
-//        if (selecteditems == 0) {
-//            selectedFlag = false;
-//            invalidateOptionsMenu();
-//        } else {
-//            if (selecteditems > 0) {
-//                invalidateOptionsMenu();
-//            } else {
-//                //do nothing
-//            }
-//        }
-//    }
 
     private void clearUnreadCount() {
         if (chatID != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
@@ -722,47 +669,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     public boolean onPrepareOptionsMenu(Menu menu) {
         Log.i("onprepareoptionsmeu", "true");
         Toolbar mtoolbar = (Toolbar) findViewById(R.id.tool_bar_chat);
-        if (toolbarActionsForChatScreen.getSelectionflag()) {
-            mtoolbar.findViewById(R.id.profile).setVisibility(View.GONE);
-            MenuItem deleteMessage = menu.findItem(R.id.delete);
-            deleteMessage.setVisible(true);
-            MenuItem copyMessage = menu.findItem(R.id.copy);
-            copyMessage.setVisible(true);
-            MenuItem forwardMessage = menu.findItem(R.id.forward);
-            forwardMessage.setVisible(true);
-            MenuItem searchMessages = menu.findItem(R.id.action_search);
-            searchMessages.setVisible(false);
-            MenuItem blockUser = menu.findItem(R.id.action_block_user);
-            blockUser.setVisible(false);
-            MenuItem viewContact = menu.findItem(R.id.action_view_contact);
-            viewContact.setVisible(false);
-            MenuItem clearChat = menu.findItem(R.id.action_clear_chat);
-            clearChat.setVisible(false);
-            TextView noOfSelectedItems = (TextView) mtoolbar.findViewById(R.id.selectedItems);
-            noOfSelectedItems.setVisibility(View.VISIBLE);
-            noOfSelectedItems.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
-            noOfSelectedItems.setText(String.valueOf(toolbarActionsForChatScreen.getSelecteditems()));
-            if (toolbarActionsForChatScreen.getMediaSelectionflag()) {
-                copyMessage.setVisible(false);
-            }
-
-        } else {
-            mtoolbar.findViewById(R.id.selectedItems).setVisibility(View.GONE);
-            MenuItem deleteMessage = menu.findItem(R.id.delete);
-            deleteMessage.setVisible(false);
-            MenuItem copyMessage = menu.findItem(R.id.copy);
-            copyMessage.setVisible(false);
-            MenuItem forwardMessage = menu.findItem(R.id.forward);
-            forwardMessage.setVisible(false);
-            mtoolbar.findViewById(R.id.profile).setVisibility(View.VISIBLE);
-        }
-
+        toolbarActionsForChatScreen.getToolbarMenu(mtoolbar, menu);
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.menu_chat_screen, menu);
 
         this.menu = menu;
@@ -773,75 +687,33 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         copyMessage.setVisible(false);
         MenuItem forwardMessage = menu.findItem(R.id.forward);
         forwardMessage.setVisible(false);
+        MenuItem upNavigation = menu.findItem(R.id.navigating_up);
+        upNavigation.setVisible(false);
+        MenuItem downNavigation = menu.findItem(R.id.navigating_down);
+        downNavigation.setVisible(false);
 
         blockUnblockUserHelper.initViewBasedOnBlockStatus(menu);
 
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        setCustomSearchViewbutton(searchView);
-        setSubmitAreaNull(searchView);
-        addCustomButtonsToSearchView(searchView);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        Toolbar mtoolbar = (Toolbar) findViewById(R.id.tool_bar_chat);
+        final EditText searchText = (EditText) mtoolbar.findViewById(R.id.search_text);
+        searchText.setText("");
+        searchText.addTextChangedListener(new TextWatcher() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
-                positions.clear();
-                positions = chatScreenAdapter.filterSearchQuery(newText);
-                return false;
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                chatScreenAdapter.filterSearchQuery(searchText.getText().toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
             }
         });
+
         return true;
-    }
-
-    private void addCustomButtonsToSearchView(SearchView searchView) {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT);
-
-        ImageButton up = new ImageButton(getApplicationContext());
-        up.setImageResource(R.drawable.ic_up_arrow);
-        up.setLayoutParams(params);
-        up.setBackgroundColor(Color.TRANSPARENT);
-        up.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "up", Toast.LENGTH_SHORT).show();
-            }
-        });
-        ImageButton down = new ImageButton(getApplicationContext());
-        down.setImageResource(R.drawable.ic_down_arrow);
-        down.setLayoutParams(params);
-        down.setBackgroundColor(Color.TRANSPARENT);
-        down.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "down", Toast.LENGTH_SHORT).show();
-            }
-        });
-        LinearLayout linearLayoutOfSearchView = (LinearLayout) searchView.findViewById(R.id.submit_area);
-        linearLayoutOfSearchView.addView(up);
-        linearLayoutOfSearchView.addView(down);
-
-    }
-
-    private void setSubmitAreaNull(SearchView searchView) {
-//        int submit_areaId = searchView.getContext().getResources().getIdentifier("android:id/submit_area", null, null);
-        ImageView mCloseButton = (ImageView) searchView.findViewById(R.id.search_close_btn);
-        mCloseButton.setEnabled(false);
-        mCloseButton.setImageAlpha(00);
-        ImageView submitImage = (ImageView) searchView.findViewById(R.id.search_go_btn);
-        searchView.setSubmitButtonEnabled(true);
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(0, 0);
-        submitImage.setLayoutParams(layoutParams);
-    }
-
-    private void setCustomSearchViewbutton(SearchView searchView) {
-        int searchImgId = android.support.v7.appcompat.R.id.search_button;
-        ImageView v = (ImageView) searchView.findViewById(searchImgId);
-        v.setImageResource(R.drawable.ic_menu_search);
-        searchView.setQueryHint("Search...");
     }
 
     @Override
@@ -876,25 +748,25 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             toolbarActionsForChatScreen.copySelectedMessages(messageList);
             toolbarActionsForChatScreen.resetList(mChatView);
             invalidateOptionsMenu();
-        } else if (id == R.id.action_search) {
+        } else if (id == R.id.navigating_up) {
+            int pos = chatScreenAdapter.getPosition("up");
+            if (pos >= 0) {
+                mChatView.smoothScrollToPosition(pos);
+            }
+            return true;
+        } else if (id == R.id.navigating_down) {
+            int pos = chatScreenAdapter.getPosition("down");
+            if (pos >= 0) {
+                mChatView.smoothScrollToPosition(pos);
+            }
+            return true;
+        } else if (id == R.id.searchChatScreen) {
+            toolbarActionsForChatScreen.setSearchFlag(true);
+            invalidateOptionsMenu();
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
-
-//    private void resetList() {
-//        selectedFlag = false;
-//        selecteditems = 0;
-//        selectedItemsList.clear();
-//
-//
-//        for (int i = 0; i < mChatView.getChildCount();
-//             i++) {
-//            View v = mChatView.getChildAt(i);
-//            v.setBackgroundColor(Color.TRANSPARENT);
-//        }
-//        invalidateOptionsMenu();
-//    }
 
     public static String getGroupServerId() {
         if (groupServerId != null) {

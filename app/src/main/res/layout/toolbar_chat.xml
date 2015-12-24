@@ -9,8 +9,9 @@
     android:theme="@style/AppHomeTheme">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/backarrow"
@@ -21,6 +22,17 @@
             android:layout_marginLeft="-16dp"
             android:layout_marginRight="-8dp"
             android:src="@drawable/ic_menu_back" />
+
+        <EditText
+            android:id="@+id/search_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:hint="Search..."
+            android:textColor="@android:color/white"
+            android:textColorHint="@color/edit_view_hint_color"
+            android:textCursorDrawable="@null"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/selectedItems"
@@ -58,7 +70,7 @@
                     android:id="@+id/chat_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
+                    android:gravity="left"
                     android:singleLine="true"
                     android:text="@string/chat_activity_username"
                     android:textColor="@android:color/white"
