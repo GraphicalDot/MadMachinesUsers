@@ -268,7 +268,7 @@ public class ChatScreenAdapter extends BaseAdapter {
             }
 
             holder.seekBar.setTag(message.id);
-            holder.seekBar.getThumb().setColorFilter( activity.getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
+            holder.seekBar.getThumb().setColorFilter(activity.getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
             holder.seekBar.setOnSeekBarChangeListener(audioEventListener);
 
             holder.playandPause.setTag(position);
@@ -280,16 +280,16 @@ public class ChatScreenAdapter extends BaseAdapter {
             holder.mediaContentLayout.setVisibility(View.GONE);
 
             if (searchString.length() != 0) {
-                String textData = message.textData.toLowerCase();
+                String textData = message.textData;
                 SpannableStringBuilder linkifiedText = new SpannableStringBuilder(textData);
-                Pattern p = Pattern.compile(searchString);
-                Matcher m = p.matcher(textData);
+                Pattern p = Pattern.compile(searchString.toLowerCase());
+                Matcher m = p.matcher(textData.toLowerCase());
                 while (m.find()) {
                     int start = m.start();
                     int end = m.end();
-                    String hashtag = textData.substring(start, end);
+//                    String hashtag = textData.substring(start, end);
                     BackgroundColorSpan span = new BackgroundColorSpan(Color.YELLOW);
-                    linkifiedText.setSpan(span, 0, hashtag.length(), 0);
+                    linkifiedText.setSpan(span, start, end, 0);
 //                    Spannable spanText = Spannable.Factory.getInstance().newSpannable(message.textData);
 //                    spanText.setSpan(new BackgroundColorSpan(Color.YELLOW), startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                 }

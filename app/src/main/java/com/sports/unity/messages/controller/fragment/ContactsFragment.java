@@ -179,6 +179,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
         contacts = (ListView) v.findViewById(R.id.list_contacts);
         contacts.setTextFilterEnabled(true);
 
+        boolean multipleSelection = false;
         int resource = 0;
         AdapterView.OnItemClickListener itemListener = null;
         ArrayList<Contacts> contactList = null;
@@ -193,6 +194,8 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
             ViewGroup searchLayout = (ViewGroup) v.findViewById(R.id.search_layout);
             searchLayout.setVisibility(View.VISIBLE);
+
+            multipleSelection = true;
         } else if (usageIn == USAGE_FOR_CONTACTS) {
             resource = R.layout.list_contact_msgs;
             itemListener = contactItemListener;
@@ -210,9 +213,10 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             ViewGroup searchLayout = (ViewGroup) v.findViewById(R.id.search_layout);
             searchLayout.setVisibility(View.GONE);
 
+            multipleSelection = false;
         }
 
-        ContactListAdapter adapter = new ContactListAdapter(getActivity(), resource, contactList);
+        ContactListAdapter adapter = new ContactListAdapter(getActivity(), resource, contactList, multipleSelection);
         contacts.setAdapter(adapter);
         contacts.setOnItemClickListener(itemListener);
 

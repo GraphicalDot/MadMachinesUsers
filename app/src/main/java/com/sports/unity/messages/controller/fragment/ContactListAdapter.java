@@ -31,12 +31,14 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements View.O
     private Button invite;
 
     private int itemLayoutId = 0;
+    private boolean multipleSelection = false;
 
-    public ContactListAdapter(Activity context, int resource, ArrayList<Contacts> list) {
+    public ContactListAdapter(Activity context, int resource, ArrayList<Contacts> list, boolean multipleSelection) {
         super(context, resource, list);
         this.context = context;
         this.inUseContactListForAdapter = list;
         itemLayoutId = resource;
+        this.multipleSelection = multipleSelection;
     }
 
     public View getView(int position, View view, ViewGroup parent) {
@@ -62,7 +64,11 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements View.O
                 invite.setVisibility(View.INVISIBLE);
             }
         } else if (itemLayoutId == R.layout.list_item_members) {
-
+            if( multipleSelection ){
+                rowView.findViewById(R.id.checkbox).setVisibility(View.VISIBLE);
+            } else {
+                rowView.findViewById(R.id.checkbox).setVisibility(View.GONE);
+            }
         }
 
         txtTitle.setText(contacts.name);
