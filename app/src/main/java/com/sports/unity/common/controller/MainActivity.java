@@ -3,6 +3,7 @@ package com.sports.unity.common.controller;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.res.ResourcesCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -54,7 +55,7 @@ public class MainActivity extends CustomAppCompatActivity {
     private void initViews() {
         Toolbar toolbar = initToolBar();
 
-        DrawerLayout mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        final DrawerLayout mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
 
             @Override
@@ -70,7 +71,16 @@ public class MainActivity extends CustomAppCompatActivity {
             }
         };
 
-        mDrawerToggle.setDrawerIndicatorEnabled(true);
+        mDrawerToggle.setDrawerIndicatorEnabled(false);
+        mDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mDrawer.openDrawer(Gravity.LEFT);
+            }
+
+        });
+
         mDrawer.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
@@ -105,6 +115,7 @@ public class MainActivity extends CustomAppCompatActivity {
 
     private Toolbar initToolBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar.setNavigationIcon(R.drawable.ic_menu);
         setSupportActionBar(toolbar);
 
         TextView title = (TextView) toolbar.findViewById(R.id.toolbar_title);

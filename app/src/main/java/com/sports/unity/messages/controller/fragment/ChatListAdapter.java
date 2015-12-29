@@ -117,7 +117,7 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
         } else {
             unread.setVisibility(View.VISIBLE);
             unread.setText(String.valueOf(chatArrayList.get(position).unreadCount));
-            lastMsgTime.setTextColor(Color.parseColor("#2c84cc"));
+            lastMsgTime.setTextColor( unread.getResources().getColor(R.color.app_theme_blue));
         }
 
 

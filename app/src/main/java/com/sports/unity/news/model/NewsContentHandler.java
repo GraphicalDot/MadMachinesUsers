@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 import com.sports.unity.Database.NewsDBHelper;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -30,10 +31,10 @@ public class NewsContentHandler {
 
     private static final int DB_CONTENT_LIMIT = 50;
 
-    private final static String BASE_URL = "http://52.74.250.156:8000//mixed?skip=0&limit=10&image_size=hdpi";
+    private final static String BASE_URL = Constants.URL_NEWS_CONTENT + "skip=0&limit=10&image_size=hdpi";
     private final static String BASE_SUBSET_URL_UP = "&direction=up&timestamp=";
     private final static String BASE_SUBSET_URL_DOWN = "&direction=down&timestamp=";
-    private final static String BASE_URL_SEARCH = "http://192.168.0.19:8000/mixed?image_size=hdpi&search=";
+    private final static String BASE_URL_SEARCH = Constants.URL_NEWS_CONTENT + "image_size=hdpi&search=";
 
     private static final String REQUEST_CONTENT_TAG = "RequestContent";
     private static final String REQUEST_MORE_CONTENT_TAG = "RequestContentMore";

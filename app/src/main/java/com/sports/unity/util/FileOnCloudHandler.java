@@ -7,17 +7,7 @@ import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
-import com.sports.unity.util.network.ContentRequest;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.BasicHttpEntity;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
 import org.jivesoftware.smack.chat.Chat;
 
 import java.io.BufferedInputStream;
@@ -30,6 +20,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -62,7 +53,7 @@ public class FileOnCloudHandler {
     }
 
     private Context context = null;
-    private PriorityQueue<CloudContentRequest> requests = new PriorityQueue<>();
+    private ArrayList<CloudContentRequest> requests = new ArrayList<>();
     private HashMap<String, Integer> requestMapWithStatus = new HashMap<String, Integer>();
 
     private Thread threadToHandleRequests = null;
@@ -158,7 +149,11 @@ public class FileOnCloudHandler {
     }
 
     private CloudContentRequest getContentRequestToBeServed(){
-        return requests.poll();
+        CloudContentRequest request = null;
+        if( requests.size() > 0 ){
+            request = requests.get(requests.size()-1);
+        }
+        return request;
     }
 
     private boolean isThereMoreRequestsToServe(){
@@ -168,82 +163,106 @@ public class FileOnCloudHandler {
     private void handleUploadRequest( CloudContentRequest request, Context context){
         if(request.isContentBytes) {
             String checksum = uploadContent((byte[]) request.getContent());
-            PersonalMessaging.getInstance(context).sendMediaMessage(checksum, (Chat) request.extra, request.messageId, request.mimeType);
+            if( checksum != null ) {
+                PersonalMessaging.getInstance(context).sendMediaMessage(checksum, (Chat) request.extra, request.messageId, request.mimeType);
 
-            sendActionToCorrespondingActivityListener(0, ActivityActionHandler.CHAT_SCREEN_KEY);
+                sendActionToCorrespondingActivityListener(0, ActivityActionHandler.CHAT_SCREEN_KEY);
 
-            requests.remove(request);
-            requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
+                requests.remove(request);
+                requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
+            } else {
+                requestMapWithStatus.put(String.valueOf(request.getMessageId()), STATUS_UPLOAD_FAILED);
+            }
         } else {
-            String checksum = uploadContent((String)request.getContent());
-            PersonalMessaging.getInstance(context).sendMediaMessage(checksum, (Chat) request.extra, request.messageId, request.mimeType);
+            String checksum = uploadContent((String) request.getContent());
+            if( checksum != null ) {
+                PersonalMessaging.getInstance(context).sendMediaMessage(checksum, (Chat) request.extra, request.messageId, request.mimeType);
 
-            sendActionToCorrespondingActivityListener(0, ActivityActionHandler.CHAT_SCREEN_KEY);
+                sendActionToCorrespondingActivityListener(0, ActivityActionHandler.CHAT_SCREEN_KEY);
 
-            requests.remove(request);
-            requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
+                requests.remove(request);
+                requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
+            } else {
+                requestMapWithStatus.put(String.valueOf(request.getMessageId()), STATUS_UPLOAD_FAILED);
+            }
         }
     }
 
     private void handleDownloadRequest( CloudContentRequest request, Context context){
         if(request.isContentBytes){
             byte[] content = downloadContent(request.checksum);
+            if( content != null ) {
+                String fileName = DBUtil.getUniqueFileName(context, request.mimeType);
+                DBUtil.writeContentToExternalFileStorage(context, fileName, content);
+                SportsUnityDBHelper.getInstance(context).updateMediaMessage_ContentDownloaded(request.messageId, fileName);
 
-            String fileName = DBUtil.getUniqueFileName(context, request.mimeType);
-            DBUtil.writeContentToExternalFileStorage(context, fileName, content);
-            SportsUnityDBHelper.getInstance(context).updateMediaMessage_ContentDownloaded(request.messageId, fileName);
+                sendActionToCorrespondingActivityListener(2, ActivityActionHandler.CHAT_SCREEN_KEY, request.mimeType, fileName, content);
 
-            sendActionToCorrespondingActivityListener(2, ActivityActionHandler.CHAT_SCREEN_KEY, request.mimeType, fileName, content);
-
-            requests.remove(request);
-            requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
+                requests.remove(request);
+                requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
+            } else {
+                requestMapWithStatus.put(String.valueOf(request.getMessageId()), STATUS_DOWNLOAD_FAILED);
+            }
         } else {
             String fileName = DBUtil.getUniqueFileName(context, request.mimeType);
-            downloadContentFromFile(request.checksum, fileName);
+            boolean success = downloadContentFromFile(request.checksum, fileName);
 
-            SportsUnityDBHelper.getInstance(context).updateMediaMessage_ContentDownloaded(request.messageId, fileName);
+            if( success ) {
+                SportsUnityDBHelper.getInstance(context).updateMediaMessage_ContentDownloaded(request.messageId, fileName);
 
-            sendActionToCorrespondingActivityListener( 0, ActivityActionHandler.CHAT_SCREEN_KEY);
+                sendActionToCorrespondingActivityListener(0, ActivityActionHandler.CHAT_SCREEN_KEY);
 
-            requests.remove(request);
-            requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
+                requests.remove(request);
+                requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
+            } else {
+                requestMapWithStatus.put(String.valueOf(request.getMessageId()), STATUS_DOWNLOAD_FAILED);
+            }
         }
     }
 
     private String uploadContent(byte[] content){
         Log.i("File on cloud" , "uploading");
 
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost(CONTENT_CLOUD_URL);
-
+        HttpURLConnection httpURLConnection = null;
         ByteArrayInputStream byteArrayInputStream = null;
         String checksum = null;
         try {
             checksum = CommonUtil.getMD5EncryptedString(content);
             byteArrayInputStream = new ByteArrayInputStream( content, 0, content.length);
 
-            httppost.setHeader( "Checksum", checksum);
+            URL url = new URL(CONTENT_CLOUD_URL);
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setConnectTimeout(15000);
+            httpURLConnection.setReadTimeout(60000);
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setRequestMethod("POST");
 
-            BasicHttpEntity entity = new BasicHttpEntity();
-            entity.setContent(byteArrayInputStream);
-            entity.setContentLength(content.length);
+            httpURLConnection.setRequestProperty("Checksum", checksum);
 
-            entity.setContentType("binary/octet-stream");
-            httppost.setEntity(entity);
+            OutputStream outputStream = httpURLConnection.getOutputStream();
 
-            ResponseHandler<String> responseHandler = new BasicResponseHandler();
-            String responseBody = httpclient.execute(httppost, responseHandler);
+            byte chunk[] = new byte[4096];
+            int read = 0;
+            while( (read = byteArrayInputStream.read(chunk)) != -1 ){
+                outputStream.write(chunk, 0, read);
+            }
 
-            Log.i("File on cloud" , content.length + " uploaded with checksum " + checksum);
+            if( httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK ){
+                Log.i("File on cloud" , "uploaded with checksum " + checksum);
+            } else {
+                checksum = null;
+                Log.i("File on cloud" , "failed to load file content");
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if( byteArrayInputStream != null ){
-                try {
-                    byteArrayInputStream.close();
-                }catch (Exception ex){}
-            }
-            httpclient.getConnectionManager().shutdown();
+            try {
+                byteArrayInputStream.close();
+            }catch (Exception ex){}
+            try {
+                httpURLConnection.disconnect();
+            }catch (Exception ex){}
         }
 
         return checksum;
@@ -282,7 +301,7 @@ public class FileOnCloudHandler {
             if( httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK ){
                 Log.i("File on cloud" , "uploaded with checksum " + checksum);
             } else {
-                //TODO
+                checksum = null;
                 Log.i("File on cloud" , "failed to load file content");
             }
 
@@ -303,15 +322,20 @@ public class FileOnCloudHandler {
     private byte[] downloadContent(String cloudFileName){
         Log.i("File on cloud" , "downloading " + cloudFileName);
 
-        HttpClient client = new DefaultHttpClient();
-        HttpGet get = new HttpGet(CONTENT_CLOUD_URL + "name="+cloudFileName);
+        HttpURLConnection httpURLConnection = null;
 
         ByteArrayOutputStream byteArrayOutputStream = null;
 
         byte[] data = null;
         try {
-            HttpResponse resp = client.execute(get);
-            InputStream is = resp.getEntity().getContent();
+            URL url = new URL(CONTENT_CLOUD_URL + "name="+cloudFileName);
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setConnectTimeout(15000);
+            httpURLConnection.setReadTimeout(60000);
+            httpURLConnection.setDoInput(true);
+            httpURLConnection.setRequestMethod("GET");
+
+            InputStream is = httpURLConnection.getInputStream();
             byteArrayOutputStream = new ByteArrayOutputStream();
 
             byte[] chunk = new byte[1024];
@@ -323,19 +347,30 @@ public class FileOnCloudHandler {
             data = byteArrayOutputStream.toByteArray();
             String checksum = CommonUtil.getMD5EncryptedString(data);
 
-            //TODO validate content
-
-            Log.i("File on cloud" , data.length + " downloaded " + checksum);
+            if ( checksum.equals(cloudFileName)) {
+                //valid content
+                Log.i("File on cloud" , data.length + " downloaded " + checksum);
+            } else {
+                data = null;
+                Log.i("File on cloud" , "Invalid Content");
+            }
         } catch(Throwable t) {
             t.printStackTrace();
         } finally {
-
+            try {
+                byteArrayOutputStream.close();
+            }catch (Exception ex){}
+            try {
+                httpURLConnection.disconnect();
+            }catch (Exception ex){}
         }
         return data;
     }
 
-    private void downloadContentFromFile(String cloudFileName, String fileName){
+    private boolean downloadContentFromFile(String cloudFileName, String fileName){
         Log.i("File on cloud" , "downloading file from " + cloudFileName);
+
+        boolean success = false;
 
         HttpURLConnection httpURLConnection = null;
         FileOutputStream fileOutputStream = null;
@@ -359,12 +394,16 @@ public class FileOnCloudHandler {
                 fileOutputStream.write(chunk, 0, read);
             }
 
-            //TODO validate file content
-
             if( httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK ){
-                Log.i("File on cloud" , "downloaded");
+                String checksum = CommonUtil.getMD5EncryptedString(context, fileName);
+                if( checksum.equals(cloudFileName) ){
+                    success = true;
+                    Log.i("File on cloud" , "downloaded");
+                } else {
+                    Log.i("File on cloud" , "Invalid Content");
+                }
+
             } else {
-                //TODO
                 Log.i("File on cloud" , "failed to download file content");
             }
 
@@ -378,6 +417,7 @@ public class FileOnCloudHandler {
                 httpURLConnection.disconnect();
             }catch (Exception ex){}
         }
+        return success;
     }
 
     private boolean sendActionToCorrespondingActivityListener(int id, String key, String mimeType, Object messageContent, Object mediaContent) {

@@ -390,7 +390,6 @@ public class ChatScreenAdapter extends BaseAdapter {
             String folderName = content.substring(0, separatorIndex);
             String name = content.substring(separatorIndex + 1);
 
-            //TODO remove this call from here
             Stickers.getInstance().loadStickerFromAsset(activity, folderName, name);
 
             Bitmap bitmap = Stickers.getInstance().getStickerBitmap(folderName, name);
