@@ -1,4 +1,4 @@
-package com.sports.unity.scores.model.football.tennis;
+package com.sports.unity.scores.model.tennis;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
