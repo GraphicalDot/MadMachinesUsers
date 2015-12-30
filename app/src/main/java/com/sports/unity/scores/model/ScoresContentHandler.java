@@ -14,9 +14,11 @@ public class ScoresContentHandler {
 
     private static final String SCORES_BASE_URL = "http://52.74.142.219:8080/";
 
-    private static final String REQUEST_KEY_LIST_OF_MATCHES = "List_Of_Matches";
-    private static final String REQUEST_KEY_MATCH_DETAILS = "Match_Detail:";
-    private static final String REQUEST_KEY_MATCH_COMMENTARY = "Match_COMMENTARY:";
+    private static final String URL_PARAMS_FOR_LIST_OF_MATCHES = "get_football_upcoming_fixtures";
+
+//    private static final String REQUEST_KEY_LIST_OF_MATCHES = "List_Of_Matches";
+//    private static final String REQUEST_KEY_MATCH_DETAILS = "Match_Detail:";
+//    private static final String REQUEST_KEY_MATCH_COMMENTARY = "Match_COMMENTARY:";
 
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
 
@@ -36,7 +38,7 @@ public class ScoresContentHandler {
 
     public interface ContentListener {
 
-        public void handleContent(String content, int responseCode);
+        public void handleContent(String tag, String content, int responseCode);
 
     }
 
@@ -50,25 +52,40 @@ public class ScoresContentHandler {
     private VolleyResponseListener responseListener = new VolleyResponseListener() {
 
         @Override
-        public void handleResponse(String tag, String response, VolleyError error) {
-            ContentListener contentListener = mapOfResponseListeners.get(tag);
-            contentListener.handleContent( response, error.networkResponse.statusCode);
+        public void handleResponse(String tag, String response, int responseCode) {
+            if( requestInProcess_RequestTagAndListenerKey.containsKey(tag) ) {
+                String listenerKey = requestInProcess_RequestTagAndListenerKey.get(tag);
+                ContentListener contentListener = mapOfResponseListeners.get(listenerKey);
+                if( contentListener != null ) {
+                    contentListener.handleContent(tag, response, responseCode);
+                } else {
+                    //nothing
+                }
 
-            requestInProcess_RequestTagAndListenerKey.remove(tag);
+                requestInProcess_RequestTagAndListenerKey.remove(tag);
+            }
         }
 
     };
 
-    void addResponseListener(ContentListener responseListener, String listenerKey){
+    public void addResponseListener(ContentListener responseListener, String listenerKey){
         mapOfResponseListeners.put(listenerKey, responseListener);
     }
 
-    void removeListener(String listenerKey){
+    public void removeResponseListener(String listenerKey){
         mapOfResponseListeners.remove(listenerKey);
     }
 
-    void requestListOfMatches(String listenerKey){
-        String requestTag = REQUEST_KEY_LIST_OF_MATCHES;
+    public void requestListOfMatches(String listenerKey, String requestTag){
+        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+            String url = generateURL( URL_PARAMS_FOR_LIST_OF_MATCHES);
+            requestContent(requestTag, listenerKey, url);
+        } else {
+            //nothing
+        }
+    }
+
+    public void requestScoresOfMatch(String matchId, String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
             String url = generateURL("");
             requestContent(requestTag, listenerKey, url);
@@ -77,18 +94,7 @@ public class ScoresContentHandler {
         }
     }
 
-    void requestScoresOfMatch(String matchId, String listenerKey){
-        String requestTag = REQUEST_KEY_MATCH_DETAILS + matchId;
-        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
-            String url = generateURL("");
-            requestContent(requestTag, listenerKey, url);
-        } else {
-            //nothing
-        }
-    }
-
-    void requestCommentaryOnMatch(String matchId, String listenerKey){
-        String requestTag = REQUEST_KEY_MATCH_COMMENTARY + matchId;
+    public void requestCommentaryOnMatch(String matchId, String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
             String url = generateURL("");
             requestContent(requestTag, listenerKey, url);

@@ -33,7 +33,8 @@ public class VolleyTagRequest extends Request<String> {
     @Override
     protected Response<String> parseNetworkResponse(NetworkResponse response) {
         try{
-            return Response.success(response.data.toString(), HttpHeaderParser.parseCacheHeaders(response));
+            String parsed = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+            return Response.success( parsed, HttpHeaderParser.parseCacheHeaders(response));
         }catch (Exception ex) {
             return Response.error( new ParseError(ex));
         }
@@ -43,14 +44,14 @@ public class VolleyTagRequest extends Request<String> {
     @Override
     protected void deliverResponse(String response) {
         if(responseListener != null ) {
-            responseListener.handleResponse(tag, response, null);
+            responseListener.handleResponse(tag, response, 200);
         }
     }
 
     @Override
     public void deliverError(VolleyError error) {
         if(responseListener != null ) {
-            responseListener.handleResponse(tag, null, error);
+            responseListener.handleResponse(tag, null, 0);
         }
     }
 

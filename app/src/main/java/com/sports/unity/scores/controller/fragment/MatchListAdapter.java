@@ -25,13 +25,13 @@ import java.util.TimeZone;
 /**
  * Created by madmachines on 8/10/15.
  */
-public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder> {
+public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.ViewHolder> {
 
     private Context context;
     private List<FootballLiveScoreResult> list;
 
 
-    public ScoresAdapter(ArrayList<FootballLiveScoreResult> list, Context applicationContext, Activity activity) {
+    public MatchListAdapter(ArrayList<FootballLiveScoreResult> list, Context applicationContext, Activity activity) {
         this.list = list;
         this.context = applicationContext;
     }
@@ -72,13 +72,13 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder
     }
 
     @Override
-    public ScoresAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public MatchListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.score_card, parent, false);
         return new ViewHolder(v);
     }
 
     @Override
-    public void onBindViewHolder(ScoresAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(MatchListAdapter.ViewHolder holder, int position) {
 
         FootballLiveScoreResult footballLiveScoreResult = list.get(position);
         Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballLiveScoreResult.getMatchDateEpoch()) * 1000)));
@@ -135,7 +135,7 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder
         return time;
     }
 
-    /*private void liveMatchColoring(ScoresAdapter.ViewHolder holder) {
+    /*private void liveMatchColoring(MatchListAdapter.ViewHolder holder) {
         holder.footer.setBackgroundColor(Color.parseColor("#236aa3"));
         holder.rootLayout.setBackgroundColor(Color.parseColor("#2c84cc"));
         holder.team1.setTextColor(Color.parseColor("#ffffff"));
@@ -148,7 +148,7 @@ public class ScoresAdapter extends RecyclerView.Adapter<ScoresAdapter.ViewHolder
         holder.seperator.setBackgroundColor(Color.parseColor("#236aa3"));
     }
 
-    private void clearLiveMatchColoring(ScoresAdapter.ViewHolder holder) {
+    private void clearLiveMatchColoring(MatchListAdapter.ViewHolder holder) {
         holder.footer.setBackgroundColor(Color.parseColor("#e6e6e6"));
         holder.rootLayout.setBackgroundColor(Color.parseColor("#ffffff"));
         holder.team1.setTextColor(Color.parseColor("#000000"));

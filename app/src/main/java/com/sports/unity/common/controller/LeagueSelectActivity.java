@@ -40,7 +40,7 @@ public class LeagueSelectActivity extends AppCompatActivity {
 
 
 
-        // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
+        // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
        // adapter = new ViewPagerAdapter1(getSupportFragmentManager(),sports,Numboftabs);
 
         // Assigning ViewPager View and setting the adapter

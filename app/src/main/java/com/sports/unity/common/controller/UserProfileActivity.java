@@ -79,7 +79,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
         int numberOfTabs = titles.length;
 
-        // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
+        // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
         ViewPagerAdapterForProfile adapter = new ViewPagerAdapterForProfile(getSupportFragmentManager(), titles, numberOfTabs);
 
         // Assigning ViewPager View and setting the adapter
