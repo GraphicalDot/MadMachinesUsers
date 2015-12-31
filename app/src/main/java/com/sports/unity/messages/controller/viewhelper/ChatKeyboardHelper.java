@@ -21,6 +21,7 @@ import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 
@@ -126,7 +127,7 @@ public class ChatKeyboardHelper {
 
                                             View view = parentLayout.findViewById(R.id.btn_text);
                                             lastTappedView = view;
-                                            highlightTappedItem( view);
+                                            highlightTappedItem(view);
                                         }
                                     }
                                 }
@@ -152,59 +153,59 @@ public class ChatKeyboardHelper {
                 });
     }
 
-    public void tapOnTab(String sendToIdentity, View view, Activity activity){
+    public void tapOnTab(String sendToIdentity, View view, Activity activity) {
         unhighlightTappedItem(lastTappedView);
         highlightTappedItem(view);
         lastTappedView = view;
 
         int id = view.getId();
-        if( id == R.id.btn_text ){
+        if (id == R.id.btn_text) {
             tapOnTextKeyBoard(activity);
-        } else if( id == R.id.btn_camera ){
-            tapOnCamera( sendToIdentity, activity);
-        } else if( id == R.id.btn_gallery ){
+        } else if (id == R.id.btn_camera) {
+            tapOnCamera(sendToIdentity, activity);
+        } else if (id == R.id.btn_gallery) {
             tapOnGallery(activity);
-        } else if( id == R.id.btn_emoticons ){
+        } else if (id == R.id.btn_emoticons) {
             tapOnEmoji(activity);
-        } else if( id == R.id.btn_audiomsg ){
+        } else if (id == R.id.btn_audiomsg) {
             tapOnAudio(activity);
         }
     }
 
-    private void unhighlightTappedItem(View view){
-        if( view != null ){
+    private void unhighlightTappedItem(View view) {
+        if (view != null) {
             int id = view.getId();
-            ImageButton imageButton = (ImageButton)view;
+            ImageButton imageButton = (ImageButton) view;
 
-            if( id == R.id.btn_text ){
+            if (id == R.id.btn_text) {
                 imageButton.setImageResource(R.drawable.ic_keyboard_disabled);
-            } else if( id == R.id.btn_camera ){
-                imageButton.setImageResource( R.drawable.ic_camera_disabled);
-            } else if( id == R.id.btn_gallery ){
-                imageButton.setImageResource( R.drawable.ic_gallery_disabled);
-            } else if( id == R.id.btn_emoticons ){
-                imageButton.setImageResource( R.drawable.ic_emojis_disabled);
-            } else if( id == R.id.btn_audiomsg ){
-                imageButton.setImageResource( R.drawable.ic_mic_disabled);
+            } else if (id == R.id.btn_camera) {
+                imageButton.setImageResource(R.drawable.ic_camera_disabled);
+            } else if (id == R.id.btn_gallery) {
+                imageButton.setImageResource(R.drawable.ic_gallery_disabled);
+            } else if (id == R.id.btn_emoticons) {
+                imageButton.setImageResource(R.drawable.ic_emojis_disabled);
+            } else if (id == R.id.btn_audiomsg) {
+                imageButton.setImageResource(R.drawable.ic_mic_disabled);
             }
         }
     }
 
-    private void highlightTappedItem(View view){
-        if( view != null ){
+    private void highlightTappedItem(View view) {
+        if (view != null) {
             int id = view.getId();
-            ImageButton imageButton = (ImageButton)view;
+            ImageButton imageButton = (ImageButton) view;
 
-            if( id == R.id.btn_text ){
+            if (id == R.id.btn_text) {
                 imageButton.setImageResource(R.drawable.ic_keyboard_selected);
-            } else if( id == R.id.btn_camera ){
-                imageButton.setImageResource( R.drawable.ic_camera_pressed);
-            } else if( id == R.id.btn_gallery ){
-                imageButton.setImageResource( R.drawable.ic_gallery_pressed);
-            } else if( id == R.id.btn_emoticons ){
-                imageButton.setImageResource( R.drawable.ic_emojis_pressed);
-            } else if( id == R.id.btn_audiomsg ){
-                imageButton.setImageResource( R.drawable.ic_mic_pressed);
+            } else if (id == R.id.btn_camera) {
+                imageButton.setImageResource(R.drawable.ic_camera_pressed);
+            } else if (id == R.id.btn_gallery) {
+                imageButton.setImageResource(R.drawable.ic_gallery_pressed);
+            } else if (id == R.id.btn_emoticons) {
+                imageButton.setImageResource(R.drawable.ic_emojis_pressed);
+            } else if (id == R.id.btn_audiomsg) {
+                imageButton.setImageResource(R.drawable.ic_mic_pressed);
             }
         }
     }
@@ -333,6 +334,13 @@ public class ChatKeyboardHelper {
 
     }
 
+    public void openTextKeyBoard(View view, Activity activity) {
+        ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_text);
+        viewGroup.setVisibility(View.GONE);
+
+        tapOnTab(null, view, activity);
+    }
+
     private void postActionOnOpeningTextKeyboard(Activity activity) {
         ViewGroup sendMessageLayout = (ViewGroup) activity.findViewById(R.id.send_message_layout);
         sendMessageLayout.setVisibility(View.VISIBLE);
@@ -352,14 +360,44 @@ public class ChatKeyboardHelper {
         ViewGroup sendMessageLayout = (ViewGroup) activity.findViewById(R.id.send_message_layout);
         sendMessageLayout.setVisibility(View.GONE);
 
-        new LoadStickers( activity.getBaseContext(), viewGroup).execute();
+        new LoadStickers(activity.getBaseContext(), viewGroup).execute();
 
     }
 
-    private void openNativeCameraActivity(String sendToIdentity, Activity activity){
+    private void openNativeCameraActivity(String sendToIdentity, Activity activity) {
         Intent intent = new Intent(activity, NativeCameraActivity.class);
         intent.putExtra(Constants.INTENT_KEY_PHONE_NUMBER, sendToIdentity);
         activity.startActivity(intent);
+    }
+
+    public void disableKeyboardAndMediaButtons(boolean blockStatus, Activity activity) {
+
+        if (blockStatus) {
+            LinearLayout compose = (LinearLayout) activity.findViewById(R.id.send_message_layout);
+            for (int i = 0; i < compose.getChildCount(); i++) {
+                View view = compose.getChildAt(i);
+                view.setEnabled(false);
+            }
+
+            LinearLayout sendMediaButtons = (LinearLayout) activity.findViewById(R.id.send_media_action_buttons);
+            for (int i = 0; i < sendMediaButtons.getChildCount(); i++) {
+                View view = sendMediaButtons.getChildAt(i);
+                view.setEnabled(false);
+            }
+        } else {
+            LinearLayout compose = (LinearLayout) activity.findViewById(R.id.send_message_layout);
+            for (int i = 0; i < compose.getChildCount(); i++) {
+                View view = compose.getChildAt(i);
+                view.setEnabled(true);
+            }
+
+            LinearLayout sendMediaButtons = (LinearLayout) activity.findViewById(R.id.send_media_action_buttons);
+            for (int i = 0; i < sendMediaButtons.getChildCount(); i++) {
+                View view = sendMediaButtons.getChildAt(i);
+                view.setEnabled(true);
+            }
+        }
+
     }
 
     private class LoadStickers extends AsyncTask {
@@ -368,7 +406,7 @@ public class ChatKeyboardHelper {
         private ViewGroup viewGroup;
         private ProgressBar progressBar;
 
-        LoadStickers(Context context, ViewGroup viewGroup){
+        LoadStickers(Context context, ViewGroup viewGroup) {
             this.context = context;
             this.viewGroup = viewGroup;
         }
@@ -376,7 +414,7 @@ public class ChatKeyboardHelper {
         @Override
         protected void onPreExecute() {
             progressBar = (ProgressBar) viewGroup.findViewById(R.id.progress);
-            progressBar.getIndeterminateDrawable().setColorFilter( popUpView.getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+            progressBar.getIndeterminateDrawable().setColorFilter(popUpView.getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
 
             progressBar.setVisibility(View.VISIBLE);
             super.onPreExecute();
@@ -397,7 +435,7 @@ public class ChatKeyboardHelper {
             SlidingTabLayout tabs = (SlidingTabLayout) viewGroup.findViewById(com.sports.unity.R.id.tabs);
 
             progressBar.setVisibility(View.GONE);
-            pager.setAdapter( new AdapterForEmoji(context));
+            pager.setAdapter(new AdapterForEmoji(context));
 
             tabs.setDistributeEvenly(true);
             tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
@@ -499,7 +537,7 @@ public class ChatKeyboardHelper {
         }
     }
 
-    private void cleanUp(){
+    private void cleanUp() {
         audioRecordingHelper = null;
     }
 

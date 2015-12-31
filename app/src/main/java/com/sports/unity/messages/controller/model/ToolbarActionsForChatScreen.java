@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -207,7 +208,9 @@ public class ToolbarActionsForChatScreen {
         searchMessages.setVisible(false);
         mtoolbar.findViewById(R.id.selectedItems).setVisibility(View.GONE);
         mtoolbar.findViewById(R.id.backarrow).setVisibility(View.VISIBLE);
-        mtoolbar.findViewById(R.id.search_text).setVisibility(View.VISIBLE);
+        EditText et = (EditText) mtoolbar.findViewById(R.id.search_text);
+        et.setVisibility(View.VISIBLE);
+        et.requestFocus();
     }
 
     private void getMediaActions(Toolbar mtoolbar, Menu menu) {
@@ -239,6 +242,7 @@ public class ToolbarActionsForChatScreen {
             copyMessage.setVisible(false);
         }
     }
+
 
     public void setSearchFlag(boolean value) {
         this.searchViewActivate = value;

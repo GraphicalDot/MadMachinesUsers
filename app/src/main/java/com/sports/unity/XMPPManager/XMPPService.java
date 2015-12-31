@@ -40,6 +40,7 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
@@ -307,7 +308,7 @@ public class XMPPService extends Service {
                         Presence response = new Presence(Presence.Type.subscribed);
                         response.setTo(presence.getFrom().substring(0, presence.getFrom().indexOf("@")));
                         connection.sendPacket(response);
-                    } else if (presence.getType() == Presence.Type.available) {
+                    } else /*if (presence.getType() == Presence.Type.available)*/ {
                         if ("Online".equals(presence.getStatus())) {
                             sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, Presence.Type.available);
                         } else {
@@ -607,7 +608,7 @@ public class XMPPService extends Service {
             if (chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
                 //nothing
             } else {
-                chatId = sportsUnityDBHelper.createChatEntry(contact.name, contact.id);
+                chatId = sportsUnityDBHelper.createChatEntry(contact.name, contact.id, false);
                 Log.i("ChatEntry : ", "chat entry made from server " + chatId + " , " + contact.id);
             }
 
@@ -770,7 +771,7 @@ public class XMPPService extends Service {
             }
 
             NotificationHandler notificationHandler = NotificationHandler.getInstance();
-            notificationHandler.addNotificationMessage( chatId, name, message, mimeType);
+            notificationHandler.addNotificationMessage(chatId, name, message, mimeType);
 
             int chatCount = notificationHandler.getNotificationChatCount();
             PendingIntent pendingIntent = null;

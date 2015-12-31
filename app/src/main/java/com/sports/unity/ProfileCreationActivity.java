@@ -188,7 +188,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_profile_creation);
 
-        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.progress_light), android.graphics.PorterDuff.Mode.MULTIPLY);
 
 

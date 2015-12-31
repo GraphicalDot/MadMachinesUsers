@@ -83,7 +83,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             ChatEntry.COLUMN_CONTACT_ID + " INTEGER " + COMMA_SEP +
             ChatEntry.COLUMN_MUTE_CONVERSATION + " boolean DEFAULT false " + COMMA_SEP +
             ChatEntry.COLUMN_UNREAD_COUNT + " boolean " + COMMA_SEP +
-            ChatEntry.COLUMN_LAST_USED + " DATETIME DEFAULT CURRENT_TIMESTAMP " +
+            ChatEntry.COLUMN_LAST_USED + " DATETIME DEFAULT CURRENT_TIMESTAMP " + COMMA_SEP +
+            ChatEntry.COLUMN_PEOPLE_AROUND_ME + " boolean " +
             ");";
 
 //    private static final String CREATE_GROUP_TABLE = "CREATE TABLE IF NOT EXISTS " +
@@ -326,7 +327,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<Contacts> getContactList_AvailableOnly(boolean forceLoad) {
-        if ( forceLoad == true || allContacts == null) {
+        if (forceLoad == true || allContacts == null) {
             ArrayList<Contacts> list = new ArrayList<>();
             SQLiteDatabase db = this.getReadableDatabase();
 
@@ -885,7 +886,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return DEFAULT_ENTRY_ID;
     }
 
-    public long createChatEntry(String name, long contactId) {
+    public long createChatEntry(String name, long contactId, boolean others) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -893,7 +894,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         values.put(ChatEntry.COLUMN_NAME, name);
         values.put(ChatEntry.COLUMN_CONTACT_ID, contactId);
         values.put(ChatEntry.COLUMN_UNREAD_COUNT, 0);
-
+        values.put(ChatEntry.COLUMN_PEOPLE_AROUND_ME, others);
         values.put(ChatEntry.COLUMN_GROUP_SERVER_ID, DEFAULT_GROUP_SERVER_ID);
 
         long id = db.insert(ChatEntry.TABLE_NAME, null, values);
@@ -947,7 +948,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public ArrayList<Chats> getChatList() {
+    public ArrayList<Chats> getChatList(boolean others) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         ArrayList<Chats> list = new ArrayList<>();
@@ -985,25 +986,37 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 //            }
 //
 //        }
+//        {
+//            String query = "SELECT " + GroupUserEntry.COLUMN_CONTACT_ID + " , " + GroupUserEntry.COLUMN_CHAT_ID +
+//                    " FROM " + GroupUserEntry.TABLE_NAME;
+//            Cursor cursor = db.rawQuery(query, null);
+//            if (cursor.moveToFirst()) {
+//                do {
+//                    Log.i("Group user entry", "Item " + cursor.getInt(0) + " : " + cursor.getInt(1));
+//                } while (cursor.moveToNext());
+//            }
+//
+//        }
         {
-            String query = "SELECT " + GroupUserEntry.COLUMN_CONTACT_ID + " , " + GroupUserEntry.COLUMN_CHAT_ID +
-                    " FROM " + GroupUserEntry.TABLE_NAME;
-            Cursor cursor = db.rawQuery(query, null);
-            if (cursor.moveToFirst()) {
-                do {
-                    Log.i("Group user entry", "Item " + cursor.getInt(0) + " : " + cursor.getInt(1));
-                } while (cursor.moveToNext());
+            String subQuery = "";
+            if (others) {
+                subQuery = "( SELECT " + ChatEntry.COLUMN_UNREAD_COUNT + " ," + ChatEntry.COLUMN_NAME + " ," + ChatEntry.COLUMN_CONTACT_ID + " ," +
+                        ChatEntry.COLUMN_LAST_MESSAGE_ID + " ," + MessagesEntry.COLUMN_DATA_TEXT + " ," + MessagesEntry.COLUMN_DATA_MEDIA + " ," +
+                        MessagesEntry.COLUMN_MIME_TYPE + " ," + MessagesEntry.COLUMN_SEND_TIMESTAMP + " ," + MessagesEntry.COLUMN_RECEIVE_TIMESTAMP + " , A." +
+                        ChatEntry.COLUMN_CHAT_ID + " ," + ChatEntry.COLUMN_GROUP_SERVER_ID + " ," + ChatEntry.COLUMN_IMAGE + "," + ChatEntry.COLUMN_MUTE_CONVERSATION +
+                        "," + ChatEntry.COLUMN_LAST_USED +
+                        " FROM " + ChatEntry.TABLE_NAME + " A INNER JOIN " + MessagesEntry.TABLE_NAME + " B ON " + ChatEntry.COLUMN_LAST_MESSAGE_ID + " = " + MessagesEntry.COLUMN_ID +
+                        " WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " = 1 " + " ) ";
+            } else {
+                subQuery = "( SELECT " + ChatEntry.COLUMN_UNREAD_COUNT + " ," + ChatEntry.COLUMN_NAME + " ," + ChatEntry.COLUMN_CONTACT_ID + " ," +
+                        ChatEntry.COLUMN_LAST_MESSAGE_ID + " ," + MessagesEntry.COLUMN_DATA_TEXT + " ," + MessagesEntry.COLUMN_DATA_MEDIA + " ," +
+                        MessagesEntry.COLUMN_MIME_TYPE + " ," + MessagesEntry.COLUMN_SEND_TIMESTAMP + " ," + MessagesEntry.COLUMN_RECEIVE_TIMESTAMP + " , A." +
+                        ChatEntry.COLUMN_CHAT_ID + " ," + ChatEntry.COLUMN_GROUP_SERVER_ID + " ," + ChatEntry.COLUMN_IMAGE + "," + ChatEntry.COLUMN_MUTE_CONVERSATION +
+                        "," + ChatEntry.COLUMN_LAST_USED +
+                        " FROM " + ChatEntry.TABLE_NAME + " A INNER JOIN " + MessagesEntry.TABLE_NAME + " B ON " + ChatEntry.COLUMN_LAST_MESSAGE_ID + " = " + MessagesEntry.COLUMN_ID +
+                        " WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " = 0 " + " ) ";
             }
 
-        }
-
-        {
-            String subQuery = "( SELECT " + ChatEntry.COLUMN_UNREAD_COUNT + " ," + ChatEntry.COLUMN_NAME + " ," + ChatEntry.COLUMN_CONTACT_ID + " ," +
-                    ChatEntry.COLUMN_LAST_MESSAGE_ID + " ," + MessagesEntry.COLUMN_DATA_TEXT + " ," + MessagesEntry.COLUMN_DATA_MEDIA + " ," +
-                    MessagesEntry.COLUMN_MIME_TYPE + " ," + MessagesEntry.COLUMN_SEND_TIMESTAMP + " ," + MessagesEntry.COLUMN_RECEIVE_TIMESTAMP + " , A." +
-                    ChatEntry.COLUMN_CHAT_ID + " ," + ChatEntry.COLUMN_GROUP_SERVER_ID + " ," + ChatEntry.COLUMN_IMAGE + "," + ChatEntry.COLUMN_MUTE_CONVERSATION +
-                    "," + ChatEntry.COLUMN_LAST_USED +
-                    " FROM " + ChatEntry.TABLE_NAME + " A INNER JOIN " + MessagesEntry.TABLE_NAME + " B ON " + ChatEntry.COLUMN_LAST_MESSAGE_ID + " = " + MessagesEntry.COLUMN_ID + " ) ";
 
             String selectQuery = " SELECT B.* , A." + ContactsEntry.COLUMN_USER_IMAGE + "," + ContactsEntry.COLUMN_BLOCK_USER + " FROM " +
                     ContactsEntry.TABLE_NAME + " A INNER JOIN " + subQuery + " B  ON A." + ContactsEntry.COLUMN_CONTACT_ID + " = B." + ChatEntry.COLUMN_CONTACT_ID

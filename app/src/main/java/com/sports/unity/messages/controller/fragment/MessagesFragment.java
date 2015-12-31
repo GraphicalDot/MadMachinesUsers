@@ -22,9 +22,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.getbase.floatingactionbutton.FloatingActionButton;
+import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.activity.CreateGroup;
+import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.Constants;
 
@@ -65,6 +68,16 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
         others.setOnClickListener(this);
         others.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
         buttonContainerLayout = (LinearLayout) v.findViewById(com.sports.unity.R.id.fragmentChangeButtonLayout);
+
+
+        FloatingActionButton button = (FloatingActionButton) v.findViewById(R.id.fab);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), PeopleAroundMeMap.class);
+                startActivity(intent);
+            }
+        });
 
 //        ImageButton createGroup = (ImageButton) v.findViewById(R.id.create_group);
 //        createGroup.setOnClickListener(this);

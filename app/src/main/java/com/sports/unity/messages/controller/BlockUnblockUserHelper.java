@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
+import com.sports.unity.messages.controller.viewhelper.ChatKeyboardHelper;
 
 /**
  * Created by madmachines on 17/11/15.
@@ -21,38 +22,40 @@ import com.sports.unity.messages.controller.model.PersonalMessaging;
 public class BlockUnblockUserHelper {
 
     private boolean blockStatus = false;
+    private Activity activity = null;
 
-    public BlockUnblockUserHelper(boolean blockStatus) {
+    public BlockUnblockUserHelper(boolean blockStatus, Activity activity) {
         this.blockStatus = blockStatus;
+        this.activity = activity;
     }
 
     public boolean isBlockStatus() {
         return blockStatus;
     }
 
-    public void initViewBasedOnBlockStatus(Menu menu){
+    public void initViewBasedOnBlockStatus(Menu menu) {
         MenuItem menuItem = menu.findItem(R.id.action_block_user);
-        if ( blockStatus ) {
+        if (blockStatus) {
             menuItem.setTitle("Unblock User");
         } else {
             menuItem.setTitle("Block User");
         }
     }
 
-    public void showAlert_ToSendMessage_UnblockUser(Activity activity, long contactId, String phoneNumber, Menu menu){
+    public void showAlert_ToSendMessage_UnblockUser(Activity activity, long contactId, String phoneNumber, Menu menu) {
         alert_Dialog("To send message, please unblock this user.", false, activity, contactId, phoneNumber, menu);
     }
 
-    public void onMenuItemSelected(Activity activity, long contactId, String phoneNumber, Menu menu){
-        if( blockStatus ) {
+    public void onMenuItemSelected(Activity activity, long contactId, String phoneNumber, Menu menu) {
+        if (blockStatus) {
             startTaskToBlockOrUnBlock(false, activity, contactId, phoneNumber, menu);
         } else {
             alert_Dialog("Are you really want to block this user ?", true, activity, contactId, phoneNumber, menu);
         }
     }
 
-    private void alert_Dialog(String message, final boolean status, final Activity activity, final long contactId, final String phoneNumber, final  Menu menu){
-        AlertDialog.Builder altDialog= new AlertDialog.Builder(activity);
+    private void alert_Dialog(String message, final boolean status, final Activity activity, final long contactId, final String phoneNumber, final Menu menu) {
+        AlertDialog.Builder altDialog = new AlertDialog.Builder(activity);
         altDialog.setMessage(message);
         altDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 
@@ -73,15 +76,16 @@ public class BlockUnblockUserHelper {
         altDialog.show();
     }
 
-    private void startTaskToBlockOrUnBlock(boolean status, Activity activity, long contactId, String phoneNumber, Menu menu){
+    private void startTaskToBlockOrUnBlock(boolean status, Activity activity, long contactId, String phoneNumber, Menu menu) {
         new BlockOrUnBlockUserAsyncTask(status, activity, contactId, phoneNumber, menu).execute();
     }
 
-    private void postActionOnBlockOrUnblock(boolean status, Menu menu){
+    private void postActionOnBlockOrUnblock(boolean status, Menu menu) {
         MenuItem item = menu.findItem(R.id.action_block_user);
 
         blockStatus = status;
-        if( blockStatus == true ){
+        ChatKeyboardHelper.getInstance(false).disableKeyboardAndMediaButtons(blockStatus, activity);
+        if (blockStatus == true) {
             item.setTitle("Unblock User");
         } else {
             item.setTitle("Block User");
@@ -100,7 +104,7 @@ public class BlockUnblockUserHelper {
 
         private boolean success = false;
 
-        public BlockOrUnBlockUserAsyncTask(boolean status, Activity activity, long contactId, String phoneNumber, Menu menu){
+        public BlockOrUnBlockUserAsyncTask(boolean status, Activity activity, long contactId, String phoneNumber, Menu menu) {
             this.status = status;
             this.activity = activity;
             this.contactId = contactId;
@@ -117,7 +121,7 @@ public class BlockUnblockUserHelper {
             success = PersonalMessaging.getInstance(activity.getApplicationContext()).
                     changeUserBlockStatus(phoneNumber, status);
 
-            if( success == true ) {
+            if (success == true) {
                 SportsUnityDBHelper.getInstance(activity.getApplicationContext()).
                         updateUserBlockStatus(contactId, status);
             } else {
@@ -128,8 +132,8 @@ public class BlockUnblockUserHelper {
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            if( success == true ){
-                postActionOnBlockOrUnblock( status, menu);
+            if (success == true) {
+                postActionOnBlockOrUnblock(status, menu);
             } else {
                 Toast.makeText(activity.getApplicationContext(), "failed !!", Toast.LENGTH_SHORT).show();
             }

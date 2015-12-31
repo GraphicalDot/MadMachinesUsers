@@ -225,7 +225,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
                 @Override
                 public void run() {
                     if (chatListView != null) {
-                        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList();
+                        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(false);
                         ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
                         adapter.updateList(chatList);
                         chatListView.setAdapter(adapter);
@@ -243,7 +243,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
 
 
     private void updateContent() {
-        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList();
+        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(false);
         if (chatList != null) {
             ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
             adapter.updateList(chatList);

@@ -3,7 +3,6 @@ package com.sports.unity.messages.controller.activity;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.widget.Toolbar;
@@ -245,8 +244,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
-
     }
 
     @Override
@@ -263,6 +260,18 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         }
     }
 
+    private void resetToolbar() {
+
+        if (toolbarActionsForChatScreen.getSelecteditems() != 0) {
+            toolbarActionsForChatScreen.resetList(mChatView);
+            invalidateOptionsMenu();
+
+        } else if (toolbarActionsForChatScreen.getSearchFlag()) {
+            toolbarActionsForChatScreen.setSearchFlag(false);
+            invalidateOptionsMenu();
+            chatScreenAdapter.filterSearchQuery("");
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -310,7 +319,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             getIntentExtras();
 
             boolean blockStatus = getIntent().getBooleanExtra("blockStatus", false);
-            blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus);
+            blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus, this);
+            disableChatIfUserBlocked();
         }
 
         if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
@@ -367,6 +377,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                resetToolbar();
                 if (s.length() > 0) {
                     if (!isGroupChat) {
                         personalMessaging.sendStatus(ChatState.composing, chat);
@@ -397,6 +408,12 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         }
     }
 
+    private void disableChatIfUserBlocked() {
+        if (blockUnblockUserHelper.isBlockStatus()) {
+            chatKeyboardHelper.disableKeyboardAndMediaButtons(blockUnblockUserHelper.isBlockStatus(), this);
+        }
+    }
+
     private void ForwardMessages(ArrayList<Integer> intArrayExtra) {
         ArrayList<Message> listOfMessages = new ArrayList<>();
         for (int id : intArrayExtra) {
@@ -424,7 +441,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
 
     }
-
 
     private void populateMessagesOnScreen() {
         mChatView = (ListView) findViewById(R.id.msgview);               // List for messages
@@ -528,7 +544,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                 if (chatID != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
                     //nothing
                 } else {
-                    chatID = sportsUnityDBHelper.createChatEntry(JABBERNAME, contactID);
+                    chatID = sportsUnityDBHelper.createChatEntry(JABBERNAME, contactID, false);
                     Log.i("ChatEntry : ", "chat entry made " + chatID + " : " + contactID);
                 }
             } else {
@@ -565,10 +581,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     }
 
     private void sendMessage(String message) {
-        if (blockUnblockUserHelper.isBlockStatus()) {
-            blockUnblockUserHelper.showAlert_ToSendMessage_UnblockUser(this, contactID, JABBERID, menu);
-            return;
-        }
 
         createChatEntryifNotExists();
 
@@ -620,7 +632,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             String stickerAssetPath = (String) messageContent;
             personalMessaging.sendStickerMessage(stickerAssetPath, chat, JABBERID, chatID);
-
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
 
             String mediaFileName = (String) messageContent;
@@ -637,22 +648,27 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     }
 
     public void openCamera(View view) {
+        resetToolbar();
         chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
     }
 
     public void emojipopup(View view) {
+        resetToolbar();
         chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
     }
 
     public void galleryPopup(View view) {
+        resetToolbar();
         chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
     }
 
     public void voicePopup(View view) {
+        resetToolbar();
         chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
     }
 
     public void openKeyBoard(View view) {
+        resetToolbar();
         chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
     }
 
@@ -763,6 +779,9 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         } else if (id == R.id.searchChatScreen) {
             toolbarActionsForChatScreen.setSearchFlag(true);
             invalidateOptionsMenu();
+
+            View view = findViewById(R.id.btn_text);
+            chatKeyboardHelper.openTextKeyBoard(view, this);
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -15,22 +15,22 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/img_chat"
         android:scaleType="centerCrop"
-        />
-        <ListView
-            android:id="@+id/msgview"
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_above="@+id/type_msg"
-            android:layout_below="@+id/tool_bar_chat"
-            android:layout_marginTop="@dimen/activity_vertical_margin_small"
-            android:choiceMode="multipleChoice"
-            android:divider="@null"
-            android:dividerHeight="0dp"
-            android:stackFromBottom="true"
-            android:transcriptMode="alwaysScroll"
-            />
+        android:src="@drawable/img_chat" />
+
+    <ListView
+        android:id="@+id/msgview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@+id/type_msg"
+        android:layout_below="@+id/tool_bar_chat"
+        android:layout_marginTop="@dimen/activity_vertical_margin_small"
+        android:choiceMode="multipleChoice"
+        android:divider="@null"
+        android:dividerHeight="0dp"
+        android:stackFromBottom="true"
+        android:transcriptMode="alwaysScroll" />
+
     <LinearLayout
         android:id="@+id/type_msg"
         android:layout_width="match_parent"
@@ -81,6 +81,7 @@
 
 
         <LinearLayout
+            android:id="@+id/send_media_action_buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="5">

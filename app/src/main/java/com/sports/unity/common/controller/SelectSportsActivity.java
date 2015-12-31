@@ -21,6 +21,7 @@ import com.sports.unity.common.controller.SportsGridViewAdapter;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.LocManager;
 
 import java.util.ArrayList;
 
@@ -28,6 +29,7 @@ public class SelectSportsActivity extends AppCompatActivity {
 
     private int[] flag = {0, 0, 0, 0, 0};
 
+    LocManager locManager;
     private ArrayList<String> sports = new ArrayList<String>();
 
     private Integer[] mThumbIds = {
@@ -57,7 +59,15 @@ public class SelectSportsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_sports);
         initView();
+        locManager = LocManager.getInstance(this);
+        locManager.buildApiClient();
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        locManager.connect();
     }
 
     private void initView() {
@@ -80,17 +90,17 @@ public class SelectSportsActivity extends AppCompatActivity {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if (flag[position] == 0) {
-                ImageView imageView = (ImageView) view;
-                imageView.setImageResource(mThumbIdsSelected[position]);
-                sports.add(mSports[position]);
-                flag[position] = 1;
-            } else {
-                ImageView imageView = (ImageView) view;
-                imageView.setImageResource(mThumbIds[position]);
-                sports.remove(mSports[position]);
-                flag[position] = 0;
-            }
+                if (flag[position] == 0) {
+                    ImageView imageView = (ImageView) view;
+                    imageView.setImageResource(mThumbIdsSelected[position]);
+                    sports.add(mSports[position]);
+                    flag[position] = 1;
+                } else {
+                    ImageView imageView = (ImageView) view;
+                    imageView.setImageResource(mThumbIds[position]);
+                    sports.remove(mSports[position]);
+                    flag[position] = 0;
+                }
             }
         });
 
@@ -99,11 +109,11 @@ public class SelectSportsActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-            if (sports.isEmpty()) {
-                Toast.makeText(SelectSportsActivity.this, R.string.select_atleast_one_sport_message, Toast.LENGTH_SHORT).show();
-            } else {
-                moveOn();
-            }
+                if (sports.isEmpty()) {
+                    Toast.makeText(SelectSportsActivity.this, R.string.select_atleast_one_sport_message, Toast.LENGTH_SHORT).show();
+                } else {
+                    moveOn();
+                }
             }
         });
 

@@ -1,44 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/search_layout"
-        android:background="@color/messages_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/messages_bg"
         android:orientation="horizontal"
+        android:paddingBottom="@dimen/horizontal_padding_very_small"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/horizontal_padding_very_small"
-        android:paddingBottom="@dimen/horizontal_padding_very_small"
-        >
+        android:paddingTop="@dimen/horizontal_padding_very_small">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:background="@drawable/round_edge_box"
-            android:paddingLeft="@dimen/vertical_padding_very_small"
-            android:paddingTop="@dimen/horizontal_padding_very_small"
+            android:orientation="horizontal"
             android:paddingBottom="@dimen/horizontal_padding_very_small"
-            >
+            android:paddingLeft="@dimen/vertical_padding_very_small"
+            android:paddingTop="@dimen/horizontal_padding_very_small">
+
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:src="@drawable/ic_search_grey"
-                />
+                android:src="@drawable/ic_search_grey" />
+
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/transparent"
-                android:textColor="@color/gray1"
                 android:paddingLeft="@dimen/vertical_padding_very_small"
                 android:text="@string/search_dots"
-                android:textSize="@dimen/font_size_medium"
-                />
+                android:textColor="@color/gray1"
+                android:textSize="@dimen/font_size_medium" />
         </LinearLayout>
     </LinearLayout>
 
@@ -46,48 +45,47 @@
         android:id="@+id/title_layout_for_members_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:paddingBottom="@dimen/horizontal_padding_very_small"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/horizontal_padding_very_small"
-        android:paddingBottom="@dimen/horizontal_padding_very_small"
-        android:background="@android:color/white"
-        android:visibility="gone"
-        >
+        android:visibility="gone">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
             android:text="@string/group_title_add_group_participanats"
             android:textColor="@color/gray1"
-            android:textSize="@dimen/font_size_very_small"
-            android:layout_alignParentLeft="true"
-            />
+            android:textSize="@dimen/font_size_very_small" />
+
         <TextView
             android:id="@+id/members_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
             android:text="@string/group_title_members_limit"
             android:textColor="@color/gray1"
-            android:textSize="@dimen/font_size_very_small"
-            android:layout_alignParentRight="true"
-            />
+            android:textSize="@dimen/font_size_very_small" />
     </RelativeLayout>
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@android:color/white"
-        >
+        android:orientation="vertical">
+
         <ListView
             android:id="@+id/list_contacts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@android:color/white"
             android:divider="@drawable/list_divider"
             android:dividerHeight="0.3dp"
-            android:background="@android:color/white"
             android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            />
+            android:paddingRight="@dimen/activity_horizontal_margin" />
+
     </LinearLayout>
 
 </LinearLayout>

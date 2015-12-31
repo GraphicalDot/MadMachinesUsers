@@ -4,11 +4,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <ListView
+        android:id="@+id/people_around_me_chat"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:divider="@drawable/list_divider"
+        android:dividerHeight="0.3dp">
+
+    </ListView>
 
     <TextView
-        android:id="@+id/textView2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:text="Others fragment welcomes you" />
+        android:id="@+id/empty_others"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:padding="@dimen/activity_horizontal_margin"
+        android:text="@string/start_messaging_others" />
+
 </LinearLayout>

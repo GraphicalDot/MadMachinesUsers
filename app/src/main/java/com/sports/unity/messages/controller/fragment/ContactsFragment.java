@@ -17,10 +17,12 @@ import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.messages.controller.BlockUnblockUserHelper;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.activity.ForwardSelectedItems;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.ToolbarActionsForChatScreen;
+import com.sports.unity.messages.controller.viewhelper.ChatKeyboardHelper;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.Constants;
 
@@ -157,12 +159,17 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             chatScreenIntent.putExtra("userpicture", userPicture);
             chatScreenIntent.putExtra("blockStatus", blockStatus);
 
-            ArrayList<Integer> selectedIds = getArguments().getIntegerArrayList(Constants.INTENT_FORWARD_SELECTED_IDS);
-            chatScreenIntent.putIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS, selectedIds);
+            if (blockStatus) {
+                Toast.makeText(getActivity().getApplicationContext(), "This user is blocked Please select another user", Toast.LENGTH_SHORT).show();
+            } else {
 
-            chatScreenIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(chatScreenIntent);
-            getActivity().finish();
+                ArrayList<Integer> selectedIds = getArguments().getIntegerArrayList(Constants.INTENT_FORWARD_SELECTED_IDS);
+                chatScreenIntent.putIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS, selectedIds);
+
+                chatScreenIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(chatScreenIntent);
+                getActivity().finish();
+            }
         }
     }
 

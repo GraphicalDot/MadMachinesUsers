@@ -30,6 +30,9 @@ public class TinyDB {
     public static final String KEY_OTP_SENT = "otp_sent";
     public static final String KEY_GET_JOINED_GROUPS_ON_REGISTRATION = "get_groups";
 
+    public static final String KEY_CURRENT_LATITUDE = "lat";
+    public static final String KEY_CURRENT_LONGITUDE = "long";
+
     public static final String KEY_USERNAME = "username";
     public static final String KEY_PASSWORD = "password";
 
