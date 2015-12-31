@@ -15,12 +15,6 @@ import com.sports.unity.common.model.TinyDB;
  */
 public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    Context context;
-
-    private Location mLastLocation;
-
-    private GoogleApiClient mGoogleApiClient;
-
     private static LocManager locManager = null;
 
     synchronized public static LocManager getInstance(Context context) {
@@ -30,7 +24,11 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         return locManager;
     }
 
-    LocManager(Context context) {
+    private Context context;
+    private Location mLastLocation;
+    private GoogleApiClient mGoogleApiClient;
+
+    public LocManager(Context context) {
         this.context = context;
     }
 
@@ -58,15 +56,19 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     @Override
     public void onConnected(Bundle bundle) {
         Log.i("fusedlocationapi", "connected");
+
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         saveLocation(mLastLocation);
     }
 
     public void saveLocation(Location mLastLocation) {
-        Log.i("latitude", String.valueOf(mLastLocation.getLatitude()));
-        Log.i("longitude", String.valueOf(mLastLocation.getLongitude()));
-        TinyDB.getInstance(context).putDouble(TinyDB.KEY_CURRENT_LATITUDE, mLastLocation.getLatitude());
-        TinyDB.getInstance(context).putDouble(TinyDB.KEY_CURRENT_LONGITUDE, mLastLocation.getLongitude());
+        if( mLastLocation != null ) {
+            Log.i("latitude", String.valueOf(mLastLocation.getLatitude()));
+            Log.i("longitude", String.valueOf(mLastLocation.getLongitude()));
+
+            TinyDB.getInstance(context).putDouble(TinyDB.KEY_CURRENT_LATITUDE, mLastLocation.getLatitude());
+            TinyDB.getInstance(context).putDouble(TinyDB.KEY_CURRENT_LONGITUDE, mLastLocation.getLongitude());
+        }
     }
 
     @Override

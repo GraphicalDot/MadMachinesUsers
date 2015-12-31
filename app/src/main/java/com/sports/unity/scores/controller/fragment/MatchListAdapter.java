@@ -61,6 +61,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         private TextView matchDay;
         private TextView venue;
         private TextView date;
+        private TextView odds;
 
         private View view;
 
@@ -78,6 +79,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             matchDay = (TextView) v.findViewById(R.id.matchDay);
             venue = (TextView) v.findViewById(R.id.venue);
             date = (TextView) v.findViewById(R.id.date);
+            odds = (TextView) v.findViewById(R.id.show_odds);
 
         }
     }
@@ -124,9 +126,9 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             }
 
             if( footballMatchJsonCaller.isLive() ){
-
+                holder.odds.setVisibility(View.GONE);
             } else {
-
+                holder.odds.setVisibility(View.VISIBLE);
             }
 
         }catch (Exception ex){

@@ -29,7 +29,7 @@ public class SelectSportsActivity extends AppCompatActivity {
 
     private int[] flag = {0, 0, 0, 0, 0};
 
-    LocManager locManager;
+    private LocManager locManager;
     private ArrayList<String> sports = new ArrayList<String>();
 
     private Integer[] mThumbIds = {
@@ -57,16 +57,18 @@ public class SelectSportsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_select_sports);
         initView();
+
         locManager = LocManager.getInstance(this);
         locManager.buildApiClient();
-
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
         locManager.connect();
     }
 
