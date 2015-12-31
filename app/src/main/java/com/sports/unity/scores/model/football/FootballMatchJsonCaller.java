@@ -61,4 +61,8 @@ public class FootballMatchJsonCaller extends JsonObjectCaller {
         return jsonObject.getString("home_team_score");
     }
 
+    public boolean isLive() throws JSONException {
+        return jsonObject.getBoolean("live");
+    }
+
 }

@@ -42,7 +42,7 @@
             android:paddingRight="@dimen/horizontal_padding_medium"
             android:gravity="center"
             android:text="Next"
-            android:textSize="@dimen/font_size_small"
+            android:textSize="@dimen/font_size_small_large"
             android:textColor="@color/app_theme_blue"
             android:textStyle="bold"
             />

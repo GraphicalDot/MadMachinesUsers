@@ -35,6 +35,7 @@
     <color name="group_receive_name">#808080</color>
     <color name="list_selector">#30004d99</color>
 
+    <!-- camera related -->
     <color name="semi_transparent">#44000000</color>
     <color name="red_semi_transparent">#55ff0000</color>
     <color name="brick_red">#e86369</color>
@@ -43,5 +44,9 @@
 
     <color name="edit_view_hint_color">#587cb0</color>
     <color name="facebook_button_separator">#004386</color>
+
+    <!-- score related -->
+    <color name="score_dark_grey">#333</color>
+    <color name="score_light_grey">#666666</color>
 
 </resources>

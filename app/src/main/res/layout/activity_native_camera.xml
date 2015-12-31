@@ -33,7 +33,7 @@
         <TextView
             android:id="@+id/send_to_label"
             android:text="Send to"
-            android:textSize="@dimen/font_size_small"
+            android:textSize="@dimen/font_size_small_large"
             android:textColor="@android:color/white"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
             <TextView
                 android:id="@+id/video_recording_time"
                 android:text="00:00"
-                android:textSize="@dimen/font_size_small"
+                android:textSize="@dimen/font_size_small_large"
                 android:textColor="@android:color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -94,7 +94,7 @@
         <TextView
             android:id="@+id/hold_message"
             android:text="@string/message_to_hold_button_for_video"
-            android:textSize="@dimen/font_size_small"
+            android:textSize="@dimen/font_size_small_large"
             android:textColor="@android:color/white"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

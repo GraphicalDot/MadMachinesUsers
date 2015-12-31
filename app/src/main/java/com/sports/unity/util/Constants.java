@@ -13,6 +13,9 @@ public class Constants {
     public static final String INTENT_KEY_CONTACT_FRAGMENT_USAGE = "CONTACT_FRAGMENT_USAGE";
     public static final String INTENT_KEY_SEARCH_ON = "SEARCH_ON";
     public static final String INTENT_FORWARD_SELECTED_IDS = "get_the _selected_ids";
+    public static final String INTENT_KEY_URL = "URL";
+    public static final String INTENT_KEY_TYPE = "TYPE";
+    public static final String INTENT_KEY_TITLE = "TITLE";
 
     public static final String INTENT_KEY_FILENAME = "FILE_NAME";
     public static final String INTENT_KEY_MIMETYPE = "MIME_TYPE";

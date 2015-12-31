@@ -106,7 +106,7 @@
             android:text="@string/dummy_text_message"
             android:textColor="@android:color/black"
             android:textColorLink="@android:color/white"
-            android:textSize="@dimen/font_size_small"
+            android:textSize="@dimen/font_size_small_large"
             android:paddingLeft="@dimen/horizontal_padding_very_very_small"
             android:paddingRight="@dimen/horizontal_padding_very_very_small"
             android:minWidth="@dimen/text_msg_minimum_width"

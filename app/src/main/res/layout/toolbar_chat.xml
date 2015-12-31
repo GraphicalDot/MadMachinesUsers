@@ -74,7 +74,7 @@
                     android:singleLine="true"
                     android:text="@string/chat_activity_username"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/font_size_small" />
+                    android:textSize="@dimen/font_size_small_large" />
 
                 <TextView
                     android:id="@+id/status_active"

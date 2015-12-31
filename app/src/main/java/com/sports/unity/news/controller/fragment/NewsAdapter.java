@@ -19,6 +19,8 @@ import com.bumptech.glide.Glide;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.news.controller.activity.NewsDetailsActivity;
 import com.sports.unity.news.model.NewsJsonCaller;
+import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -136,11 +138,13 @@ public class NewsAdapter extends BaseNewsAdapter {
                     try {
                         String newsLink = newsJsonCaller.getNewsLink();
                         String title = newsJsonCaller.getTitle();
+                        String type = CommonUtil.capitalize(newsJsonCaller.getType());
 
-                        Intent browserIntent = new Intent(activity, NewsDetailsActivity.class);
-                        browserIntent.putExtra("Url", newsLink);
-                        browserIntent.putExtra("title", title);
-                        activity.startActivity(browserIntent);
+                        Intent intent = new Intent(activity, NewsDetailsActivity.class);
+                        intent.putExtra(Constants.INTENT_KEY_URL, newsLink);
+                        intent.putExtra(Constants.INTENT_KEY_TITLE, title);
+                        intent.putExtra(Constants.INTENT_KEY_TYPE, type);
+                        activity.startActivity(intent);
                     }catch (Exception ex){
                         ex.printStackTrace();
                     }

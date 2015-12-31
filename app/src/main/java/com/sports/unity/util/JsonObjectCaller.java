@@ -1,5 +1,6 @@
 package com.sports.unity.util;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -18,6 +19,10 @@ public class JsonObjectCaller {
 
     public JSONObject getJsonObject() {
         return jsonObject;
+    }
+
+    public Object getValue(String key) throws JSONException {
+        return jsonObject.get(key);
     }
 
 }

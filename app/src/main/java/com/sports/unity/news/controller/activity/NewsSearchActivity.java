@@ -26,6 +26,7 @@ import com.sports.unity.util.Constants;
 
 public class NewsSearchActivity extends AppCompatActivity{
 
+    private static final String NEWS_FRAGMENT_TAG = "news_fragment_tag";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +50,7 @@ public class NewsSearchActivity extends AppCompatActivity{
         Bundle bundle = new Bundle();
         bundle.putBoolean(Constants.INTENT_KEY_SEARCH_ON, true);
         newsFragment.setArguments(bundle);
-        fragTransaction.add(fragment_container.getId(), newsFragment);
+        fragTransaction.add(fragment_container.getId(), newsFragment, NEWS_FRAGMENT_TAG);
         fragTransaction.commit();
 
         search.addTextChangedListener(new TextWatcher() {
@@ -112,11 +113,21 @@ public class NewsSearchActivity extends AppCompatActivity{
     }
 
     private void performSearch(String celebrity_name) {
+        if( celebrity_name != null && celebrity_name.length() > 0 ) {
+            NewsContentHandler newsContentHandler = NewsContentHandler.getInstance(NewsSearchActivity.this, NewsContentHandler.KEY_SEARCH_CONTENT);
 
-        NewsContentHandler newsContentHandler = NewsContentHandler.getInstance(NewsSearchActivity.this, NewsContentHandler.KEY_SEARCH_CONTENT);
+            NewsFragment fragment = (NewsFragment)getSupportFragmentManager().findFragmentByTag(NEWS_FRAGMENT_TAG);
+            if( fragment != null ) {
+                newsContentHandler.setSearchKeyword(celebrity_name);
+                newsContentHandler.clearContent();
 
-        newsContentHandler.setSearchKeyword(celebrity_name);
-        newsContentHandler.clearContent();
-        newsContentHandler.refreshNews(true);
+                fragment.showProgress(fragment.getView());
+                newsContentHandler.refreshNews(true);
+            } else {
+
+            }
+        } else {
+            //nothing
+        }
     }
 }

@@ -16,7 +16,8 @@
     <dimen name="vertical_padding_large">45dp</dimen>
 
     <dimen name="font_size_very_small">10sp</dimen>
-    <dimen name="font_size_small">15sp</dimen>
+    <dimen name="font_size_small_medium">12sp</dimen>
+    <dimen name="font_size_small_large">15sp</dimen>
     <dimen name="font_size_medium">20sp</dimen>
     <dimen name="font_size_large">25sp</dimen>
     <dimen name="font_size_xlarge">30sp</dimen>
@@ -35,6 +36,10 @@
     <dimen name="record_button_size">10dp</dimen>
 
     <dimen name="stickers_size">70dp</dimen>
+
+    <!-- score related -->
+    <dimen name="flag_size_small">30dp</dimen>
+    <dimen name="card_edge_curve_radius">2dp</dimen>
 
     <!-- chat related  -->
     <dimen name="text_msg_minimum_width">90dp</dimen>

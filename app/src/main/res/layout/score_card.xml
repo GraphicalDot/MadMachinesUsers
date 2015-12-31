@@ -9,8 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="5dp"
-        card_view:cardCornerRadius="2dp">
+        android:layout_margin="@dimen/vertical_padding_very_very_small"
+        card_view:cardCornerRadius="@dimen/card_edge_curve_radius">
 
         <LinearLayout
             android:id="@+id/rootLayout"
@@ -23,27 +23,27 @@
                 android:id="@+id/ScoreLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
+                android:layout_margin="@dimen/vertical_padding_small"
                 android:orientation="horizontal"
                 android:weightSum="4">
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_weight="3"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="8dp"
+                        android:layout_marginBottom="@dimen/vertical_padding_very_very_small"
                         android:orientation="horizontal">
 
                         <ImageView
                             android:id="@+id/t1flag"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:padding="0.3dp" />
+                            android:layout_width="@dimen/flag_size_small"
+                            android:layout_height="@dimen/flag_size_small"
+                            />
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -56,9 +56,11 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentLeft="true"
                                 android:layout_centerInParent="true"
-                                android:paddingLeft="8dp"
+                                android:paddingLeft="@dimen/vertical_padding_very_small"
                                 android:textColor="@android:color/black"
-                                android:textSize="18dp" />
+                                android:textSize="@dimen/font_size_medium"
+                                android:text="USA"
+                                />
 
                             <TextView
                                 android:id="@+id/t1score"
@@ -66,9 +68,11 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerInParent="true"
-                                android:paddingRight="8dp"
+                                android:paddingRight="@dimen/vertical_padding_very_small"
                                 android:textColor="@android:color/black"
-                                android:textSize="18dp" />
+                                android:textSize="@dimen/font_size_medium"
+                                android:text="2"
+                                />
                         </RelativeLayout>
 
 
@@ -77,14 +81,14 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginTop="@dimen/vertical_padding_very_very_small"
                         android:orientation="horizontal">
 
                         <ImageView
                             android:id="@+id/t2flag"
-                            android:layout_width="30dp"
-                            android:layout_height="30dp"
-                            android:padding="0.3dp" />
+                            android:layout_width="@dimen/flag_size_small"
+                            android:layout_height="@dimen/flag_size_small"
+                            />
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -97,9 +101,11 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentLeft="true"
                                 android:layout_centerInParent="true"
-                                android:paddingLeft="8dp"
+                                android:paddingLeft="@dimen/vertical_padding_very_small"
                                 android:textColor="@android:color/black"
-                                android:textSize="18dp" />
+                                android:textSize="@dimen/font_size_medium"
+                                android:text="Canada"
+                                />
 
                             <TextView
                                 android:id="@+id/t2score"
@@ -107,9 +113,11 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerInParent="true"
-                                android:paddingRight="8dp"
+                                android:paddingRight="@dimen/vertical_padding_very_small"
                                 android:textColor="@android:color/black"
-                                android:textSize="18dp" />
+                                android:textSize="@dimen/font_size_medium"
+                                android:text="3"
+                                />
 
                         </RelativeLayout>
 
@@ -118,23 +126,38 @@
                 </LinearLayout>
 
                 <View
-                    android:id="@+id/seperator"
                     android:layout_width="1dp"
                     android:layout_height="fill_parent"
-                    android:background="#f2f2f2" />
+                    android:background="@color/gray3" />
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="3">
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    >
 
                     <TextView
                         android:id="@+id/matchDay"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:textColor="@android:color/black" />
+                        android:textColor="@android:color/black"
+                        android:text="Live"
+                        />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:background="@color/app_theme_blue"
+                        android:padding="@dimen/vertical_padding_very_very_small"
+                        android:text="SHOW ODDS"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/font_size_very_small"
+                        />
 
                 </LinearLayout>
             </LinearLayout>
@@ -143,26 +166,30 @@
                 android:id="@+id/footer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#f2f2f2"
+                android:background="@color/gray3"
                 android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/venue"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="6dp"
-                    android:textColor="#333"
-                    android:textSize="12dp" />
+                    android:layout_marginLeft="@dimen/vertical_padding_small"
+                    android:layout_marginTop="@dimen/vertical_padding_very_very_small"
+                    android:textColor="@color/score_dark_grey"
+                    android:textSize="@dimen/font_size_small_medium"
+                    android:text="San Siro"
+                    />
 
                 <TextView
                     android:id="@+id/date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="6dp"
-                    android:layout_marginLeft="16dp"
-                    android:textColor="#666666"
-                    android:textSize="12dp" />
+                    android:layout_marginBottom="@dimen/vertical_padding_very_very_small"
+                    android:layout_marginLeft="@dimen/vertical_padding_small"
+                    android:textColor="@color/score_light_grey"
+                    android:textSize="@dimen/font_size_small_medium"
+                    android:text="Friday, January 01, 00:00 (IST)"
+                    />
             </LinearLayout>
         </LinearLayout>
 

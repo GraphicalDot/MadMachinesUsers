@@ -131,6 +131,10 @@
             android:name=".messages.controller.activity.ForwardSelectedItems"
             android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name=".scores.ScoreDetailActivity"
+            android:screenOrientation="portrait" >
+        </activity>
     </application>
 
 </manifest>

@@ -232,6 +232,10 @@ public class NewsContentHandler {
         }
     }
 
+    public boolean isRequestInProgress(){
+        return requestInProcess.contains(REQUEST_CONTENT_TAG);
+    }
+
     private void handleResponse(String response) {
         Log.i("News Content Handler", "Handle Response");
 
@@ -262,9 +266,25 @@ public class NewsContentHandler {
         Log.d("News Content Handler", "List Size " + list.size());
 
         if(!list.isEmpty()) {
-            filteredNewsArticle.addAll(list);
+            try{
+                if( filteredNewsArticle.size() > 0 ) {
+                    newsJsonCaller.setJsonObject(filteredNewsArticle.get(0));
+                    long currentLists_LatestEpoch = newsJsonCaller.getPublishEpoch();
 
-            try {
+                    newsJsonCaller.setJsonObject(list.get(0));
+                    long newLists_LatestEpoch = newsJsonCaller.getPublishEpoch();
+
+                    if( newLists_LatestEpoch >= currentLists_LatestEpoch) {
+                        filteredNewsArticle.addAll( 0, list); //add on top
+                        Log.i("News Content Handler", "Adding Content from Top");
+                    } else {
+                        filteredNewsArticle.addAll(list); //add on bottom
+                        Log.i("News Content Handler", "Adding Content from Bottom");
+                    }
+                } else {
+                    filteredNewsArticle.addAll(list);
+                }
+
                 newsJsonCaller.setJsonObject(filteredNewsArticle.get(0));
                 timestampFirst = newsJsonCaller.getPublishEpoch();
 
@@ -353,12 +373,12 @@ public class NewsContentHandler {
                 Log.d("News Content Handler", "celebrity name : " + getSearchKeyword());
                 try {
                     String encodedURL = URLEncoder.encode(getSearchKeyword(), "UTF-8");
-                if (timestampFirst == null) {
-                    url = BASE_URL_SEARCH + encodedURL;
+                    if (timestampFirst == null) {
+                        url = BASE_URL_SEARCH + encodedURL;
 
-                } else {
-                    url = BASE_URL_SEARCH + encodedURL + BASE_SUBSET_URL_UP + timestampFirst;
-                }
+                    } else {
+                        url = BASE_URL_SEARCH + encodedURL + BASE_SUBSET_URL_UP + timestampFirst;
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

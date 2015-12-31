@@ -24,7 +24,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_marginBottom="@dimen/vertical_padding_small"
-            android:textSize="@dimen/font_size_small"
+            android:textSize="@dimen/font_size_small_large"
             android:textColor="@android:color/black"
             android:text="@string/group_create_group_title"
             />

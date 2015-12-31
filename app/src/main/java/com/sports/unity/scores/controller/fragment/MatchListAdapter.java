@@ -1,6 +1,8 @@
 package com.sports.unity.scores.controller.fragment;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.scores.model.football.FootballMatchJsonCaller;
 
 import org.json.JSONObject;
@@ -28,34 +31,43 @@ import java.util.TimeZone;
  */
 public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.ViewHolder> {
 
-    private Context context;
+    private Activity activity;
     private List<JSONObject> list;
 
     private FootballMatchJsonCaller footballMatchJsonCaller = new FootballMatchJsonCaller();
 
-    public MatchListAdapter(ArrayList<JSONObject> list, Context applicationContext) {
+    private View.OnClickListener listener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            handleItemClick(view);
+        }
+
+    };
+
+    public MatchListAdapter(ArrayList<JSONObject> list, Activity activity) {
         this.list = list;
-        this.context = applicationContext;
+        this.activity = activity;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        public ImageView t1flag;
-        public TextView team1;
-        public TextView t1score;
-        public ImageView t2flag;
-        public TextView team2;
-        public TextView t2score;
-        public TextView matchDay;
-        public TextView venue;
-        public TextView date;
-        LinearLayout footer;
-        LinearLayout rootLayout;
-        View seperator;
+        private ImageView t1flag;
+        private TextView team1;
+        private TextView t1score;
+        private ImageView t2flag;
+        private TextView team2;
+        private TextView t2score;
+        private TextView matchDay;
+        private TextView venue;
+        private TextView date;
 
+        private View view;
 
         public ViewHolder(View v) {
             super(v);
+
+            view = v;
 
             t1flag = (ImageView) v.findViewById(R.id.t1flag);
             team1 = (TextView) v.findViewById(R.id.team1);
@@ -66,9 +78,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             matchDay = (TextView) v.findViewById(R.id.matchDay);
             venue = (TextView) v.findViewById(R.id.venue);
             date = (TextView) v.findViewById(R.id.date);
-            footer = (LinearLayout) v.findViewById(R.id.footer);
-            rootLayout = (LinearLayout) v.findViewById(R.id.rootLayout);
-            seperator = v.findViewById(R.id.seperator);
 
         }
     }
@@ -97,39 +106,58 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 e.printStackTrace();
             }
 
-            if ("?".equals(footballMatchJsonCaller.getAwayTeamScore())) {
-                holder.team1.setText(footballMatchJsonCaller.getHomeTeam());
-                holder.team2.setText(footballMatchJsonCaller.getAwayTeam());
-                holder.matchDay.setText(isttime);
-                holder.venue.setText(footballMatchJsonCaller.getStadium());
-                holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
+            holder.team1.setText(footballMatchJsonCaller.getHomeTeam());
+            holder.team2.setText(footballMatchJsonCaller.getAwayTeam());
 
-                Glide.with(context).load(footballMatchJsonCaller.getHomeTeamFlag()).into(holder.t1flag);
-                Glide.with(context).load(footballMatchJsonCaller.getAwayTeamFlag()).into(holder.t2flag);
+            holder.venue.setText(footballMatchJsonCaller.getStadium());
+            holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
+
+            Glide.with(activity).load(footballMatchJsonCaller.getHomeTeamFlag()).into(holder.t1flag);
+            Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).into(holder.t2flag);
+
+            if ("?".equals(footballMatchJsonCaller.getAwayTeamScore())) {
+//                holder.matchDay.setText(isttime);
             } else {
-                holder.team1.setText(footballMatchJsonCaller.getHomeTeam());
-                holder.team2.setText(footballMatchJsonCaller.getAwayTeam());
                 holder.t1score.setText(footballMatchJsonCaller.getHomeTeamScore());
                 holder.t2score.setText(footballMatchJsonCaller.getAwayTeamScore());
-                holder.matchDay.setText(footballMatchJsonCaller.getMatchStatus());
-                holder.venue.setText(footballMatchJsonCaller.getStadium());
-                holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
-
-                Glide.with(context).load(footballMatchJsonCaller.getHomeTeamFlag()).into(holder.t1flag);
-                Glide.with(context).load(footballMatchJsonCaller.getAwayTeamFlag()).into(holder.t2flag);
+//                holder.matchDay.setText(footballMatchJsonCaller.getMatchStatus());
             }
+
+            if( footballMatchJsonCaller.isLive() ){
+
+            } else {
+
+            }
+
         }catch (Exception ex){
             ex.printStackTrace();
         }
 
-        holder.matchDay.setTypeface(FontTypeface.getInstance(context).getRobotoRegular());
-        holder.venue.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedBold());
-        holder.date.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedRegular());
-        holder.team1.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedRegular());
-        holder.team2.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedRegular());
-        holder.t1score.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedRegular());
-        holder.t2score.setTypeface(FontTypeface.getInstance(context).getRobotoCondensedRegular());
+        holder.matchDay.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
+        holder.venue.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+        holder.date.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+        holder.team1.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+        holder.team2.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+        holder.t1score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+        holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
 
+        holder.view.setTag(position);
+        holder.view.setOnClickListener(listener);
+    }
+
+    private void handleItemClick(View view){
+        int position = (Integer)view.getTag();
+        JSONObject matchJsonObject = list.get(position);
+
+        try {
+            footballMatchJsonCaller.setJsonObject(matchJsonObject);
+
+            Intent intent = new Intent( activity, ScoreDetailActivity.class);
+            activity.startActivity(intent);
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     private String getLocalTime(String matchTime) throws ParseException {
@@ -201,4 +229,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     public int getItemCount() {
         return list.size();
     }
+
+
+
 }

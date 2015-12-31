@@ -28,13 +28,17 @@ import android.widget.Toast;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.util.Constants;
 
 public class NewsDetailsActivity extends CustomAppCompatActivity {
 
-    private String content = "";
-    private String url = "";
-    private String title = "";
-    ProgressBar progressBar;
+    private String content = null;
+
+    private String url = null;
+    private String title = null;
+    private String type = null;
+
+    private ProgressBar progressBar;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -44,12 +48,13 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
 
         setContentView(R.layout.activity_news_details);
 
-        setToolBar();
+        url = getIntent().getStringExtra(Constants.INTENT_KEY_URL);
+        title = getIntent().getStringExtra(Constants.INTENT_KEY_TITLE);
+        type = getIntent().getStringExtra(Constants.INTENT_KEY_TYPE);
 
-        url = getIntent().getStringExtra("Url");
-        title = getIntent().getStringExtra("title");
         content = title + "\n\n" + url;
 
+        setToolBar();
         initViews();
     }
 
@@ -57,7 +62,9 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(com.sports.unity.R.id.tool_bar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         TextView tv = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        tv.setText(type);
         tv.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
     }
 
