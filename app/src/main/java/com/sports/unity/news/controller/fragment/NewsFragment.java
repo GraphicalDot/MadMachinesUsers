@@ -26,9 +26,10 @@ import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.news.controller.activity.NewsSearchActivity;
-import com.sports.unity.news.model.News;
 import com.sports.unity.news.model.NewsContentHandler;
 import com.sports.unity.util.Constants;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -179,7 +180,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
             @Override
             public void run() {
                 progressBar.setVisibility(View.GONE);
-                ArrayList<News> list = mAdapter.getNews();
+                ArrayList<JSONObject> list = mAdapter.getNews();
                 Log.i("Adapter size","Count:" + list.size());
                 if(list.size() == 0) {
                     error.setVisibility(View.VISIBLE);

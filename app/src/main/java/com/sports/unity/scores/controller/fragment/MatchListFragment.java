@@ -17,12 +17,12 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.scores.model.ScoresContentHandler;
-import com.sports.unity.scores.model.football.FootballLiveScore;
-import com.sports.unity.scores.model.football.FootballLiveScoreResult;
+import com.sports.unity.scores.model.ScoresJsonParser;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -39,7 +39,7 @@ public class MatchListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
-    private ArrayList<FootballLiveScoreResult> matches = new ArrayList<>();
+    private ArrayList<JSONObject> matches = new ArrayList<>();
 
     private ScoresContentListener contentListener = new ScoresContentListener();
 
@@ -87,7 +87,7 @@ public class MatchListFragment extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_scores);
         mRecyclerView.setHasFixedSize(true);
 
-        MatchListAdapter mAdapter = new MatchListAdapter(matches, getActivity(), getActivity());
+        MatchListAdapter mAdapter = new MatchListAdapter(matches, getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -131,15 +131,8 @@ public class MatchListFragment extends Fragment {
         Log.i("List of Matches", "Handle Content");
         boolean success = false;
 
-        ArrayList<FootballLiveScoreResult> list = null;
-        try {
-            FootballLiveScore footballLiveScore = new Gson().fromJson(content, FootballLiveScore.class);
-            list = (ArrayList<FootballLiveScoreResult>) footballLiveScore.getFootballLiveScoreResult();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
-        if( list != null && list.size() > 0 ){
+        ArrayList<JSONObject> list = ScoresJsonParser.parseListOfMatches(content);
+        if( list.size() > 0 ){
             matches.clear();
             matches.addAll(list);
             success = true;
@@ -160,8 +153,10 @@ public class MatchListFragment extends Fragment {
     }
 
     private void showErrorLayout(View view){
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.VISIBLE);
+        if( matches.size() == 0 ) {
+            LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+            errorLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     private void hideErrorLayout(View view){
@@ -183,8 +178,10 @@ public class MatchListFragment extends Fragment {
     }
 
     private void showProgress(View view){
-        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
-        progressBar.setVisibility(View.VISIBLE);
+        if( matches.size() == 0 ) {
+            ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+            progressBar.setVisibility(View.VISIBLE);
+        }
     }
 
     private void hideProgress(View view){

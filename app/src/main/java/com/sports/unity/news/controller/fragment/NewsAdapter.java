@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.news.controller.activity.NewsDetailsActivity;
-import com.sports.unity.news.model.News;
+import com.sports.unity.news.model.NewsJsonCaller;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -26,6 +26,7 @@ import org.joda.time.Days;
 import org.joda.time.Hours;
 import org.joda.time.LocalDate;
 import org.joda.time.Minutes;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -34,7 +35,9 @@ import java.util.ArrayList;
  */
 public class NewsAdapter extends BaseNewsAdapter {
 
-    public NewsAdapter(ArrayList<News> news, Activity activity) {
+    private NewsJsonCaller newsJsonCaller = new NewsJsonCaller();
+
+    public NewsAdapter(ArrayList<JSONObject> news, Activity activity) {
         super( news, activity);
     }
 
@@ -79,54 +82,74 @@ public class NewsAdapter extends BaseNewsAdapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, final int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         ViewHolder holder = (ViewHolder)viewHolder;
 
-        if ( news.size() <= 0 ) {
-            Toast.makeText(activity, "Some error occured Please try later", Toast.LENGTH_LONG).show();
-        } else {
-            String text = news.get(position).getSummary();
+        newsJsonCaller.setJsonObject(news.get(position));
 
-            if (text.length() > 135) {
-                text = text.substring(0, 135) + "...";
-            }
-
-            holder.info.setText(Html.fromHtml(text + " " + "<font color='#2c84cc'><u>Read More</u></font>"));
-            holder.title.setText(news.get(position).getTitle());
-            holder.source.setText(news.get(position).getWebsite());
-            DateTime dateTime = new DateTime(news.get(position).getPublishEpoch() * 1000);
-            DateTime dateTime1 = new DateTime(LocalDate.now(DateTimeZone.forID("Asia/Kolkata")).toDateTimeAtCurrentTime());
-            int days = Days.daysBetween(dateTime, dateTime1).getDays();
-            int hours = Hours.hoursBetween(dateTime, dateTime1).getHours();
-            int minutes = Minutes.minutesBetween(dateTime, dateTime1).getMinutes();
-            if (days > 0) {
-                holder.published.setText(String.valueOf(days) + " day" + ( days==1 ? "":"s" ) +" ago");
-            } else if (hours > 0) {
-                holder.published.setText(String.valueOf(hours) + " hour" + ( hours==1 ? "":"s" ) +" ago");
-            } else if (minutes >= 0) {
-                holder.published.setText(String.valueOf(minutes) + " minute" + ( minutes==1 ? "":"s" ) +" ago");
+        try {
+            if (news.size() <= 0) {
+                Toast.makeText(activity, "Some error occured Please try later", Toast.LENGTH_LONG).show();
             } else {
-                holder.published.setText("");
+                String text = newsJsonCaller.getSummary();
+
+                if (text.length() > 135) {
+                    text = text.substring(0, 135) + "...";
+                }
+
+                holder.info.setText(Html.fromHtml(text + " " + "<font color='#2c84cc'><u>Read More</u></font>"));
+                holder.title.setText(newsJsonCaller.getTitle());
+                holder.source.setText(newsJsonCaller.getWebsite());
+                DateTime dateTime = new DateTime(newsJsonCaller.getPublishEpoch() * 1000);
+                DateTime dateTime1 = new DateTime(LocalDate.now(DateTimeZone.forID("Asia/Kolkata")).toDateTimeAtCurrentTime());
+                int days = Days.daysBetween(dateTime, dateTime1).getDays();
+                int hours = Hours.hoursBetween(dateTime, dateTime1).getHours();
+                int minutes = Minutes.minutesBetween(dateTime, dateTime1).getMinutes();
+                if (days > 0) {
+                    holder.published.setText(String.valueOf(days) + " day" + (days == 1 ? "" : "s") + " ago");
+                } else if (hours > 0) {
+                    holder.published.setText(String.valueOf(hours) + " hour" + (hours == 1 ? "" : "s") + " ago");
+                } else if (minutes >= 0) {
+                    holder.published.setText(String.valueOf(minutes) + " minute" + (minutes == 1 ? "" : "s") + " ago");
+                } else {
+                    holder.published.setText("");
+                }
+
+                if (newsJsonCaller.getImage_link() != null && !newsJsonCaller.getImage_link().equals("null")) {
+                    holder.imageView.setVisibility(View.VISIBLE);
+                    String myUri = newsJsonCaller.getImage_link();
+                    Glide.with(activity).load(myUri).into(holder.imageView);
+
+                } else {
+                    holder.imageView.setVisibility(View.GONE);
+                }
             }
 
-            if (news.get(position).getImage_link() != null && !news.get(position).getImage_link().equals("null")) {
-                holder.imageView.setVisibility(View.VISIBLE);
-                String myUri = news.get(position).getImage_link();
-                Glide.with(activity).load(myUri).into(holder.imageView);
+            holder.news_main.setTag(position);
+            holder.news_main.setOnClickListener(new View.OnClickListener() {
 
-            } else {
-                holder.imageView.setVisibility(View.GONE);
-            }
+                @Override
+                public void onClick(View view) {
+                    int position = (Integer)view.getTag();
+                    newsJsonCaller.setJsonObject(news.get(position));
+
+                    try {
+                        String newsLink = newsJsonCaller.getNewsLink();
+                        String title = newsJsonCaller.getTitle();
+
+                        Intent browserIntent = new Intent(activity, NewsDetailsActivity.class);
+                        browserIntent.putExtra("Url", newsLink);
+                        browserIntent.putExtra("title", title);
+                        activity.startActivity(browserIntent);
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                    }
+                }
+
+            });
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
-        holder.news_main.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent browserIntent = new Intent(activity, NewsDetailsActivity.class);
-                browserIntent.putExtra("Url", news.get(position).getNewsLink());
-                browserIntent.putExtra("title", news.get(position).getTitle());
-                activity.startActivity(browserIntent);
-            }
-        });
     }
 
 }

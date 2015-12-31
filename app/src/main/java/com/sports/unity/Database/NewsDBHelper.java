@@ -7,8 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.sports.unity.news.model.NewsJsonCaller;
 
-import com.sports.unity.news.model.News;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -48,18 +50,21 @@ public class NewsDBHelper extends SQLiteOpenHelper {
         super(context, DBConstants.NEWS_DATABASE_NAME, null, DBConstants.NEWS_DATABASE_VERSION);
     }
 
-    public  void saveNewsArticles(ArrayList<News> newsArrayList){
+    public  void saveNewsArticles(ArrayList<JSONObject> newsArrayList){
         ArrayList<ContentValues> contentValuesArrayList = new ArrayList<>();
 
-        for(News news : newsArrayList){
-            contentValuesArrayList.add( getContentValuesObject(news));
+        for(JSONObject news : newsArrayList){
+            ContentValues contentValues = getContentValuesObject(news);
+            if( contentValues != null ) {
+                contentValuesArrayList.add(contentValues);
+            }
         }
 
         DBUtil.clearContentFromTable( this, NewsEntry.TABLE_NAME);
         DBUtil.insertContentValuesInTable(this, NewsEntry.TABLE_NAME, contentValuesArrayList);
     }
 
-    public ArrayList<News> fetchNewsArticles(){
+    public ArrayList<JSONObject> fetchNewsArticles(){
         String[] projection = {
             NewsEntry.COLUMN_NEWS_ID,
             NewsEntry.COLUMN_WEBSITE,
@@ -83,49 +88,66 @@ public class NewsDBHelper extends SQLiteOpenHelper {
                 null,
                 null);
 
-        ArrayList<News> newsArrayList = new ArrayList<>();
-
+        ArrayList<JSONObject> newsArrayList = new ArrayList<>();
+        NewsJsonCaller newsJsonCaller = new NewsJsonCaller();
         if ( cursor.moveToFirst() ) {
             do {
-                News news = new News();
-                news.setNewsId(cursor.getString(0));
-                news.setWebsite(cursor.getString(1));
-                news.setImage_link(cursor.getString(2));
-                //TODO image content
-                news.setTitle(cursor.getString(4));
-                news.setSummary(cursor.getString(5));
-                news.setNewsLink(cursor.getString(6));
-                news.setCustomSummary(cursor.getString(7));
-                news.setPublished(cursor.getString(8));
-                news.setType(cursor.getString(9));
-                news.setPublishEpoch(cursor.getLong(10));
+                JSONObject news = new JSONObject();
+                newsJsonCaller.setJsonObject(news);
 
-                newsArrayList.add(news);
+                try {
+                    newsJsonCaller.setNewsId(cursor.getString(0));
+                    newsJsonCaller.setWebsite(cursor.getString(1));
+                    newsJsonCaller.setImage_Link(cursor.getString(2));
+                    newsJsonCaller.setTitle(cursor.getString(4));
+                    newsJsonCaller.setSummary(cursor.getString(5));
+                    newsJsonCaller.setNewsLink(cursor.getString(6));
+                    newsJsonCaller.setCustomSummary(cursor.getString(7));
+                    newsJsonCaller.setPublished(cursor.getString(8));
+                    newsJsonCaller.setType(cursor.getString(9));
+                    newsJsonCaller.setPublishEpoch(cursor.getLong(10));
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                    news = null;
+                }
+
+                if( news != null ) {
+                    newsArrayList.add(news);
+                } else {
+                    //nothing
+                }
             } while ( cursor.moveToNext() );
         }
 
         return newsArrayList;
     }
 
-    private void saveNewsArticle(News news) {
+    private void saveNewsArticle(JSONObject news) throws Exception {
         ContentValues contentValues = getContentValuesObject(news);
 
         DBUtil.insertContentValuesInTable(this, NewsEntry.TABLE_NAME, contentValues);
     }
 
-    private ContentValues getContentValuesObject(News news){
+    private ContentValues getContentValuesObject(JSONObject news) {
+        NewsJsonCaller newsJsonCaller = new NewsJsonCaller();
+        newsJsonCaller.setJsonObject(news);
+
         ContentValues contentValues = new ContentValues();
-        contentValues.put(NewsEntry.COLUMN_NEWS_ID, news.getNewsId());
-        contentValues.put(NewsEntry.COLUMN_WEBSITE, news.getWebsite());
-        contentValues.put(NewsEntry.COLUMN_IMAGE_URL, news.getImage_link());
-        //TODO image content
-        contentValues.put(NewsEntry.COLUMN_TITLE, news.getTitle());
-        contentValues.put(NewsEntry.COLUMN_SUMMARY, news.getSummary());
-        contentValues.put(NewsEntry.COLUMN_NEWS_LINK, news.getNewsLink());
-        contentValues.put(NewsEntry.COLUMN_CUSTOM_SUMMARY, news.getCustomSummary());
-        contentValues.put(NewsEntry.COLUMN_PUBLISHED, news.getPublished());
-        contentValues.put(NewsEntry.COLUMN_TYPE, news.getType());
-        contentValues.put(NewsEntry.COLUMN_PUBLISH_EPOCH, news.getPublishEpoch());
+        try {
+            contentValues.put(NewsEntry.COLUMN_NEWS_ID, newsJsonCaller.getNewsId());
+            contentValues.put(NewsEntry.COLUMN_WEBSITE, newsJsonCaller.getWebsite());
+            contentValues.put(NewsEntry.COLUMN_IMAGE_URL, newsJsonCaller.getImage_link());
+            contentValues.put(NewsEntry.COLUMN_TITLE, newsJsonCaller.getTitle());
+            contentValues.put(NewsEntry.COLUMN_SUMMARY, newsJsonCaller.getSummary());
+            contentValues.put(NewsEntry.COLUMN_NEWS_LINK, newsJsonCaller.getNewsLink());
+            contentValues.put(NewsEntry.COLUMN_CUSTOM_SUMMARY, newsJsonCaller.getCustomSummary());
+            contentValues.put(NewsEntry.COLUMN_PUBLISHED, newsJsonCaller.getPublished());
+            contentValues.put(NewsEntry.COLUMN_TYPE, newsJsonCaller.getType());
+            contentValues.put(NewsEntry.COLUMN_PUBLISH_EPOCH, newsJsonCaller.getPublishEpoch());
+        }catch (Exception ex){
+            ex.printStackTrace();
+            contentValues = null;
+        }
         return contentValues;
     }
 

@@ -1,6 +1,5 @@
 package com.sports.unity.scores.controller.fragment;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,7 +12,9 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
-import com.sports.unity.scores.model.football.FootballLiveScoreResult;
+import com.sports.unity.scores.model.football.FootballMatchJsonCaller;
+
+import org.json.JSONObject;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,10 +29,11 @@ import java.util.TimeZone;
 public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.ViewHolder> {
 
     private Context context;
-    private List<FootballLiveScoreResult> list;
+    private List<JSONObject> list;
 
+    private FootballMatchJsonCaller footballMatchJsonCaller = new FootballMatchJsonCaller();
 
-    public MatchListAdapter(ArrayList<FootballLiveScoreResult> list, Context applicationContext, Activity activity) {
+    public MatchListAdapter(ArrayList<JSONObject> list, Context applicationContext) {
         this.list = list;
         this.context = applicationContext;
     }
@@ -79,41 +81,45 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
     @Override
     public void onBindViewHolder(MatchListAdapter.ViewHolder holder, int position) {
+        JSONObject matchJsonObject = list.get(position);
 
-        FootballLiveScoreResult footballLiveScoreResult = list.get(position);
-        Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballLiveScoreResult.getMatchDateEpoch()) * 1000)));
-        String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
-        String day = (String) android.text.format.DateFormat.format("dd", date); //20
-        String month = getMonth((String) android.text.format.DateFormat.format("MMM", date));
-        String isttime = null;
         try {
-            isttime = getLocalTime(footballLiveScoreResult.getMatchTime()).substring(0, 5);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+            footballMatchJsonCaller.setJsonObject(matchJsonObject);
 
-        if ("?".equals(footballLiveScoreResult.getAwayTeamScore())) {
+            Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000)));
+            String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
+            String day = (String) android.text.format.DateFormat.format("dd", date);
+            String month = getMonth((String) android.text.format.DateFormat.format("MMM", date));
+            String isttime = null;
+            try {
+                isttime = getLocalTime(footballMatchJsonCaller.getMatchTime()).substring(0, 5);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
-            holder.team1.setText(footballLiveScoreResult.getHomeTeam());
-            holder.team2.setText(footballLiveScoreResult.getAwayTeam());
-            holder.matchDay.setText(isttime);
-            holder.venue.setText(footballLiveScoreResult.getStadium());
-            Glide.with(context).load(footballLiveScoreResult.getHomeTeamFlag()).into(holder.t1flag);
-            Glide.with(context).load(footballLiveScoreResult.getAwayTeamFlag()).into(holder.t2flag);
-            holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
+            if ("?".equals(footballMatchJsonCaller.getAwayTeamScore())) {
+                holder.team1.setText(footballMatchJsonCaller.getHomeTeam());
+                holder.team2.setText(footballMatchJsonCaller.getAwayTeam());
+                holder.matchDay.setText(isttime);
+                holder.venue.setText(footballMatchJsonCaller.getStadium());
+                holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
 
+                Glide.with(context).load(footballMatchJsonCaller.getHomeTeamFlag()).into(holder.t1flag);
+                Glide.with(context).load(footballMatchJsonCaller.getAwayTeamFlag()).into(holder.t2flag);
+            } else {
+                holder.team1.setText(footballMatchJsonCaller.getHomeTeam());
+                holder.team2.setText(footballMatchJsonCaller.getAwayTeam());
+                holder.t1score.setText(footballMatchJsonCaller.getHomeTeamScore());
+                holder.t2score.setText(footballMatchJsonCaller.getAwayTeamScore());
+                holder.matchDay.setText(footballMatchJsonCaller.getMatchStatus());
+                holder.venue.setText(footballMatchJsonCaller.getStadium());
+                holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
 
-        } else {
-
-            holder.team1.setText(footballLiveScoreResult.getHomeTeam());
-            holder.team2.setText(footballLiveScoreResult.getAwayTeam());
-            holder.t1score.setText(footballLiveScoreResult.getHomeTeamScore());
-            holder.t2score.setText(footballLiveScoreResult.getAwayTeamScore());
-            holder.matchDay.setText(footballLiveScoreResult.getMatchStatus());
-            holder.venue.setText(footballLiveScoreResult.getStadium());
-            Glide.with(context).load(footballLiveScoreResult.getHomeTeamFlag()).into(holder.t1flag);
-            Glide.with(context).load(footballLiveScoreResult.getAwayTeamFlag()).into(holder.t2flag);
-            holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
+                Glide.with(context).load(footballMatchJsonCaller.getHomeTeamFlag()).into(holder.t1flag);
+                Glide.with(context).load(footballMatchJsonCaller.getAwayTeamFlag()).into(holder.t2flag);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
 
         holder.matchDay.setTypeface(FontTypeface.getInstance(context).getRobotoRegular());

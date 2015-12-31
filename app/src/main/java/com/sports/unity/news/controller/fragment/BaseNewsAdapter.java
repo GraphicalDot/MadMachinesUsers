@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import com.sports.unity.news.model.News;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -13,10 +13,10 @@ import java.util.ArrayList;
  */
 public class BaseNewsAdapter extends RecyclerView.Adapter {
 
-    protected ArrayList<News> news = null;
+    protected ArrayList<JSONObject> news = null;
     protected Activity activity;
 
-    public BaseNewsAdapter(ArrayList<News> news, Activity activity) {
+    public BaseNewsAdapter(ArrayList<JSONObject> news, Activity activity) {
         this.activity = activity;
         this.news = news;
     }
@@ -36,7 +36,7 @@ public class BaseNewsAdapter extends RecyclerView.Adapter {
         return news.size();
     }
 
-    public ArrayList<News> getNews() {
+    public ArrayList<JSONObject> getNews() {
         return news;
     }
 

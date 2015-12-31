@@ -53,17 +53,17 @@ public class ScoresContentHandler {
 
         @Override
         public void handleResponse(String tag, String response, int responseCode) {
-            if( requestInProcess_RequestTagAndListenerKey.containsKey(tag) ) {
-                String listenerKey = requestInProcess_RequestTagAndListenerKey.get(tag);
-                ContentListener contentListener = mapOfResponseListeners.get(listenerKey);
-                if( contentListener != null ) {
-                    contentListener.handleContent(tag, response, responseCode);
-                } else {
-                    //nothing
-                }
-
-                requestInProcess_RequestTagAndListenerKey.remove(tag);
+        if( requestInProcess_RequestTagAndListenerKey.containsKey(tag) ) {
+            String listenerKey = requestInProcess_RequestTagAndListenerKey.get(tag);
+            ContentListener contentListener = mapOfResponseListeners.get(listenerKey);
+            if( contentListener != null ) {
+                contentListener.handleContent(tag, response, responseCode);
+            } else {
+                //nothing
             }
+
+            requestInProcess_RequestTagAndListenerKey.remove(tag);
+        }
         }
 
     };

@@ -9,11 +9,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
 import com.sports.unity.Database.NewsDBHelper;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+
+import org.json.JSONObject;
 
 import java.net.URI;
 import java.net.URLEncoder;
@@ -75,7 +76,7 @@ public class NewsContentHandler {
     private ContentListener contentListener = null;
     private HashSet<String> requestInProcess = new HashSet<>();
 
-    private ArrayList<News> filteredNewsArticle = null;
+    private ArrayList<JSONObject> filteredNewsArticle = null;
     private ArrayList<String> selectedSports = null;
 
     private Long timestampFirst;
@@ -119,7 +120,7 @@ public class NewsContentHandler {
         }
     };
 
-    public void init(ArrayList<News> filteredNewsArticle, boolean searchOn) {
+    public void init(ArrayList<JSONObject> filteredNewsArticle, boolean searchOn) {
         this.filteredNewsArticle = filteredNewsArticle;
 
         timestampFirst = null;
@@ -234,27 +235,44 @@ public class NewsContentHandler {
     private void handleResponse(String response) {
         Log.i("News Content Handler", "Handle Response");
 
-        NewsList newsList = new Gson().fromJson(response, NewsList.class);
-        ArrayList<News> list = (ArrayList<News>) newsList.getResult();
+        ArrayList<JSONObject> list = NewsJsonParser.parseListOfNews(response);
 
-        News newsItem = null;
-
+        JSONObject newsItem = null;
+        NewsJsonCaller newsJsonCaller = new NewsJsonCaller();
         for (int index = 0; index < list.size(); index++) {
             newsItem = list.get(index);
-            if (newsItem.getSummary() == null) {
+            newsJsonCaller.setJsonObject(newsItem);
+
+            String summary = null;
+            try{
+                summary = newsJsonCaller.getSummary();
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+
+            if ( summary == null) {
                 list.remove(index);
                 index--;
             } else {
                 //nothing
             }
         }
+
         Log.d("News Content Handler", "Response " + response);
         Log.d("News Content Handler", "List Size " + list.size());
 
         if(!list.isEmpty()) {
             filteredNewsArticle.addAll(list);
-            timestampFirst = filteredNewsArticle.get(0).getPublishEpoch();
-            timestampLast = filteredNewsArticle.get(filteredNewsArticle.size()-1).getPublishEpoch();
+
+            try {
+                newsJsonCaller.setJsonObject(filteredNewsArticle.get(0));
+                timestampFirst = newsJsonCaller.getPublishEpoch();
+
+                newsJsonCaller.setJsonObject(filteredNewsArticle.get(filteredNewsArticle.size() - 1));
+                timestampLast = newsJsonCaller.getPublishEpoch();
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
         } else {
             //nothing
         }
@@ -287,7 +305,7 @@ public class NewsContentHandler {
         Log.i("News Content Handler", "Insert Content To DB");
 
         if(filteredNewsArticle.size() > DB_CONTENT_LIMIT) {
-            ArrayList<News> newsListForInsert = new ArrayList<>();
+            ArrayList<JSONObject> newsListForInsert = new ArrayList<>();
             for(int i = 0; i < DB_CONTENT_LIMIT; i++) {
                 if( ! filteredNewsArticle.isEmpty() ) {
                     newsListForInsert.add(filteredNewsArticle.get(i));
@@ -307,9 +325,17 @@ public class NewsContentHandler {
 
         filteredNewsArticle.addAll(NewsDBHelper.getInstance(context).fetchNewsArticles());
 
-        if(!filteredNewsArticle.isEmpty()) {
-            timestampFirst = filteredNewsArticle.get(0).getPublishEpoch();
-            timestampLast = filteredNewsArticle.get(filteredNewsArticle.size()-1).getPublishEpoch();
+        NewsJsonCaller newsJsonCaller = new NewsJsonCaller();
+        if( ! filteredNewsArticle.isEmpty() ) {
+            try {
+                newsJsonCaller.setJsonObject(filteredNewsArticle.get(0));
+                timestampFirst = newsJsonCaller.getPublishEpoch();
+
+                newsJsonCaller.setJsonObject(filteredNewsArticle.get(filteredNewsArticle.size() - 1));
+                timestampLast = newsJsonCaller.getPublishEpoch();
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
         } else {
             //nothing
         }
