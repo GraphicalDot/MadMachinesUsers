@@ -4,4 +4,7 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="activity_vertical_margin_small">8dp</dimen>
     <dimen name="activity_vertical_margin_large">24dp</dimen>
+    <dimen name="filter_next_size">22sp</dimen>
+    <dimen name="filter_next_margin">22dp</dimen>
+    <dimen name="filter_next_height">40dp</dimen>
 </resources>

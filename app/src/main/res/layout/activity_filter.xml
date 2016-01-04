@@ -36,48 +36,14 @@
 
     </LinearLayout>
     <LinearLayout
-        android:id="@+id/basketball"
-        android:layout_below="@+id/category"
+        android:id="@+id/cricket"
+        android:layout_below="@id/category"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:paddingRight="10dp"
         android:paddingLeft="10dp"
         android:paddingTop="25dp"
-        android:paddingBottom="10dp"
-        android:onClick="onCheckboxClicked"
-        >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_basketball"
-            android:layout_gravity="center"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/gray1"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:text="@string/basketball"
-            android:paddingLeft="10dp"/>
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:button="@drawable/checkbox"
-            android:clickable="false"
-           />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/cricket"
-        android:layout_below="@id/basketball"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingRight="10dp"
-        android:paddingLeft="10dp"
-        android:paddingTop="5dp"
         android:paddingBottom="10dp"
         android:onClick="onCheckboxClicked"
         >
@@ -113,7 +79,7 @@
         android:paddingRight="10dp"
         android:paddingLeft="10dp"
         android:paddingTop="5dp"
-        android:paddingBottom="10dp"
+        android:paddingBottom="20dp"
         android:onClick="onCheckboxClicked">
 
         <ImageView
@@ -129,72 +95,6 @@
             android:layout_gravity="center"
             android:layout_weight="1"
             android:text="@string/football"
-            android:paddingLeft="10dp"/>
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:button="@drawable/checkbox"
-            android:clickable="false"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/f1"
-        android:layout_below="@+id/football"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingRight="10dp"
-        android:paddingLeft="10dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="10dp"
-        android:onClick="onCheckboxClicked">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_f1"
-            android:layout_gravity="center"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/gray1"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:text="@string/formula_one"
-            android:paddingLeft="10dp"/>
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:button="@drawable/checkbox"
-            android:clickable="false"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/tennis"
-        android:layout_below="@+id/f1"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingRight="10dp"
-        android:paddingLeft="10dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="25dp"
-        android:onClick="onCheckboxClicked">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_tennis"
-            android:layout_gravity="center"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/gray1"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:text="@string/tennis"
             android:paddingLeft="10dp"/>
         <CheckBox
             android:layout_width="wrap_content"

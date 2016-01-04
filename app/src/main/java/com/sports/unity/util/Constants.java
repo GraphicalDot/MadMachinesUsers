@@ -54,4 +54,13 @@ public class Constants {
     // supported file formats
     public static final List<String> FILE_EXTN = Arrays.asList("jpg", "jpeg", "png");
 
+    public static final String SPORTS_FILTER_TYPE = "advanced_filter_type";
+    public static final String FILTER_TYPE_PLAYER = "players";
+    public static final String FILTER_TYPE_LEAGUE = "leagues";
+    public static final String FILTER_TYPE_TEAM = "teams";
+
+    public static final String SPORTS_TYPE="sports_type";
+    public static final String SPORTS_TYPE_CRICKET="cricket";
+    public static final String SPORTS_TYPE_FOOTBALL="football";
+    public static final String FILTER_SEARCH_EXTRA="filter_search";
 }

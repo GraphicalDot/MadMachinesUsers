@@ -31,7 +31,11 @@ public class SplashScreenActivity extends AppCompatActivity {
         if (UserUtil.isUserRegistered()) {
             if (UserUtil.isProfileCreated()) {
                 if (UserUtil.isSportsSelected()) {
-                    moveToNextActivity(MainActivity.class);
+                    if(UserUtil.isFilterCompleted()) {
+                        moveToNextActivity(MainActivity.class);
+                    }else{
+                        moveToNextActivity(AdvancedFilterActivity.class);
+                    }
                 } else {
                     moveToNextActivity(SelectSportsActivity.class);
                 }

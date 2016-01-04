@@ -119,6 +119,11 @@
             android:label="@string/title_activity_user_profile"
             android:screenOrientation="portrait"></activity>
         <activity
+            android:name=".common.controller.AdvancedFilterActivity"
+            android:label="@string/advanced_filter"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
             android:name=".messages.controller.activity.NativeCameraActivity"
             android:screenOrientation="portrait"></activity>
         <activity

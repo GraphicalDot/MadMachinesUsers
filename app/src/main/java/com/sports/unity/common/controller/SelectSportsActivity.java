@@ -27,12 +27,14 @@ import java.util.ArrayList;
 
 public class SelectSportsActivity extends AppCompatActivity {
 
-    private int[] flag = {0, 0, 0, 0, 0};
+    private int[] flag = {0, 0};
 
     private LocManager locManager;
     private ArrayList<String> sports = new ArrayList<String>();
 
-    private Integer[] mThumbIds = {
+    /*For future use: to add all the sports
+     in sports selection screen*/
+    /*private Integer[] mThumbIds = {
             R.drawable.btn_basketball_disabled,
             R.drawable.btn_cricket_disabled,
             R.drawable.btn_football_disabled,
@@ -52,6 +54,19 @@ public class SelectSportsActivity extends AppCompatActivity {
             Constants.GAME_KEY_FOOTBALL,
             Constants.GAME_KEY_TENNIS,
             Constants.GAME_KEY_F1,
+    };*/
+
+    private Integer[] mThumbIds = {
+            R.drawable.btn_cricket_disabled,
+            R.drawable.btn_football_disabled
+    };
+    private Integer[] mThumbIdsSelected = {
+            R.drawable.btn_cricket_selected,
+            R.drawable.btn_football_selected
+    };
+    private String[] mSports = {
+            Constants.GAME_KEY_CRICKET,
+            Constants.GAME_KEY_FOOTBALL
     };
 
     @Override
@@ -123,8 +138,7 @@ public class SelectSportsActivity extends AppCompatActivity {
 
     private void moveOn() {
         UserUtil.setSportsSelected(SelectSportsActivity.this, sports);
-
-        Intent intent = new Intent(SelectSportsActivity.this, MainActivity.class);
+        Intent intent = new Intent(SelectSportsActivity.this, AdvancedFilterActivity.class);
         startActivity(intent);
 
         finish();

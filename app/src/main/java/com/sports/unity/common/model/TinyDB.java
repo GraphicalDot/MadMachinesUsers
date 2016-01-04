@@ -40,6 +40,13 @@ public class TinyDB {
 
     public static final String KEY_PROFILE_NAME = "name";
 
+    /*Preference key used to manage filters*/
+    public static final String FAVOURITE_FILTERS = "favourite_filters";
+    public static final String LEAGUE_SELECTION="league_selection";
+    public static final String TEAM_SELECTION="team_selection";
+    public static final String PLAYER_SELECTION="player_selection";
+    public static final String FILTER_COMPLETE="filter_complete";
+
 
     private SharedPreferences preferences;
     private String DEFAULT_APP_IMAGEDATA_DIRECTORY;

@@ -8,6 +8,10 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.sports.unity.R;
+import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.util.Constants;
+
+import java.util.ArrayList;
 
 /**
  * Created by madmachines on 3/9/15.
@@ -15,16 +19,33 @@ import com.sports.unity.R;
 public class SportsGridViewAdapter extends BaseAdapter {
 
     private Context mContext;
-    private Integer[] mThumbIds = {
+
+    /*For future use: to add all the sports
+    in sports selection screen*/
+    /*private Integer[] mThumbIds = {
             R.drawable.btn_basketball_disabled,
             R.drawable.btn_cricket_disabled,
             R.drawable.btn_football_disabled,
             R.drawable.btn_tennis_disabled,
             R.drawable.btn_f1_disabled,
+    };*/
+    private Integer[] mThumbIds = {
+            R.drawable.btn_cricket_disabled,
+            R.drawable.btn_football_disabled
     };
 
+    private String[] mSports = {
+            Constants.GAME_KEY_CRICKET,
+            Constants.GAME_KEY_FOOTBALL
+    };
+    private Integer[] mThumbIdsSelected = {
+            R.drawable.btn_cricket_selected,
+            R.drawable.btn_football_selected
+    };
+    private ArrayList<String> sports = new ArrayList<String>();
     public SportsGridViewAdapter(Context c) {
         mContext = c;
+       sports= UserUtil.getSportsSelected();
     }
 
     @Override
@@ -46,15 +67,18 @@ public class SportsGridViewAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         ImageView imageView;
-        if (convertView == null){
+        if (convertView == null) {
             imageView = new ImageView(mContext);
             imageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             imageView.setPadding(8, 8, 8, 8);
-        }
-        else{
+        } else {
             imageView = (ImageView) convertView;
         }
-        imageView.setImageResource(mThumbIds[position]);
+        if(sports.contains(mSports[position])){
+            imageView.setImageResource(mThumbIdsSelected[position]);
+        }else {
+            imageView.setImageResource(mThumbIds[position]);
+        }
         return imageView;
     }
 

@@ -24,7 +24,8 @@ import com.sports.unity.news.model.NewsContentHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
-public class NewsSearchActivity extends AppCompatActivity{
+public class NewsSearchActivity extends AppCompatActivity {
+    private Bundle searchFilterBundle;
 
     private static final String NEWS_FRAGMENT_TAG = "news_fragment_tag";
 
@@ -36,8 +37,7 @@ public class NewsSearchActivity extends AppCompatActivity{
         initView();
     }
 
-    private void initView () {
-
+    private void initView() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_search);
         final EditText search = (EditText) toolbar.findViewById(R.id.search_view);
         ImageView back = (ImageView) toolbar.findViewById(R.id.img_back);
@@ -84,7 +84,7 @@ public class NewsSearchActivity extends AppCompatActivity{
                     InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
 
-                    if(CommonUtil.isInternetConnectionAvailable(NewsSearchActivity.this)) {
+                    if (CommonUtil.isInternetConnectionAvailable(NewsSearchActivity.this)) {
                         performSearch(search.getText().toString());
                     } else {
                         Toast.makeText(NewsSearchActivity.this, "Check your internet connection", Toast.LENGTH_LONG).show();
@@ -109,25 +109,37 @@ public class NewsSearchActivity extends AppCompatActivity{
                 search.setText("");
             }
         });
-
+        checkForFilteredSearch(search, clear_search);
     }
 
     private void performSearch(String celebrity_name) {
-        if( celebrity_name != null && celebrity_name.length() > 0 ) {
-            NewsContentHandler newsContentHandler = NewsContentHandler.getInstance(NewsSearchActivity.this, NewsContentHandler.KEY_SEARCH_CONTENT);
 
-            NewsFragment fragment = (NewsFragment)getSupportFragmentManager().findFragmentByTag(NEWS_FRAGMENT_TAG);
-            if( fragment != null ) {
-                newsContentHandler.setSearchKeyword(celebrity_name);
-                newsContentHandler.clearContent();
+        NewsContentHandler newsContentHandler = NewsContentHandler.getInstance(NewsSearchActivity.this, NewsContentHandler.KEY_SEARCH_CONTENT);
 
-                fragment.showProgress(fragment.getView());
-                newsContentHandler.refreshNews(true);
-            } else {
+        NewsFragment fragment = (NewsFragment)getSupportFragmentManager().findFragmentByTag(NEWS_FRAGMENT_TAG);
+        if( fragment != null ) {
+            newsContentHandler.setSearchKeyword(celebrity_name);
+            newsContentHandler.clearContent();
 
-            }
+            fragment.showProgress(fragment.getView());
+            newsContentHandler.refreshNews(true);
         } else {
-            //nothing
+
         }
+    }
+
+    private void checkForFilteredSearch(EditText search, ImageView clear_search) {
+        try {
+            String searchString = getIntent().getStringExtra(Constants.FILTER_SEARCH_EXTRA);
+            if (searchString.length() > 0) {
+                search.setText(searchString, TextView.BufferType.EDITABLE);
+                search.setSelection(searchString.length(), searchString.length());
+                clear_search.setVisibility(View.VISIBLE);
+                performSearch(searchString);
+            }
+        } catch (NullPointerException stringisNull) {
+            stringisNull.printStackTrace();
+        }
+
     }
 }
