@@ -27,8 +27,6 @@ import java.util.ArrayList;
 
 public class SelectSportsActivity extends AppCompatActivity {
 
-    private int[] flag = {0, 0};
-
     private LocManager locManager;
     private ArrayList<String> sports = new ArrayList<String>();
 
@@ -74,6 +72,7 @@ public class SelectSportsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_select_sports);
+        sports=UserUtil.getSportsSelected();
         initView();
 
         locManager = LocManager.getInstance(this);
@@ -107,16 +106,14 @@ public class SelectSportsActivity extends AppCompatActivity {
         gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (flag[position] == 0) {
+                if (!sports.contains(mSports[position])) {
                     ImageView imageView = (ImageView) view;
                     imageView.setImageResource(mThumbIdsSelected[position]);
                     sports.add(mSports[position]);
-                    flag[position] = 1;
                 } else {
                     ImageView imageView = (ImageView) view;
                     imageView.setImageResource(mThumbIds[position]);
                     sports.remove(mSports[position]);
-                    flag[position] = 0;
                 }
             }
         });

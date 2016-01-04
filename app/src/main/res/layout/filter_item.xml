@@ -19,7 +19,7 @@
         android:maxLength="30"
         android:ellipsize="end"
         android:textColor="@color/gray1"
-        android:textSize="20sp" />
+        android:textSize="@dimen/font_size_medium" />
 
     <CheckBox
         android:id="@+id/cb"

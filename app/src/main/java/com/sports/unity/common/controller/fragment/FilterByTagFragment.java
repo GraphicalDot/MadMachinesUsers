@@ -17,6 +17,8 @@ import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Created by Mad on 12/28/2015.
@@ -62,7 +64,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
 
     private void prepareList() {
 
-        favouriteContentHandler = new FavouriteContentHandler();
+        favouriteContentHandler = FavouriteContentHandler.getInstance();
         if (SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_TEAM)) {
 
             if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_CRICKET)) {
@@ -108,7 +110,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     public synchronized void enableEditMode() {
         if (((AdvancedFilterActivity) getActivity()).isSearchEdit) {
 
-                ArrayList<FavouriteItem> searchList=new ArrayList<FavouriteItem>(itemAdapter.getItemDataSet());
+                ArrayList<FavouriteItem> searchList=new ArrayList<FavouriteItem>(itemDataSet);
            localList=new ArrayList<FavouriteItem>();
                 for(FavouriteItem f:searchList){
                     boolean b=false;
@@ -126,11 +128,12 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
             filterRecyclerView.setAdapter(itemAdapter);
             filterRecyclerView.invalidate();
         } else {
-            
+
             /*for(FavouriteItem f:localList){
-                if(itemDataSet.contains(f)){
+                if(f.isChecked()){
                     //TODO
                     *//*Merge changes if any*//*
+                    itemDataSet.add(f);
                 }
             }*/
             itemAdapter = new FilterRecycleAdapter(getActivity(), itemDataSet, true);

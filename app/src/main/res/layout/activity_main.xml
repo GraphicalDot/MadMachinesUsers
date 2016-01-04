@@ -45,13 +45,33 @@
         </android.support.v4.view.ViewPager>
 
     </LinearLayout>
-
     <android.support.design.widget.NavigationView
-        android:id="@+id/navigation"
+        android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/ColorPrimary"
-        app:headerLayout="@layout/navigation_header"/>
+        android:fitsSystemWindows="true">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alwaysDrawnWithCache="true"
+                android:fillViewport="true"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+                <FrameLayout
+                    android:id="@+id/nav_fragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="@dimen/nav_item_margin" />
+            </android.support.v4.widget.NestedScrollView>
+        </LinearLayout>
+    </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>

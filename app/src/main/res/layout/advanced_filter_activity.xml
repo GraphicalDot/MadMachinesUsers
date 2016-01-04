@@ -31,12 +31,12 @@
             android:id="@+id/next"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/filter_next_margin"
+            android:paddingRight="@dimen/filter_next_margin"
             android:text="@string/next"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/filter_next_size"
+            android:textSize="@dimen/font_size_medium"
             android:layout_weight="1"/>
         <TextView
             android:id="@+id/edit"
@@ -44,9 +44,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="@dimen/filter_next_margin"
+            android:paddingRight="@dimen/filter_next_margin"
             android:text="@string/edit"
             android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/filter_next_size" />
+            android:textSize="@dimen/font_size_medium" />
     </RelativeLayout>
 </RelativeLayout>

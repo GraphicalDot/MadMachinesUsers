@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Created by Mad on 12/29/2015.
  */
 public class FavouriteContentHandler {
-    //public static FavouriteContentHandler favouriteContentHandler;
+    public static FavouriteContentHandler favouriteContentHandler;
 
     private static ArrayList<String> FOOTBALL_FILTER_LEAGUE = null;
     private static ArrayList<String> FOOTBALL_FILTER_PLAYER = null;
@@ -23,7 +23,7 @@ public class FavouriteContentHandler {
     private ArrayList<FavouriteItem> favCricketTeams;
     private ArrayList<FavouriteItem> favCricketPlayers;
 
-    public FavouriteContentHandler() {
+    private FavouriteContentHandler() {
         FOOTBALL_FILTER_LEAGUE = new ArrayList<String>();
         FOOTBALL_FILTER_PLAYER = new ArrayList<String>();
         FOOTBALL_FILTER_TEAM = new ArrayList<String>();
@@ -32,10 +32,10 @@ public class FavouriteContentHandler {
         makeRequest();
     }
 
-    /*public static FavouriteContentHandler getInstance() {
+    public static FavouriteContentHandler getInstance() {
         favouriteContentHandler = new FavouriteContentHandler();
         return favouriteContentHandler;
-    }*/
+    }
 
     /**
      * Request network API to get sports details
@@ -109,7 +109,7 @@ public class FavouriteContentHandler {
          * the CRICKET_FILTER_PLAYER first*/
 
         favCricketPlayers = new ArrayList<FavouriteItem>();
-        favCricketPlayers=prepareArrayList(CRICKET_FILTER_PLAYER, UserUtil.getFavouriteFilters());
+        favCricketPlayers = prepareArrayList(CRICKET_FILTER_PLAYER, UserUtil.getFavouriteFilters());
     }
 
     private void prepareCricketTeams() {
@@ -145,19 +145,10 @@ public class FavouriteContentHandler {
 
     private ArrayList<FavouriteItem> prepareArrayList(ArrayList<String> networkList, ArrayList<String> localList) {
         ArrayList<FavouriteItem> favList = new ArrayList<FavouriteItem>();
-        /*for (int i = 0; i < networkList.size(); i++) {
-            FavouriteItem favouriteItem = new FavouriteItem();
-            favouriteItem.setName(networkList.get(i));
-            if (localList.contains(networkList.get(i))) {
-                favouriteItem.setChecked(true);
-            }
-            favList.add(favouriteItem);
-
-        }*/
-        for(String s:networkList){
+        for (String s : networkList) {
             FavouriteItem favouriteItem = new FavouriteItem();
             favouriteItem.setName(s);
-            if(localList.contains(s)){
+            if (localList.contains(s)) {
                 favouriteItem.setChecked(true);
             }
             favList.add(favouriteItem);
