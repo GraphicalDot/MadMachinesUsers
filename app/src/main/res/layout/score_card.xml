@@ -145,7 +145,7 @@
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:textColor="@android:color/black"
-                        android:text="Live"
+                        android:text="@string/live"
                         />
                     <TextView
                         android:id="@+id/show_odds"
@@ -155,7 +155,7 @@
                         android:gravity="center"
                         android:background="@color/app_theme_blue"
                         android:padding="@dimen/vertical_padding_very_very_small"
-                        android:text="SHOW ODDS"
+                        android:text="@string/show_odds"
                         android:textColor="@android:color/white"
                         android:textSize="@dimen/font_size_very_small"
                         />

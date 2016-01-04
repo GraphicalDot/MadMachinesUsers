@@ -126,9 +126,11 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             }
 
             if( footballMatchJsonCaller.isLive() ){
-                holder.odds.setVisibility(View.GONE);
-            } else {
                 holder.odds.setVisibility(View.VISIBLE);
+                holder.matchDay.setText(holder.matchDay.getResources().getString(R.string.live));
+            } else {
+                holder.odds.setVisibility(View.GONE);
+                holder.matchDay.setText("--");
             }
 
         }catch (Exception ex){
