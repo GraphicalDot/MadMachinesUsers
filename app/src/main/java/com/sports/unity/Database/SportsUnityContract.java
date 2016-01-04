@@ -96,6 +96,7 @@ public final class SportsUnityContract {
         public static final String COLUMN_PUBLISHED = "published";
         public static final String COLUMN_TYPE = "type";
         public static final String COLUMN_PUBLISH_EPOCH = "publishEpoch";
+        public static final String COLUMN_FABICON_URL = "fabicon_url";
 
     }
 

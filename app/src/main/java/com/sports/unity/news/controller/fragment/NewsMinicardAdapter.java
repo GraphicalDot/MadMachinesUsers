@@ -48,6 +48,7 @@ public class NewsMinicardAdapter extends BaseNewsAdapter {
         private TextView title;
         private TextView type;
         private ImageView imageView;
+        private ImageView fabIcon;
         private LinearLayout news_mini;
 
         public ViewHolder(View v) {
@@ -57,6 +58,7 @@ public class NewsMinicardAdapter extends BaseNewsAdapter {
             type = (TextView) v.findViewById(R.id.type);
             title = (TextView) v.findViewById(com.sports.unity.R.id.TitleText);
             imageView = (ImageView) v.findViewById(com.sports.unity.R.id.img_url);
+            fabIcon = (ImageView) v.findViewById(R.id.fab_icon);
             news_mini = (LinearLayout) v.findViewById(com.sports.unity.R.id.news_mini);
 
             published.setTypeface(FontTypeface.getInstance(v.getContext()).getRobotoRegular());
@@ -79,7 +81,7 @@ public class NewsMinicardAdapter extends BaseNewsAdapter {
 
         try {
             holder.title.setText(newsJsonCaller.getTitle());
-            holder.type.setText(CommonUtil.capitalize(newsJsonCaller.getType()));
+            holder.type.setText(newsJsonCaller.getType());
 
             DateTime dateTime = new DateTime(newsJsonCaller.getPublishEpoch() * 1000);
 
@@ -102,6 +104,14 @@ public class NewsMinicardAdapter extends BaseNewsAdapter {
                 holder.imageView.setVisibility(View.VISIBLE);
                 String myUri = newsJsonCaller.getImage_link();
                 Glide.with(activity).load(myUri).into(holder.imageView);
+            } else {
+                holder.imageView.setVisibility(View.GONE);
+            }
+
+            if (newsJsonCaller.getFabIcon_link() != null && !newsJsonCaller.getFabIcon_link().equals("null")) {
+                holder.fabIcon.setVisibility(View.VISIBLE);
+                String myUri = newsJsonCaller.getFabIcon_link();
+                Glide.with(activity).load(myUri).into(holder.fabIcon);
             } else {
                 holder.imageView.setVisibility(View.GONE);
             }

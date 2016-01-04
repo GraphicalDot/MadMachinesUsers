@@ -16,6 +16,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.news.controller.activity.NewsDetailsActivity;
 import com.sports.unity.news.model.NewsJsonCaller;
@@ -52,28 +53,25 @@ public class NewsAdapter extends BaseNewsAdapter {
         public TextView published;
         public TextView src;
         public TextView pub;
+        private TextView type;
         public LinearLayout news_main;
         public ImageView imageView;
+        public ImageView fabIcon;
 
         public ViewHolder(View v) {
             super(v);
             info = (TextView) v.findViewById(com.sports.unity.R.id.info_text);
             title = (TextView) v.findViewById(com.sports.unity.R.id.TitleText);
-            source = (TextView) v.findViewById(com.sports.unity.R.id.source);
             published = (TextView) v.findViewById(com.sports.unity.R.id.published);
-            src = (TextView) v.findViewById(com.sports.unity.R.id.src);
-            pub = (TextView) v.findViewById(com.sports.unity.R.id.pub);
+            type = (TextView) v.findViewById(R.id.type);
             imageView = (ImageView) v.findViewById(com.sports.unity.R.id.img_url);
+            fabIcon = (ImageView) v.findViewById(R.id.fab_icon);
             news_main = (LinearLayout) v.findViewById(com.sports.unity.R.id.news);
-          //  type = (TextView) v.findViewById(R.id.type);
             Context context = v.getContext();
 
             info.setTypeface(FontTypeface.getInstance(context).getRobotoLight());
             title.setTypeface(FontTypeface.getInstance(context).getRobotoSlabRegular());
-            source.setTypeface(FontTypeface.getInstance(context).getRobotoRegular());
             published.setTypeface(FontTypeface.getInstance(context).getRobotoRegular());
-            src.setTypeface(FontTypeface.getInstance(context).getRobotoRegular());
-            pub.setTypeface(FontTypeface.getInstance(context).getRobotoRegular());
         }
     }
 
@@ -101,7 +99,7 @@ public class NewsAdapter extends BaseNewsAdapter {
 
                 holder.info.setText(Html.fromHtml(text + " " + "<font color='#2c84cc'><u>Read More</u></font>"));
                 holder.title.setText(newsJsonCaller.getTitle());
-                holder.source.setText(newsJsonCaller.getWebsite());
+                holder.type.setText(newsJsonCaller.getType());
                 DateTime dateTime = new DateTime(newsJsonCaller.getPublishEpoch() * 1000);
                 DateTime dateTime1 = new DateTime(LocalDate.now(DateTimeZone.forID("Asia/Kolkata")).toDateTimeAtCurrentTime());
                 int days = Days.daysBetween(dateTime, dateTime1).getDays();
@@ -122,6 +120,14 @@ public class NewsAdapter extends BaseNewsAdapter {
                     String myUri = newsJsonCaller.getImage_link();
                     Glide.with(activity).load(myUri).into(holder.imageView);
 
+                } else {
+                    holder.imageView.setVisibility(View.GONE);
+                }
+
+                if (newsJsonCaller.getFabIcon_link() != null && !newsJsonCaller.getFabIcon_link().equals("null")) {
+                    holder.fabIcon.setVisibility(View.VISIBLE);
+                    String myUri = newsJsonCaller.getFabIcon_link();
+                    Glide.with(activity).load(myUri).into(holder.fabIcon);
                 } else {
                     holder.imageView.setVisibility(View.GONE);
                 }

@@ -32,7 +32,8 @@ public class NewsDBHelper extends SQLiteOpenHelper {
             NewsEntry.COLUMN_CUSTOM_SUMMARY + " VARCHAR " + DBConstants.COMMA_SEP +
             NewsEntry.COLUMN_PUBLISHED + " VARCHAR " + DBConstants.COMMA_SEP +
             NewsEntry.COLUMN_TYPE + " VARCHAR " + DBConstants.COMMA_SEP +
-            NewsEntry.COLUMN_PUBLISH_EPOCH + " INTEGER );";
+            NewsEntry.COLUMN_PUBLISH_EPOCH + " INTEGER " + DBConstants.COMMA_SEP +
+            NewsEntry.COLUMN_FABICON_URL + " VARCHAR );";
 
     private static final String DROP_NEWS_TABLE = "DROP TABLE IF EXISTS " + NewsEntry.TABLE_NAME;
 
@@ -77,6 +78,7 @@ public class NewsDBHelper extends SQLiteOpenHelper {
             NewsEntry.COLUMN_PUBLISHED,
             NewsEntry.COLUMN_TYPE,
             NewsEntry.COLUMN_PUBLISH_EPOCH,
+            NewsEntry.COLUMN_FABICON_URL,
         };
 
         Cursor cursor = DBUtil.query(this,
@@ -106,6 +108,7 @@ public class NewsDBHelper extends SQLiteOpenHelper {
                     newsJsonCaller.setPublished(cursor.getString(8));
                     newsJsonCaller.setType(cursor.getString(9));
                     newsJsonCaller.setPublishEpoch(cursor.getLong(10));
+                    newsJsonCaller.setFabIcon_Link(cursor.getString(11));
                 }catch (Exception ex){
                     ex.printStackTrace();
                     news = null;
@@ -144,6 +147,7 @@ public class NewsDBHelper extends SQLiteOpenHelper {
             contentValues.put(NewsEntry.COLUMN_PUBLISHED, newsJsonCaller.getPublished());
             contentValues.put(NewsEntry.COLUMN_TYPE, newsJsonCaller.getType());
             contentValues.put(NewsEntry.COLUMN_PUBLISH_EPOCH, newsJsonCaller.getPublishEpoch());
+            contentValues.put(NewsEntry.COLUMN_FABICON_URL, newsJsonCaller.getFabIcon_link());
         }catch (Exception ex){
             ex.printStackTrace();
             contentValues = null;

@@ -86,6 +86,14 @@ public class NewsJsonCaller extends JsonObjectCaller{
         jsonObject.put( "publish_epoch", publishEpoch);
     }
 
+    public String getFabIcon_link() throws JSONException {
+        return jsonObject.getString("favicon");
+    }
+
+    public void setFabIcon_Link(String imageLink) throws JSONException {
+        jsonObject.put( "favicon", imageLink);
+    }
+
 //    @Override
 //    public int compareTo(NewsJsonCaller news) {
 //        /* For Ascending order*/

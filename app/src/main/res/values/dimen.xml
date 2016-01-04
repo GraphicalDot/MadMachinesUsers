@@ -37,6 +37,15 @@
 
     <dimen name="stickers_size">70dp</dimen>
 
+    <!-- news related -->
+    <dimen name="news_large_image_height">200dp</dimen>
+    <dimen name="news_mini_image_width">120dp</dimen>
+    <dimen name="news_mini_image_height">90dp</dimen>
+
+    <dimen name="news_fav_icon_large_width">60dp</dimen>
+    <dimen name="news_fav_icon_small_width">50dp</dimen>
+    <dimen name="news_fav_icon_height">20dp</dimen>
+
     <!-- score related -->
     <dimen name="flag_size_small">30dp</dimen>
     <dimen name="card_edge_curve_radius">2dp</dimen>
@@ -51,5 +60,6 @@
     <dimen name="vertical_space_between_chats">3dp</dimen>
 
     <dimen name="keyboard_tab_height">35dp</dimen>
+
 
 </resources>
