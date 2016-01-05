@@ -132,6 +132,7 @@ Carrier SMS charges may apply.</string>
     <string name="copy_text_to_clipboard">Message copied</string>
     <string name="copy_text_multiple_to_clipboard">Messages copied</string>
     <string name="title_activity_people_around_me_map">PeopleAroundMeMap</string>
+    <string name="people_around_you">PEOPLE AROUND YOU</string>
 
     <string name="show_odds">SHOW ODDS</string>
     <string name="live">Live</string>

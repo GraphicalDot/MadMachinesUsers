@@ -8,7 +8,13 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.TinyDB;
+
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  * Created by madmachines on 29/12/15.
@@ -16,6 +22,9 @@ import com.sports.unity.common.model.TinyDB;
 public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static LocManager locManager = null;
+    private Thread uploadLocation = null;
+    public static String base_url = "54.169.217.88/set_location?user=";
+    String url = "";
 
     synchronized public static LocManager getInstance(Context context) {
         if (locManager == null) {
@@ -58,11 +67,54 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         Log.i("fusedlocationapi", "connected");
 
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        saveLocation(mLastLocation);
+        if (mLastLocation != null) {
+            saveLocation(mLastLocation);
+            sendLatituteAndLongitude(mLastLocation);
+        } else {
+            //TODO
+        }
+    }
+
+    private void sendLatituteAndLongitude(final Location mLastLocation) {
+        if (uploadLocation != null && uploadLocation.isAlive()) {
+            //do nothing
+        } else {
+            uploadLocation = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    uploadLatLng(mLastLocation);
+                }
+            });
+            uploadLocation.start();
+        }
+
+    }
+
+    private void uploadLatLng(Location mLastLocation) {
+        HttpURLConnection httpURLConnection = null;
+        url = base_url + XMPPClient.getConnection().getUser() + "@mm.io&lat=" + mLastLocation.getLatitude() + "&lng=" + mLastLocation.getLongitude();
+        try {
+            URL sendData = new URL(url);
+            httpURLConnection = (HttpURLConnection) sendData.openConnection();
+            httpURLConnection.setConnectTimeout(15000);
+            httpURLConnection.setDoInput(false);
+            httpURLConnection.setRequestMethod("GET");
+            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                Log.i("latlongresponse", " 200 ");
+            } else {
+                Log.i("latlongresponse", " 500 ");
+            }
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     public void saveLocation(Location mLastLocation) {
-        if( mLastLocation != null ) {
+        if (mLastLocation != null) {
             Log.i("latitude", String.valueOf(mLastLocation.getLatitude()));
             Log.i("longitude", String.valueOf(mLastLocation.getLongitude()));
 

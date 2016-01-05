@@ -69,4 +69,29 @@ public class ScoresJsonParser {
         return list;
     }
 
+    public static ArrayList<JSONObject> parseListOfNearByUsers(String jsonContent){
+        ArrayList<JSONObject> list = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(jsonContent);
+
+            int status = jsonObject.getInt("status");
+            String info = jsonObject.getString("info");
+
+            if( status == 200 && info.equalsIgnoreCase("Success") ) {
+                list = new ArrayList<>();
+                JSONArray array = (JSONArray) jsonObject.get("users");
+                for( int index=0; index < array.length(); index++){
+                    list.add( array.getJSONObject(index));
+                }
+            } else {
+                list.clear();
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+            list.clear();
+        }
+
+        return list;
+    }
+
 }

@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/white"
     android:orientation="vertical"
     tools:context="com.sports.unity.messages.controller.activity.PeopleAroundMeMap">
 
@@ -14,14 +15,29 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <SeekBar
-            android:id="@+id/distance_seekbar"
+        <Button
+            android:id="@+id/people_football_interest"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="@dimen/vertical_padding_small"
-            android:thumb="@drawable/ic_audio_s" />
+            android:layout_weight="1"
+            android:background="@color/app_theme_blue"
+            android:text="FOOTBALL"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/people_cricket_interest"
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/app_theme_blue"
+            android:text="CRICKET"
+            android:textColor="@android:color/white" />
+
     </LinearLayout>
 
     <FrameLayout
@@ -35,6 +51,37 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:layout="@layout/people_around_me" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@android:color/white"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/vertical_padding_small"
+            android:paddingRight="@dimen/vertical_padding_small">
+
+            <TextView
+                android:id="@+id/distance_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:padding="@dimen/vertical_padding_very_very_small"
+                android:text="@string/people_around_you"
+                android:textColor="@color/news_static"
+                android:textSize="@dimen/font_size_very_small" />
+
+            <SeekBar
+                android:id="@+id/distance_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:padding="@dimen/vertical_padding_small"
+                android:progressDrawable="@drawable/seekbar_drawable"
+                android:thumb="@drawable/ic_distance_slider_05" />
+
+        </LinearLayout>
+
     </FrameLayout>
 
 </LinearLayout>

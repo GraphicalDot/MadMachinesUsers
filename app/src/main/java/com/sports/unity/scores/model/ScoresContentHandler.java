@@ -76,6 +76,14 @@ public class ScoresContentHandler {
         mapOfResponseListeners.remove(listenerKey);
     }
 
+    public void requestNearByUsers(String listenerKey, String requestTag, String url){
+        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+             requestContent(requestTag, listenerKey, url);
+        } else {
+            //nothing
+        }
+    }
+
     public void requestListOfMatches(String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
             String url = generateURL( URL_PARAMS_FOR_LIST_OF_MATCHES);

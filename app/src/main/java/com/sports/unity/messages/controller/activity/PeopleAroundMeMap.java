@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,24 +33,69 @@ import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.ContactsHandler;
+import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.messages.controller.model.NearByUserJsonCaller;
+import com.sports.unity.scores.model.ScoresContentHandler;
+import com.sports.unity.scores.model.ScoresJsonParser;
 
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class PeopleAroundMeMap extends CustomAppCompatActivity {
 
+    private static final String REQUEST_LISTENER_KEY = "nearby_key";
+    private static final String REQUEST_TAG = "nearby_tag";
+    private static final String SPORT_SELECTION_FOOTBALL = "football";
+    private static final String SPORT_SELECTION_CRICKET = "cricket";
+
+
+    private NearByUserJsonCaller nearByUserJsonCaller = new NearByUserJsonCaller();
+
     private GoogleMap map;
     private LatLng latLong;
+    private String sportSelection = SPORT_SELECTION_FOOTBALL;
 
     private Toolbar toolbar;
     private TextView titleAddress;
     private TextView titleCity;
+
+    private String base_url = "http://54.169.217.88/retrieve_nearby_users?lat=";
+    private int radius = 500;
+
+    private ScoresContentHandler.ContentListener contentListener = new ScoresContentHandler.ContentListener() {
+
+        @Override
+        public void handleContent(String tag, String content, int responseCode) {
+            if (tag.equals(REQUEST_TAG)) {
+                if (responseCode == 200) {
+                    ArrayList<JSONObject> users = ScoresJsonParser.parseListOfNearByUsers(content);
+                    if (users != null) {
+                        plotMarkers(users);
+                    } else {
+                        //TODO
+                    }
+
+                } else {
+
+                }
+            } else {
+                //nothing
+            }
+        }
+
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,26 +108,14 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
     }
 
     private void InitSeekbar() {
+        TextView distanceText = (TextView) findViewById(R.id.distance_text);
+        distanceText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
         SeekBar seekDistance = (SeekBar) findViewById(R.id.distance_seekbar);
-        seekDistance.incrementProgressBy(1);
-        seekDistance.setMax(4);
-        seekDistance.setProgress(0);
+        seekDistance.setMax(100);
         seekDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (progress == 1) {
-                    seekBar.setThumb(getResources().getDrawable(R.drawable.ic_audio_s));
-                    map.animateCamera(CameraUpdateFactory.zoomTo(14));
-                } else if (progress == 2) {
-                    seekBar.setThumb(getResources().getDrawable(R.drawable.ic_camera_disabled));
-                    map.animateCamera(CameraUpdateFactory.zoomTo(12));
-                } else if (progress == 3) {
-                    seekBar.setThumb(getResources().getDrawable(R.drawable.ic_camera_pressed));
-                    map.animateCamera(CameraUpdateFactory.zoomTo(10));
-                } else if (progress == 4) {
-                    seekBar.setThumb(getResources().getDrawable(R.drawable.ic_camera_disabled));
-                    map.animateCamera(CameraUpdateFactory.zoomTo(8));
-                }
+
             }
 
             @Override
@@ -91,15 +125,41 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                int progress = seekBar.getProgress();
+                if (progress >= 0 && progress <= 30) {
+                    seekBar.setProgress(0);
+                    seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_05));
+                    map.animateCamera(CameraUpdateFactory.zoomTo(16));
+                } else if (progress >= 30 && progress <= 70) {
+                    seekBar.setProgress(60);
+                    seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_20));
+                    map.animateCamera(CameraUpdateFactory.zoomTo(14));
+                } else {
+                    seekBar.setProgress(100);
+                    seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_40));
+                    map.animateCamera(CameraUpdateFactory.zoomTo(12));
+                }
             }
         });
     }
 
-    private void plotMarker() {
-        MarkerOptions markerOption = new MarkerOptions().position(latLong);
-        markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_user));
-        map.addMarker(markerOption);
+    private void plotMarkers(ArrayList<JSONObject> users) {
+//        nearByUserJsonCaller.setJsonObject(users.get(0));
+//        nearByUserJsonCaller.getUsername();
+//        nearByUserJsonCaller.getDistance();
+        for (JSONObject user : users) {
+            nearByUserJsonCaller.setJsonObject(user);
+            try {
+                double latitude = nearByUserJsonCaller.getLatitude();
+                double longitude = nearByUserJsonCaller.getLongitude();
+                MarkerOptions markerOption = new MarkerOptions().position(new LatLng(latitude, longitude));
+                markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mrkr_fball));
+                markerOption.snippet(nearByUserJsonCaller.getUsername());
+                map.addMarker(markerOption);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
@@ -107,7 +167,26 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.tool_bar_map);
         titleAddress = (TextView) toolbar.findViewById(R.id.toolbar_title);
         titleCity = (TextView) toolbar.findViewById(R.id.secondary_title);
+        Button football = (Button) findViewById(R.id.people_football_interest);
+        football.setOnClickListener(sportSelectionListener);
+        Button cricket = (Button) findViewById(R.id.people_cricket_interest);
+        cricket.setOnClickListener(sportSelectionListener);
     }
+
+    Button.OnClickListener sportSelectionListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.people_football_interest) {
+                map.clear();
+                sportSelection = SPORT_SELECTION_FOOTBALL;
+//                getPeopleAroundMe();
+            } else {
+                map.clear();
+                sportSelection = SPORT_SELECTION_CRICKET;
+//                getPeopleAroundMe();
+            }
+        }
+    };
 
     private void openMap() {
 
@@ -120,11 +199,11 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         double longitude = TinyDB.getInstance(getApplicationContext()).getDouble(TinyDB.KEY_CURRENT_LONGITUDE, 0.0);
         latLong = new LatLng(latitude, longitude);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLong, 16));
-        plotMarker();
+        getPeopleAroundMe(latitude, longitude);
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
-                showProfile();
+                showProfile(marker);
                 return false;
             }
         });
@@ -136,6 +215,13 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
             }
         });
 
+    }
+
+    private void getPeopleAroundMe(double latitude, double longitude) {
+        ScoresContentHandler.getInstance().addResponseListener(contentListener, REQUEST_LISTENER_KEY);
+
+        String urlToRequest = base_url + latitude + "&lng=" + longitude + "&radius=" + radius;
+        ScoresContentHandler.getInstance().requestNearByUsers(REQUEST_LISTENER_KEY, REQUEST_TAG, urlToRequest);
     }
 
     public boolean createContact(String number, Context context) {
@@ -157,7 +243,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         return success;
     }
 
-    private void showProfile() {
+    private void showProfile(final Marker marker) {
         LayoutInflater inflater = PeopleAroundMeMap.this.getLayoutInflater();
         View popupProfile = inflater.inflate(R.layout.chat_other_profile_layout, null);
         AlertDialog.Builder otherProfile = new AlertDialog.Builder(PeopleAroundMeMap.this);
@@ -166,10 +252,10 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         popupProfile.findViewById(R.id.start_chat).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Contacts contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContact("919953936440");
+                Contacts contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContact(marker.getSnippet());
                 if (contact == null) {
-                    createContact("919953936440", getApplicationContext());
-                    contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContact("919953936440");
+                    createContact(marker.getSnippet(), getApplicationContext());
+                    contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContact(marker.getSnippet());
                 }
                 moveToChatActivity(contact);
             }
@@ -242,6 +328,19 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        ScoresContentHandler.getInstance().removeResponseListener(REQUEST_LISTENER_KEY);
     }
 
     @Override
