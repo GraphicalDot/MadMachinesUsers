@@ -107,10 +107,6 @@
             android:label="@string/title_activity_filter"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".common.controller.LeagueSelectActivity"
-            android:label="@string/title_activity_filter"
-            android:screenOrientation="portrait"></activity>
-        <activity
             android:name=".common.controller.TourActivity"
             android:label="@string/title_activity_tour"
             android:screenOrientation="portrait"></activity>

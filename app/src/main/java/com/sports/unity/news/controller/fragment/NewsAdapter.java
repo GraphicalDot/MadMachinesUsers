@@ -69,7 +69,7 @@ public class NewsAdapter extends BaseNewsAdapter {
             news_main = (LinearLayout) v.findViewById(com.sports.unity.R.id.news);
             Context context = v.getContext();
 
-            info.setTypeface(FontTypeface.getInstance(context).getRobotoLight());
+            info.setTypeface(FontTypeface.getInstance(context).getRobotoRegular());
             title.setTypeface(FontTypeface.getInstance(context).getRobotoSlabRegular());
             published.setTypeface(FontTypeface.getInstance(context).getRobotoRegular());
         }
@@ -97,7 +97,7 @@ public class NewsAdapter extends BaseNewsAdapter {
                     text = text.substring(0, 135) + "...";
                 }
 
-                holder.info.setText(Html.fromHtml(text + " " + "<font color='#2c84cc'><u>Read More</u></font>"));
+                holder.info.setText(Html.fromHtml(text + " " + "<font color='#004d99'><u>Read More</u></font>"));
                 holder.title.setText(newsJsonCaller.getTitle());
                 holder.type.setText(newsJsonCaller.getType());
                 DateTime dateTime = new DateTime(newsJsonCaller.getPublishEpoch() * 1000);

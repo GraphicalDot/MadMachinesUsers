@@ -15,38 +15,35 @@
         android:id="@+id/filter_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/ColorPrimary"
         android:layout_above="@+id/next_layout"
         android:layout_below="@+id/toolbar_main" />
 
 
     <RelativeLayout
         android:id="@+id/next_layout"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/filter_next_height"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/app_theme_blue"
-        android:weightSum="2">
+        android:background="@color/app_theme_blue">
 
-        <TextView
-            android:id="@+id/next"
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingRight="@dimen/filter_next_margin"
-            android:text="@string/next"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/font_size_medium"
-            android:layout_weight="1"/>
-        <TextView
+            android:text="edit"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="@android:color/white"
+            android:background="@android:color/transparent"
             android:id="@+id/edit"
+            android:layout_alignParentRight="true"/>
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:paddingRight="@dimen/filter_next_margin"
-            android:text="@string/edit"
-            android:textColor="@color/textColorPrimary"
-            android:textSize="@dimen/font_size_medium" />
+            android:text="next"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="@android:color/white"
+            android:background="@android:color/transparent"
+            android:id="@+id/next"
+            android:layout_alignParentRight="true"/>
     </RelativeLayout>
 </RelativeLayout>

@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -60,7 +61,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     }
 
     private void setUpEditClick() {
-        final TextView edit = (TextView) findViewById(R.id.edit);
+        final Button edit = (Button) findViewById(R.id.edit);
         edit.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
         if (!UserUtil.isFilterCompleted()) {
             edit.setVisibility(View.INVISIBLE);
@@ -75,7 +76,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
     private void setUpNextClick() {
 
-        TextView next = (TextView) findViewById(R.id.next);
+        Button next = (Button) findViewById(R.id.next);
         next.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
         if (UserUtil.isFilterCompleted()) {
             next.setVisibility(View.INVISIBLE);
@@ -136,10 +137,10 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
         titleText = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        titleText.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+        titleText.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         search = (ImageView) toolbar.findViewById(R.id.action_search);
-        search.setVisibility(View.INVISIBLE);
+        search.setVisibility(View.VISIBLE);
         titleLayout = (LinearLayout) toolbar.findViewById(R.id.title_layout);
         searchLayout = (LinearLayout) toolbar.findViewById(R.id.search_layout);
         searchText = (EditText) toolbar.findViewById(R.id.search_edit);

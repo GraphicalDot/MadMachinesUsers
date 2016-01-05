@@ -1,5 +1,6 @@
 package com.sports.unity.scores.controller.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -18,6 +20,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.sports.unity.R;
+import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
@@ -57,6 +60,26 @@ public class MatchListFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_scores_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.action_search) {
+//            Intent intent = new Intent(getActivity(), NewsSearchActivity.class);
+//            startActivity(intent);
+            return true;
+        }
+
+        if (id == com.sports.unity.R.id.action_filter) {
+            Intent i = new Intent(getActivity(), FilterActivity.class);
+           // startActivityForResult(i, 999);
+            startActivity(i);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override

@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="@dimen/vertical_padding_very_very_small"
+        android:background="@color/ColorPrimary"
+        android:layout_marginBottom="@dimen/horizontal_padding_small"
         >
 
         <LinearLayout
@@ -22,21 +23,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:background="@color/gray3"
+                android:background="@color/news_strip"
                 android:padding="@dimen/vertical_padding_very_very_small" >
+
+                //android:layout_width="@dimen/news_fav_icon_large_width"
+                //android:layout_height="@dimen/news_fav_icon_height"
 
                 <ImageView
                     android:id="@+id/fab_icon"
-                    android:layout_width="@dimen/news_fav_icon_large_width"
-                    android:layout_height="@dimen/news_fav_icon_height"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:scaleType="centerInside"
                     android:layout_gravity="center"
+                    android:paddingLeft="@dimen/vertical_padding_very_small"
                     android:paddingRight="@dimen/vertical_padding_very_small"/>
 
                 <View
                     android:layout_width="1dp"
                     android:layout_height="fill_parent"
-                    android:background="@color/gray1" />
+                    android:background="@color/news_vertical_strip" />
 
                 <TextView
                     android:id="@+id/published"
