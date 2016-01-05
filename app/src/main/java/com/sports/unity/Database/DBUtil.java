@@ -171,6 +171,12 @@ public class DBUtil {
         return content;
     }
 
+    public static void deleteContentFromExternalFileStorage(Context context, ArrayList<String> fileNames){
+        for(String name : fileNames){
+            deleteContentFromExternalFileStorage(context, name);
+        }
+    }
+
     public static boolean deleteContentFromExternalFileStorage(Context context, String fileName){
         if( fileName != null ) {
             File dirPath = new File(getExternalStorageDirectoryPath(context));

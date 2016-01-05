@@ -7,6 +7,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -30,6 +32,7 @@ import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.Stickers;
+import com.sports.unity.messages.controller.model.ToolbarActionsForChatScreen;
 import com.sports.unity.messages.controller.viewhelper.AudioRecordingHelper;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -236,6 +239,14 @@ public class ChatScreenAdapter extends BaseAdapter {
             }
         } else {
             ((LinearLayout) holder.message.getParent()).setBackgroundResource(android.R.color.transparent);
+        }
+
+        if(ToolbarActionsForChatScreen.getInstance(activity).isItemSelected(position)){
+            ColorDrawable drawable = new ColorDrawable(activity.getResources().getColor(R.color.list_selector));
+            ((FrameLayout) vi).setForeground(drawable);
+        } else {
+            ColorDrawable drawable = new ColorDrawable(Color.TRANSPARENT);
+            ((FrameLayout) vi).setForeground(drawable);
         }
 
         if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {

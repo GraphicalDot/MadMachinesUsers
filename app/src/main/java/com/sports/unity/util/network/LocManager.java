@@ -21,10 +21,11 @@ import java.net.URL;
  */
 public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
+    private static String base_url = "http://54.169.217.88/set_location?user=";
     private static LocManager locManager = null;
+
     private Thread uploadLocation = null;
-    public static String base_url = "54.169.217.88/set_location?user=";
-    String url = "";
+    private String url = "";
 
     synchronized public static LocManager getInstance(Context context) {
         if (locManager == null) {
@@ -99,15 +100,18 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
             httpURLConnection.setConnectTimeout(15000);
             httpURLConnection.setDoInput(false);
             httpURLConnection.setRequestMethod("GET");
+
             if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 Log.i("latlongresponse", " 200 ");
             } else {
                 Log.i("latlongresponse", " 500 ");
             }
-        } catch (MalformedURLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } finally {
+            try {
+                httpURLConnection.disconnect();
+            }catch (Exception ex){}
         }
 
 

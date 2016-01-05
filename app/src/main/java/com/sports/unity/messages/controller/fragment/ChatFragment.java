@@ -207,8 +207,11 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
     }
 
     private void deleteSingleChat(Chats chatObject) {
-        SportsUnityDBHelper.getInstance(getActivity()).clearChat(chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+        SportsUnityDBHelper.getInstance(getActivity()).clearChat( getActivity(), chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
         SportsUnityDBHelper.getInstance(getActivity()).clearChatEntry(chatObject.chatid);
+
+        NotificationHandler.getInstance().clearNotificationMessages(chatObject.chatid);
+
         updateContent();
     }
 

@@ -5,6 +5,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -12,11 +13,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
@@ -100,12 +103,22 @@ public class ToolbarActionsForChatScreen {
     }
 
     public void deleteMessages(ArrayList<Message> messageList, long chatID, ChatScreenAdapter chatScreenAdapter) {
+        ArrayList<String> deletedFileNames = new ArrayList<>();
+
         Collections.sort(selectedItemsList, Collections.reverseOrder());
-        for (int a :
-                selectedItemsList) {
-            sportsUnityDBHelper.deleteMessageFromTable(messageList.get(a).id);
-            messageList.remove(messageList.get(a));
+        for (int itemPosition : selectedItemsList) {
+            Message message = messageList.get(itemPosition);
+
+            if( message.mediaFileName != null ){
+                deletedFileNames.add(message.mediaFileName);
+            }
+
+            sportsUnityDBHelper.deleteMessageFromTable(message.id);
+            messageList.remove(message);
         }
+
+        DBUtil.deleteContentFromExternalFileStorage(context, deletedFileNames);
+
         chatScreenAdapter.notifydataset(messageList);
         if (messageList.isEmpty()) {
             sportsUnityDBHelper.updateChatEntry(sportsUnityDBHelper.getDummyMessageRowId(), chatID, sportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
@@ -119,7 +132,10 @@ public class ToolbarActionsForChatScreen {
             if (searchViewActivate) {
                 searchViewActivate = false;
             }
-            view.setBackgroundColor(context.getResources().getColor(R.color.list_selector));
+
+            ColorDrawable drawable = new ColorDrawable(view.getResources().getColor(R.color.list_selector));
+            ((FrameLayout)view).setForeground(drawable);
+
             selectedFlag = true;
             selecteditems++;
             selectedItemsList.add(position);
@@ -137,7 +153,9 @@ public class ToolbarActionsForChatScreen {
     public boolean onClickSelectView(View view, int position, ArrayList<Message> messageList) {
         if (selectedFlag == true) {
             if (selectedItemsList.contains(position)) {
-                view.setBackgroundColor(Color.TRANSPARENT);
+                ColorDrawable drawable = new ColorDrawable(Color.TRANSPARENT);
+                ((FrameLayout)view).setForeground(drawable);
+
                 selecteditems--;
                 selectedItemsList.remove(Integer.valueOf(position));
                 if (!messageList.get(position).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
@@ -147,7 +165,9 @@ public class ToolbarActionsForChatScreen {
                     }
                 }
             } else {
-                view.setBackgroundColor(context.getResources().getColor(R.color.list_selector));
+                ColorDrawable drawable = new ColorDrawable(view.getResources().getColor(R.color.list_selector));
+                ((FrameLayout)view).setForeground(drawable);
+
                 selecteditems++;
                 selectedItemsList.add(position);
                 if (!messageList.get(position).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
@@ -159,6 +179,16 @@ public class ToolbarActionsForChatScreen {
         }
 
         return checkSelectedItems();
+    }
+
+    public boolean isItemSelected(int position){
+        boolean selected = false;
+        if (selectedItemsList.contains(position)) {
+            selected = true;
+        } else {
+            //nothing
+        }
+        return selected;
     }
 
     public void getToolbarMenu(Toolbar mtoolbar, Menu menu) {

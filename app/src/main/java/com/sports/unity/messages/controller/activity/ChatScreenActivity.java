@@ -747,7 +747,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         } else if (id == R.id.action_block_user) {
             blockUnblockUserHelper.onMenuItemSelected(this, contactID, JABBERID, menu);
         } else if (id == R.id.action_clear_chat) {
-            sportsUnityDBHelper.clearChat(chatID, groupServerId);
+            sportsUnityDBHelper.clearChat( getApplicationContext(), chatID, groupServerId);
 
             AudioRecordingHelper.getInstance(this).stopAndReleaseMediaPlayer();
             AudioRecordingHelper.getInstance(this).clearProgressMap();

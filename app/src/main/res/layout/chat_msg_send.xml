@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent">
+    android:background="@android:color/transparent"
+    android:foreground="@color/list_selector"
+    >
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="right"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="@dimen/vertical_space_between_chats"
         android:layout_marginTop="@dimen/vertical_space_between_chats"
@@ -127,15 +130,14 @@
                 android:textSize="@dimen/font_size_very_small" />
             <ImageView
                 android:id="@+id/receivedStatus"
-                android:layout_width="@dimen/message_status_size"
-                android:layout_height="@dimen/message_status_size"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
                 android:src="@drawable/ic_msg_pending" />
 
         </LinearLayout>
 
-
     </LinearLayout>
 
-</RelativeLayout>
+</FrameLayout>

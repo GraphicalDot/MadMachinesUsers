@@ -1061,7 +1061,9 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return userBlockedList;
     }
 
-    public void clearChat(long chatId, String groupServerId) {
+    public ArrayList<String> clearChat(Context context, long chatId, String groupServerId) {
+        ArrayList<String> mediaFileNames = getMediaFileNamesForParticularChat(chatId);
+
         SQLiteDatabase db = this.getWritableDatabase();
 
         String selection = MessagesEntry.COLUMN_CHAT_ID + " = ? ";
@@ -1070,7 +1072,33 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         if (chatId != DEFAULT_ENTRY_ID) {
             db.delete(MessagesEntry.TABLE_NAME, selection, selectionArgs);
             updateChatEntry(getDummyMessageRowId(), chatId, groupServerId);
+
+            DBUtil.deleteContentFromExternalFileStorage( context, mediaFileNames);
         }
+
+        return mediaFileNames;
+    }
+
+    public ArrayList<String> getMediaFileNamesForParticularChat(long chatId){
+        ArrayList<String> mediaFileNames = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+        String selectQuery = "SELECT " + MessagesEntry.COLUMN_MEDIA_FILE_NAME + " FROM " + MessagesEntry.TABLE_NAME + " where " + MessagesEntry.COLUMN_CHAT_ID + " = ? ";
+
+        String[] args = {String.valueOf(chatId)};
+        Cursor cursor = db.rawQuery(selectQuery, args);
+
+        if (cursor.moveToFirst()) {
+            do {
+                String filename = cursor.getString(0);
+                if( filename != null ) {
+                    mediaFileNames.add(filename);
+                }
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
+        return mediaFileNames;
     }
 
     public void clearChatEntry(long chatId) {
