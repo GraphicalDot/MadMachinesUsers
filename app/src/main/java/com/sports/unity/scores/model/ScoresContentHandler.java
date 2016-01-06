@@ -14,7 +14,8 @@ public class ScoresContentHandler {
 
     private static final String SCORES_BASE_URL = "http://52.74.142.219:8080/";
 
-    private static final String URL_PARAMS_FOR_LIST_OF_MATCHES = "get_football_upcoming_fixtures";
+    private static final String URL_PARAMS_FOR_LIST_OF_MATCHES = "get_all_matches_list";
+    private static final String URL_PARAMS_FOR_COMMENTARY = "get_football_commentary?match_id=";
 
 //    private static final String REQUEST_KEY_LIST_OF_MATCHES = "List_Of_Matches";
 //    private static final String REQUEST_KEY_MATCH_DETAILS = "Match_Detail:";
@@ -102,9 +103,9 @@ public class ScoresContentHandler {
         }
     }
 
-    public void requestCommentaryOnMatch(String matchId, String listenerKey, String requestTag){
+    public void requestCommentaryOnMatch(int matchId, String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
-            String url = generateURL("");
+            String url = generateURL( URL_PARAMS_FOR_COMMENTARY + matchId);
             requestContent(requestTag, listenerKey, url);
         } else {
             //nothing

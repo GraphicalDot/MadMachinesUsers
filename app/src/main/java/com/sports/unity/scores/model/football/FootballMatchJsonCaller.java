@@ -7,7 +7,7 @@ import org.json.JSONException;
 /**
  * Created by madmachines on 8/10/15.
  */
-public class FootballMatchJsonCaller extends JsonObjectCaller {
+public class FootballMatchJsonCaller extends MatchJsonCaller {
 
     public int getMatchDateEpoch() throws JSONException {
         return jsonObject.getInt("match_date_epoch");
@@ -33,20 +33,12 @@ public class FootballMatchJsonCaller extends JsonObjectCaller {
         return jsonObject.getInt("league_id");
     }
 
-    public String getMatchDate() throws JSONException {
-        return jsonObject.getString("match_date");
-    }
-
     public String getAwayTeamFlag() throws JSONException {
         return jsonObject.getString("away_team_flag");
     }
 
     public String getHomeTeamFlag() throws JSONException {
         return jsonObject.getString("home_team_flag");
-    }
-
-    public String getMatchTime() throws JSONException {
-        return jsonObject.getString("match_time");
     }
 
     public String getStadium() throws JSONException {

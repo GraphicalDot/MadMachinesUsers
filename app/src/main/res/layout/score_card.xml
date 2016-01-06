@@ -23,20 +23,19 @@
                 android:id="@+id/ScoreLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/vertical_padding_small"
+                android:layout_margin="@dimen/vertical_padding_very_very_small"
                 android:orientation="horizontal"
                 android:weightSum="4">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="3"
+                    android:layout_weight="2.5"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/vertical_padding_very_very_small"
                         android:orientation="horizontal">
 
                         <ImageView
@@ -51,18 +50,6 @@
                             android:gravity="center">
 
                             <TextView
-                                android:id="@+id/team1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentLeft="true"
-                                android:layout_centerInParent="true"
-                                android:paddingLeft="@dimen/vertical_padding_very_small"
-                                android:textColor="@android:color/black"
-                                android:textSize="@dimen/font_size_medium"
-                                android:text="USA"
-                                />
-
-                            <TextView
                                 android:id="@+id/t1score"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -70,9 +57,24 @@
                                 android:layout_centerInParent="true"
                                 android:paddingRight="@dimen/vertical_padding_very_small"
                                 android:textColor="@android:color/black"
-                                android:textSize="@dimen/font_size_medium"
-                                android:text="2"
+                                android:textSize="@dimen/font_size_small_large"
+                                android:text=""
                                 />
+
+                            <TextView
+                                android:id="@+id/team1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_toLeftOf="@id/t1score"
+                                android:layout_centerInParent="true"
+                                android:paddingLeft="@dimen/vertical_padding_very_small"
+                                android:singleLine="true"
+                                android:textColor="@android:color/black"
+                                android:textSize="@dimen/font_size_small_large"
+                                android:text="USA"
+                                />
+
                         </RelativeLayout>
 
 
@@ -81,8 +83,8 @@
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/vertical_padding_very_very_small"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/vertical_padding_very_very_small">
 
                         <ImageView
                             android:id="@+id/t2flag"
@@ -96,18 +98,6 @@
                             android:gravity="center">
 
                             <TextView
-                                android:id="@+id/team2"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentLeft="true"
-                                android:layout_centerInParent="true"
-                                android:paddingLeft="@dimen/vertical_padding_very_small"
-                                android:textColor="@android:color/black"
-                                android:textSize="@dimen/font_size_medium"
-                                android:text="Canada"
-                                />
-
-                            <TextView
                                 android:id="@+id/t2score"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -115,8 +105,22 @@
                                 android:layout_centerInParent="true"
                                 android:paddingRight="@dimen/vertical_padding_very_small"
                                 android:textColor="@android:color/black"
-                                android:textSize="@dimen/font_size_medium"
-                                android:text="3"
+                                android:textSize="@dimen/font_size_small_large"
+                                android:text=""
+                                />
+
+                            <TextView
+                                android:id="@+id/team2"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_toLeftOf="@id/t2score"
+                                android:layout_centerInParent="true"
+                                android:paddingLeft="@dimen/vertical_padding_very_small"
+                                android:singleLine="true"
+                                android:textColor="@android:color/black"
+                                android:textSize="@dimen/font_size_small_large"
+                                android:text="Canada"
                                 />
 
                         </RelativeLayout>
@@ -133,33 +137,45 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="1.5"
                     android:orientation="vertical"
                     android:gravity="center"
                     >
 
                     <TextView
-                        android:id="@+id/matchDay"
+                        android:id="@+id/liveText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/app_theme_blue"
+                        android:textSize="@dimen/font_size_small_large"
                         android:text="@string/live"
                         />
+                    <TextView
+                        android:id="@+id/matchDay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="@dimen/vertical_padding_very_very_small"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:textColor="@color/gray1"
+                        android:textSize="@dimen/font_size_small_medium"
+                        android:text=""
+                        />
+
                     <TextView
                         android:id="@+id/show_odds"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
+                        android:padding="3dp"
                         android:background="@color/app_theme_blue"
-                        android:padding="@dimen/vertical_padding_very_very_small"
                         android:text="@string/show_odds"
-                        android:textColor="@android:color/white"
-                        android:textSize="@dimen/font_size_very_small"
+                        android:textColor="@color/ColorPrimary"
+                        android:textSize="8dp"
                         />
-
                 </LinearLayout>
             </LinearLayout>
 

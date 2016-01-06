@@ -12,52 +12,38 @@ import java.util.ArrayList;
  */
 public class ScoresJsonParser {
 
+    public static final String CRICKET = "cricket";
+    public static final String FOOTBALL = "football";
+    public static final String SPORTS_TYPE_PARAMETER = "type";
+
     public static ArrayList<JSONObject> parseListOfMatches(String jsonContent){
-
-        /*
-
-        "data": [
-        {
-            'match_date_epoch': 1449081000,
-            'match_number': '4th Test Match',
-            'match_id': 'indrsa_2015_test_04',
-            'team_2': 'South Africa',
-            'venue': 'Feroz Shah Kotla, Delhi, India',
-            'match_format': 'test',
-            'match_date': '2015-12-03',
-            'match_time': '04:00+00:00',
-            'status': 'completed', 'team_1': 'India'
-        }
-        ,
-        {
-            'match_date_epoch': 1449599400,
-            'match_number': 'Semi Final Match',
-            'match_id': 'ramslamt20_2015_sf1',
-            'team_2': 'Cape Cobras',
-            'venue': 'Kingsmead, Durban, South Africa',
-            'match_format': 't20',
-            'match_date': '2015-12-09',
-            'match_time': '16:00+00:00',
-            'status': 'completed',
-            'team_1': 'Dolphins'
-        }
-        ],
-
-       */
 
         ArrayList<JSONObject> list = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(jsonContent);
 
-            String successMessage = jsonObject.getString("success");
-            String errorMessage = jsonObject.getString("error");
+            boolean success = jsonObject.getBoolean("success");
+            boolean error = jsonObject.getBoolean("error");
 
-            if( successMessage.equalsIgnoreCase("true") ) {
+            if( success ) {
                 list = new ArrayList<>();
-                JSONArray array = (JSONArray) jsonObject.get("data");
+
+                jsonObject = jsonObject.getJSONObject("data");
+
+                JSONArray array = (JSONArray) jsonObject.get(CRICKET);
                 for( int index=0; index < array.length(); index++){
-                    list.add( array.getJSONObject(index));
+                    JSONObject match = array.getJSONObject(index);
+                    match.put( SPORTS_TYPE_PARAMETER, CRICKET);
+                    list.add( match);
                 }
+
+                array = (JSONArray) jsonObject.get(FOOTBALL);
+                for( int index=0; index < array.length(); index++){
+                    JSONObject match = array.getJSONObject(index);
+                    match.put( SPORTS_TYPE_PARAMETER, FOOTBALL);
+                    list.add(match);
+                }
+
             } else {
                 list.clear();
             }
@@ -80,6 +66,31 @@ public class ScoresJsonParser {
             if( status == 200 && info.equalsIgnoreCase("Success") ) {
                 list = new ArrayList<>();
                 JSONArray array = (JSONArray) jsonObject.get("users");
+                for( int index=0; index < array.length(); index++){
+                    list.add( array.getJSONObject(index));
+                }
+            } else {
+                list.clear();
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+            list.clear();
+        }
+
+        return list;
+    }
+
+    public static ArrayList<JSONObject> parseListOfMatchCommentaries(String jsonContent){
+        ArrayList<JSONObject> list = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(jsonContent);
+
+            boolean success = jsonObject.getBoolean("success");
+            boolean error = jsonObject.getBoolean("error");
+
+            if( success ) {
+                list = new ArrayList<>();
+                JSONArray array = (JSONArray) jsonObject.get("data");
                 for( int index=0; index < array.length(); index++){
                     list.add( array.getJSONObject(index));
                 }

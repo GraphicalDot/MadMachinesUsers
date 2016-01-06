@@ -3,6 +3,7 @@ package com.sports.unity.scores.controller.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +16,10 @@ import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.scores.model.ScoresJsonParser;
+import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
 import com.sports.unity.scores.model.football.FootballMatchJsonCaller;
+import com.sports.unity.scores.model.football.MatchJsonCaller;
 
 import org.json.JSONObject;
 
@@ -34,7 +38,9 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     private Activity activity;
     private List<JSONObject> list;
 
+    private MatchJsonCaller matchJsonCaller = new MatchJsonCaller();
     private FootballMatchJsonCaller footballMatchJsonCaller = new FootballMatchJsonCaller();
+    private CricketMatchJsonCaller cricketMatchJsonCaller = new CricketMatchJsonCaller();
 
     private View.OnClickListener listener = new View.OnClickListener() {
 
@@ -59,6 +65,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         private TextView team2;
         private TextView t2score;
         private TextView matchDay;
+        private TextView liveText;
         private TextView venue;
         private TextView date;
         private TextView odds;
@@ -77,6 +84,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             team2 = (TextView) v.findViewById(R.id.team2);
             t2score = (TextView) v.findViewById(R.id.t2score);
             matchDay = (TextView) v.findViewById(R.id.matchDay);
+            liveText = (TextView) v.findViewById(R.id.liveText);
             venue = (TextView) v.findViewById(R.id.venue);
             date = (TextView) v.findViewById(R.id.date);
             odds = (TextView) v.findViewById(R.id.show_odds);
@@ -95,49 +103,117 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         JSONObject matchJsonObject = list.get(position);
 
         try {
-            footballMatchJsonCaller.setJsonObject(matchJsonObject);
+            matchJsonCaller.setJsonObject(matchJsonObject);
 
-            Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000)));
-            String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
-            String day = (String) android.text.format.DateFormat.format("dd", date);
-            String month = getMonth((String) android.text.format.DateFormat.format("MMM", date));
-            String isttime = null;
-            try {
-                isttime = getLocalTime(footballMatchJsonCaller.getMatchTime()).substring(0, 5);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
+//            holder.liveText.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
+//            holder.liveText.setTextColor(Color.BLACK);
 
-            holder.team1.setText(footballMatchJsonCaller.getHomeTeam());
-            holder.team2.setText(footballMatchJsonCaller.getAwayTeam());
+            if( matchJsonCaller.getType().equals(ScoresJsonParser.CRICKET) ) {
+                cricketMatchJsonCaller.setJsonObject(matchJsonObject);
 
-            holder.venue.setText(footballMatchJsonCaller.getStadium());
-            holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
 
-            Glide.with(activity).load(footballMatchJsonCaller.getHomeTeamFlag()).into(holder.t1flag);
-            Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).into(holder.t2flag);
+                Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000)));
+                String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
+                String day = (String) android.text.format.DateFormat.format("dd", date);
+                String month = getMonth((String) android.text.format.DateFormat.format("MMM", date));
+                String isttime = null;
+                try {
+                    isttime = getLocalTime(cricketMatchJsonCaller.getMatchTime()).substring(0, 5);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
 
-            if ("?".equals(footballMatchJsonCaller.getAwayTeamScore())) {
-//                holder.matchDay.setText(isttime);
-            } else {
-                holder.t1score.setText(footballMatchJsonCaller.getHomeTeamScore());
-                holder.t2score.setText(footballMatchJsonCaller.getAwayTeamScore());
-//                holder.matchDay.setText(footballMatchJsonCaller.getMatchStatus());
-            }
+                holder.team1.setText(cricketMatchJsonCaller.getTeam1());
+                holder.team2.setText(cricketMatchJsonCaller.getTeam2());
 
-            if( footballMatchJsonCaller.isLive() ){
-                holder.odds.setVisibility(View.VISIBLE);
-                holder.matchDay.setText(holder.matchDay.getResources().getString(R.string.live));
-            } else {
-                holder.odds.setVisibility(View.GONE);
-                holder.matchDay.setText("--");
+                holder.venue.setText(cricketMatchJsonCaller.getVenue());
+                holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
+
+                Glide.with(activity).load(cricketMatchJsonCaller.getTeam1Flag()).into(holder.t1flag);
+                Glide.with(activity).load(cricketMatchJsonCaller.getTeam2Flag()).into(holder.t2flag);
+
+                boolean isLive = false;
+                if ( cricketMatchJsonCaller.getStatus().equals("completed") ) {
+                    holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
+                    holder.liveText.setVisibility(View.GONE);
+
+                    holder.t1score.setText( cricketMatchJsonCaller.getTeam1Score());
+                    holder.t2score.setText( cricketMatchJsonCaller.getTeam2Score());
+                } else if ( cricketMatchJsonCaller.getStatus().equals("notstarted") ) {
+                    holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
+                    holder.liveText.setVisibility(View.GONE);
+
+                    holder.t1score.setText( "");
+                    holder.t2score.setText( "");
+                } else {
+                    isLive = true;
+                    holder.liveText.setVisibility(View.VISIBLE);
+                    holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
+
+                    holder.t1score.setText( cricketMatchJsonCaller.getTeam1Score());
+                    holder.t2score.setText( cricketMatchJsonCaller.getTeam2Score());
+                }
+
+                if( isLive ){
+                    holder.odds.setVisibility(View.VISIBLE);
+                } else {
+                    holder.odds.setVisibility(View.GONE);
+                }
+
+            } else if( matchJsonCaller.getType().equals(ScoresJsonParser.FOOTBALL) ) {
+                footballMatchJsonCaller.setJsonObject(matchJsonObject);
+
+                Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000)));
+                String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
+                String day = (String) android.text.format.DateFormat.format("dd", date);
+                String month = getMonth((String) android.text.format.DateFormat.format("MMM", date));
+                String isttime = null;
+                try {
+                    isttime = getLocalTime(footballMatchJsonCaller.getMatchTime()).substring(0, 5);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                holder.team1.setText(footballMatchJsonCaller.getHomeTeam());
+                holder.team2.setText(footballMatchJsonCaller.getAwayTeam());
+
+                holder.venue.setText(footballMatchJsonCaller.getStadium());
+                holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
+
+                Glide.with(activity).load(footballMatchJsonCaller.getHomeTeamFlag()).into(holder.t1flag);
+                Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).into(holder.t2flag);
+
+                if ("?".equals(footballMatchJsonCaller.getAwayTeamScore())) {
+                    holder.matchDay.setText("Upcoming");
+                    holder.liveText.setVisibility(View.GONE);
+
+                    holder.t1score.setText( "");
+                    holder.t2score.setText( "");
+                } else {
+                    if( footballMatchJsonCaller.isLive() ){
+                        holder.liveText.setVisibility(View.VISIBLE);
+                    } else {
+                        holder.matchDay.setText("Completed");
+                        holder.liveText.setVisibility(View.GONE);
+                    }
+                    holder.t1score.setText(footballMatchJsonCaller.getHomeTeamScore());
+                    holder.t2score.setText(footballMatchJsonCaller.getAwayTeamScore());
+                }
+
+                if( footballMatchJsonCaller.isLive() ){
+                    holder.odds.setVisibility(View.VISIBLE);
+                } else {
+                    holder.odds.setVisibility(View.GONE);
+                }
             }
 
         }catch (Exception ex){
             ex.printStackTrace();
         }
 
-        holder.matchDay.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
+        holder.liveText.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+
+        holder.matchDay.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
         holder.venue.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
         holder.date.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
         holder.team1.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
