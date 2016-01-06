@@ -52,4 +52,7 @@
     <color name="score_dark_grey">#333</color>
     <color name="score_light_grey">#666666</color>
 
+    <!-- people around me -->
+    <color name="around_me_seekbar_progress_color">#cccccc</color>
+
 </resources>

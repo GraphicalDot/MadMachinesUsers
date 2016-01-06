@@ -74,6 +74,8 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
     private String base_url = "http://54.169.217.88/retrieve_nearby_users?lat=";
     private int radius = 500;
 
+    private int stepRange = 25;
+
     private ScoresContentHandler.ContentListener contentListener = new ScoresContentHandler.ContentListener() {
 
         @Override
@@ -126,16 +128,24 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 int progress = seekBar.getProgress();
-                if (progress >= 0 && progress <= 30) {
+                if (progress >= 0 && progress <= stepRange/2) {
                     seekBar.setProgress(0);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_05));
                     map.animateCamera(CameraUpdateFactory.zoomTo(16));
-                } else if (progress >= 30 && progress <= 70) {
-                    seekBar.setProgress(60);
+                } else if (progress >= 0*stepRange + stepRange/2 && progress <= 0*stepRange + stepRange/2 + stepRange) {
+                    seekBar.setProgress(1 * stepRange);
+                    seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_10));
+                    map.animateCamera(CameraUpdateFactory.zoomTo(14));
+                } else if (progress >= 1*stepRange + stepRange/2 && progress <= 1*stepRange + stepRange/2 + stepRange) {
+                    seekBar.setProgress(2 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_20));
                     map.animateCamera(CameraUpdateFactory.zoomTo(14));
+                } else if (progress >= 2*stepRange + stepRange/2 && progress <= 2*stepRange + stepRange/2 + stepRange) {
+                    seekBar.setProgress(3 * stepRange);
+                    seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_30));
+                    map.animateCamera(CameraUpdateFactory.zoomTo(14));
                 } else {
-                    seekBar.setProgress(100);
+                    seekBar.setProgress(4 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_40));
                     map.animateCamera(CameraUpdateFactory.zoomTo(12));
                 }

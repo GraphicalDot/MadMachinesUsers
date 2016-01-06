@@ -76,7 +76,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:padding="@dimen/vertical_padding_small"
+                android:padding="@dimen/vertical_padding_medium"
                 android:progressDrawable="@drawable/seekbar_drawable"
                 android:thumb="@drawable/ic_distance_slider_05" />
 

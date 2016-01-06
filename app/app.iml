@@ -77,6 +77,7 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/recyclerview-v7/22.2.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.android.support/support-v4/22.2.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.facebook.android/facebook-android-sdk/4.4.0/jars" />
+      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.getbase/floatingactionbutton/1.10.1/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-base/7.5.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-location/7.5.0/jars" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/exploded-aar/com.google.android.gms/play-services-maps/7.5.0/jars" />
@@ -115,8 +116,8 @@
     <orderEntry type="library" exported="" name="glide-3.6.1" level="project" />
     <orderEntry type="library" exported="" name="bolts-android-1.2.0" level="project" />
     <orderEntry type="library" exported="" name="recyclerview-v7-22.2.1" level="project" />
-    <orderEntry type="library" exported="" name="smack-android-extensions-4.1.4" level="project" />
     <orderEntry type="library" exported="" name="smack-android-4.1.4" level="project" />
+    <orderEntry type="library" exported="" name="smack-android-extensions-4.1.4" level="project" />
     <orderEntry type="library" exported="" name="cardview-v7-22.2.1" level="project" />
     <orderEntry type="library" exported="" name="minidns-0.1.7" level="project" />
     <orderEntry type="library" exported="" name="support-annotations-22.2.1" level="project" />
@@ -128,6 +129,7 @@
     <orderEntry type="library" exported="" name="commons-net-3.3" level="project" />
     <orderEntry type="library" exported="" name="jxmpp-core-0.4.2" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-22.2.1" level="project" />
+    <orderEntry type="library" exported="" name="floatingactionbutton-1.10.1" level="project" />
     <orderEntry type="library" exported="" name="play-services-location-7.5.0" level="project" />
     <orderEntry type="library" exported="" name="smack-sasl-provided-4.1.4" level="project" />
   </component>
