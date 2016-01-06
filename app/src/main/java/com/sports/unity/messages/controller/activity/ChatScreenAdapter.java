@@ -56,6 +56,8 @@ public class ChatScreenAdapter extends BaseAdapter {
     private ArrayList<Message> messageList;
 //    private ArrayList<Integer> messageListForFilter = new ArrayList<>();
 
+
+    private boolean nearByChat = false;
     private Activity activity;
     private String searchString = "";
 
@@ -68,10 +70,11 @@ public class ChatScreenAdapter extends BaseAdapter {
     private AudioEventListener audioEventListener = new AudioEventListener();
     private ImageOrVideoClickListener imageOrVideoClickListener = new ImageOrVideoClickListener();
 
-    public ChatScreenAdapter(ChatScreenActivity chatScreenActivity, ArrayList<Message> messagelist) {
+    public ChatScreenAdapter(ChatScreenActivity chatScreenActivity, ArrayList<Message> messagelist, boolean otherChat) {
         this.messageList = messagelist;
         activity = chatScreenActivity;
         mediaMap = chatScreenActivity.getMediaMap();
+        nearByChat = otherChat;
 
         audioRecordingHelper = AudioRecordingHelper.getInstance(activity);
         audioRecordingHelper.clearProgressMap();
@@ -241,7 +244,7 @@ public class ChatScreenAdapter extends BaseAdapter {
             ((LinearLayout) holder.message.getParent()).setBackgroundResource(android.R.color.transparent);
         }
 
-        if(ToolbarActionsForChatScreen.getInstance(activity).isItemSelected(position)){
+        if (ToolbarActionsForChatScreen.getInstance(activity).isItemSelected(position)) {
             ColorDrawable drawable = new ColorDrawable(activity.getResources().getColor(R.color.list_selector));
             ((FrameLayout) vi).setForeground(drawable);
         } else {
@@ -492,7 +495,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                 if (chat == null) {
                     chat = chatManager.createChat(ChatScreenActivity.getJABBERID() + "@mm.io");
                 }
-                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, message.mimeType, chat, message.id);
+                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, message.mimeType, chat, message.id, nearByChat);
 
                 activity.runOnUiThread(new Runnable() {
                     @Override

@@ -10,11 +10,12 @@ public class ActivityActionHandler {
 
     public static final String CHAT_SCREEN_KEY = "chat_screen_key";
     public static final String CHAT_LIST_KEY = "chat_list_key";
+    public static final String CHAT_OTHERS_LIST_KEY = "chat_list_others_key";
 
     private static ActivityActionHandler activityActionHandler = null;
 
-    public static ActivityActionHandler getInstance(){
-        if( activityActionHandler == null ){
+    public static ActivityActionHandler getInstance() {
+        if (activityActionHandler == null) {
             activityActionHandler = new ActivityActionHandler();
         }
         return activityActionHandler;
@@ -23,30 +24,30 @@ public class ActivityActionHandler {
     private HashMap<String, ActivityActionListener> activityListenerMap = new HashMap<>();
     private HashMap<String, ActionItem> actionItemOnHoldMap = new HashMap<>();
 
-    private ActivityActionHandler(){
+    private ActivityActionHandler() {
 
     }
 
-    public void addActionListener(String key, ActivityActionListener listener){
+    public void addActionListener(String key, ActivityActionListener listener) {
         activityListenerMap.put(key, listener);
 
-        if( actionItemOnHoldMap.containsKey(key) ){
+        if (actionItemOnHoldMap.containsKey(key)) {
             ActionItem actionItem = actionItemOnHoldMap.get(key);
-            listener.handleMediaContent( actionItem.id, actionItem.getMimeType(), actionItem.getMessageContent(), actionItem.getMediaContent());
+            listener.handleMediaContent(actionItem.id, actionItem.getMimeType(), actionItem.getMessageContent(), actionItem.getMediaContent());
             actionItemOnHoldMap.remove(key);
         }
     }
 
-    public void removeActionListener(String key){
+    public void removeActionListener(String key) {
         activityListenerMap.remove(key);
     }
 
-    public ActivityActionListener getActionListener(String key){
+    public ActivityActionListener getActionListener(String key) {
         return activityListenerMap.get(key);
     }
 
-    public void addActionOnHold(String key, ActionItem actionItem){
-        actionItemOnHoldMap.put( key, actionItem);
+    public void addActionOnHold(String key, ActionItem actionItem) {
+        actionItemOnHoldMap.put(key, actionItem);
     }
 
     public static class ActionItem {
@@ -57,7 +58,7 @@ public class ActivityActionHandler {
         private Object mediaContent = null;
 
 
-        public ActionItem(int id, String mimeType, Object messageContent, Object mediaContent){
+        public ActionItem(int id, String mimeType, Object messageContent, Object mediaContent) {
             this.id = id;
             this.mimeType = mimeType;
             this.messageContent = messageContent;

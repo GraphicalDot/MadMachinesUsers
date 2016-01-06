@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
@@ -113,7 +114,11 @@ public class BlockUnblockUserHelper {
         }
 
         protected void onPreExecute() {
+            ProgressBar progressBar = new ProgressBar(activity);
+            progressBar.getIndeterminateDrawable().setColorFilter(activity.getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+
             progressDialog = ProgressDialog.show(activity, "", "Please wait a moment...", true);
+            progressDialog.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
 
         }
 

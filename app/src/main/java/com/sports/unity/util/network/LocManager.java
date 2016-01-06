@@ -1,6 +1,8 @@
 package com.sports.unity.util.network;
 
 import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,6 +17,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by madmachines on 29/12/15.
@@ -111,7 +115,8 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         } finally {
             try {
                 httpURLConnection.disconnect();
-            }catch (Exception ex){}
+            } catch (Exception ex) {
+            }
         }
 
 
@@ -124,6 +129,24 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
             TinyDB.getInstance(context).putDouble(TinyDB.KEY_CURRENT_LATITUDE, mLastLocation.getLatitude());
             TinyDB.getInstance(context).putDouble(TinyDB.KEY_CURRENT_LONGITUDE, mLastLocation.getLongitude());
+            saveStreetAddress(mLastLocation);
+
+
+        }
+    }
+
+    private void saveStreetAddress(Location mLastLocation) {
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        try {
+            List<Address> addressList = geocoder.getFromLocation(
+                    mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
+            if (addressList != null && addressList.size() > 0) {
+                Address address = addressList.get(0);
+                TinyDB.getInstance(context).putString(TinyDB.KEY_ADDRESS_LOCATION, address.getAddressLine(0));
+                TinyDB.getInstance(context).putString(TinyDB.KEY_ADDRESS_STATE, address.getLocality());
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

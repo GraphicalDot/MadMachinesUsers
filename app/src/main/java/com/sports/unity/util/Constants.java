@@ -36,6 +36,7 @@ public class Constants {
 
     public static final String PARAM_TIME = "time";
     public static final String PARAM_MIME_TYPE = "mime_type";
+    public static final String PARAM_CHAT_TYPE_OTHERS = "chat_type_others";
 
     public static final String NEWS_REQUEST_TAG = "news_tag";
 
@@ -59,8 +60,8 @@ public class Constants {
     public static final String FILTER_TYPE_LEAGUE = "leagues";
     public static final String FILTER_TYPE_TEAM = "teams";
 
-    public static final String SPORTS_TYPE="sports_type";
-    public static final String SPORTS_TYPE_CRICKET="cricket";
-    public static final String SPORTS_TYPE_FOOTBALL="football";
-    public static final String FILTER_SEARCH_EXTRA="filter_search";
+    public static final String SPORTS_TYPE = "sports_type";
+    public static final String SPORTS_TYPE_CRICKET = "cricket";
+    public static final String SPORTS_TYPE_FOOTBALL = "football";
+    public static final String FILTER_SEARCH_EXTRA = "filter_search";
 }

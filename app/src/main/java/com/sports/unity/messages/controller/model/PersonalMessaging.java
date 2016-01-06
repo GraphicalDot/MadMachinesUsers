@@ -6,6 +6,7 @@ import android.util.Log;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.ReadReceipt;
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
@@ -69,43 +70,46 @@ public class PersonalMessaging {
         sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
     }
 
-    public void sendTextMessage(String msg, Chat chat, String number, long chatId) {
+    public void sendTextMessage(String msg, Chat chat, String number, long chatId, boolean otherChat) {
         Message message = new Message();
         message.setBody(msg);
 
         String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
-        String stanzaId = sendMessage(message, chat, time, SportsUnityDBHelper.MIME_TYPE_TEXT);
+        String stanzaId = sendMessage(message, chat, time, SportsUnityDBHelper.MIME_TYPE_TEXT, otherChat);
 
         long messageId = sportsUnityDBHelper.addMessage(message.getBody(), SportsUnityDBHelper.MIME_TYPE_TEXT, number, true, time,
                 stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
         sportsUnityDBHelper.updateChatEntry(messageId, chatId, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
     }
 
-    public void sendStickerMessage(String msg, Chat chat, String number, long chatId) {
+    public void sendStickerMessage(String msg, Chat chat, String number, long chatId, boolean otherChat) {
         Message message = new Message();
         message.setBody(msg);
 
         String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
-        String stanzaId = sendMessage(message, chat, time, SportsUnityDBHelper.MIME_TYPE_STICKER);
+        String stanzaId = sendMessage(message, chat, time, SportsUnityDBHelper.MIME_TYPE_STICKER, otherChat);
 
         long messageId = sportsUnityDBHelper.addMessage(message.getBody(), SportsUnityDBHelper.MIME_TYPE_STICKER, number, true, time,
                 stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
         sportsUnityDBHelper.updateChatEntry(messageId, chatId, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
     }
 
-    public void sendMediaMessage(String checksum, Chat chat, long messageId, String mimeType) {
+    public void sendMediaMessage(String checksum, Chat chat, long messageId, String mimeType, boolean nearByChat) {
         Message message = new Message();
         message.setBody(checksum);
 
         long time = CommonUtil.getCurrentGMTTimeInEpoch();
-        String stanzaId = sendMessage(message, chat, String.valueOf(time), mimeType);
+        String stanzaId = sendMessage(message, chat, String.valueOf(time), mimeType, nearByChat);
 
         sportsUnityDBHelper.updateMediaMessage_ContentUploaded(messageId, stanzaId, checksum);
     }
 
-    private String sendMessage(Message message, Chat chat, String currentTime, String mimeType){
+    private String sendMessage(Message message, Chat chat, String currentTime, String mimeType, boolean otherChat) {
         JivePropertiesManager.addProperty(message, Constants.PARAM_TIME, currentTime);
         JivePropertiesManager.addProperty(message, Constants.PARAM_MIME_TYPE, mimeType);
+        if (otherChat) {
+            JivePropertiesManager.addProperty(message, Constants.PARAM_CHAT_TYPE_OTHERS, otherChat);
+        }
 
         DeliveryReceiptRequest.addTo(message);
         String id = message.getStanzaId();
@@ -149,17 +153,17 @@ public class PersonalMessaging {
         }
     }
 
-    public void updateBlockList(Context context){
+    public void updateBlockList(Context context) {
         List<PrivacyItem> privacyItems = getPrivacyList();
 
-        if( privacyItems.size() > -1 ) {
+        if (privacyItems.size() > -1) {
             ArrayList<String> blockedUserList = SportsUnityDBHelper.getInstance(context).getUserBlockedList();
-            if( blockedUserList.size() != 0 ) {
+            if (blockedUserList.size() != 0) {
                 privacyItems = new ArrayList<>();
-                for (String phoneNumber : blockedUserList ) {
+                for (String phoneNumber : blockedUserList) {
                     phoneNumber += "@mm.io";
-                    privacyItems.add( new PrivacyItem(PrivacyItem.Type.jid, phoneNumber, false, 1));
-                    Log.i("Privacy" , phoneNumber);
+                    privacyItems.add(new PrivacyItem(PrivacyItem.Type.jid, phoneNumber, false, 1));
+                    Log.i("Privacy", phoneNumber);
                 }
                 sendPrivacyList(privacyItems);
             } else {
@@ -199,25 +203,25 @@ public class PersonalMessaging {
         return success;
     }
 
-    private List<PrivacyItem> getPrivacyList(){
+    private List<PrivacyItem> getPrivacyList() {
         List<PrivacyItem> privacyItems = new ArrayList<>();
 
         try {
             PrivacyListManager privacyManager = PrivacyListManager.getInstanceFor(XMPPClient.getConnection());
             PrivacyList plist = privacyManager.getPrivacyList(PRIVACY_LIST_NAME);
             privacyItems = plist.getItems();
-        } catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
         return privacyItems;
     }
 
-    private boolean sendPrivacyList(List<PrivacyItem> privacyItems){
+    private boolean sendPrivacyList(List<PrivacyItem> privacyItems) {
         boolean success = false;
         PrivacyListManager privacyManager = PrivacyListManager.getInstanceFor(XMPPClient.getConnection());
 
-        try{
+        try {
             privacyManager.updatePrivacyList(PRIVACY_LIST_NAME, privacyItems);
             privacyManager.setActiveListName(PRIVACY_LIST_NAME);
 
@@ -244,15 +248,15 @@ public class PersonalMessaging {
         updateReadreceipts();
     }
 
-    public void readReceiptReceived(String fromJid, String toJid, String packetId){
+    public void readReceiptReceived(String fromJid, String toJid, String packetId) {
         sportsUnityDBHelper.updateReadStatus(packetId);
 
         updateReadreceipts();
     }
 
-    public void sendReadStatus(String to, String messageStanzaId){
-        boolean success = XMPPClient.getInstance().sendReadStatus( to+"@mm.io", messageStanzaId);
-        if( success ) {
+    public void sendReadStatus(String to, String messageStanzaId) {
+        boolean success = XMPPClient.getInstance().sendReadStatus(to + "@mm.io", messageStanzaId);
+        if (success) {
             sportsUnityDBHelper.updateReadStatus(messageStanzaId);
         } else {
             //nothing

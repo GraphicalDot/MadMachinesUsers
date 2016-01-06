@@ -33,6 +33,9 @@ public class TinyDB {
     public static final String KEY_CURRENT_LATITUDE = "lat";
     public static final String KEY_CURRENT_LONGITUDE = "long";
 
+    public static final String KEY_ADDRESS_LOCATION = "location";
+    public static final String KEY_ADDRESS_STATE = "state";
+
     public static final String KEY_USERNAME = "username";
     public static final String KEY_PASSWORD = "password";
 
@@ -42,10 +45,10 @@ public class TinyDB {
 
     /*Preference key used to manage filters*/
     public static final String FAVOURITE_FILTERS = "favourite_filters";
-    public static final String LEAGUE_SELECTION="league_selection";
-    public static final String TEAM_SELECTION="team_selection";
-    public static final String PLAYER_SELECTION="player_selection";
-    public static final String FILTER_COMPLETE="filter_complete";
+    public static final String LEAGUE_SELECTION = "league_selection";
+    public static final String TEAM_SELECTION = "team_selection";
+    public static final String PLAYER_SELECTION = "player_selection";
+    public static final String FILTER_COMPLETE = "filter_complete";
 
 
     private SharedPreferences preferences;

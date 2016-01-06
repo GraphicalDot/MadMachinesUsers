@@ -61,17 +61,14 @@
         android:layout_below="@id/fragmentChangeButtonContainer"
         android:background="@android:color/white">
 
-        <com.getbase.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab"
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/floatingbutton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:layout_margin="@dimen/vertical_padding_small"
-            android:backgroundTint="@color/app_theme_blue"
-            android:src="@drawable/ic_ppl_around_u"
-            android:visibility="visible"
-            app:elevation="6dp"
-            app:pressedTranslationZ="12dp" />
+            android:layout_gravity="bottom|right"
+            android:layout_margin="16dp"
+            android:clickable="true"
+            android:src="@drawable/ic_ppl_around_u" />
 
     </FrameLayout>
 

@@ -224,7 +224,7 @@ public class XMPPService extends Service {
 
                     Contacts owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
                     if (owner == null) {
-                        createContact(ownerPhoneNumber, getApplicationContext());
+                        createContact(ownerPhoneNumber, getApplicationContext(), true);
                         owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
                     }
 
@@ -474,7 +474,7 @@ public class XMPPService extends Service {
             String text = messageXML.substring(messageXML.indexOf("$") + 1, messageXML.indexOf("$$"));
             String nodeid = messageXML.substring(messageXML.indexOf("node='") + 6, messageXML.indexOf("'><item id='"));
             groupServerId = nodeid;
-            chatId = getChatIdOrCreateIfNotExist(true, from, groupServerId);
+            chatId = getChatIdOrCreateIfNotExist(true, from, groupServerId, false);
             long messageId = sportsUnityDBHelper.addMessage(text, SportsUnityDBHelper.MIME_TYPE_TEXT, from, false, time, null, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, groupServerId);
             if (ChatScreenApplication.isActivityVisible()) {
@@ -516,6 +516,11 @@ public class XMPPService extends Service {
         String fromId = message.getFrom().substring(0, message.getFrom().indexOf("@"));
         String to = message.getTo().substring(0, message.getTo().indexOf("@"));
         String mimeType = (String) JivePropertiesManager.getProperty(message, Constants.PARAM_MIME_TYPE);
+        boolean nearByChat = false;
+        Object object = JivePropertiesManager.getProperty(message, Constants.PARAM_CHAT_TYPE_OTHERS);
+        if (object != null) {
+            nearByChat = (boolean) object;
+        }
 
         boolean success = true;
         long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
@@ -527,8 +532,8 @@ public class XMPPService extends Service {
             messageFrom = message.getFrom().substring(message.getFrom().indexOf("/") + 1);
 
             if (!to.equals(messageFrom)) {
-                chatId = getChatIdOrCreateIfNotExist(isGroupChat, messageFrom, groupServerId);
-                handleMessage(message, value, chatId, messageFrom, groupServerId);
+                chatId = getChatIdOrCreateIfNotExist(isGroupChat, messageFrom, groupServerId, false);
+                handleMessage(message, value, chatId, messageFrom, groupServerId, false);
             } else {
                 success = false;
             }
@@ -536,8 +541,8 @@ public class XMPPService extends Service {
             groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
             messageFrom = fromId;
 
-            chatId = getChatIdOrCreateIfNotExist(isGroupChat, fromId, groupServerId);
-            handleMessage(message, value, chatId, fromId, groupServerId);
+            chatId = getChatIdOrCreateIfNotExist(isGroupChat, fromId, groupServerId, nearByChat);
+            handleMessage(message, value, chatId, fromId, groupServerId, nearByChat);
         }
 
 
@@ -594,13 +599,13 @@ public class XMPPService extends Service {
         }
     }
 
-    private long getChatIdOrCreateIfNotExist(boolean isGroupChat, String from, String fromGroup) {
+    private long getChatIdOrCreateIfNotExist(boolean isGroupChat, String from, String fromGroup, boolean nearByChat) {
         long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
 
         if (!isGroupChat) {
             Contacts contact = sportsUnityDBHelper.getContact(from);
             if (contact == null) {
-                createContact(from, getApplicationContext());
+                createContact(from, getApplicationContext(), nearByChat);
                 contact = sportsUnityDBHelper.getContact(from);
             }
 
@@ -608,7 +613,7 @@ public class XMPPService extends Service {
             if (chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
                 //nothing
             } else {
-                chatId = sportsUnityDBHelper.createChatEntry(contact.name, contact.id, false);
+                chatId = sportsUnityDBHelper.createChatEntry(contact.name, contact.id, nearByChat);
                 Log.i("ChatEntry : ", "chat entry made from server " + chatId + " , " + contact.id);
             }
 
@@ -618,7 +623,7 @@ public class XMPPService extends Service {
         return chatId;
     }
 
-    public void handleMessage(Message message, Object value, long chatId, String from, String fromGroup) {
+    public void handleMessage(Message message, Object value, long chatId, String from, String fromGroup, boolean nearByChat) {
         String mimeType = (String) JivePropertiesManager.getProperty(message, Constants.PARAM_MIME_TYPE);
 
         if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
@@ -628,7 +633,11 @@ public class XMPPService extends Service {
                     value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, null);
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
 
-            sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
+            if (!nearByChat) {
+                sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
+            } else {
+                //TODO
+            }
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
             long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
                     value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
@@ -640,7 +649,11 @@ public class XMPPService extends Service {
                     value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
 
-            sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
+            if (!nearByChat) {
+                sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
+            } else {
+                //TODO
+            }
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
             String checksum = message.getBody();
 
@@ -648,7 +661,11 @@ public class XMPPService extends Service {
                     value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
 
-            sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
+            if (!nearByChat) {
+                sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
+            } else {
+                //TODO
+            }
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
                     value.toString(), message.getStanzaId(), null, null,
@@ -687,7 +704,7 @@ public class XMPPService extends Service {
         return success;
     }
 
-    public static boolean createContact(String number, Context context) {
+    public static boolean createContact(String number, Context context, boolean nearByChat) {
         boolean success = false;
         try {
             XMPPTCPConnection connection = XMPPClient.getInstance().getConnection();
@@ -695,8 +712,13 @@ public class XMPPService extends Service {
             card.load(connection, number + "@mm.io");
             String status = card.getMiddleName();
             byte[] image = card.getAvatar();
+            String nickname = card.getNickName();
 
-            SportsUnityDBHelper.getInstance(context).addToContacts(number, number, true, ContactsHandler.getInstance().defaultStatus, true);
+            if (nearByChat) {
+                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, number, true, ContactsHandler.getInstance().defaultStatus, false);
+            } else {
+                SportsUnityDBHelper.getInstance(context).addToContacts(number, number, true, ContactsHandler.getInstance().defaultStatus, true);
+            }
             SportsUnityDBHelper.getInstance(context).updateContacts(number, image, status);
 
             success = true;

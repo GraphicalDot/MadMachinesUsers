@@ -948,7 +948,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public ArrayList<Chats> getChatList(boolean others) {
+    public ArrayList<Chats> getChatList(boolean nearByChat) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         ArrayList<Chats> list = new ArrayList<>();
@@ -999,7 +999,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 //        }
         {
             String subQuery = "";
-            if (others) {
+            if (nearByChat) {
                 subQuery = "( SELECT " + ChatEntry.COLUMN_UNREAD_COUNT + " ," + ChatEntry.COLUMN_NAME + " ," + ChatEntry.COLUMN_CONTACT_ID + " ," +
                         ChatEntry.COLUMN_LAST_MESSAGE_ID + " ," + MessagesEntry.COLUMN_DATA_TEXT + " ," + MessagesEntry.COLUMN_DATA_MEDIA + " ," +
                         MessagesEntry.COLUMN_MIME_TYPE + " ," + MessagesEntry.COLUMN_SEND_TIMESTAMP + " ," + MessagesEntry.COLUMN_RECEIVE_TIMESTAMP + " , A." +
@@ -1073,13 +1073,13 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             db.delete(MessagesEntry.TABLE_NAME, selection, selectionArgs);
             updateChatEntry(getDummyMessageRowId(), chatId, groupServerId);
 
-            DBUtil.deleteContentFromExternalFileStorage( context, mediaFileNames);
+            DBUtil.deleteContentFromExternalFileStorage(context, mediaFileNames);
         }
 
         return mediaFileNames;
     }
 
-    public ArrayList<String> getMediaFileNamesForParticularChat(long chatId){
+    public ArrayList<String> getMediaFileNamesForParticularChat(long chatId) {
         ArrayList<String> mediaFileNames = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
@@ -1091,7 +1091,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 String filename = cursor.getString(0);
-                if( filename != null ) {
+                if (filename != null) {
                     mediaFileNames.add(filename);
                 }
             } while (cursor.moveToNext());
@@ -1306,6 +1306,17 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         }
         c.close();
         return null;
+    }
+
+    public void deleteContact(int contactId) {
+
+        SQLiteDatabase db = getWritableDatabase();
+
+        String table = ContactsEntry.TABLE_NAME;
+        String whereClause = ContactsEntry.COLUMN_CONTACT_ID + "=?";
+        String[] whereArgs = new String[]{String.valueOf(contactId)};
+        db.delete(ContactsEntry.TABLE_NAME, whereClause, whereArgs);
+
     }
 
     public static class GroupParticipants {

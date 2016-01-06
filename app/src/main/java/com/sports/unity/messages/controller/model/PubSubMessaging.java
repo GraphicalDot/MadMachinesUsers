@@ -79,7 +79,7 @@ public class PubSubMessaging {
                         String ownerPhoneNumber = owner.getJid().substring(0, owner.getJid().indexOf("@"));
                         Contacts ownerContact = sportsUnityDBHelper.getContact(ownerPhoneNumber);
                         if (owner == null) {
-                            XMPPService.createContact(ownerPhoneNumber, context);
+                            XMPPService.createContact(ownerPhoneNumber, context, true);
                             ownerContact = sportsUnityDBHelper.getContact(ownerPhoneNumber);
                         }
                         long chatId = sportsUnityDBHelper.createGroupChatEntry(subject, ownerContact.id, null, groupServerId);

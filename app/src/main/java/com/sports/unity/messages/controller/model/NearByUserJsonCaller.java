@@ -25,4 +25,8 @@ public class NearByUserJsonCaller extends JsonObjectCaller {
         return jsonObject.getDouble("lng");
     }
 
+    public String getInterests() throws JSONException {
+        return jsonObject.getString("interests");
+    }
+
 }

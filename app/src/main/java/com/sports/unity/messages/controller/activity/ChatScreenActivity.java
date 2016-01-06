@@ -73,6 +73,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     private ArrayList<Integer> selectedItemsList = new ArrayList<>();
 
     private ListView mChatView;
+    private boolean otherChat = false;
 
 
     private ToolbarActionsForChatScreen toolbarActionsForChatScreen = null;
@@ -336,6 +337,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
         }
 
+        otherChat = getIntent().getBooleanExtra("otherChat", false);
+
         initUI(toolbar);
 
         clearUnreadCount();
@@ -460,7 +463,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
             mChatView.setAdapter(groupChatScreenAdapter);
         } else {
             messageList = sportsUnityDBHelper.getMessages(chatID);
-            chatScreenAdapter = new ChatScreenAdapter(ChatScreenActivity.this, messageList);
+            chatScreenAdapter = new ChatScreenAdapter(ChatScreenActivity.this, messageList, otherChat);
             mChatView.setAdapter(chatScreenAdapter);
         }
 
@@ -598,13 +601,12 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                     groupChatScreenAdapter.notifydataset(messageList);
                 }
             } else {
-                personalMessaging.sendTextMessage(message, chat, JABBERID, chatID);
+                personalMessaging.sendTextMessage(message, chat, JABBERID, chatID, otherChat);
                 personalMessaging.sendStatus(ChatState.paused, chat);
                 messageList = sportsUnityDBHelper.getMessages(chatID);
                 chatScreenAdapter.notifydataset(messageList);
             }
         }
-
         messageText.setText("");
     }
 
@@ -620,7 +622,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
-            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload((byte[]) mediaContent, mimeType, chat, messageId);
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload((byte[]) mediaContent, mimeType, chat, messageId, otherChat);
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
             String mediaFileName = (String) messageContent;
 
@@ -628,10 +630,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
-            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, mimeType, chat, messageId);
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, mimeType, chat, messageId, otherChat);
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             String stickerAssetPath = (String) messageContent;
-            personalMessaging.sendStickerMessage(stickerAssetPath, chat, JABBERID, chatID);
+            personalMessaging.sendStickerMessage(stickerAssetPath, chat, JABBERID, chatID, otherChat);
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
 
             String mediaFileName = (String) messageContent;
@@ -642,7 +644,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
-            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload((byte[]) mediaContent, mimeType, chat, messageId);
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload((byte[]) mediaContent, mimeType, chat, messageId, otherChat);
 
         }
     }
@@ -747,7 +749,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         } else if (id == R.id.action_block_user) {
             blockUnblockUserHelper.onMenuItemSelected(this, contactID, JABBERID, menu);
         } else if (id == R.id.action_clear_chat) {
-            sportsUnityDBHelper.clearChat( getApplicationContext(), chatID, groupServerId);
+            sportsUnityDBHelper.clearChat(getApplicationContext(), chatID, groupServerId);
 
             AudioRecordingHelper.getInstance(this).stopAndReleaseMediaPlayer();
             AudioRecordingHelper.getInstance(this).clearProgressMap();
