@@ -45,12 +45,11 @@ public class MainActivity extends CustomAppCompatActivity {
     }
 
     private void setNavigation() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-
-        toggle.syncState();
+//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+//        drawer.setDrawerListener(toggle);
+//        toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         {
             //TODO
@@ -63,7 +62,36 @@ public class MainActivity extends CustomAppCompatActivity {
 
 
     private void initViews() {
-        toolbar = initToolBar();
+        Toolbar toolbar = initToolBar();
+
+        final DrawerLayout mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu();
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+                super.onDrawerClosed(drawerView);
+                invalidateOptionsMenu();
+            }
+        };
+
+        mDrawerToggle.setDrawerIndicatorEnabled(false);
+        mDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mDrawer.openDrawer(Gravity.LEFT);
+            }
+
+        });
+
+        mDrawer.setDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
 
         String titles[] = {getString(R.string.scores), getString(R.string.news), getString(R.string.messages)};
         int numberOfTabs = titles.length;

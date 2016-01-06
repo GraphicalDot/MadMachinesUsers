@@ -71,7 +71,7 @@
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_very_small" />
 
-            <SeekBar
+            <com.sports.unity.messages.controller.viewhelper.DiscreteSeekBar
                 android:id="@+id/distance_seekbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

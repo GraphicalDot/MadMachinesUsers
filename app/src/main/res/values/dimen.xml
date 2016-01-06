@@ -68,4 +68,7 @@
     <dimen name="filter_next_height">40dp</dimen>
     <dimen name="nav_item_margin">25dp</dimen>
 
+    <!-- map related  -->
+    <dimen name="seekbar_point_size">20dp</dimen>
+
 </resources>
