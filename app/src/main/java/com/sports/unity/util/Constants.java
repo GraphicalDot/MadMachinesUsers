@@ -16,6 +16,7 @@ public class Constants {
     public static final String INTENT_KEY_URL = "URL";
     public static final String INTENT_KEY_TYPE = "TYPE";
     public static final String INTENT_KEY_TITLE = "TITLE";
+    public static final String INTENT_KEY_ID = "ID";
 
     public static final String INTENT_KEY_FILENAME = "FILE_NAME";
     public static final String INTENT_KEY_MIMETYPE = "MIME_TYPE";

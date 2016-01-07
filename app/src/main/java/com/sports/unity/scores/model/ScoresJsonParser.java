@@ -105,4 +105,27 @@ public class ScoresJsonParser {
         return list;
     }
 
+    public static JSONObject parseScoreDetails(String jsonContent){
+        JSONObject scoreDetails = null;
+        try {
+            JSONObject jsonObject = new JSONObject(jsonContent);
+
+            boolean success = jsonObject.getBoolean("success");
+            boolean error = jsonObject.getBoolean("error");
+
+            if( success ) {
+                JSONArray array = (JSONArray) jsonObject.get("data");
+                if( array.length() == 1 ){
+                    scoreDetails = array.getJSONObject(0);
+                }
+            } else {
+                //nothing
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        return scoreDetails;
+    }
+
 }

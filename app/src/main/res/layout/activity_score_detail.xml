@@ -16,9 +16,33 @@
        <LinearLayout
            android:id="@+id/horizontal_strip"
            android:layout_width="match_parent"
-           android:layout_height="@dimen/horizontal_padding_medium"
+           android:layout_height="wrap_content"
            android:background="@color/gray3"
-           android:orientation="vertical"/>
+           android:orientation="vertical">
+
+           <TextView
+               android:id="@+id/venue"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginLeft="@dimen/vertical_padding_small"
+               android:layout_marginTop="@dimen/vertical_padding_very_very_small"
+               android:textColor="@color/score_dark_grey"
+               android:textSize="@dimen/font_size_small_medium"
+               android:text=""
+               />
+
+           <TextView
+               android:id="@+id/date"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginBottom="@dimen/vertical_padding_very_very_small"
+               android:layout_marginLeft="@dimen/vertical_padding_small"
+               android:textColor="@color/score_light_grey"
+               android:textSize="@dimen/font_size_small_medium"
+               android:text=""
+               />
+
+       </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -37,20 +61,21 @@
                     android:id="@+id/team1_image"
                     android:layout_width="@dimen/flag_size_large"
                     android:layout_height="@dimen/flag_size_large"
-                    android:src="@drawable/ic_football"
+
                     />
                 <TextView
                     android:id="@+id/team1_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="AAAAAAAAAAA"
+                    android:text=""
                     android:textSize="@dimen/font_size_small_large"/>
             </LinearLayout>
 
             <TextView
+                android:id="@+id/score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="1 - 0"
+                android:text=""
                 android:paddingLeft="@dimen/horizontal_padding_small"
                 android:paddingRight="@dimen/horizontal_padding_small"
                 android:textSize="@dimen/font_size_xlarge"/>
@@ -64,22 +89,36 @@
                     android:id="@+id/team2_image"
                     android:layout_width="@dimen/flag_size_large"
                     android:layout_height="@dimen/flag_size_large"
-                    android:src="@drawable/ic_football"
                     />
                 <TextView
                     android:id="@+id/team2_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="AAAAAAAAAAA"
+                    android:text=""
                     android:textSize="@dimen/font_size_small_large"/>
 
             </LinearLayout>
         </LinearLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/my_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical" />
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            />
+        <include layout="@layout/error_layout"
+            android:id="@+id/error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </FrameLayout>
 
 </LinearLayout>

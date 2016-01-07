@@ -1,6 +1,7 @@
 package com.sports.unity.scores.model;
 
 import com.android.volley.VolleyError;
+import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.network.VolleyRequestHandler;
 import com.sports.unity.util.network.VolleyResponseListener;
 import com.sports.unity.util.network.VolleyTagRequest;
@@ -15,7 +16,12 @@ public class ScoresContentHandler {
     private static final String SCORES_BASE_URL = "http://52.74.142.219:8080/";
 
     private static final String URL_PARAMS_FOR_LIST_OF_MATCHES = "get_all_matches_list";
-    private static final String URL_PARAMS_FOR_COMMENTARY = "get_football_commentary?match_id=";
+
+    private static final String URL_PARAMS_FOR_FOOTBALL_MATCH_DETAIL = "get_football_match_scores?match_id=";
+    private static final String URL_PARAMS_FOR_CRICKET_MATCH_DETAIL = "get_cricket_match_scores?match_key=";
+
+    private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "get_cricket_match_commentary?match_key=";
+    private static final String URL_PARAMS_FOR_FOOTBALL_COMMENTARY = "get_football_commentary?match_id=";
 
 //    private static final String REQUEST_KEY_LIST_OF_MATCHES = "List_Of_Matches";
 //    private static final String REQUEST_KEY_MATCH_DETAILS = "Match_Detail:";
@@ -94,21 +100,37 @@ public class ScoresContentHandler {
         }
     }
 
-    public void requestScoresOfMatch(String matchId, String listenerKey, String requestTag){
+    public void requestScoresOfMatch(String sportType, String matchId, String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
-            String url = generateURL("");
+
+            String baseUrl = null;
+            if( sportType.equalsIgnoreCase(ScoresJsonParser.CRICKET) ){
+                baseUrl = URL_PARAMS_FOR_CRICKET_MATCH_DETAIL;
+            } else if( sportType.equalsIgnoreCase(ScoresJsonParser.FOOTBALL) ){
+                baseUrl = URL_PARAMS_FOR_FOOTBALL_MATCH_DETAIL;
+            }
+
+            String url = generateURL( baseUrl + matchId);
             requestContent(requestTag, listenerKey, url);
         } else {
             //nothing
         }
     }
 
-    public void requestCommentaryOnMatch(int matchId, String listenerKey, String requestTag){
+    public void requestCommentaryOnMatch(String sportType, String matchId, String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
-            String url = generateURL( URL_PARAMS_FOR_COMMENTARY + matchId);
+
+            String baseUrl = null;
+            if( sportType.equalsIgnoreCase(ScoresJsonParser.CRICKET) ){
+                baseUrl = URL_PARAMS_FOR_CRICKET_COMMENTARY;
+            } else if( sportType.equalsIgnoreCase(ScoresJsonParser.FOOTBALL) ){
+                baseUrl = URL_PARAMS_FOR_FOOTBALL_COMMENTARY;
+            }
+
+            String url = generateURL( baseUrl + matchId);
             requestContent(requestTag, listenerKey, url);
         } else {
-            //nothing
+            //nothin
         }
     }
 

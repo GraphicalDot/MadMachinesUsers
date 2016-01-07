@@ -22,6 +22,7 @@ import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
 import com.sports.unity.scores.model.football.FootballMatchJsonCaller;
 import com.sports.unity.scores.model.football.MatchJsonCaller;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONObject;
 
@@ -247,9 +248,22 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         JSONObject matchJsonObject = list.get(position);
 
         try {
-            footballMatchJsonCaller.setJsonObject(matchJsonObject);
+            matchJsonCaller.setJsonObject(matchJsonObject);
+
+            String type = matchJsonCaller.getType();
+            String matchId = null;
+
+            if( type.equalsIgnoreCase(ScoresJsonParser.CRICKET) ){
+                cricketMatchJsonCaller.setJsonObject(matchJsonObject);
+                matchId = cricketMatchJsonCaller.getMatchId();
+            } else if( type.equalsIgnoreCase(ScoresJsonParser.FOOTBALL) ){
+                footballMatchJsonCaller.setJsonObject(matchJsonObject);
+                matchId = String.valueOf(footballMatchJsonCaller.getMatchId());
+            }
 
             Intent intent = new Intent( activity, ScoreDetailActivity.class);
+            intent.putExtra(Constants.INTENT_KEY_TYPE, type);
+            intent.putExtra(Constants.INTENT_KEY_ID, matchId);
             activity.startActivity(intent);
 
         }catch (Exception ex){
@@ -257,7 +271,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         }
     }
 
-    private String getLocalTime(String matchTime) throws ParseException {
+    public static String getLocalTime(String matchTime) throws ParseException {
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
         formatter.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
         java.sql.Time timeValue = new java.sql.Time(formatter.parse(matchTime).getTime());
@@ -292,7 +306,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         holder.seperator.setBackgroundColor(Color.parseColor("#cbcbcb"));
     }*/
 
-    public String getMonth(String mon) {
+    public static String getMonth(String mon) {
         switch (mon) {
             case "Jan":
                 return "January";
