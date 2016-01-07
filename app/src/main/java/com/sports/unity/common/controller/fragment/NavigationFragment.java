@@ -49,9 +49,10 @@ public class NavigationFragment extends Fragment {
         CircleImageView profile_photo = (CircleImageView) navigationView.findViewById(R.id.circleView);
         TextView name = (TextView) navigationView.findViewById(R.id.name);
 
-        String user_name = TinyDB.getInstance(getActivity()).getString(TinyDB.KEY_USERNAME);
+        String user_name = TinyDB.getInstance(getActivity()).getString(TinyDB.KEY_PROFILE_NAME);
+        String user_details = TinyDB.getInstance(getActivity()).getString(TinyDB.KEY_USERNAME);
 
-        Contacts contact = sportsUnityDBHelper.getContact(user_name);
+        Contacts contact = sportsUnityDBHelper.getContact(user_details);
 
 
         if(contact.image != null) {
@@ -62,7 +63,7 @@ public class NavigationFragment extends Fragment {
         }
 
 
-        name.setText(contact.name);
+        name.setText(user_name);
 
     }
 }

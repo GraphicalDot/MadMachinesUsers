@@ -50,7 +50,7 @@
                     android:layout_gravity="center"
                     android:textColor="@color/news_data"
                     android:text="published"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/font_size_very_small"
                     android:paddingLeft="@dimen/vertical_padding_very_small"
                      />
 
@@ -63,7 +63,7 @@
                     android:textAllCaps="true"
                     android:paddingRight="@dimen/vertical_padding_very_small"
                     android:textColor="@color/app_theme_blue"
-                    android:textSize="10sp"
+                    android:textSize="@dimen/font_size_very_small"
                     android:text="CRICKET" />
 
             </LinearLayout>

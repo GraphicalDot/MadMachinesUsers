@@ -58,4 +58,5 @@
     <!-- people around me -->
     <color name="around_me_seekbar_progress_color">#cccccc</color>
 
+    <color name="dot_color_grey">#999999</color>
 </resources>

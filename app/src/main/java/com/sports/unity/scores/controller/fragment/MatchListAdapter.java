@@ -1,9 +1,11 @@
 package com.sports.unity.scores.controller.fragment;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,6 +43,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     private MatchJsonCaller matchJsonCaller = new MatchJsonCaller();
     private FootballMatchJsonCaller footballMatchJsonCaller = new FootballMatchJsonCaller();
     private CricketMatchJsonCaller cricketMatchJsonCaller = new CricketMatchJsonCaller();
+
+    private OddsClickListener oddsClickListener = new OddsClickListener();
 
     private View.OnClickListener listener = new View.OnClickListener() {
 
@@ -129,8 +133,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 holder.venue.setText(cricketMatchJsonCaller.getVenue());
                 holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
 
-                Glide.with(activity).load(cricketMatchJsonCaller.getTeam1Flag()).into(holder.t1flag);
-                Glide.with(activity).load(cricketMatchJsonCaller.getTeam2Flag()).into(holder.t2flag);
+                Glide.with(activity).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(holder.t1flag);
+                Glide.with(activity).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(holder.t2flag);
 
                 boolean isLive = false;
                 if ( cricketMatchJsonCaller.getStatus().equals("completed") ) {
@@ -180,8 +184,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 holder.venue.setText(footballMatchJsonCaller.getStadium());
                 holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
 
-                Glide.with(activity).load(footballMatchJsonCaller.getHomeTeamFlag()).into(holder.t1flag);
-                Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).into(holder.t2flag);
+                Glide.with(activity).load(footballMatchJsonCaller.getHomeTeamFlag()).placeholder(R.drawable.ic_no_img).into(holder.t1flag);
+                Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).placeholder(R.drawable.ic_no_img).into(holder.t2flag);
 
                 if ("?".equals(footballMatchJsonCaller.getAwayTeamScore())) {
                     holder.matchDay.setText("Upcoming");
@@ -223,6 +227,19 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
         holder.view.setTag(position);
         holder.view.setOnClickListener(listener);
+
+        try {
+            if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {
+                holder.odds.setVisibility(View.VISIBLE);
+
+                ((ViewGroup) holder.odds.getParent()).setTag(position);
+                ((ViewGroup) holder.odds.getParent()).setOnClickListener(oddsClickListener);
+            } else {
+                holder.odds.setVisibility(View.GONE);
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     private void handleItemClick(View view){
@@ -311,5 +328,77 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     }
 
 
+    class OddsClickListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            int position = (Integer)v.getTag();
+
+            JSONObject jsonObject = list.get(position);
+            matchJsonCaller.setJsonObject(jsonObject);
+
+
+            LayoutInflater inflater = activity.getLayoutInflater();
+            final View popupOdds = inflater.inflate(R.layout.betfair_dialog_layout, null);
+
+            final AlertDialog.Builder oddsBuilder = new AlertDialog.Builder(activity);
+            oddsBuilder.setView(popupOdds);
+
+            final AlertDialog oddsDialog = oddsBuilder.create();
+            oddsDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            oddsDialog.show();
+
+            ImageView flag1 = (ImageView) popupOdds.findViewById(R.id.flag1);
+            ImageView flag2 = (ImageView) popupOdds.findViewById(R.id.flag2);
+            ImageView close = (ImageView) popupOdds.findViewById(R.id.close);
+            TextView team1 = (TextView) popupOdds.findViewById(R.id.team1_name);
+            TextView team2 = (TextView) popupOdds.findViewById(R.id.team2_name);
+            TextView bet1 = (TextView) popupOdds.findViewById(R.id.bet1);
+            TextView bet2 = (TextView) popupOdds.findViewById(R.id.bet2);
+            TextView title = (TextView) popupOdds.findViewById(R.id.title);
+
+            team1.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+            team2.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+            bet1.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+            bet2.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+            title.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
+
+            try {
+                if (matchJsonCaller.getType().equals(ScoresJsonParser.CRICKET)) {
+                    cricketMatchJsonCaller.setJsonObject(jsonObject);
+
+                    Glide.with(activity).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(flag1);
+                    Glide.with(activity).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(flag2);
+
+                    team1.setText(cricketMatchJsonCaller.getTeam1());
+                    team2.setText(cricketMatchJsonCaller.getTeam2());
+                } else if (matchJsonCaller.getType().equals(ScoresJsonParser.FOOTBALL)) {
+                    footballMatchJsonCaller.setJsonObject(jsonObject);
+
+                    Glide.with(activity).load(footballMatchJsonCaller.getHomeTeamFlag()).placeholder(R.drawable.ic_no_img).into(flag1);
+                    Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).placeholder(R.drawable.ic_no_img).into(flag2);
+
+                    team1.setText(footballMatchJsonCaller.getHomeTeam());
+                    team2.setText(footballMatchJsonCaller.getAwayTeam());
+                }
+
+                bet1.setText(matchJsonCaller.getTeams1Odds());
+                bet2.setText(matchJsonCaller.getTeams2Odds());
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+
+            close.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    oddsDialog.dismiss();
+                }
+            });
+
+
+
+        }
+    }
 
 }

@@ -73,7 +73,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/news_data"
                         android:text="published"
-                        android:textSize="10sp"
+                        android:textSize="@dimen/font_size_very_small"
                         android:layout_gravity="center"
                         android:paddingLeft="@dimen/vertical_padding_very_small"
                          />
@@ -88,7 +88,7 @@
                         android:textAllCaps="true"
                         android:text="CRICKET"
                         android:textColor="@color/app_theme_blue"
-                        android:textSize="10sp" />
+                        android:textSize="@dimen/font_size_very_small" />
                 </LinearLayout>
 
             </RelativeLayout>

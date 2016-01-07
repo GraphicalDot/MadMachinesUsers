@@ -48,27 +48,29 @@
                 android:id="@+id/member"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#999999"
+                android:layout_gravity="center"
+                android:paddingRight="@dimen/vertical_padding_very_very_small"
+                android:textColor="@color/dot_color_grey"
                 android:text="Member of 0 groups"
                 android:textSize="@dimen/font_size_very_small"
                 android:textStyle="normal"
                 />
 
-            <TextView
+            <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/vertical_padding_very_very_small"
-                android:layout_marginRight="@dimen/vertical_padding_very_very_small"
-                android:layout_marginTop="3dp"
-                android:text="•"
-                android:textSize="@dimen/font_size_medium"
-                android:textColor="#999999" />
+                android:background="@drawable/dot_circle"
+                android:layout_gravity="center"
+                />
+
 
             <TextView
                 android:id="@+id/admin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="#999999"
+                android:layout_gravity="center"
+                android:paddingLeft="@dimen/vertical_padding_very_very_small"
+                android:textColor="@color/dot_color_grey"
                 android:text="Admin of 0 groups"
                 android:textSize="@dimen/font_size_very_small"
                 android:textStyle="normal"
