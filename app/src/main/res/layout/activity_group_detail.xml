@@ -10,8 +10,7 @@
         layout="@layout/toolbar_group"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:minHeight="?android:attr/actionBarSize"
-        />
+        android:minHeight="?android:attr/actionBarSize" />
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/fragment_container"

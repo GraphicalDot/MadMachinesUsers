@@ -1,265 +1,248 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/filter_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff"
-    android:id="@+id/filter_fragment">
+    android:background="#fff">
+
     <include
         android:id="@+id/tool_bar"
         layout="@layout/tool_bar_filter"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:minHeight="?android:attr/actionBarSize"
-        />
+        android:minHeight="?android:attr/actionBarSize" />
+
     <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/filter1"
-        android:layout_below="@+id/tool_bar"
-       >
-    <LinearLayout
-        android:id="@+id/category"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingRight="16dp"
-        android:paddingLeft="16dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:background="@color/gray3">
-
-        <TextView
-            android:id="@+id/filter"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/gray2"
-            android:text="@string/filter_by_sports" />
-
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/cricket"
-        android:layout_below="@id/category"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingRight="10dp"
-        android:paddingLeft="10dp"
-        android:paddingTop="25dp"
-        android:paddingBottom="10dp"
-        android:onClick="onCheckboxClicked"
-        >
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_cricket"
-            android:layout_gravity="center"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/gray1"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:text="@string/cricket"
-            android:paddingLeft="10dp"/>
-
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:button="@drawable/checkbox"
-            android:clickable="false"
-            />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/football"
-        android:layout_below="@id/cricket"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingRight="10dp"
-        android:paddingLeft="10dp"
-        android:paddingTop="5dp"
-        android:paddingBottom="20dp"
-        android:onClick="onCheckboxClicked">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/ic_football"
-            android:layout_gravity="center"/>
-        <TextView
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/gray1"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:text="@string/football"
-            android:paddingLeft="10dp"/>
-        <CheckBox
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="right"
-            android:button="@drawable/checkbox"
-            android:clickable="false"
-            />
-    </LinearLayout>
-    </RelativeLayout>
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/filter1">
-    <LinearLayout
-        android:id="@+id/advCategory"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingRight="16dp"
-        android:paddingLeft="16dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
-        android:background="@color/gray3">
-
-        <TextView
-            android:id="@+id/filter3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/gray2"
-            android:text="@string/advance_filters" />
-
-        <TextView
-            android:id="@+id/clear"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/app_theme_blue"
-            android:gravity="right"
-            android:layout_weight="1"
-            android:text="Clear All Filters"
-            />
-    </LinearLayout>
+        android:layout_below="@+id/tool_bar">
 
         <LinearLayout
-            android:id="@+id/adv1"
-            android:layout_below="@+id/advCategory"
+            android:id="@+id/category"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gray3"
+            android:padding="@dimen/horizontal_padding_very_small">
+
+            <TextView
+                android:id="@+id/filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/filter_by_sports"
+                android:textColor="@color/gray2" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/cricket"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/category"
+            android:onClick="onCheckboxClicked"
             android:orientation="horizontal"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"
-            android:paddingTop="25dp"
-            android:paddingBottom="10dp">
+            android:padding="@dimen/horizontal_padding_very_small">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_teams"
-                />
+                android:layout_gravity="center"
+                android:background="@drawable/ic_cricket" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:paddingLeft="@dimen/horizontal_padding_very_small"
+                android:text="@string/cricket"
+                android:textColor="@color/gray1" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/checkbox"
+                android:clickable="false"
+                android:gravity="right" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/football"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cricket"
+            android:onClick="onCheckboxClicked"
+            android:orientation="horizontal"
+            android:padding="@dimen/horizontal_padding_very_small">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_football" />
+
+            <TextView
+
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:paddingLeft="@dimen/horizontal_padding_very_small"
+                android:text="@string/football"
+                android:textColor="@color/gray1" />
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/checkbox"
+                android:clickable="false"
+                android:gravity="right" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/filter1">
+
+        <LinearLayout
+            android:id="@+id/advCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gray3"
+            android:padding="@dimen/horizontal_padding_very_small">
+
+            <TextView
+                android:id="@+id/filter3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/advance_filters"
+                android:textColor="@color/gray2" />
+
+            <TextView
+                android:id="@+id/clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="Clear All Filters"
+                android:textColor="@color/app_theme_blue" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/adv1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/advCategory"
+            android:orientation="horizontal"
+            android:padding="@dimen/horizontal_padding_small">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_teams" />
+
             <TextView
                 android:id="@+id/team"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gray1"
                 android:layout_gravity="center"
                 android:layout_weight="1"
+                android:paddingLeft="@dimen/horizontal_padding_very_small"
                 android:text="@string/filter_by_team"
-                android:paddingLeft="10dp"/>
+                android:textColor="@color/gray1" />
 
             <ImageView
                 android:id="@+id/next1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_next"
                 android:layout_gravity="center"
-                android:layout_marginRight="8dp"/>
+                android:layout_marginRight="@dimen/horizontal_padding_very_small"
+                android:background="@drawable/ic_next" />
         </LinearLayout>
 
-        <View android:layout_below="@+id/adv1"
-            android:layout_height="0.3dp"
+        <View
+            android:id="@+id/div1"
             android:layout_width="match_parent"
-            android:background="@drawable/filter_divider"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            android:id="@+id/div1"/>
+            android:layout_height="1dp"
+            android:layout_below="@+id/adv1"
+            android:layout_marginBottom="@dimen/horizontal_padding_very_very_small"
+            android:layout_marginTop="@dimen/horizontal_padding_very_very_small"
+            android:background="@drawable/filter_divider" />
+
         <LinearLayout
             android:id="@+id/adv2"
-            android:layout_below="@+id/div1"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:layout_below="@+id/div1"
             android:dividerHeight="0.3dp"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="10dp">
+            android:orientation="horizontal"
+            android:padding="@dimen/horizontal_padding_small">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_leagues"
-                />
+                android:background="@drawable/ic_leagues" />
+
             <TextView
                 android:id="@+id/leauge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gray1"
                 android:layout_gravity="center"
                 android:layout_weight="1"
+                android:paddingLeft="@dimen/horizontal_padding_very_small"
                 android:text="@string/filter_by_leaugues_cups"
-                android:paddingLeft="10dp"/>
+                android:textColor="@color/gray1" />
 
             <ImageView
                 android:id="@+id/next2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_next"
                 android:layout_gravity="center"
-                android:layout_marginRight="8dp"/>
+                android:layout_marginRight="@dimen/horizontal_padding_very_small"
+                android:background="@drawable/ic_next" />
         </LinearLayout>
 
         <View
-            android:layout_below="@+id/adv2"
-            android:layout_height="0.3dp"
-            android:layout_width="match_parent"
-            android:background="@drawable/filter_divider"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
             android:id="@+id/div2"
-           />
+            android:layout_width="match_parent"
+            android:layout_height="0.3dp"
+            android:layout_below="@+id/adv2"
+            android:layout_marginBottom="@dimen/horizontal_padding_very_very_small"
+            android:layout_marginTop="@dimen/horizontal_padding_very_very_small"
+            android:background="@drawable/filter_divider" />
 
 
         <LinearLayout
             android:id="@+id/adv3"
-            android:layout_below="@+id/div2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@+id/div2"
             android:orientation="horizontal"
-            android:paddingRight="10dp"
-            android:paddingLeft="10dp"
-            android:paddingTop="5dp"
-            android:paddingBottom="15dp"
-          >
+            android:padding="@dimen/horizontal_padding_small">
 
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_players"
-                />
+                android:background="@drawable/ic_players" />
+
             <TextView
                 android:id="@+id/player"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gray1"
                 android:layout_gravity="center"
                 android:layout_weight="1"
+                android:paddingLeft="@dimen/horizontal_padding_very_small"
                 android:text="@string/filter_by_players"
-                android:paddingLeft="10dp"/>
+                android:textColor="@color/gray1" />
 
             <ImageView
                 android:id="@+id/next3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_next"
                 android:layout_gravity="center"
-                android:layout_marginRight="8dp"/>
+                android:layout_marginRight="@dimen/horizontal_padding_very_small"
+                android:background="@drawable/ic_next" />
         </LinearLayout>
-        </RelativeLayout>
+    </RelativeLayout>
 </RelativeLayout>

@@ -41,7 +41,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="0.3dp"
+            android:layout_height="1dp"
             android:background="@color/horizontal_line_grey" />
 
         <LinearLayout
@@ -63,8 +63,8 @@
                 android:hint="Write a message"
                 android:inputType="textMultiLine"
                 android:maxLength="2000"
-                android:paddingLeft="16dp"
-                android:paddingTop="16dp"
+                android:paddingLeft="@dimen/vertical_padding_small"
+                android:paddingTop="@dimen/vertical_padding_small"
                 android:scrollbars="vertical"
                 android:textColor="@android:color/black" />
 

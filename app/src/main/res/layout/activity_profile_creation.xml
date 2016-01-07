@@ -1,80 +1,75 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:facebook="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sports.unity.ProfileCreationActivity"
-    >
+    tools:context="com.sports.unity.ProfileCreationActivity">
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/splash_bg"
         android:scaleType="centerCrop"
-        />
+        android:src="@drawable/splash_bg" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        >
+        android:paddingTop="@dimen/activity_vertical_margin">
 
         <LinearLayout
             android:id="@+id/centerContent"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
             android:layout_centerInParent="true"
-            >
+            android:gravity="center"
+            android:orientation="vertical">
 
             <FrameLayout
                 android:layout_width="fill_parent"
-                android:layout_height="50dp"
-                >
+                android:layout_height="50dp">
 
-                <com.facebook.login.widget.LoginButton
-                    xmlns:facebook="http://schemas.android.com/apk/res-auto"
-                    facebook:com_facebook_login_text="USE MY FACEBOOK DETAILS"
+                <com.facebook.login.widget.LoginButton xmlns:facebook="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/login_button"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_below="@+id/nameView"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="@dimen/activity_vertical_margin"
+                    android:layout_marginStart="@dimen/activity_vertical_margin"
+                    facebook:com_facebook_login_text="USE MY FACEBOOK DETAILS" />
+
+                <LinearLayout
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_marginEnd="@dimen/activity_vertical_margin"
                     android:layout_marginStart="@dimen/activity_vertical_margin"
-                    android:layout_gravity="center"
-                    android:layout_below="@+id/nameView"
-                    />
-                <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="@drawable/white_stroke_round_edge_button"
-                    android:layout_marginEnd="@dimen/activity_vertical_margin"
-                    android:layout_marginStart="@dimen/activity_vertical_margin">
+                    android:background="@drawable/white_stroke_round_edge_button">
+
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="fill_parent"
-                        android:src="@drawable/fb"
                         android:layout_marginLeft="24dp"
                         android:layout_marginRight="24dp"
-                       android:background="@android:color/transparent"/>
+                        android:background="@android:color/transparent"
+                        android:src="@drawable/fb" />
+
                     <View
-                        android:layout_marginTop="1dp"
-                        android:layout_marginBottom="1dp"
                         android:layout_width="1dp"
                         android:layout_height="fill_parent"
+                        android:layout_marginBottom="1dp"
+                        android:layout_marginTop="1dp"
                         android:background="@color/facebook_button_separator" />
 
-                <Button
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="@android:color/transparent"
-                    android:text="USE MY FACEBOOK DETAILS"
-                    android:textColor="@color/ColorPrimary"
-                    android:clickable="false"
-                    />
+                    <Button
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:background="@android:color/transparent"
+                        android:clickable="false"
+                        android:text="USE MY FACEBOOK DETAILS"
+                        android:textColor="@color/ColorPrimary" />
                 </LinearLayout>
             </FrameLayout>
 
@@ -83,44 +78,43 @@
                 android:id="@+id/continue_button"
                 android:layout_width="fill_parent"
                 android:layout_height="50dp"
-                android:background="@drawable/round_edge_box"
-                android:text="CONTINUE"
-                android:textColor="@color/app_theme_blue"
+                android:layout_below="@+id/login_button"
                 android:layout_marginEnd="@dimen/activity_vertical_margin"
                 android:layout_marginStart="@dimen/activity_vertical_margin"
                 android:layout_marginTop="15dp"
-                android:layout_below="@+id/login_button"
-                />
+                android:background="@drawable/round_edge_box"
+                android:text="CONTINUE"
+                android:textColor="@color/app_theme_blue" />
         </LinearLayout>
 
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/profile_image"
             android:layout_width="@dimen/profile_image_circle_radius"
             android:layout_height="@dimen/profile_image_circle_radius"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:src="@drawable/add_photo"
             android:layout_above="@id/nameView"
-            android:layout_centerHorizontal="true" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:src="@drawable/add_photo" />
+
         <EditText
             android:id="@+id/nameView"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:hint="Enter your name"
-            android:background="@drawable/text"
-            android:ems="10"
-            android:inputType="textNoSuggestions"
-            android:textColorHint="@color/edit_view_hint_color"
-            android:textColor="@color/ColorPrimary"
-            android:textCursorDrawable="@null"
-            android:gravity="center"
+            android:layout_above="@id/centerContent"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginEnd="@dimen/activity_vertical_margin"
             android:layout_marginStart="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_above="@id/centerContent"
-            android:layout_centerHorizontal="true" />
+            android:background="@drawable/text"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Enter your name"
+            android:inputType="textNoSuggestions"
+            android:textColor="@color/ColorPrimary"
+            android:textColorHint="@color/edit_view_hint_color"
+            android:textCursorDrawable="@null" />
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -128,8 +122,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:visibility="gone"
-            />
+            android:visibility="gone" />
 
     </RelativeLayout>
 

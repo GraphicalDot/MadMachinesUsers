@@ -70,7 +70,7 @@
 
     <!-- map related  -->
     <dimen name="seekbar_point_size">20dp</dimen>
-
+    <dimen name="map_sport_selection_button_height">40dp</dimen>
 
     <!--Navigation bar related-->
     <dimen name="nav_item_margin">15dp</dimen>

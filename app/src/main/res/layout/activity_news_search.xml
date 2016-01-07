@@ -5,15 +5,16 @@
     tools:context="com.sports.unity.news.controller.activity.NewsSearchActivity">
 
     <RelativeLayout
+        android:id="@+id/search_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/search_bar">
-    <include
-        android:id="@+id/tool_bar_search"
-        layout="@layout/tool_bar_news_search"
-        android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:minHeight="?android:attr/actionBarSize" />
+        android:layout_height="wrap_content">
+
+        <include
+            android:id="@+id/tool_bar_search"
+            layout="@layout/tool_bar_news_search"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:minHeight="?android:attr/actionBarSize" />
     </RelativeLayout>
 
     <FrameLayout
@@ -22,5 +23,5 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/search_bar">
 
-</FrameLayout>
+    </FrameLayout>
 </RelativeLayout>

@@ -64,7 +64,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements View.O
                 invite.setVisibility(View.INVISIBLE);
             }
         } else if (itemLayoutId == R.layout.list_item_members) {
-            if( multipleSelection ){
+            if (multipleSelection) {
                 rowView.findViewById(R.id.checkbox).setVisibility(View.VISIBLE);
             } else {
                 rowView.findViewById(R.id.checkbox).setVisibility(View.GONE);
