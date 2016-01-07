@@ -50,24 +50,28 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/gray3"
-                android:gravity="center_horizontal"
+                android:gravity="center"
                 android:orientation="horizontal"
-                android:paddingBottom="@dimen/horizontal_padding_very_small">
+                android:padding="@dimen/vertical_padding_very_small">
 
                 <TextView
                     android:id="@+id/distanceFromMe"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:textColor="@color/custom_black_distace" />
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/dot_circle" />
 
                 <TextView
                     android:id="@+id/sport"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:textColor="@color/gray4" />
             </LinearLayout>
 

@@ -144,4 +144,8 @@ Carrier SMS charges may apply.</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="hello_blank_fragment">Blank Fragment</string>
+    <string name="enable_location_button">Enable</string>
+    <string name="enable_location_text">Enable Location</string>
+    <string name="turn_on_gps_text">Please go to settings and enable GPS</string>
+    <string name="location_turned_off_text">Your location services are turned off.</string>
 </resources>

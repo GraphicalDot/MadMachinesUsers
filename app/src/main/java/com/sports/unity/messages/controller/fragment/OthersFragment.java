@@ -20,6 +20,7 @@ import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
+import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.NotificationHandler;
 
@@ -203,17 +204,19 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
     @Override
     public void onResume() {
         super.onResume();
-        updatecontent();
+        updateContent();
+
+        ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_OTHERS_LIST_KEY, activityActionListener);
+
+        NotificationHandler.dismissNotification(getActivity());
     }
 
-    private void updatecontent() {
-        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(true);
-        if (chatList != null) {
-            ChatListAdapter adapter = (ChatListAdapter) otherChatListView.getAdapter();
-            adapter.updateList(chatList);
-            otherChatListView.setAdapter(adapter);
-        }
+    @Override
+    public void onStop() {
+        super.onStop();
+        ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.CHAT_OTHERS_LIST_KEY);
     }
+
 
     private ActivityActionListener activityActionListener = new ActivityActionListener() {
 
@@ -224,17 +227,17 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
 
         @Override
         public void handleAction(int id) {
-//            getActivity().runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    if (otherChatListView != null) {
-//                        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(false);
-//                        ChatListAdapter adapter = (ChatListAdapter) otherChatListView.getAdapter();
-//                        adapter.updateList(chatList);
-//                        otherChatListView.setAdapter(adapter);
-//                    }
-//                }
-//            });
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (otherChatListView != null) {
+                        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(true);
+                        ChatListAdapter adapter = (ChatListAdapter) otherChatListView.getAdapter();
+                        adapter.updateList(chatList);
+                        otherChatListView.setAdapter(adapter);
+                    }
+                }
+            });
         }
 
         @Override

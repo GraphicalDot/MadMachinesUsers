@@ -370,6 +370,50 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return allContacts;
     }
 
+    public ArrayList<Contacts> getContactList_RegisteredOnly(boolean forceLoad) {
+        if (forceLoad == true || allContacts == null) {
+            ArrayList<Contacts> list = new ArrayList<>();
+            SQLiteDatabase db = this.getReadableDatabase();
+
+            String[] projection = {
+                    ContactsEntry.COLUMN_NAME,
+                    ContactsEntry.COLUMN_PHONENUMBER,
+                    ContactsEntry.COLUMN_REGISTERED,
+                    ContactsEntry.COLUMN_USER_IMAGE,
+                    ContactsEntry.COLUMN_CONTACT_ID,
+                    ContactsEntry.COLUMN_STATUS
+            };
+
+            String selection = ContactsEntry.COLUMN_AVAILABLE + " LIKE ? and " + ContactsEntry.COLUMN_REGISTERED + " LIKE ? ";
+            String[] selectionArgs = {"1", "1"};
+
+            String sortOrder =
+                    ContactsEntry.COLUMN_NAME + " ASC ";
+
+            Cursor c = db.query(
+                    ContactsEntry.TABLE_NAME,  // The table to query
+                    projection,                               // The columns to return
+                    selection,                                // The columns for the WHERE clause
+                    selectionArgs,                            // The values for the WHERE clause
+                    null,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    sortOrder                                 // The sort order
+            );
+            if (c.moveToFirst()) {
+                do {
+                    boolean value = c.getInt(2) > 0;
+                    list.add(new Contacts(c.getString(0), c.getString(1), value, c.getBlob(3), c.getInt(4), c.getString(5)));
+                } while (c.moveToNext());
+            }
+            c.close();
+
+            allContacts = list;
+        } else {
+            //nothing
+        }
+        return allContacts;
+    }
+
     public ArrayList<Contacts> getContactList(boolean registeredOnly) {
 
         ArrayList<Contacts> list = new ArrayList<>();
@@ -1310,13 +1354,45 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     public void deleteContact(int contactId) {
 
-        SQLiteDatabase db = getWritableDatabase();
+        if (isContactAvailable(contactId)) {
+            //nothing
+        } else {
+            SQLiteDatabase db = getWritableDatabase();
 
-        String table = ContactsEntry.TABLE_NAME;
-        String whereClause = ContactsEntry.COLUMN_CONTACT_ID + "=?";
-        String[] whereArgs = new String[]{String.valueOf(contactId)};
-        db.delete(ContactsEntry.TABLE_NAME, whereClause, whereArgs);
+            String table = ContactsEntry.TABLE_NAME;
+            String whereClause = ContactsEntry.COLUMN_CONTACT_ID + "=?";
+            String[] whereArgs = new String[]{String.valueOf(contactId)};
+            db.delete(ContactsEntry.TABLE_NAME, whereClause, whereArgs);
+        }
 
+    }
+
+    private boolean isContactAvailable(int contactId) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        boolean value = false;
+        String[] projection = {
+                ContactsEntry.COLUMN_AVAILABLE
+        };
+
+        String selection = ContactsEntry.COLUMN_CONTACT_ID + " = ? ";
+        String[] selectionArgs = {String.valueOf(contactId)};
+
+
+        Cursor c = db.query(
+                ContactsEntry.TABLE_NAME,
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                null
+        );
+
+        if (c.moveToFirst()) {
+            value = c.getInt(0) > 0;
+        }
+        return value;
     }
 
     public static class GroupParticipants {

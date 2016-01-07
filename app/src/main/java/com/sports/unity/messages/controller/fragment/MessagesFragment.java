@@ -2,6 +2,7 @@ package com.sports.unity.messages.controller.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -64,8 +65,9 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
         buttonContainerLayout = (LinearLayout) v.findViewById(com.sports.unity.R.id.fragmentChangeButtonLayout);
 
 
-        FloatingActionButton button = (FloatingActionButton) v.findViewById(R.id.floatingbutton);
-        button.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton peopleAroundMeFab = (FloatingActionButton) v.findViewById(R.id.floatingbutton);
+        peopleAroundMeFab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.app_theme_blue)));
+        peopleAroundMeFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), PeopleAroundMeMap.class);

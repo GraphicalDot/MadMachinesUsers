@@ -117,8 +117,7 @@
         <activity
             android:name=".common.controller.AdvancedFilterActivity"
             android:label="@string/advanced_filter"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".messages.controller.activity.NativeCameraActivity"
             android:screenOrientation="portrait"></activity>
@@ -130,15 +129,14 @@
             android:screenOrientation="portrait"></activity>
         <activity
             android:name=".messages.controller.activity.ForwardSelectedItems"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".scores.ScoreDetailActivity"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
         <activity
             android:name=".messages.controller.activity.PeopleAroundMeMap"
-            android:label="@string/title_activity_people_around_me_map"></activity>
+            android:label="@string/title_activity_people_around_me_map"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

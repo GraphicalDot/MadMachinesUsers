@@ -554,7 +554,11 @@ public class XMPPService extends Service {
                 } else {
                     try {
                         sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
-                        sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
+                        if (nearByChat) {
+                            sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_OTHERS_LIST_KEY, 0, null);
+                        } else {
+                            sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
+                        }
                         DisplayNotification(message.getBody(), messageFrom, mimeType, chatId, isGroupChat, groupServerId);
                     } catch (XMPPException.XMPPErrorException e) {
                         e.printStackTrace();
@@ -567,7 +571,11 @@ public class XMPPService extends Service {
             } else {
                 try {
                     sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
-                    sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
+                    if (nearByChat) {
+                        sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_OTHERS_LIST_KEY, 0, null);
+                    } else {
+                        sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
+                    }
                     DisplayNotification(message.getBody(), messageFrom, mimeType, chatId, isGroupChat, groupServerId);
                 } catch (XMPPException.XMPPErrorException e) {
                     e.printStackTrace();
@@ -633,11 +641,7 @@ public class XMPPService extends Service {
                     value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, null);
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
 
-            if (!nearByChat) {
-                sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
-            } else {
-                //TODO
-            }
+            sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
             long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
                     value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
@@ -649,11 +653,7 @@ public class XMPPService extends Service {
                     value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
 
-            if (!nearByChat) {
-                sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
-            } else {
-                //TODO
-            }
+            sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
             String checksum = message.getBody();
 
@@ -661,11 +661,7 @@ public class XMPPService extends Service {
                     value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
 
-            if (!nearByChat) {
-                sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
-            } else {
-                //TODO
-            }
+            sendActionToCorrespondingActivityListener(3, ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
                     value.toString(), message.getStanzaId(), null, null,

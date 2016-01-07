@@ -59,10 +59,15 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     }
 
     public Location getLocation() {
-        if (mGoogleApiClient.isConnected()) {
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mGoogleApiClient != null) {
+            if (mGoogleApiClient.isConnected()) {
+                mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            } else {
+                connect();
+            }
         } else {
-            //TODO
+            buildApiClient();
+            connect();
         }
         return mLastLocation;
     }
@@ -95,7 +100,7 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     }
 
-    private void uploadLatLng(Location mLastLocation) {
+    public void uploadLatLng(Location mLastLocation) {
         HttpURLConnection httpURLConnection = null;
         url = base_url + XMPPClient.getConnection().getUser() + "@mm.io&lat=" + mLastLocation.getLatitude() + "&lng=" + mLastLocation.getLongitude();
         try {

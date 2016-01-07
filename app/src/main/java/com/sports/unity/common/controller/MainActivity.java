@@ -21,6 +21,7 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.LocManager;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -30,6 +31,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends CustomAppCompatActivity {
 
     Toolbar toolbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +43,7 @@ public class MainActivity extends CustomAppCompatActivity {
 
         initViews();
         setNavigation();
-
+        LocManager.getInstance(this).getLocation();
     }
 
     private void setNavigation() {
@@ -55,7 +57,7 @@ public class MainActivity extends CustomAppCompatActivity {
             //TODO
         /*Create Navigation profiling fragment and add it to container
         **/
-            getSupportFragmentManager().beginTransaction().add(R.id.nav_fragment,new NavigationFragment(),"Nav_frag").commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.nav_fragment, new NavigationFragment(), "Nav_frag").commit();
 
         }
     }

@@ -21,6 +21,7 @@ import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.controller.SportsGridViewAdapter;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.LocManager;
@@ -164,14 +165,13 @@ public class SelectSportsActivity extends AppCompatActivity {
         urlToRequest = "";
         HttpURLConnection httpURLConnection = null;
         String interests = "";
-        if (sports.size() > 1) {
-            for (String sport : sports) {
+        if (sports != null || sports.size() > 0)
+            for (String sport :
+                    sports) {
                 interests += "&interests=" + sport.toLowerCase();
             }
-        } else {
-            interests += "&interests=" + sports.get(0).toLowerCase();
-        }
-        urlToRequest = base_url + XMPPClient.getConnection().getUser() + interests;
+        urlToRequest = base_url + TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME) + interests;
+        Log.i("urltorequest", urlToRequest);
         try {
             URL sendInterests = new URL(urlToRequest);
             httpURLConnection = (HttpURLConnection) sendInterests.openConnection();

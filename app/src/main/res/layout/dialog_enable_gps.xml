@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray3"
+    android:gravity="center_vertical|center_horizontal"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title_gps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingBottom="@dimen/vertical_padding_very_small"
+        android:paddingTop="@dimen/vertical_padding_very_small"
+        android:text="@string/enable_location_text"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/font_size_medium" />
+
+    <TextView
+        android:id="@+id/gps_status"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="@string/location_turned_off_text"
+        android:textColor="@color/gray2" />
+
+    <TextView
+        android:id="@+id/turn_on_gps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:paddingBottom="@dimen/vertical_padding_very_small"
+        android:text="@string/turn_on_gps_text"
+        android:textColor="@color/gray2" />
+
+    <Button
+        android:id="@+id/enable_gps"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/app_theme_blue"
+        android:text="@string/enable_location_button"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/font_size_medium" />
+
+</LinearLayout>
