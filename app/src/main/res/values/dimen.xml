@@ -48,7 +48,7 @@
 
     <!-- score related -->
     <dimen name="flag_size_small">30dp</dimen>
-    <dimen name="flag_size_large">60dp</dimen>
+    <dimen name="flag_size_large">40dp</dimen>
     <dimen name="card_edge_curve_radius">2dp</dimen>
 
     <!-- chat related  -->

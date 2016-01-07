@@ -99,7 +99,7 @@ public class ScoresJsonParser {
             }
         }catch (Exception ex){
             ex.printStackTrace();
-            list.clear();
+            list = null;
         }
 
         return list;

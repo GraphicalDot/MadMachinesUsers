@@ -2,6 +2,7 @@ package com.sports.unity.scores.controller.fragment;
 
 import android.app.Activity;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +59,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
         jsonCaller.setJsonObject(list.get(position));
 
         try {
-            holder.broadcast.setText(jsonCaller.getComment());
+            holder.broadcast.setText(Html.fromHtml(jsonCaller.getComment()));
         }catch (Exception ex){
             ex.printStackTrace();
         }

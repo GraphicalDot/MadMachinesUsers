@@ -78,7 +78,7 @@
                 android:text=""
                 android:paddingLeft="@dimen/horizontal_padding_small"
                 android:paddingRight="@dimen/horizontal_padding_small"
-                android:textSize="@dimen/font_size_xlarge"/>
+                android:textSize="@dimen/font_size_medium"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -100,9 +100,17 @@
             </LinearLayout>
         </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray4"
+        ></LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/vertical_padding_very_small"
+        >
         <android.support.v7.widget.RecyclerView
             android:id="@+id/my_recycler_view"
             android:layout_width="match_parent"

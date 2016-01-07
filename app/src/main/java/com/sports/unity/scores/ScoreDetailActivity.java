@@ -88,6 +88,8 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
         initProgress();
         initErrorLayout();
 
+        ((TextView)findViewById(R.id.venue)).setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
 
@@ -209,7 +211,7 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
                 String month = MatchListAdapter.getMonth((String) android.text.format.DateFormat.format("MMM", date));
                 String isttime = null;
                 try {
-                    isttime = MatchListAdapter.getLocalTime(cricketMatchJsonCaller.getMatchTime()).substring(0, 5);
+                    isttime = MatchListAdapter.getLocalTime(footballMatchJsonCaller.getMatchTime()).substring(0, 5);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
@@ -358,11 +360,11 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
                         ScoreDetailActivity.this.renderComments();
                     } else {
                         Log.i("Score Detail", "Error In Handling Content");
-                        showErrorLayout();
+//                        showErrorLayout();
                     }
                 } else {
                     Log.i("Score Detail", "Error In Response");
-                    showErrorLayout();
+//                    showErrorLayout();
                 }
 
                 hideProgress();
