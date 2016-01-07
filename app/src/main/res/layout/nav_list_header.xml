@@ -5,7 +5,7 @@
     android:orientation="horizontal">
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="@dimen/drawer_item_height"
         android:textColor="@color/app_theme_blue"
         android:textSize="@dimen/font_size_medium"
         android:id="@+id/itemheader"

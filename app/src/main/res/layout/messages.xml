@@ -9,10 +9,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/messages_bg"
-        android:paddingBottom="10dp"
-        android:paddingEnd="30dp"
-        android:paddingStart="30dp"
-        android:paddingTop="10dp">
+        android:paddingBottom="@dimen/vertical_padding_very_small"
+        android:paddingEnd="@dimen/horizontal_padding_medium"
+        android:paddingStart="@dimen/horizontal_padding_medium"
+        android:paddingTop="@dimen/vertical_padding_very_small">
 
         <LinearLayout
             android:id="@+id/fragmentChangeButtonLayout"
@@ -66,7 +66,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
-            android:layout_margin="16dp"
+            android:layout_margin="@dimen/vertical_padding_small"
             android:clickable="true"
             android:src="@drawable/ic_ppl_around_u" />
 

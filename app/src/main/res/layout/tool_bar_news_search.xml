@@ -19,7 +19,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginRight="16dp"
+                android:layout_marginRight="@dimen/horizontal_padding_small"
                 android:scaleType="fitXY"
                 android:src="@drawable/ic_menu_back_blk" />
 
@@ -34,7 +34,7 @@
                 android:imeOptions="actionSearch"
                 android:inputType="text"
                 android:maxLines="1"
-                android:paddingLeft="2dp"
+                android:paddingLeft="@dimen/horizontal_padding_very_very_small"
                 android:singleLine="true"
                 android:textColor="#000"
                 android:textColorHint="@color/news_data" />
@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:paddingRight="16dp"
+                android:paddingRight="@dimen/horizontal_padding_small"
                 android:src="@drawable/ic_close_blk" />
         </LinearLayout>
 

@@ -84,7 +84,7 @@
                 android:paddingRight="@dimen/vertical_padding_very_small"
                 android:paddingTop="@dimen/vertical_padding_very_small"
                 android:textColor="@color/news_headline_mini"
-                android:textSize="18sp" />
+                android:textSize="@dimen/font_size_medium" />
 
             <TextView
                 android:id="@+id/info_text"

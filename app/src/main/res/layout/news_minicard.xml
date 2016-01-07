@@ -40,7 +40,7 @@
                     android:padding="@dimen/vertical_padding_very_small"
                     android:textColor="@color/news_headline_mini"
                     android:text="This is my news article\nplease help :P"
-                    android:textSize="14sp" />
+                    android:textSize="@dimen/font_size_small_large" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
