@@ -1,5 +1,13 @@
 package com.sports.unity.common.model;
 
+import android.util.Log;
+
+import com.sports.unity.scores.model.ScoresContentHandler;
+import com.sports.unity.util.Constants;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 /**
@@ -22,44 +30,68 @@ public class FavouriteContentHandler {
 
     private ArrayList<FavouriteItem> favCricketTeams;
     private ArrayList<FavouriteItem> favCricketPlayers;
+    private ArrayList<JSONObject> matches = new ArrayList<>();
+    private ScoresContentListener contentListener = new ScoresContentListener();
 
+    private static final String LISTENER_KEY = "favourite_listener";
+    private static final String FOOTBALL_LEAGUE_REQUEST_TAG = "football_league_request_tag";
+    private static final String FOOTBALL_TEAM_REQUEST_TAG = "football_team_request_tag";
+    private static final String FOOTBALL_PLAYER_REQUEST_TAG = "football_player_request_tag";
+    private static final String CRICKET_TEAM_REQUEST_TAG = "cricket_team_request_tag";
+    private static final String CRICKET_PLAYER_REQUEST_TAG = "cricket_player_request_tag";
+    private ArrayList<ListPreparedListener> listPreparedListener;
+    public int responseNum = 0;
+    private ArrayList<Boolean> responseBool;
+    private static final String URL_FOOTBALL_LEAGUE = "http://52.74.142.219:8000/get_football_leagues";
+    private static final String URL_FOOTBALL_PLAYER = "http://52.74.142.219:8000/get_top_football_players";
+    private static final String URL_FOOTBALL_TEAM = "http://52.74.142.219:8000/get_top_football_teams";
+    private static final String URL_CRICKET_TEAM = "http://52.74.142.219:8080/top_cricket_teams";
+    private static final String URL_CRICKET_PLAYER = "http://52.74.142.219:8080/top_cricket_players";
+
+    public boolean isDisplay;
     private FavouriteContentHandler() {
         FOOTBALL_FILTER_LEAGUE = new ArrayList<String>();
         FOOTBALL_FILTER_PLAYER = new ArrayList<String>();
         FOOTBALL_FILTER_TEAM = new ArrayList<String>();
         CRICKET_FILTER_PLAYER = new ArrayList<String>();
         CRICKET_FILTER_TEAM = new ArrayList<String>();
+        matches = new ArrayList<JSONObject>();
+        listPreparedListener=new ArrayList<ListPreparedListener>();
+        responseBool = new ArrayList<Boolean>();
         makeRequest();
     }
 
     public static FavouriteContentHandler getInstance() {
-        favouriteContentHandler = new FavouriteContentHandler();
+        if (favouriteContentHandler == null) {
+            favouriteContentHandler = new FavouriteContentHandler();
+        }
+
         return favouriteContentHandler;
     }
 
     /**
      * Request network API to get sports details
      */
-    private void requestFootballLeagues() {
-        FOOTBALL_FILTER_LEAGUE = initDataSet("FOOTBALL LEAGUE");
+    public void requestFootballLeagues() {
+        //FOOTBALL_FILTER_LEAGUE=initDataSet("League".concat(Constants.NAV_COMP));
+        ScoresContentHandler.getInstance().requestFavouriteContent(URL_FOOTBALL_LEAGUE, LISTENER_KEY, FOOTBALL_LEAGUE_REQUEST_TAG);
+
     }
 
-    private void requestFootballPlayers() {
-
-        FOOTBALL_FILTER_PLAYER = initDataSet("FOOTBALL Players");
+    public void requestFootballPlayers() {
+        ScoresContentHandler.getInstance().requestFavouriteContent(URL_FOOTBALL_PLAYER, LISTENER_KEY, FOOTBALL_PLAYER_REQUEST_TAG);
     }
 
-    private void requestFootballTeams() {
-        FOOTBALL_FILTER_TEAM = initDataSet("Football Team");
+    public void requestFootballTeams() {
+        ScoresContentHandler.getInstance().requestFavouriteContent(URL_FOOTBALL_TEAM, LISTENER_KEY, FOOTBALL_TEAM_REQUEST_TAG);
     }
 
-    private void requestCricketTeams() {
-        CRICKET_FILTER_TEAM = initDataSet("Cricket Team");
+    public void requestCricketTeams() {
+        ScoresContentHandler.getInstance().requestFavouriteContent(URL_CRICKET_TEAM, LISTENER_KEY, CRICKET_TEAM_REQUEST_TAG);
     }
 
-    private void requestCricketPlayers() {
-
-        CRICKET_FILTER_PLAYER = initDataSet("Cricket Player");
+    public void requestCricketPlayers() {
+        ScoresContentHandler.getInstance().requestFavouriteContent(URL_CRICKET_PLAYER, LISTENER_KEY, CRICKET_PLAYER_REQUEST_TAG);
     }
 
 
@@ -170,14 +202,134 @@ public class FavouriteContentHandler {
         requestFootballTeams();
         requestCricketPlayers();
         requestCricketTeams();
-        prepareList();
     }
 
-    private void prepareList() {
-        prepareFootballLeagues();
-        prepareFootballTeams();
-        prepareFootballPlayers();
-        prepareCricketTeams();
-        prepareCricketPlayers();
+    private void addResponseListener() {
+        ScoresContentHandler.getInstance().addResponseListener(contentListener, LISTENER_KEY);
     }
+
+    private void removeResponseListener() {
+        ScoresContentHandler.getInstance().removeResponseListener(LISTENER_KEY);
+    }
+
+    private boolean handleContent(String content, String Tag) {
+        boolean success = false;
+        ArrayList<JSONObject> list = new ArrayList<JSONObject>();
+        list = FavouriteJsonParser.parseFavouriteList(content);
+        if (list.size() > 0) {
+            matches=new ArrayList<JSONObject>(list);
+            /*matches.addAll(list);*/
+            success = true;
+        } else {
+            //nothing
+        }
+        return success;
+    }
+
+    public void addPrepareListener(ListPreparedListener listPreparedListener) {
+        this.listPreparedListener.add(listPreparedListener);
+    }
+
+    public void onResume() {
+        addResponseListener();
+    }
+
+    public void onPause() {
+        removeResponseListener();
+    }
+
+    private class ScoresContentListener implements ScoresContentHandler.ContentListener {
+
+        @Override
+        public void handleContent(String tag, String content, int responseCode) {
+            responseNum++;
+            boolean success = false;
+            if (responseCode == 200) {
+                success = FavouriteContentHandler.this.handleContent(content, tag);
+                responseBool.add(success);
+                if (success) {
+                    if (tag.equals(FOOTBALL_LEAGUE_REQUEST_TAG)) {
+                        //TODO
+                        for (JSONObject obj : matches) {
+                            try {
+                                String s = obj.getString("league_name");
+                                s = s.concat(Constants.NAV_COMP);
+                                FOOTBALL_FILTER_LEAGUE.add(s);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        prepareFootballLeagues();
+                    } else if (tag.equals(FOOTBALL_TEAM_REQUEST_TAG)) {
+                        //TODO
+                        for (JSONObject obj : matches) {
+                            try {
+                                String s = obj.getString("team_name");
+                                s = s.concat(Constants.NAV_TEAM);
+                                FOOTBALL_FILTER_TEAM.add(s);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        prepareFootballTeams();
+                    } else if (tag.equals(FOOTBALL_PLAYER_REQUEST_TAG)) {
+                        //TODO
+                        for (JSONObject obj : matches) {
+                            try {
+                                String s = obj.getString("player_name");
+                                FOOTBALL_FILTER_PLAYER.add(s);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        prepareFootballPlayers();
+                    } else if (tag.equals(CRICKET_TEAM_REQUEST_TAG)) {
+                        //TODO
+                        for (JSONObject obj : matches) {
+                            try {
+                                String s = obj.getString("team");
+                                s = s.concat(Constants.NAV_TEAM);
+                                CRICKET_FILTER_TEAM.add(s);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        prepareCricketTeams();
+                    } else if (tag.equals(CRICKET_PLAYER_REQUEST_TAG)) {
+                        //TODO
+                        for (JSONObject obj : matches) {
+                            try {
+                                String s = obj.getString("player_name");
+                                CRICKET_FILTER_PLAYER.add(s);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        prepareCricketPlayers();
+                    } else {
+                        //nothing
+                    }
+                } else {
+                }
+            } else {
+            }
+            if(responseNum==5){
+                boolean x=true;
+                for(boolean b:responseBool){
+                    if(!b){
+                        x=false;
+                    }
+                }
+                for(ListPreparedListener l:listPreparedListener){
+                    isDisplay=x;
+                    l.onListPrepared(x);
+                }
+            }
+        }
+    }
+
+    public interface ListPreparedListener {
+        public void onListPrepared(Boolean b);
+    }
+
 }

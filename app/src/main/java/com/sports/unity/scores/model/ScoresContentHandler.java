@@ -155,5 +155,13 @@ public class ScoresContentHandler {
         mapOfResponseListeners.clear();
         requestInProcess_RequestTagAndListenerKey.clear();
     }
+    
+    public void requestFavouriteContent(String url,String listenerKey, String requestTag){
+        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+            requestContent(requestTag, listenerKey, url);
+        } else {
+            //nothing
+        }
+    }
 
 }

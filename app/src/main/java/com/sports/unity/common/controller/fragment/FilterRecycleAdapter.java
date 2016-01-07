@@ -64,7 +64,10 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
 
         if(!UserUtil.isFilterCompleted()||isEditMode) {
             final FavouriteItem favouriteItem=itemDataSet.get(position);
-            holder.tv.setText(favouriteItem.getName());
+            String s=favouriteItem.getName();
+            s=s.replace(Constants.NAV_COMP,"");
+            s=s.replace(Constants.NAV_TEAM,"");
+            holder.tv.setText(s);
             if (favouriteItem.isChecked()) {
                 if (!((AdvancedFilterActivity) activity).favList.contains(favouriteItem.getName())) {
                     ((AdvancedFilterActivity) activity).favList.add(favouriteItem.getName());
@@ -88,8 +91,11 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
                 }
             });
         }else{
+            String s=favDataSet.get(position);
+            s=s.replaceAll(Constants.NAV_COMP,"");
+            s=s.replace(Constants.NAV_TEAM,"");
             holder.cb.setVisibility(View.INVISIBLE);
-            holder.tv.setText(favDataSet.get(position));
+            holder.tv.setText(s);
             holder.v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

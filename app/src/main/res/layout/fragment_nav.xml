@@ -7,9 +7,124 @@
         android:id="@+id/nav_header"
         layout="@layout/navigation_header" />
 
-    <TextView
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="NavFrag" />
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/nav_item_margin">
 
+        <ExpandableListView
+            android:id="@+id/fav_team"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/edit_team"
+            android:layout_marginTop="@dimen/nav_item_margin_v"
+            android:divider="@null"
+            android:scrollbars="none" />
+
+        <TextView
+            android:id="@+id/edit_team"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/fav_team"
+            android:layout_marginRight="@dimen/nav_item_margin"
+            android:layout_marginTop="3dp"
+            android:layout_toLeftOf="@+id/favindi"
+            android:text="@string/edit"
+            android:textColor="@color/app_theme_blue"
+            android:textSize="@dimen/font_size_small_large"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/favindi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/nav_item_margin"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/expandable_list_selector" />
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/divider_horizontal_textfield" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/nav_item_margin">
+
+
+        <ExpandableListView
+            android:id="@+id/complist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/nav_item_margin"
+            android:layout_toLeftOf="@+id/edit_comp"
+            android:layout_marginTop="@dimen/nav_item_margin_v"
+            android:divider="@null"
+            android:scrollbars="none" />
+
+        <ImageView
+            android:id="@+id/compindi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/nav_item_margin"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/expandable_list_selector" />
+
+        <TextView
+            android:id="@+id/edit_comp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/complist"
+            android:layout_marginRight="@dimen/nav_item_margin"
+            android:layout_marginTop="3dp"
+            android:layout_toLeftOf="@+id/compindi"
+            android:text="@string/edit"
+            android:textColor="@color/app_theme_blue"
+            android:textSize="@dimen/font_size_small_large"
+            android:visibility="invisible" />
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/divider_horizontal_textfield" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/nav_item_margin"
+        android:layout_marginTop="@dimen/nav_item_margin_v"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/invite"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="left"
+            android:text="@string/invite_friend"
+            android:textColor="@color/gray1"
+            android:textSize="@dimen/font_size_medium" />
+
+        <TextView
+            android:id="@+id/rate"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="left"
+            android:text="@string/app_rate"
+            android:textColor="@color/gray1"
+            android:textSize="@dimen/font_size_medium" />
+
+        <TextView
+            android:id="@+id/feedback"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:gravity="left"
+            android:text="@string/feedback"
+            android:textColor="@color/gray1"
+            android:textSize="@dimen/font_size_medium" />
+    </LinearLayout>
 </LinearLayout>

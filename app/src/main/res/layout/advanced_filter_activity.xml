@@ -30,7 +30,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="edit"
+            android:text="@string/edit"
             style="?android:attr/borderlessButtonStyle"
             android:textColor="@android:color/white"
             android:background="@android:color/transparent"
@@ -39,7 +39,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="next"
+            android:text="@string/next"
             style="?android:attr/borderlessButtonStyle"
             android:textColor="@android:color/white"
             android:background="@android:color/transparent"

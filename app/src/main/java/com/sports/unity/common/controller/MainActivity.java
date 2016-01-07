@@ -1,5 +1,6 @@
 package com.sports.unity.common.controller;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -7,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +32,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class MainActivity extends CustomAppCompatActivity {
 
+    NavigationFragment navigationFragment;
+    public boolean isPaused;
+    
     Toolbar toolbar;
 
     @Override
@@ -40,9 +45,14 @@ public class MainActivity extends CustomAppCompatActivity {
 
         SportsUnityDBHelper.getInstance(this).addDummyMessageIfNotExist();
         XMPPService.startService(MainActivity.this);
-
+        
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationFragment = new NavigationFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.nav_fragment, navigationFragment, "Nav_frag").commit();
+        
         initViews();
         setNavigation();
+        
         LocManager.getInstance(this).getLocation();
     }
 
@@ -57,7 +67,7 @@ public class MainActivity extends CustomAppCompatActivity {
             //TODO
         /*Create Navigation profiling fragment and add it to container
         **/
-            getSupportFragmentManager().beginTransaction().add(R.id.nav_fragment, new NavigationFragment(), "Nav_frag").commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.nav_fragment,new NavigationFragment(),"Nav_frag").commit();
 
         }
     }
@@ -138,6 +148,16 @@ public class MainActivity extends CustomAppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if(!isPaused) {
+            navigationFragment = new NavigationFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.nav_fragment, navigationFragment, "Nav_frag").commit();
+        }
+        isPaused=false;
+    }
+
+    @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -147,4 +167,10 @@ public class MainActivity extends CustomAppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        navigationFragment.onActivityResult(requestCode, resultCode, data);
+        Log.d("max", "ONMAINRESULT");
+    }
 }

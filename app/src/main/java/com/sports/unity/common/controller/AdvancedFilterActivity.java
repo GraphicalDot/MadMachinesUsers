@@ -44,6 +44,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private EditText searchText;
     public boolean isSearchEdit;
     public String searchString;
+    public boolean isFromNav;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +52,11 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         editFilterListener = new ArrayList<OnEditFilterListener>();
         favList = UserUtil.getFavouriteFilters();
         bundle = getIntent().getExtras();
+        try {
+            isFromNav = bundle.getBoolean(Constants.IS_FROM_NAV, false);
+        }catch (NullPointerException booleanNull){
+
+        }
         setUpToolBar();
         if (savedInstanceState == null) {
             initFragment();
@@ -58,6 +64,12 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         }
         setUpNextClick();
         setUpEditClick();
+
+        if(isFromNav){
+            handleEditClick((Button) findViewById(R.id.edit));
+        }else{
+            findViewById(R.id.edit).setVisibility(View.INVISIBLE);
+        }
     }
 
     private void setUpEditClick() {
@@ -89,23 +101,28 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         });
     }
 
-    private void handleEditClick(TextView edit) {
+    private void handleEditClick(Button edit) {
         if (!isEditMode) {
             edit.setText("Done");
             search.setVisibility(View.VISIBLE);
             isEditMode = true;
             performEdit();
         } else {
-            isEditMode = false;
-            isSearchEdit=false;
-            search.setVisibility(View.INVISIBLE);
-            if (searchLayout.getVisibility() == View.VISIBLE) {
-                titleLayout.setVisibility(View.VISIBLE);
-                searchLayout.setVisibility(View.GONE);
+            if(!isFromNav) {
+                isEditMode = false;
+                isSearchEdit = false;
+                search.setVisibility(View.INVISIBLE);
+                if (searchLayout.getVisibility() == View.VISIBLE) {
+                    titleLayout.setVisibility(View.VISIBLE);
+                    searchLayout.setVisibility(View.GONE);
+                }
+                edit.setText("Edit");
+                performEdit();
+            }else{
+                UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
+                setResult(RESULT_OK);
+                finish();
             }
-            edit.setText("Edit");
-            UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
-            performEdit();
 
         }
     }
@@ -254,6 +271,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     public void onBackPressed() {
         Bundle b = advancedFilterFragment.getArguments();
         if (UserUtil.isFilterCompleted()) {
+            if(isFromNav){
+                setResult(RESULT_CANCELED);
+            }
             finish();
         } else if (b.get(Constants.SPORTS_FILTER_TYPE).equals(Constants.FILTER_TYPE_PLAYER)) {
             UserUtil.setLeagueSelected(AdvancedFilterActivity.this, true);

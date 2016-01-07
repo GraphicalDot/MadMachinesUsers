@@ -148,4 +148,7 @@ Carrier SMS charges may apply.</string>
     <string name="enable_location_text">Enable Location</string>
     <string name="turn_on_gps_text">Please go to settings and enable GPS</string>
     <string name="location_turned_off_text">Your location services are turned off.</string>
+    <string name="invite_friend">Invite Friend</string>
+    <string name="app_rate">App Rate</string>
+    <string name="feedback">Feddback</string>
 </resources>
