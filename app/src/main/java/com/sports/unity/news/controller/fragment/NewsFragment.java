@@ -33,7 +33,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class NewsFragment extends Fragment implements NewsContentHandler.ContentListener{
+public class NewsFragment extends Fragment implements NewsContentHandler.ContentListener {
 
     private NewsContentHandler newsContentHandler;
 
@@ -64,7 +64,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
         newsContentHandler.addContentListener(this);
 
-        if(newsContentHandler.isRequestInProgress()) {
+        if (newsContentHandler.isRequestInProgress()) {
             showProgress(getView());
             mSwipeRefreshLayout.setRefreshing(true);
         } else {
@@ -147,7 +147,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         initErrorLayout(v);
         hideErrorLayout(v);
 
-        if( searchOn == false ) {
+        if (searchOn == false) {
             newsContentHandler = NewsContentHandler.getInstance(getActivity().getBaseContext(), NewsContentHandler.KEY_BASE_CONTENT);
         } else {
             newsContentHandler = NewsContentHandler.getInstance(getActivity().getBaseContext(), NewsContentHandler.KEY_SEARCH_CONTENT);
@@ -155,9 +155,9 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
         addOrUpdateAdapter();
 
-        if( searchOn == false ) {
+        if (searchOn == false) {
             boolean success = newsContentHandler.refreshNews(false);
-            if( success ){
+            if (success) {
                 showProgress(v);
             } else {
 
@@ -177,8 +177,8 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                         Log.i("News Content", "Refresh Call");
 
                         boolean canRefreshContent = false;
-                        if ( searchOn ) {
-                            if( newsContentHandler.getSearchKeyword() != null && newsContentHandler.getSearchKeyword().length() > 0 ) {
+                        if (searchOn) {
+                            if (newsContentHandler.getSearchKeyword() != null && newsContentHandler.getSearchKeyword().length() > 0) {
                                 canRefreshContent = true;
                             } else {
                                 canRefreshContent = false;
@@ -187,7 +187,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                             canRefreshContent = true;
                         }
 
-                        if( canRefreshContent ) {
+                        if (canRefreshContent) {
                             boolean success = newsContentHandler.refreshNews(true);
                             if (success == false) {
                                 showErrorLayout(getView());
@@ -244,46 +244,46 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
     }
 
-    private void initErrorLayout(View view){
+    private void initErrorLayout(View view) {
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
 
-        TextView oops = (TextView)errorLayout.findViewById(R.id.oops);
+        TextView oops = (TextView) errorLayout.findViewById(R.id.oops);
         oops.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
 
         TextView something_wrong = (TextView) errorLayout.findViewById(R.id.something_wrong);
         something_wrong.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
     }
 
-    private void showErrorLayout(View view){
-        if( mAdapter.getNews().size() == 0 ) {
+    private void showErrorLayout(View view) {
+        if (mAdapter.getNews().size() == 0) {
             LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
             errorLayout.setVisibility(View.VISIBLE);
         }
     }
 
-    private void hideErrorLayout(View view){
+    private void hideErrorLayout(View view) {
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.GONE);
     }
 
-    private void initProgress(View view){
-        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+    private void initProgress(View view) {
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
     }
 
-    public void showProgress(View view){
-        if( mAdapter.getNews().size() == 0 ) {
+    public void showProgress(View view) {
+        if (mAdapter.getNews().size() == 0) {
             ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
             progressBar.setVisibility(View.VISIBLE);
         }
     }
 
-    private void hideProgress(View view){
-        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+    private void hideProgress(View view) {
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.setVisibility(View.GONE);
     }
 
-    private void resetScrollFlag(){
+    private void resetScrollFlag() {
         loading = false;
     }
 
@@ -295,17 +295,17 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
             @Override
             public void run() {
                 ArrayList<JSONObject> list = mAdapter.getNews();
-                Log.i("Adapter size","Count:" + list.size());
+                Log.i("Adapter size", "Count:" + list.size());
 
-                if(list.size() == 0) {
-                    if( ! searchOn ) {
+                if (list.size() == 0) {
+                    if (!searchOn) {
                         showErrorLayout(getView());
                         Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_LONG).show();
                     } else {
 //                        something_wrong.setText("No search results found for this search");
                         Toast.makeText(getActivity(), "No search results found for this search", Toast.LENGTH_LONG).show();
                     }
-                } else{
+                } else {
                     hideErrorLayout(getView());
                     addOrUpdateAdapter();
                 }
@@ -315,15 +315,15 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         });
     }
 
-    private void  addOrUpdateAdapter(){
+    private void addOrUpdateAdapter() {
         boolean flag = TinyDB.getInstance(getActivity()).getBoolean("check", false);
 
         ArrayList list = null;
-        if( flag ){
+        if (flag) {
             if (mAdapter == null) {
                 Log.d("News Content", "creating mini adapter");
                 list = new ArrayList();
-                mAdapter = new NewsMinicardAdapter( list, getActivity());
+                mAdapter = new NewsMinicardAdapter(list, getActivity());
                 mRecyclerView.setAdapter(mAdapter);
 
                 newsContentHandler.init(list, searchOn);
@@ -348,7 +348,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                 mAdapter = new NewsAdapter(list, getActivity());
                 mRecyclerView.setAdapter(mAdapter);
 
-                newsContentHandler.init( list, searchOn);
+                newsContentHandler.init(list, searchOn);
             } else {
                 if (mAdapter instanceof NewsAdapter) {
                     Log.d("News Content", "no change in news adapter");
@@ -371,14 +371,14 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        if( requestCode == 999 && data != null ) {
+        if (requestCode == 999 && data != null) {
 
             newsContentHandler.clearContent();
             mAdapter.notifyDataSetChanged();
             newsContentHandler.selectedSportsChanged();
 
             boolean success = newsContentHandler.refreshNews(true);
-            if(success == false) {
+            if (success == false) {
                 showErrorLayout(getView());
                 hideProgress(getView());
 
@@ -401,11 +401,11 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         hideProgress(getView());
         mSwipeRefreshLayout.setRefreshing(false);
 
-        if(responseCode == 1) {
+        if (responseCode == 1) {
             Log.i("News Content", "Handle Response");
 
             displayResult();
-        } else if(responseCode == 0) {
+        } else if (responseCode == 0) {
             Log.i("News Content", "Handle Error");
 
             getActivity().runOnUiThread(new Runnable() {
@@ -414,7 +414,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                 public void run() {
                     showErrorLayout(getView());
 
-                    Toast.makeText(getActivity(),"Check your internet connection",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
                 }
 
             });
