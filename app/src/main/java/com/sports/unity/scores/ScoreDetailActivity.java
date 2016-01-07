@@ -3,6 +3,7 @@ package com.sports.unity.scores;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
@@ -56,6 +57,7 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
         sportsType = getIntent().getStringExtra(Constants.INTENT_KEY_TYPE);
         matchId = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
 
+        initToolbar();
         initView();
     }
 
@@ -95,6 +97,47 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
+    }
+
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        ImageView back_arrow = (ImageView) toolbar.findViewById(R.id.back_img);
+        back_arrow.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+
+        });
+    }
+
+    private void setTitle(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        TextView title_text = (TextView) toolbar.findViewById(R.id.toolbar_title);
+
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+            if (sportsType.equals(ScoresJsonParser.CRICKET)) {
+                cricketMatchJsonCaller.setJsonObject(matchScoreDetails);
+
+                stringBuilder.append(cricketMatchJsonCaller.getTeam1());
+                stringBuilder.append(" V" +
+                        "S ");
+                stringBuilder.append(cricketMatchJsonCaller.getTeam2());
+
+            } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
+                footballMatchJsonCaller.setJsonObject(matchScoreDetails);
+
+                stringBuilder.append(footballMatchJsonCaller.getHomeTeam());
+                stringBuilder.append(" VS ");
+                stringBuilder.append(footballMatchJsonCaller.getAwayTeam());
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        title_text.setText(stringBuilder.toString());
     }
 
     private void renderComments(){
@@ -330,7 +373,10 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
                     success = ScoreDetailActivity.this.handleScoreDetails(content);
                     if (success) {
                         hideErrorLayout();
+
+                        ScoreDetailActivity.this.setTitle();
                         ScoreDetailActivity.this.renderScores();
+
                         ScoreDetailActivity.this.requestMatchCommentaries();
                     } else {
                         Log.i("Score Detail", "Error In Handling Content");
