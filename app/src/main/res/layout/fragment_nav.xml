@@ -41,7 +41,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/nav_item_margin"
             android:layout_marginTop="3dp"
-            android:background="@drawable/expandable_list_selector" />
+            android:background="@drawable/arrow_down" />
     </RelativeLayout>
 
     <ImageView
@@ -72,7 +72,7 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="@dimen/nav_item_margin"
             android:layout_marginTop="3dp"
-            android:background="@drawable/expandable_list_selector" />
+            android:background="@drawable/arrow_down" />
 
         <TextView
             android:id="@+id/edit_comp"

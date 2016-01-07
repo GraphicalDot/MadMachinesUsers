@@ -46,10 +46,6 @@ public class MainActivity extends CustomAppCompatActivity {
         SportsUnityDBHelper.getInstance(this).addDummyMessageIfNotExist();
         XMPPService.startService(MainActivity.this);
         
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationFragment = new NavigationFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.nav_fragment, navigationFragment, "Nav_frag").commit();
-        
         initViews();
         setNavigation();
         
@@ -57,19 +53,8 @@ public class MainActivity extends CustomAppCompatActivity {
     }
 
     private void setNavigation() {
-//        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-//                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-//        drawer.setDrawerListener(toggle);
-//        toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        {
-            //TODO
-        /*Create Navigation profiling fragment and add it to container
-        **/
-            getSupportFragmentManager().beginTransaction().add(R.id.nav_fragment,new NavigationFragment(),"Nav_frag").commit();
-
-        }
+        navigationFragment = new NavigationFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.nav_fragment, navigationFragment, "Nav_frag").commit();
     }
 
 
