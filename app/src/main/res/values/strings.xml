@@ -152,4 +152,6 @@ Carrier SMS charges may apply.</string>
     <string name="app_rate">App Rate</string>
     <string name="feedback">Feedback</string>
     <string name="nav_edit">EDIT</string>
+    <string name="no_users_nearby">We didn\'t find anyone :(</string>
+    <string name="try_broadening_search_increasing_radius">Try broadening your search by increasing radius</string>
 </resources>
