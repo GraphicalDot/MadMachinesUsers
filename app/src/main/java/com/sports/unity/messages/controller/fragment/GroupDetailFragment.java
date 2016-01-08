@@ -25,6 +25,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.activity.CreateGroup;
@@ -131,7 +132,13 @@ public class GroupDetailFragment extends Fragment {
                 cursor.close();
 
 
-                bitmap = decodeSampleImage(file, 150, 150);
+                bitmap = decodeSampleImage(file, 100, 100);
+
+                try {
+                    bitmap = ProfileCreationActivity.rotateImageIfRequired(bitmap, file);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);

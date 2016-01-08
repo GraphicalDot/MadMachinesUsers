@@ -45,8 +45,9 @@ public class AdapterForEmoji extends PagerAdapter implements AdapterView.OnItemC
     private GridView gridView;
     private ViewGroup layout;
 
-    private int titles[] = {R.drawable.ic_football, R.drawable.ic_basketball, R.drawable.ic_cricket, R.drawable.ic_tennis, R.drawable.ic_f1};
+    //private int titles[] = {R.drawable.ic_football, R.drawable.ic_basketball, R.drawable.ic_cricket, R.drawable.ic_tennis, R.drawable.ic_f1};
 
+    private int titles[] = {R.drawable.ic_football, R.drawable.ic_cricket};
 
     public AdapterForEmoji(Context context) {
         this.context = context;
@@ -65,25 +66,25 @@ public class AdapterForEmoji extends PagerAdapter implements AdapterView.OnItemC
                 collection.addView(viewgroup);
                 break;
             case 1:
-                resId = R.layout.basketball_emoji;
-                viewgroup = loadStickersGridView(resId, collection, inflater, "basketballStickers");
-                collection.addView(viewgroup);
-                break;
-            case 2:
                 resId = R.layout.cricket_emoji;
                 viewgroup = loadStickersGridView(resId, collection, inflater, "cricketStickers");
                 collection.addView(viewgroup);
                 break;
-            case 3:
-                resId = R.layout.tennis_emoji;
-                viewgroup = loadStickersGridView(resId, collection, inflater, "tennisStickers");
-                collection.addView(viewgroup);
-                break;
-            case 4:
-                resId = R.layout.f1_emoji;
-                viewgroup = loadStickersGridView(resId, collection, inflater, "f1Stickers");
-                collection.addView(viewgroup);
-                break;
+//            case 2:
+//                resId = R.layout.basketball_emoji;
+//                viewgroup = loadStickersGridView(resId, collection, inflater, "basketballStickers");
+//                collection.addView(viewgroup);
+//                break;
+//            case 3:
+//                resId = R.layout.tennis_emoji;
+//                viewgroup = loadStickersGridView(resId, collection, inflater, "tennisStickers");
+//                collection.addView(viewgroup);
+//                break;
+//            case 4:
+//                resId = R.layout.f1_emoji;
+//                viewgroup = loadStickersGridView(resId, collection, inflater, "f1Stickers");
+//                collection.addView(viewgroup);
+//                break;
         }
 
         return viewgroup;
