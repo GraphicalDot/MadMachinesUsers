@@ -4,15 +4,15 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.provider.MediaStore;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -58,6 +58,7 @@ public class ChatKeyboardHelper {
 
     private int keyboardHeight;
     private int previuosKeyboardHeight;
+    private int softBarHeight = 0;
     private boolean isKeyBoardVisible = false;
 
     private ViewGroup parentLayout;
@@ -95,7 +96,7 @@ public class ChatKeyboardHelper {
                         parentLayout.getWindowVisibleDisplayFrame(r);
 
                         int screenHeight = parentLayout.getRootView().getHeight();
-                        int heightDifference = screenHeight - (r.bottom);
+                        int heightDifference = screenHeight - (r.bottom) - softBarHeight;
 
                         if (previuosKeyboardHeight != heightDifference) {
                             changeKeyboardHeight(heightDifference, parentLayout);
@@ -154,6 +155,8 @@ public class ChatKeyboardHelper {
     }
 
     public void tapOnTab(String sendToIdentity, View view, Activity activity) {
+        softBarHeight = getSoftButtonsBarHeight(activity);
+
         unhighlightTappedItem(lastTappedView);
         highlightTappedItem(view);
         lastTappedView = view;
@@ -400,6 +403,31 @@ public class ChatKeyboardHelper {
 
     }
 
+    private int getSoftButtonsBarHeight(Activity activity) {
+        // getRealMetrics is only available with API 17 and +
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            DisplayMetrics metrics = new DisplayMetrics();
+            activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+            int usableHeight = metrics.heightPixels;
+            activity.getWindowManager().getDefaultDisplay().getRealMetrics(metrics);
+            int realHeight = metrics.heightPixels;
+            if (realHeight > usableHeight)
+                return realHeight - usableHeight;
+            else
+                return 0;
+        }
+        return 0;
+    }
+
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = popUpView.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = popUpView.getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
+    }
+
     private class LoadStickers extends AsyncTask {
 
         private Context context;
@@ -459,6 +487,7 @@ public class ChatKeyboardHelper {
 
         if (isKeyBoardVisible) {
             showGalleryView(activity, gallery);
+            Log.d("Keyboard Helper", "shown gallery");
         } else {
             keyboardOpenedListener = new KeyboardOpenedListener() {
 
@@ -507,9 +536,11 @@ public class ChatKeyboardHelper {
     }
 
     private void changeKeyboardHeight(int height, View parentLayout) {
+        Log.d("Keyboard Helper", "keyboard height changed");
         if (height > 100) {
             keyboardHeight = height;
             popupWindow.setHeight(keyboardHeight);
+            Log.d("Keyboard Helper", "change popup window height to "+keyboardHeight);
 
             if (keyboardOpenedListener != null) {
                 keyboardOpenedListener.keyboardOpened(keyboardHeight);
@@ -530,6 +561,7 @@ public class ChatKeyboardHelper {
     }
 
     private void showPopupWindow(View parentLayout) {
+        Log.d("Keyboard Helper", "show pop up window");
         if (!popupWindow.isShowing()) {
             popupWindow.showAtLocation(parentLayout, Gravity.BOTTOM, 0, 0);
         } else {
