@@ -150,7 +150,7 @@
                     android:layout_marginTop="@dimen/horizontal_padding_very_small"
                     android:gravity="center"
                     android:text="Take a minute to review our"
-                    android:textColor="#b7cfe9" />
+                    android:textColor="@color/take_a_minut" />
 
                 <TextView
                     android:id="@+id/privacy_policy"

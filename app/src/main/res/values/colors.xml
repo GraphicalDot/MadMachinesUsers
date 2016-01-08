@@ -40,6 +40,8 @@
     <color name="group_receive_name">#808080</color>
     <color name="news_vertical_strip">#ababab</color>
     <color name="list_selector">#30004d99</color>
+    <color name="take_a_minut">#b7cfe9</color>
+
 
     <!-- camera related -->
     <color name="semi_transparent">#44000000</color>
