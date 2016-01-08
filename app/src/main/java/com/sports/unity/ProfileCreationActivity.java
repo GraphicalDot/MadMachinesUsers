@@ -1,6 +1,7 @@
 package com.sports.unity;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -11,6 +12,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -125,23 +127,80 @@ public class ProfileCreationActivity extends AppCompatActivity {
                 File file = new File(filePath);
                 cursor.close();
 
+                bitmap = decodeSampleImage(file, 100, 100);
 
-                bitmap = decodeSampleImage(file, 150, 150);
+                try {
+                    bitmap = rotateImageIfRequired(bitmap, file);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
 
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+
+               Log.i("bitmap size in if", "" + bitmap.getByteCount());
                 byteArray = byteArrayOutputStream.toByteArray();
                 circleImageView.setImageBitmap(bitmap);
             } else {
                 bitmap = (Bitmap) data.getExtras().get("data");
+
+                Uri tempUri = getImageUri(getApplicationContext(), bitmap);
+                File file = new File(getRealPathFromURI(tempUri));
+
+                bitmap = decodeSampleImage(file, 100, 100);
+
+                try {
+                    bitmap = rotateImageIfRequired(bitmap, file);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
                 ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+                Log.i("bitmap size in else", "" + bitmap.getByteCount());
                 byteArray = byteArrayOutputStream.toByteArray();
                 circleImageView.setImageBitmap(bitmap);
             }
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
+    }
+
+
+    public static Bitmap rotateImageIfRequired(Bitmap img, File selectedImage) throws IOException {
+
+        ExifInterface ei = new ExifInterface(selectedImage.getPath());
+        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+        switch (orientation) {
+            case ExifInterface.ORIENTATION_ROTATE_90:
+                return rotateImage(img, 90);
+            case ExifInterface.ORIENTATION_ROTATE_180:
+                return rotateImage(img, 180);
+            case ExifInterface.ORIENTATION_ROTATE_270:
+                return rotateImage(img, 270);
+            default:
+                return img;
+        }
+    }
+
+    private static Bitmap rotateImage(Bitmap img, int degree) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+        img.recycle();
+        return rotatedImg;
+    }
+
+    public Uri getImageUri(Context inContext, Bitmap inImage) {
+        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+        return Uri.parse(path);
+    }
+
+    public String getRealPathFromURI(Uri uri) {
+        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+        cursor.moveToFirst();
+        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+        return cursor.getString(idx);
     }
 
     public static Bitmap decodeSampleImage(File f, int width, int height) {

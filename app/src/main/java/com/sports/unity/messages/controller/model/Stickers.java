@@ -51,10 +51,10 @@ public class Stickers {
     public void loadAllStickers(Context context){
         try {
             loadStickersFromAsset(context, "footballStickers");
-            loadStickersFromAsset(context, "basketballStickers");
             loadStickersFromAsset(context, "cricketStickers");
-            loadStickersFromAsset(context, "tennisStickers");
-            loadStickersFromAsset(context, "f1Stickers");
+//            loadStickersFromAsset(context, "basketballStickers");
+//            loadStickersFromAsset(context, "tennisStickers");
+//            loadStickersFromAsset(context, "f1Stickers");
         }catch (Exception ex){
             ex.printStackTrace();
         }

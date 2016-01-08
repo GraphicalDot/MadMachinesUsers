@@ -331,6 +331,7 @@ public class ChatScreenAdapter extends BaseAdapter {
 
             int width = activity.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width);
             int height = activity.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height);
+
             image.setLayoutParams(new FrameLayout.LayoutParams(width, height));
 
             if (content != null) {

@@ -368,6 +368,7 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
                 }
 
                 hideProgress();
+
 //                mSwipeRefreshLayout.setRefreshing(false);
             } else if( tag.equals(SCORE_DETAIL_REQUEST_TAG) ) {
                 boolean success = false;
