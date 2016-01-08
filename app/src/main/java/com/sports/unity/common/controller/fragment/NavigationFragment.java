@@ -243,6 +243,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
                 break;
             case R.id.edit_team:
                 isTeam = true;
+                Log.d("max","CLICKER");
                 ((MainActivity) getActivity()).isPaused = true;
                 Intent advancedFilterTeam = new Intent(getActivity(), AdvancedFilterActivity.class);
                 advancedFilterTeam.putExtra(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_TEAM);

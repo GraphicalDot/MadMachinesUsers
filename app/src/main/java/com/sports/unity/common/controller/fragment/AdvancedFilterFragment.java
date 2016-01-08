@@ -4,10 +4,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.sports.unity.R;
+import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.util.Constants;
@@ -50,6 +52,13 @@ public class AdvancedFilterFragment extends Fragment {
         FilterPagerAdapter filterPagerAdapter=new FilterPagerAdapter(getActivity().getSupportFragmentManager(),sportsSelected,SPORTS_FILTER_TYPE);
         ViewPager pager = (ViewPager) view.findViewById(R.id.pager);
         pager.setAdapter(filterPagerAdapter);
+        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                ((AdvancedFilterActivity)getActivity()).closeSearch();
+            }
+        });
         SlidingTabLayout tabs = (SlidingTabLayout) view.findViewById(R.id.tabs);
         tabs.setDistributeEvenly(true);
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
@@ -59,6 +68,6 @@ public class AdvancedFilterFragment extends Fragment {
             }
         });
         tabs.setViewPager(pager);
-    }
 
+    }
 }

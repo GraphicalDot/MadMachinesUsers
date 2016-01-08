@@ -91,24 +91,25 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
                 }
             });
         }else{
-            String s=favDataSet.get(position);
+           String s=favDataSet.get(position);
             s=s.replaceAll(Constants.NAV_COMP,"");
-            s=s.replace(Constants.NAV_TEAM,"");
+            s=s.replace(Constants.NAV_TEAM, "");
+            final String searchString=s.replace(Constants.NAV_TEAM,"");
             holder.cb.setVisibility(View.INVISIBLE);
             holder.tv.setText(s);
             holder.v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    searchNews();
+                    searchNews(searchString);
                 }
             });
         }
     }
 
-    private void searchNews() {
+    private void searchNews(String s) {
 
         Intent newsSearch=new Intent(activity,NewsSearchActivity.class);
-        newsSearch.putExtra(Constants.FILTER_SEARCH_EXTRA,"Sachin");
+        newsSearch.putExtra(Constants.FILTER_SEARCH_EXTRA,s);
         activity.startActivity(newsSearch);
     }
 

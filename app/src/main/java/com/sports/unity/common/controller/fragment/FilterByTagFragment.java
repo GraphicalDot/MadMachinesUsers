@@ -22,6 +22,7 @@ import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 /**
  * Created by Mad on 12/28/2015.
@@ -34,8 +35,9 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     private String SPORTS_FILTER_TYPE, SPORTS_TYPE;
     private FavouriteContentHandler favouriteContentHandler;
     private FilterRecycleAdapter itemAdapter;
-    ArrayList<FavouriteItem> localList;
-
+    ArrayList<FavouriteItem> searchList;
+    ArrayList<String> searchStringList;
+    private boolean isEdit;
     private LinearLayout errorLayout;
     private ProgressBar progressBar;
 
@@ -48,6 +50,8 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
         favouriteContentHandler.addPrepareListener(this);
         SPORTS_FILTER_TYPE = bundle.getString(Constants.SPORTS_FILTER_TYPE);
         SPORTS_TYPE = bundle.getString(Constants.SPORTS_TYPE);
+        isFilterCompleted = UserUtil.isFilterCompleted();
+        isFromNav = ((AdvancedFilterActivity) getActivity()).isFromNav;
     }
 
     @Override
@@ -94,7 +98,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         filterRecyclerView.setLayoutManager(mLayoutManager);
         progressBar.setVisibility(View.VISIBLE);
-        if(favouriteContentHandler.isDisplay){
+        if (favouriteContentHandler.isDisplay) {
             hideProgress();
             prepareList();
         }
@@ -126,16 +130,21 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
             itemDataSet = favouriteContentHandler.getFavFootballLeagues();
 
         }
-        if(itemDataSet==null){
+        if (itemDataSet == null) {
             hideProgress();
             showErrorLayout();
-        }else {
+        } else {
             displayContent();
         }
     }
 
+    private boolean isFilterCompleted;
+    private boolean isFromNav;
+
     private void displayContent() {
-        if (!UserUtil.isFilterCompleted() || ((AdvancedFilterActivity) getActivity()).isFromNav) {
+        hideErrorLayout();
+        filterRecyclerView.setVisibility(View.VISIBLE);
+        if (!isFilterCompleted || isFromNav) {
             itemAdapter = new FilterRecycleAdapter(getActivity(), itemDataSet, true);
             filterRecyclerView.setAdapter(itemAdapter);
         } else {
@@ -152,36 +161,57 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
         }
     }
 
-    public synchronized void enableEditMode() {
-        if (((AdvancedFilterActivity) getActivity()).isSearchEdit) {
+    private void requestEdit(boolean b) {
+        if (b) {
+            isEdit = true;
+            showProgress();
+            favouriteContentHandler.requestFavSearch(SPORTS_FILTER_TYPE, ((AdvancedFilterActivity) getActivity()).searchString);
 
-            ArrayList<FavouriteItem> searchList = new ArrayList<FavouriteItem>(itemDataSet);
-            localList = new ArrayList<FavouriteItem>();
-            for (FavouriteItem f : searchList) {
-                boolean b = false;
-                String[] split = ((AdvancedFilterActivity) getActivity()).searchString.toLowerCase().split("\\s+");
-                for (String s : split) {
-                    if (f.getName().toLowerCase().contains(s)) {
-                        b = true;
+            Log.d("max", "Requesting Search");
+        } else if (!isFilterCompleted || isFromNav) {
+
+            searchList = itemAdapter.getItemDataSet();
+            if (searchList.size() > 0) {
+                Log.d("max", "Closing Search");
+                try {
+                    for (FavouriteItem f : searchList) {
+                        Log.d("max", "Name is" + f.getName());
+                        if (f.isChecked()) {
+                            itemDataSet.add(f);
+                        }
                     }
+                } catch (ConcurrentModificationException e) {
+                    Log.d("max", e.toString());
+                    filterRecyclerView.setVisibility(View.VISIBLE);
+                    hideErrorLayout();
                 }
-                if (b) {
-                    localList.add(f);
-                }
+                isEdit = false;
+                hideErrorLayout();
+                filterRecyclerView.setVisibility(View.VISIBLE);
+                itemAdapter = new FilterRecycleAdapter(getActivity(), itemDataSet, true);
+                filterRecyclerView.setAdapter(itemAdapter);
+                filterRecyclerView.invalidate();
             }
-            itemAdapter = new FilterRecycleAdapter(getActivity(), localList, true);
+        } else {
+            Log.d("hjk", "CLOSING");
+            displayContent();
+        }
+    }
+
+    public void enableEditMode() {
+        if ((isEdit && isFromNav) || !isFilterCompleted) {
+            searchList = new ArrayList<FavouriteItem>();
+            searchList = favouriteContentHandler.getSearchList();
+            Log.d("max", "ENABLED"+searchList.size());
+            itemAdapter = new FilterRecycleAdapter(getActivity(), searchList, true);
+            filterRecyclerView.setVisibility(View.VISIBLE);
             filterRecyclerView.setAdapter(itemAdapter);
             filterRecyclerView.invalidate();
         } else {
-
-            /*for(FavouriteItem f:localList){
-                if(f.isChecked()){
-                    //TODO
-                    *//*Merge changes if any*//*
-                    itemDataSet.add(f);
-                }
-            }*/
-            itemAdapter = new FilterRecycleAdapter(getActivity(), itemDataSet, true);
+            searchStringList = new ArrayList<String>();
+            searchStringList = favouriteContentHandler.getSearchStringList();
+            itemAdapter = new FilterRecycleAdapter(getActivity(), searchStringList);
+            filterRecyclerView.setVisibility(View.VISIBLE);
             filterRecyclerView.setAdapter(itemAdapter);
             filterRecyclerView.invalidate();
         }
@@ -189,10 +219,12 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
 
 
     private void showErrorLayout() {
+        filterRecyclerView.setVisibility(View.INVISIBLE);
         errorLayout.setVisibility(View.VISIBLE);
     }
 
     private void hideErrorLayout() {
+        filterRecyclerView.setVisibility(View.VISIBLE);
         errorLayout.setVisibility(View.GONE);
     }
 
@@ -212,22 +244,32 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     }
 
     @Override
-    public void onEdit() {
-        if (((AdvancedFilterActivity) getActivity()).isEditMode) {
-            enableEditMode();
-        } else {
-            disableEditMode();
-        }
+    public void onEdit(boolean b) {
+        requestEdit(b);
     }
+
     @Override
     public void onListPrepared(Boolean b) {
-        if (b) {
-            prepareList();
-            hideErrorLayout();
-            hideProgress();
+        if (!isEdit) {
+            if (b) {
+                prepareList();
+                hideErrorLayout();
+                hideProgress();
+            } else {
+                hideProgress();
+                showErrorLayout();
+            }
         } else {
-            hideProgress();
-            showErrorLayout();
+
+            Log.d("max", "ResultSearch" + b);
+            if (b) {
+                enableEditMode();
+                hideErrorLayout();
+                hideProgress();
+            } else {
+                hideProgress();
+                showErrorLayout();
+            }
         }
     }
 }

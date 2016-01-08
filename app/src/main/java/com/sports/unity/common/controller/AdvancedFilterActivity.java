@@ -3,11 +3,8 @@ package com.sports.unity.common.controller;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -23,7 +20,6 @@ import com.sports.unity.R;
 import com.sports.unity.common.controller.fragment.AdvancedFilterFragment;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
-import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
@@ -38,7 +34,6 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     public ArrayList<String> favList;
     private TextView titleText;
     private ArrayList<OnEditFilterListener> editFilterListener;
-    public boolean isEditMode;
     private ImageView search, searchClose;
     private LinearLayout titleLayout, searchLayout;
     private EditText searchText;
@@ -63,25 +58,19 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
         }
         setUpNextClick();
-        setUpEditClick();
-
-        if(isFromNav){
-            handleEditClick((Button) findViewById(R.id.edit));
-        }else{
-            findViewById(R.id.edit).setVisibility(View.INVISIBLE);
-        }
+        setUpDoneClick();
     }
 
-    private void setUpEditClick() {
-        final Button edit = (Button) findViewById(R.id.edit);
-        edit.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
-        if (!UserUtil.isFilterCompleted()) {
-            edit.setVisibility(View.INVISIBLE);
+    private void setUpDoneClick() {
+        final Button done = (Button) findViewById(R.id.done);
+        done.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+        if (!UserUtil.isFilterCompleted()||!isFromNav) {
+            done.setVisibility(View.INVISIBLE);
         }
-        edit.setOnClickListener(new View.OnClickListener() {
+        done.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                handleEditClick(edit);
+                handleDoneClick(done);
             }
         });
     }
@@ -101,8 +90,8 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         });
     }
 
-    private void handleEditClick(Button edit) {
-        if (!isEditMode) {
+    private void handleDoneClick(Button edit) {
+        /*if (!isEditMode) {
             edit.setText("Done");
             search.setVisibility(View.VISIBLE);
             isEditMode = true;
@@ -118,16 +107,17 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
                 }
                 edit.setText("Edit");
                 performEdit();
-            }else{
+            }else{*/
                 UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
                 setResult(RESULT_OK);
                 finish();
-            }
+           /* }
 
-        }
+        }*/
     }
 
     private void handleNextClick() {
+        closeSearch();
         Bundle b = advancedFilterFragment.getArguments();
         UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
         if (UserUtil.isFilterCompleted()) {
@@ -238,7 +228,14 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
 
     }
-
+public void closeSearch(){
+    if (searchLayout.getVisibility() == View.VISIBLE) {
+        titleLayout.setVisibility(View.VISIBLE);
+        searchLayout.setVisibility(View.GONE);
+        isSearchEdit = false;
+        performEdit();
+    }
+}
     private void addFragment() {
         advancedFilterFragment = new AdvancedFilterFragment();
         advancedFilterFragment.setArguments(bundle);
@@ -254,13 +251,13 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     }
 
     public interface OnEditFilterListener {
-        public void onEdit();
+        public void onEdit(boolean b);
     }
 
     private void performEdit() {
         if (editFilterListener.size() > 0) {
             for (OnEditFilterListener e : editFilterListener) {
-                e.onEdit();
+                e.onEdit(isSearchEdit);
             }
         } else {
             //nothing

@@ -19,7 +19,7 @@ public class FavouriteContentHandler {
     private static ArrayList<String> FOOTBALL_FILTER_LEAGUE = null;
     private static ArrayList<String> FOOTBALL_FILTER_PLAYER = null;
     private static ArrayList<String> FOOTBALL_FILTER_TEAM = null;
-
+    private static ArrayList<String> FAVOURITE_SEARCH = null;
 
     private static ArrayList<String> CRICKET_FILTER_PLAYER = null;
     private static ArrayList<String> CRICKET_FILTER_TEAM = null;
@@ -30,6 +30,7 @@ public class FavouriteContentHandler {
 
     private ArrayList<FavouriteItem> favCricketTeams;
     private ArrayList<FavouriteItem> favCricketPlayers;
+    private ArrayList<FavouriteItem> favSearchTeams;
     private ArrayList<JSONObject> matches = new ArrayList<>();
     private ScoresContentListener contentListener = new ScoresContentListener();
 
@@ -39,6 +40,8 @@ public class FavouriteContentHandler {
     private static final String FOOTBALL_PLAYER_REQUEST_TAG = "football_player_request_tag";
     private static final String CRICKET_TEAM_REQUEST_TAG = "cricket_team_request_tag";
     private static final String CRICKET_PLAYER_REQUEST_TAG = "cricket_player_request_tag";
+    private static final String FAV_SEARCH_REQUEST_TAG = "fav_search_request_tag";
+
     private ArrayList<ListPreparedListener> listPreparedListener;
     public int responseNum = 0;
     private ArrayList<Boolean> responseBool;
@@ -47,16 +50,26 @@ public class FavouriteContentHandler {
     private static final String URL_FOOTBALL_TEAM = "http://52.74.142.219:8000/get_top_football_teams";
     private static final String URL_CRICKET_TEAM = "http://52.74.142.219:8080/top_cricket_teams";
     private static final String URL_CRICKET_PLAYER = "http://52.74.142.219:8080/top_cricket_players";
+    private static final String URL_TEAM_SEARCH = "http://52.76.74.188:9000/fav_team?team=";
+    private static final String URL_LEAGUE_SEARCH = "http://52.76.74.188:9000/fav_league?league=";
+    private static final String URL_PLAYER_SEARCH = "http://52.76.74.188:9000/fav_player?player=";
+
 
     public boolean isDisplay;
+    private boolean isSearchPlayer = false;
+    private boolean isSearchTeam = false;
+    private boolean isSearchLeague = false;
+
+
     private FavouriteContentHandler() {
         FOOTBALL_FILTER_LEAGUE = new ArrayList<String>();
         FOOTBALL_FILTER_PLAYER = new ArrayList<String>();
         FOOTBALL_FILTER_TEAM = new ArrayList<String>();
         CRICKET_FILTER_PLAYER = new ArrayList<String>();
         CRICKET_FILTER_TEAM = new ArrayList<String>();
+        FAVOURITE_SEARCH = new ArrayList<String>();
         matches = new ArrayList<JSONObject>();
-        listPreparedListener=new ArrayList<ListPreparedListener>();
+        listPreparedListener = new ArrayList<ListPreparedListener>();
         responseBool = new ArrayList<Boolean>();
         makeRequest();
     }
@@ -94,6 +107,24 @@ public class FavouriteContentHandler {
         ScoresContentHandler.getInstance().requestFavouriteContent(URL_CRICKET_PLAYER, LISTENER_KEY, CRICKET_PLAYER_REQUEST_TAG);
     }
 
+    public void requestFavSearch(String searchType, String param) {
+        if (searchType.equals(Constants.FILTER_TYPE_LEAGUE)) {
+            isSearchLeague = true;
+            isSearchPlayer = false;
+            isSearchTeam = false;
+            ScoresContentHandler.getInstance().requestFavouriteSearch(URL_LEAGUE_SEARCH, param, LISTENER_KEY, FAV_SEARCH_REQUEST_TAG);
+        } else if (searchType.equals(Constants.FILTER_TYPE_PLAYER)) {
+            isSearchLeague = false;
+            isSearchPlayer = true;
+            isSearchTeam = false;
+            ScoresContentHandler.getInstance().requestFavouriteSearch(URL_PLAYER_SEARCH, param, LISTENER_KEY, FAV_SEARCH_REQUEST_TAG);
+        } else if (searchType.equals(Constants.FILTER_TYPE_TEAM)) {
+            isSearchLeague = false;
+            isSearchPlayer = false;
+            isSearchTeam = true;
+            ScoresContentHandler.getInstance().requestFavouriteSearch(URL_TEAM_SEARCH, param, LISTENER_KEY, FAV_SEARCH_REQUEST_TAG);
+        }
+    }
 
     /**
      * Handle response from API and setup the corresponding arraylist
@@ -154,25 +185,47 @@ public class FavouriteContentHandler {
         favCricketTeams = prepareArrayList(CRICKET_FILTER_TEAM, UserUtil.getFavouriteFilters());
     }
 
+    private void prepareSearchList() {
+        //TODO
+        /**
+         * handle the response and setup
+         * the CRICKET_FILTER_TEAM first*/
+
+        favSearchTeams = new ArrayList<FavouriteItem>();
+        favSearchTeams = prepareArrayList(FAVOURITE_SEARCH, UserUtil.getFavouriteFilters());
+    }
 
     public ArrayList<FavouriteItem> getFavFootballLeagues() {
+        prepareFootballLeagues();
         return favFootballLeagues;
     }
 
     public ArrayList<FavouriteItem> getFavFootballTeams() {
+        prepareFootballTeams();
         return favFootballTeams;
     }
 
     public ArrayList<FavouriteItem> getFavFootballPlayers() {
+        prepareFootballPlayers();
         return favFootballPlayers;
     }
 
     public ArrayList<FavouriteItem> getFavCricketTeams() {
+        prepareCricketTeams();
         return favCricketTeams;
     }
 
     public ArrayList<FavouriteItem> getFavCricketPlayers() {
+        prepareCricketPlayers();
         return favCricketPlayers;
+    }
+
+    public ArrayList<FavouriteItem> getSearchList() {
+        return favSearchTeams;
+    }
+
+    public ArrayList<String> getSearchStringList() {
+        return FAVOURITE_SEARCH;
     }
 
     private ArrayList<FavouriteItem> prepareArrayList(ArrayList<String> networkList, ArrayList<String> localList) {
@@ -217,7 +270,7 @@ public class FavouriteContentHandler {
         ArrayList<JSONObject> list = new ArrayList<JSONObject>();
         list = FavouriteJsonParser.parseFavouriteList(content);
         if (list.size() > 0) {
-            matches=new ArrayList<JSONObject>(list);
+            matches = new ArrayList<JSONObject>(list);
             /*matches.addAll(list);*/
             success = true;
         } else {
@@ -242,6 +295,7 @@ public class FavouriteContentHandler {
 
         @Override
         public void handleContent(String tag, String content, int responseCode) {
+            Log.d("max", "inside Result" + "--Tag-" + tag + "--respo--" + responseCode + "-res-" + content);
             responseNum++;
             boolean success = false;
             if (responseCode == 200) {
@@ -306,26 +360,69 @@ public class FavouriteContentHandler {
                             }
                         }
                         prepareCricketPlayers();
+                    } else if (tag.equals(FAV_SEARCH_REQUEST_TAG)) {
+
+                        FAVOURITE_SEARCH = new ArrayList<String>();
+                        //TODO
+                        for (JSONObject obj : matches) {
+                            try {
+                                String s = null;
+                                if (isSearchTeam) {
+                                    s = obj.getString("team_name");
+                                } else if (isSearchLeague) {
+                                    s = obj.getString("league_name");
+                                } else if (isSearchPlayer) {
+                                    s = obj.getString("name");
+                                }
+                                Log.d("max", "inside Result--" + s);
+                                if (isSearchTeam) {
+                                    s = s.concat(Constants.NAV_TEAM);
+                                } else if (isSearchLeague) {
+                                    s = s.concat(Constants.NAV_COMP);
+                                }
+                                if (!FAVOURITE_SEARCH.contains(s)) {
+                                    FAVOURITE_SEARCH.add(s);
+                                }
+                            } catch (JSONException e) {
+                                for (ListPreparedListener l : listPreparedListener) {
+                                    l.onListPrepared(false);
+                                }
+                                e.printStackTrace();
+                            }
+                        }
+                        prepareSearchList();
+                        for (ListPreparedListener l : listPreparedListener) {
+                            l.onListPrepared(success);
+                        }
                     } else {
                         //nothing
                     }
                 } else {
-                }
-            } else {
-            }
-            if(responseNum==5){
-                boolean x=true;
-                for(boolean b:responseBool){
-                    if(!b){
-                        x=false;
+                    for (ListPreparedListener l : listPreparedListener) {
+                        l.onListPrepared(false);
                     }
                 }
-                for(ListPreparedListener l:listPreparedListener){
-                    isDisplay=x;
-                    l.onListPrepared(x);
+            } else {
+                for (ListPreparedListener l : listPreparedListener) {
+                    l.onListPrepared(false);
+                }
+            }
+            if (!tag.equals(FAV_SEARCH_REQUEST_TAG)){
+                if (responseNum == 5) {
+                    boolean x = true;
+                    for (boolean b : responseBool) {
+                        if (!b) {
+                            x = false;
+                        }
+                    }
+                    for (ListPreparedListener l : listPreparedListener) {
+                        isDisplay = x;
+                        l.onListPrepared(x);
+                    }
                 }
             }
         }
+
     }
 
     public interface ListPreparedListener {

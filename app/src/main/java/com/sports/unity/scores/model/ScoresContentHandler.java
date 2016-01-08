@@ -150,6 +150,11 @@ public class ScoresContentHandler {
         stringBuilder.append(parameters);
         return stringBuilder.toString();
     }
+    private String generateFavURL(String baseUrl,String parameters){
+        StringBuilder stringBuilder = new StringBuilder(baseUrl);
+        stringBuilder.append(parameters);
+        return stringBuilder.toString();
+    }
 
     private void cleanUp(){
         mapOfResponseListeners.clear();
@@ -158,6 +163,15 @@ public class ScoresContentHandler {
     
     public void requestFavouriteContent(String url,String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+            requestContent(requestTag, listenerKey, url);
+        } else {
+            //nothing
+        }
+    }
+
+    public void requestFavouriteSearch(String baseUrl,String params,String listenerKey, String requestTag){
+        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+            String url = generateFavURL(baseUrl,params);
             requestContent(requestTag, listenerKey, url);
         } else {
             //nothing
