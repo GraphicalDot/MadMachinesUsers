@@ -15,7 +15,7 @@
     <dimen name="horizontal_padding_large">45dp</dimen>
 
     <dimen name="vertical_padding_very_very_small">5dp</dimen>
-    <dimen name="vertical_padding_very_small">10dp</dimen>
+    <dimen name="vertical_padding_very_small">50dp</dimen>
     <dimen name="vertical_padding_small">16dp</dimen>
     <dimen name="vertical_padding_medium">30dp</dimen>
     <dimen name="vertical_padding_large">45dp</dimen>

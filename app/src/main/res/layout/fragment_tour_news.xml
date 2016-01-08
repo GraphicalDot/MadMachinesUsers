@@ -30,8 +30,8 @@
                 android:layout_weight="0.1"
                 android:gravity="center"
                 android:text="@string/tour_news_title"
-                android:paddingTop="20dp"
-                android:textSize="25dp"/>
+                android:paddingTop="@dimen/vertical_padding_small"
+                android:textSize="@dimen/font_size_large"/>
 
             <TextView
                 android:id="@+id/details"
