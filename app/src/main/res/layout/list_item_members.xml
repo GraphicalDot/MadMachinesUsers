@@ -16,7 +16,7 @@
             android:layout_height="@dimen/profile_thumb_image_small"
             android:layout_gravity="center"
             android:layout_marginLeft="@dimen/horizontal_padding_small"
-            android:layout_marginRight="6dp"
+            android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
             android:src="@drawable/ic_user" />
 
         <LinearLayout
@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/username"
                 android:textColor="@android:color/black"
-                android:textSize="15sp" />
+                android:textSize="@dimen/font_size_small_large" />
 
             <TextView
                 android:id="@+id/status"
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/activeStatus"
                 android:textColor="@color/last_msg"
-                android:textSize="10sp" />
+                android:textSize="@dimen/font_size_very_small" />
 
         </LinearLayout>
 

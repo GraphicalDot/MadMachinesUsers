@@ -10,10 +10,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginLeft="@dimen/horizontal_padding_small"
+        android:layout_marginRight="@dimen/horizontal_padding_small"
+        android:layout_marginTop="@dimen/vertical_padding_very_very_small"
         android:background="@drawable/chat_grey"
         android:orientation="vertical">
 
@@ -44,15 +43,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/singleMessageLeft"
-        android:layout_marginBottom="3dp"
-        android:layout_marginLeft="5dp">
+        android:layout_marginBottom="2dp"
+        >
 
         <TextView
             android:id="@+id/timestampLeft"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
-            android:layout_marginLeft="28dp"
+            android:layout_marginLeft="@dimen/horizontal_padding_medium"
             android:text="@string/group_chat_receive_time"
             android:textSize="@dimen/font_size_very_small" />
 
