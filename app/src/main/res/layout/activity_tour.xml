@@ -19,8 +19,8 @@
         android:orientation="horizontal"
         android:id="@+id/radiogroup"
         android:gravity="bottom"
-        android:paddingTop="5dp"
-        android:paddingBottom="20dp">
+        android:paddingTop="@dimen/vertical_padding_very_very_small"
+        android:paddingBottom="@dimen/vertical_padding_small">
 
         <RadioButton
             android:layout_width="wrap_content"
@@ -51,11 +51,11 @@
     <Button
         android:id="@+id/btn"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="?android:attr/actionBarSize"
         android:layout_gravity="bottom"
         android:background="@color/app_theme_blue"
         android:textColor="@color/ColorPrimary"
-        android:textSize="20dp"
+        android:textSize="@dimen/font_size_medium"
        />
     </LinearLayout>
 

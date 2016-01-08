@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/app_theme_blue"
-        android:elevation="2dp" />
+        android:elevation="@dimen/toolbar_elevation" />
 
     <View
         android:layout_width="fill_parent"

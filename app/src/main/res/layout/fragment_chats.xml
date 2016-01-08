@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:divider="@drawable/list_divider"
-        android:dividerHeight="0.3dp" />
+        android:dividerHeight="1dp" />
 
     <TextView
         android:id="@+id/empty"

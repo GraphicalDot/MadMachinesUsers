@@ -86,14 +86,14 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_pic"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
+            android:layout_width="@dimen/profile_thumb_image_large"
+            android:layout_height="@dimen/profile_thumb_image_large"
             android:layout_gravity="center_horizontal"
             android:background="@android:color/transparent"
-            android:paddingTop="16dp"
+            android:paddingTop="@dimen/vertical_padding_small"
             android:src="@drawable/ic_user"
             app:border_color="@color/gray3"
-            app:border_width="5dp" />
+            app:border_width="@dimen/circle_around_image_thickness" />
 
         <ProgressBar
             android:id="@+id/progressBarProfile"

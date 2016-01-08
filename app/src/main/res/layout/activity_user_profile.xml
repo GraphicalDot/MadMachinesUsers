@@ -18,10 +18,9 @@
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_picture"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="@dimen/profile_thumb_image_xlarge"
+            android:layout_height="@dimen/profile_thumb_image_xlarge"
             android:layout_gravity="center"
-            android:layout_marginRight="5dp"
             android:src="@drawable/ic_user" />
 
         <TextView
@@ -30,7 +29,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textColor="#000"
-            android:textSize="25dp"
+            android:textSize="@dimen/font_size_large"
             android:text="Hello"/>
 
         <LinearLayout
@@ -75,7 +74,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/ColorPrimary"
-                android:elevation="2dp"/>
+                android:elevation="@dimen/toolbar_elevation"/>
             <View
                 android:layout_width="fill_parent"
                 android:layout_height="2dp"
