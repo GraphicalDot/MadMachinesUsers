@@ -5,10 +5,9 @@
     android:orientation="horizontal">
     <TextView
         android:layout_width="wrap_content"
-        android:layout_height="@dimen/drawer_item_height"
+        android:layout_height="@dimen/drawer_header_height"
         android:textColor="@color/app_theme_blue"
-        android:textSize="@dimen/font_size_medium"
+        android:textSize="@dimen/font_size_small_large"
         android:id="@+id/itemheader"
-        android:gravity="left"
-        android:text="JKhjkhjkh"/>
+        android:gravity="left|center_vertical"/>
 </LinearLayout>

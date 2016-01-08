@@ -13,5 +13,5 @@
         android:maxLength="30"
         android:ellipsize="end"
         android:textColor="@color/text_color"
-        android:textSize="@dimen/font_size_medium" />
+        android:textSize="@dimen/font_size_small_medium" />
 </LinearLayout>

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sports.unity.R;
+import com.sports.unity.common.model.FontTypeface;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -47,7 +48,7 @@ public class NavListAdapter extends BaseExpandableListAdapter {
 
         textView = (TextView) convertView.findViewById(R.id.itemtext);
         textView.setText(child.get(childPosition));
-
+        //textView.setTypeface(FontTypeface.getInstance(act).getRobotoCondensedRegular());
         return convertView;
     }
 
@@ -66,6 +67,7 @@ public class NavListAdapter extends BaseExpandableListAdapter {
         }else{
             textView.setTextColor(act.getResources().getColor(R.color.app_theme_blue));
         }
+        textView.setTypeface(FontTypeface.getInstance(act).getRobotoCondensedBold());
         textView.setText(groupItems.get(groupPosition));
         return convertView;
     }
@@ -98,7 +100,7 @@ public class NavListAdapter extends BaseExpandableListAdapter {
     @Override
     public void onGroupCollapsed(int groupPosition) {
         super.onGroupCollapsed(groupPosition);
-        indiIm.setBackgroundResource(R.drawable.arrow_down);
+        indiIm.setImageResource(R.drawable.ic_side_nav_expand);
         editTeam.setVisibility(View.INVISIBLE);
 
     }
@@ -106,7 +108,7 @@ public class NavListAdapter extends BaseExpandableListAdapter {
     @Override
     public void onGroupExpanded(int groupPosition) {
         super.onGroupExpanded(groupPosition);
-        indiIm.setBackgroundResource(R.drawable.ic_arrow_up);
+        indiIm.setImageResource(R.drawable.ic_side_nav_collapse);
         editTeam.setVisibility(View.VISIBLE);
     }
 

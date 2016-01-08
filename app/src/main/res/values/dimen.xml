@@ -90,6 +90,8 @@
     <dimen name="circle_around_image_thickness">5dp</dimen>
 
     <!-- Navigation Drawer related -->
-    <dimen name="drawer_item_height">50dp</dimen>
-
+    <dimen name="drawer_header_height">50dp</dimen>
+    <dimen name="drawer_item_height">40dp</dimen>
+    <dimen name="group_indicator_margin_top">4dp</dimen>
+    group_indicator_margin_top
 </resources>

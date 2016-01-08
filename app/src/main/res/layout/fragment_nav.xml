@@ -17,37 +17,37 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/edit_team"
-            android:layout_marginTop="@dimen/nav_item_margin_v"
             android:divider="@null"
             android:scrollbars="none" />
 
         <TextView
             android:id="@+id/edit_team"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/fav_team"
-            android:layout_marginRight="@dimen/nav_item_margin"
-            android:layout_marginTop="3dp"
+            android:layout_height="@dimen/drawer_header_height"
             android:layout_toLeftOf="@+id/favindi"
-            android:text="@string/edit"
+            android:gravity="center"
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_small"
+            android:text="@string/nav_edit"
             android:textColor="@color/app_theme_blue"
-            android:textSize="@dimen/font_size_small_large"
+            android:textSize="@dimen/font_size_very_small"
             android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/favindi"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/drawer_header_height"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/nav_item_margin"
-            android:layout_marginTop="3dp"
-            android:background="@drawable/arrow_down" />
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_small"
+            android:scaleType="center"
+            android:src="@drawable/ic_side_nav_expand" />
     </RelativeLayout>
 
-    <ImageView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/divider_horizontal_textfield" />
+        android:layout_height="1dp"
+        android:background="@color/gray3"></LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -59,39 +59,39 @@
             android:id="@+id/complist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/nav_item_margin"
             android:layout_toLeftOf="@+id/edit_comp"
-            android:layout_marginTop="@dimen/nav_item_margin_v"
             android:divider="@null"
             android:scrollbars="none" />
-
-        <ImageView
-            android:id="@+id/compindi"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="@dimen/nav_item_margin"
-            android:layout_marginTop="3dp"
-            android:background="@drawable/arrow_down" />
 
         <TextView
             android:id="@+id/edit_comp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/complist"
-            android:layout_marginRight="@dimen/nav_item_margin"
-            android:layout_marginTop="3dp"
+            android:layout_height="@dimen/drawer_header_height"
             android:layout_toLeftOf="@+id/compindi"
-            android:text="@string/edit"
+            android:gravity="center"
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_small"
+            android:text="@string/nav_edit"
             android:textColor="@color/app_theme_blue"
-            android:textSize="@dimen/font_size_small_large"
+            android:textSize="@dimen/font_size_very_small"
             android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/compindi"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/drawer_header_height"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_small"
+            android:scaleType="center"
+            android:src="@drawable/ic_side_nav_expand" />
+
     </RelativeLayout>
 
-    <ImageView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/divider_horizontal_textfield" />
+        android:layout_height="1dp"
+        android:background="@color/gray3"></LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -103,28 +103,28 @@
         <TextView
             android:id="@+id/invite"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/drawer_item_height"
+            android:layout_height="@dimen/drawer_header_height"
             android:gravity="left"
             android:text="@string/invite_friend"
             android:textColor="@color/gray1"
-            android:textSize="@dimen/font_size_medium" />
+            android:textSize="@dimen/font_size_small_large" />
 
         <TextView
             android:id="@+id/rate"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/drawer_item_height"
+            android:layout_height="@dimen/drawer_header_height"
             android:gravity="left"
             android:text="@string/app_rate"
             android:textColor="@color/gray1"
-            android:textSize="@dimen/font_size_medium" />
+            android:textSize="@dimen/font_size_small_large" />
 
         <TextView
             android:id="@+id/feedback"
             android:layout_width="wrap_content"
-            android:layout_height="@dimen/drawer_item_height"
+            android:layout_height="@dimen/drawer_header_height"
             android:gravity="left"
             android:text="@string/feedback"
             android:textColor="@color/gray1"
-            android:textSize="@dimen/font_size_medium" />
+            android:textSize="@dimen/font_size_small_large" />
     </LinearLayout>
 </LinearLayout>

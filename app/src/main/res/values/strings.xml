@@ -150,5 +150,6 @@ Carrier SMS charges may apply.</string>
     <string name="location_turned_off_text">Your location services are turned off.</string>
     <string name="invite_friend">Invite Friend</string>
     <string name="app_rate">App Rate</string>
-    <string name="feedback">Feddback</string>
+    <string name="feedback">Feedback</string>
+    <string name="nav_edit">EDIT</string>
 </resources>
