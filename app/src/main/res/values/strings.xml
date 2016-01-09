@@ -51,11 +51,11 @@
     <string name="title_activity_filter">FilterActivity</string>
     <string name="title_activity_tour">TourActivity</string>
 
-    <string name="tour_score_details">Class aptent taciti sociosqu ad litora torquent per conubia nostra.</string>
+    <string name="tour_score_details">Get detailed analysis and overviews of all relevant matches from your favourite teams and competitions.</string>
     <string name="tour_score_title">Score</string>
-    <string name="tour_news_details">Class aptent taciti sociosqu ad litora torquent per conubia nostra.</string>
+    <string name="tour_news_details">Personalized sports news from thousands of sources.</string>
     <string name="tour_news_title">News</string>
-    <string name="tour_people_details">Class aptent taciti sociosqu ad litora torquent per conubia nostra.</string>
+    <string name="tour_people_details">Allows you to find people who love teams, players and leagues similar to the ones you appreciate.</string>
     <string name="tour_people_title">People Around You</string>
     <string name="basketball">Basketball</string>
     <string name="cricket">Cricket</string>

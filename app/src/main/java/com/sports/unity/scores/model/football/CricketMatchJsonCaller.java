@@ -48,12 +48,24 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         return jsonObject.getString("match_format");
     }
 
-    public String getTeam1Score() throws JSONException {
-        return jsonObject.getString("team_1_score");
+    public JSONObject getTeam1Score() throws JSONException {
+        return jsonObject.getJSONObject("team_1_score");
     }
 
-    public String getTeam2Score() throws JSONException {
-        return jsonObject.getString("team_2_score");
+    public JSONObject getTeam2Score() throws JSONException {
+        return jsonObject.getJSONObject("team_2_score");
+    }
+
+    public String getScore(JSONObject jsonObject) throws JSONException {
+        return jsonObject.getString("score");
+    }
+
+    public String getOvers(JSONObject jsonObject) throws JSONException {
+        return jsonObject.getString("overs");
+    }
+
+    public String getWickets(JSONObject jsonObject) throws JSONException {
+        return jsonObject.getString("wickets");
     }
 
 }

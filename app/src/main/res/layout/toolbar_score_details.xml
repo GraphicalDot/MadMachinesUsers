@@ -10,18 +10,38 @@
     <ImageView
         android:id="@+id/back_img"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:scaleType="fitXY"
+        android:layout_height="match_parent"
+        android:paddingRight="@dimen/horizontal_padding_small"
+        android:scaleType="center"
         android:src="@drawable/ic_menu_back" />
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <ImageView
+            android:id="@+id/refresh"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_small"
+            android:scaleType="center"
+            android:src="@drawable/ic_refresh_white" />
         <TextView
             android:id="@+id/toolbar_title"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toLeftOf="@id/refresh"
+            android:gravity="left|center_vertical"
             android:paddingLeft="@dimen/vertical_padding_very_small"
             android:singleLine="true"
+            android:text=""
             android:textColor="@color/ColorPrimary"
             android:textSize="@dimen/font_size_small_large" />
+
+    </RelativeLayout>
+
 
 </android.support.v7.widget.Toolbar>

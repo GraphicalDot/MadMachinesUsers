@@ -142,8 +142,11 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
                     holder.liveText.setVisibility(View.GONE);
 
-                    holder.t1score.setText( cricketMatchJsonCaller.getTeam1Score());
-                    holder.t2score.setText( cricketMatchJsonCaller.getTeam2Score());
+                    JSONObject score = cricketMatchJsonCaller.getTeam1Score();
+                    holder.t1score.setText( cricketMatchJsonCaller.getScore(score));
+
+                    score = cricketMatchJsonCaller.getTeam2Score();
+                    holder.t2score.setText( cricketMatchJsonCaller.getScore(score));
                 } else if ( cricketMatchJsonCaller.getStatus().equals("notstarted") ) {
                     holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
                     holder.liveText.setVisibility(View.GONE);
@@ -155,8 +158,11 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     holder.liveText.setVisibility(View.VISIBLE);
                     holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
 
-                    holder.t1score.setText( cricketMatchJsonCaller.getTeam1Score());
-                    holder.t2score.setText( cricketMatchJsonCaller.getTeam2Score());
+                    JSONObject score = cricketMatchJsonCaller.getTeam1Score();
+                    holder.t1score.setText( cricketMatchJsonCaller.getScore(score));
+
+                    score = cricketMatchJsonCaller.getTeam2Score();
+                    holder.t2score.setText( cricketMatchJsonCaller.getScore(score));
                 }
 
                 if( isLive ){

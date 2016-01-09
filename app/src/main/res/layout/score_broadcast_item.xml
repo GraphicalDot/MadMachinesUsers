@@ -1,24 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:paddingBottom="@dimen/horizontal_padding_very_very_small"
-    android:paddingTop="@dimen/horizontal_padding_very_very_small">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:layout_marginBottom="1dp"
+    >
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/gray3"
         android:paddingTop="@dimen/horizontal_padding_very_small"
         android:paddingBottom="@dimen/horizontal_padding_very_small"
         android:paddingLeft="@dimen/horizontal_padding_medium"
-        android:paddingRight="@dimen/horizontal_padding_medium">
+        android:paddingRight="@dimen/horizontal_padding_medium"
+        android:orientation="horizontal"
+        >
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/grey_ring"
+                />
+            <TextView
+                android:id="@+id/comment_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="@dimen/font_size_very_small"
+                android:text="0"
+                />
+        </FrameLayout>
+
 
         <TextView
             android:id="@+id/broadcast"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/horizontal_padding_medium"
             android:textSize="@dimen/font_size_small_medium"
-            android:text="@string/tour_news_details"/>
-    </FrameLayout>
+            android:text=""/>
+    </LinearLayout>
 
 </LinearLayout>

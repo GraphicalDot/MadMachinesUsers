@@ -18,7 +18,9 @@
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:background="@color/gray3"
-           android:orientation="vertical">
+           android:orientation="vertical"
+           android:elevation="@dimen/toolbar_elevation"
+           >
 
            <TextView
                android:id="@+id/venue"
@@ -44,37 +46,63 @@
 
        </LinearLayout>
 
-        <LinearLayout
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/gray3"
             android:orientation="horizontal"
             android:paddingTop="@dimen/vertical_padding_medium"
             android:paddingBottom="@dimen/vertical_padding_medium"
+            android:paddingLeft="@dimen/horizontal_padding_large"
+            android:paddingRight="@dimen/horizontal_padding_large"
             android:gravity="center">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center">
-                <ImageView
-                    android:id="@+id/team1_image"
-                    android:layout_width="@dimen/flag_size_large"
-                    android:layout_height="@dimen/flag_size_large"
+                android:layout_gravity="left"
+                >
 
-                    />
+                <LinearLayout
+                    android:id="@+id/flag1_parent_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left"
+                    android:gravity="center">
+                    <ImageView
+                        android:id="@+id/team1_image"
+                        android:layout_width="@dimen/flag_size_large"
+                        android:layout_height="@dimen/flag_size_large"
+                        />
+                    <TextView
+                        android:id="@+id/team1_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="@dimen/font_size_small_large"
+                        android:paddingLeft="@dimen/horizontal_padding_very_small"
+                        />
+                </LinearLayout>
                 <TextView
                     android:id="@+id/team1_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="left"
                     android:text=""
-                    android:textSize="@dimen/font_size_small_large"/>
+                    android:textColor="@color/gray1"
+                    android:textSize="@dimen/font_size_small_medium"
+                    android:singleLine="true"
+                    android:maxLength="30"
+                    />
             </LinearLayout>
 
             <TextView
-                android:id="@+id/score"
+                android:id="@+id/central_score"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text=""
                 android:paddingLeft="@dimen/horizontal_padding_small"
                 android:paddingRight="@dimen/horizontal_padding_small"
@@ -84,21 +112,44 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:gravity="center">
-                <ImageView
-                    android:id="@+id/team2_image"
-                    android:layout_width="@dimen/flag_size_large"
-                    android:layout_height="@dimen/flag_size_large"
-                    />
+                android:layout_gravity="right"
+                >
+
+                <LinearLayout
+                    android:id="@+id/flag2_parent_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left"
+                    android:gravity="center">
+                    <ImageView
+                        android:id="@+id/team2_image"
+                        android:layout_width="@dimen/flag_size_large"
+                        android:layout_height="@dimen/flag_size_large"
+                        />
+                    <TextView
+                        android:id="@+id/team2_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="@dimen/font_size_small_large"
+                        android:paddingLeft="@dimen/horizontal_padding_very_small"
+                        />
+                </LinearLayout>
                 <TextView
                     android:id="@+id/team2_name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="left"
                     android:text=""
-                    android:textSize="@dimen/font_size_small_large"/>
+                    android:textSize="@dimen/font_size_small_medium"
+                    android:textColor="@color/gray1"
+                    android:singleLine="true"
+                    android:maxLength="30"
+                    />
 
             </LinearLayout>
-        </LinearLayout>
+        </FrameLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -109,13 +160,14 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="@dimen/vertical_padding_very_small"
         >
         <android.support.v7.widget.RecyclerView
             android:id="@+id/my_recycler_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical" />
+            android:scrollbars="vertical"
+            android:background="@color/gray3"
+            />
         <ProgressBar
             android:id="@+id/progress"
             android:layout_width="wrap_content"
@@ -126,6 +178,15 @@
             android:id="@+id/error"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            />
+        <TextView
+            android:id="@+id/no_comments"
+            android:text="No Comments"
+            android:textSize="@dimen/font_size_large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
             />
     </FrameLayout>
 

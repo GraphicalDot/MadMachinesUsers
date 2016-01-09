@@ -5,7 +5,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -57,6 +59,12 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
         sportsType = getIntent().getStringExtra(Constants.INTENT_KEY_TYPE);
         matchId = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
 
+//        sportsType = ScoresJsonParser.FOOTBALL;
+//        matchId = "2138018";
+
+//        sportsType = ScoresJsonParser.CRICKET;
+//        matchId = "bblt20_2015_g22";
+
         initToolbar();
         initView();
     }
@@ -70,7 +78,7 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
         {
             Log.i("Score Detail", "Through Resume");
 
-            showProgress();
+            showProgress(false);
             requestMatchScoreDetails();
 //            requestContent();
         }
@@ -91,9 +99,9 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
         ((TextView)findViewById(R.id.venue)).setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.setHasFixedSize(false);
 
-        BroadcastListAdapter mAdapter = new BroadcastListAdapter(commentaries, this);
+        BroadcastListAdapter mAdapter = new BroadcastListAdapter(sportsType, commentaries, this);
         mRecyclerView.setAdapter(mAdapter);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
@@ -103,12 +111,24 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
 
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+
         ImageView back_arrow = (ImageView) toolbar.findViewById(R.id.back_img);
         back_arrow.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 finish();
+            }
+
+        });
+
+        ImageView refreshImageView = (ImageView) toolbar.findViewById(R.id.refresh);
+        refreshImageView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                requestMatchScoreDetails();
+                showProgress(true);
             }
 
         });
@@ -125,15 +145,14 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
                 cricketMatchJsonCaller.setJsonObject(matchScoreDetails);
 
                 stringBuilder.append(cricketMatchJsonCaller.getTeam1());
-                stringBuilder.append(" V" +
-                        "S ");
+                stringBuilder.append(" v/s ");
                 stringBuilder.append(cricketMatchJsonCaller.getTeam2());
 
             } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
                 footballMatchJsonCaller.setJsonObject(matchScoreDetails);
 
                 stringBuilder.append(footballMatchJsonCaller.getHomeTeam());
-                stringBuilder.append(" VS ");
+                stringBuilder.append(" v/s ");
                 stringBuilder.append(footballMatchJsonCaller.getAwayTeam());
             }
         } catch (Exception ex) {
@@ -148,9 +167,10 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
         mRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
-    private void renderScores(){
+    private boolean renderScores(){
         Log.i("Score Detail", "Render Scores");
 
+        boolean requestCommentaries = false;
         if ( sportsType.equals(ScoresJsonParser.CRICKET) ) {
             cricketMatchJsonCaller.setJsonObject(matchScoreDetails);
 
@@ -178,10 +198,25 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
                 Glide.with(this).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(flag1);
                 Glide.with(this).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(flag2);
 
+                findViewById(R.id.central_score).setVisibility(View.GONE);
+
                 ((TextView)findViewById(R.id.venue)).setText(cricketMatchJsonCaller.getVenue());
                 ((TextView)findViewById(R.id.date)).setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
 
                 if ( cricketMatchJsonCaller.getStatus().equals("notstarted") ) {
+                    showNoCommentaries();
+
+//                    {
+//                        textView = (TextView) findViewById(R.id.team1_score);
+//                        textView.setText("234/7 (20)");
+//
+//                    }
+//
+//                    {
+//                        textView = (TextView) findViewById(R.id.team2_score);
+//                        textView.setText("76/2 (12)");
+//
+//                    }
 
                 } else {
                     if ( cricketMatchJsonCaller.getStatus().equals("completed") ) {
@@ -190,12 +225,39 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
 
                     }
 
-                    StringBuilder score = new StringBuilder();
-                    score.append(cricketMatchJsonCaller.getTeam1Score());
-                    score.append("-");
-                    score.append(cricketMatchJsonCaller.getTeam2Score());
-                    textView = (TextView) findViewById(R.id.score);
-                    textView.setText(score.toString());
+                    {
+                        JSONObject scoreJsonObject = cricketMatchJsonCaller.getTeam1Score();
+                        StringBuilder stringBuilder = new StringBuilder("");
+                        stringBuilder.append(cricketMatchJsonCaller.getScore(scoreJsonObject));
+                        stringBuilder.append("/");
+                        stringBuilder.append(cricketMatchJsonCaller.getWickets(scoreJsonObject));
+                        stringBuilder.append(" (");
+                        stringBuilder.append(cricketMatchJsonCaller.getOvers(scoreJsonObject));
+                        stringBuilder.append(")");
+
+                        textView = (TextView) findViewById(R.id.team1_score);
+                        textView.setText(stringBuilder.toString());
+
+                        textView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+                    }
+
+                    {
+                        JSONObject scoreJsonObject = cricketMatchJsonCaller.getTeam2Score();
+                        StringBuilder stringBuilder = new StringBuilder("");
+                        stringBuilder.append(cricketMatchJsonCaller.getScore(scoreJsonObject));
+                        stringBuilder.append("/");
+                        stringBuilder.append(cricketMatchJsonCaller.getWickets(scoreJsonObject));
+                        stringBuilder.append(" (");
+                        stringBuilder.append(cricketMatchJsonCaller.getOvers(scoreJsonObject));
+                        stringBuilder.append(")");
+
+                        textView = (TextView) findViewById(R.id.team2_score);
+                        textView.setText(stringBuilder.toString());
+
+                        textView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+                    }
+
+                    requestCommentaries = true;
                 }
 
             }catch (Exception ex){
@@ -203,6 +265,18 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
             }
         } else if ( sportsType.equals(ScoresJsonParser.FOOTBALL) ) {
             footballMatchJsonCaller.setJsonObject(matchScoreDetails);
+
+            {
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.FILL_PARENT);
+                params.gravity = Gravity.CENTER;
+                ((ViewGroup) findViewById(R.id.flag1_parent_layout)).setLayoutParams(params);
+            }
+            {
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.FILL_PARENT);
+                params.gravity = Gravity.CENTER;
+                ((ViewGroup) findViewById(R.id.flag2_parent_layout)).setLayoutParams(params);
+            }
+
 
             try {
                 Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000)));
@@ -228,11 +302,14 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
                 Glide.with(this).load(footballMatchJsonCaller.getHomeTeamFlag()).placeholder(R.drawable.ic_no_img).into(flag1);
                 Glide.with(this).load(footballMatchJsonCaller.getAwayTeamFlag()).placeholder(R.drawable.ic_no_img).into(flag2);
 
+                findViewById(R.id.team1_score).setVisibility(View.GONE);
+                findViewById(R.id.team2_score).setVisibility(View.GONE);
+
                 ((TextView)findViewById(R.id.venue)).setText(footballMatchJsonCaller.getStadium());
                 ((TextView)findViewById(R.id.date)).setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
 
                 if ("?".equals(footballMatchJsonCaller.getAwayTeamScore())) {
-
+                    showNoCommentaries();
                 } else {
                     if( footballMatchJsonCaller.isLive() ){
 
@@ -242,10 +319,13 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
 
                     StringBuilder score = new StringBuilder();
                     score.append(footballMatchJsonCaller.getHomeTeamScore());
-                    score.append("-");
+                    score.append(" - ");
                     score.append(footballMatchJsonCaller.getAwayTeamScore());
-                    textView = (TextView) findViewById(R.id.score);
+
+                    textView = (TextView)findViewById(R.id.central_score);
                     textView.setText(score.toString());
+
+                    requestCommentaries = true;
                 }
 
             }catch (Exception ex){
@@ -253,6 +333,11 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
             }
         }
 
+        return requestCommentaries;
+    }
+
+    private void showNoCommentaries(){
+        findViewById(R.id.no_comments).setVisibility(View.VISIBLE);
     }
 
     private boolean handleCommentaries(String content){
@@ -297,7 +382,9 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
 
         hideErrorLayout();
 
-        ScoresContentHandler.getInstance().requestCommentaryOnMatch( sportsType, matchId, REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
+        ScoresContentHandler.getInstance().requestCommentaryOnMatch(sportsType, matchId, REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
+//        ScoresContentHandler.getInstance().requestCommentaryOnMatch( sportsType, "bblt20_2015_g22", REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
+//        ScoresContentHandler.getInstance().requestCommentaryOnMatch( ScoresJsonParser.FOOTBALL, "2138018", REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
     }
 
     private void initErrorLayout(){
@@ -320,6 +407,8 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
     private void hideErrorLayout(){
         LinearLayout errorLayout = (LinearLayout) findViewById(R.id.error);
         errorLayout.setVisibility(View.GONE);
+
+        findViewById(R.id.no_comments).setVisibility(View.GONE);
     }
 
     private void addResponseListener(){
@@ -335,8 +424,8 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
     }
 
-    private void showProgress(){
-        if( commentaries.size() == 0 ) {
+    private void showProgress(boolean force){
+        if( commentaries.size() == 0 || force ) {
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
             progressBar.setVisibility(View.VISIBLE);
         }
@@ -360,11 +449,11 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
                         ScoreDetailActivity.this.renderComments();
                     } else {
                         Log.i("Score Detail", "Error In Handling Content");
-//                        showErrorLayout();
+                        showNoCommentaries();
                     }
                 } else {
                     Log.i("Score Detail", "Error In Response");
-//                    showErrorLayout();
+                    showErrorLayout();
                 }
 
                 hideProgress();
@@ -378,9 +467,13 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
                         hideErrorLayout();
 
                         ScoreDetailActivity.this.setTitle();
-                        ScoreDetailActivity.this.renderScores();
-
-                        ScoreDetailActivity.this.requestMatchCommentaries();
+                        boolean requestCommentaries = ScoreDetailActivity.this.renderScores();
+                        if( requestCommentaries ){
+                            ScoreDetailActivity.this.requestMatchCommentaries();
+                        } else {
+                            ScoreDetailActivity.this.requestMatchCommentaries();
+//                            hideProgress();
+                        }
                     } else {
                         Log.i("Score Detail", "Error In Handling Content");
                         showErrorLayout();
