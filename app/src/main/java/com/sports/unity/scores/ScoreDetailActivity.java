@@ -31,6 +31,8 @@ import org.w3c.dom.Text;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ScoreDetailActivity extends CustomAppCompatActivity {
 
@@ -48,6 +50,8 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
 
     private String sportsType = null;
     private String matchId = null;
+
+    private Timer timerToRefreshContent = null;
 
     private RecyclerView mRecyclerView = null;
 
@@ -89,6 +93,7 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
         super.onPause();
 
         removeResponseListener();
+        disableAutoRefreshContent();
     }
 
     private void initView() {
@@ -206,23 +211,11 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
                 if ( cricketMatchJsonCaller.getStatus().equals("notstarted") ) {
                     showNoCommentaries();
 
-//                    {
-//                        textView = (TextView) findViewById(R.id.team1_score);
-//                        textView.setText("234/7 (20)");
-//
-//                    }
-//
-//                    {
-//                        textView = (TextView) findViewById(R.id.team2_score);
-//                        textView.setText("76/2 (12)");
-//
-//                    }
-
                 } else {
                     if ( cricketMatchJsonCaller.getStatus().equals("completed") ) {
 
                     } else {
-
+                        enableAutoRefreshContent();
                     }
 
                     {
@@ -312,7 +305,7 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
                     showNoCommentaries();
                 } else {
                     if( footballMatchJsonCaller.isLive() ){
-
+                        enableAutoRefreshContent();
                     } else {
 
                     }
@@ -334,6 +327,31 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
         }
 
         return requestCommentaries;
+    }
+
+    private void disableAutoRefreshContent(){
+        if( timerToRefreshContent != null ){
+            timerToRefreshContent.cancel();
+            timerToRefreshContent = null;
+        }
+    }
+
+    private void enableAutoRefreshContent(){
+        disableAutoRefreshContent();
+
+        timerToRefreshContent = new Timer();
+        timerToRefreshContent.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                autoRefreshCall();
+            }
+
+        }, 60000, 60000);
+    }
+
+    private void autoRefreshCall(){
+        requestMatchScoreDetails();
     }
 
     private void showNoCommentaries(){
