@@ -22,6 +22,7 @@
 
 package com.sports.unity.messages.controller.activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -314,7 +315,11 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         if( cameraId == Camera.CameraInfo.CAMERA_FACING_BACK ) {
             recorder.setOrientationHint(90);
         } else {
-            recorder.setOrientationHint(270);
+            if( mPreview.cameraOrientation == 90 ){
+                recorder.setOrientationHint(270);
+            } else if( mPreview.cameraOrientation == 270 ){
+                recorder.setOrientationHint(90);
+            }
         }
 
         mCamera.unlock();
@@ -411,12 +416,13 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             tempView.setBackgroundColor(getResources().getColor(R.color.semi_transparent));
         }
 
-        {
+        if (getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH)) {
             View tempView = findViewById(R.id.flash);
             tempView.setVisibility(View.VISIBLE);
         }
 
-        {
+        int cameraCount = Camera.getNumberOfCameras();
+        if( cameraCount == 2 ){
             View tempView = findViewById(R.id.switch_camera);
             tempView.setVisibility(View.VISIBLE);
         }
@@ -552,10 +558,10 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
             Matrix matrix = new Matrix();
             if( cameraId == Camera.CameraInfo.CAMERA_FACING_BACK ) {
-                matrix.postRotate(90);
+                matrix.postRotate(mPreview.cameraOrientation);
             } else {
                 matrix.preScale( -1, 1);
-                matrix.postRotate(90);
+                matrix.postRotate(mPreview.cameraOrientation);
             }
 
             Log.i("Captured Image Size ", originalBitmap.getWidth() + " : " + originalBitmap.getHeight());
@@ -727,6 +733,64 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
     }
 
+    private void setFocusMode(Camera.Parameters parameters){
+        List<String> supportedFocusMode = parameters.getSupportedFocusModes();
+        if( supportedFocusMode != null && supportedFocusMode.size() > 0 ) {
+            String focusMode = null;
+            if (supportedFocusMode.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                focusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
+            } else if (supportedFocusMode.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+                focusMode = Camera.Parameters.FOCUS_MODE_AUTO;
+            } else if (supportedFocusMode.contains(Camera.Parameters.FOCUS_MODE_INFINITY)) {
+                focusMode = Camera.Parameters.FOCUS_MODE_INFINITY;
+            } else {
+                focusMode = supportedFocusMode.get(0);
+            }
+
+            parameters.setFocusMode(focusMode);
+        } else {
+            //nothing
+        }
+    }
+
+    private void setFlashMode(Camera.Parameters parameters){
+        List<String> supportedFlashModes = parameters.getSupportedFlashModes();
+        if( supportedFlashModes != null && supportedFlashModes.size() > 0 ) {
+            if( supportedFlashModes.contains(flashStatus) ) {
+                parameters.setFlashMode(flashStatus);
+            } else {
+                //nothing
+            }
+        } else {
+            //nothing
+        }
+    }
+
+    public static int getCameraDisplayOrientation(Activity activity, int cameraId, android.hardware.Camera camera) {
+        android.hardware.Camera.CameraInfo info = new android.hardware.Camera.CameraInfo();
+        android.hardware.Camera.getCameraInfo(cameraId, info);
+
+        int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+        int degrees = 0;
+
+        switch (rotation) {
+            case Surface.ROTATION_0: degrees = 0; break;
+            case Surface.ROTATION_90: degrees = 90; break;
+            case Surface.ROTATION_180: degrees = 180; break;
+            case Surface.ROTATION_270: degrees = 270; break;
+        }
+
+        int result;
+        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+            result = (info.orientation + degrees) % 360;
+            result = (360 - result) % 360;  // compensate the mirror
+        } else {  // back-facing
+            result = (info.orientation - degrees + 360) % 360;
+        }
+
+        return result;
+    }
+
     class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
 
         // SurfaceHolder
@@ -786,7 +850,10 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         private void setCamera(Camera camera) {
             mCamera = camera;
 
-            computeCameraOrientation();
+//            computeCameraOrientation();
+            cameraOrientation = getCameraDisplayOrientation( NativeCameraActivity.this, cameraId, mCamera);
+            camera.setDisplayOrientation(cameraOrientation);
+            Log.d("Native Camera", "Camera Display orientation " + cameraOrientation);
 
             Display display = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
@@ -794,9 +861,11 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             mPreviewSize = getBestAspectPreviewSize( display.getWidth(), display.getHeight(), mCamera.getParameters());
 
             Camera.Parameters parameters = mCamera.getParameters();
-            parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
-            parameters.setFlashMode(flashStatus);
-            parameters.setPictureSize( mPreviewSize.width, mPreviewSize.height);
+
+            setFocusMode(parameters);
+            setFlashMode(parameters);
+
+            parameters.setPictureSize(mPreviewSize.width, mPreviewSize.height);
             parameters.setPictureFormat(PixelFormat.JPEG);
             parameters.setJpegQuality(85);
             mCamera.setParameters(parameters);
@@ -945,7 +1014,8 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             Collections.sort(sizes, Collections.reverseOrder(new SizeComparator()));
 
 
-            for (Camera.Size size : sizes) {
+            for ( int index=0; index < 4 && index < sizes.size() ; index++ ) {
+                Camera.Size size = sizes.get(index);
                 double ratio = (double) size.width / size.height;
 
                 if (Math.abs(ratio - targetRatio) < minDiff) {

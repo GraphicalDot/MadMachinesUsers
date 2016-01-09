@@ -5,7 +5,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
 import android.os.Environment;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
@@ -209,8 +211,15 @@ public class DBUtil {
     }
 
     private static String getExternalStorageDirectoryPath(Context context){
-        StringBuilder stringBuilder = new StringBuilder( context.getExternalFilesDir(Environment.DIRECTORY_DOCUMENTS).getAbsolutePath());
-        return stringBuilder.toString();
+        String path = null;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            path = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        } else {
+            path = Environment.getExternalStorageDirectory().getAbsolutePath();
+        }
+
+        return path;
     }
 
 }
