@@ -284,7 +284,6 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             discardContent();
         } else if( id == R.id.send_camera_content ) {
             handleSendMedia();
-            finish();
         } else if( id == R.id.flash ) {
             changeFlashStatus();
             changeFlashContent();
@@ -673,6 +672,15 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             public void postAction(Object object) {
                 String fileName = (String)object;
                 addActionToCorrespondingActivity(ActivityActionHandler.CHAT_SCREEN_KEY, contentMimeType, fileName, this.object);
+
+                NativeCameraActivity.this.runOnUiThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        NativeCameraActivity.this.finish();
+                    }
+
+                });
             }
 
         }.start();
