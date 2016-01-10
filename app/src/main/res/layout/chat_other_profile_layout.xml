@@ -59,7 +59,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:textColor="@color/custom_black_distace" />
+                    android:textColor="@color/custom_black_distace"
+                    android:textSize="@dimen/font_size_small_large"
+                    />
 
                 <ImageView
                     android:id="@+id/dot"
@@ -73,7 +75,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:textColor="@color/gray4" />
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/font_size_small_large"
+                    />
             </LinearLayout>
 
             <Button

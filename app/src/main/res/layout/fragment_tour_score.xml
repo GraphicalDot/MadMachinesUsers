@@ -40,7 +40,9 @@
             android:paddingLeft="@dimen/vertical_padding_medium"
             android:paddingRight="@dimen/vertical_padding_medium"
             android:textColor="@color/text_color"
-            android:text="@string/tour_score_details"/>
+            android:text="@string/tour_score_details"
+            android:textSize="@dimen/font_size_small_large"
+            />
     </LinearLayout>
 
 </FrameLayout>

@@ -21,6 +21,7 @@
         android:layout_height="wrap_content"
         android:text="Record"
         android:textColor="@android:color/white"
+        android:textSize="@dimen/font_size_small_large"
         android:layout_centerInParent="true"
         android:layout_gravity="center" />
     <TextView
@@ -33,6 +34,7 @@
         android:gravity="center"
         android:text="00:00"
         android:textColor="@color/messages_bg"
+        android:textSize="@dimen/font_size_small_large"
         />
 
     <ImageButton
@@ -48,6 +50,7 @@
         android:layout_height="wrap_content"
         android:text="Release to cancel recording"
         android:textColor="@android:color/white"
+        android:textSize="@dimen/font_size_small_large"
         android:layout_above="@id/record_button_white"
         android:gravity="center"
         android:paddingBottom="@dimen/vertical_padding_small"
@@ -58,6 +61,7 @@
         android:layout_height="wrap_content"
         android:text="00:00"
         android:textColor="@android:color/holo_red_light"
+        android:textSize="@dimen/font_size_small_large"
         android:layout_centerInParent="true"
         android:layout_gravity="center" />
 

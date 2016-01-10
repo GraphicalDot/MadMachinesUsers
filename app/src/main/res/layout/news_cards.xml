@@ -94,7 +94,9 @@
                 android:paddingBottom="@dimen/vertical_padding_very_small"
                 android:paddingLeft="@dimen/vertical_padding_very_small"
                 android:paddingRight="@dimen/vertical_padding_very_small"
-                android:textColor="@color/news_data" />
+                android:textColor="@color/news_data"
+                android:textSize="@dimen/font_size_small_large"
+                />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 

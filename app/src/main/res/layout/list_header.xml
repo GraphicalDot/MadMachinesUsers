@@ -7,4 +7,6 @@
     android:paddingTop="2dip"
     android:paddingBottom="2dip"
     android:paddingLeft="5dip"
-    android:background="@android:color/white" />
+    android:background="@android:color/white"
+    android:textSize="@dimen/font_size_small_large"
+    />

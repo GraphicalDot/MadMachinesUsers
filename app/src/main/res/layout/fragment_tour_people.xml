@@ -40,7 +40,9 @@
             android:paddingRight="@dimen/vertical_padding_medium"
             android:gravity="center"
             android:textColor="@color/text_color"
-            android:text="@string/tour_people_details"/>
+            android:text="@string/tour_people_details"
+            android:textSize="@dimen/font_size_small_large"
+            />
     </LinearLayout>
 
 </FrameLayout>
