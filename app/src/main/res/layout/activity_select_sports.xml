@@ -36,6 +36,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="next"
+            android:textSize="@dimen/font_size_small_large"
             style="?android:attr/borderlessButtonStyle"
             android:textColor="@android:color/white"
             android:background="@android:color/transparent"

@@ -112,7 +112,9 @@
                     android:editable="false"
                     android:padding="@dimen/horizontal_padding_very_small"
                     android:text="@string/country_code"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_size_medium"
+                    />
 
                 <EditText
                     android:id="@+id/phoneNumber"
@@ -127,6 +129,7 @@
                     android:maxLength="10"
                     android:padding="@dimen/horizontal_padding_very_small"
                     android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_size_medium"
                     android:textCursorDrawable="@null" />
 
                 <Button

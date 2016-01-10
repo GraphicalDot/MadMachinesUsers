@@ -59,7 +59,9 @@
             android:paddingLeft="@dimen/horizontal_padding_very_very_small"
             android:singleLine="true"
             android:textColor="#000"
-            android:textColorHint="@color/news_data"/>
+            android:textColorHint="@color/news_data"
+            android:textSize="@dimen/font_size_medium"
+            />
 
         <ImageView
             android:id="@+id/search_close"

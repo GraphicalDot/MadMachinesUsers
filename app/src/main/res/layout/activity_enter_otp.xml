@@ -42,7 +42,9 @@
                 android:maxLength="4"
                 android:maxLines="1"
                 android:textColor="@android:color/white"
-                android:textCursorDrawable="@null"/>
+                android:textCursorDrawable="@null"
+                android:textSize="@dimen/font_size_medium"
+                />
 
             <Button
                 android:id="@+id/sendOtpButton"
@@ -75,7 +77,9 @@
             android:layout_centerHorizontal="true"
             android:background="@android:color/transparent"
             android:text="@string/btn_resend"
-            android:textColor="@color/ColorPrimary" />
+            android:textColor="@color/ColorPrimary"
+            android:textSize="@dimen/font_size_small_large"
+            />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -125,7 +129,9 @@
                 android:layout_alignParentTop="true"
                 android:background="@android:color/transparent"
                 android:text="@string/edit_phone_number"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_small_large"
+                />
         </LinearLayout>
 
         <ProgressBar

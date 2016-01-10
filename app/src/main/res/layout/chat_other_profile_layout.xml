@@ -86,7 +86,9 @@
                 android:layout_height="wrap_content"
                 android:background="@color/app_theme_blue"
                 android:text="Say Hello"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_small_large"
+                />
         </LinearLayout>
 
         <de.hdodenhof.circleimageview.CircleImageView

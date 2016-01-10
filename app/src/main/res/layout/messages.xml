@@ -29,7 +29,9 @@
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:text="@string/friends"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_small_large"
+                />
 
             <Button
                 android:id="@+id/btn_contacts"
@@ -39,7 +41,9 @@
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:text="@string/contacts"
-                android:textColor="@color/app_theme_blue" />
+                android:textColor="@color/app_theme_blue"
+                android:textSize="@dimen/font_size_small_large"
+                />
 
             <Button
                 android:id="@+id/btn_others"
@@ -49,7 +53,9 @@
                 android:layout_weight="1"
                 android:background="@android:color/transparent"
                 android:text="@string/others"
-                android:textColor="@color/app_theme_blue" />
+                android:textColor="@color/app_theme_blue"
+                android:textSize="@dimen/font_size_small_large"
+                />
         </LinearLayout>
 
     </LinearLayout>

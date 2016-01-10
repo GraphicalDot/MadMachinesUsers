@@ -47,7 +47,9 @@
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:text="FOOTBALL"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_size_small_large"
+                    />
 
                 <Button
                     android:id="@+id/people_cricket_interest"
@@ -56,7 +58,9 @@
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:text="CRICKET"
-                    android:textColor="@color/app_theme_blue" />
+                    android:textColor="@color/app_theme_blue"
+                    android:textSize="@dimen/font_size_small_large"
+                    />
             </LinearLayout>
 
 

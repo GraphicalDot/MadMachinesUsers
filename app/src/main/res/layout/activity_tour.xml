@@ -55,7 +55,7 @@
         android:layout_gravity="bottom"
         android:background="@color/app_theme_blue"
         android:textColor="@color/ColorPrimary"
-        android:textSize="@dimen/font_size_medium"
+        android:textSize="@dimen/font_size_small_large"
        />
     </LinearLayout>
 

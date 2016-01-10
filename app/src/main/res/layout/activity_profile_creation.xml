@@ -69,7 +69,9 @@
                         android:background="@android:color/transparent"
                         android:clickable="false"
                         android:text="USE MY FACEBOOK DETAILS"
-                        android:textColor="@color/ColorPrimary" />
+                        android:textColor="@color/ColorPrimary"
+                        android:textSize="@dimen/font_size_small_large"
+                        />
                 </LinearLayout>
             </FrameLayout>
 
@@ -84,9 +86,42 @@
                 android:layout_marginTop="@dimen/vertical_padding_small"
                 android:background="@drawable/round_edge_box"
                 android:text="CONTINUE"
-                android:textColor="@color/app_theme_blue" />
+                android:textColor="@color/app_theme_blue"
+                android:textSize="@dimen/font_size_small_large"
+                />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/edit_line"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:orientation="horizontal"
+            android:background="@android:color/white"
+            android:layout_above="@id/centerContent"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            />
+
+        <EditText
+            android:id="@+id/nameView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/edit_line"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_vertical_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:gravity="center"
+            android:hint="Enter your name"
+            android:inputType="textNoSuggestions"
+            android:textColor="@color/ColorPrimary"
+            android:textColorHint="@color/edit_view_hint_color"
+            android:textCursorDrawable="@null"
+            android:textSize="@dimen/font_size_medium"
+            />
 
         <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/profile_image"
@@ -96,25 +131,6 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:src="@drawable/add_photo" />
-
-        <EditText
-            android:id="@+id/nameView"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_above="@id/centerContent"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginEnd="@dimen/activity_vertical_margin"
-            android:layout_marginStart="@dimen/activity_vertical_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:background="@drawable/text"
-            android:ems="10"
-            android:gravity="center"
-            android:hint="Enter your name"
-            android:inputType="textNoSuggestions"
-            android:textColor="@color/ColorPrimary"
-            android:textColorHint="@color/edit_view_hint_color"
-            android:textCursorDrawable="@null" />
 
         <ProgressBar
             android:id="@+id/progressBar"
