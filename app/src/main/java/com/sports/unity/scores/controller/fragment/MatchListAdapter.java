@@ -165,10 +165,16 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     holder.t2score.setText( cricketMatchJsonCaller.getScore(score));
                 }
 
-                if( isLive ){
+                if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {
                     holder.odds.setVisibility(View.VISIBLE);
+
+                    ((ViewGroup) holder.odds.getParent()).setTag(position);
+                    ((ViewGroup) holder.odds.getParent()).setClickable(true);
+                    ((ViewGroup) holder.odds.getParent()).setOnClickListener(oddsClickListener);
                 } else {
                     holder.odds.setVisibility(View.GONE);
+
+                    ((ViewGroup) holder.odds.getParent()).setClickable(false);
                 }
 
             } else if( matchJsonCaller.getType().equals(ScoresJsonParser.FOOTBALL) ) {
@@ -211,10 +217,16 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     holder.t2score.setText(footballMatchJsonCaller.getAwayTeamScore());
                 }
 
-                if( footballMatchJsonCaller.isLive() ){
+                if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {
                     holder.odds.setVisibility(View.VISIBLE);
+
+                    ((ViewGroup) holder.odds.getParent()).setTag(position);
+                    ((ViewGroup) holder.odds.getParent()).setClickable(true);
+                    ((ViewGroup) holder.odds.getParent()).setOnClickListener(oddsClickListener);
                 } else {
                     holder.odds.setVisibility(View.GONE);
+
+                    ((ViewGroup) holder.odds.getParent()).setClickable(false);
                 }
             }
 
@@ -235,18 +247,18 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         holder.view.setTag(position);
         holder.view.setOnClickListener(listener);
 
-        try {
-            if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {
-                holder.odds.setVisibility(View.VISIBLE);
-
-                ((ViewGroup) holder.odds.getParent()).setTag(position);
-                ((ViewGroup) holder.odds.getParent()).setOnClickListener(oddsClickListener);
-            } else {
-                holder.odds.setVisibility(View.GONE);
-            }
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
+//        try {
+//            if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {
+//                holder.odds.setVisibility(View.VISIBLE);
+//
+//                ((ViewGroup) holder.odds.getParent()).setTag(position);
+//                ((ViewGroup) holder.odds.getParent()).setOnClickListener(oddsClickListener);
+//            } else {
+//                holder.odds.setVisibility(View.GONE);
+//            }
+//        }catch (Exception ex){
+//            ex.printStackTrace();
+//        }
     }
 
     private void handleItemClick(View view){

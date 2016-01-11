@@ -22,12 +22,24 @@ public class MatchJsonCaller extends JsonObjectCaller {
         return jsonObject.getString("match_time");
     }
 
-    public String getTeams1Odds() throws JSONException {
-        return jsonObject.getString("team_1_odds");
+    public String getTeams1Odds() {
+        String odds = null;
+        try{
+            odds = jsonObject.getString("team_1_odds");
+        }catch (JSONException ex){
+            ex.printStackTrace();
+        }
+        return odds;
     }
 
     public String getTeams2Odds() throws JSONException {
-        return jsonObject.getString("team_2_odds");
+        String odds = null;
+        try{
+            odds = jsonObject.getString("team_2_odds");
+        }catch (JSONException ex){
+            ex.printStackTrace();
+        }
+        return odds;
     }
 
 }
