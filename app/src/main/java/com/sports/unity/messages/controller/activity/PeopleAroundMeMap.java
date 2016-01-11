@@ -21,6 +21,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -57,6 +59,7 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -608,6 +611,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.i("onResume", "called");
+        hideSoftKeyboard();
         ScoresContentHandler.getInstance().addResponseListener(contentListener, REQUEST_LISTENER_KEY);
 
         if (checkIfGPSEnabled()) {
@@ -619,6 +623,14 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         openMap();
     }
 
+    public void hideSoftKeyboard() {
+        if (getCurrentFocus() != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+
+
+        }
+    }
 
     @Override
     protected void onPause() {
@@ -685,12 +697,15 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
             if (success) {
                 onSuccessfulVcardRetrieval(view, vCard, number, distance);
             } else {
-                onUnSuccessfulVcardRetrieval();
+                onUnSuccessfulVcardRetrieval(view);
             }
         }
     }
 
-    private void onUnSuccessfulVcardRetrieval() {
+    private void onUnSuccessfulVcardRetrieval(View view) {
+        view.findViewById(R.id.progressBarProfile).setVisibility(View.GONE);
+        TextView name = (TextView) view.findViewById(R.id.username);
+        name.setText("Oops looks like there was an error");
         //TODO
     }
 
