@@ -16,6 +16,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
@@ -52,6 +53,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -99,8 +101,13 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
             Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
 
+            Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            intent.setType("image/*");
+
+
             Intent chooser = new Intent(Intent.ACTION_CHOOSER);
             chooser.putExtra(Intent.EXTRA_INTENT, galleryIntent);
+            chooser.putExtra(Intent.CATEGORY_OPENABLE, intent);
 
             Intent[] intentArray = {cameraIntent};
             chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
@@ -113,58 +120,68 @@ public class ProfileCreationActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
+
+
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
             Bitmap bitmap = null;
             if (data.getData() != null) {
 
                 Uri selectedImage = data.getData();
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String filePath = cursor.getString(columnIndex);
-                File file = new File(filePath);
-                cursor.close();
-
-                bitmap = decodeSampleImage(file, 100, 100);
+//                String[] filePathColumn = {MediaStore.Images.Media.DATA};
+//                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
+//                cursor.moveToFirst();
+//                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
+//                String filePath = cursor.getString(columnIndex);
+//                File file = new File(filePath);
+//                cursor.close();
 
                 try {
-                    bitmap = rotateImageIfRequired(bitmap, file);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                    bitmap = getBitmapFromUri(selectedImage);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+               compress_and_set_image(bitmap);
 
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-
-               Log.i("bitmap size in if", "" + bitmap.getByteCount());
-                byteArray = byteArrayOutputStream.toByteArray();
-                circleImageView.setImageBitmap(bitmap);
             } else {
                 bitmap = (Bitmap) data.getExtras().get("data");
-
-                Uri tempUri = getImageUri(getApplicationContext(), bitmap);
-                File file = new File(getRealPathFromURI(tempUri));
-
-                bitmap = decodeSampleImage(file, 100, 100);
-
-                try {
-                    bitmap = rotateImageIfRequired(bitmap, file);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-                Log.i("bitmap size in else", "" + bitmap.getByteCount());
-                byteArray = byteArrayOutputStream.toByteArray();
-                circleImageView.setImageBitmap(bitmap);
+                compress_and_set_image(bitmap);
             }
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
+    private Bitmap compress_and_set_image( Bitmap bitmap) {
+
+        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
+        Uri tempUri = getImageUri(getApplicationContext(), bitmap);
+        File file = new File(getRealPathFromURI(tempUri));
+
+        bitmap = decodeSampleImage(file, 100, 100);
+
+        try {
+            bitmap = rotateImageIfRequired(bitmap, file);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+
+        Log.i("bitmap size in if", "" + bitmap.getByteCount());
+        byteArray = byteArrayOutputStream.toByteArray();
+        circleImageView.setImageBitmap(bitmap);
+
+        return bitmap;
+    }
+    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor =
+                getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+        return image;
+    }
 
     public static Bitmap rotateImageIfRequired(Bitmap img, File selectedImage) throws IOException {
 
