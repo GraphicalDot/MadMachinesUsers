@@ -15,9 +15,9 @@
         android:id="@+id/filter_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/ColorPrimary"
         android:layout_above="@+id/next_layout"
-        android:layout_below="@+id/toolbar_main" />
+        android:layout_below="@+id/toolbar_main"
+        android:background="@color/ColorPrimary" />
 
 
     <RelativeLayout
@@ -43,9 +43,8 @@
             android:text="@string/next"
             android:textSize="@dimen/font_size_small_large"
             style="?android:attr/borderlessButtonStyle"
-            android:textColor="@android:color/white"
+            android:layout_alignParentRight="true"
             android:background="@android:color/transparent"
-            android:id="@+id/next"
-            android:layout_alignParentRight="true"/>
+            android:textColor="@android:color/white" />
     </RelativeLayout>
 </RelativeLayout>
