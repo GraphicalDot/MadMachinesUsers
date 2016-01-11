@@ -102,31 +102,27 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     public void uploadLatLng(Location mLastLocation) {
         HttpURLConnection httpURLConnection = null;
-        String user = XMPPClient.getConnection().getUser();
-        if (user != null) {
-            url = base_url + XMPPClient.getConnection().getUser() + "@mm.io&lat=" + mLastLocation.getLatitude() + "&lng=" + mLastLocation.getLongitude();
-            try {
-                URL sendData = new URL(url);
-                httpURLConnection = (HttpURLConnection) sendData.openConnection();
-                httpURLConnection.setConnectTimeout(15000);
-                httpURLConnection.setDoInput(false);
-                httpURLConnection.setRequestMethod("GET");
+        url = base_url + TinyDB.getInstance(context).getString(TinyDB.KEY_USERNAME) + "@mm.io&lat=" + mLastLocation.getLatitude() + "&lng=" + mLastLocation.getLongitude();
+        try {
+            URL sendData = new URL(url);
+            httpURLConnection = (HttpURLConnection) sendData.openConnection();
+            httpURLConnection.setConnectTimeout(15000);
+            httpURLConnection.setDoInput(false);
+            httpURLConnection.setRequestMethod("GET");
 
-                if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                    Log.i("latlongresponse", " 200 ");
-                } else {
-                    Log.i("latlongresponse", " 500 ");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    httpURLConnection.disconnect();
-                } catch (Exception ex) {
-                }
+            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                Log.i("latlongresponse", " 200 ");
+            } else {
+                Log.i("latlongresponse", " 500 ");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                httpURLConnection.disconnect();
+            } catch (Exception ex) {
             }
         }
-
     }
 
     public void saveLocation(Location mLastLocation) {
