@@ -60,7 +60,7 @@
 
     </LinearLayout>
 
-    <android.support.design.widget.CoordinatorLayout
+    <FrameLayout
         android:id="@+id/childFragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -77,7 +77,7 @@
             app:borderWidth="0dp"
             android:src="@drawable/ic_ppl_around_u" />
 
-    </android.support.design.widget.CoordinatorLayout>
+    </FrameLayout>
 
     <!--<LinearLayout-->
     <!--android:layout_above="@+id/chatButtons"-->

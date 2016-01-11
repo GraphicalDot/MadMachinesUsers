@@ -36,7 +36,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
 
     private static final String CURRENT_FRAGMENT = "current_fragment";
 
-    CoordinatorLayout frame;
+    FrameLayout frame;
     Button contacts;
     Button chats;
     Button others;
@@ -53,7 +53,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View v = inflater.inflate(com.sports.unity.R.layout.messages, container, false);
-        frame = (CoordinatorLayout) v.findViewById(com.sports.unity.R.id.childFragmentContainer);
+        frame = (FrameLayout) v.findViewById(com.sports.unity.R.id.childFragmentContainer);
         contacts = (Button) v.findViewById(R.id.btn_contacts);
         contacts.setOnClickListener(this);
         contacts.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
