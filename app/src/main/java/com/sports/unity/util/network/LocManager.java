@@ -102,28 +102,30 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     public void uploadLatLng(Location mLastLocation) {
         HttpURLConnection httpURLConnection = null;
-        url = base_url + XMPPClient.getConnection().getUser() + "@mm.io&lat=" + mLastLocation.getLatitude() + "&lng=" + mLastLocation.getLongitude();
-        try {
-            URL sendData = new URL(url);
-            httpURLConnection = (HttpURLConnection) sendData.openConnection();
-            httpURLConnection.setConnectTimeout(15000);
-            httpURLConnection.setDoInput(false);
-            httpURLConnection.setRequestMethod("GET");
-
-            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                Log.i("latlongresponse", " 200 ");
-            } else {
-                Log.i("latlongresponse", " 500 ");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+        String user = XMPPClient.getConnection().getUser();
+        if (user != null) {
+            url = base_url + XMPPClient.getConnection().getUser() + "@mm.io&lat=" + mLastLocation.getLatitude() + "&lng=" + mLastLocation.getLongitude();
             try {
-                httpURLConnection.disconnect();
-            } catch (Exception ex) {
+                URL sendData = new URL(url);
+                httpURLConnection = (HttpURLConnection) sendData.openConnection();
+                httpURLConnection.setConnectTimeout(15000);
+                httpURLConnection.setDoInput(false);
+                httpURLConnection.setRequestMethod("GET");
+
+                if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    Log.i("latlongresponse", " 200 ");
+                } else {
+                    Log.i("latlongresponse", " 500 ");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    httpURLConnection.disconnect();
+                } catch (Exception ex) {
+                }
             }
         }
-
 
     }
 
