@@ -143,10 +143,21 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     holder.liveText.setVisibility(View.GONE);
 
                     JSONObject score = cricketMatchJsonCaller.getTeam1Score();
-                    holder.t1score.setText( cricketMatchJsonCaller.getScore(score));
+
+                    StringBuilder stringBuilder = new StringBuilder("");
+                    stringBuilder.append(cricketMatchJsonCaller.getScore(score));
+                    stringBuilder.append("/");
+                    stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
+
+                    holder.t1score.setText(stringBuilder.toString());
 
                     score = cricketMatchJsonCaller.getTeam2Score();
-                    holder.t2score.setText( cricketMatchJsonCaller.getScore(score));
+                    stringBuilder = new StringBuilder("");
+                    stringBuilder.append(cricketMatchJsonCaller.getScore(score));
+                    stringBuilder.append("/");
+                    stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
+
+                    holder.t2score.setText( stringBuilder.toString());
                 } else if ( cricketMatchJsonCaller.getStatus().equals("notstarted") ) {
                     holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
                     holder.liveText.setVisibility(View.GONE);
@@ -159,10 +170,19 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
 
                     JSONObject score = cricketMatchJsonCaller.getTeam1Score();
-                    holder.t1score.setText( cricketMatchJsonCaller.getScore(score));
+
+                    StringBuilder stringBuilder = new StringBuilder("");
+                    stringBuilder.append(cricketMatchJsonCaller.getScore(score));
+                    stringBuilder.append("/");
+                    stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
+                    holder.t1score.setText(stringBuilder.toString());
 
                     score = cricketMatchJsonCaller.getTeam2Score();
-                    holder.t2score.setText( cricketMatchJsonCaller.getScore(score));
+                    stringBuilder = new StringBuilder("");
+                    stringBuilder.append(cricketMatchJsonCaller.getScore(score));
+                    stringBuilder.append("/");
+                    stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
+                    holder.t2score.setText( stringBuilder.toString());
                 }
 
                 if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {

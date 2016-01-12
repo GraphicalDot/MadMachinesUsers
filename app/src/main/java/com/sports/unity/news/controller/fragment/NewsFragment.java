@@ -190,16 +190,14 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                         if (canRefreshContent) {
                             boolean success = newsContentHandler.refreshNews(true);
                             if (success == false) {
-                                showErrorLayout(getView());
-                                hideProgress(getView());
+                                mSwipeRefreshLayout.setRefreshing(false);
 
-                                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_LONG).show();
+                                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
                             } else {
-                                hideErrorLayout(getView());
+                                mSwipeRefreshLayout.setRefreshing(true);
 //                              showProgress(getView());
                             }
 
-                            mSwipeRefreshLayout.setRefreshing(true);
                         } else {
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
@@ -300,10 +298,10 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                 if (list.size() == 0) {
                     if (!searchOn) {
                         showErrorLayout(getView());
-                        Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
                     } else {
 //                        something_wrong.setText("No search results found for this search");
-                        Toast.makeText(getActivity(), "No search results found for this search", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), "No search results found for this search", Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     hideErrorLayout(getView());
@@ -382,7 +380,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                 showErrorLayout(getView());
                 hideProgress(getView());
 
-                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
             } else {
                 hideErrorLayout(getView());
                 showProgress(getView());

@@ -39,6 +39,7 @@ import com.sports.unity.util.ThreadTask;
 
 import java.io.ByteArrayOutputStream;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 /**
@@ -105,7 +106,7 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
 
     @Override
     public void onBindViewHolder(ImageAdapterForGallery.ViewHolder holder, final int position) {
-       // holder.imageView.setTag(position);
+        holder.imageView.setId(position);
         holder.imageView.setOnClickListener(this);
 
         Glide.with(activity)
@@ -163,7 +164,16 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
     private void handleSendMedia(){
         ImageView imageView = (ImageView)selectedViewForSend;
 
-        Bitmap bitmap = imageView.getDrawingCache();
+        int position = imageView.getId();
+
+        File file = new File(filePath.get(position));
+
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(),bmOptions);
+
+      // Bitmap bitmap = imageView.getDrawingCache();
+
+
         new ThreadTask( bitmap){
             private byte[] mediaContent = null;
 

@@ -123,47 +123,35 @@ public class ProfileCreationActivity extends AppCompatActivity {
 
 
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
-            Bitmap bitmap = null;
-            if (data.getData() != null) {
-
-                Uri selectedImage = data.getData();
-//                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-//                Cursor cursor = getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-//                cursor.moveToFirst();
-//                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-//                String filePath = cursor.getString(columnIndex);
-//                File file = new File(filePath);
-//                cursor.close();
-
-                try {
+            try {
+                Bitmap bitmap = null;
+                if (data.getData() != null) {
+                    Uri selectedImage = data.getData();
                     bitmap = getBitmapFromUri(selectedImage);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-               compress_and_set_image(bitmap);
 
-            } else {
-                bitmap = (Bitmap) data.getExtras().get("data");
-                compress_and_set_image(bitmap);
+                    compress_and_set_image(bitmap);
+                } else {
+                    bitmap = (Bitmap) data.getExtras().get("data");
+                    compress_and_set_image(bitmap);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(this, "Unable to access this file since it is locked :( Select another image.", Toast.LENGTH_SHORT).show();
             }
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
-    private Bitmap compress_and_set_image( Bitmap bitmap) {
+    private Bitmap compress_and_set_image( Bitmap bitmap) throws Exception {
 
         CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
+
         Uri tempUri = getImageUri(getApplicationContext(), bitmap);
         File file = new File(getRealPathFromURI(tempUri));
 
         bitmap = decodeSampleImage(file, 100, 100);
-
-        try {
-            bitmap = rotateImageIfRequired(bitmap, file);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        bitmap = rotateImageIfRequired(bitmap, file);
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
@@ -208,7 +196,7 @@ public class ProfileCreationActivity extends AppCompatActivity {
         return rotatedImg;
     }
 
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
+    public static Uri getImageUri(Context inContext, Bitmap inImage) {
         String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
         return Uri.parse(path);
     }
