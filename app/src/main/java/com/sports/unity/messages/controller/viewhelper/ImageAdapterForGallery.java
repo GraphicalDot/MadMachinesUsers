@@ -168,8 +168,9 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
 
         File file = new File(filePath.get(position));
 
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(),bmOptions);
+        //BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        //Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(),bmOptions);
+        Bitmap bitmap = ProfileCreationActivity.decodeSampleImage(file,keyboardHeight,keyboardHeight);
 
       // Bitmap bitmap = imageView.getDrawingCache();
 
