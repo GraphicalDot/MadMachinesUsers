@@ -1,10 +1,12 @@
 package com.sports.unity.messages.controller.activity;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -16,7 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -104,7 +106,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     private EditText messageText;
     private Chat chat;
     private TextView status;
-    private ImageButton back;
+    private ImageView back;
 
     private ViewGroup parentLayout;
     private CircleImageView userPic;
@@ -299,7 +301,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
          * Declarations ofr all the textviews and other ui elements
          */
 
-        back = (ImageButton) toolbar.findViewById(R.id.backarrow);
+        back = (ImageView) toolbar.findViewById(R.id.backarrow);
         messageText = (EditText) findViewById(R.id.msg);
         status = (TextView) toolbar.findViewById(R.id.status_active);
         LinearLayout profile_link = (LinearLayout) toolbar.findViewById(R.id.profile);
@@ -413,9 +415,46 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
     private void disableChatIfUserBlocked() {
         if (blockUnblockUserHelper.isBlockStatus()) {
-            chatKeyboardHelper.disableKeyboardAndMediaButtons(blockUnblockUserHelper.isBlockStatus(), this);
+            chatKeyboardHelper.disableOrEnableKeyboardAndMediaButtons(blockUnblockUserHelper.isBlockStatus(), this);
         }
+
+
+        LinearLayout messagecomposeLayout = (LinearLayout) findViewById(R.id.type_msg);
+        messagecomposeLayout.setClickable(true);
+        messagecomposeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i("layoutclicked", "true");
+                if (blockUnblockUserHelper.isBlockStatus()) {
+                    displayAlertToUnblockUser();
+                } else {
+                    //nothing
+                }
+            }
+        });
     }
+
+    private void displayAlertToUnblockUser() {
+        AlertDialog.Builder build = new AlertDialog.Builder(
+                ChatScreenActivity.this);
+        build.setMessage(
+                "Unblock " + JABBERNAME + " To send a message? ");
+        build.setPositiveButton("unblock",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        blockUnblockUserHelper.onMenuItemSelected(ChatScreenActivity.this, contactID, JABBERID, menu);
+                    }
+                });
+        build.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Do nothing
+                    }
+                });
+        AlertDialog dialog = build.create();
+        dialog.show();
+    }
+
 
     private void ForwardMessages(ArrayList<Integer> intArrayExtra) {
         ArrayList<Message> listOfMessages = new ArrayList<>();

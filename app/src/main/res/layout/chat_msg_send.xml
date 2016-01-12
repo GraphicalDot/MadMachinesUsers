@@ -132,7 +132,7 @@
                 android:id="@+id/receivedStatus"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
+                android:layout_gravity="end|center_vertical"
                 android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
                 android:src="@drawable/ic_msg_pending" />
 

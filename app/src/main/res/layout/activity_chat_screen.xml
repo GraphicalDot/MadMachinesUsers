@@ -67,8 +67,7 @@
                 android:paddingTop="@dimen/vertical_padding_small"
                 android:scrollbars="vertical"
                 android:textColor="@android:color/black"
-                android:textSize="@dimen/font_size_medium"
-                />
+                android:textSize="@dimen/font_size_medium" />
 
             <Button
                 android:id="@+id/send"
@@ -79,8 +78,7 @@
                 android:gravity="center"
                 android:text="SEND"
                 android:textColor="@color/app_theme_blue"
-                android:textSize="@dimen/font_size_small_large"
-                />
+                android:textSize="@dimen/font_size_small_large" />
         </LinearLayout>
 
 

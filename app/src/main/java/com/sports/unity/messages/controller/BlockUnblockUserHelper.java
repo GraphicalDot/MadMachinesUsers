@@ -85,7 +85,7 @@ public class BlockUnblockUserHelper {
         MenuItem item = menu.findItem(R.id.action_block_user);
 
         blockStatus = status;
-        ChatKeyboardHelper.getInstance(false).disableKeyboardAndMediaButtons(blockStatus, activity);
+        ChatKeyboardHelper.getInstance(false).disableOrEnableKeyboardAndMediaButtons(blockStatus, activity);
         if (blockStatus == true) {
             item.setTitle("Unblock User");
         } else {

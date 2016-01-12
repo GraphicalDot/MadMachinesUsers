@@ -1,91 +1,87 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/ColorPrimary"
+    android:orientation="vertical"
     tools:context="com.sports.unity.common.controller.UserProfileActivity">
+
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/toolbar_userdetails"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:minHeight="?android:attr/actionBarSize" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_picture"
+        android:layout_width="@dimen/profile_thumb_image_xlarge"
+        android:layout_height="@dimen/profile_thumb_image_xlarge"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/vertical_padding_very_very_small"
+        android:src="@drawable/ic_user" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Gabriel"
+        android:textColor="#000"
+        android:textSize="@dimen/font_size_large" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
-            <include
-                android:id="@+id/tool_bar"
-                layout="@layout/profile_toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?android:attr/actionBarSize"
-                android:minHeight="?android:attr/actionBarSize"/>
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/user_picture"
-            android:layout_width="@dimen/profile_thumb_image_xlarge"
-            android:layout_height="@dimen/profile_thumb_image_xlarge"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_user" />
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/vertical_padding_very_very_small">
 
         <TextView
-            android:id="@+id/name"
-            android:layout_width="match_parent"
+            android:id="@+id/member"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textColor="#000"
-            android:textSize="@dimen/font_size_large"
-            android:text="Hello"/>
+            android:layout_gravity="center"
+            android:paddingRight="@dimen/horizontal_padding_very_small"
+            android:text="Member of 0 groups"
+            android:textColor="@color/dot_color_grey"
+            android:textSize="@dimen/font_size_small_large"
+            android:textStyle="normal" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <ImageView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+            android:layout_gravity="center"
+            android:background="@drawable/dot_circle" />
 
-            <TextView
-                android:id="@+id/member"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingRight="@dimen/vertical_padding_very_small"
-                android:textColor="@color/dot_color_grey"
-                android:text="Member of 0 groups"
-                android:textSize="@dimen/font_size_small_large"
-                android:layout_gravity="center"
-                android:textStyle="normal"
-                />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/dot_circle"
-                android:layout_gravity="center"
-                />
-
-            <TextView
-                android:id="@+id/admin"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/vertical_padding_very_small"
-                android:textColor="@color/dot_color_grey"
-                android:text="Admin of 0 groups"
-                android:textSize="@dimen/font_size_small_large"
-                android:layout_gravity="center"
-                android:textStyle="normal"
-                />
-        </LinearLayout>
-            <com.sports.unity.common.view.SlidingTabLayout
-                android:id="@+id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/ColorPrimary"
-                android:elevation="@dimen/toolbar_elevation"/>
-            <View
-                android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="@color/app_theme_blue" />
-
-            <android.support.v4.view.ViewPager
-                android:id="@+id/pager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1" />
-
-
+        <TextView
+            android:id="@+id/admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
+            android:text="Admin of 0 groups"
+            android:textColor="@color/dot_color_grey"
+            android:textSize="@dimen/font_size_small_large"
+            android:textStyle="normal" />
     </LinearLayout>
-</RelativeLayout>
+
+    <com.sports.unity.common.view.SlidingTabLayout
+        android:id="@+id/tabs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/ColorPrimary"
+        android:elevation="@dimen/toolbar_elevation" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="@color/app_theme_blue" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+</LinearLayout>

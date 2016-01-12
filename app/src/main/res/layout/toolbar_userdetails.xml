@@ -8,17 +8,12 @@
     android:popupTheme="@style/PopupMenuListView"
     android:theme="@style/AppHomeTheme">
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/backarrow"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-        <ImageButton
-            android:id="@+id/backarrow"
-            style="?android:attr/buttonBarButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_menu_back_blk" />
-    </LinearLayout>
+        android:layout_height="wrap_content"
+        android:paddingRight="@dimen/horizontal_padding_small"
+        android:scaleType="center"
+        android:src="@drawable/ic_menu_back_blk" />
 
 </android.support.v7.widget.Toolbar>

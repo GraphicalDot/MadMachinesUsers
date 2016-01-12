@@ -75,6 +75,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
     private static final String SPORT_SELECTION_FOOTBALL = "football";
     private static final String SPORT_SELECTION_CRICKET = "cricket";
 
+    private AlertDialog aDialog = null;
 
     private NearByUserJsonCaller nearByUserJsonCaller = new NearByUserJsonCaller();
 
@@ -87,7 +88,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
     private TextView titleCity;
 
     private String base_url = "http://54.169.217.88/retrieve_nearby_users?lat=";
-    private int radius = 5000;
+    private int radius = 1000;
 
     private int stepRange = 25;
 
@@ -115,10 +116,10 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
                             View view = inflater.inflate(R.layout.chat_other_profile_layout, null);
                             AlertDialog.Builder otherProfileBuilder = new AlertDialog.Builder(PeopleAroundMeMap.this);
                             otherProfileBuilder.setView(view);
-                            AlertDialog noUsersNearBy = otherProfileBuilder.create();
-                            noUsersNearBy.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                            noUsersNearBy.show();
-                            populateProfilePopup(null, view, null, 0);
+                            aDialog = otherProfileBuilder.create();
+                            aDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                            aDialog.show();
+                            populateProfilePopup(null, view, null, 0, null);
                         }
                     }
 
@@ -141,6 +142,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_people_around_me_map);
 
+        hideSoftKeyboard();
         initToolbar();
 //        openMap();
         InitSeekbar();
@@ -222,14 +224,14 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
                 int progress = seekBar.getProgress();
                 if (progress >= 0 && progress <= stepRange / 2) {
                     seekBar.setProgress(0);
-                    seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_05));
-                    radius = 5000;
+                    seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_01));
+                    radius = 1000;
                     map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else if (progress >= 0 * stepRange + stepRange / 2 && progress <= 0 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(1 * stepRange);
-                    seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_10));
-                    radius = 10000;
+                    seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_05));
+                    radius = 5000;
                     map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else if (progress >= 1 * stepRange + stepRange / 2 && progress <= 1 * stepRange + stepRange / 2 + stepRange) {
@@ -256,7 +258,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
     }
 
     private int calculateZoomLevel(int radius) {
-        int zoomLevel = 1;
+        int zoomLevel = 0;
         Circle circle = map.addCircle(new CircleOptions().center(latLong).radius(radius).strokeColor(Color.TRANSPARENT));
         circle.setVisible(true);
         if (circle != null) {
@@ -264,6 +266,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
             double scale = r / 500;
             zoomLevel = (int) (16 - Math.log(scale) / Math.log(2));
         }
+        Log.i("zoomlevel", String.valueOf(zoomLevel));
         return zoomLevel;
     }
 
@@ -402,10 +405,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
 //            }
 //
 //        });
-
-        AlertDialog nearByUserProfile = otherProfileBuilder.create();
-        nearByUserProfile.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        nearByUserProfile.show();
+        aDialog = otherProfileBuilder.create();
+        aDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        aDialog.show();
 
         popupProfile.findViewById(R.id.progressBarProfile).setVisibility(View.VISIBLE);
 
@@ -413,7 +415,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         new GetVcardForUser(popupProfile, distance).execute(marker.getSnippet().substring(0, marker.getSnippet().indexOf(",")).trim());
     }
 
-    private void populateProfilePopup(final VCard vCard, View popupProfile, final String number, int distance) {
+    private void populateProfilePopup(final VCard vCard, View popupProfile, final String number, int distance, String info) {
 
         CircleImageView imageview = (CircleImageView) popupProfile.findViewById(R.id.user_pic);
 
@@ -432,14 +434,23 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         popupProfile.findViewById(R.id.progressBarProfile).setVisibility(View.GONE);
 
         if (vCard == null) {
-            sayHello.setVisibility(View.GONE);
-            popupProfile.findViewById(R.id.dot).setVisibility(View.GONE);
-            sport.setVisibility(View.GONE);
+            if (info == null) {
+                sayHello.setVisibility(View.GONE);
+                popupProfile.findViewById(R.id.dot).setVisibility(View.GONE);
+                sport.setVisibility(View.GONE);
 
-            name.setText(R.string.no_users_nearby);
-            distancefromUser.setText(R.string.try_broadening_search_increasing_radius);
-            imageview.setImageResource(R.drawable.img_no_frnd_found);
+                name.setText(R.string.no_users_nearby);
+                distancefromUser.setText(R.string.try_broadening_search_increasing_radius);
+                imageview.setImageResource(R.drawable.img_no_frnd_found);
+            } else {
+                sayHello.setVisibility(View.GONE);
+                popupProfile.findViewById(R.id.dot).setVisibility(View.GONE);
+                sport.setVisibility(View.GONE);
 
+                name.setText("Whoops!!");
+                distancefromUser.setText(info);
+                imageview.setImageResource(R.drawable.img_no_frnd_found);
+            }
 
         } else {
             name.setText(vCard.getNickName());
@@ -540,13 +551,13 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(PeopleAroundMeMap.this);
         builder.setView(enableGps);
 
-        final AlertDialog enableGpsPopup = builder.create();
-        enableGpsPopup.show();
+        aDialog = builder.create();
+        aDialog.show();
 
         enableGps.findViewById(R.id.enable_gps).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                enableGpsPopup.dismiss();
+                aDialog.dismiss();
                 Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(myIntent);
             }
@@ -611,10 +622,10 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.i("onResume", "called");
-        hideSoftKeyboard();
         ScoresContentHandler.getInstance().addResponseListener(contentListener, REQUEST_LISTENER_KEY);
 
         if (checkIfGPSEnabled()) {
+
             LocManager.getInstance(getApplicationContext()).getLocation();
         } else {
             //nothing
@@ -632,10 +643,17 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         }
     }
 
+    private void dismissDialog() {
+        if (aDialog != null && aDialog.isShowing()) {
+            aDialog.cancel();
+        }
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
         Log.i("onPaused", "called");
+        dismissDialog();
         ScoresContentHandler.getInstance().removeResponseListener(REQUEST_LISTENER_KEY);
     }
 
@@ -682,11 +700,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
                 number = param[0];
                 card.load(connection, number + "@mm.io");
                 success = true;
-            } catch (SmackException.NoResponseException e) {
+            } catch (XMPPException e) {
                 e.printStackTrace();
-            } catch (XMPPException.XMPPErrorException e) {
-                e.printStackTrace();
-            } catch (SmackException.NotConnectedException e) {
+            } catch (SmackException e) {
                 e.printStackTrace();
             }
             return card;
@@ -703,14 +719,13 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
     }
 
     private void onUnSuccessfulVcardRetrieval(View view) {
-        view.findViewById(R.id.progressBarProfile).setVisibility(View.GONE);
-        TextView name = (TextView) view.findViewById(R.id.username);
-        name.setText("Oops looks like there was an error");
+        String info = "Something went wrong";
+        populateProfilePopup(null, view, null, 0, info);
         //TODO
     }
 
     private void onSuccessfulVcardRetrieval(View view, VCard vCard, String number, int distance) {
-        populateProfilePopup(vCard, view, number, distance);
+        populateProfilePopup(vCard, view, number, distance, null);
     }
 
 }

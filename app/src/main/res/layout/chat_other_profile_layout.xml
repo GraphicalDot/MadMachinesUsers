@@ -58,10 +58,9 @@
                     android:id="@+id/distanceFromMe"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:paddingRight="@dimen/horizontal_padding_very_small"
                     android:textColor="@color/custom_black_distace"
-                    android:textSize="@dimen/font_size_small_large"
-                    />
+                    android:textSize="@dimen/font_size_small_large" />
 
                 <ImageView
                     android:id="@+id/dot"
@@ -74,10 +73,9 @@
                     android:id="@+id/sport"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:paddingLeft="@dimen/horizontal_padding_very_small"
                     android:textColor="@color/gray4"
-                    android:textSize="@dimen/font_size_small_large"
-                    />
+                    android:textSize="@dimen/font_size_small_large" />
             </LinearLayout>
 
             <Button
@@ -87,8 +85,7 @@
                 android:background="@color/app_theme_blue"
                 android:text="Say Hello"
                 android:textColor="@android:color/white"
-                android:textSize="@dimen/font_size_small_large"
-                />
+                android:textSize="@dimen/font_size_small_large" />
         </LinearLayout>
 
         <de.hdodenhof.circleimageview.CircleImageView

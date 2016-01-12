@@ -34,8 +34,10 @@ public class MainActivity extends CustomAppCompatActivity {
 
     NavigationFragment navigationFragment;
     public boolean isPaused;
-    
+
     Toolbar toolbar;
+
+    private Thread locationUpdate = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +47,22 @@ public class MainActivity extends CustomAppCompatActivity {
 
         SportsUnityDBHelper.getInstance(this).addDummyMessageIfNotExist();
         XMPPService.startService(MainActivity.this);
-        
+
         initViews();
         setNavigation();
-        
-        LocManager.getInstance(this).getLocation();
+
+        if (locationUpdate != null && locationUpdate.isAlive()) {
+            //no nothing
+        } else {
+            locationUpdate = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    LocManager.getInstance(getApplicationContext()).getLocation();
+                }
+            });
+            locationUpdate.start();
+        }
+
     }
 
     private void setNavigation() {
@@ -135,11 +148,11 @@ public class MainActivity extends CustomAppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if(!isPaused) {
+        if (!isPaused) {
             navigationFragment = new NavigationFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.nav_fragment, navigationFragment, "Nav_frag").commit();
         }
-        isPaused=false;
+        isPaused = false;
     }
 
     @Override

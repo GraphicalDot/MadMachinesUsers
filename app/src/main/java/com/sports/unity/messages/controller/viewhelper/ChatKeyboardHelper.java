@@ -370,31 +370,35 @@ public class ChatKeyboardHelper {
         activity.startActivity(intent);
     }
 
-    public void disableKeyboardAndMediaButtons(boolean blockStatus, Activity activity) {
+    public void disableOrEnableKeyboardAndMediaButtons(boolean blockStatus, Activity activity) {
 
         if (blockStatus) {
             LinearLayout compose = (LinearLayout) activity.findViewById(R.id.send_message_layout);
             for (int i = 0; i < compose.getChildCount(); i++) {
                 View view = compose.getChildAt(i);
                 view.setEnabled(false);
+                view.setClickable(false);
             }
 
             LinearLayout sendMediaButtons = (LinearLayout) activity.findViewById(R.id.send_media_action_buttons);
             for (int i = 0; i < sendMediaButtons.getChildCount(); i++) {
                 View view = sendMediaButtons.getChildAt(i);
                 view.setEnabled(false);
+                view.setClickable(false);
             }
         } else {
             LinearLayout compose = (LinearLayout) activity.findViewById(R.id.send_message_layout);
             for (int i = 0; i < compose.getChildCount(); i++) {
                 View view = compose.getChildAt(i);
                 view.setEnabled(true);
+                view.setClickable(true);
             }
 
             LinearLayout sendMediaButtons = (LinearLayout) activity.findViewById(R.id.send_media_action_buttons);
             for (int i = 0; i < sendMediaButtons.getChildCount(); i++) {
                 View view = sendMediaButtons.getChildAt(i);
                 view.setEnabled(true);
+                view.setClickable(true);
             }
         }
 
@@ -512,7 +516,7 @@ public class ChatKeyboardHelper {
         if (height > 100) {
             keyboardHeight = height;
             popupWindow.setHeight(keyboardHeight);
-            Log.d("Keyboard Helper", "change popup window height to "+keyboardHeight);
+            Log.d("Keyboard Helper", "change popup window height to " + keyboardHeight);
 
             if (keyboardOpenedListener != null) {
                 keyboardOpenedListener.keyboardOpened(keyboardHeight);
