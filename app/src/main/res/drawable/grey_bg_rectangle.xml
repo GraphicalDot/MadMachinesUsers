@@ -4,9 +4,4 @@
 
     <solid android:color="@color/messages_bg"></solid>
 
-    <size
-        android:width="@dimen/camera_button_size"
-        android:height="@dimen/camera_button_size"
-        />
-
 </shape>

@@ -106,7 +106,7 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
 
     @Override
     public void onBindViewHolder(ImageAdapterForGallery.ViewHolder holder, final int position) {
-        holder.imageView.setId(position);
+        holder.imageView.setTag(R.layout.layout_gallery, position);
         holder.imageView.setOnClickListener(this);
 
         Glide.with(activity)
@@ -164,13 +164,13 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
     private void handleSendMedia(){
         ImageView imageView = (ImageView)selectedViewForSend;
 
-        int position = imageView.getId();
+        int position = (Integer)imageView.getTag(R.layout.layout_gallery);
 
         File file = new File(filePath.get(position));
 
         //BitmapFactory.Options bmOptions = new BitmapFactory.Options();
         //Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(),bmOptions);
-        Bitmap bitmap = ProfileCreationActivity.decodeSampleImage(file,keyboardHeight,keyboardHeight);
+        Bitmap bitmap = ProfileCreationActivity.decodeSampleImage(file, keyboardHeight, keyboardHeight);
 
       // Bitmap bitmap = imageView.getDrawingCache();
 

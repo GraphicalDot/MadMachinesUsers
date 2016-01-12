@@ -45,6 +45,8 @@ import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.FileOnCloudHandler;
+import com.sports.unity.util.GlobalEventHandler;
+import com.sports.unity.util.GlobalEventListener;
 import com.sports.unity.util.NotificationHandler;
 import com.sports.unity.util.ThreadTask;
 
@@ -125,6 +127,20 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     private ChatKeyboardHelper chatKeyboardHelper = null;
 
     private HashMap<String, byte[]> mediaMap = new HashMap<>();
+
+    private GlobalEventListener globalEventListener = new GlobalEventListener() {
+
+        @Override
+        public void onInternetStateChanged(boolean connected) {
+            ChatScreenActivity.this.onInternetStateChanged(connected);
+        }
+
+        @Override
+        public void onXMPPServerConnected(boolean connected) {
+            ChatScreenActivity.this.onXMPPServerConnected(connected);
+        }
+
+    };
 
     private ActivityActionListener activityActionListener = new ActivityActionListener() {
         @Override
@@ -226,6 +242,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
     public void onStop() {
         ChatScreenApplication.activityStopped();
         ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.CHAT_SCREEN_KEY);
+        GlobalEventHandler.getInstance().removeGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY);
 
         super.onStop();
     }
@@ -235,6 +252,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
         super.onResume();
 
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, activityActionListener);
+        GlobalEventHandler.getInstance().addGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY, globalEventListener);
         ChatScreenApplication.activityResumed();
 
         NotificationHandler.dismissNotification(getBaseContext());
@@ -855,6 +873,12 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                             if (!mediaMap.containsKey(message.mediaFileName)) {
                                 byte[] content = DBUtil.loadContentFromExternalFileStorage(ChatScreenActivity.this.getBaseContext(), message.mediaFileName);
                                 mediaMap.put(message.mediaFileName, content);
+
+                                if ((message.textData.length() == 0 && message.iAmSender == true) || (message.mediaFileName == null && message.iAmSender == false)) {
+                                    FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(content, message.mimeType, chat, message.id, otherChat);
+                                } else {
+                                    //nothing
+                                }
                             } else {
                                 //nothing
                             }
@@ -890,6 +914,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
                 //nothing
             }
         }
+    }
+
+    public void onInternetStateChanged(boolean connected) {
+
+    }
+
+    public void onXMPPServerConnected(boolean connected) {
+
     }
 
     private boolean sendActionToCorrespondingActivityListener() {

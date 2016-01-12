@@ -2,11 +2,13 @@ package com.sports.unity.common.controller;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.crittercism.app.Crittercism;
 import com.sports.unity.ProfileCreationActivity;
@@ -27,6 +29,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         UserUtil.init(this);
 
 //        cachedFlow( "9717261060", "641970");
+//        showScreenSize();
 
         if (UserUtil.isUserRegistered()) {
             if (UserUtil.isProfileCreated()) {
@@ -63,6 +66,31 @@ public class SplashScreenActivity extends AppCompatActivity {
         UserUtil.setUserRegistered(context, true);
 
         ContactsHandler.getInstance().copyAllContacts_OnThread(getApplicationContext());
+    }
+
+    private void showScreenSize(){
+        int screenSize = getResources().getConfiguration().screenLayout &
+                Configuration.SCREENLAYOUT_SIZE_MASK;
+
+        String toastMsg;
+        switch(screenSize) {
+            case Configuration.SCREENLAYOUT_SIZE_XLARGE:
+                toastMsg = "XLarge screen";
+                break;
+            case Configuration.SCREENLAYOUT_SIZE_LARGE:
+                toastMsg = "Large screen";
+                break;
+            case Configuration.SCREENLAYOUT_SIZE_NORMAL:
+                toastMsg = "Normal screen";
+                break;
+            case Configuration.SCREENLAYOUT_SIZE_SMALL:
+                toastMsg = "Small screen";
+                break;
+            default:
+                toastMsg = "Screen size is neither large, normal or small";
+        }
+
+        Toast.makeText(this, toastMsg, Toast.LENGTH_LONG).show();
     }
 
     private void moveToNextActivity(Class nextActivityClass) {

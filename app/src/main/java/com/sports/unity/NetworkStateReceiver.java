@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.GlobalEventHandler;
 
 /**
  * Created by madmachines on 16/10/15.
@@ -28,6 +29,8 @@ public class NetworkStateReceiver extends BroadcastReceiver {
         } else {
             //nothing
         }
+
+        GlobalEventHandler.getInstance().internetStateChanged(connected);
 
     }
 

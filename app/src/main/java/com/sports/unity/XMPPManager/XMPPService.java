@@ -32,6 +32,7 @@ import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.FileOnCloudHandler;
+import com.sports.unity.util.GlobalEventHandler;
 import com.sports.unity.util.NotificationHandler;
 
 import org.jivesoftware.smack.ConnectionListener;
@@ -369,6 +370,8 @@ public class XMPPService extends Service {
                 attachChatRelatedListeners((XMPPTCPConnection) connection);
                 getForms((XMPPTCPConnection) connection);
 
+                GlobalEventHandler.getInstance().xmppServerConnected(true);
+
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -376,20 +379,20 @@ public class XMPPService extends Service {
 
         @Override
         public void connectionClosed() {
-//            XMPPClient.reconnectAndAuthenticate_OnThread(XMPPService.this);
             Log.i("connection", "closed");
 
+            GlobalEventHandler.getInstance().internetStateChanged(false);
         }
 
         @Override
         public void connectionClosedOnError(Exception e) {
-//            XMPPClient.reconnectAndAuthenticate_OnThread(XMPPService.this);
             Log.i("connection", "closed on error");
+
+            GlobalEventHandler.getInstance().internetStateChanged(false);
         }
 
         @Override
         public void reconnectionSuccessful() {
-//            XMPPClient.reconnectAndAuthenticate_OnThread(XMPPService.this);
             Log.i("reconnection", "succesful");
 
         }
@@ -400,7 +403,6 @@ public class XMPPService extends Service {
 
         @Override
         public void reconnectionFailed(Exception e) {
-//            XMPPClient.reconnectAndAuthenticate_OnThread(XMPPService.this);
             Log.i("reconnection", "failed");
 
         }

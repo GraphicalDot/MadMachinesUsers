@@ -60,7 +60,9 @@ public class FileOnCloudHandler {
     }
 
     public void requestForUpload(byte[] content, String mimeType, Chat chat, long messageId, boolean nearByChat) {
-        if (!requestMapWithStatus.containsKey(String.valueOf(messageId))) {
+        boolean handleRequest = shouldHandleRequest(messageId);
+
+        if ( handleRequest ) {
             CloudContentRequest request = new CloudContentRequest(true, mimeType, messageId, null, content, true, chat);
             requests.add(request);
             requestMapWithStatus.put(String.valueOf(messageId), STATUS_UPLOADING);
@@ -70,7 +72,9 @@ public class FileOnCloudHandler {
     }
 
     public void requestForUpload(String fileName, String mimeType, Chat chat, long messageId, boolean nearByChat) {
-        if (!requestMapWithStatus.containsKey(String.valueOf(messageId))) {
+        boolean handleRequest = shouldHandleRequest(messageId);
+
+        if ( handleRequest ) {
             Log.i("File on cloud", "upload request message id " + messageId);
             CloudContentRequest request = new CloudContentRequest(true, mimeType, messageId, null, fileName, false, chat);
             requests.add(request);
@@ -81,7 +85,9 @@ public class FileOnCloudHandler {
     }
 
     public void requestForDownload(String checksum, String mimeType, long messageId) {
-        if (!requestMapWithStatus.containsKey(String.valueOf(messageId))) {
+        boolean handleRequest = shouldHandleRequest(messageId);
+
+        if ( handleRequest ) {
             boolean isContentInBytes = true;
             if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
                 isContentInBytes = false;
@@ -118,6 +124,22 @@ public class FileOnCloudHandler {
         }
 
         return status;
+    }
+
+    private boolean shouldHandleRequest(long messageId){
+        boolean handleRequest = false;
+        if( requestMapWithStatus.containsKey(String.valueOf(messageId)) ){
+            int status = requestMapWithStatus.get(String.valueOf(messageId));
+            if( status == STATUS_DOWNLOAD_FAILED || status == STATUS_UPLOAD_FAILED ){
+                handleRequest = true;
+                requestMapWithStatus.remove(String.valueOf(messageId));
+            } else {
+                handleRequest = false;
+            }
+        } else {
+            handleRequest = true;
+        }
+        return handleRequest;
     }
 
     private void processRequests(final boolean nearByChat) {
@@ -168,6 +190,7 @@ public class FileOnCloudHandler {
                 requests.remove(request);
                 requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
             } else {
+                requests.remove(request);
                 requestMapWithStatus.put(String.valueOf(request.getMessageId()), STATUS_UPLOAD_FAILED);
             }
         } else {
@@ -180,6 +203,7 @@ public class FileOnCloudHandler {
                 requests.remove(request);
                 requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
             } else {
+                requests.remove(request);
                 requestMapWithStatus.put(String.valueOf(request.getMessageId()), STATUS_UPLOAD_FAILED);
             }
         }
@@ -198,6 +222,7 @@ public class FileOnCloudHandler {
                 requests.remove(request);
                 requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
             } else {
+                requests.remove(request);
                 requestMapWithStatus.put(String.valueOf(request.getMessageId()), STATUS_DOWNLOAD_FAILED);
             }
         } else {
@@ -212,6 +237,7 @@ public class FileOnCloudHandler {
                 requests.remove(request);
                 requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
             } else {
+                requests.remove(request);
                 requestMapWithStatus.put(String.valueOf(request.getMessageId()), STATUS_DOWNLOAD_FAILED);
             }
         }
@@ -253,6 +279,7 @@ public class FileOnCloudHandler {
 
         } catch (Exception e) {
             e.printStackTrace();
+            checksum = null;
         } finally {
             try {
                 byteArrayInputStream.close();
@@ -306,6 +333,7 @@ public class FileOnCloudHandler {
 
         } catch (Exception e) {
             e.printStackTrace();
+            checksum = null;
         } finally {
             try {
                 fileInputStream.close();
@@ -357,6 +385,7 @@ public class FileOnCloudHandler {
             }
         } catch (Throwable t) {
             t.printStackTrace();
+            data = null;
         } finally {
             try {
                 byteArrayOutputStream.close();

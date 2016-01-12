@@ -27,6 +27,7 @@ import com.sports.unity.messages.controller.activity.ChatScreenAdapter;
 import com.sports.unity.messages.controller.activity.ForwardSelectedItems;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.FileOnCloudHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -136,12 +137,17 @@ public class ToolbarActionsForChatScreen {
             ColorDrawable drawable = new ColorDrawable(view.getResources().getColor(R.color.list_selector));
             ((FrameLayout)view).setForeground(drawable);
 
-            selectedFlag = true;
-            selecteditems++;
-            selectedItemsList.add(position);
-            if (!message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
-                mediaSelected = true;
-                mediaSelectedItems++;
+            int status = FileOnCloudHandler.getInstance(view.getContext()).getMediaContentStatus(message);
+            if( status == FileOnCloudHandler.STATUS_UPLOADED || status == FileOnCloudHandler.STATUS_DOWNLOADED || status == FileOnCloudHandler.STATUS_NONE ) {
+                selectedFlag = true;
+                selecteditems++;
+                selectedItemsList.add(position);
+                if (!message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
+                    mediaSelected = true;
+                    mediaSelectedItems++;
+                }
+            } else {
+                //nothing
             }
         } else {
             //do nothing
@@ -152,13 +158,15 @@ public class ToolbarActionsForChatScreen {
 
     public boolean onClickSelectView(View view, int position, ArrayList<Message> messageList) {
         if (selectedFlag == true) {
+            Message message = messageList.get(position);
             if (selectedItemsList.contains(position)) {
                 ColorDrawable drawable = new ColorDrawable(Color.TRANSPARENT);
                 ((FrameLayout)view).setForeground(drawable);
 
                 selecteditems--;
                 selectedItemsList.remove(Integer.valueOf(position));
-                if (!messageList.get(position).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
+
+                if (!message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
                     mediaSelectedItems--;
                     if (mediaSelectedItems == 0) {
                         mediaSelected = false;
@@ -168,11 +176,17 @@ public class ToolbarActionsForChatScreen {
                 ColorDrawable drawable = new ColorDrawable(view.getResources().getColor(R.color.list_selector));
                 ((FrameLayout)view).setForeground(drawable);
 
-                selecteditems++;
-                selectedItemsList.add(position);
-                if (!messageList.get(position).mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
-                    mediaSelected = true;
-                    mediaSelectedItems++;
+                int status = FileOnCloudHandler.getInstance(view.getContext()).getMediaContentStatus(message);
+                if( status == FileOnCloudHandler.STATUS_UPLOADED || status == FileOnCloudHandler.STATUS_DOWNLOADED || status == FileOnCloudHandler.STATUS_NONE ) {
+                    selecteditems++;
+                    selectedItemsList.add(position);
+
+                    if (!message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
+                        mediaSelected = true;
+                        mediaSelectedItems++;
+                    }
+                } else {
+                    //nothing
                 }
             }
         } else {
