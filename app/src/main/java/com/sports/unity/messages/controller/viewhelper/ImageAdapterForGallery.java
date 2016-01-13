@@ -26,6 +26,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.Database.DBUtil;
@@ -33,13 +34,13 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.common.model.TinyDB;
-import com.sports.unity.util.ActivityActionHandler;
-import com.sports.unity.util.ActivityActionListener;
-import com.sports.unity.util.ThreadTask;
+import com.sports.unity.util.*;
+import com.sports.unity.util.ImageUtil;
 
 import java.io.ByteArrayOutputStream;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 /**
@@ -145,7 +146,7 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
         sendImageView.setOnClickListener(sendClickListener);
 
         recyclerView.clearOnScrollListeners();
-        recyclerView.addOnScrollListener( scrollListener);
+        recyclerView.addOnScrollListener(scrollListener);
     }
 
     private void deactivateSendOverlay(){
@@ -165,40 +166,39 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
         ImageView imageView = (ImageView)selectedViewForSend;
 
         int position = (Integer)imageView.getTag(R.layout.layout_gallery);
-
         File file = new File(filePath.get(position));
 
-        //BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        //Bitmap bitmap = BitmapFactory.decodeFile(file.getAbsolutePath(),bmOptions);
-        Bitmap bitmap = ProfileCreationActivity.decodeSampleImage(file, keyboardHeight, keyboardHeight);
+        final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
+        final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
 
-      // Bitmap bitmap = imageView.getDrawingCache();
+        try{
+            Bitmap bitmap = com.sports.unity.util.ImageUtil.decodeSampleImage( file, screenHeight, screenWidth);
 
+            new ThreadTask(bitmap) {
+                private byte[] mediaContent = null;
 
-        new ThreadTask( bitmap){
-            private byte[] mediaContent = null;
+                @Override
+                public Object process() {
+                    Bitmap bitmap = (Bitmap) object;
+                    mediaContent = ImageUtil.getBytes(bitmap);
 
-            @Override
-            public Object process() {
-                Bitmap bitmap = (Bitmap)object;
-                String fileName = DBUtil.getUniqueFileName(activity.getBaseContext(), SportsUnityDBHelper.MIME_TYPE_IMAGE);
+                    String fileName = DBUtil.getUniqueFileName(activity.getBaseContext(), SportsUnityDBHelper.MIME_TYPE_IMAGE);
+                    DBUtil.writeContentToExternalFileStorage(activity.getBaseContext(), fileName, mediaContent);
+                    return fileName;
+                }
 
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                mediaContent = stream.toByteArray();
+                @Override
+                public void postAction(Object object) {
+                    String fileName = (String) object;
+                    sendActionToCorrespondingActivityListener(1, ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName, mediaContent);
+                }
 
-                DBUtil.writeContentToExternalFileStorage(activity.getBaseContext(), fileName, mediaContent);
-                return fileName;
-            }
+            }.start();
+        } catch (Exception ex){
+            ex.printStackTrace();
 
-            @Override
-            public void postAction(Object object) {
-                String fileName = (String)object;
-                sendActionToCorrespondingActivityListener( 1, ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName, mediaContent);
-            }
-
-        }.start();
-
+            Toast.makeText(activity, "Something went wrong.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private boolean sendActionToCorrespondingActivityListener(int id, String key, String mimeType, Object messageContent, Object mediaContent) {

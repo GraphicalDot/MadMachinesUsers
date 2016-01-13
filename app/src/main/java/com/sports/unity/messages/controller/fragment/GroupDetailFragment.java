@@ -31,6 +31,7 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.activity.CreateGroup;
 import com.sports.unity.messages.controller.model.GroupMessaging;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.ImageUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -38,7 +39,6 @@ import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.sports.unity.ProfileCreationActivity.decodeSampleImage;
 
 /**
  * Created by amandeep on 30/10/15.
@@ -119,38 +119,9 @@ public class GroupDetailFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
-            Bitmap bitmap = null;
-            if (data.getData() != null) {
+            Bitmap decodedBitmap = ImageUtil.handleImageAndSetToView(data, groupAvatar);
 
-                Uri selectedImage = data.getData();
-                String[] filePathColumn = {MediaStore.Images.Media.DATA};
-                Cursor cursor = getActivity().getContentResolver().query(selectedImage, filePathColumn, null, null, null);
-                cursor.moveToFirst();
-                int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-                String filePath = cursor.getString(columnIndex);
-                File file = new File(filePath);
-                cursor.close();
-
-
-                bitmap = decodeSampleImage(file, 100, 100);
-
-                try {
-                    bitmap = ProfileCreationActivity.rotateImageIfRequired(bitmap, file);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-                groupImageArray = byteArrayOutputStream.toByteArray();
-                groupAvatar.setImageBitmap(bitmap);
-            } else {
-                bitmap = (Bitmap) data.getExtras().get("data");
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-                groupImageArray = byteArrayOutputStream.toByteArray();
-                groupAvatar.setImageBitmap(bitmap);
-            }
+            groupImageArray = ImageUtil.getBytes(decodedBitmap);
         } else {
             //callbackManager.onActivityResult(requestCode, resultCode, data);
         }

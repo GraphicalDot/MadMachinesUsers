@@ -563,13 +563,17 @@ public class ChatKeyboardHelper {
 
         cursor = activity.getContentResolver().query(uri, projection, null,
                 null, MediaStore.MediaColumns.DATE_MODIFIED + " DESC");
-        column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
+        if( cursor != null ) {
+            column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
-        while (cursor.moveToNext()) {
-            absolutePathOfImage = cursor.getString(column_index_data);
-            listOfAllImages.add(absolutePathOfImage);
+            while (cursor.moveToNext()) {
+                absolutePathOfImage = cursor.getString(column_index_data);
+                listOfAllImages.add(absolutePathOfImage);
+            }
+            cursor.close();
+        } else {
+            //nothing
         }
-        cursor.close();
         return listOfAllImages;
     }
 

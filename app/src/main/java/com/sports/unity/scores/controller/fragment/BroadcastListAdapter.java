@@ -78,7 +78,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
             if( sportsType.equals(ScoresJsonParser.CRICKET) ){
                 holder.commentTime.setText(jsonCaller.getOvers());
             } else if( sportsType.equals(ScoresJsonParser.FOOTBALL) ){
-                holder.commentTime.setText( Html.fromHtml(jsonCaller.getMinute() + "<sup>'</sup>"));
+                holder.commentTime.setText( Html.fromHtml(jsonCaller.getMinute()));
             }
 
         }catch (Exception ex){

@@ -110,26 +110,37 @@ public class ContactsHandler {
 
         ContentResolver contentResolver = context.getContentResolver();
         Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
-        while (cursor.moveToNext()) {
-            String contact_id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-            Cursor phoneCursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{contact_id}, null);
-            while (phoneCursor.moveToNext()) {
-                String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                if (phoneNumber.length() < 10) {
-                    //do nothing
-                } else {
-                    phoneNumber = phoneNumber.replaceAll("\\s+", "");
-                    phoneNumber = phoneNumber.replaceAll("[-+.^:,]", "");
-                    phoneNumber = phoneNumber.replaceAll("\\p{P}", "");
-                    if (phoneNumber.startsWith("91")) {
-                        //Do nothing
-                    } else {
-                        phoneNumber = "91" + phoneNumber;
+        if( cursor != null ) {
+            while (cursor.moveToNext()) {
+                String contact_id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+                Cursor phoneCursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{contact_id}, null);
+                if( phoneCursor != null ) {
+                    while (phoneCursor.moveToNext()) {
+                        String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        if (phoneNumber.length() < 10) {
+                            //do nothing
+                        } else {
+                            phoneNumber = phoneNumber.replaceAll("\\s+", "");
+                            phoneNumber = phoneNumber.replaceAll("[-+.^:,]", "");
+                            phoneNumber = phoneNumber.replaceAll("\\p{P}", "");
+                            if (phoneNumber.startsWith("91")) {
+                                //Do nothing
+                            } else {
+                                phoneNumber = "91" + phoneNumber;
+                            }
+                            contacts.put(phoneNumber, name);
+                        }
                     }
-                    contacts.put(phoneNumber, name);
+                    phoneCursor.close();
+                } else {
+                    //nothing
                 }
             }
+            cursor.close();
+        } else {
+            //nothing
         }
 
         return contacts;
@@ -202,28 +213,37 @@ public class ContactsHandler {
         String SELECTION = ContactsContract.Contacts.HAS_PHONE_NUMBER + "='1'";
         ContentResolver sContentResolver = context.getContentResolver();
         Cursor cursor = sContentResolver.query(ContactsContract.Contacts.CONTENT_URI, PROJECTION, SELECTION, null, null);
-        while (cursor.moveToNext()) {
-            String contact_id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-            String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-            String phoneNumber = null;
-            Cursor phoneCursor = sContentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{contact_id}, null);
-            while (phoneCursor.moveToNext()) {
-                phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                if (phoneNumber.length() < 10) {
-                    //do nothing
-                } else {
-                    phoneNumber = phoneNumber.replaceAll("\\s+", "");
-                    phoneNumber = phoneNumber.replaceAll("[-+.^:,]", "");
-                    if (phoneNumber.startsWith("91")) {
-                        SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, false, defaultStatus, true);
-                    } else {
-                        phoneNumber = "91" + phoneNumber;
-                        SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, false, defaultStatus, true);
+
+        if( cursor != null ) {
+            while (cursor.moveToNext()) {
+                String contact_id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
+                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+                String phoneNumber = null;
+                Cursor phoneCursor = sContentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{contact_id}, null);
+                if( phoneCursor != null ) {
+                    while (phoneCursor.moveToNext()) {
+                        phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        if (phoneNumber.length() < 10) {
+                            //do nothing
+                        } else {
+                            phoneNumber = phoneNumber.replaceAll("\\s+", "");
+                            phoneNumber = phoneNumber.replaceAll("[-+.^:,]", "");
+                            if (phoneNumber.startsWith("91")) {
+                                SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, false, defaultStatus, true);
+                            } else {
+                                phoneNumber = "91" + phoneNumber;
+                                SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, false, defaultStatus, true);
+                            }
+                        }
                     }
+                    phoneCursor.close();
                 }
             }
+            cursor.close();
+        } else {
+            //nothing
         }
-        cursor.close();
     }
 
     private class AddContactThread extends Thread {

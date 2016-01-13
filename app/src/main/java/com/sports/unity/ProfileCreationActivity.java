@@ -42,6 +42,7 @@ import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.SelectSportsActivity;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.util.ImageUtil;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -120,127 +121,14 @@ public class ProfileCreationActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-
-
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
-            try {
-                Bitmap bitmap = null;
-                if (data.getData() != null) {
-                    Uri selectedImage = data.getData();
-                    bitmap = getBitmapFromUri(selectedImage);
+            CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
 
-                    compress_and_set_image(bitmap);
-                } else {
-                    bitmap = (Bitmap) data.getExtras().get("data");
-                    compress_and_set_image(bitmap);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Toast.makeText(this, "Unable to access this file since it is locked :( Select another image.", Toast.LENGTH_SHORT).show();
-            }
+            Bitmap bitmap = ImageUtil.handleImageAndSetToView(data, circleImageView);
+            byteArray = ImageUtil.getBytes(bitmap);
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
-    }
-
-    private Bitmap compress_and_set_image( Bitmap bitmap) throws Exception {
-
-        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
-
-        Uri tempUri = getImageUri(getApplicationContext(), bitmap);
-        File file = new File(getRealPathFromURI(tempUri));
-
-        bitmap = decodeSampleImage(file, 100, 100);
-        bitmap = rotateImageIfRequired(bitmap, file);
-
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-
-        Log.i("bitmap size in if", "" + bitmap.getByteCount());
-        byteArray = byteArrayOutputStream.toByteArray();
-        circleImageView.setImageBitmap(bitmap);
-
-        return bitmap;
-    }
-    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
-        ParcelFileDescriptor parcelFileDescriptor =
-                getContentResolver().openFileDescriptor(uri, "r");
-        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-        parcelFileDescriptor.close();
-        return image;
-    }
-
-    public static Bitmap rotateImageIfRequired(Bitmap img, File selectedImage) throws IOException {
-
-        ExifInterface ei = new ExifInterface(selectedImage.getPath());
-        int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-
-        switch (orientation) {
-            case ExifInterface.ORIENTATION_ROTATE_90:
-                return rotateImage(img, 90);
-            case ExifInterface.ORIENTATION_ROTATE_180:
-                return rotateImage(img, 180);
-            case ExifInterface.ORIENTATION_ROTATE_270:
-                return rotateImage(img, 270);
-            default:
-                return img;
-        }
-    }
-
-    private static Bitmap rotateImage(Bitmap img, int degree) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degree);
-        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
-        img.recycle();
-        return rotatedImg;
-    }
-
-    public static Uri getImageUri(Context inContext, Bitmap inImage) {
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
-
-    public String getRealPathFromURI(Uri uri) {
-        Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-        cursor.moveToFirst();
-        int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-        return cursor.getString(idx);
-    }
-
-    public static Bitmap decodeSampleImage(File f, int width, int height) {
-        try {
-            System.gc(); // First of all free some memory
-
-            // Decode image size
-
-            BitmapFactory.Options o = new BitmapFactory.Options();
-            o.inJustDecodeBounds = true;
-            BitmapFactory.decodeStream(new FileInputStream(f), null, o);
-
-            // The new size we want to scale to
-
-            final int requiredWidth = width;
-            final int requiredHeight = height;
-
-            // Find the scale value (as a power of 2)
-
-            int sampleScaleSize = 1;
-
-            while (o.outWidth / sampleScaleSize / 2 >= requiredWidth && o.outHeight / sampleScaleSize / 2 >= requiredHeight)
-                sampleScaleSize *= 2;
-
-            // Decode with inSampleSize
-
-            BitmapFactory.Options o2 = new BitmapFactory.Options();
-            o2.inSampleSize = sampleScaleSize;
-
-            return BitmapFactory.decodeStream(new FileInputStream(f), null, o2);
-        } catch (Exception e) {
-            Log.d("error", e.getMessage()); // We don't want the application to just throw an exception
-        }
-
-        return null;
     }
 
     @Override
