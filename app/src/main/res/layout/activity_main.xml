@@ -62,18 +62,18 @@
             <include
                 android:id="@+id/nav_header"
                 layout="@layout/navigation_header" />
-            <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fillViewport="true"
-                android:nestedScrollingEnabled="true">
+                >
 
                 <FrameLayout
                     android:id="@+id/nav_fragment"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginBottom="@dimen/nav_item_margin"/>
-            </android.support.v4.widget.NestedScrollView>
+            </ScrollView>
         </LinearLayout>
     </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>
