@@ -17,12 +17,9 @@ import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
-import com.sports.unity.messages.controller.BlockUnblockUserHelper;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
-import com.sports.unity.messages.controller.activity.ForwardSelectedItems;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.ToolbarActionsForChatScreen;
-import com.sports.unity.messages.controller.viewhelper.ChatKeyboardHelper;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.Constants;
 

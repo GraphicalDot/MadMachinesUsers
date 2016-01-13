@@ -113,7 +113,7 @@ public class CommonUtil {
     }
 
     public static String getDefaultTimezoneTimeInAMANDPM(long gmtEpoch) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("K:mm a");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("h:mm a");
         simpleDateFormat.setTimeZone(TimeZone.getDefault());
         String time = String.valueOf(simpleDateFormat.format(gmtEpoch * 1000));
         return time;

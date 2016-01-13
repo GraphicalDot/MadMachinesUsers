@@ -63,6 +63,7 @@
                 android:hint="Write a message"
                 android:inputType="textMultiLine"
                 android:maxLength="2000"
+                android:maxLines="5"
                 android:paddingLeft="@dimen/vertical_padding_small"
                 android:paddingTop="@dimen/vertical_padding_small"
                 android:scrollbars="vertical"

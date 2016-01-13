@@ -31,6 +31,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -38,6 +39,7 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.sports.unity.Database.SportsUnityDBHelper;
@@ -226,31 +228,31 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
                     seekBar.setProgress(0);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_01));
                     radius = 1000;
-                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+//                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else if (progress >= 0 * stepRange + stepRange / 2 && progress <= 0 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(1 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_05));
                     radius = 5000;
-                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+//                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else if (progress >= 1 * stepRange + stepRange / 2 && progress <= 1 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(2 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_20));
                     radius = 20000;
-                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+//                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else if (progress >= 2 * stepRange + stepRange / 2 && progress <= 2 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(3 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_30));
                     radius = 30000;
-                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+//                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else {
                     seekBar.setProgress(4 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_40));
                     radius = 40000;
-                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+//                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 }
             }
@@ -275,6 +277,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
     }
 
     private void plotMarkers(ArrayList<JSONObject> users, String sportSelection) {
+        ArrayList<Marker> markers = new ArrayList<>();
         Log.i("plottingmarkers", "true");
         for (JSONObject user : users) {
             nearByUserJsonCaller.setJsonObject(user);
@@ -293,14 +296,32 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
                     if (nearByUserJsonCaller.getUsername().equals(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME))) {
                         //nothing
                     } else {
-                        map.addMarker(markerOption);
+                        Marker marker = map.addMarker(markerOption);
+                        markers.add(marker);
                     }
-
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
+        animateCamera(markers);
+    }
+
+    private void animateCamera(ArrayList<Marker> markers) {
+        if (markers != null) {
+            LatLngBounds.Builder builder = new LatLngBounds.Builder();
+            for (Marker marker : markers) {
+                builder.include(marker.getPosition());
+            }
+            LatLngBounds bounds = builder.build();
+            int padding = 300; // offset from edges of the map in pixels
+            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+            map.moveCamera(cu);
+            map.animateCamera(cu);
+            Toast.makeText(PeopleAroundMeMap.this, markers.size() + " people around you", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
 

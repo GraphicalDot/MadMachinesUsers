@@ -51,18 +51,6 @@ public class MainActivity extends CustomAppCompatActivity {
         initViews();
         setNavigation();
 
-        if (locationUpdate != null && locationUpdate.isAlive()) {
-            //no nothing
-        } else {
-            locationUpdate = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    LocManager.getInstance(getApplicationContext()).getLocation();
-                }
-            });
-            locationUpdate.start();
-        }
-
     }
 
     private void setNavigation() {
@@ -153,6 +141,21 @@ public class MainActivity extends CustomAppCompatActivity {
             getSupportFragmentManager().beginTransaction().replace(R.id.nav_fragment, navigationFragment, "Nav_frag").commit();
         }
         isPaused = false;
+        updateLocation();
+    }
+
+    private void updateLocation() {
+        if (locationUpdate != null && locationUpdate.isAlive()) {
+            //no nothing
+        } else {
+            locationUpdate = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    LocManager.getInstance(getApplicationContext()).getLocation();
+                }
+            });
+            locationUpdate.start();
+        }
     }
 
     @Override
