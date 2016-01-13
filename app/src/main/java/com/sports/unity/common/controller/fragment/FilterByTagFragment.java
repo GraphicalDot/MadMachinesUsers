@@ -5,7 +5,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +22,7 @@ import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
+import java.util.List;
 
 /**
  * Created by Mad on 12/28/2015.
@@ -36,20 +36,24 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     private FavouriteContentHandler favouriteContentHandler;
     private FilterRecycleAdapter itemAdapter;
     ArrayList<FavouriteItem> searchList;
-    ArrayList<String> searchStringList;
+    List<String> searchStringList;
     private boolean isEdit;
     private LinearLayout errorLayout;
     private ProgressBar progressBar;
-
+    private TextView messageView;
+    private final String errorMessage = "Something went wrong";
+    private final String noResultMessage = "No result found";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bundle = getArguments();
+
         favouriteContentHandler = FavouriteContentHandler.getInstance();
-        favouriteContentHandler.addPrepareListener(this);
+
         SPORTS_FILTER_TYPE = bundle.getString(Constants.SPORTS_FILTER_TYPE);
         SPORTS_TYPE = bundle.getString(Constants.SPORTS_TYPE);
+        ((AdvancedFilterActivity) getActivity()).addEditClickListener(this);
         isFilterCompleted = UserUtil.isFilterCompleted();
         isFromNav = ((AdvancedFilterActivity) getActivity()).isFromNav;
     }
@@ -57,13 +61,22 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     @Override
     public void onPause() {
         super.onPause();
+        favouriteContentHandler.searchNum = 0;
         favouriteContentHandler.onPause();
+        favouriteContentHandler.removePrepairedListener(this);
+        hideProgress();
+        hideErrorLayout();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         favouriteContentHandler.onResume();
+        favouriteContentHandler.addPrepareListener(this);
+        if (!favouriteContentHandler.isDisplay) {
+            showProgress();
+            favouriteContentHandler.makeRequest();
+        }
     }
 
     @Nullable
@@ -76,7 +89,6 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((AdvancedFilterActivity) getActivity()).addEditClickListener(this);
         initViews(view);
         setUpRecyclerView(view);
     }
@@ -86,8 +98,8 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
         TextView oops = (TextView) errorLayout.findViewById(R.id.oops);
         oops.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
 
-        TextView something_wrong = (TextView) errorLayout.findViewById(R.id.something_wrong);
-        something_wrong.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
+        messageView = (TextView) errorLayout.findViewById(R.id.something_wrong);
+        messageView.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getActivity().getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
     }
@@ -130,9 +142,9 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
             itemDataSet = favouriteContentHandler.getFavFootballLeagues();
 
         }
-        if (itemDataSet == null) {
+        if (itemDataSet == null || itemDataSet.size() <= 0) {
             hideProgress();
-            showErrorLayout();
+            showErrorLayout(errorMessage);
         } else {
             displayContent();
         }
@@ -163,64 +175,151 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
 
     private void requestEdit(boolean b) {
         if (b) {
-            isEdit = true;
             showProgress();
-            favouriteContentHandler.requestFavSearch(SPORTS_FILTER_TYPE, ((AdvancedFilterActivity) getActivity()).searchString);
-
-            Log.d("max", "Requesting Search");
-        } else if (!isFilterCompleted || isFromNav) {
-
-            searchList = itemAdapter.getItemDataSet();
-            if (searchList.size() > 0) {
-                Log.d("max", "Closing Search");
+            /**
+             * Handle previous search result if search is
+             not closed by the user and add data to item data set */
+            if ((isEdit && isFromNav) || (isEdit && !isFilterCompleted)) {
                 try {
-                    for (FavouriteItem f : searchList) {
-                        Log.d("max", "Name is" + f.getName());
-                        if (f.isChecked()) {
-                            itemDataSet.add(f);
+                    searchList = itemAdapter.getItemDataSet();
+                    if (searchList.size() > 0) {
+                        try {
+                            for (FavouriteItem f : searchList) {
+                                if (f.isChecked()) {
+                                    for (int index = 0; index < itemDataSet.size(); index++) {
+                                        FavouriteItem f1 = itemDataSet.get(index);
+                                        if (f1.getName().equals(f.getName())) {
+                                            itemDataSet.remove(index);
+                                        }
+                                    }
+                                    itemDataSet.add(0, f);
+                                }
+                            }
+                        } catch (ConcurrentModificationException e) {
+                            hideErrorLayout();
                         }
                     }
-                } catch (ConcurrentModificationException e) {
-                    Log.d("max", e.toString());
-                    filterRecyclerView.setVisibility(View.VISIBLE);
-                    hideErrorLayout();
+                } catch (NullPointerException e) {
+                    showErrorLayout(errorMessage);
                 }
-                isEdit = false;
-                hideErrorLayout();
-                filterRecyclerView.setVisibility(View.VISIBLE);
-                itemAdapter = new FilterRecycleAdapter(getActivity(), itemDataSet, true);
-                filterRecyclerView.setAdapter(itemAdapter);
-                filterRecyclerView.invalidate();
+
+            }
+            isEdit = true;
+            favouriteContentHandler.requestFavSearch(SPORTS_FILTER_TYPE, SPORTS_TYPE, ((AdvancedFilterActivity) getActivity()).searchString);
+
+        } else if ((isEdit && isFromNav) || (isEdit && !isFilterCompleted)) {
+            searchList = itemAdapter.getItemDataSet();
+            try {
+                if (searchList.size() > 0) {
+                    try {
+                        for (FavouriteItem f : searchList) {
+                            if (f.isChecked()) {
+                                for (int index = 0; index < itemDataSet.size(); index++) {
+                                    FavouriteItem f1 = itemDataSet.get(index);
+                                    if (f1.getName().equals(f.getName())) {
+                                        itemDataSet.remove(index);
+                                    }
+                                }
+                                itemDataSet.add(0, f);
+                            }
+                        }
+                    } catch (ConcurrentModificationException e) {
+                        filterRecyclerView.setVisibility(View.VISIBLE);
+                        hideErrorLayout();
+                    }
+                    isEdit = false;
+                    hideErrorLayout();
+                    filterRecyclerView.setVisibility(View.VISIBLE);
+                    itemAdapter.setItemDataSet(itemDataSet, true);
+                }
+            } catch (NullPointerException e) {
+                showErrorLayout(errorMessage);
             }
         } else {
-            Log.d("hjk", "CLOSING");
             displayContent();
         }
     }
 
     public void enableEditMode() {
-        if ((isEdit && isFromNav) || !isFilterCompleted) {
+        if ((isEdit && isFromNav) || (isEdit && !isFilterCompleted)) {
+
             searchList = new ArrayList<FavouriteItem>();
-            searchList = favouriteContentHandler.getSearchList();
-            Log.d("max", "ENABLED"+searchList.size());
-            itemAdapter = new FilterRecycleAdapter(getActivity(), searchList, true);
-            filterRecyclerView.setVisibility(View.VISIBLE);
-            filterRecyclerView.setAdapter(itemAdapter);
-            filterRecyclerView.invalidate();
+            if (SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_TEAM)) {
+                if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_CRICKET)) {
+                    searchList = favouriteContentHandler.getSearchedCricketTeam();
+
+                } else if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                    searchList = favouriteContentHandler.getSearchedFootballTeam();
+                }
+
+            } else if (SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_PLAYER)) {
+
+                if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_CRICKET)) {
+                    searchList = favouriteContentHandler.getSearchedCricketPlayer();
+
+                } else if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                    searchList = favouriteContentHandler.getSearchedFootballPlayer();
+
+                }
+
+            } else if (SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_LEAGUE)) {
+                searchList = favouriteContentHandler.getSearchedFootballLeague();
+
+            }
+            try {
+                if (searchList.size() <= 0) {
+
+                    showErrorLayout(noResultMessage);
+                } else {
+                    itemAdapter.setItemDataSet(searchList, true);
+                    filterRecyclerView.setVisibility(View.VISIBLE);
+                }
+            } catch (NullPointerException e) {
+                showErrorLayout(noResultMessage);
+            }
         } else {
             searchStringList = new ArrayList<String>();
-            searchStringList = favouriteContentHandler.getSearchStringList();
-            itemAdapter = new FilterRecycleAdapter(getActivity(), searchStringList);
-            filterRecyclerView.setVisibility(View.VISIBLE);
-            filterRecyclerView.setAdapter(itemAdapter);
-            filterRecyclerView.invalidate();
+            if (SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_TEAM)) {
+                if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_CRICKET)) {
+                    searchStringList = favouriteContentHandler.getSearchedCricketTeamStringList();
+
+                } else if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                    searchStringList = favouriteContentHandler.getSearchedFootballTeamStringList();
+                }
+
+            } else if (SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_PLAYER)) {
+
+                if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_CRICKET)) {
+                    searchStringList = favouriteContentHandler.getSearchedCricketPlayerStringList();
+
+                } else if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                    searchStringList = favouriteContentHandler.getSearchedFootballPlayerStringList();
+
+                }
+
+            } else if (SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_LEAGUE)) {
+                searchStringList = favouriteContentHandler.getSearchedFootballLeagueStringList();
+
+            }
+            try {
+                if (searchStringList.size() <= 0) {
+                    showErrorLayout(noResultMessage);
+                } else {
+                    itemAdapter.setFavDataSet(searchStringList, false);
+                    filterRecyclerView.setVisibility(View.VISIBLE);
+                }
+            } catch (NullPointerException e) {
+                showErrorLayout(noResultMessage);
+            }
         }
     }
 
 
-    private void showErrorLayout() {
+    private void showErrorLayout(String message) {
         filterRecyclerView.setVisibility(View.INVISIBLE);
         errorLayout.setVisibility(View.VISIBLE);
+        messageView.setText(message);
+        errorLayout.requestLayout();
     }
 
     private void hideErrorLayout() {
@@ -238,18 +337,14 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
         progressBar.setVisibility(View.GONE);
     }
 
-    private void disableEditMode() {
-        prepareList();
-        filterRecyclerView.invalidate();
-    }
-
     @Override
     public void onEdit(boolean b) {
         requestEdit(b);
+
     }
 
     @Override
-    public void onListPrepared(Boolean b) {
+    public void onListPrepared(Boolean b, String message) {
         if (!isEdit) {
             if (b) {
                 prepareList();
@@ -257,18 +352,16 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
                 hideProgress();
             } else {
                 hideProgress();
-                showErrorLayout();
+                showErrorLayout(message);
             }
         } else {
-
-            Log.d("max", "ResultSearch" + b);
             if (b) {
-                enableEditMode();
                 hideErrorLayout();
                 hideProgress();
+                enableEditMode();
             } else {
                 hideProgress();
-                showErrorLayout();
+                showErrorLayout(message);
             }
         }
     }

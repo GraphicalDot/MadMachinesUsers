@@ -7,6 +7,15 @@ public class FavouriteItem {
     private String name;
     private boolean isChecked;
 
+    public FavouriteItem(){
+
+    }
+
+    public FavouriteItem(FavouriteItem item){
+        this.name = item.name;
+        this.isChecked = item.isChecked;
+    }
+
     public void setName(String name) {
         this.name = name;
     }

@@ -1,6 +1,8 @@
 package com.sports.unity.common.controller;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,18 +14,25 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.fragment.AdvancedFilterFragment;
 import com.sports.unity.common.controller.fragment.NavigationFragment;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.LocManager;
+
+import org.jivesoftware.smack.XMPPConnection;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -37,6 +46,9 @@ public class MainActivity extends CustomAppCompatActivity {
 
     Toolbar toolbar;
 
+    private XMPPTCPConnection con;
+    private SportsUnityDBHelper sportsUnityDBHelper;
+
     private Thread locationUpdate = null;
 
     @Override
@@ -47,15 +59,45 @@ public class MainActivity extends CustomAppCompatActivity {
 
         SportsUnityDBHelper.getInstance(this).addDummyMessageIfNotExist();
         XMPPService.startService(MainActivity.this);
-
+        
         initViews();
-        setNavigation();
+        
+        setNavigation(savedInstanceState);
+        sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
+
+        con = XMPPClient.getConnection();
+        setNavigationProfile();
+    }
+    
+    public void setNavigationProfile() {
+
+        LinearLayout navHeader = (LinearLayout) findViewById(R.id.nav_header);
+
+        CircleImageView profile_photo = (CircleImageView) navHeader.findViewById(R.id.circleView);
+        TextView name = (TextView) navHeader.findViewById(R.id.name);
+
+        String user_name = TinyDB.getInstance(this).getString(TinyDB.KEY_PROFILE_NAME);
+        String user_details = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
+
+        Contacts contact = sportsUnityDBHelper.getContact(user_details);
+
+
+        if (contact.image != null) {
+            Bitmap bmp = BitmapFactory.decodeByteArray(contact.image, 0, contact.image.length);
+            profile_photo.setImageBitmap(bmp);
+        } else {
+            profile_photo.setImageResource(R.drawable.ic_user);
+        }
+
+
+        name.setText(user_name);
 
     }
-
-    private void setNavigation() {
-        navigationFragment = new NavigationFragment();
-        getSupportFragmentManager().beginTransaction().add(R.id.nav_fragment, navigationFragment, "Nav_frag").commit();
+    private void setNavigation(Bundle savedInstanceState) {
+        if(savedInstanceState==null) {
+            navigationFragment = new NavigationFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.nav_fragment, navigationFragment, "Nav_frag").commit();
+        }
     }
 
 

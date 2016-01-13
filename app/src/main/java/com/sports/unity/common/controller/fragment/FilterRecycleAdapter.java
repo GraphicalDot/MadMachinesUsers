@@ -18,13 +18,14 @@ import com.sports.unity.news.controller.activity.NewsSearchActivity;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Mad on 12/29/2015.
  */
 public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdapter.FilterItemView> {
     private ArrayList<FavouriteItem> itemDataSet;
-    private ArrayList<String> favDataSet;
+    private List<String> favDataSet;
     private Activity activity;
     private boolean isEditMode;
     public FilterRecycleAdapter(Activity activity, ArrayList<FavouriteItem> itemDataSet,boolean isEdit) {
@@ -32,7 +33,7 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
         this.itemDataSet = itemDataSet;
         this.activity = activity;
     }
-    public FilterRecycleAdapter(Activity activity, ArrayList<String> favDataSet) {
+    public FilterRecycleAdapter(Activity activity, List<String> favDataSet) {
         this.favDataSet = favDataSet;
         this.activity = activity;
     }
@@ -125,11 +126,23 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
         }
     }
     public ArrayList<FavouriteItem> getItemDataSet(){
-        return itemDataSet;
+        ArrayList<FavouriteItem> search = new ArrayList<>();
+        for(FavouriteItem item : itemDataSet){
+            search.add(new FavouriteItem(item));
+        }
+
+        return search;
     }
-    public void setInEditMode(ArrayList<FavouriteItem> itemDataSet,boolean isEditMode){
+    public void setItemDataSet(ArrayList<FavouriteItem> itemDataSet,boolean isEditMode){
         this.itemDataSet=itemDataSet;
         this.isEditMode=isEditMode;
-        notifyDataSetChanged();
+        this.notifyDataSetChanged();
     }
+    public void setFavDataSet(List<String> itemDataSet,boolean isEditMode){
+        this.favDataSet=itemDataSet;
+        this.isEditMode=isEditMode;
+        this.notifyDataSetChanged();
+
+    }
+
 }

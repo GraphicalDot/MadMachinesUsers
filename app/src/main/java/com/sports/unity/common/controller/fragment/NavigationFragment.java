@@ -1,6 +1,8 @@
 package com.sports.unity.common.controller.fragment;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ExpandableListActivity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +17,7 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,10 +45,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class NavigationFragment extends Fragment implements ExpandableListView.OnChildClickListener, View.OnClickListener {
 
-
-    private static XMPPTCPConnection con;
-    private SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(getActivity());
-
+    public boolean isMannual;
     ArrayList<String> teamGroupItems = new ArrayList<String>();
     private ArrayList<Object> teamChildItems = new ArrayList<Object>();
 
@@ -71,42 +71,13 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-
-        con = XMPPClient.getConnection();
-
         return inflater.inflate(R.layout.fragment_nav, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        setNavigationProfile(view);
         setUpExpandableLists(view);
-    }
-
-    public void setNavigationProfile(View view) {
-
-        LinearLayout navHeader = (LinearLayout) view.findViewById(R.id.nav_header);
-
-        CircleImageView profile_photo = (CircleImageView) navHeader.findViewById(R.id.circleView);
-        TextView name = (TextView) navHeader.findViewById(R.id.name);
-
-        String user_name = TinyDB.getInstance(getActivity()).getString(TinyDB.KEY_PROFILE_NAME);
-        String user_details = TinyDB.getInstance(getActivity()).getString(TinyDB.KEY_USERNAME);
-
-        Contacts contact = sportsUnityDBHelper.getContact(user_details);
-
-
-        if (contact.image != null) {
-            Bitmap bmp = BitmapFactory.decodeByteArray(contact.image, 0, contact.image.length);
-            profile_photo.setImageBitmap(bmp);
-        } else {
-            profile_photo.setImageResource(R.drawable.ic_user);
-        }
-
-
-        name.setText(user_name);
-
     }
 
     private void setUpExpandableLists(View view) {
@@ -143,19 +114,72 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 competeList.collapseGroup(0);
+             setListViewHeight(parent,groupPosition);
                 return false;
             }
         });
-
         competeList.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 teamList.collapseGroup(0);
+              setListViewHeight(parent, groupPosition);
                 return false;
+            }
+        });
+        teamList.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+            @Override
+            public void onGroupCollapse(int i) {
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                teamList.setLayoutParams(params);
+                teamList.requestLayout();
+            }
+        });
+        competeList.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+            @Override
+            public void onGroupCollapse(int i) {
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                competeList.setLayoutParams(params);
+                competeList.requestLayout();
             }
         });
     }
 
+
+    private void setListViewHeight(ExpandableListView listView,
+                                   int group) {
+        ExpandableListAdapter listAdapter = (ExpandableListAdapter) listView.getExpandableListAdapter();
+        int totalHeight = 0;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(),
+                View.MeasureSpec.EXACTLY);
+        for (int i = 0; i < listAdapter.getGroupCount(); i++) {
+            View groupItem = listAdapter.getGroupView(i, false, null, listView);
+            groupItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+
+            totalHeight += groupItem.getMeasuredHeight();
+
+            if (((listView.isGroupExpanded(i)) && (i != group))
+                    || ((!listView.isGroupExpanded(i)) && (i == group))) {
+                for (int j = 0; j < listAdapter.getChildrenCount(i); j++) {
+                    View listItem = listAdapter.getChildView(i, j, false, null,
+                            listView);
+                    listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+
+                    totalHeight += listItem.getMeasuredHeight();
+
+                }
+            }
+        }
+
+        ViewGroup.LayoutParams params = listView.getLayoutParams();
+        int height = totalHeight
+                + (listView.getDividerHeight() * (listAdapter.getGroupCount() - 1));
+        if (height < 10)
+            height = 200;
+        params.height = height;
+        listView.setLayoutParams(params);
+        listView.requestLayout();
+
+    }
 
     @Override
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
@@ -226,24 +250,27 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.favindi:
+                isMannual=true;
                 competeList.collapseGroup(0);
                 if (teamList.isGroupExpanded(0)) {
                     teamList.collapseGroup(0);
                 } else {
+                    setListViewHeight(teamList,0);
                     teamList.expandGroup(0);
                 }
                 break;
             case R.id.compindi:
+                isMannual=true;
                 teamList.collapseGroup(0);
                 if (competeList.isGroupExpanded(0)) {
                     competeList.collapseGroup(0);
                 } else {
+                    setListViewHeight(competeList,0);
                     competeList.expandGroup(0);
                 }
                 break;
             case R.id.edit_team:
                 isTeam = true;
-                Log.d("max","CLICKER");
                 ((MainActivity) getActivity()).isPaused = true;
                 Intent advancedFilterTeam = new Intent(getActivity(), AdvancedFilterActivity.class);
                 advancedFilterTeam.putExtra(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_TEAM);
@@ -269,10 +296,16 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
                 updateCompChild();
                 isComp = false;
                 compAdapter.updateChildList(competeChildItems);
+                competeList.collapseGroup(0);
+                setListViewHeight(competeList, 0);
+                competeList.expandGroup(0);
             } else if (isTeam) {
                 updateTeamChild();
                 isTeam = false;
                 teamAdapter.updateChildList(teamChildItems);
+                teamList.collapseGroup(0);
+                setListViewHeight(teamList,0);
+                teamList.expandGroup(0);
             }
         }
     }

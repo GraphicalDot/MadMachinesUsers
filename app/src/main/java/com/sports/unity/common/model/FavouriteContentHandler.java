@@ -1,7 +1,5 @@
 package com.sports.unity.common.model;
 
-import android.util.Log;
-
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
 
@@ -9,6 +7,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Mad on 12/29/2015.
@@ -16,13 +16,18 @@ import java.util.ArrayList;
 public class FavouriteContentHandler {
     public static FavouriteContentHandler favouriteContentHandler;
 
-    private static ArrayList<String> FOOTBALL_FILTER_LEAGUE = null;
-    private static ArrayList<String> FOOTBALL_FILTER_PLAYER = null;
-    private static ArrayList<String> FOOTBALL_FILTER_TEAM = null;
-    private static ArrayList<String> FAVOURITE_SEARCH = null;
+    private static List<String> FOOTBALL_FILTER_LEAGUE = null;
+    private static List<String> FOOTBALL_FILTER_PLAYER = null;
+    private static List<String> FOOTBALL_FILTER_TEAM = null;
+    private static List<String> CRICKET_FILTER_PLAYER = null;
+    private static List<String> CRICKET_FILTER_TEAM = null;
 
-    private static ArrayList<String> CRICKET_FILTER_PLAYER = null;
-    private static ArrayList<String> CRICKET_FILTER_TEAM = null;
+    private static List<String> SEARCH_FOOTBALL_LEAGUE = null;
+    private static List<String> SEARCH_CRICKET_TEAM = null;
+    private static List<String> SEARCH_CRICKET_PLAYER = null;
+    private static List<String> SEARCH_FOOTBALL_TEAM = null;
+    private static List<String> SEARCH_FOOTBALL_PLAYER = null;
+
 
     private ArrayList<FavouriteItem> favFootballLeagues;
     private ArrayList<FavouriteItem> favFootballTeams;
@@ -30,7 +35,15 @@ public class FavouriteContentHandler {
 
     private ArrayList<FavouriteItem> favCricketTeams;
     private ArrayList<FavouriteItem> favCricketPlayers;
-    private ArrayList<FavouriteItem> favSearchTeams;
+
+
+    private ArrayList<FavouriteItem> favSearchFootballLeague;
+    private ArrayList<FavouriteItem> favSearchCricketTeam;
+    private ArrayList<FavouriteItem> favSearchCricketPlayer;
+    private ArrayList<FavouriteItem> favSearchFootballTeam;
+    private ArrayList<FavouriteItem> favSearchFootballPlayer;
+
+
     private ArrayList<JSONObject> matches = new ArrayList<>();
     private ScoresContentListener contentListener = new ScoresContentListener();
 
@@ -40,26 +53,41 @@ public class FavouriteContentHandler {
     private static final String FOOTBALL_PLAYER_REQUEST_TAG = "football_player_request_tag";
     private static final String CRICKET_TEAM_REQUEST_TAG = "cricket_team_request_tag";
     private static final String CRICKET_PLAYER_REQUEST_TAG = "cricket_player_request_tag";
-    private static final String FAV_SEARCH_REQUEST_TAG = "fav_search_request_tag";
 
-    private ArrayList<ListPreparedListener> listPreparedListener;
-    public int responseNum = 0;
-    private ArrayList<Boolean> responseBool;
+    private static final String SEARCH_REQUEST_TAG = "fav_search_request_";
+    private static final String SEARCH_REQUEST_LEAGUE_TAG = "fav_search_request_league_tag";
+    private static final String SEARCH_CRICKET_TEAM_TAG = "fav_search_request_cricket_team_tag";
+    private static final String SEARCH_CRICKET_PLAYER_TAG = "fav_search_request_cricket_player_tag";
+
+    private static final String SEARCH_FOOTBALL_TEAM_TAG = "fav_search_request_football_team_tag";
+    private static final String SEARCH_FOOTBALL_PLAYER_TAG = "fav_search_request_football_player_tag";
+
+
     private static final String URL_FOOTBALL_LEAGUE = "http://52.74.142.219:8000/get_football_leagues";
     private static final String URL_FOOTBALL_PLAYER = "http://52.74.142.219:8000/get_top_football_players";
     private static final String URL_FOOTBALL_TEAM = "http://52.74.142.219:8000/get_top_football_teams";
     private static final String URL_CRICKET_TEAM = "http://52.74.142.219:8080/top_cricket_teams";
     private static final String URL_CRICKET_PLAYER = "http://52.74.142.219:8080/top_cricket_players";
-    private static final String URL_TEAM_SEARCH = "http://52.76.74.188:9000/fav_team?team=";
+
+
     private static final String URL_LEAGUE_SEARCH = "http://52.76.74.188:9000/fav_league?league=";
-    private static final String URL_PLAYER_SEARCH = "http://52.76.74.188:9000/fav_player?player=";
+
+    private static final String URL_CRICKET_TEAM_SEARCH = "http://52.76.74.188:9000/fav_team?sport_type=cricket&team=";
+    private static final String URL_CRICKET_PLAYER_SEARCH = "http://52.76.74.188:9000/fav_player?sport_type=cricket&player=";
+    private static final String URL_FOOTBALL_TEAM_SEARCH = "http://52.76.74.188:9000/fav_team?sport_type=football&team=";
+    private static final String URL_FOOTBALL_PLAYER_SEARCH = "http://52.76.74.188:9000/fav_player?sport_type=football&player=";
 
 
+    private final String errorMessage = "Something went wrong";
+    private final String noResultMessage = "No result found";
+
+    private ArrayList<ListPreparedListener> listPreparedListener;
+    public int responseNum = 0;
+    private ArrayList<Boolean> responseBool;
     public boolean isDisplay;
     private boolean isSearchPlayer = false;
     private boolean isSearchTeam = false;
     private boolean isSearchLeague = false;
-
 
     private FavouriteContentHandler() {
         FOOTBALL_FILTER_LEAGUE = new ArrayList<String>();
@@ -67,7 +95,12 @@ public class FavouriteContentHandler {
         FOOTBALL_FILTER_TEAM = new ArrayList<String>();
         CRICKET_FILTER_PLAYER = new ArrayList<String>();
         CRICKET_FILTER_TEAM = new ArrayList<String>();
-        FAVOURITE_SEARCH = new ArrayList<String>();
+        SEARCH_FOOTBALL_LEAGUE = new ArrayList<String>();
+        SEARCH_FOOTBALL_PLAYER = new ArrayList<String>();
+        SEARCH_FOOTBALL_TEAM = new ArrayList<String>();
+        SEARCH_CRICKET_PLAYER = new ArrayList<String>();
+        SEARCH_CRICKET_TEAM = new ArrayList<String>();
+
         matches = new ArrayList<JSONObject>();
         listPreparedListener = new ArrayList<ListPreparedListener>();
         responseBool = new ArrayList<Boolean>();
@@ -80,6 +113,10 @@ public class FavouriteContentHandler {
         }
 
         return favouriteContentHandler;
+    }
+
+    public void resetListener() {
+        listPreparedListener = new ArrayList<>();
     }
 
     /**
@@ -107,22 +144,34 @@ public class FavouriteContentHandler {
         ScoresContentHandler.getInstance().requestFavouriteContent(URL_CRICKET_PLAYER, LISTENER_KEY, CRICKET_PLAYER_REQUEST_TAG);
     }
 
-    public void requestFavSearch(String searchType, String param) {
+    public int searchNum = 0;
+
+    public void requestFavSearch(String searchType, String sportsType, String param) {
+        searchNum++;
+        clearSearchList();
         if (searchType.equals(Constants.FILTER_TYPE_LEAGUE)) {
             isSearchLeague = true;
             isSearchPlayer = false;
             isSearchTeam = false;
-            ScoresContentHandler.getInstance().requestFavouriteSearch(URL_LEAGUE_SEARCH, param, LISTENER_KEY, FAV_SEARCH_REQUEST_TAG);
+            ScoresContentHandler.getInstance().requestFavouriteSearch(URL_LEAGUE_SEARCH, param, LISTENER_KEY, SEARCH_REQUEST_LEAGUE_TAG);
         } else if (searchType.equals(Constants.FILTER_TYPE_PLAYER)) {
             isSearchLeague = false;
             isSearchPlayer = true;
             isSearchTeam = false;
-            ScoresContentHandler.getInstance().requestFavouriteSearch(URL_PLAYER_SEARCH, param, LISTENER_KEY, FAV_SEARCH_REQUEST_TAG);
+            if (sportsType.equals(Constants.SPORTS_TYPE_CRICKET)) {
+                ScoresContentHandler.getInstance().requestFavouriteSearch(URL_CRICKET_PLAYER_SEARCH, param, LISTENER_KEY, SEARCH_CRICKET_PLAYER_TAG);
+            } else if (sportsType.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                ScoresContentHandler.getInstance().requestFavouriteSearch(URL_FOOTBALL_PLAYER_SEARCH, param, LISTENER_KEY, SEARCH_FOOTBALL_PLAYER_TAG);
+            }
         } else if (searchType.equals(Constants.FILTER_TYPE_TEAM)) {
             isSearchLeague = false;
             isSearchPlayer = false;
             isSearchTeam = true;
-            ScoresContentHandler.getInstance().requestFavouriteSearch(URL_TEAM_SEARCH, param, LISTENER_KEY, FAV_SEARCH_REQUEST_TAG);
+            if (sportsType.equals(Constants.SPORTS_TYPE_CRICKET)) {
+                ScoresContentHandler.getInstance().requestFavouriteSearch(URL_CRICKET_TEAM_SEARCH, param, LISTENER_KEY, SEARCH_CRICKET_TEAM_TAG);
+            } else if (sportsType.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                ScoresContentHandler.getInstance().requestFavouriteSearch(URL_FOOTBALL_TEAM_SEARCH, param, LISTENER_KEY, SEARCH_FOOTBALL_TEAM_TAG);
+            }
         }
     }
 
@@ -185,14 +234,42 @@ public class FavouriteContentHandler {
         favCricketTeams = prepareArrayList(CRICKET_FILTER_TEAM, UserUtil.getFavouriteFilters());
     }
 
-    private void prepareSearchList() {
+    private void prepareSearchList(String searchTag, Boolean success) {
         //TODO
         /**
          * handle the response and setup
          * the CRICKET_FILTER_TEAM first*/
+        if (searchTag.equals(SEARCH_REQUEST_LEAGUE_TAG)) {
+            favSearchFootballLeague = new ArrayList<FavouriteItem>();
+            favSearchFootballLeague = prepareArrayList(SEARCH_FOOTBALL_LEAGUE, UserUtil.getFavouriteFilters());
+        } else if (searchTag.equals(SEARCH_CRICKET_PLAYER_TAG)) {
+            favSearchCricketPlayer = new ArrayList<FavouriteItem>();
+            favSearchCricketPlayer = prepareArrayList(SEARCH_CRICKET_PLAYER, UserUtil.getFavouriteFilters());
+        } else if (searchTag.equals(SEARCH_CRICKET_TEAM_TAG)) {
+            favSearchCricketTeam = new ArrayList<FavouriteItem>();
+            favSearchCricketTeam = prepareArrayList(SEARCH_CRICKET_TEAM, UserUtil.getFavouriteFilters());
+        } else if (searchTag.equals(SEARCH_FOOTBALL_PLAYER_TAG)) {
+            favSearchFootballPlayer = new ArrayList<FavouriteItem>();
+            favSearchFootballPlayer = prepareArrayList(SEARCH_FOOTBALL_PLAYER, UserUtil.getFavouriteFilters());
+        } else if (searchTag.equals(SEARCH_FOOTBALL_TEAM_TAG)) {
+            favSearchFootballTeam = new ArrayList<FavouriteItem>();
+            favSearchFootballTeam = prepareArrayList(SEARCH_FOOTBALL_TEAM, UserUtil.getFavouriteFilters());
+        }
+    }
 
-        favSearchTeams = new ArrayList<FavouriteItem>();
-        favSearchTeams = prepareArrayList(FAVOURITE_SEARCH, UserUtil.getFavouriteFilters());
+    private void clearSearchList() {
+        SEARCH_FOOTBALL_LEAGUE = new ArrayList<String>();
+        SEARCH_FOOTBALL_PLAYER = new ArrayList<String>();
+        SEARCH_FOOTBALL_TEAM = new ArrayList<String>();
+        SEARCH_CRICKET_PLAYER = new ArrayList<String>();
+        SEARCH_CRICKET_TEAM = new ArrayList<String>();
+        favSearchFootballLeague = new ArrayList<FavouriteItem>();
+        favSearchCricketPlayer = new ArrayList<FavouriteItem>();
+        favSearchCricketTeam = new ArrayList<FavouriteItem>();
+        favSearchFootballPlayer = new ArrayList<FavouriteItem>();
+        favSearchFootballTeam = new ArrayList<FavouriteItem>();
+
+
     }
 
     public ArrayList<FavouriteItem> getFavFootballLeagues() {
@@ -220,15 +297,49 @@ public class FavouriteContentHandler {
         return favCricketPlayers;
     }
 
-    public ArrayList<FavouriteItem> getSearchList() {
-        return favSearchTeams;
+    public ArrayList<FavouriteItem> getSearchedFootballLeague() {
+        return favSearchFootballLeague;
     }
 
-    public ArrayList<String> getSearchStringList() {
-        return FAVOURITE_SEARCH;
+    public List<String> getSearchedFootballLeagueStringList() {
+        return SEARCH_FOOTBALL_LEAGUE;
     }
 
-    private ArrayList<FavouriteItem> prepareArrayList(ArrayList<String> networkList, ArrayList<String> localList) {
+    public ArrayList<FavouriteItem> getSearchedCricketPlayer() {
+        return favSearchCricketPlayer;
+    }
+
+    public List<String> getSearchedCricketPlayerStringList() {
+        return SEARCH_CRICKET_PLAYER;
+    }
+
+    public ArrayList<FavouriteItem> getSearchedCricketTeam() {
+        return favSearchCricketTeam;
+    }
+
+    public List<String> getSearchedCricketTeamStringList() {
+        return SEARCH_CRICKET_TEAM;
+    }
+
+    public ArrayList<FavouriteItem> getSearchedFootballPlayer() {
+        return favSearchFootballPlayer;
+    }
+
+    public List<String> getSearchedFootballPlayerStringList() {
+        return SEARCH_FOOTBALL_PLAYER;
+    }
+
+    public ArrayList<FavouriteItem> getSearchedFootballTeam() {
+        return favSearchFootballTeam;
+    }
+
+    public List<String> getSearchedFootballTeamStringList() {
+        return SEARCH_FOOTBALL_TEAM;
+    }
+
+
+    private ArrayList<FavouriteItem> prepareArrayList(List<String> networkList, ArrayList<String> localList) {
+        Collections.sort(networkList);
         ArrayList<FavouriteItem> favList = new ArrayList<FavouriteItem>();
         for (String s : networkList) {
             FavouriteItem favouriteItem = new FavouriteItem();
@@ -249,7 +360,14 @@ public class FavouriteContentHandler {
         return itemDataSet;
     }
 
-    private void makeRequest() {
+    public void makeRequest() {
+        if(!isDisplay) {
+            FOOTBALL_FILTER_LEAGUE = new ArrayList<String>();
+            FOOTBALL_FILTER_PLAYER = new ArrayList<String>();
+            FOOTBALL_FILTER_TEAM = new ArrayList<String>();
+            CRICKET_FILTER_PLAYER = new ArrayList<String>();
+            CRICKET_FILTER_TEAM = new ArrayList<String>();
+        }
         requestFootballLeagues();
         requestFootballPlayers();
         requestFootballTeams();
@@ -283,6 +401,10 @@ public class FavouriteContentHandler {
         this.listPreparedListener.add(listPreparedListener);
     }
 
+    public void removePrepairedListener(ListPreparedListener l) {
+        this.listPreparedListener.remove(l);
+    }
+
     public void onResume() {
         addResponseListener();
     }
@@ -291,22 +413,35 @@ public class FavouriteContentHandler {
         removeResponseListener();
     }
 
+    private int responseSearchnum = 0;
+    private ArrayList<Boolean> responseSearchBool = new ArrayList<Boolean>();
+
     private class ScoresContentListener implements ScoresContentHandler.ContentListener {
 
         @Override
-        public void handleContent(String tag, String content, int responseCode) {
-            Log.d("max", "inside Result" + "--Tag-" + tag + "--respo--" + responseCode + "-res-" + content);
-            responseNum++;
+        public void handleContent(String searchTag, String content, int responseCode) {
+            if (!searchTag.contains(SEARCH_REQUEST_TAG)) {
+                responseNum++;
+            } else {
+                responseSearchnum++;
+            }
             boolean success = false;
             if (responseCode == 200) {
-                success = FavouriteContentHandler.this.handleContent(content, tag);
-                responseBool.add(success);
+                success = FavouriteContentHandler.this.handleContent(content, searchTag);
+
+
+                if (!searchTag.contains(SEARCH_REQUEST_TAG)) {
+                    responseBool.add(success);
+                } else {
+                    responseSearchBool.add(success);
+                }
                 if (success) {
-                    if (tag.equals(FOOTBALL_LEAGUE_REQUEST_TAG)) {
+                    if (searchTag.equals(FOOTBALL_LEAGUE_REQUEST_TAG)) {
                         //TODO
                         for (JSONObject obj : matches) {
                             try {
                                 String s = obj.getString("league_name");
+                                s = s.concat(", " + obj.getString("region"));
                                 s = s.concat(Constants.NAV_COMP);
                                 FOOTBALL_FILTER_LEAGUE.add(s);
                             } catch (JSONException e) {
@@ -314,7 +449,7 @@ public class FavouriteContentHandler {
                             }
                         }
                         prepareFootballLeagues();
-                    } else if (tag.equals(FOOTBALL_TEAM_REQUEST_TAG)) {
+                    } else if (searchTag.equals(FOOTBALL_TEAM_REQUEST_TAG)) {
                         //TODO
                         for (JSONObject obj : matches) {
                             try {
@@ -326,7 +461,7 @@ public class FavouriteContentHandler {
                             }
                         }
                         prepareFootballTeams();
-                    } else if (tag.equals(FOOTBALL_PLAYER_REQUEST_TAG)) {
+                    } else if (searchTag.equals(FOOTBALL_PLAYER_REQUEST_TAG)) {
                         //TODO
                         for (JSONObject obj : matches) {
                             try {
@@ -337,7 +472,7 @@ public class FavouriteContentHandler {
                             }
                         }
                         prepareFootballPlayers();
-                    } else if (tag.equals(CRICKET_TEAM_REQUEST_TAG)) {
+                    } else if (searchTag.equals(CRICKET_TEAM_REQUEST_TAG)) {
                         //TODO
                         for (JSONObject obj : matches) {
                             try {
@@ -349,7 +484,7 @@ public class FavouriteContentHandler {
                             }
                         }
                         prepareCricketTeams();
-                    } else if (tag.equals(CRICKET_PLAYER_REQUEST_TAG)) {
+                    } else if (searchTag.equals(CRICKET_PLAYER_REQUEST_TAG)) {
                         //TODO
                         for (JSONObject obj : matches) {
                             try {
@@ -360,10 +495,9 @@ public class FavouriteContentHandler {
                             }
                         }
                         prepareCricketPlayers();
-                    } else if (tag.equals(FAV_SEARCH_REQUEST_TAG)) {
-
-                        FAVOURITE_SEARCH = new ArrayList<String>();
+                    } else if (searchTag.contains(SEARCH_REQUEST_TAG)) {
                         //TODO
+                        clearSearchList();
                         for (JSONObject obj : matches) {
                             try {
                                 String s = null;
@@ -374,41 +508,61 @@ public class FavouriteContentHandler {
                                 } else if (isSearchPlayer) {
                                     s = obj.getString("name");
                                 }
-                                Log.d("max", "inside Result--" + s);
+
                                 if (isSearchTeam) {
                                     s = s.concat(Constants.NAV_TEAM);
                                 } else if (isSearchLeague) {
                                     s = s.concat(Constants.NAV_COMP);
                                 }
-                                if (!FAVOURITE_SEARCH.contains(s)) {
-                                    FAVOURITE_SEARCH.add(s);
+                                if (searchTag.equals(SEARCH_REQUEST_LEAGUE_TAG)) {
+                                    if (!SEARCH_FOOTBALL_LEAGUE.contains(s)) {
+                                        SEARCH_FOOTBALL_LEAGUE.add(s);
+                                    }
+                                } else if (searchTag.equals(SEARCH_CRICKET_PLAYER_TAG)) {
+                                    if (!SEARCH_CRICKET_PLAYER.contains(s)) {
+                                        SEARCH_CRICKET_PLAYER.add(s);
+                                    }
+                                } else if (searchTag.equals(SEARCH_CRICKET_TEAM_TAG)) {
+                                    if (!SEARCH_CRICKET_TEAM.contains(s)) {
+                                        SEARCH_CRICKET_TEAM.add(s);
+                                    }
+                                } else if (searchTag.equals(SEARCH_FOOTBALL_PLAYER_TAG)) {
+                                    if (!SEARCH_FOOTBALL_PLAYER.contains(s)) {
+                                        SEARCH_FOOTBALL_PLAYER.add(s);
+                                    }
+                                } else if (searchTag.equals(SEARCH_FOOTBALL_TEAM_TAG)) {
+                                    if (!SEARCH_FOOTBALL_TEAM.contains(s)) {
+                                        SEARCH_FOOTBALL_TEAM.add(s);
+                                    }
                                 }
                             } catch (JSONException e) {
                                 for (ListPreparedListener l : listPreparedListener) {
-                                    l.onListPrepared(false);
+                                    l.onListPrepared(false, noResultMessage);
                                 }
                                 e.printStackTrace();
                             }
                         }
-                        prepareSearchList();
-                        for (ListPreparedListener l : listPreparedListener) {
-                            l.onListPrepared(success);
-                        }
+                        matches = new ArrayList<JSONObject>();
+                        prepareSearchList(searchTag, success);
                     } else {
                         //nothing
                     }
                 } else {
-                    for (ListPreparedListener l : listPreparedListener) {
-                        l.onListPrepared(false);
-                    }
+                    /*for (ListPreparedListener l : listPreparedListener) {
+                        Log.d("max","sending response");
+                        l.onListPrepared(false, noResultMessage);
+                    }*/
                 }
             } else {
-                for (ListPreparedListener l : listPreparedListener) {
-                    l.onListPrepared(false);
+                if (!searchTag.contains(SEARCH_REQUEST_TAG)) {
+                    for (ListPreparedListener l : listPreparedListener) {
+                        l.onListPrepared(false, errorMessage);
+                    }
+                    return;
                 }
             }
-            if (!tag.equals(FAV_SEARCH_REQUEST_TAG)){
-                if (responseNum == 5) {
+            if (!searchTag.contains(SEARCH_REQUEST_TAG)) {
+                if (responseNum >= 5) {
                     boolean x = true;
                     for (boolean b : responseBool) {
                         if (!b) {
@@ -417,8 +571,24 @@ public class FavouriteContentHandler {
                     }
                     for (ListPreparedListener l : listPreparedListener) {
                         isDisplay = x;
-                        l.onListPrepared(x);
+                        l.onListPrepared(x, "");
                     }
+                    responseBool = new ArrayList<Boolean>();
+                }
+            } else {
+                if (responseSearchnum == searchNum) {
+                    try {
+                        for (int i = 0; i < listPreparedListener.size(); i++) {
+                            listPreparedListener.get(i).onListPrepared(true, noResultMessage);
+                        }
+                    } catch (Exception e) {
+                        for (ListPreparedListener l : listPreparedListener) {
+                            l.onListPrepared(false, errorMessage);
+                        }
+                    }
+                    searchNum = 0;
+                    responseSearchnum = 0;
+                    responseSearchBool = new ArrayList<Boolean>();
                 }
             }
         }
@@ -426,7 +596,7 @@ public class FavouriteContentHandler {
     }
 
     public interface ListPreparedListener {
-        public void onListPrepared(Boolean b);
+        public void onListPrepared(Boolean b, String message);
     }
 
 }

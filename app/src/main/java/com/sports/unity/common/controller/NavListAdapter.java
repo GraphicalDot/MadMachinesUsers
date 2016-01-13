@@ -102,7 +102,6 @@ public class NavListAdapter extends BaseExpandableListAdapter {
         super.onGroupCollapsed(groupPosition);
         indiIm.setImageResource(R.drawable.ic_side_nav_expand);
         editTeam.setVisibility(View.INVISIBLE);
-
     }
 
     @Override

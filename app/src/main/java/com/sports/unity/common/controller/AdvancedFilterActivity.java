@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.common.controller.fragment.AdvancedFilterFragment;
+import com.sports.unity.common.model.FavouriteContentHandler;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
@@ -40,6 +41,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     public boolean isSearchEdit;
     public String searchString;
     public boolean isFromNav;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +51,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         bundle = getIntent().getExtras();
         try {
             isFromNav = bundle.getBoolean(Constants.IS_FROM_NAV, false);
-        }catch (NullPointerException booleanNull){
+        } catch (NullPointerException booleanNull) {
 
         }
         setUpToolBar();
@@ -64,7 +66,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private void setUpDoneClick() {
         final Button done = (Button) findViewById(R.id.done);
         done.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
-        if (!UserUtil.isFilterCompleted()||!isFromNav) {
+        if (!UserUtil.isFilterCompleted() || !isFromNav) {
             done.setVisibility(View.INVISIBLE);
         }
         done.setOnClickListener(new View.OnClickListener() {
@@ -108,9 +110,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
                 edit.setText("Edit");
                 performEdit();
             }else{*/
-                UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
-                setResult(RESULT_OK);
-                finish();
+        UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
+        setResult(RESULT_OK);
+        finish();
            /* }
 
         }*/
@@ -155,10 +157,14 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (titleLayout.getVisibility() == View.VISIBLE) {
-                    titleLayout.setVisibility(View.GONE);
-                    searchLayout.setVisibility(View.VISIBLE);
-                    isSearchEdit=true;
+                if (FavouriteContentHandler.getInstance().isDisplay) {
+                    if (titleLayout.getVisibility() == View.VISIBLE) {
+                        titleLayout.setVisibility(View.GONE);
+                        searchLayout.setVisibility(View.VISIBLE);
+                        isSearchEdit = true;
+                    }
+                } else {
+                    Toast.makeText(AdvancedFilterActivity.this, "Please wait", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -180,11 +186,13 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
                     InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                     inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-                    searchString=searchText.getText().toString();
-                    if(!TextUtils.isEmpty(searchString)) {
+                    searchString = searchText.getText().toString();
+                    if (!TextUtils.isEmpty(searchString)) {
+
+                        isSearchEdit = true;
                         performEdit();
-                    }else{
-                        Toast.makeText(AdvancedFilterActivity.this,"Please enter your query",Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(AdvancedFilterActivity.this, "Please enter your query", Toast.LENGTH_SHORT).show();
                     }
                     return true;
                 }
@@ -193,13 +201,12 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         });
     }
 
-
     public void addEditClickListener(OnEditFilterListener listener) {
         editFilterListener.add(listener);
     }
 
-    public void removeEditClickListener() {
-        editFilterListener = null;
+    public void removeEditClickListener(OnEditFilterListener listener) {
+        editFilterListener.remove(listener);
     }
 
 
@@ -215,11 +222,11 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             addFragment();
         } else /*if (!UserUtil.isLeagueSelected())*/ {
             bundle = new Bundle();
-            if(UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
+            if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
                 bundle.putString(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_LEAGUE);
                 titleText.setText("Select your favourite leagues");
 
-            }else{
+            } else {
                 bundle.putString(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_TEAM);
                 titleText.setText("Select your favourite teams");
             }
@@ -228,15 +235,19 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
 
     }
-public void closeSearch(){
-    if (searchLayout.getVisibility() == View.VISIBLE) {
-        titleLayout.setVisibility(View.VISIBLE);
-        searchLayout.setVisibility(View.GONE);
-        isSearchEdit = false;
-        performEdit();
+
+    public void closeSearch() {
+        if (searchLayout.getVisibility() == View.VISIBLE) {
+            titleLayout.setVisibility(View.VISIBLE);
+            searchLayout.setVisibility(View.GONE);
+            isSearchEdit = false;
+            performEdit();
+        }
     }
-}
+
     private void addFragment() {
+        editFilterListener = new ArrayList<>();
+        FavouriteContentHandler.getInstance().resetListener();
         advancedFilterFragment = new AdvancedFilterFragment();
         advancedFilterFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().add(R.id.filter_container, advancedFilterFragment, bundle.getString(Constants.SPORTS_FILTER_TYPE)).commit();
@@ -245,6 +256,9 @@ public void closeSearch(){
     }
 
     private void replaceFragment(Bundle bundle) {
+        editFilterListener = new ArrayList<>();
+        FavouriteContentHandler.getInstance().resetListener();
+
         advancedFilterFragment = new AdvancedFilterFragment();
         advancedFilterFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.filter_container, advancedFilterFragment, bundle.getString(Constants.SPORTS_FILTER_TYPE)).commit();
@@ -268,7 +282,7 @@ public void closeSearch(){
     public void onBackPressed() {
         Bundle b = advancedFilterFragment.getArguments();
         if (UserUtil.isFilterCompleted()) {
-            if(isFromNav){
+            if (isFromNav) {
                 setResult(RESULT_CANCELED);
             }
             finish();
@@ -278,7 +292,8 @@ public void closeSearch(){
             titleText.setText("Select your favourite teams");
             replaceFragment(bundle);
         } else if (b.get(Constants.SPORTS_FILTER_TYPE).equals(Constants.FILTER_TYPE_TEAM)) {
-            if(UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
+            if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
+                editFilterListener.remove(editFilterListener.size() - 1);
                 UserUtil.setTeamSelected(AdvancedFilterActivity.this, true);
                 bundle.putString(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_LEAGUE);
                 titleText.setText("Select your favourite leagues");
