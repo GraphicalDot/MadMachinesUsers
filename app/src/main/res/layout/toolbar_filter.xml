@@ -58,8 +58,8 @@
             android:maxLines="1"
             android:paddingLeft="@dimen/horizontal_padding_very_very_small"
             android:singleLine="true"
-            android:textColor="#000"
-            android:textColorHint="@color/news_data"
+            android:textColor="@color/textColorPrimary"
+            android:textColorHint="@color/textColorPrimary"
             android:textSize="@dimen/font_size_medium"
             />
 

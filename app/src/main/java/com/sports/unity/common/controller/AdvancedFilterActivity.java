@@ -162,6 +162,10 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
                         titleLayout.setVisibility(View.GONE);
                         searchLayout.setVisibility(View.VISIBLE);
                         isSearchEdit = true;
+                        searchText.setFocusable(true);
+                        searchText.requestFocus();
+                        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        mgr.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT);
                     }
                 } else {
                     Toast.makeText(AdvancedFilterActivity.this, "Please wait", Toast.LENGTH_SHORT).show();
@@ -172,9 +176,12 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (searchLayout.getVisibility() == View.VISIBLE) {
+                    InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    mgr.hideSoftInputFromWindow(getWindow().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     titleLayout.setVisibility(View.VISIBLE);
                     searchLayout.setVisibility(View.GONE);
                     isSearchEdit = false;
+                    searchText.setText("");
                     performEdit();
                 }
             }
@@ -238,8 +245,11 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
     public void closeSearch() {
         if (searchLayout.getVisibility() == View.VISIBLE) {
+            InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            mgr.hideSoftInputFromWindow(getWindow().getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
             titleLayout.setVisibility(View.VISIBLE);
             searchLayout.setVisibility(View.GONE);
+            searchText.setText("");
             isSearchEdit = false;
             performEdit();
         }
@@ -281,7 +291,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     @Override
     public void onBackPressed() {
         Bundle b = advancedFilterFragment.getArguments();
-        if (UserUtil.isFilterCompleted()) {
+        if (isSearchEdit) {
+            closeSearch();
+        } else if (UserUtil.isFilterCompleted()) {
             if (isFromNav) {
                 setResult(RESULT_CANCELED);
             }
