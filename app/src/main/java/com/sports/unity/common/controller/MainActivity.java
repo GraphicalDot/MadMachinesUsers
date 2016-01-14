@@ -1,6 +1,7 @@
 package com.sports.unity.common.controller;
 
 import android.content.Intent;
+import android.location.Location;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -44,12 +45,10 @@ public class MainActivity extends CustomAppCompatActivity {
     NavigationFragment navigationFragment;
     public boolean isPaused;
 
-    Toolbar toolbar;
-
     private XMPPTCPConnection con;
     private SportsUnityDBHelper sportsUnityDBHelper;
 
-    private Thread locationUpdate = null;
+    LocManager locManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +58,19 @@ public class MainActivity extends CustomAppCompatActivity {
 
         SportsUnityDBHelper.getInstance(this).addDummyMessageIfNotExist();
         XMPPService.startService(MainActivity.this);
-        
+
         initViews();
-        
         setNavigation(savedInstanceState);
-        sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
 
         con = XMPPClient.getConnection();
+        sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
         setNavigationProfile();
+
+        locManager = LocManager.getInstance(getApplicationContext());
+        locManager.buildApiClient();
+
     }
-    
+
     public void setNavigationProfile() {
 
         LinearLayout navHeader = (LinearLayout) findViewById(R.id.nav_header);
@@ -93,13 +95,19 @@ public class MainActivity extends CustomAppCompatActivity {
         name.setText(user_name);
 
     }
+
     private void setNavigation(Bundle savedInstanceState) {
-        if(savedInstanceState==null) {
+        if (savedInstanceState == null) {
             navigationFragment = new NavigationFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.nav_fragment, navigationFragment, "Nav_frag").commit();
         }
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        locManager.connect();
+    }
 
     private void initViews() {
         Toolbar toolbar = initToolBar();
@@ -187,17 +195,16 @@ public class MainActivity extends CustomAppCompatActivity {
     }
 
     private void updateLocation() {
-        if (locationUpdate != null && locationUpdate.isAlive()) {
-            //no nothing
+        Location location = null;
+        if (locManager.ismGoogleApiClientConnected()) {
+            location = locManager.getLocation();
+            if (location != null) {
+                locManager.sendLatituteAndLongitude(location);
+            }
         } else {
-            locationUpdate = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    LocManager.getInstance(getApplicationContext()).getLocation();
-                }
-            });
-            locationUpdate.start();
+            //TODO
         }
+//        GPSTracking.getInstance(getApplicationContext()).getLocation();
     }
 
     @Override

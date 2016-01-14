@@ -10,11 +10,13 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +37,24 @@ public class NewsSearchActivity extends AppCompatActivity {
         setContentView(R.layout.activity_news_search);
 
         initView();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+        automaticSearch();
+    }
+
+    private void automaticSearch() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_search);
+        EditText search = (EditText) toolbar.findViewById(R.id.search_view);
+
+        if (CommonUtil.isInternetConnectionAvailable(NewsSearchActivity.this)) {
+            performSearch(search.getText().toString());
+        } else {
+            Toast.makeText(NewsSearchActivity.this, "Check your internet connection", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void initView() {
@@ -116,8 +136,8 @@ public class NewsSearchActivity extends AppCompatActivity {
 
         NewsContentHandler newsContentHandler = NewsContentHandler.getInstance(NewsSearchActivity.this, NewsContentHandler.KEY_SEARCH_CONTENT);
 
-        NewsFragment fragment = (NewsFragment)getSupportFragmentManager().findFragmentByTag(NEWS_FRAGMENT_TAG);
-        if( fragment != null ) {
+        NewsFragment fragment = (NewsFragment) getSupportFragmentManager().findFragmentByTag(NEWS_FRAGMENT_TAG);
+        if (fragment != null) {
             newsContentHandler.setSearchKeyword(celebrity_name);
             newsContentHandler.clearContent();
 

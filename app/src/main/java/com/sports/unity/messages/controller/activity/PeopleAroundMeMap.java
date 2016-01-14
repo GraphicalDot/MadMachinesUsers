@@ -21,7 +21,6 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -61,7 +60,6 @@ import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -309,16 +307,20 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
 
     private void animateCamera(ArrayList<Marker> markers) {
         if (markers != null) {
+            int counter = 0;
             LatLngBounds.Builder builder = new LatLngBounds.Builder();
             for (Marker marker : markers) {
                 builder.include(marker.getPosition());
+                counter++;
             }
-            LatLngBounds bounds = builder.build();
-            int padding = 300; // offset from edges of the map in pixels
-            CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-            map.moveCamera(cu);
-            map.animateCamera(cu);
-            Toast.makeText(PeopleAroundMeMap.this, markers.size() + " people around you", Toast.LENGTH_SHORT).show();
+            if (counter > 0) {
+                LatLngBounds bounds = builder.build();
+                int padding = 300; // offset from edges of the map in pixels
+                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
+                map.moveCamera(cu);
+                map.animateCamera(cu);
+                Toast.makeText(PeopleAroundMeMap.this, markers.size() + " people around you", Toast.LENGTH_SHORT).show();
+            }
         }
 
 
@@ -358,7 +360,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         double latitude = TinyDB.getInstance(getApplicationContext()).getDouble(TinyDB.KEY_CURRENT_LATITUDE, 0.0);
         double longitude = TinyDB.getInstance(getApplicationContext()).getDouble(TinyDB.KEY_CURRENT_LONGITUDE, 0.0);
         latLong = new LatLng(latitude, longitude);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLong, calculateZoomLevel(radius)));
+        //map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLong, calculateZoomLevel(radius)));
         getPeopleAroundMe(latitude, longitude);
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -605,16 +607,11 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         Log.i("gettingLocation", "true");
         final Location location = map.getMyLocation();
         if (location != null) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    LocManager.getInstance(getApplicationContext()).uploadLatLng(location);
-                }
-            }).start();
+            LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location);
             TinyDB.getInstance(getApplicationContext()).putDouble(TinyDB.KEY_CURRENT_LATITUDE, location.getLatitude());
             TinyDB.getInstance(getApplicationContext()).putDouble(TinyDB.KEY_CURRENT_LONGITUDE, location.getLongitude());
             defaultLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLatLng, calculateZoomLevel(radius)));
+//            map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLatLng, calculateZoomLevel(radius)));
 //            openMap();
             Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
             try {
@@ -647,7 +644,10 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
 
         if (checkIfGPSEnabled()) {
 
-            LocManager.getInstance(getApplicationContext()).getLocation();
+            Location location = LocManager.getInstance(getApplicationContext()).getLocation();
+            if (location != null) {
+                LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location);
+            }
         } else {
             //nothing
         }

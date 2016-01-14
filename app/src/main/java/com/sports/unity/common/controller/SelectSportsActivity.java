@@ -32,7 +32,6 @@ import java.util.ArrayList;
 
 public class SelectSportsActivity extends AppCompatActivity {
 
-    private LocManager locManager;
     private ArrayList<String> sports = new ArrayList<String>();
 
     private Thread sendInterestsThread = null;
@@ -83,16 +82,6 @@ public class SelectSportsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_sports);
         sports = UserUtil.getSportsSelected();
         initView();
-
-        locManager = LocManager.getInstance(this);
-        locManager.buildApiClient();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        locManager.connect();
     }
 
     private void initView() {
@@ -143,6 +132,15 @@ public class SelectSportsActivity extends AppCompatActivity {
     }
 
     private void moveOn() {
+        executeThreadToUpdateInterests();
+        UserUtil.setSportsSelected(SelectSportsActivity.this, sports);
+        Intent intent = new Intent(SelectSportsActivity.this, AdvancedFilterActivity.class);
+        startActivity(intent);
+
+        finish();
+    }
+
+    private void executeThreadToUpdateInterests() {
         if (sendInterestsThread != null && sendInterestsThread.isAlive()) {
 
         } else {
@@ -154,11 +152,6 @@ public class SelectSportsActivity extends AppCompatActivity {
             });
             sendInterestsThread.start();
         }
-        UserUtil.setSportsSelected(SelectSportsActivity.this, sports);
-        Intent intent = new Intent(SelectSportsActivity.this, AdvancedFilterActivity.class);
-        startActivity(intent);
-
-        finish();
     }
 
     private void sendInterests() {

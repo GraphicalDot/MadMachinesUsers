@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
@@ -26,10 +28,21 @@ public class ForwardSelectedItems extends CustomAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forward_selected_items);
+        initToolber();
         Intent intent = getIntent();
 
         ArrayList<Integer> selectedIdsITemList = intent.getIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS);
         addContactFragment(selectedIdsITemList);
+    }
+
+    private void initToolber() {
+        ImageView backArrow = (ImageView) findViewById(R.id.backarrow);
+        backArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private void addContactFragment(ArrayList<Integer> selectedIdsITemList) {

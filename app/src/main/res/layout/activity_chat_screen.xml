@@ -29,7 +29,7 @@
         android:divider="@null"
         android:dividerHeight="0dp"
         android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll" />
+        android:transcriptMode="normal" />
 
     <LinearLayout
         android:id="@+id/type_msg"
@@ -61,7 +61,7 @@
                 android:background="@android:color/transparent"
                 android:focusable="true"
                 android:hint="Write a message"
-                android:inputType="textMultiLine"
+                android:inputType="textMultiLine|textCapSentences"
                 android:maxLength="2000"
                 android:maxLines="5"
                 android:paddingLeft="@dimen/vertical_padding_small"

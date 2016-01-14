@@ -110,7 +110,7 @@ public class ToolbarActionsForChatScreen {
         for (int itemPosition : selectedItemsList) {
             Message message = messageList.get(itemPosition);
 
-            if( message.mediaFileName != null ){
+            if (message.mediaFileName != null) {
                 deletedFileNames.add(message.mediaFileName);
             }
 
@@ -135,22 +135,27 @@ public class ToolbarActionsForChatScreen {
             }
 
             ColorDrawable drawable = new ColorDrawable(view.getResources().getColor(R.color.list_selector));
-            ((FrameLayout)view).setForeground(drawable);
+            ((FrameLayout) view).setForeground(drawable);
 
-            int status = FileOnCloudHandler.getInstance(view.getContext()).getMediaContentStatus(message);
-            if( status == FileOnCloudHandler.STATUS_UPLOADED || status == FileOnCloudHandler.STATUS_DOWNLOADED || status == FileOnCloudHandler.STATUS_NONE ) {
+            if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
                 selectedFlag = true;
                 selecteditems++;
                 selectedItemsList.add(position);
-                if (!message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
-                    mediaSelected = true;
-                    mediaSelectedItems++;
-                }
             } else {
-                //nothing
+                int status = FileOnCloudHandler.getInstance(view.getContext()).getMediaContentStatus(message);
+                if (status == FileOnCloudHandler.STATUS_UPLOADED || status == FileOnCloudHandler.STATUS_DOWNLOADED || status == FileOnCloudHandler.STATUS_NONE || message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
+                    selectedFlag = true;
+                    selecteditems++;
+                    selectedItemsList.add(position);
+                    if (!message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
+                        mediaSelected = true;
+                        mediaSelectedItems++;
+                    }
+                }
             }
         } else {
-            //do nothing
+
+            return false;
         }
 
         return checkSelectedItems();
@@ -160,8 +165,8 @@ public class ToolbarActionsForChatScreen {
         if (selectedFlag == true) {
             Message message = messageList.get(position);
             if (selectedItemsList.contains(position)) {
-                ColorDrawable drawable = new ColorDrawable(Color.TRANSPARENT);
-                ((FrameLayout)view).setForeground(drawable);
+                ColorDrawable drawable = new ColorDrawable(view.getResources().getColor(R.color.list_selector));
+                ((FrameLayout) view).setForeground(drawable);
 
                 selecteditems--;
                 selectedItemsList.remove(Integer.valueOf(position));
@@ -174,28 +179,33 @@ public class ToolbarActionsForChatScreen {
                 }
             } else {
                 ColorDrawable drawable = new ColorDrawable(view.getResources().getColor(R.color.list_selector));
-                ((FrameLayout)view).setForeground(drawable);
+                ((FrameLayout) view).setForeground(drawable);
 
-                int status = FileOnCloudHandler.getInstance(view.getContext()).getMediaContentStatus(message);
-                if( status == FileOnCloudHandler.STATUS_UPLOADED || status == FileOnCloudHandler.STATUS_DOWNLOADED || status == FileOnCloudHandler.STATUS_NONE ) {
+                if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
+                    selectedFlag = true;
                     selecteditems++;
                     selectedItemsList.add(position);
-
-                    if (!message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
-                        mediaSelected = true;
-                        mediaSelectedItems++;
-                    }
                 } else {
-                    //nothing
+                    int status = FileOnCloudHandler.getInstance(view.getContext()).getMediaContentStatus(message);
+                    if (status == FileOnCloudHandler.STATUS_UPLOADED || status == FileOnCloudHandler.STATUS_DOWNLOADED || status == FileOnCloudHandler.STATUS_NONE || message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
+                        selectedFlag = true;
+                        selecteditems++;
+                        selectedItemsList.add(position);
+                        if (!message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
+                            mediaSelected = true;
+                            mediaSelectedItems++;
+                        }
+                    }
                 }
             }
         } else {
+            return false;
         }
 
         return checkSelectedItems();
     }
 
-    public boolean isItemSelected(int position){
+    public boolean isItemSelected(int position) {
         boolean selected = false;
         if (selectedItemsList.contains(position)) {
             selected = true;

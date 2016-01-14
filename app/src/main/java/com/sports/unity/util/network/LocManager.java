@@ -55,7 +55,9 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     }
 
     public void connect() {
-        mGoogleApiClient.connect();
+        if (mGoogleApiClient != null && !mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.connect();
+        }
     }
 
     public Location getLocation() {
@@ -66,8 +68,15 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                 connect();
             }
         } else {
-            buildApiClient();
-            connect();
+            if (mGoogleApiClient == null) {
+                buildApiClient();
+            } else {
+                if (!mGoogleApiClient.isConnected()) {
+                    connect();
+                }
+            }
+
+
         }
         return mLastLocation;
     }
@@ -79,13 +88,12 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastLocation != null) {
             saveLocation(mLastLocation);
-            sendLatituteAndLongitude(mLastLocation);
         } else {
             //TODO
         }
     }
 
-    private void sendLatituteAndLongitude(final Location mLastLocation) {
+    public void sendLatituteAndLongitude(final Location mLastLocation) {
         if (uploadLocation != null && uploadLocation.isAlive()) {
             //do nothing
         } else {
@@ -97,7 +105,6 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
             });
             uploadLocation.start();
         }
-
     }
 
     public void uploadLatLng(Location mLastLocation) {
@@ -110,11 +117,6 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
             httpURLConnection.setDoInput(false);
             httpURLConnection.setRequestMethod("GET");
 
-            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                Log.i("latlongresponse", " 200 ");
-            } else {
-                Log.i("latlongresponse", " 500 ");
-            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -160,6 +162,15 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
+    public boolean ismGoogleApiClientConnected() {
+        if (mGoogleApiClient != null) {
+            return mGoogleApiClient.isConnected();
+        } else {
+            return false;
+        }
 
     }
 }
