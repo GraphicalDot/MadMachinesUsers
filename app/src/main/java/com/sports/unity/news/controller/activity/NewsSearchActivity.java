@@ -42,19 +42,15 @@ public class NewsSearchActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         automaticSearch();
     }
 
     private void automaticSearch() {
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_search);
         EditText search = (EditText) toolbar.findViewById(R.id.search_view);
-
-        if (CommonUtil.isInternetConnectionAvailable(NewsSearchActivity.this)) {
-            performSearch(search.getText().toString());
-        } else {
-            Toast.makeText(NewsSearchActivity.this, "Check your internet connection", Toast.LENGTH_LONG).show();
-        }
+        ImageView clear_search = (ImageView) toolbar.findViewById(R.id.search_clear);
+        checkForFilteredSearch(search, clear_search);
     }
 
     private void initView() {
@@ -129,7 +125,7 @@ public class NewsSearchActivity extends AppCompatActivity {
                 search.setText("");
             }
         });
-        checkForFilteredSearch(search, clear_search);
+//        checkForFilteredSearch(search, clear_search);
     }
 
     private void performSearch(String celebrity_name) {
@@ -155,6 +151,8 @@ public class NewsSearchActivity extends AppCompatActivity {
                 search.setText(searchString, TextView.BufferType.EDITABLE);
                 search.setSelection(searchString.length(), searchString.length());
                 clear_search.setVisibility(View.VISIBLE);
+
+                this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
                 performSearch(searchString);
             }
         } catch (NullPointerException stringisNull) {
