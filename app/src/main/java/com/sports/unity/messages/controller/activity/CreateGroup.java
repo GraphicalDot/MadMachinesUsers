@@ -76,8 +76,8 @@ public class CreateGroup extends CustomAppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
-        ((ImageView) toolbar.findViewById(R.id.backImage)).setImageResource(R.drawable.ic_menu_back_blk);
-        toolbar.findViewById(R.id.backImage).setOnClickListener(new View.OnClickListener() {
+        ((ImageView) toolbar.findViewById(R.id.backarrow)).setImageResource(R.drawable.ic_menu_back_blk);
+        toolbar.findViewById(R.id.backarrow).setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {

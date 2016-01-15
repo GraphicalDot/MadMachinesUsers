@@ -5,45 +5,44 @@
     android:background="@android:color/white"
     android:elevation="@dimen/toolbar_elevation"
     android:minHeight="?android:attr/actionBarSize"
-    android:theme="@style/AppHomeTheme"
-    android:popupTheme="@style/PopupMenuListView">
+    android:popupTheme="@style/PopupMenuListView"
+    android:theme="@style/AppHomeTheme">
+
 
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        >
+        android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/backImage"
+        <ImageView
+            android:id="@+id/backarrow"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_gravity="center"
-            style="?android:attr/buttonBarButtonStyle"
+            android:layout_height="match_parent"
+            android:paddingRight="@dimen/horizontal_padding_small"
+            android:scaleType="center"
             android:src="@drawable/ic_close_blk" />
 
         <TextView
             android:id="@+id/title"
-            android:layout_toRightOf="@+id/backImage"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
+            android:layout_toRightOf="@+id/backarrow"
             android:gravity="center"
             android:text="Create Group"
             android:textSize="@dimen/font_size_large" />
 
         <TextView
             android:id="@+id/actionButton"
-            android:layout_alignParentRight="true"
             android:layout_width="wrap_content"
             android:layout_height="fill_parent"
+            android:layout_alignParentRight="true"
+            android:gravity="center"
             android:paddingLeft="@dimen/horizontal_padding_medium"
             android:paddingRight="@dimen/horizontal_padding_medium"
-            android:gravity="center"
             android:text="Next"
-            android:textSize="@dimen/font_size_small_large"
             android:textColor="@color/app_theme_blue"
-            android:textStyle="bold"
-            />
+            android:textSize="@dimen/font_size_small_large"
+            android:textStyle="bold" />
 
     </RelativeLayout>
 

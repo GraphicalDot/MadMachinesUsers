@@ -317,7 +317,6 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
                 LatLngBounds bounds = builder.build();
                 int padding = 300; // offset from edges of the map in pixels
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                map.moveCamera(cu);
                 map.animateCamera(cu);
                 Toast.makeText(PeopleAroundMeMap.this, markers.size() + " people around you", Toast.LENGTH_SHORT).show();
             }
@@ -349,7 +348,6 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
     }
 
     private void openMap() {
-
         map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
                 .getMap();
 
@@ -360,7 +358,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         double latitude = TinyDB.getInstance(getApplicationContext()).getDouble(TinyDB.KEY_CURRENT_LATITUDE, 0.0);
         double longitude = TinyDB.getInstance(getApplicationContext()).getDouble(TinyDB.KEY_CURRENT_LONGITUDE, 0.0);
         latLong = new LatLng(latitude, longitude);
-        //map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLong, calculateZoomLevel(radius)));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLong, calculateZoomLevel(radius)));
         getPeopleAroundMe(latitude, longitude);
         map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
@@ -514,14 +512,16 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         String name = contact.name;
         long contactId = contact.id;
         byte[] userPicture = contact.image;
+        boolean nearbyChat = false;
 
         String groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
         long chatId = SportsUnityDBHelper.getInstance(getApplicationContext()).getChatEntryID(contactId, groupServerId);
         if (chatId == SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
             if (contactAvailable) {
-                //nothing
+                //create chat entry inside ChatScreenActivity only
             } else {
-                chatId = SportsUnityDBHelper.getInstance(getApplicationContext()).createChatEntry(name, contactId, true);
+                nearbyChat = true;
+                chatId = SportsUnityDBHelper.getInstance(getApplicationContext()).createChatEntry(name, contactId, nearbyChat);
             }
 
         }
@@ -602,38 +602,46 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
 
     }
 
-    private Location getLocation() {
+    private void getLocation() {
         LatLng defaultLatLng = null;
         Log.i("gettingLocation", "true");
-        final Location location = map.getMyLocation();
+        Location location = map.getMyLocation();
         if (location != null) {
-            LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location);
+            LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location, true);
             TinyDB.getInstance(getApplicationContext()).putDouble(TinyDB.KEY_CURRENT_LATITUDE, location.getLatitude());
             TinyDB.getInstance(getApplicationContext()).putDouble(TinyDB.KEY_CURRENT_LONGITUDE, location.getLongitude());
             defaultLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-//            map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLatLng, calculateZoomLevel(radius)));
-//            openMap();
-            Geocoder geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
-            try {
-                List<Address> addressList = geocoder.getFromLocation(
-                        location.getLatitude(), location.getLongitude(), 1);
-                if (addressList != null && addressList.size() > 0) {
-                    Address address = addressList.get(0);
-                    titleAddress.setText(address.getAddressLine(0));
-                    titleCity.setText(address.getLocality());
-                    saveAddress(address.getAddressLine(0), address.getLocality());
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+//            map.moveCamera(CameraUpdateFactory.newLatLngZoom(defaultLatLng, getcurrentZoom()));
+            new FetchAndDisplayCurrentAddress(location).execute();
             getPeopleAroundMe(defaultLatLng.latitude, defaultLatLng.longitude);
         }
-        return location;
+
     }
 
-    private void saveAddress(String street, String city) {
-        TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_ADDRESS_LOCATION, street);
-        TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_ADDRESS_STATE, city);
+    private float getcurrentZoom() {
+        return map.getCameraPosition().zoom;
+    }
+
+    class FetchAndDisplayCurrentAddress extends AsyncTask<Void, Void, Void> {
+
+        Location location = null;
+
+        public FetchAndDisplayCurrentAddress(Location location) {
+            this.location = location;
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            LocManager.getInstance(getApplicationContext()).saveLocation(location);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            titleAddress.setText(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_LOCATION));
+            titleCity.setText(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_STATE));
+            super.onPostExecute(aVoid);
+        }
     }
 
     @Override
@@ -646,7 +654,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
 
             Location location = LocManager.getInstance(getApplicationContext()).getLocation();
             if (location != null) {
-                LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location);
+                LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location, true);
             }
         } else {
             //nothing
@@ -737,6 +745,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
                 onUnSuccessfulVcardRetrieval(view);
             }
         }
+
     }
 
     private void onUnSuccessfulVcardRetrieval(View view) {

@@ -70,8 +70,7 @@
                         android:clickable="false"
                         android:text="USE MY FACEBOOK DETAILS"
                         android:textColor="@color/ColorPrimary"
-                        android:textSize="@dimen/font_size_small_large"
-                        />
+                        android:textSize="@dimen/font_size_small_large" />
                 </LinearLayout>
             </FrameLayout>
 
@@ -87,21 +86,19 @@
                 android:background="@drawable/round_edge_box"
                 android:text="CONTINUE"
                 android:textColor="@color/app_theme_blue"
-                android:textSize="@dimen/font_size_small_large"
-                />
+                android:textSize="@dimen/font_size_small_large" />
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/edit_line"
             android:layout_width="fill_parent"
             android:layout_height="1dp"
-            android:orientation="horizontal"
-            android:background="@android:color/white"
             android:layout_above="@id/centerContent"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginLeft="@dimen/activity_vertical_margin"
             android:layout_marginRight="@dimen/activity_vertical_margin"
-            />
+            android:background="@android:color/white"
+            android:orientation="horizontal" />
 
         <EditText
             android:id="@+id/nameView"
@@ -120,8 +117,7 @@
             android:textColor="@color/ColorPrimary"
             android:textColorHint="@color/edit_view_hint_color"
             android:textCursorDrawable="@null"
-            android:textSize="@dimen/font_size_medium"
-            />
+            android:textSize="@dimen/font_size_medium" />
 
         <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/profile_image"

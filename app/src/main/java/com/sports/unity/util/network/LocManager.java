@@ -29,7 +29,9 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     private static LocManager locManager = null;
 
     private Thread uploadLocation = null;
+    private Thread getLocation = null;
     private String url = "";
+    boolean dataSent = false;
 
     synchronized public static LocManager getInstance(Context context) {
         if (locManager == null) {
@@ -60,50 +62,55 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         }
     }
 
-    public Location getLocation() {
-        if (mGoogleApiClient != null) {
-            if (mGoogleApiClient.isConnected()) {
-                mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            } else {
-                connect();
-            }
+    public void retrieveLocation() {
+        if (getLocation != null && getLocation.isAlive()) {
+            //do nothing
         } else {
-            if (mGoogleApiClient == null) {
-                buildApiClient();
+            if (getLocation != null && getLocation.isAlive()) {
+                //do nothing
             } else {
-                if (!mGoogleApiClient.isConnected()) {
-                    connect();
-                }
+                getLocation = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                        if (mLastLocation != null) {
+                            saveLocation(mLastLocation);
+                        }
+                    }
+                });
+                getLocation.start();
             }
-
 
         }
+    }
+
+    public Location getLocation() {
+        if (mLastLocation == null) {
+            retrieveLocation();
+        }
         return mLastLocation;
+
     }
 
     @Override
     public void onConnected(Bundle bundle) {
         Log.i("fusedlocationapi", "connected");
-
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-        if (mLastLocation != null) {
-            saveLocation(mLastLocation);
-        } else {
-            //TODO
-        }
+        retrieveLocation();
     }
 
-    public void sendLatituteAndLongitude(final Location mLastLocation) {
+    public void sendLatituteAndLongitude(final Location mLastLocation, boolean peopleAroundMeActivity) {
         if (uploadLocation != null && uploadLocation.isAlive()) {
             //do nothing
         } else {
-            uploadLocation = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    uploadLatLng(mLastLocation);
-                }
-            });
-            uploadLocation.start();
+            if (peopleAroundMeActivity || dataSent == false) {
+                uploadLocation = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        uploadLatLng(mLastLocation);
+                    }
+                });
+                uploadLocation.start();
+            }
         }
     }
 
@@ -117,6 +124,10 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
             httpURLConnection.setDoInput(false);
             httpURLConnection.setRequestMethod("GET");
 
+            if (httpURLConnection.getResponseCode() == httpURLConnection.HTTP_OK) {
+                dataSent = true;
+                Log.i("data sent", "true");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -171,6 +182,5 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         } else {
             return false;
         }
-
     }
 }

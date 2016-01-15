@@ -199,7 +199,7 @@ public class MainActivity extends CustomAppCompatActivity {
         if (locManager.ismGoogleApiClientConnected()) {
             location = locManager.getLocation();
             if (location != null) {
-                locManager.sendLatituteAndLongitude(location);
+                locManager.sendLatituteAndLongitude(location, false);
             }
         } else {
             //TODO
