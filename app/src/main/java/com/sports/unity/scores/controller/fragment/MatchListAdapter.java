@@ -452,5 +452,9 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
         }
     }
+    public void updateChild(ArrayList<JSONObject> list){
+        this.list=list;
+        this.notifyDataSetChanged();
+    }
 
 }

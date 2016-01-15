@@ -10,6 +10,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.sports.unity.R;
+import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
@@ -30,7 +33,7 @@ import com.sports.unity.util.Constants;
 /**
  * Created by Agupta on 8/13/2015.
  */
-public class MessagesFragment extends Fragment implements View.OnClickListener {
+public class MessagesFragment extends Fragment implements View.OnClickListener{
 
     private OnSearchViewQueryListener mListener = null;
 
@@ -47,6 +50,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
+
     }
 
     @Override
@@ -103,7 +107,8 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //Log.i("Adding Child Fragment", "Now");
-
+        view.setFocusableInTouchMode(true);
+        view.requestFocus();
     }
 
     @Override
@@ -161,11 +166,14 @@ public class MessagesFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    private SearchView searchView;
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_messages_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        ((MainActivity)getActivity()).setSearchView(searchView);
         int searchImgId = android.support.v7.appcompat.R.id.search_button;
         ImageView v = (ImageView) searchView.findViewById(searchImgId);
         v.setImageResource(R.drawable.ic_menu_search);

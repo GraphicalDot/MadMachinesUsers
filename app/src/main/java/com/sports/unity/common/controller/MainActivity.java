@@ -10,6 +10,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -47,7 +48,7 @@ public class MainActivity extends CustomAppCompatActivity {
 
     private XMPPTCPConnection con;
     private SportsUnityDBHelper sportsUnityDBHelper;
-
+    public SearchView searchView;
     LocManager locManager;
 
     @Override
@@ -213,14 +214,28 @@ public class MainActivity extends CustomAppCompatActivity {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if(searchView!=null) {
+                if (!searchView.isIconified()) {
+                    searchView.setIconified(true);
+                } else {
+                    super.onBackPressed();
+                }
+            }else{
+                super.onBackPressed();
+            }
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        navigationFragment.onActivityResult(requestCode, resultCode, data);
-        Log.d("max", "ONMAINRESULT");
+        if(requestCode == Constants.REQUEST_CODE_NAV) {
+            navigationFragment.onActivityResult(requestCode, resultCode, data);
+            Log.d("max", "ONMAINRESULT");
+        }
     }
+    public void setSearchView(SearchView searchView){
+        this.searchView=searchView;
+    }
+
 }

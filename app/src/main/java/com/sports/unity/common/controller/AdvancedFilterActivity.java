@@ -209,6 +209,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     }
 
     public void addEditClickListener(OnEditFilterListener listener) {
+        if(editFilterListener==null){
+            editFilterListener=new ArrayList<>();
+        }
         editFilterListener.add(listener);
     }
 

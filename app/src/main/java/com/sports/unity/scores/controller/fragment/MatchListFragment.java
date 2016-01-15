@@ -1,5 +1,6 @@
 package com.sports.unity.scores.controller.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,9 +23,12 @@ import android.widget.TextView;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
+import com.sports.unity.util.Constants;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -46,6 +50,8 @@ public class MatchListFragment extends Fragment {
 
     private ScoresContentListener contentListener = new ScoresContentListener();
 
+    private  MatchListAdapter mAdapter;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -60,6 +66,7 @@ public class MatchListFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_scores_menu, menu);
+        menu.findItem(R.id.action_search).setVisible(false);
     }
 
     @Override
@@ -75,8 +82,7 @@ public class MatchListFragment extends Fragment {
 
         if (id == com.sports.unity.R.id.action_filter) {
             Intent i = new Intent(getActivity(), FilterActivity.class);
-           // startActivityForResult(i, 999);
-            startActivity(i);
+           startActivityForResult(i, Constants.REQUEST_CODE_SCORE);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -110,7 +116,7 @@ public class MatchListFragment extends Fragment {
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_scores);
         mRecyclerView.setHasFixedSize(true);
 
-        MatchListAdapter mAdapter = new MatchListAdapter(matches, getActivity());
+        mAdapter = new MatchListAdapter(matches, getActivity());
         mRecyclerView.setAdapter(mAdapter);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
@@ -157,8 +163,31 @@ public class MatchListFragment extends Fragment {
         ArrayList<JSONObject> list = ScoresJsonParser.parseListOfMatches(content);
         if( list.size() > 0 ){
             matches.clear();
-            matches.addAll(list);
+            if(UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET)&& UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_FOOTBALL)) {
+                matches.addAll(list);
+            }else {
+                ArrayList<JSONObject> cricket=new ArrayList<>();
+                ArrayList <JSONObject> footbal=new ArrayList<>();
+                for(JSONObject obj: list) {
+                    try {
+                        String s= obj.getString(ScoresJsonParser.SPORTS_TYPE_PARAMETER);
+                        if(s.equals(ScoresJsonParser.CRICKET)){
+                            cricket.add(obj);
+                        }else{
+                            footbal.add(obj);
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if(UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET)){
+                    matches.addAll(cricket);
+                }else{
+                    matches.addAll(footbal);
+                }
+            }
             success = true;
+            mAdapter.updateChild(matches);
         } else {
             //nothing
         }
@@ -256,4 +285,12 @@ public class MatchListFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode== Activity.RESULT_OK&& requestCode==Constants.REQUEST_CODE_SCORE){
+            mSwipeRefreshLayout.setRefreshing(true);
+            requestContent();
+        }
+    }
 }
