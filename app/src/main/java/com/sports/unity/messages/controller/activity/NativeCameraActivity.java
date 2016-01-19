@@ -32,6 +32,7 @@ import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.hardware.Camera;
 import android.media.CamcorderProfile;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -79,13 +80,14 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
     /**
      * Safe method for getting a camera instance.
+     *
      * @return
      */
-    public static Camera getCameraInstance( int cameraId){
+    public static Camera getCameraInstance(int cameraId) {
         Camera c = null;
         try {
             c = Camera.open(cameraId); // attempt to get a Camera instance
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return c; // returns null if camera is unavailable
@@ -124,8 +126,8 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         View view = findViewById(R.id.root);
 
         boolean opened = safeCameraOpenInView(view);
-        if(opened == false){
-            Log.i("Camera","Error, Camera failed to open");
+        if (opened == false) {
+            Log.i("Camera", "Error, Camera failed to open");
         }
 
     }
@@ -163,11 +165,11 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         return false;
     }
 
-    private void initView(){
+    private void initView() {
 
         {
             String sendTo = getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
-            TextView sendToView = (TextView)findViewById(R.id.identity);
+            TextView sendToView = (TextView) findViewById(R.id.identity);
             sendToView.setText(sendTo);
         }
 
@@ -189,7 +191,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
              * check for two camera's
              */
             int cameraCount = Camera.getNumberOfCameras();
-            if ( cameraCount == 2 ) {
+            if (cameraCount == 2) {
                 View view = findViewById(R.id.switch_camera);
                 view.setVisibility(View.VISIBLE);
             } else {
@@ -203,6 +205,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
     /**
      * Recommended "safe" way to open the camera.
+     *
      * @param view
      * @return
      */
@@ -213,14 +216,14 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         mCameraView = view;
         qOpened = (mCamera != null);
 
-        if(qOpened == true){
+        if (qOpened == true) {
             FrameLayout preview = (FrameLayout) view.findViewById(R.id.camera_preview);
 
-            if( preview.getChildCount() == 0 ){
-                mPreview = new CameraPreview( getBaseContext(), mCamera, view);
+            if (preview.getChildCount() == 0) {
+                mPreview = new CameraPreview(getBaseContext(), mCamera, view);
                 preview.addView(mPreview);
             } else {
-                mPreview = (CameraPreview)preview.getChildAt(0);
+                mPreview = (CameraPreview) preview.getChildAt(0);
                 mPreview.setCamera(mCamera);
             }
             mPreview.startCameraPreview();
@@ -228,7 +231,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         return qOpened;
     }
 
-    private void closeCameraAndView(){
+    private void closeCameraAndView() {
         releaseCameraAndPreview();
 
 //        ViewGroup view = (ViewGroup)findViewById(R.id.camera_preview);
@@ -245,13 +248,13 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             mCamera.release();
             mCamera = null;
         }
-        if(mPreview != null){
+        if (mPreview != null) {
             mPreview.destroyDrawingCache();
             mPreview.mCamera = null;
         }
     }
 
-    private void addClickListener(){
+    private void addClickListener() {
         {
             View view = findViewById(R.id.flash);
             view.setOnClickListener(this);
@@ -279,25 +282,25 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
     }
 
-    private void handleClickEvent(View view, int id){
-        if( id == R.id.discard_camera_content ) {
+    private void handleClickEvent(View view, int id) {
+        if (id == R.id.discard_camera_content) {
             discardContent();
-        } else if( id == R.id.send_camera_content ) {
+        } else if (id == R.id.send_camera_content) {
             handleSendMedia();
-        } else if( id == R.id.flash ) {
+        } else if (id == R.id.flash) {
             changeFlashStatus();
             changeFlashContent();
-        } else if( id == R.id.switch_camera ) {
+        } else if (id == R.id.switch_camera) {
             animateCamera(view);
             changeCamera();
-        } else if( id == R.id.capture ){
+        } else if (id == R.id.capture) {
             mCamera.takePicture(null, null, mPicture);
         }
     }
 
     private void handleLongClickEvent(final View view) {
         int id = view.getId();
-        if( id == R.id.capture ){
+        if (id == R.id.capture) {
 
             view.setOnTouchListener(new CustomTouchListener(view));
 
@@ -308,15 +311,15 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
     }
 
-    private void prepareForVideoRecording(){
+    private void prepareForVideoRecording() {
         recorder = new MediaRecorder();
 
-        if( cameraId == Camera.CameraInfo.CAMERA_FACING_BACK ) {
+        if (cameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
             recorder.setOrientationHint(90);
         } else {
-            if( mPreview.cameraOrientation == 90 ){
+            if (mPreview.cameraOrientation == 90) {
                 recorder.setOrientationHint(270);
-            } else if( mPreview.cameraOrientation == 270 ){
+            } else if (mPreview.cameraOrientation == 270) {
                 recorder.setOrientationHint(90);
             }
         }
@@ -337,11 +340,11 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             recorder.prepare();
 
             success = true;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        if( success ) {
+        if (success) {
             recorder.start();
         } else {
             //TODO
@@ -352,7 +355,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
     private void cancelVideoRecording() {
         cancelTimer();
 
-        TextView holdMessage = (TextView)findViewById(R.id.hold_message);
+        TextView holdMessage = (TextView) findViewById(R.id.hold_message);
         holdMessage.setText(R.string.message_to_hold_button_for_video);
 
         releaseMediaRecorder();
@@ -367,7 +370,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
         cancelTimer();
 
-        TextView holdMessage = (TextView)findViewById(R.id.hold_message);
+        TextView holdMessage = (TextView) findViewById(R.id.hold_message);
         holdMessage.setText(R.string.message_to_hold_button_for_video);
 
         releaseMediaRecorder();
@@ -379,7 +382,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         playVideo();
     }
 
-    private void prepareLayoutForVideo(){
+    private void prepareLayoutForVideo() {
         {
             View tempView = findViewById(R.id.flash);
             tempView.setVisibility(View.GONE);
@@ -391,12 +394,12 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
 
         {
-            TextView holdMessage = (TextView)findViewById(R.id.hold_message);
+            TextView holdMessage = (TextView) findViewById(R.id.hold_message);
             holdMessage.setText(R.string.message_video_recoding_on);
         }
 
         {
-            ImageView view = (ImageView)findViewById(R.id.capture);
+            ImageView view = (ImageView) findViewById(R.id.capture);
             view.setImageResource(R.drawable.ic_record_video);
         }
 
@@ -404,12 +407,12 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             View tempView = findViewById(R.id.top_recording_layout);
             tempView.setVisibility(View.VISIBLE);
 
-            TextView view = (TextView)tempView.findViewById(R.id.video_recording_time);
+            TextView view = (TextView) tempView.findViewById(R.id.video_recording_time);
             view.setText("00:" + VIDEO_MAX_DURATION);
         }
     }
 
-    private void discardLayoutForVideo(){
+    private void discardLayoutForVideo() {
         {
             View tempView = findViewById(R.id.camera_config_layout);
             tempView.setBackgroundColor(getResources().getColor(R.color.semi_transparent));
@@ -421,13 +424,13 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
 
         int cameraCount = Camera.getNumberOfCameras();
-        if( cameraCount == 2 ){
+        if (cameraCount == 2) {
             View tempView = findViewById(R.id.switch_camera);
             tempView.setVisibility(View.VISIBLE);
         }
 
         {
-            ImageView view = (ImageView)findViewById(R.id.capture);
+            ImageView view = (ImageView) findViewById(R.id.capture);
             view.setImageResource(R.drawable.ic_capture);
         }
 
@@ -447,29 +450,35 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
     private void outsideOfRecordButton() {
         {
             View view = findViewById(R.id.camera_config_layout);
-            view.setBackgroundColor( getResources().getColor(R.color.red_semi_transparent));
+            view.setBackgroundColor(getResources().getColor(R.color.red_semi_transparent));
         }
     }
 
-    private void playVideo(){
+    private void playVideo() {
         try {
             Uri uri = Uri.parse(DBUtil.getFilePath(this.getBaseContext(), videoContentOutputFilename));
 
-            VideoView videoView = (VideoView)findViewById(R.id.video_container);
+            VideoView videoView = (VideoView) findViewById(R.id.video_container);
             videoView.setVisibility(View.VISIBLE);
-
 
             videoView.setMediaController(new MediaController(this));
             videoView.setVideoURI(uri);
             videoView.requestFocus();
             videoView.setZOrderMediaOverlay(true);
             findViewById(R.id.send_discard_layout).bringToFront();
+            videoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                @Override
+                public boolean onError(MediaPlayer mediaPlayer, int what, int extra) {
+                    return true;
+                }
+            });
             videoView.start();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-    private void releaseMediaRecorder(){
+
+    private void releaseMediaRecorder() {
         if (recorder != null) {
             recorder.reset();
             recorder.release();
@@ -478,8 +487,8 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
     }
 
-    private void animateCamera(final View view){
-        final RotateAnimation rotate = new RotateAnimation( 0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+    private void animateCamera(final View view) {
+        final RotateAnimation rotate = new RotateAnimation(0, 360, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         rotate.setDuration(300);
         rotate.setInterpolator(new FastOutSlowInInterpolator());
         rotate.setAnimationListener(new Animation.AnimationListener() {
@@ -506,8 +515,8 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
     }
 
-    private void changeCamera(){
-        if( cameraId == Camera.CameraInfo.CAMERA_FACING_BACK ){
+    private void changeCamera() {
+        if (cameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
             cameraId = Camera.CameraInfo.CAMERA_FACING_FRONT;
         } else {
             cameraId = Camera.CameraInfo.CAMERA_FACING_BACK;
@@ -516,20 +525,20 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         safeCameraOpenInView(mCameraView);
     }
 
-    private void changeFlashStatus(){
-        if( flashStatus.equals(Camera.Parameters.FLASH_MODE_ON) ) {
+    private void changeFlashStatus() {
+        if (flashStatus.equals(Camera.Parameters.FLASH_MODE_ON)) {
             flashStatus = Camera.Parameters.FLASH_MODE_OFF;
-        } else if( flashStatus.equals(Camera.Parameters.FLASH_MODE_OFF) ) {
+        } else if (flashStatus.equals(Camera.Parameters.FLASH_MODE_OFF)) {
             flashStatus = Camera.Parameters.FLASH_MODE_ON;
         }
     }
 
-    private void changeFlashContent(){
-        ImageView flash = (ImageView)findViewById(R.id.flash);
-        if( flashStatus.equals(Camera.Parameters.FLASH_MODE_ON) ) {
-            flash.setImageResource( R.drawable.ic_flash_on);
-        } else if( flashStatus.equals(Camera.Parameters.FLASH_MODE_OFF) ) {
-            flash.setImageResource( R.drawable.ic_flash_disabled);
+    private void changeFlashContent() {
+        ImageView flash = (ImageView) findViewById(R.id.flash);
+        if (flashStatus.equals(Camera.Parameters.FLASH_MODE_ON)) {
+            flash.setImageResource(R.drawable.ic_flash_on);
+        } else if (flashStatus.equals(Camera.Parameters.FLASH_MODE_OFF)) {
+            flash.setImageResource(R.drawable.ic_flash_disabled);
         }
 
         {
@@ -541,7 +550,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
     }
 
-    private void showPictureViewsToSend(byte [] pictureContent) {
+    private void showPictureViewsToSend(byte[] pictureContent) {
         prepareLayoutToSendContent();
 
         {
@@ -551,10 +560,10 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             Bitmap originalBitmap = BitmapFactory.decodeByteArray(pictureContent, 0, pictureContent.length);
 
             Matrix matrix = new Matrix();
-            if( cameraId == Camera.CameraInfo.CAMERA_FACING_BACK ) {
+            if (cameraId == Camera.CameraInfo.CAMERA_FACING_BACK) {
                 matrix.postRotate(mPreview.cameraOrientation);
             } else {
-                matrix.preScale( -1, 1);
+                matrix.preScale(-1, 1);
                 matrix.postRotate(mPreview.cameraOrientation);
             }
 
@@ -563,7 +572,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             Bitmap rotatedBitMap = Bitmap.createBitmap(originalBitmap, 0, 0, originalBitmap.getWidth(), originalBitmap.getHeight(), matrix, false);
             originalBitmap.recycle();
 
-            ImageView imageView = (ImageView)findViewById(R.id.taken_picture);
+            ImageView imageView = (ImageView) findViewById(R.id.taken_picture);
             imageView.setVisibility(View.VISIBLE);
             imageView.setImageBitmap(rotatedBitMap);
 
@@ -575,7 +584,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
     }
 
-    private void prepareLayoutToSendContent(){
+    private void prepareLayoutToSendContent() {
         closeCameraAndView();
 
         {
@@ -606,7 +615,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
 
         {
-            VideoView view = (VideoView)findViewById(R.id.video_container);
+            VideoView view = (VideoView) findViewById(R.id.video_container);
             view.setVisibility(View.GONE);
         }
 
@@ -628,7 +637,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         safeCameraOpenInView(mCameraView);
     }
 
-    private void clearDiscardedContent(){
+    private void clearDiscardedContent() {
         DBUtil.deleteContentFromExternalFileStorage(this, videoContentOutputFilename);
     }
 
@@ -645,18 +654,18 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
     };
 
-    private void handleSendMedia(){
-        new ThreadTask( content){
+    private void handleSendMedia() {
+        new ThreadTask(content) {
 
             @Override
             public Object process() {
                 String fileName = null;
-                if( contentMimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ) {
+                if (contentMimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
                     byte[] byteArray = (byte[]) object;
                     fileName = DBUtil.getUniqueFileName(getBaseContext(), SportsUnityDBHelper.MIME_TYPE_IMAGE);
 
                     DBUtil.writeContentToExternalFileStorage(getBaseContext(), fileName, byteArray);
-                } else if( contentMimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ) {
+                } else if (contentMimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
                     fileName = videoContentOutputFilename;
                 }
                 return fileName;
@@ -664,7 +673,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
             @Override
             public void postAction(Object object) {
-                String fileName = (String)object;
+                String fileName = (String) object;
                 addActionToCorrespondingActivity(ActivityActionHandler.CHAT_SCREEN_KEY, contentMimeType, fileName, this.object);
 
                 NativeCameraActivity.this.runOnUiThread(new Runnable() {
@@ -689,18 +698,18 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         return success;
     }
 
-    private void startTimer(){
+    private void startTimer() {
         cancelTimer();
 
-        TextView textView = (TextView)findViewById(R.id.video_recording_time);
+        TextView textView = (TextView) findViewById(R.id.video_recording_time);
         textView.setTag(VIDEO_MAX_DURATION);
 
         timer = new Timer();
-        timer.schedule( new VideoTimerTask(textView), 1000, 1000);
+        timer.schedule(new VideoTimerTask(textView), 1000, 1000);
     }
 
-    private void cancelTimer(){
-        if( timer != null ){
+    private void cancelTimer() {
+        if (timer != null) {
             timer.cancel();
             timer = null;
         }
@@ -711,7 +720,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         private TextView textView = null;
         private int count = VIDEO_MAX_DURATION;
 
-        private VideoTimerTask(TextView textView){
+        private VideoTimerTask(TextView textView) {
             this.textView = textView;
         }
 
@@ -719,7 +728,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         public void run() {
             count--;
 
-            if( count > -1 ) {
+            if (count > -1) {
                 NativeCameraActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -735,9 +744,9 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
     }
 
-    private void setFocusMode(Camera.Parameters parameters){
+    private void setFocusMode(Camera.Parameters parameters) {
         List<String> supportedFocusMode = parameters.getSupportedFocusModes();
-        if( supportedFocusMode != null && supportedFocusMode.size() > 0 ) {
+        if (supportedFocusMode != null && supportedFocusMode.size() > 0) {
             String focusMode = null;
             if (supportedFocusMode.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
                 focusMode = Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE;
@@ -755,10 +764,10 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
     }
 
-    private void setFlashMode(Camera.Parameters parameters){
+    private void setFlashMode(Camera.Parameters parameters) {
         List<String> supportedFlashModes = parameters.getSupportedFlashModes();
-        if( supportedFlashModes != null && supportedFlashModes.size() > 0 ) {
-            if( supportedFlashModes.contains(flashStatus) ) {
+        if (supportedFlashModes != null && supportedFlashModes.size() > 0) {
+            if (supportedFlashModes.contains(flashStatus)) {
                 parameters.setFlashMode(flashStatus);
             } else {
                 //nothing
@@ -776,10 +785,18 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         int degrees = 0;
 
         switch (rotation) {
-            case Surface.ROTATION_0: degrees = 0; break;
-            case Surface.ROTATION_90: degrees = 90; break;
-            case Surface.ROTATION_180: degrees = 180; break;
-            case Surface.ROTATION_270: degrees = 270; break;
+            case Surface.ROTATION_0:
+                degrees = 0;
+                break;
+            case Surface.ROTATION_90:
+                degrees = 90;
+                break;
+            case Surface.ROTATION_180:
+                degrees = 180;
+                break;
+            case Surface.ROTATION_270:
+                degrees = 270;
+                break;
         }
 
         int result;
@@ -853,14 +870,14 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             mCamera = camera;
 
 //            computeCameraOrientation();
-            cameraOrientation = getCameraDisplayOrientation( NativeCameraActivity.this, cameraId, mCamera);
+            cameraOrientation = getCameraDisplayOrientation(NativeCameraActivity.this, cameraId, mCamera);
             camera.setDisplayOrientation(cameraOrientation);
             Log.d("Native Camera", "Camera Display orientation " + cameraOrientation);
 
             Display display = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
 
             mSupportedPreviewSizes = mCamera.getParameters().getSupportedPreviewSizes();
-            mPreviewSize = getBestAspectPreviewSize( display.getWidth(), display.getHeight(), mCamera.getParameters());
+            mPreviewSize = getBestAspectPreviewSize(display.getWidth(), display.getHeight(), mCamera.getParameters());
 
             Camera.Parameters parameters = mCamera.getParameters();
 
@@ -999,7 +1016,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 //            }
 //        }
 
-        public Camera.Size getBestAspectPreviewSize( int width, int height, Camera.Parameters parameters) {
+        public Camera.Size getBestAspectPreviewSize(int width, int height, Camera.Parameters parameters) {
             Log.i("Native Camera", "Display Size " + width + " : " + height);
 
             Camera.Size optimalSize = null;
@@ -1016,7 +1033,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             Collections.sort(sizes, Collections.reverseOrder(new SizeComparator()));
 
 
-            for ( int index=0; index < 4 && index < sizes.size() ; index++ ) {
+            for (int index = 0; index < 4 && index < sizes.size(); index++) {
                 Camera.Size size = sizes.get(index);
                 double ratio = (double) size.width / size.height;
 
@@ -1031,7 +1048,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             return (optimalSize);
         }
 
-        private void computeCameraOrientation(){
+        private void computeCameraOrientation() {
             Display display = ((WindowManager) mContext.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();
             int displayOrientation = display.getRotation();
 
@@ -1085,7 +1102,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         private int lastTouchStatus = INSIDE_STATUS;
 
 
-        private CustomTouchListener(View view){
+        private CustomTouchListener(View view) {
             location = new int[2];
             view.getLocationOnScreen(location);
             recordButtonRect = new Rect(location[0], location[1], location[0] + view.getWidth(), location[1] + view.getHeight());
@@ -1105,8 +1122,8 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
                     int pointX = location[0] + (int) event.getX();
                     int pointY = location[1] + (int) event.getY();
 
-                    TextView textView = (TextView)NativeCameraActivity.this.findViewById(R.id.video_recording_time);
-                    Integer videoDuration = VIDEO_MAX_DURATION - (Integer)textView.getTag();
+                    TextView textView = (TextView) NativeCameraActivity.this.findViewById(R.id.video_recording_time);
+                    Integer videoDuration = VIDEO_MAX_DURATION - (Integer) textView.getTag();
 
                     if (recordButtonRect.contains(pointX, pointY) && videoDuration > 0) {
                         doneVideoRecording();
