@@ -63,11 +63,11 @@ public class FavouriteContentHandler {
     private static final String SEARCH_FOOTBALL_PLAYER_TAG = "fav_search_request_football_player_tag";
 
 
-    private static final String URL_FOOTBALL_LEAGUE = "http://52.74.142.219:8000/get_football_leagues";
-    private static final String URL_FOOTBALL_PLAYER = "http://52.74.142.219:8000/get_top_football_players";
-    private static final String URL_FOOTBALL_TEAM = "http://52.74.142.219:8000/get_top_football_teams";
-    private static final String URL_CRICKET_TEAM = "http://52.74.142.219:8080/top_cricket_teams";
-    private static final String URL_CRICKET_PLAYER = "http://52.74.142.219:8080/top_cricket_players";
+    private static final String URL_FOOTBALL_LEAGUE = "http://52.74.75.79:8000/get_football_leagues";
+    private static final String URL_FOOTBALL_PLAYER = "http://52.74.75.79:8000/get_top_football_players";
+    private static final String URL_FOOTBALL_TEAM = "http://52.74.75.79:8000/get_top_football_teams";
+    private static final String URL_CRICKET_TEAM = "http://52.74.75.79:8080/top_cricket_teams";
+    private static final String URL_CRICKET_PLAYER = "http://52.74.75.79:8080/top_cricket_players";
 
 
     private static final String URL_LEAGUE_SEARCH = "http://52.76.74.188:9000/fav_league?league=";

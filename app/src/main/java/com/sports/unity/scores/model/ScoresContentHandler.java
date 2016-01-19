@@ -13,7 +13,7 @@ import java.util.HashMap;
  */
 public class ScoresContentHandler {
 
-    private static final String SCORES_BASE_URL = "http://52.74.142.219:8080/";
+    private static final String SCORES_BASE_URL = "http://52.74.75.79:8080/";
 
     private static final String URL_PARAMS_FOR_LIST_OF_MATCHES = "get_all_matches_list";
 

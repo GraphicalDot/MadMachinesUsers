@@ -455,25 +455,20 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         try {
             Uri uri = Uri.parse(DBUtil.getFilePath(this.getBaseContext(), videoContentOutputFilename));
 
-            FrameLayout videoContainer = (FrameLayout)findViewById(R.id.video_container);
-            videoContainer.setVisibility(View.VISIBLE);
-            videoContainer.removeAllViews();
+            VideoView videoView = (VideoView)findViewById(R.id.video_container);
+            videoView.setVisibility(View.VISIBLE);
 
-            VideoView videoView = new VideoView(this);
-            videoView.setLayoutParams( new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-            videoView.setZOrderOnTop(true);
-
-            videoContainer.addView(videoView);
 
             videoView.setMediaController(new MediaController(this));
             videoView.setVideoURI(uri);
             videoView.requestFocus();
+            videoView.setZOrderMediaOverlay(true);
+            findViewById(R.id.send_discard_layout).bringToFront();
             videoView.start();
         }catch (Exception ex){
             ex.printStackTrace();
         }
     }
-
     private void releaseMediaRecorder(){
         if (recorder != null) {
             recorder.reset();
@@ -611,8 +606,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         }
 
         {
-            ViewGroup view = (ViewGroup)findViewById(R.id.video_container);
-            view.removeAllViews();
+            VideoView view = (VideoView)findViewById(R.id.video_container);
             view.setVisibility(View.GONE);
         }
 
