@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.news.controller.activity.NewsSearchActivity;
 import com.sports.unity.util.Constants;
@@ -26,7 +27,7 @@ import java.util.List;
 public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdapter.FilterItemView> {
     private ArrayList<FavouriteItem> itemDataSet;
     private List<String> favDataSet;
-    private Activity activity;
+    public Activity activity;
     private boolean isEditMode;
     public FilterRecycleAdapter(Activity activity, ArrayList<FavouriteItem> itemDataSet,boolean isEdit) {
         isEditMode=isEdit;
@@ -114,7 +115,7 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
         activity.startActivity(newsSearch);
     }
 
-    public static class FilterItemView extends RecyclerView.ViewHolder {
+    public class FilterItemView extends RecyclerView.ViewHolder {
         public TextView tv;
         public CheckBox cb;
         public View v;
@@ -122,6 +123,7 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
             super(itemView);
             v=itemView;
             tv = (TextView) itemView.findViewById(R.id.tv);
+            tv.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
             cb = (CheckBox) itemView.findViewById(R.id.cb);
         }
     }

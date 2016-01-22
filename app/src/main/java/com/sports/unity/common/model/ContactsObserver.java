@@ -1,5 +1,6 @@
 package com.sports.unity.common.model;
 
+import android.Manifest;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.os.Handler;
@@ -43,12 +44,18 @@ public class ContactsObserver extends ContentObserver {
     public void onChange(boolean selfChange) {
 
         super.onChange(selfChange);
-
         if (contactSyncInProgress == false) {
             contactSyncInProgress = true;
-
-            SyncContactThread syncContactThread = new SyncContactThread();
-            syncContactThread.start();
+            if(!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+                SyncContactThread syncContactThread = new SyncContactThread();
+                syncContactThread.start();
+            }else if(PermissionUtil.getInstance().isPermissionGranted(context, Manifest.permission.READ_CONTACTS)) {
+                SyncContactThread syncContactThread = new SyncContactThread();
+                syncContactThread.start();
+            }else{
+                contactSyncInProgress=false;
+                //nothing
+            }
         }
     }
 
@@ -71,13 +78,13 @@ public class ContactsObserver extends ContentObserver {
                 Iterator<String> iterator = androidContacts.keySet().iterator();
 
                 String phoneNumber = null;
-                while ( iterator.hasNext() ) {
+                while (iterator.hasNext()) {
                     phoneNumber = iterator.next();
                     contactNumberList.add(phoneNumber);
                 }
 
                 contactsHandler.syncContacts(context, contactNumberList);
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
 

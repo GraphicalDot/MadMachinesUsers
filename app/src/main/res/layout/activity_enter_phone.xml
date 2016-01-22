@@ -2,7 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sports.unity.common.controller.EnterPhoneActivity">
+    tools:context="com.sports.unity.common.controller.EnterPhoneActivity"
+    android:id="@+id/rootview">
 
     <ImageView
         android:layout_width="match_parent"

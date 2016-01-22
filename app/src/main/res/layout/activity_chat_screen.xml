@@ -4,7 +4,6 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     tools:context="com.sports.unity.messages.controller.activity.ChatScreenActivity">
-
     <include
         android:id="@+id/tool_bar_chat"
         layout="@layout/toolbar_chat"
@@ -138,4 +137,10 @@
         </LinearLayout>
     </LinearLayout>
 
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/rootview">
+
+    </FrameLayout>
 </RelativeLayout>

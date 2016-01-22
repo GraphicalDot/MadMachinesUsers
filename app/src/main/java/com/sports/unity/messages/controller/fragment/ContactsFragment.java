@@ -1,11 +1,13 @@
 package com.sports.unity.messages.controller.fragment;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +19,9 @@ import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.common.controller.MainActivity;
+import com.sports.unity.common.model.ContactsHandler;
+import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.ToolbarActionsForChatScreen;
@@ -24,11 +29,12 @@ import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by madmachines on 24/8/15.
  */
-public class ContactsFragment extends Fragment implements OnSearchViewQueryListener {
+public class ContactsFragment extends Fragment implements OnSearchViewQueryListener, MainActivity.PermissionResultHandler {
 
     public static int USAGE_FOR_CONTACTS = 0;
     public static int USAGE_FOR_MEMBERS = 1;
@@ -40,6 +46,10 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
     private ListView contacts;
     private ViewGroup titleLayout = null;
+    private View v;
+
+    private boolean copyContactCallInitiated = false;
+    private boolean listeningCopyFinishPostCall = false;
 
     private AdapterView.OnItemClickListener contactItemListener = new AdapterView.OnItemClickListener() {
 
@@ -179,20 +189,57 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
         usageIn = getArguments().getInt(Constants.INTENT_KEY_CONTACT_FRAGMENT_USAGE);
 
-        View v = inflater.inflate(com.sports.unity.R.layout.fragment_contacts, container, false);
+        v = inflater.inflate(com.sports.unity.R.layout.fragment_contacts, container, false);
         contacts = (ListView) v.findViewById(R.id.list_contacts);
         contacts.setTextFilterEnabled(true);
+        if (PermissionUtil.getInstance().isRuntimePermissionRequired()) {
 
+            if (PermissionUtil.getInstance().requestPermission(getActivity(), new ArrayList<String>(Arrays.asList(Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS)), getResources().getString(R.string.read_contact_permission_message), Constants.REQUEST_CODE_CONTACT_PERMISSION)) {
+                handleContacts();
+            }
+        }
+
+        return v;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ViewGroup searchLayout = (ViewGroup) view.findViewById(R.id.search_layout);
+        searchLayout.setVisibility(View.GONE);
+    }
+
+    private void handleContacts() {
+        addListenerToHandleContactCopyPostCall();
+        ContactsHandler.getInstance().copyAllContacts_OnThread(getActivity().getApplicationContext(), new Runnable() {
+            @Override
+            public void run() {
+                if (listeningCopyFinishPostCall) {
+                    removeListenerToHandleContactCopyPostCall();
+
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            copyContactCallInitiated = false;
+                            setContactList(v);
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    private void setContactList(View v) {
         boolean multipleSelection = false;
         int resource = 0;
-        AdapterView.OnItemClickListener itemListener = null;
         ArrayList<Contacts> contactList = null;
+        AdapterView.OnItemClickListener itemListener = null;
         if (usageIn == USAGE_FOR_MEMBERS) {
             resource = R.layout.list_item_members;
             itemListener = memberItemListener;
 
             contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true);
-
+            Log.d("max", "contactlistsize---" + contactList.size());
             titleLayout = (ViewGroup) v.findViewById(R.id.title_layout_for_members_list);
             titleLayout.setVisibility(View.VISIBLE);
 
@@ -205,7 +252,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             itemListener = contactItemListener;
 
             contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList_AvailableOnly(false);
-
+            Log.d("max", "contactlistsize---" + contactList.size());
             ViewGroup searchLayout = (ViewGroup) v.findViewById(R.id.search_layout);
             searchLayout.setVisibility(View.GONE);
         } else if (usageIn == USAGE_FOR_FORWARD) {
@@ -213,7 +260,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             itemListener = forwardToContactMemberListener;
 
             contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true);
-
+            Log.d("max", "contactlistsize---" + contactList.size());
             ViewGroup searchLayout = (ViewGroup) v.findViewById(R.id.search_layout);
             searchLayout.setVisibility(View.GONE);
 
@@ -223,8 +270,15 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
         ContactListAdapter adapter = new ContactListAdapter(getActivity(), resource, contactList, multipleSelection);
         contacts.setAdapter(adapter);
         contacts.setOnItemClickListener(itemListener);
+    }
 
-        return v;
+    private void addListenerToHandleContactCopyPostCall() {
+        listeningCopyFinishPostCall = true;
+        copyContactCallInitiated = true;
+    }
+
+    private void removeListenerToHandleContactCopyPostCall() {
+        listeningCopyFinishPostCall = false;
     }
 
     public void filterResults(String filter) {
@@ -241,5 +295,46 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
         filterResults(filterText);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+            ((MainActivity) getActivity()).addContactResultListener(this);
+            if (copyContactCallInitiated) {
+                if (ContactsHandler.getInstance().isContactCopyInProgress()) {
+                    addListenerToHandleContactCopyPostCall();
+                } else {
+                    setContactList(getView());
+                }
+            } else {
+                //nothing
+            }
+        } else {
+            setContactList(getView());
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        removeListenerToHandleContactCopyPostCall();
+    }
+
+    @Override
+    public void onPermissionResult(int requestCode, int[] grantResults) {
+        if (requestCode == Constants.REQUEST_CODE_CONTACT_PERMISSION) {
+            if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
+                handleContacts();
+            } else {
+                PermissionUtil.getInstance().showSnackBar(getActivity(), getString(R.string.permission_denied));
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((MainActivity)getActivity()).removeContactResultListener();
+    }
 }
 

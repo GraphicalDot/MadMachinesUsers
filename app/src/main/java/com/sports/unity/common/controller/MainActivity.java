@@ -5,7 +5,7 @@ import android.location.Location;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -15,7 +15,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -23,17 +22,15 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
-import com.sports.unity.common.controller.fragment.AdvancedFilterFragment;
 import com.sports.unity.common.controller.fragment.NavigationFragment;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
-import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.LocManager;
 
-import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -41,7 +38,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by Edwin on 15/02/2015.
  */
-public class MainActivity extends CustomAppCompatActivity {
+public class MainActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     NavigationFragment navigationFragment;
     public boolean isPaused;
@@ -50,6 +47,7 @@ public class MainActivity extends CustomAppCompatActivity {
     private SportsUnityDBHelper sportsUnityDBHelper;
     public SearchView searchView;
     LocManager locManager;
+    private PermissionResultHandler contactResultHandler,locationResultHandelar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,13 +212,13 @@ public class MainActivity extends CustomAppCompatActivity {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if(searchView!=null) {
+            if (searchView != null) {
                 if (!searchView.isIconified()) {
                     searchView.setIconified(true);
                 } else {
                     super.onBackPressed();
                 }
-            }else{
+            } else {
                 super.onBackPressed();
             }
         }
@@ -229,13 +227,51 @@ public class MainActivity extends CustomAppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == Constants.REQUEST_CODE_NAV) {
+        if (requestCode == Constants.REQUEST_CODE_NAV) {
             navigationFragment.onActivityResult(requestCode, resultCode, data);
             Log.d("max", "ONMAINRESULT");
         }
     }
-    public void setSearchView(SearchView searchView){
-        this.searchView=searchView;
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == Constants.REQUEST_CODE_CONTACT_PERMISSION) {
+            if (contactResultHandler != null) {
+                contactResultHandler.onPermissionResult(requestCode, grantResults);
+            } else {
+                PermissionUtil.getInstance().showSnackBar(this, "Sorry something went wrong");
+            }
+        }else if (requestCode == Constants.REQUEST_CODE_LOCATION_PERMISSION) {
+            if (locationResultHandelar != null) {
+                locationResultHandelar.onPermissionResult(requestCode, grantResults);
+            } else {
+                PermissionUtil.getInstance().showSnackBar(this, "Sorry something went wrong");
+            }
+        }
+
     }
 
+    public void addContactResultListener(PermissionResultHandler permissionResultHandler) {
+        this.contactResultHandler = permissionResultHandler;
+    }
+
+    public void removeContactResultListener() {
+        this.contactResultHandler = null;
+    }
+    public void addLocationResultListener(PermissionResultHandler permissionResultHandler) {
+        this.locationResultHandelar = permissionResultHandler;
+    }
+
+    public void removeLocationResultListener() {
+        this.locationResultHandelar = null;
+    }
+
+    public void setSearchView(SearchView searchView) {
+        this.searchView = searchView;
+    }
+
+    public interface PermissionResultHandler {
+        public void onPermissionResult(int requestCode, int[] grantResults);
+    }
 }

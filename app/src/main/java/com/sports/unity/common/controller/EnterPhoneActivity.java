@@ -1,8 +1,10 @@
 package com.sports.unity.common.controller;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,6 +22,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
@@ -29,7 +32,10 @@ import org.apache.http.Header;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class EnterPhoneActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class EnterPhoneActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,16 +53,16 @@ public class EnterPhoneActivity extends AppCompatActivity {
     };
 
     private void init() {
-        TextView entr_ph_no=(TextView) findViewById(R.id.entr_ph_no);
+        TextView entr_ph_no = (TextView) findViewById(R.id.entr_ph_no);
         entr_ph_no.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
 
-        TextView txt_details=(TextView) findViewById(R.id.txt_details);
+        TextView txt_details = (TextView) findViewById(R.id.txt_details);
         txt_details.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
 
-        TextView take_a_minut=(TextView) findViewById(R.id.take_a_minut);
+        TextView take_a_minut = (TextView) findViewById(R.id.take_a_minut);
         take_a_minut.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
 
-        TextView privacy_policy=(TextView) findViewById(R.id.privacy_policy);
+        TextView privacy_policy = (TextView) findViewById(R.id.privacy_policy);
         privacy_policy.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
 
         final Button continueButton = (Button) findViewById(R.id.getOtp);
@@ -64,7 +70,15 @@ public class EnterPhoneActivity extends AppCompatActivity {
         continueButton.setOnClickListener(sendButtonClickListener);
 
         final EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
-        setUserPhoneNumber(phoneNumberEditText, continueButton);
+        if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+
+            setUserPhoneNumber(phoneNumberEditText, continueButton);
+        } else {
+            if (PermissionUtil.getInstance().requestPermission(EnterPhoneActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.READ_PHONE_STATE)), getResources().getString(R.string.read_phone_permission_message), Constants.REQUEST_CODE_PHONE_STATE_PERMISSION)) {
+
+                setUserPhoneNumber(phoneNumberEditText, continueButton);
+            }
+        }
         phoneNumberEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -129,7 +143,7 @@ public class EnterPhoneActivity extends AppCompatActivity {
                 try {
                     String info = response.getString("info");
 
-                    if( info.equalsIgnoreCase("Success")){
+                    if (info.equalsIgnoreCase("Success")) {
 //                        UserUtil.setOtpSent(EnterPhoneActivity.this, true);
                         Toast.makeText(EnterPhoneActivity.this, R.string.otp_message_otp_sent, Toast.LENGTH_SHORT).show();
                     } else {
@@ -167,6 +181,18 @@ public class EnterPhoneActivity extends AppCompatActivity {
         startActivity(intent);
 
         finish();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == Constants.REQUEST_CODE_CONTACT_PERMISSION) {
+            if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
+                setUserPhoneNumber((EditText) findViewById(R.id.phoneNumber), (Button) findViewById(R.id.getOtp));
+            } else {
+                PermissionUtil.getInstance().showSnackBar(this, getString(R.string.permission_denied));
+            }
+        }
     }
 
 }

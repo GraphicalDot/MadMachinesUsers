@@ -1,6 +1,7 @@
 package com.sports.unity.common.model;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -30,7 +31,6 @@ public class UserUtil {
         SPORTS_SELECTED = tinyDB.getListString(TinyDB.KEY_SPORTS_SELECTED);
 
         favFilterList = tinyDB.getListString(TinyDB.FAVOURITE_FILTERS);
-
 
         leagueSelected =tinyDB.getBoolean(TinyDB.LEAGUE_SELECTION, false);
         teamSelected =tinyDB.getBoolean(TinyDB.TEAM_SELECTION, false);
@@ -125,10 +125,10 @@ public class UserUtil {
         return filterCompleted;
     }
     public static void setFavouriteFilters(Context context, ArrayList<String> footballFilterTeam) {
-        favFilterList = footballFilterTeam;
+        favFilterList = new ArrayList<String>(footballFilterTeam);
 
         TinyDB tinyDB = TinyDB.getInstance(context);
-        tinyDB.putListString(TinyDB.FAVOURITE_FILTERS, footballFilterTeam);
+        tinyDB.putListString(TinyDB.FAVOURITE_FILTERS, favFilterList);
     }
 
     public static ArrayList<String> getFavouriteFilters() {

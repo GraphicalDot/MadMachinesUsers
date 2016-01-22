@@ -1,18 +1,16 @@
 package com.sports.unity.messages.controller.fragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -21,21 +19,24 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import com.sports.unity.R;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.Constants;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Created by Agupta on 8/13/2015.
  */
-public class MessagesFragment extends Fragment implements View.OnClickListener{
+public class MessagesFragment extends Fragment implements View.OnClickListener,MainActivity.PermissionResultHandler{
 
     private OnSearchViewQueryListener mListener = null;
 
@@ -77,8 +78,13 @@ public class MessagesFragment extends Fragment implements View.OnClickListener{
         peopleAroundMeFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), PeopleAroundMeMap.class);
-                startActivity(intent);
+                if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+                    startPeopleAroundMeActivity();
+                } else {
+                    if (PermissionUtil.getInstance().requestPermission(getActivity(), new ArrayList<String>(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)), getResources().getString(R.string.location_permission_message), Constants.REQUEST_CODE_LOCATION_PERMISSION)) {
+                        startPeopleAroundMeActivity();
+                    }
+                }
             }
         });
 
@@ -104,7 +110,11 @@ public class MessagesFragment extends Fragment implements View.OnClickListener{
         getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
         return v;
     }
+    private void startPeopleAroundMeActivity(){
 
+        Intent intent = new Intent(getActivity(), PeopleAroundMeMap.class);
+        startActivity(intent);
+    }
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -175,7 +185,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener{
         inflater.inflate(R.menu.fragment_messages_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        ((MainActivity)getActivity()).setSearchView(searchView);
+        ((MainActivity) getActivity()).setSearchView(searchView);
         int searchImgId = android.support.v7.appcompat.R.id.search_button;
         ImageView v = (ImageView) searchView.findViewById(searchImgId);
         v.setImageResource(R.drawable.ic_menu_search);
@@ -197,9 +207,9 @@ public class MessagesFragment extends Fragment implements View.OnClickListener{
         searchView.setOnQueryTextFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View view, boolean b) {
-                if(!b){
+                if (!b) {
                     InputMethodManager mgr = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    mgr.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT,InputMethodManager.HIDE_NOT_ALWAYS);
+                    mgr.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);
                 }
             }
         });
@@ -210,5 +220,30 @@ public class MessagesFragment extends Fragment implements View.OnClickListener{
         super.onPause();
 
         mListener = null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+            ((MainActivity) getActivity()).addLocationResultListener(this);
+        }
+    }
+
+    @Override
+    public void onPermissionResult(int requestCode, int[] grantResults) {
+        if (requestCode == Constants.REQUEST_CODE_LOCATION_PERMISSION) {
+            if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
+                startPeopleAroundMeActivity();
+            } else {
+                PermissionUtil.getInstance().showSnackBar(getActivity(), getString(R.string.permission_denied));
+            }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((MainActivity) getActivity()).removeLocationResultListener();
     }
 }

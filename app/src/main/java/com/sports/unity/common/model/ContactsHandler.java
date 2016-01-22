@@ -56,19 +56,27 @@ public class ContactsHandler {
 
     }
 
-    public void copyAllContacts_OnThread(Context context){
+    public boolean isContactCopyInProgress() {
+        return contactCopyInProgress;
+    }
+
+    public void copyAllContacts_OnThread(Context context, Runnable postRunnable){
         if( contactCopyInProgress == false ) {
+            Log.i("copy contacts", "not in progress");
             contactCopyInProgress = true;
 
             boolean isProcessedBefore = TinyDB.getInstance(context).getBoolean( TinyDB.KEY_CONTACTS_COPIED_SUCESSFULLY, false);
-
             if( ! isProcessedBefore ) {
-                AddContactThread addContactThread = new AddContactThread(context);
+                Log.i("copy contacts", "start processing");
+                AddContactThread addContactThread = new AddContactThread(context, postRunnable);
                 addContactThread.start();
             } else {
-                //nothing
+                Log.i("copy contacts", "processed before");
+                contactCopyInProgress = false;
+                postRunnable.run();
             }
         } else {
+            Log.i("copy contacts", "in progress");
             //nothing
         }
     }
@@ -248,9 +256,11 @@ public class ContactsHandler {
 
     private class AddContactThread extends Thread {
         private Context context;
+        private Runnable postRunnable = null;
 
-        public AddContactThread(Context context){
+        public AddContactThread(Context context, Runnable postRunnable){
             this.context = context;
+            this.postRunnable = postRunnable;
         }
 
         @Override
@@ -260,6 +270,9 @@ public class ContactsHandler {
 
             TinyDB.getInstance(context).putBoolean(TinyDB.KEY_CONTACTS_COPIED_SUCESSFULLY, true);
             contactCopyInProgress = false;
+            if( postRunnable != null ){
+                postRunnable.run();
+            }
             Log.i("Copy All Contacts", "Ended");
         }
 

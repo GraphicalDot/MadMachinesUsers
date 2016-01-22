@@ -71,4 +71,11 @@ public class Constants {
     public static final int REQUEST_CODE_NAV = 2424;
     public static final String IS_FROM_NAV = "is_from_nav";
     public static final int REQUEST_CODE_SCORE = 4848;
+    public static final int REQUEST_CODE_CAMERA_EXTERNAL_STORAGE_PERMISSION = 101;
+    public static final int REQUEST_CODE_CONTACT_PERMISSION = 102;
+    public static final int REQUEST_CODE_PHONE_STATE_PERMISSION = 103;
+    public static final int REQUEST_CODE_CAMERA_PERMISSION = 104;
+    public static final int REQUEST_CODE_GALLERY_STORAGE_PERMISSION = 105;
+    public static final int REQUEST_CODE_RECORD_AUDIO_PERMISSION = 106;
+    public static final int REQUEST_CODE_LOCATION_PERMISSION = 107;
 }

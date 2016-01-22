@@ -1,11 +1,13 @@
 package com.sports.unity.messages.controller.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -31,6 +33,7 @@ import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.UserProfileActivity;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.messages.controller.BlockUnblockUserHelper;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.GroupMessaging;
@@ -61,11 +64,12 @@ import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChatScreenActivity extends CustomAppCompatActivity {
+public class ChatScreenActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
 
     private static ArrayList<Message> messageList;
     private static ChatScreenAdapter chatScreenAdapter;
@@ -708,7 +712,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
     public void openCamera(View view) {
         resetToolbar();
-        chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
+        if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+            chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
+        } else {
+            if (PermissionUtil.getInstance().requestPermission(ChatScreenActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.CAMERA)), getResources().getString(R.string.camera_permission_message), Constants.REQUEST_CODE_CAMERA_PERMISSION)) {
+
+                chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
+            }
+        }
     }
 
     public void emojipopup(View view) {
@@ -718,12 +729,25 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
     public void galleryPopup(View view) {
         resetToolbar();
-        chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
+        if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+            chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
+        } else {
+            if (PermissionUtil.getInstance().requestPermission(ChatScreenActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE)), getResources().getString(R.string.gallery_permission_message), Constants.REQUEST_CODE_GALLERY_STORAGE_PERMISSION)) {
+
+                chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
+            }
+        }
     }
 
     public void voicePopup(View view) {
         resetToolbar();
-        chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
+        if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+            chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
+        } else {
+            if (PermissionUtil.getInstance().requestPermission(ChatScreenActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.RECORD_AUDIO)), getResources().getString(R.string.audio_permission_message), Constants.REQUEST_CODE_RECORD_AUDIO_PERMISSION)) {
+                chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
+            }
+        }
     }
 
     public void openKeyBoard(View view) {
@@ -952,4 +976,27 @@ public class ChatScreenActivity extends CustomAppCompatActivity {
 
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == Constants.REQUEST_CODE_CAMERA_PERMISSION) {
+            if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
+                openCamera(findViewById(R.id.btn_camera));
+            } else {
+                PermissionUtil.getInstance().showSnackBar(this, getString(R.string.permission_denied));
+            }
+        }else if (requestCode == Constants.REQUEST_CODE_GALLERY_STORAGE_PERMISSION) {
+            if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
+                galleryPopup(findViewById(R.id.btn_gallery));
+            } else {
+                PermissionUtil.getInstance().showSnackBar(this, getString(R.string.permission_denied));
+            }
+        }else if (requestCode == Constants.REQUEST_CODE_RECORD_AUDIO_PERMISSION) {
+            if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
+                voicePopup(findViewById(R.id.btn_audiomsg));
+            } else {
+                PermissionUtil.getInstance().showSnackBar(this, getString(R.string.permission_denied));
+            }
+        }
+    }
 }

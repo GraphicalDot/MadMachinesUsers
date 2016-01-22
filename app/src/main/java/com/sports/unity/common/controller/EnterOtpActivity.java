@@ -1,9 +1,11 @@
 package com.sports.unity.common.controller;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,7 +23,9 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
+import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
@@ -31,7 +35,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class EnterOtpActivity extends AppCompatActivity {
+import java.util.ArrayList;
+import java.util.Arrays;
+
+public class EnterOtpActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private boolean paused = false;
     private boolean moved = false;
@@ -59,6 +66,14 @@ public class EnterOtpActivity extends AppCompatActivity {
         setContentView(com.sports.unity.R.layout.activity_enter_otp);
 
         initViews();
+
+        if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+            copyContacts();
+        } else {
+            if (PermissionUtil.getInstance().requestPermission(EnterOtpActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS)), getResources().getString(R.string.read_contact_permission_message), Constants.REQUEST_CODE_CONTACT_PERMISSION)) {
+                copyContacts();
+            }
+        }
     }
 
     @Override
@@ -72,6 +87,10 @@ public class EnterOtpActivity extends AppCompatActivity {
             //nothing
         }
 
+    }
+
+    private void copyContacts() {
+        ContactsHandler.getInstance().copyAllContacts_OnThread(getApplicationContext(), null);
     }
 
     @Override
@@ -89,7 +108,7 @@ public class EnterOtpActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progressBar);
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.gray1), android.graphics.PorterDuff.Mode.MULTIPLY);
 
         Button editNumberButton = (Button) findViewById(R.id.editnumber);
@@ -229,7 +248,7 @@ public class EnterOtpActivity extends AppCompatActivity {
                 try {
                     String info = response.getString("info");
 
-                    if( info.equalsIgnoreCase("Success")){
+                    if (info.equalsIgnoreCase("Success")) {
                         UserUtil.setOtpSent(EnterOtpActivity.this, true);
                         Toast.makeText(EnterOtpActivity.this, R.string.otp_message_otp_sent, Toast.LENGTH_SHORT).show();
                     } else {
@@ -308,6 +327,18 @@ public class EnterOtpActivity extends AppCompatActivity {
         Intent intent = new Intent(this, EnterPhoneActivity.class);
         intent.putExtra(Constants.INTENT_KEY_PHONE_NUMBER, phoneNumber);
         startActivity(intent);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == Constants.REQUEST_CODE_CONTACT_PERMISSION) {
+            if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
+                copyContacts();
+            } else {
+                PermissionUtil.getInstance().showSnackBar(this, getString(R.string.permission_denied));
+            }
+        }
     }
 
 }

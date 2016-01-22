@@ -65,7 +65,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         UserUtil.setOtpSent(context, false);
         UserUtil.setUserRegistered(context, true);
 
-        ContactsHandler.getInstance().copyAllContacts_OnThread(getApplicationContext());
+        ContactsHandler.getInstance().copyAllContacts_OnThread(getApplicationContext(), null);
     }
 
     private void showScreenSize(){
@@ -101,8 +101,6 @@ public class SplashScreenActivity extends AppCompatActivity {
 
     private void show() {
         initViews();
-
-        ContactsHandler.getInstance().copyAllContacts_OnThread(getApplicationContext());
     }
 
     private void initViews() {

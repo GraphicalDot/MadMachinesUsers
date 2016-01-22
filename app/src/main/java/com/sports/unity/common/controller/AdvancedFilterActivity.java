@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.text.method.MovementMethod;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -20,6 +22,7 @@ import com.sports.unity.R;
 import com.sports.unity.common.controller.fragment.AdvancedFilterFragment;
 import com.sports.unity.common.model.FavouriteContentHandler;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
 
@@ -41,7 +44,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     public boolean isSearchEdit;
     public String searchString;
     public boolean isFromNav;
-
+    private int listSize=0;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +64,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         }
         setUpNextClick();
         setUpDoneClick();
+        setupSkipClick();
     }
 
     private void setUpDoneClick() {
@@ -73,6 +77,26 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             @Override
             public void onClick(View view) {
                 handleDoneClick(done);
+            }
+        });
+    }
+
+    private void setupSkipClick() {
+        Button skip = (Button) findViewById(R.id.skip);
+        skip.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+        if (UserUtil.isFilterCompleted()) {
+            skip.setVisibility(View.INVISIBLE);
+        }
+        skip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Log.d("max","Handling Skip click");
+                TinyDB tinyDB=TinyDB.getInstance(AdvancedFilterActivity.this);
+                favList=tinyDB.getListString(TinyDB.FAVOURITE_FILTERS);
+                UserUtil.setFavouriteFilters(AdvancedFilterActivity.this,favList);
+                UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
+                moveToNextActivity(MainActivity.class);
             }
         });
     }
@@ -110,6 +134,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
                 edit.setText("Edit");
                 performEdit();
             }else{*/
+        Log.d("max","Handeling Done click");
         UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
         setResult(RESULT_OK);
         finish();
@@ -119,6 +144,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     }
 
     private void handleNextClick() {
+        Log.d("max","Handeling Next click");
         closeSearch();
         Bundle b = advancedFilterFragment.getArguments();
         UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
@@ -209,8 +235,8 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     }
 
     public void addEditClickListener(OnEditFilterListener listener) {
-        if(editFilterListener==null){
-            editFilterListener=new ArrayList<>();
+        if (editFilterListener == null) {
+            editFilterListener = new ArrayList<>();
         }
         editFilterListener.add(listener);
     }
@@ -249,7 +275,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     public void closeSearch() {
         if (searchLayout.getVisibility() == View.VISIBLE) {
             InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            mgr.hideSoftInputFromWindow(getWindow().getCurrentFocus().getWindowToken(),InputMethodManager.HIDE_NOT_ALWAYS);
+            mgr.hideSoftInputFromWindow(getWindow().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             titleLayout.setVisibility(View.VISIBLE);
             searchLayout.setVisibility(View.GONE);
             searchText.setText("");
