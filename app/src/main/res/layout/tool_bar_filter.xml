@@ -10,19 +10,21 @@
     <ImageView
         android:id="@+id/cancel"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ic_close"
-       />
+        android:layout_height="match_parent"
+        android:paddingRight="@dimen/horizontal_padding_very_small"
+        android:scaleType="center"
+        android:src="@drawable/ic_close" />
 
     <TextView
         android:id="@+id/toolbar_title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="@dimen/font_size_medium"
-        android:textColor="@color/ColorPrimary"
+        android:layout_height="match_parent"
         android:layout_gravity="end"
         android:gravity="center"
+        android:paddingLeft="@dimen/horizontal_padding_very_small"
+        android:paddingRight="@dimen/horizontal_padding_very_small"
         android:text="@string/apply_filters"
-        android:paddingRight="@dimen/horizontal_padding_very_small"/>
+        android:textColor="@color/ColorPrimary"
+        android:textSize="@dimen/font_size_medium" />
 
 </android.support.v7.widget.Toolbar>

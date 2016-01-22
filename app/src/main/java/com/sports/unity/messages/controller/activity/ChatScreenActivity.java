@@ -165,7 +165,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                             status.setText("");
                             personalMessaging.getLastTime(JABBERID);
                         } else {
-                            status.setText("last seen at " + object.toString());
+                            status.setText("last seen " + object.toString());
                         }
                     }
                 });
@@ -621,7 +621,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
         Roster roster = Roster.getInstanceFor(con);
         Presence availability = roster.getPresence(JABBERID + "@mm.io");
-        Log.i("availability :", String.valueOf(availability));
+        Log.i("userPresence :", String.valueOf(availability.toXML()));
         int state = retrieveState_mode(availability.getStatus());
         if (state == 1) {
             status.setText("Online");
@@ -631,10 +631,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         //Log.i("State", String.valueOf(state));
     }
 
-    private int retrieveState_mode(String userMode) {
+    private int retrieveState_mode(String status) {
         int userState = 0;
         /** 0 for lastseen, 1 for online*/
-        if ("Online".equals(userMode)) {
+        if ("Online".equals(status)) {
             userState = 1;
             return userState;
         } else {

@@ -119,7 +119,7 @@ public class XMPPClient {
             Presence presence = new Presence(Presence.Type.available);
             presence.setStatus("Offline");
             try {
-                connection.sendPacket(presence);
+                connection.sendStanza(presence);
             } catch (SmackException.NotConnectedException e) {
                 e.printStackTrace();
             }
@@ -143,8 +143,8 @@ public class XMPPClient {
             Message message = new Message("settimedev@mm.io", Message.Type.headline);
             message.setBody(String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()));
             try {
-                connection.sendPacket(presence);
-                connection.sendPacket(message);
+                connection.sendStanza(presence);
+                connection.sendStanza(message);
             } catch (SmackException.NotConnectedException e) {
                 e.printStackTrace();
             }

@@ -3,139 +3,132 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/transparent"
-    android:gravity="center_vertical|center_horizontal"
+    android:background="@android:color/white"
+    android:gravity="center"
     android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/horizontal_padding_very_small">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center|center_horizontal"
+            android:text="MATCH WINNER 2-WAY"
+            android:textColor="@color/gray1"
+            android:textSize="@dimen/font_size_small_large" />
+
+        <ImageView
+            android:id="@+id/close"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:paddingRight="@dimen/vertical_padding_very_small"
+            android:scaleType="center"
+            android:src="@drawable/ic_close_blk" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:background="@color/gray3" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/vertical_padding_small"
-        android:background="@drawable/round_edge_box"
         android:gravity="center"
-        android:orientation="vertical">
-
-        <FrameLayout
-            android:id="@+id/header"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/horizontal_padding_very_very_small"
-            android:paddingBottom="@dimen/horizontal_padding_very_very_small">
-
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="MATCH WINNER 2-WAY"
-                android:textSize="@dimen/font_size_small_large"
-                android:textColor="@color/gray1"
-                android:layout_gravity="center"/>
-
-            <ImageView
-                android:id="@+id/close"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:src="@drawable/ic_close_blk"
-                android:layout_marginRight="@dimen/vertical_padding_very_small"
-                />
-            </FrameLayout>
-
-        <View
-            android:layout_width="wrap_content"
-            android:layout_height="1dp"
-            android:background="@color/gray3" />
+        android:orientation="horizontal"
+        android:padding="@dimen/horizontal_padding_small">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingTop="@dimen/vertical_padding_very_very_small"
-            android:paddingBottom="@dimen/vertical_padding_very_very_small"
-            android:gravity="center">
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:paddingRight="@dimen/vertical_padding_medium">
-                <ImageView
-                    android:id="@+id/flag1"
-                    android:layout_width="@dimen/flag_size_large"
-                    android:layout_height="@dimen/flag_size_large"
-                    android:src="@drawable/ic_football"
-                    android:paddingBottom="@dimen/vertical_padding_very_very_small"/>
-                <TextView
-                    android:id="@+id/team1_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAllCaps="true"
-                    android:textSize="@dimen/font_size_small_medium"/>
-
-                <TextView
-                    android:id="@+id/bet1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/brick_red"
-                    android:textSize="@dimen/font_size_small_medium"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
-                android:paddingLeft="@dimen/vertical_padding_medium">
-                <ImageView
-                    android:id="@+id/flag2"
-                    android:layout_width="@dimen/flag_size_large"
-                    android:layout_height="@dimen/flag_size_large"
-                    android:src="@drawable/ic_football"
-                    android:paddingBottom="@dimen/vertical_padding_very_very_small"
-                    />
-                <TextView
-                    android:id="@+id/team2_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAllCaps="true"
-                    android:textSize="@dimen/font_size_small_medium"/>
-
-                <TextView
-                    android:id="@+id/bet2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/brick_red"
-                    android:textSize="@dimen/font_size_small_medium"/>
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/footer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="@dimen/horizontal_padding_very_very_small"
-            android:paddingBottom="@dimen/horizontal_padding_very_small"
-            android:orientation="horizontal"
+            android:layout_weight="1"
             android:gravity="center"
-            >
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Powered by "
-                android:textSize="@dimen/font_size_small_medium"
-                android:layout_gravity="center"/>
+            android:orientation="vertical">
 
             <ImageView
+                android:id="@+id/flag1"
+                android:layout_width="@dimen/flag_size_large"
+                android:layout_height="@dimen/flag_size_large"
+                android:paddingBottom="@dimen/vertical_padding_very_very_small"
+                android:src="@drawable/ic_football" />
+
+            <TextView
+                android:id="@+id/team1_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:src="@drawable/img_bet_logo"
-                />
+                android:text="@string/dummy_team_1"
+                android:textAllCaps="true"
+                android:textSize="@dimen/font_size_small_medium" />
+
+            <TextView
+                android:id="@+id/bet1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/brick_red"
+                android:textSize="@dimen/font_size_small_medium" />
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/flag2"
+                android:layout_width="@dimen/flag_size_large"
+                android:layout_height="@dimen/flag_size_large"
+                android:paddingBottom="@dimen/vertical_padding_very_very_small"
+                android:src="@drawable/ic_football" />
+
+            <TextView
+                android:id="@+id/team2_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/dummy_team_1"
+                android:textAllCaps="true"
+                android:textSize="@dimen/font_size_small_medium" />
+
+            <TextView
+                android:id="@+id/bet2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/brick_red"
+                android:textSize="@dimen/font_size_small_medium" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/horizontal_padding_very_small">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Powered by "
+            android:textSize="@dimen/font_size_small_medium" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/img_bet_logo" />
     </LinearLayout>
 
 </LinearLayout>

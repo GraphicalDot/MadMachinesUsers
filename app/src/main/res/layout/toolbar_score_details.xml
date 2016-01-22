@@ -17,8 +17,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/refresh"
@@ -29,6 +28,7 @@
             android:paddingRight="@dimen/horizontal_padding_small"
             android:scaleType="center"
             android:src="@drawable/ic_refresh_white" />
+
         <TextView
             android:id="@+id/toolbar_title"
             android:layout_width="match_parent"

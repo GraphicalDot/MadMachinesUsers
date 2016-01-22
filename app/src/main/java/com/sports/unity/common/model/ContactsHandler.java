@@ -41,6 +41,8 @@ public class ContactsHandler {
         return CONTACT_HANDLER;
     }
 
+    private Roster roster = null;
+
     private static void addToContactList(String number) throws SmackException.NotLoggedInException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, SmackException.NoResponseException {
         Presence response = new Presence(Presence.Type.subscribe);
         response.setTo(number + "@mm.io");
@@ -94,10 +96,11 @@ public class ContactsHandler {
     }
 
     void syncContacts(Context context, ArrayList<String> contactNumberList) throws XMPPException {
+        roster = Roster.getInstanceFor(XMPPClient.getConnection());
         for (int i = 0; i < contactNumberList.size(); i++) {
             String number = contactNumberList.get(i);
             XMPPService.answerForm.setAnswer("user", number);
-            if (checkIfUserExists(number, XMPPService.searchManager, XMPPService.answerForm)) {
+            if (checkIfUserExists(number, XMPPService.searchManager, XMPPService.answerForm, roster)) {
                 SportsUnityDBHelper.getInstance(context).updateContacts(number, imgs, status);
             }
         }
@@ -114,17 +117,17 @@ public class ContactsHandler {
         long timeToCheck = System.currentTimeMillis() - 10 * 60 * 1000; // before ten minutes.
 
         String selection = ContactsContract.Contacts.HAS_PHONE_NUMBER + "='1' and " + ContactsContract.Contacts.CONTACT_LAST_UPDATED_TIMESTAMP + " > ?";
-        String selectionArgs[] = { String.valueOf(timeToCheck) };
+        String selectionArgs[] = {String.valueOf(timeToCheck)};
 
         ContentResolver contentResolver = context.getContentResolver();
         Cursor cursor = contentResolver.query(ContactsContract.Contacts.CONTENT_URI, PROJECTION, selection, selectionArgs, null);
-        if( cursor != null ) {
+        if (cursor != null) {
             while (cursor.moveToNext()) {
                 String contact_id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                 String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
                 Cursor phoneCursor = contentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{contact_id}, null);
-                if( phoneCursor != null ) {
+                if (phoneCursor != null) {
                     while (phoneCursor.moveToNext()) {
                         String phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                         if (phoneNumber.length() < 10) {
@@ -158,14 +161,14 @@ public class ContactsHandler {
 
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         Iterator<String> keyIterator = androidContacts.keySet().iterator();
-        while ( keyIterator.hasNext() ) {
+        while (keyIterator.hasNext()) {
             String phoneNumber = keyIterator.next();
             String name = androidContacts.get(phoneNumber);
             name = name.trim();
 
-            sportsUnityDBHelper.addToContacts( name, phoneNumber, false, defaultStatus, true);
+            sportsUnityDBHelper.addToContacts(name, phoneNumber, false, defaultStatus, true);
 
-            if ( ! name.isEmpty() ) {
+            if (!name.isEmpty()) {
                 sportsUnityDBHelper.updateUserName(phoneNumber, name);
                 sportsUnityDBHelper.updateChatEntryName(sportsUnityDBHelper.getContactId(phoneNumber), name, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
             } else {
@@ -176,7 +179,7 @@ public class ContactsHandler {
 
     }
 
-    private Boolean checkIfUserExists(String number, UserSearchManager search, Form answerForm) throws XMPPException {
+    private Boolean checkIfUserExists(String number, UserSearchManager search, Form answerForm, Roster roster) throws XMPPException {
         Boolean flag = false;
         try {
 
@@ -191,7 +194,9 @@ public class ContactsHandler {
                         imgs = card.getAvatar();
                         status = card.getMiddleName();
                         String name = card.getNickName();
-                        addToContactList(number);
+                        Log.i("Creating Entry", "true");
+                        roster.createEntry(number, name, null);
+//                        addToContactList(number);
                         Log.i("Iterator values......", " " + value);
                         flag = true;
                     }
@@ -222,14 +227,14 @@ public class ContactsHandler {
         ContentResolver sContentResolver = context.getContentResolver();
         Cursor cursor = sContentResolver.query(ContactsContract.Contacts.CONTENT_URI, PROJECTION, SELECTION, null, null);
 
-        if( cursor != null ) {
+        if (cursor != null) {
             while (cursor.moveToNext()) {
                 String contact_id = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
                 String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
                 String phoneNumber = null;
                 Cursor phoneCursor = sContentResolver.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", new String[]{contact_id}, null);
-                if( phoneCursor != null ) {
+                if (phoneCursor != null) {
                     while (phoneCursor.moveToNext()) {
                         phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                         if (phoneNumber.length() < 10) {

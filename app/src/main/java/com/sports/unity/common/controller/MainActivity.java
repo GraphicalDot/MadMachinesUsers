@@ -28,6 +28,7 @@ import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.LocManager;
 
@@ -212,13 +213,13 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if (searchView != null) {
+            if(searchView!=null) {
                 if (!searchView.isIconified()) {
                     searchView.setIconified(true);
                 } else {
                     super.onBackPressed();
                 }
-            } else {
+            }else{
                 super.onBackPressed();
             }
         }
@@ -227,7 +228,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Constants.REQUEST_CODE_NAV) {
+        if(requestCode == Constants.REQUEST_CODE_NAV) {
             navigationFragment.onActivityResult(requestCode, resultCode, data);
             Log.d("max", "ONMAINRESULT");
         }
@@ -274,4 +275,5 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     public interface PermissionResultHandler {
         public void onPermissionResult(int requestCode, int[] grantResults);
     }
+    
 }

@@ -11,6 +11,7 @@
         android:layout_width="@dimen/profile_thumb_image_small"
         android:layout_height="@dimen/profile_thumb_image_small"
         android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/horizontal_padding_small"
         android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
         android:src="@drawable/ic_user" />
 
@@ -47,6 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginRight="@dimen/horizontal_padding_small"
         android:background="@drawable/round_edge_box_blue"
         android:focusable="false"
         android:minHeight="@dimen/invite_button_height"

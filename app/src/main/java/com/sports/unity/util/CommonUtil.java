@@ -121,11 +121,11 @@ public class CommonUtil {
 
     public static String getTimeDifference(long epochTime) {
         long currentTime = getCurrentGMTTimeInEpoch();
-        DateTime dateTime = new DateTime(epochTime);
-        DateTime dateTimenow = new DateTime(currentTime);
+        DateTime dateTime = new DateTime(epochTime * 1000);
+        DateTime dateTimenow = new DateTime(currentTime * 1000);
         int days = Days.daysBetween(dateTime, dateTimenow).getDays();
         if (days > 0) {
-            return String.valueOf(days + " days");
+            return String.valueOf(days);
         }
 
         return String.valueOf(0);

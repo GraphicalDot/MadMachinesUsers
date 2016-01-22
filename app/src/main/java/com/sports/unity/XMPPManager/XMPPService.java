@@ -18,6 +18,7 @@ import com.sports.unity.ChatScreenApplication;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.ContactsObserver;
@@ -45,9 +46,13 @@ import org.jivesoftware.smack.chat.ChatMessageListener;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
@@ -57,6 +62,7 @@ import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.muc.RoomInfo;
 import org.jivesoftware.smackx.pubsub.Item;
 import org.jivesoftware.smackx.pubsub.ItemPublishEvent;
 import org.jivesoftware.smackx.pubsub.LeafNode;
@@ -71,6 +77,7 @@ import org.jivesoftware.smackx.xdata.Form;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 public class XMPPService extends Service {
@@ -284,6 +291,18 @@ public class XMPPService extends Service {
 
             });
 
+            connection.addPacketInterceptor(new StanzaListener() {
+                @Override
+                public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
+                    Log.i("Presence Intercepted", "true");
+                    Presence presence = (Presence) packet;
+                    if (CustomAppCompatActivity.isActivityCounterNull()) {
+                        presence.setStatus("Offline");
+                    } else {
+                        presence.setStatus("Online");
+                    }
+                }
+            }, new StanzaTypeFilter(Presence.class));
             /**
              *  packet filter to see if messages are published to the node or not
              */
@@ -296,20 +315,30 @@ public class XMPPService extends Service {
                 }
             }, new IQTypeFilter(IQ.Type.result));*/
 
-
             /**
              * Listen for subscription packets to read status
              */
-            connection.addPacketListener(new PacketListener() {
+
+            Roster.getInstanceFor(connection).setSubscriptionMode(Roster.SubscriptionMode.accept_all);
+            connection.addSyncStanzaListener(new StanzaListener() {
 
                 @Override
                 public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
+                    Log.i("receivedsubsReq", "true");
                     Presence presence = (Presence) packet;
+                    String from = presence.getFrom();
                     if (presence.getType() == Presence.Type.subscribe) {
-                        Presence response = new Presence(Presence.Type.subscribed);
-                        response.setTo(presence.getFrom().substring(0, presence.getFrom().indexOf("@")));
-                        connection.sendPacket(response);
-                    } else /*if (presence.getType() == Presence.Type.available)*/ {
+                        try {
+                            Log.i("addingToRoster", "true");
+                            Roster.getInstanceFor(connection).createEntry(from, "", null);
+                        } catch (SmackException.NotLoggedInException e) {
+                            e.printStackTrace();
+                        } catch (SmackException.NoResponseException e) {
+                            e.printStackTrace();
+                        } catch (XMPPException.XMPPErrorException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
                         if ("Online".equals(presence.getStatus())) {
                             sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, Presence.Type.available);
                         } else {
@@ -317,8 +346,7 @@ public class XMPPService extends Service {
                         }
                     }
                 }
-
-            }, new PacketTypeFilter(Presence.class));
+            }, new StanzaTypeFilter(Presence.class));
 
         } else
 
@@ -442,6 +470,7 @@ public class XMPPService extends Service {
                         }
                     } else {
                         String lastSeen = CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(gmtEpoch));
+                        lastSeen = "today at " + lastSeen;
                         sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, lastSeen);
                     }
 
@@ -593,7 +622,6 @@ public class XMPPService extends Service {
 
     private void handleStatus(Message message) {
         Log.i("handle status :", "");
-
         if (message.hasExtension(ChatState.composing.toString(), ChatStateExtension.NAMESPACE)) {
             Log.i("status :", "composing");
             sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, ChatState.composing.toString());

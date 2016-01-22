@@ -20,31 +20,53 @@
             android:background="@android:color/transparent"
             android:orientation="vertical">
 
-            <Button
-                style="?android:attr/borderlessButtonStyle"
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/transparent" />
+                android:background="@android:color/transparent">
 
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/gray3"
-                android:gravity="center_horizontal"
-                android:orientation="horizontal"
-                android:padding="@dimen/horizontal_padding_very_small">
-
-                <TextView
-                    android:id="@+id/username"
-                    android:layout_width="wrap_content"
+                <RelativeLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:gravity="center_horizontal|center_vertical"
-                    android:paddingTop="@dimen/vertical_padding_medium"
-                    android:textSize="@dimen/font_size_medium" />
+                    android:layout_gravity="bottom">
 
-            </LinearLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/profile_thumb_image_small"
+                        android:background="@drawable/shape_rounded_corners" />
+
+                    <ImageButton
+                        android:id="@+id/close_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:background="@android:color/transparent"
+                        android:padding="@dimen/horizontal_padding_very_small"
+                        android:src="@drawable/ic_close_blk" />
+
+                </RelativeLayout>
+
+
+                <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/user_pic"
+                    android:layout_width="@dimen/profile_thumb_image_xlarge"
+                    android:layout_height="@dimen/profile_thumb_image_xlarge"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_user"
+                    app:civ_border_color="@color/gray3"
+                    app:civ_border_width="@dimen/circle_around_image_thickness" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/gray3"
+                android:gravity="center_horizontal|center_vertical"
+                android:textSize="@dimen/font_size_medium" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -82,22 +104,12 @@
                 android:id="@+id/start_chat"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/app_theme_blue"
+                android:background="@drawable/shape_rounded_corners_say_hello"
                 android:text="Say Hello"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/font_size_small_large" />
         </LinearLayout>
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/user_pic"
-            android:layout_width="@dimen/profile_thumb_image_large"
-            android:layout_height="@dimen/profile_thumb_image_large"
-            android:layout_gravity="center_horizontal"
-            android:background="@android:color/transparent"
-            android:paddingTop="@dimen/vertical_padding_small"
-            android:src="@drawable/ic_user"
-            app:border_color="@color/gray3"
-            app:border_width="@dimen/circle_around_image_thickness" />
 
         <ProgressBar
             android:id="@+id/progressBarProfile"

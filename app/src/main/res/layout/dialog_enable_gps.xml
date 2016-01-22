@@ -22,10 +22,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
+        android:paddingLeft="@dimen/horizontal_padding_medium"
+        android:paddingRight="@dimen/horizontal_padding_medium"
         android:text="@string/location_turned_off_text"
         android:textColor="@color/gray2"
-        android:textSize="@dimen/font_size_small_large"
-        />
+        android:textSize="@dimen/font_size_small_large" />
 
     <TextView
         android:id="@+id/turn_on_gps"
@@ -35,8 +36,7 @@
         android:paddingBottom="@dimen/vertical_padding_very_small"
         android:text="@string/turn_on_gps_text"
         android:textColor="@color/gray2"
-        android:textSize="@dimen/font_size_small_large"
-        />
+        android:textSize="@dimen/font_size_small_large" />
 
     <Button
         android:id="@+id/enable_gps"

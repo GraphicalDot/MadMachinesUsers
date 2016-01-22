@@ -32,5 +32,13 @@ public class CustomAppCompatActivity extends AppCompatActivity {
 
     }
 
+    public static boolean isActivityCounterNull() {
+        if (activityCounter == 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 
 }

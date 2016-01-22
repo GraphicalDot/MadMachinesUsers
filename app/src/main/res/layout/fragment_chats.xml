@@ -20,7 +20,6 @@
         android:background="@android:color/white"
         android:padding="@dimen/activity_horizontal_margin"
         android:text="@string/start_messaging"
-        android:textSize="@dimen/font_size_small_large"
-        />
+        android:textSize="@dimen/font_size_small_large" />
 
 </LinearLayout>

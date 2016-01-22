@@ -15,10 +15,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="start"
         android:gravity="center"
+        android:text="@string/app_name"
         android:textColor="@android:color/white"
         android:textSize="@dimen/font_size_medium"
-        app:showAsAction="ifRoom"/>
-
+        app:showAsAction="ifRoom" />
 
 
 </android.support.v7.widget.Toolbar>
