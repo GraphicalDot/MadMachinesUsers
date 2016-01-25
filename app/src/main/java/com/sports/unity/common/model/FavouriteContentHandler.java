@@ -13,6 +13,10 @@ import java.util.List;
 /**
  * Created by Mad on 12/29/2015.
  */
+
+/**
+ * Helper class to handle the favourite filter selection.
+ */
 public class FavouriteContentHandler {
     public static FavouriteContentHandler favouriteContentHandler;
 
@@ -89,6 +93,15 @@ public class FavouriteContentHandler {
     private boolean isSearchTeam = false;
     private boolean isSearchLeague = false;
 
+    public int searchNum = 0;
+
+
+    private int responseSearchnum = 0;
+    private ArrayList<Boolean> responseSearchBool = new ArrayList<Boolean>();
+
+    /**
+     * constructor
+     */
     private FavouriteContentHandler() {
         FOOTBALL_FILTER_LEAGUE = new ArrayList<String>();
         FOOTBALL_FILTER_PLAYER = new ArrayList<String>();
@@ -107,6 +120,12 @@ public class FavouriteContentHandler {
         makeRequest();
     }
 
+
+    /**
+     * method to instantiate the {@link FavouriteContentHandler} class.
+     *
+     * @return single instance of {@link FavouriteContentHandler}
+     */
     public static FavouriteContentHandler getInstance() {
         if (favouriteContentHandler == null) {
             favouriteContentHandler = new FavouriteContentHandler();
@@ -115,12 +134,15 @@ public class FavouriteContentHandler {
         return favouriteContentHandler;
     }
 
+    /**
+     * resets the {@link ListPreparedListener} attached to the FavouriteContentHandler class.
+     */
     public void resetListener() {
         listPreparedListener = new ArrayList<>();
     }
 
     /**
-     * Request network API to get sports details
+     * Request network API for top football leagues.
      */
     public void requestFootballLeagues() {
         //FOOTBALL_FILTER_LEAGUE=initDataSet("League".concat(Constants.NAV_COMP));
@@ -128,24 +150,41 @@ public class FavouriteContentHandler {
 
     }
 
+    /**
+     * Request network API for top football players.
+     */
     public void requestFootballPlayers() {
         ScoresContentHandler.getInstance().requestFavouriteContent(URL_FOOTBALL_PLAYER, LISTENER_KEY, FOOTBALL_PLAYER_REQUEST_TAG);
     }
 
+    /**
+     * Request network API for top football teams.
+     */
     public void requestFootballTeams() {
         ScoresContentHandler.getInstance().requestFavouriteContent(URL_FOOTBALL_TEAM, LISTENER_KEY, FOOTBALL_TEAM_REQUEST_TAG);
     }
 
+    /**
+     * Request network API for top cricket teams.
+     */
     public void requestCricketTeams() {
         ScoresContentHandler.getInstance().requestFavouriteContent(URL_CRICKET_TEAM, LISTENER_KEY, CRICKET_TEAM_REQUEST_TAG);
     }
 
+    /**
+     * Request network API for top cricket players.
+     */
     public void requestCricketPlayers() {
         ScoresContentHandler.getInstance().requestFavouriteContent(URL_CRICKET_PLAYER, LISTENER_KEY, CRICKET_PLAYER_REQUEST_TAG);
     }
 
-    public int searchNum = 0;
-
+    /**
+     * Request network API for search
+     *
+     * @param searchType Type of search e.g. League ,Team or Player.
+     * @param sportsType Type of sport e.g. Cricket or Football.
+     * @param param      String to be searched.
+     */
     public void requestFavSearch(String searchType, String sportsType, String param) {
         searchNum++;
         clearSearchList();
@@ -176,36 +215,32 @@ public class FavouriteContentHandler {
     }
 
     /**
-     * Handle response from API and setup the corresponding arraylist
-     * by comparing them with saved arraylist in shared preference.
+     * Setup the football league's ArrayList
+     * by comparing them with saved ArrayList in shared preference.
      */
     private void prepareFootballLeagues() {
-        //TODO
-        /**
-         * handle the response and setup
-         * the FOOTBALL_FILTER_LEAGUE first*/
 
         favFootballLeagues = new ArrayList<FavouriteItem>();
         favFootballLeagues = prepareArrayList(FOOTBALL_FILTER_LEAGUE, UserUtil.getFavouriteFilters());
 
     }
 
+    /**
+     * Setup the football player's ArrayList
+     * by comparing them with saved ArrayList in shared preference.
+     */
     private void prepareFootballPlayers() {
-        //TODO
-        /**
-         * handle the response and setup
-         * the FOOTBALL_FILTER_PLAYER first*/
 
         favFootballPlayers = new ArrayList<FavouriteItem>();
         favFootballPlayers = prepareArrayList(FOOTBALL_FILTER_PLAYER, UserUtil.getFavouriteFilters());
 
     }
 
+    /**
+     * Setup the football team's ArrayList
+     * by comparing them with saved ArrayList in shared preference.
+     */
     private void prepareFootballTeams() {
-        //TODO
-        /**
-         * handle the response and setup
-         * the FOOTBALL_FILTER_TEAM first*/
 
         favFootballTeams = new ArrayList<FavouriteItem>();
         favFootballTeams = prepareArrayList(FOOTBALL_FILTER_TEAM, UserUtil.getFavouriteFilters());
@@ -213,32 +248,34 @@ public class FavouriteContentHandler {
 
     }
 
-
+    /**
+     * Setup the cricket player's ArrayList
+     * by comparing them with saved ArrayList in shared preference.
+     */
     private void prepareCricketPlayers() {
-        //TODO
-        /**
-         * handle the response and setup
-         * the CRICKET_FILTER_PLAYER first*/
 
         favCricketPlayers = new ArrayList<FavouriteItem>();
         favCricketPlayers = prepareArrayList(CRICKET_FILTER_PLAYER, UserUtil.getFavouriteFilters());
     }
 
+    /**
+     * Setup the cricket team's ArrayList
+     * by comparing them with saved ArrayList in shared preference.
+     */
     private void prepareCricketTeams() {
-        //TODO
-        /**
-         * handle the response and setup
-         * the CRICKET_FILTER_TEAM first*/
 
         favCricketTeams = new ArrayList<FavouriteItem>();
         favCricketTeams = prepareArrayList(CRICKET_FILTER_TEAM, UserUtil.getFavouriteFilters());
     }
 
+    /**
+     * prepare the corresponding ArrayList of search result.
+     *
+     * @param searchTag tag to identify the corresponding ArrayList.
+     * @param success   whether search query was success.
+     */
     private void prepareSearchList(String searchTag, Boolean success) {
-        //TODO
-        /**
-         * handle the response and setup
-         * the CRICKET_FILTER_TEAM first*/
+
         if (searchTag.equals(SEARCH_REQUEST_LEAGUE_TAG)) {
             favSearchFootballLeague = new ArrayList<FavouriteItem>();
             favSearchFootballLeague = prepareArrayList(SEARCH_FOOTBALL_LEAGUE, UserUtil.getFavouriteFilters());
@@ -257,6 +294,9 @@ public class FavouriteContentHandler {
         }
     }
 
+    /**
+     * resets all the ArrayLists related to search.
+     */
     private void clearSearchList() {
         SEARCH_FOOTBALL_LEAGUE = new ArrayList<String>();
         SEARCH_FOOTBALL_PLAYER = new ArrayList<String>();
@@ -272,72 +312,125 @@ public class FavouriteContentHandler {
 
     }
 
+    /**
+     * @return ArrayList of top football leagues.
+     */
     public ArrayList<FavouriteItem> getFavFootballLeagues() {
         prepareFootballLeagues();
         return favFootballLeagues;
     }
 
+    /**
+     * @return ArrayList of top football teams.
+     */
     public ArrayList<FavouriteItem> getFavFootballTeams() {
         prepareFootballTeams();
         return favFootballTeams;
     }
 
+    /**
+     * @return ArrayList of top football players.
+     */
     public ArrayList<FavouriteItem> getFavFootballPlayers() {
         prepareFootballPlayers();
         return favFootballPlayers;
     }
 
+    /**
+     * @return ArrayList of top cricket teams.
+     */
     public ArrayList<FavouriteItem> getFavCricketTeams() {
         prepareCricketTeams();
         return favCricketTeams;
     }
 
+    /**
+     * @return ArrayList of top cricket players.
+     */
     public ArrayList<FavouriteItem> getFavCricketPlayers() {
         prepareCricketPlayers();
         return favCricketPlayers;
     }
 
+    /**
+     * @return ArrayList of search results related to football league.
+     */
     public ArrayList<FavouriteItem> getSearchedFootballLeague() {
         return favSearchFootballLeague;
     }
 
+    /**
+     * @return List of search results related to football league.
+     */
     public List<String> getSearchedFootballLeagueStringList() {
         return SEARCH_FOOTBALL_LEAGUE;
     }
 
+    /**
+     * @return ArrayList of search results related to cricket player.
+     */
     public ArrayList<FavouriteItem> getSearchedCricketPlayer() {
         return favSearchCricketPlayer;
     }
 
+    /**
+     * @return List of search results related to cricket player.
+     */
     public List<String> getSearchedCricketPlayerStringList() {
         return SEARCH_CRICKET_PLAYER;
     }
 
+    /**
+     * @return ArrayList of search results related to cricket team.
+     */
     public ArrayList<FavouriteItem> getSearchedCricketTeam() {
         return favSearchCricketTeam;
     }
 
+    /**
+     * @return List of search results related to cricket team.
+     */
     public List<String> getSearchedCricketTeamStringList() {
         return SEARCH_CRICKET_TEAM;
     }
 
+    /**
+     * @return ArrayList of search results related to football player.
+     */
     public ArrayList<FavouriteItem> getSearchedFootballPlayer() {
         return favSearchFootballPlayer;
     }
 
+    /**
+     * @return List of search results related to football player.
+     */
     public List<String> getSearchedFootballPlayerStringList() {
         return SEARCH_FOOTBALL_PLAYER;
     }
+
+    /**
+     * @return ArrayList of search results related to football team.
+     */
 
     public ArrayList<FavouriteItem> getSearchedFootballTeam() {
         return favSearchFootballTeam;
     }
 
+    /**
+     * @return List of search results related to football team.
+     */
     public List<String> getSearchedFootballTeamStringList() {
         return SEARCH_FOOTBALL_TEAM;
     }
 
-
+    /**
+     * prepares the corresponding ArrayList of favourites by
+     * comparing them with the saved list.
+     *
+     * @param networkList ArrayList of favourites from API.
+     * @param localList   saved ArrayList of favourites.
+     * @return
+     */
     private ArrayList<FavouriteItem> prepareArrayList(List<String> networkList, ArrayList<String> localList) {
         Collections.sort(networkList);
         ArrayList<FavouriteItem> favList = new ArrayList<FavouriteItem>();
@@ -352,16 +445,11 @@ public class FavouriteContentHandler {
         return favList;
     }
 
-    private ArrayList<String> initDataSet(String s) {
-        ArrayList<String> itemDataSet = new ArrayList<String>();
-        for (int i = 0; i < 11; i++) {
-            itemDataSet.add(s + (i + 1));
-        }
-        return itemDataSet;
-    }
-
+    /**
+     * Make request to network API for favourites.
+     */
     public void makeRequest() {
-        if(!isDisplay) {
+        if (!isDisplay) {
             FOOTBALL_FILTER_LEAGUE = new ArrayList<String>();
             FOOTBALL_FILTER_PLAYER = new ArrayList<String>();
             FOOTBALL_FILTER_TEAM = new ArrayList<String>();
@@ -375,14 +463,27 @@ public class FavouriteContentHandler {
         requestCricketTeams();
     }
 
+    /**
+     * Add response listener to handle the response from network.
+     */
     private void addResponseListener() {
         ScoresContentHandler.getInstance().addResponseListener(contentListener, LISTENER_KEY);
     }
 
+    /**
+     * remove network response listener .
+     */
     private void removeResponseListener() {
         ScoresContentHandler.getInstance().removeResponseListener(LISTENER_KEY);
     }
 
+    /**
+     * handle the content from response.
+     *
+     * @param content content from response.
+     * @param Tag     corresponding request tag.
+     * @return
+     */
     private boolean handleContent(String content, String Tag) {
         boolean success = false;
         ArrayList<JSONObject> list = new ArrayList<JSONObject>();
@@ -397,25 +498,41 @@ public class FavouriteContentHandler {
         return success;
     }
 
-    public void addPrepareListener(ListPreparedListener listPreparedListener) {
+    /**
+     * add the list prepared listener.
+     *
+     * @param listPreparedListener listener to be added.
+     */
+    public void addPreparedListener(ListPreparedListener listPreparedListener) {
         this.listPreparedListener.add(listPreparedListener);
     }
 
-    public void removePrepairedListener(ListPreparedListener l) {
+    /**
+     * remove the list prepared listener.
+     *
+     * @param l listener to be removed.
+     */
+    public void removePreparedListener(ListPreparedListener l) {
         this.listPreparedListener.remove(l);
     }
 
+    /**
+     * handles the activity resume callbacks.
+     */
     public void onResume() {
         addResponseListener();
     }
 
+    /**
+     * handles the activity pause callbacks.
+     */
     public void onPause() {
         removeResponseListener();
     }
 
-    private int responseSearchnum = 0;
-    private ArrayList<Boolean> responseSearchBool = new ArrayList<Boolean>();
-
+    /**
+     * Response handler interface which handles the response from favourites and search request.
+     */
     private class ScoresContentListener implements ScoresContentHandler.ContentListener {
 
         @Override
@@ -595,8 +712,18 @@ public class FavouriteContentHandler {
 
     }
 
+    /**
+     * Interface to add the list prepare listeners.
+     */
     public interface ListPreparedListener {
-        public void onListPrepared(Boolean b, String message);
+        /**
+         * callback for list prepared.
+         *
+         * @param success      success result of list preparing.
+         * @param responseCode response code from network.
+         */
+        public void onListPrepared(Boolean success, String responseCode);
+
     }
 
 }

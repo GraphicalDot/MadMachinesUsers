@@ -43,6 +43,8 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     private TextView messageView;
     private final String errorMessage = "Something went wrong";
     private final String noResultMessage = "No result found";
+    private boolean isFilterCompleted;
+    private boolean isFromNav;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,7 +65,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
         super.onPause();
         favouriteContentHandler.searchNum = 0;
         favouriteContentHandler.onPause();
-        favouriteContentHandler.removePrepairedListener(this);
+        favouriteContentHandler.removePreparedListener(this);
         hideProgress();
         hideErrorLayout();
     }
@@ -72,7 +74,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     public void onResume() {
         super.onResume();
         favouriteContentHandler.onResume();
-        favouriteContentHandler.addPrepareListener(this);
+        favouriteContentHandler.addPreparedListener(this);
         if (!favouriteContentHandler.isDisplay) {
             showProgress();
             favouriteContentHandler.makeRequest();
@@ -116,6 +118,9 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
         }
     }
 
+    /**
+     * prepare the corresponding favourite list according to the filter type e.g. League, Team or Player.
+     */
     private void prepareList() {
 
 
@@ -150,9 +155,10 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
         }
     }
 
-    private boolean isFilterCompleted;
-    private boolean isFromNav;
 
+    /**
+     * update the filter list in filter recycle adapter and display.
+     */
     private void displayContent() {
         hideErrorLayout();
         filterRecyclerView.setVisibility(View.VISIBLE);
@@ -173,6 +179,12 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
         }
     }
 
+    /**
+     * handle the search query from the user.
+     * marge previous search result.
+     * and request current query to network.
+     * @param b
+     */
     private void requestEdit(boolean b) {
         if (b) {
             showProgress();
@@ -240,6 +252,10 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
         }
     }
 
+    /**
+     * handles the search result and get the corresponding list from FavouriteContentHandler
+     * and updates the filter recycler adapter on success otherwise enables the error layout.
+     */
     public void enableEditMode() {
         if ((isEdit && isFromNav) || (isEdit && !isFilterCompleted)) {
 
@@ -314,7 +330,10 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
         }
     }
 
-
+    /**
+     * display the error layout.
+     * @param message error message.
+     */
     private void showErrorLayout(String message) {
         filterRecyclerView.setVisibility(View.INVISIBLE);
         errorLayout.setVisibility(View.VISIBLE);
@@ -322,27 +341,45 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
         errorLayout.requestLayout();
     }
 
+    /**
+     * hides error layout.
+     */
     private void hideErrorLayout() {
         filterRecyclerView.setVisibility(View.VISIBLE);
         errorLayout.setVisibility(View.GONE);
     }
 
-
+    /**
+     * show progress dialog.
+     */
     private void showProgress() {
         progressBar.setVisibility(View.VISIBLE);
 
     }
 
+    /**
+     * hide progress dialog.
+     */
     private void hideProgress() {
         progressBar.setVisibility(View.GONE);
     }
 
+    /**
+     * callback for search fired from MainActivity.
+     * @param b
+     */
     @Override
     public void onEdit(boolean b) {
         requestEdit(b);
 
     }
 
+    /**
+     * Implementation of ListPrepared listener callback.
+     * callback from List Prepared listener attached to FavouriteContentHandler.
+     * @param b success
+     * @param message error message.
+     */
     @Override
     public void onListPrepared(Boolean b, String message) {
         if (!isEdit) {

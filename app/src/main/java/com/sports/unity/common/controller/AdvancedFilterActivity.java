@@ -44,7 +44,8 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     public boolean isSearchEdit;
     public String searchString;
     public boolean isFromNav;
-    private int listSize=0;
+    private int listSize = 0;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,10 +92,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Log.d("max","Handling Skip click");
-                TinyDB tinyDB=TinyDB.getInstance(AdvancedFilterActivity.this);
-                favList=tinyDB.getListString(TinyDB.FAVOURITE_FILTERS);
-                UserUtil.setFavouriteFilters(AdvancedFilterActivity.this,favList);
+                TinyDB tinyDB = TinyDB.getInstance(AdvancedFilterActivity.this);
+                favList = tinyDB.getListString(TinyDB.FAVOURITE_FILTERS);
+                UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
                 UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
                 moveToNextActivity(MainActivity.class);
             }
