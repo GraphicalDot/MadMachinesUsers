@@ -514,8 +514,9 @@ public class XMPPService extends Service {
                 } else {
                     sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
                     sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
+                    byte[] image = sportsUnityDBHelper.getUserProfileImage(from);
                     try {
-                        DisplayNotification(text, from, SportsUnityDBHelper.MIME_TYPE_TEXT, chatId, true, groupServerId);
+                        DisplayNotification(text, from, SportsUnityDBHelper.MIME_TYPE_TEXT, chatId, true, groupServerId,image);
                     } catch (SmackException.NotConnectedException e) {
                         e.printStackTrace();
                     } catch (XMPPException.XMPPErrorException e) {
@@ -527,8 +528,9 @@ public class XMPPService extends Service {
             } else {
                 sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
                 sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
+                byte[] image = sportsUnityDBHelper.getUserProfileImage(from);
                 try {
-                    DisplayNotification(text, from, SportsUnityDBHelper.MIME_TYPE_TEXT, chatId, true, groupServerId);
+                    DisplayNotification(text, from, SportsUnityDBHelper.MIME_TYPE_TEXT, chatId, true, groupServerId,image);
                 } catch (SmackException.NotConnectedException e) {
                     e.printStackTrace();
                 } catch (XMPPException.XMPPErrorException e) {
@@ -590,7 +592,8 @@ public class XMPPService extends Service {
                         } else {
                             sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
                         }
-                        DisplayNotification(message.getBody(), messageFrom, mimeType, chatId, isGroupChat, groupServerId);
+                        byte[] image = sportsUnityDBHelper.getUserProfileImage(fromId);
+                        DisplayNotification(message.getBody(), messageFrom, mimeType, chatId, isGroupChat, groupServerId,image);
                     } catch (XMPPException.XMPPErrorException e) {
                         e.printStackTrace();
                     } catch (SmackException.NoResponseException e) {
@@ -607,7 +610,8 @@ public class XMPPService extends Service {
                     } else {
                         sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_LIST_KEY, 0, null);
                     }
-                    DisplayNotification(message.getBody(), messageFrom, mimeType, chatId, isGroupChat, groupServerId);
+                    byte[] image = sportsUnityDBHelper.getUserProfileImage(fromId);
+                    DisplayNotification(message.getBody(), messageFrom, mimeType, chatId, isGroupChat, groupServerId,image);
                 } catch (XMPPException.XMPPErrorException e) {
                     e.printStackTrace();
                 } catch (SmackException.NoResponseException e) {
@@ -805,7 +809,7 @@ public class XMPPService extends Service {
 //
 //    }
 
-    public void DisplayNotification(String message, String from, String mimeType, long chatId, boolean isGroupChat, String groupServerId) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+    public void DisplayNotification(String message, String from, String mimeType, long chatId, boolean isGroupChat, String groupServerId,byte[] image) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
         if (sportsUnityDBHelper.isMute(chatId)) {
             //nothing
         } else {
@@ -819,7 +823,7 @@ public class XMPPService extends Service {
             }
 
             NotificationHandler notificationHandler = NotificationHandler.getInstance();
-            notificationHandler.addNotificationMessage(chatId, name, message, mimeType);
+            notificationHandler.addNotificationMessage(chatId, name, message, mimeType,image);
 
             int chatCount = notificationHandler.getNotificationChatCount();
             PendingIntent pendingIntent = null;

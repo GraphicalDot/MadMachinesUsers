@@ -65,17 +65,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/fragmentChangeButtonContainer"
-        android:background="@android:color/white">
+        android:background="@android:color/white"
+      >
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/floatingbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_margin="@dimen/vertical_padding_small"
-            android:clickable="true"
-            app:borderWidth="0dp"
-            android:src="@drawable/ic_ppl_around_u" />
+        <!--<android.support.design.widget.FloatingActionButton-->
+            <!--android:id="@+id/floatingbutton"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="bottom|right"-->
+            <!--android:layout_margin="@dimen/vertical_padding_small"-->
+            <!--android:clickable="true"-->
+            <!--app:borderWidth="0dp"-->
+            <!--app:layout_anchorGravity="bottom|right|end"-->
+            <!--android:src="@drawable/ic_ppl_around_u" />-->
 
     </FrameLayout>
 

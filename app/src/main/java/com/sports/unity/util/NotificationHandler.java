@@ -6,7 +6,14 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.support.v7.app.NotificationCompat;
+import android.util.Log;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
@@ -45,8 +52,8 @@ public class NotificationHandler {
 
     }
 
-    synchronized public void addNotificationMessage(long chatId, String from, String message, String mimeType) {
-        NotificationMessage notificationMessage = new NotificationMessage(chatId, from, message, mimeType);
+    synchronized public void addNotificationMessage(long chatId, String from, String message, String mimeType,byte[] image) {
+        NotificationMessage notificationMessage = new NotificationMessage(chatId, from, message, mimeType,image);
         notificationMessageList.add(notificationMessage);
 
         chatIdSet.add(chatId);
@@ -90,6 +97,13 @@ public class NotificationHandler {
     private void singleMessageNotification(Context context, PendingIntent pendingIntent, NotificationMessage messageArrived) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
         builder.setSmallIcon(R.drawable.ic_stat_notification);
+        builder.setColor(context.getResources().getColor(R.color.app_theme_blue));
+
+        if(messageArrived.getProfileImage() != null) {
+            builder.setLargeIcon(getCroppedBitmap(messageArrived.getProfileImage()));
+        } else {
+            //nothing
+        }
 
         builder.setContentText(messageArrived.getTitleMessage());
         builder.setContentTitle(messageArrived.from);
@@ -103,12 +117,29 @@ public class NotificationHandler {
         notificationManager.notify(NotificationHandler.NOTIFICATION_ID, builder.build());
     }
 
+    public Bitmap getCroppedBitmap(Bitmap bitmap) {
+
+        bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, false);
+
+        final int width = bitmap.getWidth();
+        final int height = bitmap.getHeight();
+        final Bitmap outputBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        final Path path = new Path();
+        path.addCircle(
+                (float) (width / 2)
+                , (float) (height / 2)
+                , (float) Math.min( height/2, width/2)
+                , Path.Direction.CCW);
+
+        final Canvas canvas = new Canvas(outputBitmap);
+        canvas.clipPath(path);
+        canvas.drawBitmap(bitmap, 0, 0, null);
+        return outputBitmap;
+    }
+
     private void comboMessageNotification(Context context, PendingIntent pendingIntent, NotificationMessage messageArrived, int chatCount, int messageCount) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
-        builder.setSmallIcon(R.drawable.ic_stat_notification);
-
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_launcher);
-        builder.setLargeIcon(bitmap);
 
         builder.setContentText(messageArrived.getTitleMessage());
         builder.setContentTitle(messageArrived.from);
@@ -116,6 +147,15 @@ public class NotificationHandler {
         NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
         if (chatCount == 1) {
             style.setBigContentTitle(messageArrived.from);
+
+            if(messageArrived.getProfileImage() != null) {
+                builder.setLargeIcon(getCroppedBitmap(messageArrived.getProfileImage()));
+            } else {
+                //nothing
+            }
+
+            builder.setSmallIcon(R.drawable.ic_stat_notification);
+            builder.setColor(context.getResources().getColor(R.color.app_theme_blue));
 
             int index = notificationMessageList.size() - MESSAGE_LIMIT;
             if (index < 0) {
@@ -128,6 +168,8 @@ public class NotificationHandler {
             style.setSummaryText(messageCount + " messages");
         } else {
             style.setBigContentTitle("Sports Unity");
+            builder.setSmallIcon(R.drawable.ic_stat_notification);
+            builder.setColor(context.getResources().getColor(R.color.app_theme_blue));
 
             int index = notificationMessageList.size() - MESSAGE_LIMIT;
             if (index < 0) {
@@ -155,12 +197,22 @@ public class NotificationHandler {
         private String from;
         private String message;
         private String mimeType;
+        private byte[] image;
 
-        NotificationMessage(long chatId, String from, String message, String mimeType) {
+        NotificationMessage(long chatId, String from, String message, String mimeType,byte[] image) {
             this.chatId = chatId;
             this.from = from;
             this.message = message;
             this.mimeType = mimeType;
+            this.image = image;
+        }
+
+        private Bitmap getProfileImage() {
+            Bitmap profileImage = null;
+            if(image != null) {
+               profileImage = BitmapFactory.decodeByteArray(image, 0, image.length);
+            }
+            return profileImage;
         }
 
         private String getTitleMessage() {

@@ -2,6 +2,7 @@ package com.sports.unity.messages.controller.viewhelper;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Rect;
@@ -532,6 +533,10 @@ public class ChatKeyboardHelper {
     private void showGalleryView(Activity activity, RecyclerView recyclerView) {
         ArrayList<String> path = getAllShownImagesPath(activity);
 
+        for (int i=0; i<path.size(); i++) {
+            Log.d("List of images/video   ",path.get(i));
+        }
+
         RecyclerView.Adapter mAdapter = new ImageAdapterForGallery(activity, recyclerView, path, keyboardHeight);
         recyclerView.setAdapter(mAdapter);
     }
@@ -557,12 +562,43 @@ public class ChatKeyboardHelper {
         ArrayList<String> listOfAllImages = new ArrayList<String>();
         String absolutePathOfImage = null;
 
-        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+//        uri = android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+//
+//        String[] projection = {MediaStore.MediaColumns.DATA};
+//
+//        cursor = activity.getContentResolver().query(uri, projection, null,
+//                null, MediaStore.MediaColumns.DATE_MODIFIED + " DESC");
 
-        String[] projection = {MediaStore.MediaColumns.DATA};
+        String[] projection = {
+                MediaStore.Files.FileColumns._ID,
+                MediaStore.Files.FileColumns.DATA,
+                MediaStore.Files.FileColumns.DATE_ADDED,
+                MediaStore.Files.FileColumns.MEDIA_TYPE,
+                MediaStore.Files.FileColumns.MIME_TYPE,
+                MediaStore.Files.FileColumns.TITLE
+        };
 
-        cursor = activity.getContentResolver().query(uri, projection, null,
-                null, MediaStore.MediaColumns.DATE_MODIFIED + " DESC");
+// Return only video and image metadata.
+        String selection = MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+                + " OR "
+                + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+
+        Uri queryUri = MediaStore.Files.getContentUri("external");
+
+        CursorLoader cursorLoader = new CursorLoader(
+                activity,
+                queryUri,
+                projection,
+                selection,
+                null, // Selection args (none).
+                MediaStore.Files.FileColumns.DATE_ADDED + " DESC" // Sort order.
+        );
+
+        cursor = cursorLoader.loadInBackground();
+
+
         if( cursor != null ) {
             column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
@@ -570,6 +606,7 @@ public class ChatKeyboardHelper {
                 absolutePathOfImage = cursor.getString(column_index_data);
                 listOfAllImages.add(absolutePathOfImage);
             }
+
             cursor.close();
         } else {
             //nothing

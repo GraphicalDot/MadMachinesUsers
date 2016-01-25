@@ -326,6 +326,39 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     }
 
+    public byte[] getUserProfileImage(String number) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+
+        int contactId = getContactId(number);
+
+        String[] projection = {
+                ContactsEntry.COLUMN_USER_IMAGE,
+        };
+        String selection = ContactsEntry.COLUMN_CONTACT_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(contactId)};
+
+        Cursor c = db.query(
+                ContactsEntry.TABLE_NAME,  // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                // The sort order
+        );
+
+        byte[] image = null;
+        if (c.moveToFirst()) {
+
+            image = c.getBlob(0);
+        }
+
+        c.close();
+        return image;
+
+    }
+
     public ArrayList<Contacts> getContactList_AvailableOnly(boolean forceLoad) {
         if (forceLoad == true || allContacts == null) {
             ArrayList<Contacts> list = new ArrayList<>();
@@ -344,7 +377,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             String[] selectionArgs = {"1"};
 
             String sortOrder =
-                    ContactsEntry.COLUMN_NAME + " ASC ";
+                    ContactsEntry.COLUMN_NAME + " COLLATE NOCASE ASC ";
 
             Cursor c = db.query(
                     ContactsEntry.TABLE_NAME,  // The table to query

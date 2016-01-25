@@ -14,4 +14,16 @@
         android:src="@drawable/grey_bg_rectangle"
         android:layout_gravity="center"/>
 
+    <TextView
+        android:id="@+id/duration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_edge_box"
+        android:text="hello"
+        android:layout_gravity="right"
+        android:paddingLeft="@dimen/vertical_padding_very_very_small"
+        android:paddingRight="@dimen/vertical_padding_very_very_small"
+        android:layout_margin="@dimen/vertical_padding_very_very_small"
+        />
+
 </FrameLayout>

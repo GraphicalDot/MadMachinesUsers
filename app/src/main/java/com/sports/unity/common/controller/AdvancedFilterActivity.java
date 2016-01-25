@@ -64,7 +64,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         }
         setUpNextClick();
         setUpDoneClick();
-        setupSkipClick();
+        setUpSkipClick();
     }
 
     private void setUpDoneClick() {
@@ -81,7 +81,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         });
     }
 
-    private void setupSkipClick() {
+    private void setUpSkipClick() {
         Button skip = (Button) findViewById(R.id.skip);
         skip.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
         if (UserUtil.isFilterCompleted()) {
@@ -134,7 +134,6 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
                 edit.setText("Edit");
                 performEdit();
             }else{*/
-        Log.d("max","Handeling Done click");
         UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
         setResult(RESULT_OK);
         finish();
@@ -144,8 +143,6 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     }
 
     private void handleNextClick() {
-        Log.d("max","Handeling Next click");
-        closeSearch();
         Bundle b = advancedFilterFragment.getArguments();
         UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
         if (UserUtil.isFilterCompleted()) {
@@ -165,6 +162,8 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
             moveToNextActivity(MainActivity.class);
         }
+
+        closeSearch();
 
     }
 

@@ -29,6 +29,8 @@ import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Arrays;
 
 /**
@@ -239,7 +241,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             itemListener = memberItemListener;
 
             contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true);
-            Log.d("max", "contactlistsize---" + contactList.size());
+
             titleLayout = (ViewGroup) v.findViewById(R.id.title_layout_for_members_list);
             titleLayout.setVisibility(View.VISIBLE);
 
@@ -252,7 +254,27 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             itemListener = contactItemListener;
 
             contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList_AvailableOnly(false);
-            Log.d("max", "contactlistsize---" + contactList.size());
+
+            {
+                /*
+                 * Sorting and grouping by registered and unregistered contacts
+                 */
+                ArrayList<Contacts> contactList_registered = new ArrayList<>();
+                ArrayList<Contacts> contactList_unregistered = new ArrayList<>();
+
+                for (int i = 0; i < contactList.size(); i++) {
+                    if (contactList.get(i).registered) {
+                        contactList_registered.add(contactList.get(i));
+                    } else {
+                        contactList_unregistered.add(contactList.get(i));
+                    }
+                }
+
+                contactList.clear();
+                contactList.addAll(contactList_registered);
+                contactList.addAll(contactList_unregistered);
+            }
+
             ViewGroup searchLayout = (ViewGroup) v.findViewById(R.id.search_layout);
             searchLayout.setVisibility(View.GONE);
         } else if (usageIn == USAGE_FOR_FORWARD) {
@@ -260,7 +282,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             itemListener = forwardToContactMemberListener;
 
             contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true);
-            Log.d("max", "contactlistsize---" + contactList.size());
+
             ViewGroup searchLayout = (ViewGroup) v.findViewById(R.id.search_layout);
             searchLayout.setVisibility(View.GONE);
 

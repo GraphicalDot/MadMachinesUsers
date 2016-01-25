@@ -36,7 +36,7 @@ import java.util.Arrays;
 /**
  * Created by Agupta on 8/13/2015.
  */
-public class MessagesFragment extends Fragment implements View.OnClickListener,MainActivity.PermissionResultHandler{
+public class MessagesFragment extends Fragment implements View.OnClickListener {
 
     private OnSearchViewQueryListener mListener = null;
 
@@ -53,14 +53,13 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         View v = inflater.inflate(com.sports.unity.R.layout.messages, container, false);
-        frame = (FrameLayout) v.findViewById(com.sports.unity.R.id.childFragmentContainer);
+       // frame = (FrameLayout) v.findViewById(com.sports.unity.R.id.childFragmentContainer);
         contacts = (Button) v.findViewById(R.id.btn_contacts);
         contacts.setOnClickListener(this);
         contacts.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
@@ -73,20 +72,20 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
         buttonContainerLayout = (LinearLayout) v.findViewById(com.sports.unity.R.id.fragmentChangeButtonLayout);
 
 
-        FloatingActionButton peopleAroundMeFab = (FloatingActionButton) v.findViewById(R.id.floatingbutton);
-        peopleAroundMeFab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.app_theme_blue)));
-        peopleAroundMeFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-                    startPeopleAroundMeActivity();
-                } else {
-                    if (PermissionUtil.getInstance().requestPermission(getActivity(), new ArrayList<String>(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)), getResources().getString(R.string.location_permission_message), Constants.REQUEST_CODE_LOCATION_PERMISSION)) {
-                        startPeopleAroundMeActivity();
-                    }
-                }
-            }
-        });
+//        FloatingActionButton peopleAroundMeFab = (FloatingActionButton) v.findViewById(R.id.floatingbutton);
+//        peopleAroundMeFab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.app_theme_blue)));
+//        peopleAroundMeFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+//                    startPeopleAroundMeActivity();
+//                } else {
+//                    if (PermissionUtil.getInstance().requestPermission(getActivity(), new ArrayList<String>(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)), getResources().getString(R.string.location_permission_message), Constants.REQUEST_CODE_LOCATION_PERMISSION)) {
+//                        startPeopleAroundMeActivity();
+//                    }
+//                }
+//            }
+//        });
 
 //        ImageButton createGroup = (ImageButton) v.findViewById(R.id.create_group);
 //        createGroup.setOnClickListener(this);
@@ -110,11 +109,12 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
         getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
         return v;
     }
-    private void startPeopleAroundMeActivity(){
-
-        Intent intent = new Intent(getActivity(), PeopleAroundMeMap.class);
-        startActivity(intent);
-    }
+    
+//    private void startPeopleAroundMeActivity(){
+//        Intent intent = new Intent(getActivity(), PeopleAroundMeMap.class);
+//        startActivity(intent);
+//    }
+    
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -225,25 +225,6 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
     @Override
     public void onResume() {
         super.onResume();
-        if (PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-            ((MainActivity) getActivity()).addLocationResultListener(this);
-        }
     }
 
-    @Override
-    public void onPermissionResult(int requestCode, int[] grantResults) {
-        if (requestCode == Constants.REQUEST_CODE_LOCATION_PERMISSION) {
-            if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
-                startPeopleAroundMeActivity();
-            } else {
-                PermissionUtil.getInstance().showSnackBar(getActivity(), getString(R.string.permission_denied));
-            }
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((MainActivity) getActivity()).removeLocationResultListener();
-    }
 }

@@ -1,7 +1,9 @@
 package com.sports.unity.news.model;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -32,10 +34,12 @@ public class NewsContentHandler {
 
     private static final int DB_CONTENT_LIMIT = 50;
 
-    private final static String BASE_URL = Constants.URL_NEWS_CONTENT + "skip=0&limit=10&image_size=hdpi";
+    private final static String BASE_URL = Constants.URL_NEWS_CONTENT + "skip=0&limit=10&image_size=";
     private final static String BASE_SUBSET_URL_UP = "&direction=up&timestamp=";
     private final static String BASE_SUBSET_URL_DOWN = "&direction=down&timestamp=";
-    private final static String BASE_URL_SEARCH = Constants.URL_NEWS_CONTENT + "image_size=hdpi&search=";
+  //  private final static String BASE_URL_SEARCH = Constants.URL_NEWS_CONTENT + "image_size=hdpi&search=";
+    private final static String BASE_URL_SEARCH = Constants.URL_NEWS_CONTENT + "image_size=";
+    private final static String SUBSET_URL_SEARCH ="&search=";
 
     private static final String REQUEST_CONTENT_TAG = "RequestContent";
     private static final String REQUEST_MORE_CONTENT_TAG = "RequestContentMore";
@@ -86,7 +90,8 @@ public class NewsContentHandler {
     private boolean searchOn = false;
     private String searchKeyword = null;
 
-    private NewsContentHandler(Context context) {
+
+    private NewsContentHandler(Context context ) {
         this.context = context;
     }
 
@@ -191,7 +196,8 @@ public class NewsContentHandler {
             StringRequest stringRequest = null;
             RequestQueue queue = Volley.newRequestQueue(context);
 
-            String url = generateUrl(timestampFirst);
+            String screen_type = getScreenSize(context);
+            String url = generateUrl(timestampFirst,screen_type);
 
             if( url != null ) {
                 Log.i("filter", "type" + url);
@@ -216,7 +222,8 @@ public class NewsContentHandler {
             RequestQueue queue = Volley.newRequestQueue(context);
 
             StringRequest stringRequest = null;
-            String url = generateUrlForLoadMore(timestampLast);
+            String screen_type = getScreenSize(context);
+            String url = generateUrlForLoadMore(timestampLast, screen_type);
 
             if( url != null ) {
                 stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadMoreContent, responseListener_ForLoadMoreContent);
@@ -367,57 +374,79 @@ public class NewsContentHandler {
         }
     }
 
-    private String generateUrl(Long timestampFirst) {
+    private String generateUrl(Long timestampFirst, String screen_type) {
         String url = null;
             if (searchOn) {
                 Log.d("News Content Handler", "celebrity name : " + getSearchKeyword());
                 try {
                     String encodedURL = URLEncoder.encode(getSearchKeyword(), "UTF-8");
                     if (timestampFirst == null) {
-                        url = BASE_URL_SEARCH + encodedURL;
+                        url = BASE_URL_SEARCH + screen_type + SUBSET_URL_SEARCH + encodedURL;
 
                     } else {
-                        url = BASE_URL_SEARCH + encodedURL + BASE_SUBSET_URL_UP + timestampFirst;
+                        url = BASE_URL_SEARCH + screen_type + SUBSET_URL_SEARCH + encodedURL + BASE_SUBSET_URL_UP + timestampFirst;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
                 if (timestampFirst == null) {
-                    url = BASE_URL + subUrl_HavingSelectedSports;
+                    url = BASE_URL + screen_type + subUrl_HavingSelectedSports;
                 } else {
-                    url = BASE_URL + subUrl_HavingSelectedSports + BASE_SUBSET_URL_UP + timestampFirst;
+                    url = BASE_URL + screen_type + subUrl_HavingSelectedSports + BASE_SUBSET_URL_UP + timestampFirst;
                 }
             }
         Log.d("News Content Handler","Refresh URL : " + url);
         return url;
     }
 
-    private String generateUrlForLoadMore(Long timestampLast) {
+    private String generateUrlForLoadMore(Long timestampLast, String screen_type) {
+
         String url = null;
         if(searchOn) {
             if (timestampLast != null) {
                 try {
                     String encodedURL = URLEncoder.encode(getSearchKeyword(), "UTF-8");
-                    url = BASE_URL_SEARCH +encodedURL+ BASE_SUBSET_URL_DOWN + timestampLast;
+                    url = BASE_URL_SEARCH + screen_type + SUBSET_URL_SEARCH +encodedURL+ BASE_SUBSET_URL_DOWN + timestampLast;
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
             } else {
-//            url = null;
                 //nothing
             }
         } else  {
             if (timestampLast != null) {
-                url = BASE_URL + subUrl_HavingSelectedSports + BASE_SUBSET_URL_DOWN + timestampLast;
+                url = BASE_URL + screen_type + subUrl_HavingSelectedSports + BASE_SUBSET_URL_DOWN + timestampLast;
             } else {
-//            url = null;
                 //nothing
             }
         }
 
-        Log.d("News Content Handler","Load More URL : " + url);
+        Log.d("News Content Handler", "Load More URL : " + url);
         return url;
+    }
+
+    public String getScreenSize(Context context) {
+
+        float density= context.getResources().getDisplayMetrics().density;
+
+        Log.i("density : ",""+density);
+        String screen_type = null;
+
+        if(density == 1.0) {
+            screen_type = "mdpi";
+
+        } else if (density == 1.5) {
+            screen_type = "mdpi";
+
+        } else if (density == 2.0) {
+            screen_type = "hdpi";
+
+        } else {
+            screen_type = "hdpi";
+        }
+
+        return screen_type;
     }
 }

@@ -25,7 +25,7 @@
         android:id="@+id/cb"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:button="@drawable/checkbox"
+        android:button="@drawable/favourite_checkbox"
         android:clickable="false"
         android:gravity="right" />
 </LinearLayout>

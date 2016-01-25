@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -213,9 +215,27 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
             private int visibleThreshold = 5;
             private int previousTotal = 0;
 
+//            boolean hideToolBar = false;
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//                if (hideToolBar) {
+//                    ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+//                } else {
+//                    ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+//                }
+//            }
+
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
+
+//                if (dy > 20) {
+//                    hideToolBar = true;
+//
+//                } else if (dy < -5) {
+//                    hideToolBar = false;
+//                }
 
                 int visibleItemCount = mRecyclerView.getChildCount();
                 int totalItemCount = mLayoutManager.getItemCount();
