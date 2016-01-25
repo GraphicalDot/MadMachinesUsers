@@ -193,7 +193,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
     private void createUser() {
         EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         String otp = otpEditText.getText().toString();
-        String phoneNumber = getPhoneNumber();
+        String phoneNumber = "91" + getPhoneNumber();
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, phoneNumber);
@@ -204,7 +204,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
     private void resendOtp() {
         Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending, Toast.LENGTH_SHORT).show();
 
-        String phoneNumber = getPhoneNumber();
+        String phoneNumber = "91" + getPhoneNumber();
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, phoneNumber);
         requestContent(ScoresContentHandler.CALL_NAME_ASK_OTP, parameters, RESEND_OTP_REQUEST_TAG);

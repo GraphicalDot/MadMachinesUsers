@@ -75,7 +75,9 @@ public class ContactsHandler {
             } else {
                 Log.i("copy contacts", "processed before");
                 contactCopyInProgress = false;
-                postRunnable.run();
+                if( postRunnable != null ){
+                    postRunnable.run();
+                }
             }
         } else {
             Log.i("copy contacts", "in progress");
