@@ -18,9 +18,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.common.model.ContactsHandler;
@@ -28,25 +25,29 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.common.view.CustomVolleyCallerActivity;
+import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
 
-import org.apache.http.Header;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
-public class EnterOtpActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class EnterOtpActivity extends CustomVolleyCallerActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private boolean paused = false;
+    private static final String REQUEST_LISTENER = "ENTER_OTP_SCREEN_LISTENER";
+
+    private static final String CREATE_USER_REQUEST_TAG = "CreateUserTag";
+    private static final String RESEND_OTP_REQUEST_TAG = "ResendOtpTag";
+
     private boolean moved = false;
 
     private View.OnClickListener sendButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            beforeAsyncCall();
             createUser();
         }
     };
@@ -54,7 +55,6 @@ public class EnterOtpActivity extends AppCompatActivity implements ActivityCompa
     private View.OnClickListener resendOtpButtonClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-//            beforeAsyncCall();
             resendOtp();
         }
     };
@@ -64,14 +64,36 @@ public class EnterOtpActivity extends AppCompatActivity implements ActivityCompa
         super.onCreate(savedInstanceState);
 
         setContentView(com.sports.unity.R.layout.activity_enter_otp);
-
         initViews();
 
-        if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-            copyContacts();
-        } else {
-            if (PermissionUtil.getInstance().requestPermission(EnterOtpActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS)), getResources().getString(R.string.read_contact_permission_message), Constants.REQUEST_CODE_CONTACT_PERMISSION)) {
+        {
+            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+            CreateUserComponentListener createUserComponentListener = new CreateUserComponentListener(progressBar);
+            ResendOtpComponentListener resendOtpComponentListener = new ResendOtpComponentListener(progressBar);
+
+            ArrayList<CustomComponentListener> listeners = new ArrayList<>();
+            listeners.add(createUserComponentListener);
+            listeners.add(resendOtpComponentListener);
+
+            onComponentCreate(listeners, REQUEST_LISTENER);
+        }
+
+        {
+            if (!UserUtil.isOtpSent()) {
+                UserUtil.setOtpSent(EnterOtpActivity.this, true);
+                resendOtp();
+            } else {
+                //nothing
+            }
+        }
+
+        {
+            if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
                 copyContacts();
+            } else {
+                if (PermissionUtil.getInstance().requestPermission(EnterOtpActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)), getResources().getString(R.string.read_contact_permission_message), Constants.REQUEST_CODE_CONTACT_PERMISSION)) {
+                    copyContacts();
+                }
             }
         }
     }
@@ -80,11 +102,10 @@ public class EnterOtpActivity extends AppCompatActivity implements ActivityCompa
     protected void onResume() {
         super.onResume();
 
-        paused = false;
         if (UserUtil.isUserRegistered()) {
             moveToNextActivity();
         } else {
-            //nothing
+            onComponentResume();
         }
 
     }
@@ -97,7 +118,7 @@ public class EnterOtpActivity extends AppCompatActivity implements ActivityCompa
     protected void onPause() {
         super.onPause();
 
-        paused = true;
+        onComponentPause();
     }
 
     @Override
@@ -174,140 +195,19 @@ public class EnterOtpActivity extends AppCompatActivity implements ActivityCompa
         String otp = otpEditText.getText().toString();
         String phoneNumber = getPhoneNumber();
 
-        RequestParams requestParams = new RequestParams();
-        requestParams.add(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, "91" + phoneNumber);
-
-        requestParams.add(Constants.REQUEST_PARAMETER_KEY_AUTH_CODE, otp);
-
-        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-        asyncHttpClient.setTimeout(Constants.CONNECTION_TIME_OUT);
-        asyncHttpClient.get(Constants.URL_CREATE, requestParams, new JsonHttpResponseHandler() {
-
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                Log.i("Enter Otp", "Create user call is successful");
-
-                try {
-                    afterAsyncCall();
-
-                    Log.i("Enter Otp", "create user call response info : " + response.getString("info"));
-                    if (response.getString("status").equals("200")) {
-                        String password = response.getString(Constants.REQUEST_PARAMETER_KEY_PASSWORD);
-                        TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
-
-                        UserUtil.setOtpSent(EnterOtpActivity.this, false);
-                        UserUtil.setUserRegistered(EnterOtpActivity.this, true);
-
-                        if (!paused) {
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    moveToNextActivity();
-                                }
-                            });
-                        } else {
-                            //nothing
-                        }
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.otp_message_wrong_expired_token, Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                afterAsyncCall();
-
-                String resp = String.valueOf(statusCode);
-                Log.i("Enter Otp ", "On Failure, response : " + resp);
-
-                Toast.makeText(getApplicationContext(), R.string.otp_message_create_user_failed, Toast.LENGTH_LONG).show();
-            }
-
-        });
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, phoneNumber);
+        parameters.put(Constants.REQUEST_PARAMETER_KEY_AUTH_CODE, otp);
+        requestContent(ScoresContentHandler.CALL_NAME_CREATE_USER, parameters, CREATE_USER_REQUEST_TAG);
     }
 
     private void resendOtp() {
         Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending, Toast.LENGTH_SHORT).show();
 
         String phoneNumber = getPhoneNumber();
-
-        RequestParams requestParams = new RequestParams();
-        requestParams.add(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, "91" + phoneNumber);
-
-        AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
-        asyncHttpClient.setTimeout(Constants.CONNECTION_TIME_OUT);
-        asyncHttpClient.get(Constants.URL_REGISTER, requestParams, new JsonHttpResponseHandler() {
-
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-//                afterAsyncCall();
-
-                try {
-                    String info = response.getString("info");
-
-                    if (info.equalsIgnoreCase("Success")) {
-                        UserUtil.setOtpSent(EnterOtpActivity.this, true);
-                        Toast.makeText(EnterOtpActivity.this, R.string.otp_message_otp_sent, Toast.LENGTH_SHORT).show();
-                    } else {
-                        onFailure_OnSendingOTP();
-                    }
-
-                    Log.i("Enter Otp", "resend response info : " + info);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                super.onFailure(statusCode, headers, throwable, errorResponse);
-                onFailure_OnSendingOTP();
-            }
-
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-                onFailure_OnSendingOTP();
-            }
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                onFailure_OnSendingOTP();
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, String responseString) {
-                onFailure_OnSendingOTP();
-            }
-
-        });
-    }
-
-    private void onFailure_OnSendingOTP() {
-//                afterAsyncCall();
-        Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
-        UserUtil.setOtpSent(EnterOtpActivity.this, false);
-    }
-
-    private void beforeAsyncCall() {
-        Button sendOtpButton = (Button) findViewById(R.id.sendOtpButton);
-        sendOtpButton.setOnClickListener(null);
-
-//        Button resendOtpButton = (Button) findViewById(R.id.resend);
-//        resendOtpButton.setOnClickListener(null);
-
-        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-    }
-
-    private void afterAsyncCall() {
-        Button sendOtpButton = (Button) findViewById(R.id.sendOtpButton);
-        sendOtpButton.setOnClickListener(sendButtonClickListener);
-
-//        Button resendOtpButton = (Button) findViewById(R.id.resend);
-//        resendOtpButton.setOnClickListener(resendOtpButtonClickListener);
-
-        findViewById(R.id.progressBar).setVisibility(View.GONE);
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, phoneNumber);
+        requestContent(ScoresContentHandler.CALL_NAME_ASK_OTP, parameters, RESEND_OTP_REQUEST_TAG);
     }
 
     private void moveToNextActivity() {
@@ -329,6 +229,137 @@ public class EnterOtpActivity extends AppCompatActivity implements ActivityCompa
         startActivity(intent);
     }
 
+    private class CreateUserComponentListener extends CustomComponentListener {
+
+        private boolean success;
+
+        public CreateUserComponentListener(ProgressBar progressBar) {
+            super(CREATE_USER_REQUEST_TAG, progressBar, null);
+        }
+
+        @Override
+        protected void showErrorLayout() {
+            EnterOtpActivity.this.runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+                }
+
+            });
+        }
+
+        @Override
+        public boolean handleContent(String tag, String content) {
+            boolean success = false;
+            try {
+                JSONObject response = new JSONObject(content);
+                if (response.getString("status").equals("200")) {
+                    String password = response.getString(Constants.REQUEST_PARAMETER_KEY_PASSWORD);
+                    TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
+
+                    UserUtil.setOtpSent(EnterOtpActivity.this, false);
+                    UserUtil.setUserRegistered(EnterOtpActivity.this, true);
+
+                    this.success = true;
+                } else {
+                    this.success = false;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            success = true;
+            return success;
+        }
+
+        @Override
+        public void handleErrorContent(String tag) {
+            //nothing
+        }
+
+        @Override
+        public void changeUI() {
+            EnterOtpActivity.this.runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (success) {
+                        moveToNextActivity();
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.otp_message_wrong_expired_token, Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            });
+        }
+
+    }
+
+    private class ResendOtpComponentListener extends CustomComponentListener {
+
+        private boolean resendSuccessful;
+
+        public ResendOtpComponentListener(ProgressBar progressBar) {
+            super(RESEND_OTP_REQUEST_TAG, progressBar, null);
+        }
+
+        @Override
+        protected void showErrorLayout() {
+            EnterOtpActivity.this.runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+                }
+
+            });
+        }
+
+        @Override
+        public void handleErrorContent(String tag) {
+            UserUtil.setOtpSent(EnterOtpActivity.this, false);
+        }
+
+        @Override
+        public boolean handleContent(String tag, String content) {
+            boolean success = false;
+            try {
+                JSONObject response = new JSONObject(content);
+                String info = response.getString("info");
+
+                if (info.equalsIgnoreCase("Success")) {
+                    UserUtil.setOtpSent(EnterOtpActivity.this, true);
+                    this.resendSuccessful = true;
+                } else {
+                    UserUtil.setOtpSent(EnterOtpActivity.this, false);
+                    this.resendSuccessful = false;
+                }
+                Log.i("Enter Otp", "resend response info : " + info);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            success = true;
+            return success;
+        }
+
+        @Override
+        public void changeUI() {
+            EnterOtpActivity.this.runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    if (resendSuccessful) {
+                        Toast.makeText(EnterOtpActivity.this, R.string.otp_message_otp_sent, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+            });
+        }
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -342,6 +373,3 @@ public class EnterOtpActivity extends AppCompatActivity implements ActivityCompa
     }
 
 }
-
-
-

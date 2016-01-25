@@ -22,7 +22,6 @@ public class Constants {
     public static final String INTENT_KEY_MIMETYPE = "MIME_TYPE";
 
     public static final String URL_REGISTER = "http://54.169.217.88/register?";
-    public static final String URL_CREATE = "http://54.169.217.88/create?";
     public static final String URL_NEWS_CONTENT = "http://52.76.74.188:8000/mixed?";
 
     public static final String REQUEST_PARAMETER_KEY_PHONE_NUMBER = "phone_number";
@@ -41,7 +40,8 @@ public class Constants {
 
     public static final String NEWS_REQUEST_TAG = "news_tag";
 
-    public static final int CONNECTION_TIME_OUT = 20 * 1000;
+    public static final int CONNECTION_TIME_OUT = 10 * 1000;
+    public static final int CONNECTION_READ_TIME_OUT = 20 * 1000;
 
 
     // Number of columns of Grid View

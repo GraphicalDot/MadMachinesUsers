@@ -9,6 +9,7 @@ import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 
 import org.jivesoftware.smack.chat.Chat;
+import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,6 +40,7 @@ public class FileOnCloudHandler {
 
 
     private static final String CONTENT_CLOUD_URL = "http://54.169.217.88/media?";
+    private static final String CONTENT_PRESENT_URL = "http://54.169.217.88/media_present?";
 
     private static FileOnCloudHandler FILE_ON_CLOUD_HANDLER = null;
 
@@ -251,30 +253,37 @@ public class FileOnCloudHandler {
         String checksum = null;
         try {
             checksum = CommonUtil.getMD5EncryptedString(content);
-            byteArrayInputStream = new ByteArrayInputStream(content, 0, content.length);
 
-            URL url = new URL(CONTENT_CLOUD_URL);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setConnectTimeout(15000);
-            httpURLConnection.setReadTimeout(60000);
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setRequestMethod("POST");
-
-            httpURLConnection.setRequestProperty("Checksum", checksum);
-
-            OutputStream outputStream = httpURLConnection.getOutputStream();
-
-            byte chunk[] = new byte[4096];
-            int read = 0;
-            while ((read = byteArrayInputStream.read(chunk)) != -1) {
-                outputStream.write(chunk, 0, read);
-            }
-
-            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                Log.i("File on cloud", "uploaded with checksum " + checksum);
+            if( checkIfContentAlreadyExist(checksum)){
+                //nothing
             } else {
-                checksum = null;
-                Log.i("File on cloud", "failed to load file content");
+
+                byteArrayInputStream = new ByteArrayInputStream(content, 0, content.length);
+
+                URL url = new URL(CONTENT_CLOUD_URL);
+                httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setConnectTimeout(15000);
+                httpURLConnection.setReadTimeout(60000);
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setRequestMethod("POST");
+
+                httpURLConnection.setRequestProperty("Checksum", checksum);
+
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+
+                byte chunk[] = new byte[4096];
+                int read = 0;
+                while ((read = byteArrayInputStream.read(chunk)) != -1) {
+                    outputStream.write(chunk, 0, read);
+                }
+
+                if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    Log.i("File on cloud", "uploaded with checksum " + checksum);
+                } else {
+                    checksum = null;
+                    Log.i("File on cloud", "failed to load file content");
+                }
+
             }
 
         } catch (Exception e) {
@@ -303,32 +312,38 @@ public class FileOnCloudHandler {
         try {
             checksum = CommonUtil.getMD5EncryptedString(context, fileName);
 
-            File file = new File(DBUtil.getFilePath(context, fileName));
-            fileInputStream = new FileInputStream(file);
-
-            URL url = new URL(CONTENT_CLOUD_URL);
-            httpURLConnection = (HttpURLConnection) url.openConnection();
-            httpURLConnection.setConnectTimeout(15000);
-            httpURLConnection.setReadTimeout(60000);
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setRequestMethod("POST");
-            httpURLConnection.setChunkedStreamingMode(4096);
-
-            httpURLConnection.setRequestProperty("Checksum", checksum);
-
-            OutputStream outputStream = httpURLConnection.getOutputStream();
-
-            byte chunk[] = new byte[4096];
-            int read = 0;
-            while ((read = fileInputStream.read(chunk)) != -1) {
-                outputStream.write(chunk, 0, read);
-            }
-
-            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                Log.i("File on cloud", "uploaded with checksum " + checksum);
+            if( checkIfContentAlreadyExist(checksum)){
+                //nothing
             } else {
-                checksum = null;
-                Log.i("File on cloud", "failed to load file content");
+
+                File file = new File(DBUtil.getFilePath(context, fileName));
+                fileInputStream = new FileInputStream(file);
+
+                URL url = new URL(CONTENT_CLOUD_URL);
+                httpURLConnection = (HttpURLConnection) url.openConnection();
+                httpURLConnection.setConnectTimeout(15000);
+                httpURLConnection.setReadTimeout(60000);
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setRequestMethod("POST");
+                httpURLConnection.setChunkedStreamingMode(4096);
+
+                httpURLConnection.setRequestProperty("Checksum", checksum);
+
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+
+                byte chunk[] = new byte[4096];
+                int read = 0;
+                while ((read = fileInputStream.read(chunk)) != -1) {
+                    outputStream.write(chunk, 0, read);
+                }
+
+                if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    Log.i("File on cloud", "uploaded with checksum " + checksum);
+                } else {
+                    checksum = null;
+                    Log.i("File on cloud", "failed to load file content");
+                }
+
             }
 
         } catch (Exception e) {
@@ -452,6 +467,63 @@ public class FileOnCloudHandler {
             }
         }
         return success;
+    }
+
+    private boolean checkIfContentAlreadyExist(String checksum){
+        boolean existOnServer = false;
+
+        HttpURLConnection httpURLConnection = null;
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        byte[] data = null;
+        try {
+            URL url = new URL(CONTENT_PRESENT_URL + "name=" + checksum);
+            httpURLConnection = (HttpURLConnection) url.openConnection();
+            httpURLConnection.setConnectTimeout(15000);
+            httpURLConnection.setReadTimeout(20000);
+            httpURLConnection.setDoInput(true);
+            httpURLConnection.setRequestMethod("GET");
+
+            InputStream is = httpURLConnection.getInputStream();
+            byteArrayOutputStream = new ByteArrayOutputStream();
+
+            byte[] chunk = new byte[1024];
+            int bytesRead = -1;
+            while ((bytesRead = is.read(chunk)) != -1) {
+                byteArrayOutputStream.write(chunk, 0, bytesRead);
+            }
+
+            data = byteArrayOutputStream.toByteArray();
+
+            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                try {
+                    JSONObject jsonObject = new JSONObject(new String(data));
+                    if( jsonObject.getInt("status") == 200 ){
+                        existOnServer = true;
+                        Log.i("File on cloud", "Check for existence of content on server, Exist ");
+                    } else {
+                        Log.i("File on cloud", "Check for existence of content on server, Don't Exist ");
+                    }
+                }catch (Exception ex){
+                    ex.printStackTrace();
+                }
+            } else {
+                Log.i("File on cloud", "Check for existence of content on server, failed as per response code ");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                byteArrayOutputStream.close();
+            } catch (Exception ex) {
+            }
+            try {
+                httpURLConnection.disconnect();
+            } catch (Exception ex) {
+            }
+        }
+
+        return existOnServer;
     }
 
     private boolean sendActionToCorrespondingActivityListener(int id, String key, String mimeType, Object messageContent, Object mediaContent) {

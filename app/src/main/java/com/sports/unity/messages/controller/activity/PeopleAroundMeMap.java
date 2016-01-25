@@ -66,6 +66,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -90,7 +91,6 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
     private TextView titleAddress;
     private TextView titleCity;
 
-    private String base_url = "http://54.169.217.88/retrieve_nearby_users?lat=";
     private int radius = 1000;
 
     private int stepRange = 25;
@@ -403,8 +403,11 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
 
         ScoresContentHandler.getInstance().addResponseListener(contentListener, REQUEST_LISTENER_KEY);
 
-        String urlToRequest = base_url + latitude + "&lng=" + longitude + "&radius=" + radius;
-        ScoresContentHandler.getInstance().requestNearByUsers(REQUEST_LISTENER_KEY, REQUEST_TAG, urlToRequest);
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put(ScoresContentHandler.PARAM_LATITUDE, String.valueOf(latitude));
+        parameters.put(ScoresContentHandler.PARAM_LONGITUDE, String.valueOf(longitude));
+        parameters.put(ScoresContentHandler.PARAM_RADIUS, String.valueOf(radius));
+        ScoresContentHandler.getInstance().requestCall( ScoresContentHandler.CALL_NAME_NEAR_BY_USERS, parameters, REQUEST_LISTENER_KEY, REQUEST_TAG);
     }
 
     public boolean createContact(String number, Context context, VCard vCard) {

@@ -8,6 +8,6 @@ import com.android.volley.VolleyError;
  */
 public interface VolleyResponseListener {
 
-    public void handleResponse(String tag, String reponse, int responseCode);
+    public void handleResponse(String tag, String response, int responseCode);
 
 }

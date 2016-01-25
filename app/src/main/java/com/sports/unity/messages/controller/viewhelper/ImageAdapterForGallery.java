@@ -1,8 +1,6 @@
 package com.sports.unity.messages.controller.viewhelper;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -13,19 +11,11 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.Gallery;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -34,9 +24,7 @@ import android.widget.ViewAnimator;
 import com.bumptech.glide.Glide;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
-import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
-import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.util.*;
 import com.sports.unity.util.ImageUtil;
 

@@ -123,7 +123,12 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
             CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
 
             Bitmap bitmap = ImageUtil.handleImageAndSetToView(data, circleImageView);
-            byteArray = ImageUtil.getBytes(bitmap);
+
+            if( bitmap != null ) {
+                byteArray = ImageUtil.getCompressedBytes(bitmap);
+
+                Log.d("Profile Creation", "Byte Count " + bitmap.getByteCount() + " Density " + bitmap.getDensity() + " Row Bytes " + bitmap.getRowBytes() );
+            }
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
@@ -250,9 +255,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     private void setProfileImage(Bitmap image) {
         CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
         circleImageView.setImageBitmap(image);
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        image.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-        byteArray = byteArrayOutputStream.toByteArray();
+        byteArray = ImageUtil.getCompressedBytes(image);
     }
 
     private void onSuccessfulLogin() {

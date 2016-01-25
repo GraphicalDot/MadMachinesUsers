@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -11,8 +12,11 @@ import android.widget.GridView;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.messages.controller.model.Stickers;
+import com.sports.unity.util.ActivityActionHandler;
+import com.sports.unity.util.ActivityActionListener;
 
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -67,11 +71,33 @@ public class EmojiAdapter extends BaseAdapter {
                 .placeholder(R.drawable.grey_bg_rectangle)
                 .into(imageView);
 
-        imageView.setTag( R.id.emoji, stickersCategory + "/" + stickersName.get(position));
+        imageView.setTag(R.id.emoji, stickersCategory + "/" + stickersName.get(position));
 
-//        imageView.setImageResource(R.drawable.grey_bg_rectangle);
-//        imageView.setImageBitmap(Stickers.getInstance().getStickerBitmap(stickersCategory, stickersName.get(position)));
-//        imageView.setTag( stickersCategory + "/" + stickersName.get(position));
+        imageView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                String selectedStickerPath = (String)view.getTag(R.id.emoji);
+
+                sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_STICKER, selectedStickerPath);
+            }
+
+        });
         return imageView;
     }
+
+    private boolean sendActionToCorrespondingActivityListener(String key, String mimeType, Object data) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+
+        if (actionListener != null) {
+            actionListener.handleMediaContent( 1, mimeType, data, null);
+            success = true;
+        }
+        return success;
+    }
+
+
 }

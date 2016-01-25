@@ -31,6 +31,7 @@ import org.w3c.dom.Text;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -392,7 +393,11 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
 
         hideErrorLayout();
 
-        ScoresContentHandler.getInstance().requestScoresOfMatch( sportsType, matchId, REQUEST_LISTENER_KEY, SCORE_DETAIL_REQUEST_TAG);
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put(ScoresContentHandler.PARAM_SPORTS_TYPE, sportsType);
+        parameters.put(ScoresContentHandler.PARAM_ID, matchId);
+        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_DETAIL, parameters, REQUEST_LISTENER_KEY, SCORE_DETAIL_REQUEST_TAG);
+//        ScoresContentHandler.getInstance().requestScoresOfMatch( sportsType, matchId, REQUEST_LISTENER_KEY, SCORE_DETAIL_REQUEST_TAG);
     }
 
     private void requestMatchCommentaries() {
@@ -400,9 +405,11 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
 
         hideErrorLayout();
 
-        ScoresContentHandler.getInstance().requestCommentaryOnMatch(sportsType, matchId, REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
-//        ScoresContentHandler.getInstance().requestCommentaryOnMatch( sportsType, "bblt20_2015_g22", REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
-//        ScoresContentHandler.getInstance().requestCommentaryOnMatch( ScoresJsonParser.FOOTBALL, "2138018", REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put(ScoresContentHandler.PARAM_SPORTS_TYPE, sportsType);
+        parameters.put(ScoresContentHandler.PARAM_ID, matchId);
+        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_DETAIL, parameters, REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
+//        ScoresContentHandler.getInstance().requestCommentaryOnMatch(sportsType, matchId, REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
     }
 
     private void initErrorLayout(){

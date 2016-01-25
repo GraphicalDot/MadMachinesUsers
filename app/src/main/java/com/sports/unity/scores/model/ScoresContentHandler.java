@@ -2,6 +2,7 @@ package com.sports.unity.scores.model;
 
 import com.android.volley.VolleyError;
 import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.VolleyRequestHandler;
 import com.sports.unity.util.network.VolleyResponseListener;
 import com.sports.unity.util.network.VolleyTagRequest;
@@ -13,19 +14,31 @@ import java.util.HashMap;
  */
 public class ScoresContentHandler {
 
+    public static final String CALL_NAME_CREATE_USER = "CREATE_USER";
+    public static final String CALL_NAME_ASK_OTP = "ASK_OTP";
+    public static final String CALL_NAME_MATCHES_LIST = "MATCHES_LIST";
+    public static final String CALL_NAME_MATCH_DETAIL = "MATCH_DETAILS";
+    public static final String CALL_NAME_MATCH_COMMENTARIES = "MATCH_COMMENTARIES";
+    public static final String CALL_NAME_NEAR_BY_USERS = "NEAR_BY_USERS";
+
+    public static final String PARAM_SPORTS_TYPE = "SPORTS_TYPE";
+    public static final String PARAM_ID = "ID";
+
+    public static final String PARAM_LATITUDE = "LATITUDE";
+    public static final String PARAM_LONGITUDE = "LONGITUDE";
+    public static final String PARAM_RADIUS = "RADIUS";
+
+    private static final String URL_CREATE = "http://54.169.217.88/create?";
+    public static final String URL_REGISTER = "http://54.169.217.88/register?";
+    private static final String URL_REQUEST_OTP = "http://54.169.217.88/create?";
+    private static final String URL_NEAR_BY = "http://54.169.217.88/retrieve_nearby_users?";
+
     private static final String SCORES_BASE_URL = "http://52.74.75.79:8080/";
-
     private static final String URL_PARAMS_FOR_LIST_OF_MATCHES = "get_all_matches_list";
-
     private static final String URL_PARAMS_FOR_FOOTBALL_MATCH_DETAIL = "get_football_match_scores?match_id=";
     private static final String URL_PARAMS_FOR_CRICKET_MATCH_DETAIL = "get_cricket_match_scores?match_key=";
-
     private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "get_cricket_match_commentary?match_key=";
     private static final String URL_PARAMS_FOR_FOOTBALL_COMMENTARY = "get_football_commentary?match_id=";
-
-//    private static final String REQUEST_KEY_LIST_OF_MATCHES = "List_Of_Matches";
-//    private static final String REQUEST_KEY_MATCH_DETAILS = "Match_Detail:";
-//    private static final String REQUEST_KEY_MATCH_COMMENTARY = "Match_COMMENTARY:";
 
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
 
@@ -83,15 +96,83 @@ public class ScoresContentHandler {
         mapOfResponseListeners.remove(listenerKey);
     }
 
-    public void requestNearByUsers(String listenerKey, String requestTag, String url){
+    public void requestCall(String callName, HashMap<String, String> parameters, String requestListenerKey, String requestTag){
+        if( callName.equals(CALL_NAME_CREATE_USER) ){
+            String phoneNumber = parameters.get(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER);
+            String otp = parameters.get(Constants.REQUEST_PARAMETER_KEY_AUTH_CODE);
+            requestToCreateUser(phoneNumber, otp, requestListenerKey, requestTag);
+        } else if( callName.equals(CALL_NAME_ASK_OTP) ){
+            String phoneNumber = parameters.get(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER);
+            requestForOtp(phoneNumber, requestListenerKey, requestTag);
+        } else if( callName.equals(CALL_NAME_NEAR_BY_USERS) ){
+            String lat = parameters.get(PARAM_LATITUDE);
+            String lng = parameters.get(PARAM_LONGITUDE);
+            String radius = parameters.get(PARAM_RADIUS);
+            requestNearByUsers(lat, lng, radius, requestListenerKey, requestTag);
+        } else if( callName.equals(CALL_NAME_MATCHES_LIST) ){
+            requestListOfMatches(requestListenerKey, requestTag);
+        } else if( callName.equals(CALL_NAME_MATCH_DETAIL) ){
+            String matchId = parameters.get(PARAM_ID);
+            String sportsType = parameters.get(PARAM_SPORTS_TYPE);
+            requestScoresOfMatch( sportsType, matchId, requestListenerKey, requestTag);
+        } else if( callName.equals(CALL_NAME_MATCH_COMMENTARIES) ){
+            String matchId = parameters.get(PARAM_ID);
+            String sportsType = parameters.get(PARAM_SPORTS_TYPE);
+            requestCommentaryOnMatch( sportsType, matchId, requestListenerKey, requestTag);
+        }
+    }
+
+    public boolean isRequestInProcess(String requestTag){
+        return requestInProcess_RequestTagAndListenerKey.containsKey(requestTag);
+    }
+
+    private void requestToCreateUser(String phoneNumber, String otp, String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
-             requestContent(requestTag, listenerKey, url);
+            StringBuilder urlBuilder = new StringBuilder(URL_CREATE);
+            urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER);
+            urlBuilder.append("=");
+            urlBuilder.append(phoneNumber);
+            urlBuilder.append("&");
+            urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_AUTH_CODE);
+            urlBuilder.append("=");
+            urlBuilder.append(otp);
+
+            requestContent(requestTag, listenerKey, urlBuilder.toString());
         } else {
             //nothing
         }
     }
 
-    public void requestListOfMatches(String listenerKey, String requestTag){
+    private void requestForOtp(String phoneNumber, String listenerKey, String requestTag){
+        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+            StringBuilder urlBuilder = new StringBuilder(URL_REGISTER);
+            urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER);
+            urlBuilder.append("=");
+            urlBuilder.append(phoneNumber);
+
+            requestContent(requestTag, listenerKey, urlBuilder.toString());
+        } else {
+            //nothing
+        }
+    }
+
+    private void requestNearByUsers(String lat, String lng, String radius, String listenerKey, String requestTag){
+        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+            StringBuilder urlBuilder = new StringBuilder(URL_NEAR_BY);
+            urlBuilder.append("lat=");
+            urlBuilder.append(lat);
+            urlBuilder.append("&lng=");
+            urlBuilder.append(lng);
+            urlBuilder.append("&radius=");
+            urlBuilder.append(radius);
+
+            requestContent(requestTag, listenerKey, urlBuilder.toString());
+        } else {
+            //nothing
+        }
+    }
+
+    private void requestListOfMatches(String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
             String url = generateURL( URL_PARAMS_FOR_LIST_OF_MATCHES);
             requestContent(requestTag, listenerKey, url);
@@ -100,7 +181,7 @@ public class ScoresContentHandler {
         }
     }
 
-    public void requestScoresOfMatch(String sportType, String matchId, String listenerKey, String requestTag){
+    private void requestScoresOfMatch(String sportType, String matchId, String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
 
             String baseUrl = null;
@@ -117,7 +198,7 @@ public class ScoresContentHandler {
         }
     }
 
-    public void requestCommentaryOnMatch(String sportType, String matchId, String listenerKey, String requestTag){
+    private void requestCommentaryOnMatch(String sportType, String matchId, String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
 
             String baseUrl = null;

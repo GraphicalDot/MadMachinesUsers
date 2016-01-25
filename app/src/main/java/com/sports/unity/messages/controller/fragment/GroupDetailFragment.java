@@ -2,40 +2,24 @@ package com.sports.unity.messages.controller.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sports.unity.Database.SportsUnityDBHelper;
-import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.activity.CreateGroup;
-import com.sports.unity.messages.controller.model.GroupMessaging;
-import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.ImageUtil;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.util.ArrayList;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -121,7 +105,7 @@ public class GroupDetailFragment extends Fragment {
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
             Bitmap decodedBitmap = ImageUtil.handleImageAndSetToView(data, groupAvatar);
 
-            groupImageArray = ImageUtil.getBytes(decodedBitmap);
+            groupImageArray = ImageUtil.getCompressedBytes(decodedBitmap);
         } else {
             //callbackManager.onActivityResult(requestCode, resultCode, data);
         }

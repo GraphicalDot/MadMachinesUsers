@@ -1,7 +1,6 @@
 apply plugin: 'com.android.application'
 
 android {
-    useLibrary 'org.apache.http.legacy'
     compileSdkVersion 23
     buildToolsVersion '23.0.1'
     defaultConfig {
@@ -36,7 +35,6 @@ repositories {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.loopj.android:android-async-http:1.4.8'
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.facebook.android:facebook-android-sdk:4.4.0'
     compile 'org.igniterealtime.smack:smack-android-extensions:4.1.4'

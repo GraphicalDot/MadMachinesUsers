@@ -61,6 +61,7 @@ import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.ImageUtil;
 import com.sports.unity.util.ThreadTask;
 
 import org.w3c.dom.Text;
@@ -110,6 +111,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
     private MediaRecorder recorder = null;
     private Timer timer = null;
 
+    private boolean captureImageClicked = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -287,14 +289,21 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             discardContent();
         } else if (id == R.id.send_camera_content) {
             handleSendMedia();
-        } else if (id == R.id.flash) {
-            changeFlashStatus();
-            changeFlashContent();
-        } else if (id == R.id.switch_camera) {
+        } else if( id == R.id.flash ) {
+            if( mCamera != null ) {
+                changeFlashStatus();
+                changeFlashContent();
+            }
+        } else if( id == R.id.switch_camera ) {
             animateCamera(view);
             changeCamera();
-        } else if (id == R.id.capture) {
-            mCamera.takePicture(null, null, mPicture);
+        } else if( id == R.id.capture ){
+            if( ! captureImageClicked && mCamera != null  ) {
+                captureImageClicked = true;
+                mCamera.takePicture(null, null, mPicture);
+            } else {
+                //nothing
+            }
         }
     }
 
@@ -543,7 +552,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
         {
             Camera.Parameters p = mCamera.getParameters();
-            p.setFlashMode(flashStatus);
+            setFlashMode(p);
             mCamera.setParameters(p);
 
             mPreview.startCameraPreview();
@@ -576,11 +585,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             imageView.setVisibility(View.VISIBLE);
             imageView.setImageBitmap(rotatedBitMap);
 
-            {
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                rotatedBitMap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
-                content = byteArrayOutputStream.toByteArray();
-            }
+            content = ImageUtil.getCompressedBytes(rotatedBitMap);
         }
     }
 
@@ -650,6 +655,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         public void onPictureTaken(byte[] data, Camera camera) {
             contentMimeType = SportsUnityDBHelper.MIME_TYPE_IMAGE;
             showPictureViewsToSend(data);
+            captureImageClicked = false;
         }
 
     };

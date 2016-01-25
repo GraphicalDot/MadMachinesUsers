@@ -32,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Edwin on 15/02/2015.
@@ -246,7 +247,9 @@ public class MatchListFragment extends Fragment {
 
         hideErrorLayout(getView());
 
-        ScoresContentHandler.getInstance().requestListOfMatches(LIST_LISTENER_KEY, LIST_OF_MATCHES_REQUEST_TAG);
+        HashMap<String, String> parameters = new HashMap<>();
+        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCHES_LIST, parameters, LIST_LISTENER_KEY, LIST_OF_MATCHES_REQUEST_TAG);
+//        ScoresContentHandler.getInstance().requestListOfMatches(LIST_LISTENER_KEY, LIST_OF_MATCHES_REQUEST_TAG);
 
 //        Calendar c = Calendar.getInstance();
 //        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");

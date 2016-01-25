@@ -177,8 +177,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         public void handleAction(int id) {
             //id is 0, for media content uploaded.
 
-            sendReadStatus();
-
             ChatScreenActivity.this.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -189,6 +187,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                         messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
                         chatScreenAdapter.notifydataset(messageList);
                     }
+
+                    sendReadStatus();
                 }
             });
         }

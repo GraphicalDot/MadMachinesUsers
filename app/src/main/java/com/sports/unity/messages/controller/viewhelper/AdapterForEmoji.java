@@ -42,11 +42,8 @@ import java.util.zip.Inflater;
 public class AdapterForEmoji extends PagerAdapter implements AdapterView.OnItemClickListener {
 
     private Context context;
-    private GridView gridView;
-    private ViewGroup layout;
 
     //private int titles[] = {R.drawable.ic_football, R.drawable.ic_basketball, R.drawable.ic_cricket, R.drawable.ic_tennis, R.drawable.ic_f1};
-
     private int titles[] = {R.drawable.ic_football, R.drawable.ic_cricket};
 
     public AdapterForEmoji(Context context) {
@@ -92,9 +89,9 @@ public class AdapterForEmoji extends PagerAdapter implements AdapterView.OnItemC
 
 
     public ViewGroup loadStickersGridView(int resId, ViewGroup collection, LayoutInflater inflater, String stickerCategory) {
-        layout = (ViewGroup) inflater.inflate(resId, collection, false);
+        ViewGroup layout = (ViewGroup) inflater.inflate(resId, collection, false);
 
-        gridView = (GridView) layout.findViewById(R.id.emoji);
+        GridView gridView = (GridView) layout.findViewById(R.id.emoji);
 
         gridView.setAdapter(new EmojiAdapter(context, stickerCategory));
         gridView.setOnItemClickListener(this);
