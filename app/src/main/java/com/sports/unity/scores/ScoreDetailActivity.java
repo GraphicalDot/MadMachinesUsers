@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.scores.controller.fragment.BroadcastListAdapter;
 import com.sports.unity.scores.controller.fragment.MatchListAdapter;
 import com.sports.unity.scores.model.ScoresContentHandler;
@@ -35,9 +36,9 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ScoreDetailActivity extends CustomAppCompatActivity {
+public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
-    private static final String REQUEST_LISTENER_KEY = "list_commentaries_listener";
+    private static final String REQUEST_LISTENER_KEY = "score_detail_listener";
     private static final String SCORE_DETAIL_REQUEST_TAG = "score_detail_request_tag";
     private static final String LIST_OF_COMMENTARIES_REQUEST_TAG = "list_commentaries_request_tag";
 
@@ -72,6 +73,19 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
 
         initToolbar();
         initView();
+
+//        {
+//            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+//            ScoreDetailComponentListener createUserComponentListener = new ScoreDetailComponentListener(progressBar);
+//            MatchCommentariesComponentListener resendOtpComponentListener = new MatchCommentariesComponentListener(progressBar);
+//
+//            ArrayList<CustomComponentListener> listeners = new ArrayList<>();
+//            listeners.add(createUserComponentListener);
+//            listeners.add(resendOtpComponentListener);
+//
+//            onComponentCreate(listeners, REQUEST_LISTENER_KEY);
+//        }
+
     }
 
     @Override
@@ -87,6 +101,8 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
             requestMatchScoreDetails();
 //            requestContent();
         }
+
+        onComponentResume();
     }
 
     @Override
@@ -95,6 +111,8 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
 
         removeResponseListener();
         disableAutoRefreshContent();
+
+        onComponentPause();
     }
 
     private void initView() {
@@ -512,6 +530,50 @@ public class ScoreDetailActivity extends CustomAppCompatActivity {
             } else {
                 //nothing
             }
+        }
+    }
+
+    private class ScoreDetailComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
+
+        public ScoreDetailComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
+            super( SCORE_DETAIL_REQUEST_TAG, progressBar, errorLayout);
+        }
+
+        @Override
+        public boolean handleContent(String tag, String content) {
+            return false;
+        }
+
+        @Override
+        public void handleErrorContent(String tag) {
+
+        }
+
+        @Override
+        public void changeUI() {
+
+        }
+    }
+
+    private class MatchCommentariesComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
+
+        public MatchCommentariesComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
+            super( LIST_OF_COMMENTARIES_REQUEST_TAG, progressBar, errorLayout);
+        }
+
+        @Override
+        public boolean handleContent(String tag, String content) {
+            return false;
+        }
+
+        @Override
+        public void handleErrorContent(String tag) {
+
+        }
+
+        @Override
+        public void changeUI() {
+
         }
     }
 

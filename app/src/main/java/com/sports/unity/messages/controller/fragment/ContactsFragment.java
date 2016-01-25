@@ -196,7 +196,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
         contacts.setTextFilterEnabled(true);
         if (PermissionUtil.getInstance().isRuntimePermissionRequired()) {
 
-            if (PermissionUtil.getInstance().requestPermission(getActivity(), new ArrayList<String>(Arrays.asList(Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS)), getResources().getString(R.string.read_contact_permission_message), Constants.REQUEST_CODE_CONTACT_PERMISSION)) {
+            if (PermissionUtil.getInstance().requestPermission(getActivity(), new ArrayList<String>(Arrays.asList(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)), getResources().getString(R.string.read_contact_permission_message), Constants.REQUEST_CODE_CONTACT_PERMISSION)) {
                 handleContacts();
             }
         }
@@ -354,9 +354,18 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        try {
+            ((MainActivity) getActivity()).removeContactResultListener();
+        } catch (Exception e) {
+            //nothing
+        }
+    }
+
+    @Override
     public void onDestroy() {
         super.onDestroy();
-        ((MainActivity)getActivity()).removeContactResultListener();
     }
 }
 
