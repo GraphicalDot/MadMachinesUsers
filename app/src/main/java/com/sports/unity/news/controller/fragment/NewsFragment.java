@@ -27,6 +27,7 @@ import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.news.controller.activity.NewsSearchActivity;
 import com.sports.unity.news.model.NewsContentHandler;
 import com.sports.unity.util.Constants;
@@ -49,6 +50,9 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
     private boolean searchOn = false;
 
+    private int sportsSelectedNum = 0;
+    private ArrayList<String> sportSelected;
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
@@ -57,6 +61,8 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
         View v = inflater.inflate(com.sports.unity.R.layout.news, container, false);
         initViews(v);
+        sportsSelectedNum = UserUtil.getSportsSelected().size();
+        sportSelected = UserUtil.getSportsSelected();
         return v;
     }
 
@@ -73,13 +79,44 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
             hideProgress(getView());
             mSwipeRefreshLayout.setRefreshing(false);
         }
+
+
+        boolean isSportsChanged = false;
+        if (sportsSelectedNum != UserUtil.getSportsSelected().size()) {
+            isSportsChanged = true;
+        } else {
+            for (int i = 0; i < sportSelected.size(); i++) {
+                if (!sportSelected.get(0).equals(UserUtil.getSportsSelected().get(i))) {
+                    isSportsChanged = true;
+                }
+            }
+        }
+        if (isSportsChanged) {
+            newsContentHandler.clearContent();
+            mAdapter.notifyDataSetChanged();
+            newsContentHandler.selectedSportsChanged();
+            sportSelected = UserUtil.getSportsSelected();
+            sportsSelectedNum = UserUtil.getSportsSelected().size();
+            boolean success = newsContentHandler.refreshNews(true);
+            if (success == false) {
+                showErrorLayout(getView());
+                hideProgress(getView());
+
+                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
+            } else {
+                hideErrorLayout(getView());
+                showProgress(getView());
+            }
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
         newsContentHandler.removeContentListener();
+
+        sportsSelectedNum = UserUtil.getSportsSelected().size();
+        sportSelected = UserUtil.getSportsSelected();
     }
 
     @Override
@@ -384,31 +421,6 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
             Log.d("News Content", "Update Adapter List Object ID " + list);
 
             mAdapter.notifyDataSetChanged();
-        }
-    }
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == 999 && data != null) {
-
-            newsContentHandler.clearContent();
-            mAdapter.notifyDataSetChanged();
-            newsContentHandler.selectedSportsChanged();
-
-            boolean success = newsContentHandler.refreshNews(true);
-            if (success == false) {
-                showErrorLayout(getView());
-                hideProgress(getView());
-
-                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
-            } else {
-                hideErrorLayout(getView());
-                showProgress(getView());
-            }
-
-
-        } else {
-            //nothing
         }
     }
 

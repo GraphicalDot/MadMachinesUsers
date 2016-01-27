@@ -51,7 +51,9 @@ public class MatchListFragment extends Fragment {
 
     private ScoresContentListener contentListener = new ScoresContentListener();
 
-    private  MatchListAdapter mAdapter;
+    private MatchListAdapter mAdapter;
+    private int sportsSelectedNum = 0;
+    private ArrayList<String> sportSelected;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -59,7 +61,8 @@ public class MatchListFragment extends Fragment {
 
         View view = inflater.inflate(com.sports.unity.R.layout.fragment_match_list, container, false);
         initView(view);
-
+        sportsSelectedNum = UserUtil.getSportsSelected().size();
+        sportSelected = UserUtil.getSportsSelected();
         return view;
     }
 
@@ -83,7 +86,7 @@ public class MatchListFragment extends Fragment {
 
         if (id == com.sports.unity.R.id.action_filter) {
             Intent i = new Intent(getActivity(), FilterActivity.class);
-           startActivityForResult(i, Constants.REQUEST_CODE_SCORE);
+            startActivityForResult(i, Constants.REQUEST_CODE_SCORE);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -94,7 +97,7 @@ public class MatchListFragment extends Fragment {
         super.onResume();
 
         addResponseListener();
-        if( matches.size() == 0 ) {
+        if (matches.size() == 0) {
             Log.i("List of Matches", "Through Resume");
 
             showProgress(getView());
@@ -102,17 +105,38 @@ public class MatchListFragment extends Fragment {
         } else {
             //nothing
         }
+
+
+        boolean isSportsChanged = false;
+        if (sportsSelectedNum != UserUtil.getSportsSelected().size()) {
+            isSportsChanged = true;
+        } else {
+            for (int i = 0; i < sportSelected.size(); i++) {
+                if (!sportSelected.get(0).equals(UserUtil.getSportsSelected().get(i))) {
+                    isSportsChanged = true;
+                }
+            }
+        }
+        if (isSportsChanged) {
+            mSwipeRefreshLayout.setRefreshing(true);
+            requestContent();
+            sportSelected = UserUtil.getSportsSelected();
+            sportsSelectedNum = UserUtil.getSportsSelected().size();
+        }
+
+
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
+        sportsSelectedNum = UserUtil.getSportsSelected().size();
+        sportSelected = UserUtil.getSportsSelected();
         removeResponseListener();
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
-    private void initView(View view){
+    private void initView(View view) {
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_scores);
         mRecyclerView.setHasFixedSize(true);
@@ -151,39 +175,39 @@ public class MatchListFragment extends Fragment {
         });
     }
 
-    private void renderContent(){
+    private void renderContent() {
         Log.i("List of Matches", "Render Content");
 
         mRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
-    private boolean handleContent(String content){
+    private boolean handleContent(String content) {
         Log.i("List of Matches", "Handle Content");
         boolean success = false;
 
         ArrayList<JSONObject> list = ScoresJsonParser.parseListOfMatches(content);
-        if( list.size() > 0 ){
+        if (list.size() > 0) {
             matches.clear();
-            if(UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET)&& UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_FOOTBALL)) {
+            if (UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET) && UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_FOOTBALL)) {
                 matches.addAll(list);
-            }else {
-                ArrayList<JSONObject> cricket=new ArrayList<>();
-                ArrayList <JSONObject> footbal=new ArrayList<>();
-                for(JSONObject obj: list) {
+            } else {
+                ArrayList<JSONObject> cricket = new ArrayList<>();
+                ArrayList<JSONObject> footbal = new ArrayList<>();
+                for (JSONObject obj : list) {
                     try {
-                        String s= obj.getString(ScoresJsonParser.SPORTS_TYPE_PARAMETER);
-                        if(s.equals(ScoresJsonParser.CRICKET)){
+                        String s = obj.getString(ScoresJsonParser.SPORTS_TYPE_PARAMETER);
+                        if (s.equals(ScoresJsonParser.CRICKET)) {
                             cricket.add(obj);
-                        }else{
+                        } else {
                             footbal.add(obj);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
-                if(UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET)){
+                if (UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET)) {
                     matches.addAll(cricket);
-                }else{
+                } else {
                     matches.addAll(footbal);
                 }
             }
@@ -195,50 +219,50 @@ public class MatchListFragment extends Fragment {
         return success;
     }
 
-    private void initErrorLayout(View view){
+    private void initErrorLayout(View view) {
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
 
-        TextView oops = (TextView)errorLayout.findViewById(R.id.oops);
+        TextView oops = (TextView) errorLayout.findViewById(R.id.oops);
         oops.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
 
         TextView something_wrong = (TextView) errorLayout.findViewById(R.id.something_wrong);
         something_wrong.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
     }
 
-    private void showErrorLayout(View view){
-        if( matches.size() == 0 ) {
+    private void showErrorLayout(View view) {
+        if (matches.size() == 0) {
             LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
             errorLayout.setVisibility(View.VISIBLE);
         }
     }
 
-    private void hideErrorLayout(View view){
+    private void hideErrorLayout(View view) {
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.GONE);
     }
 
-    private void addResponseListener(){
+    private void addResponseListener() {
         ScoresContentHandler.getInstance().addResponseListener(contentListener, LIST_LISTENER_KEY);
     }
 
-    private void removeResponseListener(){
+    private void removeResponseListener() {
         ScoresContentHandler.getInstance().removeResponseListener(LIST_LISTENER_KEY);
     }
 
-    private void initProgress(View view){
-        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+    private void initProgress(View view) {
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
     }
 
-    private void showProgress(View view){
-        if( matches.size() == 0 ) {
+    private void showProgress(View view) {
+        if (matches.size() == 0) {
             ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
             progressBar.setVisibility(View.VISIBLE);
         }
     }
 
-    private void hideProgress(View view){
-        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+    private void hideProgress(View view) {
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.setVisibility(View.GONE);
     }
 
@@ -264,9 +288,9 @@ public class MatchListFragment extends Fragment {
 
         @Override
         public void handleContent(String tag, String content, int responseCode) {
-            if( tag.equals(LIST_OF_MATCHES_REQUEST_TAG) ){
+            if (tag.equals(LIST_OF_MATCHES_REQUEST_TAG)) {
                 boolean success = false;
-                if( responseCode == 200 ){
+                if (responseCode == 200) {
                     success = MatchListFragment.this.handleContent(content);
                     if (success) {
                         hideErrorLayout(MatchListFragment.this.getView());
@@ -285,15 +309,6 @@ public class MatchListFragment extends Fragment {
             } else {
                 //nothing
             }
-        }
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode== Activity.RESULT_OK&& requestCode==Constants.REQUEST_CODE_SCORE){
-            mSwipeRefreshLayout.setRefreshing(true);
-            requestContent();
         }
     }
 }
