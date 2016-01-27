@@ -239,14 +239,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
 
         @Override
         protected void showErrorLayout() {
-            EnterOtpActivity.this.runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-                }
-
-            });
+            Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -279,18 +272,11 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
 
         @Override
         public void changeUI() {
-            EnterOtpActivity.this.runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (success) {
-                        moveToNextActivity();
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.otp_message_wrong_expired_token, Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-            });
+            if (success) {
+                moveToNextActivity();
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.otp_message_wrong_expired_token, Toast.LENGTH_SHORT).show();
+            }
         }
 
     }
@@ -305,14 +291,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
 
         @Override
         protected void showErrorLayout() {
-            EnterOtpActivity.this.runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-                }
-
-            });
+            Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -345,19 +324,13 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
 
         @Override
         public void changeUI() {
-            EnterOtpActivity.this.runOnUiThread(new Runnable() {
-
-                @Override
-                public void run() {
-                    if (resendSuccessful) {
-                        Toast.makeText(EnterOtpActivity.this, R.string.otp_message_otp_sent, Toast.LENGTH_SHORT).show();
-                    } else {
-                        Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-            });
+            if (resendSuccessful) {
+                Toast.makeText(EnterOtpActivity.this, R.string.otp_message_otp_sent, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+            }
         }
+
     }
 
     @Override

@@ -2,29 +2,21 @@ package com.sports.unity.util;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.sports.unity.R;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by amandeep on 13/1/16.
@@ -33,8 +25,8 @@ public class ImageUtil {
 
     public static final int SMALL_THUMB_IMAGE_SIZE = 100;
 
-    public static Bitmap handleImageAndSetToView(Intent data, ImageView imageView) {
-        Bitmap decodedBitmap = null;
+    public static byte[] handleImageAndSetToView(Intent data, ImageView imageView, int requiredWidth, int requiredHeight) {
+        byte[] compressedContent = null;
         if (imageView != null) {
             Context context = imageView.getContext();
             boolean success = false;
@@ -50,11 +42,6 @@ public class ImageUtil {
                         selectedImageFilePath = ImageUtil.getRealPathFromURI(selectedImageUri, context);
                     }
 
-//                    Bitmap bitmap = getBitmapFromUri(selectedImageUri, imageView.getContext());
-//                    selectedImageUri = getImageUri(imageView.getContext(), bitmap);
-
-//                    selectedImageUri = Uri.fromFile(new File(selectedImageUri.getPath()));
-
                     Log.d("Image Util", "Accessible Selected Image Path " + selectedImageFilePath);
                 } else {
                     Bitmap bitmap = (Bitmap) data.getExtras().get("data");
@@ -65,7 +52,7 @@ public class ImageUtil {
                 }
 
                 if (selectedImageFilePath != null) {
-                    decodedBitmap = compress_and_set_image( selectedImageFilePath, imageView);
+                    compressedContent = getAndSetCompressedImageToView(selectedImageFilePath, imageView, requiredWidth, requiredHeight);
 
                     success = true;
                 } else {
@@ -79,83 +66,7 @@ public class ImageUtil {
                 Toast.makeText(context, "Unable to access this file since it is locked :( Select another image.", Toast.LENGTH_SHORT).show();
             }
         }
-        return decodedBitmap;
-    }
-
-    public static Bitmap getBitmapFromUri(Uri uri, Context context) throws IOException {
-        ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(uri, "r");
-        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
-        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
-        parcelFileDescriptor.close();
-        return image;
-    }
-
-    public static Bitmap compress_and_set_image( String filePath, ImageView imageView) throws Exception {
-        File file = new File(filePath);
-        Bitmap bitmap = ImageUtil.decodeSampleImage(file, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
-
-        bitmap = ImageUtil.rotateImageIfRequired(bitmap, file);
-        imageView.setImageBitmap(bitmap);
-
-        return bitmap;
-    }
-
-    public static int calculateInSampleSize( BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        int sampleScaleSize = 1;
-
-//        while (options.outWidth / sampleScaleSize / 2 >= reqWidth && options.outHeight / sampleScaleSize / 2 >= reqHeight) {
-//            sampleScaleSize *= 2;
-//        }
-
-        int sampleScaleSize_WithWidth = options.outWidth / reqWidth;
-        int sampleScaleSize_WithHeight = options.outHeight / reqHeight;
-
-        if( sampleScaleSize_WithHeight < sampleScaleSize_WithWidth ){
-            sampleScaleSize = sampleScaleSize_WithHeight;
-        } else {
-            sampleScaleSize = sampleScaleSize_WithWidth;
-        }
-
-        return sampleScaleSize;
-    }
-
-    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
-
-        // First decode with inJustDecodeBounds=true to check dimensions
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(res, resId, options);
-
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        return BitmapFactory.decodeResource(res, resId, options);
-    }
-
-    public static Bitmap decodeSampleImage(File file, int width, int height) throws Exception {
-//            System.gc(); // First of all free some memory
-
-        // Decode image size
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeStream(new FileInputStream(file), null, options);
-
-        // Decode with inSampleSize
-        BitmapFactory.Options o2 = new BitmapFactory.Options();
-        o2.inSampleSize = calculateInSampleSize(options, width, height);
-        o2.inJustDecodeBounds = false;
-
-        return BitmapFactory.decodeStream(new FileInputStream(file), null, o2);
-    }
-
-    public static Bitmap decodeSampleImage(String filePath, int width, int height) throws Exception {
-        return decodeSampleImage(new File(filePath), width, height);
-    }
-
-    public static Bitmap decodeSampleImage(Uri uri, int width, int height, Context context) throws Exception {
-        return decodeSampleImage( new File(getRealPathFromURI(uri, context)), width, height);
+        return compressedContent;
     }
 
     public static Bitmap rotateImageIfRequired(Bitmap img, File selectedImage) throws IOException {
@@ -173,6 +84,101 @@ public class ImageUtil {
             default:
                 return img;
         }
+    }
+
+//    public static Bitmap getBitmapFromUri(Uri uri, Context context) throws IOException {
+//        ParcelFileDescriptor parcelFileDescriptor = context.getContentResolver().openFileDescriptor(uri, "r");
+//        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+//        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+//        parcelFileDescriptor.close();
+//        return image;
+//    }
+
+    public static Bitmap getCompressedBitmap(String filePath, int requiredWidth, int requiredHeight) throws Exception {
+        Bitmap bitmap = getDecodedSampleBitmap(filePath, requiredWidth, requiredHeight);
+        byte[] content = ImageUtil.getCompressedBytes(bitmap);
+        bitmap = BitmapFactory.decodeByteArray(content, 0, content.length);
+        return bitmap;
+    }
+
+    public static byte[] getCompressedBytes(String filePath, int requiredWidth, int requiredHeight) throws Exception {
+        Bitmap bitmap = getDecodedSampleBitmap(filePath, requiredWidth, requiredHeight);
+        byte[] content = ImageUtil.getCompressedBytes(bitmap);
+        return content;
+    }
+
+    private static byte[] getAndSetCompressedImageToView(String filePath, ImageView imageView, int requiredWidth, int requiredHeight) throws Exception {
+        byte[] content = ImageUtil.getCompressedBytes(filePath, requiredWidth, requiredHeight);
+
+        Bitmap bitmap = BitmapFactory.decodeByteArray(content, 0, content.length);
+        imageView.setImageBitmap(bitmap);
+
+        return content;
+    }
+
+    private static Bitmap getDecodedSampleBitmap(String filePath, int requiredWidth, int requiredHeight) throws Exception {
+        File file = new File(filePath);
+        Bitmap bitmap = ImageUtil.decodeSampleImage(file, requiredWidth, requiredHeight);
+        bitmap = ImageUtil.rotateImageIfRequired(bitmap, file);
+        return bitmap;
+    }
+
+    private static Bitmap decodeSampleImage(File file, int width, int height) throws Exception {
+//            System.gc(); // First of all free some memory
+
+        // Decode image size
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(new FileInputStream(file), null, options);
+
+        // Decode with inSampleSize
+        BitmapFactory.Options o2 = new BitmapFactory.Options();
+        o2.inSampleSize = calculateInSampleSize(options, width, height);
+        o2.inJustDecodeBounds = false;
+
+        return BitmapFactory.decodeStream(new FileInputStream(file), null, o2);
+    }
+
+//    private static Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight) {
+//
+//        // First decode with inJustDecodeBounds=true to check dimensions
+//        final BitmapFactory.Options options = new BitmapFactory.Options();
+//        options.inJustDecodeBounds = true;
+//        BitmapFactory.decodeResource(res, resId, options);
+//
+//        // Calculate inSampleSize
+//        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+//
+//        // Decode bitmap with inSampleSize set
+//        options.inJustDecodeBounds = false;
+//        return BitmapFactory.decodeResource(res, resId, options);
+//    }
+//
+//    private static Bitmap decodeSampleImage(String filePath, int width, int height) throws Exception {
+//        return decodeSampleImage(new File(filePath), width, height);
+//    }
+//
+//    private static Bitmap decodeSampleImage(Uri uri, int width, int height, Context context) throws Exception {
+//        return decodeSampleImage( new File(getRealPathFromURI(uri, context)), width, height);
+//    }
+
+    private static int calculateInSampleSize( BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        int sampleScaleSize = 1;
+
+//        while (options.outWidth / sampleScaleSize / 2 >= reqWidth && options.outHeight / sampleScaleSize / 2 >= reqHeight) {
+//            sampleScaleSize *= 2;
+//        }
+
+        int sampleScaleSize_WithWidth = options.outWidth / reqWidth;
+        int sampleScaleSize_WithHeight = options.outHeight / reqHeight;
+
+        if( sampleScaleSize_WithHeight < sampleScaleSize_WithWidth ){
+            sampleScaleSize = sampleScaleSize_WithHeight;
+        } else {
+            sampleScaleSize = sampleScaleSize_WithWidth;
+        }
+
+        return sampleScaleSize;
     }
 
     private static Bitmap rotateImage(Bitmap bitmap, int degree) {
@@ -207,10 +213,31 @@ public class ImageUtil {
     }
 
     public static byte[] getCompressedBytes(Bitmap bitmap){
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+        byte[] bytes = null;
+        ByteArrayOutputStream byteArrayOutputStream = null;
+        try {
+            byteArrayOutputStream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
 
-        return byteArrayOutputStream.toByteArray();
+            bytes = byteArrayOutputStream.toByteArray();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }finally {
+            try{
+                byteArrayOutputStream.close();
+            }catch (Exception ex){}
+        }
+
+        return bytes;
+    }
+
+    public static Bitmap getCompressedBitmap(Bitmap bitmap){
+        Bitmap compressedBitmap = null;
+        byte[] content = getCompressedBytes(bitmap);
+        if( content != null ) {
+            compressedBitmap = BitmapFactory.decodeByteArray(content, 0, content.length);
+        }
+        return compressedBitmap;
     }
 
 }

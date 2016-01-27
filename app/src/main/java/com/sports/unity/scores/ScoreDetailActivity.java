@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
@@ -42,7 +43,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
     private static final String SCORE_DETAIL_REQUEST_TAG = "score_detail_request_tag";
     private static final String LIST_OF_COMMENTARIES_REQUEST_TAG = "list_commentaries_request_tag";
 
-    private ScoresContentListener contentListener = new ScoresContentListener();
+//    private ScoresContentListener contentListener = new ScoresContentListener();
 
     private CricketMatchJsonCaller cricketMatchJsonCaller = new CricketMatchJsonCaller();
     private FootballMatchJsonCaller footballMatchJsonCaller = new FootballMatchJsonCaller();
@@ -65,26 +66,22 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         sportsType = getIntent().getStringExtra(Constants.INTENT_KEY_TYPE);
         matchId = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
 
-//        sportsType = ScoresJsonParser.FOOTBALL;
-//        matchId = "2138018";
-
-//        sportsType = ScoresJsonParser.CRICKET;
-//        matchId = "bblt20_2015_g22";
-
         initToolbar();
         initView();
 
-//        {
-//            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
-//            ScoreDetailComponentListener createUserComponentListener = new ScoreDetailComponentListener(progressBar);
-//            MatchCommentariesComponentListener resendOtpComponentListener = new MatchCommentariesComponentListener(progressBar);
-//
-//            ArrayList<CustomComponentListener> listeners = new ArrayList<>();
-//            listeners.add(createUserComponentListener);
-//            listeners.add(resendOtpComponentListener);
-//
-//            onComponentCreate(listeners, REQUEST_LISTENER_KEY);
-//        }
+        {
+            LinearLayout errorLayout = (LinearLayout) findViewById(R.id.error);
+            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+
+            ScoreDetailComponentListener createUserComponentListener = new ScoreDetailComponentListener(progressBar, errorLayout);
+            MatchCommentariesComponentListener resendOtpComponentListener = new MatchCommentariesComponentListener(progressBar, errorLayout);
+
+            ArrayList<CustomComponentListener> listeners = new ArrayList<>();
+            listeners.add(createUserComponentListener);
+            listeners.add(resendOtpComponentListener);
+
+            onComponentCreate(listeners, REQUEST_LISTENER_KEY);
+        }
 
     }
 
@@ -92,34 +89,24 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
     public void onResume() {
         super.onResume();
 
-        addResponseListener();
+        onComponentResume();
 
         {
             Log.i("Score Detail", "Through Resume");
 
-            showProgress(false);
             requestMatchScoreDetails();
-//            requestContent();
         }
-
-        onComponentResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        removeResponseListener();
         disableAutoRefreshContent();
-
         onComponentPause();
     }
 
     private void initView() {
-
-        initProgress();
-        initErrorLayout();
-
         ((TextView)findViewById(R.id.venue)).setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -409,127 +396,25 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
     private void requestMatchScoreDetails() {
         Log.i("Score Detail", "Request Score Details");
 
-        hideErrorLayout();
-
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(ScoresContentHandler.PARAM_SPORTS_TYPE, sportsType);
         parameters.put(ScoresContentHandler.PARAM_ID, matchId);
         ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_DETAIL, parameters, REQUEST_LISTENER_KEY, SCORE_DETAIL_REQUEST_TAG);
-//        ScoresContentHandler.getInstance().requestScoresOfMatch( sportsType, matchId, REQUEST_LISTENER_KEY, SCORE_DETAIL_REQUEST_TAG);
     }
 
     private void requestMatchCommentaries() {
         Log.i("Score Detail", "Request Commentaries");
 
-        hideErrorLayout();
-
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(ScoresContentHandler.PARAM_SPORTS_TYPE, sportsType);
         parameters.put(ScoresContentHandler.PARAM_ID, matchId);
-        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_DETAIL, parameters, REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
-//        ScoresContentHandler.getInstance().requestCommentaryOnMatch(sportsType, matchId, REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
-    }
-
-    private void initErrorLayout(){
-        LinearLayout errorLayout = (LinearLayout) findViewById(R.id.error);
-
-        TextView oops = (TextView)errorLayout.findViewById(R.id.oops);
-        oops.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoLight());
-
-        TextView something_wrong = (TextView) errorLayout.findViewById(R.id.something_wrong);
-        something_wrong.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoLight());
-    }
-
-    private void showErrorLayout(){
-        if( commentaries.size() == 0 ) {
-            LinearLayout errorLayout = (LinearLayout) findViewById(R.id.error);
-            errorLayout.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void hideErrorLayout(){
-        LinearLayout errorLayout = (LinearLayout) findViewById(R.id.error);
-        errorLayout.setVisibility(View.GONE);
-
-        findViewById(R.id.no_comments).setVisibility(View.GONE);
-    }
-
-    private void addResponseListener(){
-        ScoresContentHandler.getInstance().addResponseListener(contentListener, REQUEST_LISTENER_KEY);
-    }
-
-    private void removeResponseListener(){
-        ScoresContentHandler.getInstance().removeResponseListener(REQUEST_LISTENER_KEY);
-    }
-
-    private void initProgress(){
-        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progress);
-        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_COMMENTARIES, parameters, REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
     }
 
     private void showProgress(boolean force){
         if( commentaries.size() == 0 || force ) {
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
             progressBar.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void hideProgress(){
-        ProgressBar progressBar = (ProgressBar)findViewById(R.id.progress);
-        progressBar.setVisibility(View.GONE);
-    }
-
-    private class ScoresContentListener implements ScoresContentHandler.ContentListener {
-
-        @Override
-        public void handleContent(String tag, String content, int responseCode) {
-            if( tag.equals(LIST_OF_COMMENTARIES_REQUEST_TAG) ){
-                boolean success = false;
-                if( responseCode == 200 ){
-                    success = ScoreDetailActivity.this.handleCommentaries(content);
-                    if (success) {
-                        hideErrorLayout();
-                        ScoreDetailActivity.this.renderComments();
-                    } else {
-                        Log.i("Score Detail", "Error In Handling Content");
-                        showNoCommentaries();
-                    }
-                } else {
-                    Log.i("Score Detail", "Error In Response");
-                    showErrorLayout();
-                }
-
-                hideProgress();
-
-//                mSwipeRefreshLayout.setRefreshing(false);
-            } else if( tag.equals(SCORE_DETAIL_REQUEST_TAG) ) {
-                boolean success = false;
-                if( responseCode == 200 ){
-                    success = ScoreDetailActivity.this.handleScoreDetails(content);
-                    if (success) {
-                        hideErrorLayout();
-
-                        ScoreDetailActivity.this.setTitle();
-                        boolean requestCommentaries = ScoreDetailActivity.this.renderScores();
-                        if( requestCommentaries ){
-                            ScoreDetailActivity.this.requestMatchCommentaries();
-                        } else {
-                            ScoreDetailActivity.this.requestMatchCommentaries();
-//                            hideProgress();
-                        }
-                    } else {
-                        Log.i("Score Detail", "Error In Handling Content");
-                        showErrorLayout();
-                        hideProgress();
-                    }
-                } else {
-                    Log.i("Score Detail", "Error In Response");
-                    showErrorLayout();
-                    hideProgress();
-                }
-            } else {
-                //nothing
-            }
         }
     }
 
@@ -541,7 +426,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
         @Override
         public boolean handleContent(String tag, String content) {
-            return false;
+            return ScoreDetailActivity.this.handleScoreDetails(content);
         }
 
         @Override
@@ -550,12 +435,36 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         }
 
         @Override
-        public void changeUI() {
+        protected void hideErrorLayout() {
+            super.hideErrorLayout();
 
+            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
+        }
+
+        @Override
+        protected void showErrorLayout() {
+            if( commentaries.size() == 0 ) {
+                super.showErrorLayout();
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void changeUI() {
+            ScoreDetailActivity.this.setTitle();
+            boolean requestCommentaries = ScoreDetailActivity.this.renderScores();
+            if( requestCommentaries ){
+                ScoreDetailActivity.this.requestMatchCommentaries();
+            } else {
+
+            }
         }
     }
 
     private class MatchCommentariesComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
+
+        private boolean successfulResponse = false;
 
         public MatchCommentariesComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
             super( LIST_OF_COMMENTARIES_REQUEST_TAG, progressBar, errorLayout);
@@ -563,7 +472,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
         @Override
         public boolean handleContent(String tag, String content) {
-            return false;
+            successfulResponse = ScoreDetailActivity.this.handleCommentaries(content);
+            return true;
         }
 
         @Override
@@ -572,8 +482,29 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         }
 
         @Override
-        public void changeUI() {
+        protected void hideErrorLayout() {
+            super.hideErrorLayout();
 
+            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
+        }
+
+        @Override
+        protected void showErrorLayout() {
+            if( commentaries.size() == 0 ) {
+                super.showErrorLayout();
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void changeUI() {
+            if (successfulResponse) {
+                ScoreDetailActivity.this.renderComments();
+            } else {
+                Log.i("Score Detail", "Error In Handling Content");
+                showNoCommentaries();
+            }
         }
     }
 

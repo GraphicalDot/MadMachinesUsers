@@ -137,6 +137,39 @@ public class DBUtil {
         Log.d("File I/O", "end writing");
     }
 
+    public static void writeContentToExternalFileStorage( Context context, String sourceFileName, String destinationFileName){
+        Log.d("File I/O", "start writing");
+        File dirPath = new File(getExternalStorageDirectoryPath(context));
+        if( ! dirPath.exists() ){
+            dirPath.mkdir();
+        }
+
+        File file = new File ( getFilePath( context, destinationFileName));
+        FileOutputStream out = null;
+        FileInputStream fileInputStream = null;
+        try {
+            out = new FileOutputStream(file);
+            fileInputStream = new FileInputStream(sourceFileName);
+
+            byte[] chunk = new byte[1024];
+            int read = 0;
+            while( (read = fileInputStream.read(chunk)) != -1 ) {
+                out.write(chunk, 0, read);
+            }
+            out.flush();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            }catch (Exception ex){}
+        }
+
+        Log.d("File I/O", "end writing");
+    }
+
     public static byte[] loadContentFromExternalFileStorage( Context context, String fileName){
         Log.d("File I/O", "start reading");
         byte [] content = null;

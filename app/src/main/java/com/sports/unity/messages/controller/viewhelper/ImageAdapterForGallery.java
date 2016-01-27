@@ -201,34 +201,32 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
 
 
         final int position = (Integer)imageView.getTag(R.layout.layout_gallery);
-        final File file = new File(filePath.get(position));
+        final String file = filePath.get(position);
 
         final int screenHeight = activity.getResources().getDisplayMetrics().heightPixels;
         final int screenWidth = activity.getResources().getDisplayMetrics().widthPixels;
 
         try{
-            Bitmap bitmap = com.sports.unity.util.ImageUtil.decodeSampleImage( file, screenHeight, screenWidth);
-
-            new ThreadTask(bitmap) {
-                private byte[] mediaContent = null;
+            new ThreadTask(null) {
 
                 @Override
                 public Object process() {
-                  //  Bitmap bitmap = (Bitmap) object;
-                    try {
-                        mediaContent = FileUtils.readFileToByteArray(file);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
 
                     String fileName = null;
+                    try {
+                        if (filePath.get(position).contains(".jpg") || filePath.get(position).contains(".png") || filePath.get(position).contains(".jpeg")) {
+                            fileName = DBUtil.getUniqueFileName(activity.getBaseContext(), SportsUnityDBHelper.MIME_TYPE_IMAGE);
+                            this.object = ImageUtil.getCompressedBytes(file, screenHeight, screenWidth);
 
-                    if(filePath.get(position).contains(".jpg") || filePath.get(position).contains(".png") || filePath.get(position).contains(".jpeg")) {
-                        fileName = DBUtil.getUniqueFileName(activity.getBaseContext(), SportsUnityDBHelper.MIME_TYPE_IMAGE);
-                        DBUtil.writeContentToExternalFileStorage(activity.getBaseContext(), fileName, mediaContent);
-                    } else {
-                        fileName = DBUtil.getUniqueFileName(activity.getBaseContext(), SportsUnityDBHelper.MIME_TYPE_VIDEO);
-                        DBUtil.writeContentToExternalFileStorage(activity.getBaseContext(), fileName, mediaContent);
+                            DBUtil.writeContentToExternalFileStorage(activity.getBaseContext(), fileName, (byte[])this.object);
+                        } else {
+                            fileName = DBUtil.getUniqueFileName(activity.getBaseContext(), SportsUnityDBHelper.MIME_TYPE_VIDEO);
+                            this.object = fileName;
+
+                            DBUtil.writeContentToExternalFileStorage(activity.getBaseContext(), file, fileName);
+                        }
+                    }catch (Exception ex){
+                        ex.printStackTrace();
                     }
                     return fileName;
                 }
@@ -236,6 +234,7 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
                 @Override
                 public void postAction(Object object) {
                     String fileName = (String) object;
+                    Object mediaContent = this.object;
 
                     if(filePath.get(position).contains(".jpg") || filePath.get(position).contains(".png") || filePath.get(position).contains(".jpeg")) {
                         sendActionToCorrespondingActivityListener(1, ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName, mediaContent);

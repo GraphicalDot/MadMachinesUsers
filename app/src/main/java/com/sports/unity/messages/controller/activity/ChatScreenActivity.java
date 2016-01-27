@@ -683,7 +683,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
-            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload((byte[]) mediaContent, mimeType, chat, messageId, otherChat);
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload( mediaFileName, mimeType, chat, messageId, otherChat);
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
             String mediaFileName = (String) messageContent;
 
@@ -705,7 +705,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
-            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload((byte[]) mediaContent, mimeType, chat, messageId, otherChat);
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, mimeType, chat, messageId, otherChat);
 
         }
     }
@@ -898,8 +898,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                                 byte[] content = DBUtil.loadContentFromExternalFileStorage(ChatScreenActivity.this.getBaseContext(), message.mediaFileName);
                                 mediaMap.put(message.mediaFileName, content);
 
-                                if ((message.textData.length() == 0 && message.iAmSender == true) || (message.mediaFileName == null && message.iAmSender == false)) {
-                                    FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(content, message.mimeType, chat, message.id, otherChat);
+                                if ( (message.textData.length() == 0 && message.iAmSender == true) ) {
+                                    FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload( message.mediaFileName, message.mimeType, chat, message.id, otherChat);
                                 } else {
                                     //nothing
                                 }

@@ -89,7 +89,6 @@ public class ScoresJsonParser {
             boolean error = jsonObject.getBoolean("error");
 
             if( success ) {
-                list = new ArrayList<>();
                 JSONArray array = (JSONArray) jsonObject.get("data");
                 for( int index=0; index < array.length(); index++){
                     list.add( array.getJSONObject(index));

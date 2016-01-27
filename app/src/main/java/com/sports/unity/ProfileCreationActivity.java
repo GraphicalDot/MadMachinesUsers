@@ -122,13 +122,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
             CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
 
-            Bitmap bitmap = ImageUtil.handleImageAndSetToView(data, circleImageView);
-
-            if( bitmap != null ) {
-                byteArray = ImageUtil.getCompressedBytes(bitmap);
-
-                Log.d("Profile Creation", "Byte Count " + bitmap.getByteCount() + " Density " + bitmap.getDensity() + " Row Bytes " + bitmap.getRowBytes() );
-            }
+            byteArray = ImageUtil.handleImageAndSetToView(data, circleImageView, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }

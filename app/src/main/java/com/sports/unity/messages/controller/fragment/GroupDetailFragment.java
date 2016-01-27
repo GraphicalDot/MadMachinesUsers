@@ -103,9 +103,7 @@ public class GroupDetailFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
-            Bitmap decodedBitmap = ImageUtil.handleImageAndSetToView(data, groupAvatar);
-
-            groupImageArray = ImageUtil.getCompressedBytes(decodedBitmap);
+            groupImageArray = ImageUtil.handleImageAndSetToView(data, groupAvatar, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
         } else {
             //callbackManager.onActivityResult(requestCode, resultCode, data);
         }
