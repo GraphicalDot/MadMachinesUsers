@@ -64,7 +64,8 @@
     <string name="football">Football</string>
     <string name="formula_one">Formula One</string>
     <string name="tennis">Tennis</string>
-    <string name="filter_by_sports">FILTER BY SPORTS</string>
+    <string name="filter_by_sports">Filter by Sports</string>
+    <string name="edit_sports">EDIT SPORTS</string>
     <string name="clear_all_filters">Clear All Filters</string>
     <string name="apply_filters">Next</string>
     <string name="advance_filters">ADVANCE FILTERS</string>

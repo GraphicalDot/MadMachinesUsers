@@ -19,18 +19,18 @@
             android:fitsSystemWindows="true"
             android:scrollbars="none" />
 
-        <TextView
-            android:id="@+id/edit_team"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/drawer_header_height"
-            android:layout_toLeftOf="@+id/favindi"
-            android:gravity="center"
-            android:paddingLeft="@dimen/horizontal_padding_small"
-            android:paddingRight="@dimen/horizontal_padding_small"
-            android:text="@string/nav_edit"
-            android:textColor="@color/app_theme_blue"
-            android:textSize="@dimen/font_size_very_small"
-            android:visibility="invisible" />
+        <!--<TextView-->
+            <!--android:id="@+id/edit_team"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="@dimen/drawer_header_height"-->
+            <!--android:layout_toLeftOf="@+id/favindi"-->
+            <!--android:gravity="center"-->
+            <!--android:paddingLeft="@dimen/horizontal_padding_small"-->
+            <!--android:paddingRight="@dimen/horizontal_padding_small"-->
+            <!--android:text="@string/nav_edit"-->
+            <!--android:textColor="@color/app_theme_blue"-->
+            <!--android:textSize="@dimen/font_size_very_small"-->
+            <!--android:visibility="invisible" />-->
 
         <ImageView
             android:id="@+id/favindi"

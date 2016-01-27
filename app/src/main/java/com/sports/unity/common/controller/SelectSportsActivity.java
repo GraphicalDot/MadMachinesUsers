@@ -37,6 +37,7 @@ public class SelectSportsActivity extends AppCompatActivity {
     private Thread sendInterestsThread = null;
     private String base_url = "http://54.169.217.88/set_user_interests?username=";
     private String urlToRequest = "";
+    private boolean flag = false;
 
     /*For future use: to add all the sports
      in sports selection screen*/
@@ -81,6 +82,12 @@ public class SelectSportsActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_select_sports);
         sports = UserUtil.getSportsSelected();
+        try {
+           flag=getIntent().getBooleanExtra(Constants.IS_FROM_NAV, false);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         initView();
     }
 
@@ -135,6 +142,8 @@ public class SelectSportsActivity extends AppCompatActivity {
         executeThreadToUpdateInterests();
         UserUtil.setSportsSelected(SelectSportsActivity.this, sports);
         Intent intent = new Intent(SelectSportsActivity.this, AdvancedFilterActivity.class);
+        intent.putExtra(Constants.IS_FROM_NAV,flag);
+        intent.putExtra(Constants.SPORTS_TYPE, UserUtil.getSportsSelected().get(0));
         startActivity(intent);
 
         finish();

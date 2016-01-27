@@ -24,6 +24,7 @@ import com.sports.unity.common.model.FavouriteContentHandler;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
@@ -36,7 +37,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private Bundle bundle;
     private AdvancedFilterFragment advancedFilterFragment;
     public ArrayList<String> favList;
+    private ArrayList<String> sportsSelected;
     private TextView titleText;
+    private ImageView back;
     private ArrayList<OnEditFilterListener> editFilterListener;
     private ImageView search, searchClose;
     private LinearLayout titleLayout, searchLayout;
@@ -45,6 +48,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     public String searchString;
     public boolean isFromNav;
     private int listSize = 0;
+    int fragmentNum = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         setContentView(R.layout.advanced_filter_activity);
         editFilterListener = new ArrayList<OnEditFilterListener>();
         favList = UserUtil.getFavouriteFilters();
+        sportsSelected = UserUtil.getSportsSelected();
         bundle = getIntent().getExtras();
         try {
             isFromNav = bundle.getBoolean(Constants.IS_FROM_NAV, false);
@@ -71,8 +76,10 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private void setUpDoneClick() {
         final Button done = (Button) findViewById(R.id.done);
         done.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
-        if (!UserUtil.isFilterCompleted() || !isFromNav) {
+        if (!UserUtil.isFilterCompleted() || isFromNav) {
             done.setVisibility(View.INVISIBLE);
+        }else{
+            done.setVisibility(View.VISIBLE);
         }
         done.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,7 +92,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private void setUpSkipClick() {
         Button skip = (Button) findViewById(R.id.skip);
         skip.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
-        if (UserUtil.isFilterCompleted()) {
+        if (!UserUtil.isFilterCompleted() || isFromNav) {
+            skip.setVisibility(View.VISIBLE);
+        }else{
             skip.setVisibility(View.INVISIBLE);
         }
         skip.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +114,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
         Button next = (Button) findViewById(R.id.next);
         next.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
-        if (UserUtil.isFilterCompleted()) {
+        if (!UserUtil.isFilterCompleted() || isFromNav) {
+            next.setVisibility(View.VISIBLE);
+        }else{
             next.setVisibility(View.INVISIBLE);
         }
         next.setOnClickListener(new View.OnClickListener() {
@@ -143,26 +154,18 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     }
 
     private void handleNextClick() {
-        Bundle b = advancedFilterFragment.getArguments();
         UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
-        if (UserUtil.isFilterCompleted()) {
+        if (UserUtil.isFilterCompleted()&&!isFromNav) {
             finish();
-        } else if (b.get(Constants.SPORTS_FILTER_TYPE).equals(Constants.FILTER_TYPE_LEAGUE)) {
-            UserUtil.setLeagueSelected(AdvancedFilterActivity.this, true);
-            bundle.putString(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_TEAM);
-            titleText.setText("Select your favourite teams");
+        } else if (fragmentNum < sportsSelected.size()) {
+            bundle.putString(Constants.SPORTS_TYPE, sportsSelected.get(fragmentNum));
             replaceFragment(bundle);
-        } else if (b.get(Constants.SPORTS_FILTER_TYPE).equals(Constants.FILTER_TYPE_TEAM)) {
-            UserUtil.setTeamSelected(AdvancedFilterActivity.this, true);
-            bundle.putString(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_PLAYER);
-            titleText.setText("Select your favourite player");
-            replaceFragment(bundle);
-        } else if (!UserUtil.isPlayerSelected()) {
-            UserUtil.setPlayerSelected(AdvancedFilterActivity.this, true);
+            titleText.setText(CommonUtil.capitalize(sportsSelected.get(fragmentNum)));
+            fragmentNum ++;
+        } else  if(fragmentNum == sportsSelected.size()) {
             UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
             moveToNextActivity(MainActivity.class);
         }
-
         closeSearch();
 
     }
@@ -172,6 +175,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         setSupportActionBar(toolbar);
         titleText = (TextView) toolbar.findViewById(R.id.toolbar_title);
         titleText.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
+        back = (ImageView) toolbar.findViewById(R.id.img_back);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         search = (ImageView) toolbar.findViewById(R.id.action_search);
         search.setVisibility(View.VISIBLE);
@@ -179,6 +183,12 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         searchLayout = (LinearLayout) toolbar.findViewById(R.id.search_layout);
         searchText = (EditText) toolbar.findViewById(R.id.search_edit);
         searchClose = (ImageView) toolbar.findViewById(R.id.search_close);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBack();
+            }
+        });
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -247,29 +257,17 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
     private void moveToNextActivity(Class nextActivityClass) {
         Intent mainIntent = new Intent(AdvancedFilterActivity.this, nextActivityClass);
+        mainIntent.putExtra(Constants.IS_FROM_NAV,isFromNav);
         startActivity(mainIntent);
         finish();
     }
 
 
     private void initFragment() {
-        if (UserUtil.isFilterCompleted()) {
-            addFragment();
-        } else /*if (!UserUtil.isLeagueSelected())*/ {
-            bundle = new Bundle();
-            if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
-                bundle.putString(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_LEAGUE);
-                titleText.setText("Select your favourite leagues");
-
-            } else {
-                bundle.putString(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_TEAM);
-                titleText.setText("Select your favourite teams");
-            }
             addFragment();
         }
 
 
-    }
 
     public void closeSearch() {
         if (searchLayout.getVisibility() == View.VISIBLE) {
@@ -284,12 +282,13 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     }
 
     private void addFragment() {
+        fragmentNum = 1;
         editFilterListener = new ArrayList<>();
         FavouriteContentHandler.getInstance().resetListener();
         advancedFilterFragment = new AdvancedFilterFragment();
         advancedFilterFragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().add(R.id.filter_container, advancedFilterFragment, bundle.getString(Constants.SPORTS_FILTER_TYPE)).commit();
-        titleText.setText("Select your favourite " + bundle.getString(Constants.SPORTS_FILTER_TYPE));
+        getSupportFragmentManager().beginTransaction().add(R.id.filter_container, advancedFilterFragment, bundle.getString(Constants.SPORTS_TYPE)).commit();
+        titleText.setText(CommonUtil.capitalize(sportsSelected.get(0)));
 
     }
 
@@ -299,7 +298,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
         advancedFilterFragment = new AdvancedFilterFragment();
         advancedFilterFragment.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction().replace(R.id.filter_container, advancedFilterFragment, bundle.getString(Constants.SPORTS_FILTER_TYPE)).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.filter_container, advancedFilterFragment, bundle.getString(Constants.SPORTS_TYPE)).commit();
     }
 
     public interface OnEditFilterListener {
@@ -316,34 +315,30 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        Bundle b = advancedFilterFragment.getArguments();
+    private void onBack() {
+        fragmentNum--;
         if (isSearchEdit) {
             closeSearch();
-        } else if (UserUtil.isFilterCompleted()) {
+        } else if (UserUtil.isFilterCompleted()&&!isFromNav) {
             if (isFromNav) {
                 setResult(RESULT_CANCELED);
             }
             finish();
-        } else if (b.get(Constants.SPORTS_FILTER_TYPE).equals(Constants.FILTER_TYPE_PLAYER)) {
-            UserUtil.setLeagueSelected(AdvancedFilterActivity.this, true);
-            bundle.putString(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_TEAM);
-            titleText.setText("Select your favourite teams");
+        } else if (fragmentNum !=0) {
+            bundle.putString(Constants.SPORTS_TYPE, sportsSelected.get(fragmentNum-1));
             replaceFragment(bundle);
-        } else if (b.get(Constants.SPORTS_FILTER_TYPE).equals(Constants.FILTER_TYPE_TEAM)) {
-            if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
-                editFilterListener.remove(editFilterListener.size() - 1);
-                UserUtil.setTeamSelected(AdvancedFilterActivity.this, true);
-                bundle.putString(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_LEAGUE);
-                titleText.setText("Select your favourite leagues");
-                replaceFragment(bundle);
-            } else {
+            titleText.setText(CommonUtil.capitalize(UserUtil.getSportsSelected().get(fragmentNum - 1)));
+        } else if (fragmentNum == 0 ) {
+            if(!UserUtil.isFilterCompleted()||isFromNav){
                 moveToNextActivity(SelectSportsActivity.class);
+            } else {
+                finish();
             }
-        } else if (b.get(Constants.SPORTS_FILTER_TYPE).equals(Constants.FILTER_TYPE_LEAGUE)) {
-            moveToNextActivity(SelectSportsActivity.class);
         }
+    }
 
+    @Override
+    public void onBackPressed() {
+        onBack();
     }
 }

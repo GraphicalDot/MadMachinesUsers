@@ -85,15 +85,15 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
         compIndi = (ImageView) view.findViewById(R.id.compindi);
         teamIndi.setOnClickListener(this);
         compIndi.setOnClickListener(this);
-        editTeam = (TextView) view.findViewById(R.id.edit_team);
-        editComp = (TextView) view.findViewById(R.id.edit_comp);
-        editTeam.setOnClickListener(this);
-        editComp.setOnClickListener(this);
+       // editTeam = (TextView) view.findViewById(R.id.edit_team);
+        //editComp = (TextView) view.findViewById(R.id.edit_comp);
+        //editTeam.setOnClickListener(this);
+        //editComp.setOnClickListener(this);
         teamList = (ExpandableListView) view.findViewById(R.id.fav_team);
         competeList = (ExpandableListView) view.findViewById(R.id.complist);
 
-        teamAdapter = new NavListAdapter(getActivity(), teamGroupItems, teamChildItems, editTeam, teamIndi);
-        compAdapter = new NavListAdapter(getActivity(), competeGroupItems, competeChildItems, editComp, compIndi);
+        teamAdapter = new NavListAdapter(getActivity(), teamGroupItems, teamChildItems, teamIndi);
+        compAdapter = new NavListAdapter(getActivity(), competeGroupItems, competeChildItems, compIndi);
 
         teamList.setAdapter(teamAdapter);
         teamList.setGroupIndicator(null);
@@ -269,44 +269,44 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
                     competeList.expandGroup(0);
                 }
                 break;
-            case R.id.edit_team:
-                isTeam = true;
-                ((MainActivity) getActivity()).isPaused = true;
-                Intent advancedFilterTeam = new Intent(getActivity(), AdvancedFilterActivity.class);
-                advancedFilterTeam.putExtra(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_TEAM);
-                advancedFilterTeam.putExtra(Constants.IS_FROM_NAV, isTeam);
-                getActivity().startActivityForResult(advancedFilterTeam, Constants.REQUEST_CODE_NAV);
-                break;
-            case R.id.edit_comp:
-                isComp = true;
-                ((MainActivity) getActivity()).isPaused = true;
-                Intent advancedFilterLeague = new Intent(getActivity(), AdvancedFilterActivity.class);
-                advancedFilterLeague.putExtra(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_LEAGUE);
-                advancedFilterLeague.putExtra(Constants.IS_FROM_NAV, isComp);
-                getActivity().startActivityForResult(advancedFilterLeague, Constants.REQUEST_CODE_NAV);
+//            case R.id.edit_team:
+//                isTeam = true;
+//                ((MainActivity) getActivity()).isPaused = true;
+//                Intent advancedFilterTeam = new Intent(getActivity(), AdvancedFilterActivity.class);
+//                advancedFilterTeam.putExtra(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_TEAM);
+//                advancedFilterTeam.putExtra(Constants.IS_FROM_NAV, isTeam);
+//                getActivity().startActivityForResult(advancedFilterTeam, Constants.REQUEST_CODE_NAV);
+//                break;
+//            case R.id.edit_comp:
+//                isComp = true;
+//                ((MainActivity) getActivity()).isPaused = true;
+//                Intent advancedFilterLeague = new Intent(getActivity(), AdvancedFilterActivity.class);
+//                advancedFilterLeague.putExtra(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_LEAGUE);
+//                advancedFilterLeague.putExtra(Constants.IS_FROM_NAV, isComp);
+//                getActivity().startActivityForResult(advancedFilterLeague, Constants.REQUEST_CODE_NAV);
         }
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d("max","REQU-"+requestCode);
-        if (resultCode == Activity.RESULT_OK && requestCode == Constants.REQUEST_CODE_NAV) {
-            if (isComp) {
-                updateCompChild();
-                isComp = false;
-                compAdapter.updateChildList(competeChildItems);
-                competeList.collapseGroup(0);
-                setListViewHeight(competeList, 0);
-                competeList.expandGroup(0);
-            } else if (isTeam) {
-                updateTeamChild();
-                isTeam = false;
-                teamAdapter.updateChildList(teamChildItems);
-                teamList.collapseGroup(0);
-                setListViewHeight(teamList,0);
-                teamList.expandGroup(0);
-            }
-        }
-    }
+   // @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        Log.d("max","REQU-"+requestCode);
+//        if (resultCode == Activity.RESULT_OK && requestCode == Constants.REQUEST_CODE_NAV) {
+//            if (isComp) {
+//                updateCompChild();
+//                isComp = false;
+//                compAdapter.updateChildList(competeChildItems);
+//                competeList.collapseGroup(0);
+//                setListViewHeight(competeList, 0);
+//                competeList.expandGroup(0);
+//            } else if (isTeam) {
+//                updateTeamChild();
+//                isTeam = false;
+//                teamAdapter.updateChildList(teamChildItems);
+//                teamList.collapseGroup(0);
+//                setListViewHeight(teamList,0);
+//                teamList.expandGroup(0);
+//            }
+//        }
+//    }
 }

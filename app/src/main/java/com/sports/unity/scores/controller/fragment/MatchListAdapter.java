@@ -137,6 +137,15 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 Glide.with(activity).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(holder.t1flag);
                 Glide.with(activity).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(holder.t2flag);
 
+                holder.team1.setTextColor(activity.getResources().getColor(R.color.ColorPrimaryDark));
+                holder.t1score.setTextColor(activity.getResources().getColor(R.color.ColorPrimaryDark));
+                holder.team2.setTextColor(activity.getResources().getColor(R.color.ColorPrimaryDark));
+                holder.t2score.setTextColor(activity.getResources().getColor(R.color.ColorPrimaryDark));
+                holder.team1.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+                holder.team2.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+                holder.t1score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+                holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+
                 boolean isLive = false;
                 if ( cricketMatchJsonCaller.getStatus().equals("completed") ) {
                     holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
@@ -158,6 +167,24 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
 
                     holder.t2score.setText( stringBuilder.toString());
+
+
+                    String result = matchJsonCaller.getResult();
+                    if(result != null || result != "") {
+                        if(result.equals("team_1")) {
+                            holder.team1.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
+                            holder.t1score.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
+                            holder.team1.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+                            holder.t1score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+                        } else if(result.equals("team_2")){
+                            holder.team2.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
+                            holder.t2score.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
+                            holder.team2.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+                            holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+                        }
+                    } else {
+                       //nothing
+                    }
                 } else if ( cricketMatchJsonCaller.getStatus().equals("notstarted") ) {
                     holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
                     holder.liveText.setVisibility(View.GONE);
@@ -248,6 +275,32 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
                     ((ViewGroup) holder.odds.getParent()).setClickable(false);
                 }
+
+                holder.team1.setTextColor(activity.getResources().getColor(R.color.ColorPrimaryDark));
+                holder.t1score.setTextColor(activity.getResources().getColor(R.color.ColorPrimaryDark));
+                holder.team2.setTextColor(activity.getResources().getColor(R.color.ColorPrimaryDark));
+                holder.t2score.setTextColor(activity.getResources().getColor(R.color.ColorPrimaryDark));
+                holder.team1.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+                holder.team2.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+                holder.t1score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+                holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+
+                String result = matchJsonCaller.getResult();
+                    if(holder.matchDay.getText().equals("Completed")) {
+                        if(result != null || result != "") {
+                            if (result.equals("home_team")) {
+                                holder.team1.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
+                                holder.t1score.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
+                                holder.team1.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+                                holder.t1score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+                            } else if (result.equals("away_team")) {
+                                holder.team2.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
+                                holder.t2score.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
+                                holder.team2.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+                                holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+                            }
+                        }} else {
+                    }
             }
 
         }catch (Exception ex){
@@ -259,10 +312,10 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         holder.matchDay.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
         holder.venue.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
         holder.date.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
-        holder.team1.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
-        holder.team2.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
-        holder.t1score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
-        holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+//        holder.team1.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+//        holder.team2.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+//        holder.t1score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
+//        holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
 
         holder.view.setTag(position);
         holder.view.setOnClickListener(listener);

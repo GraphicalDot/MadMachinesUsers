@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +22,7 @@ public class AdvancedFilterFragment extends Fragment {
 
     private Bundle bundle;
     private ArrayList<String> sportsSelected;
-    private String SPORTS_FILTER_TYPE;
+    private String SPORTS_TYPE;
     public AdvancedFilterFragment() {
     }
 
@@ -31,7 +30,7 @@ public class AdvancedFilterFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bundle = getArguments();
-        SPORTS_FILTER_TYPE =bundle.getString(Constants.SPORTS_FILTER_TYPE);
+        SPORTS_TYPE =bundle.getString(Constants.SPORTS_TYPE);
         sportsSelected= UserUtil.getSportsSelected();
     }
 
@@ -49,7 +48,8 @@ public class AdvancedFilterFragment extends Fragment {
     }
 
     private void setTab(View view) {
-        FilterPagerAdapter filterPagerAdapter=new FilterPagerAdapter(getActivity().getSupportFragmentManager(),sportsSelected,SPORTS_FILTER_TYPE);
+
+        FilterPagerAdapter filterPagerAdapter=new FilterPagerAdapter(getActivity().getSupportFragmentManager(),SPORTS_TYPE);
         ViewPager pager = (ViewPager) view.findViewById(R.id.pager);
         pager.setAdapter(filterPagerAdapter);
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {

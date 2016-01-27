@@ -26,11 +26,11 @@ public class NavListAdapter extends BaseExpandableListAdapter {
     ImageView indiIm;
     Activity act;
 
-    public NavListAdapter(Activity context, ArrayList<String> groupList, ArrayList<Object> childItems, TextView tv, ImageView indiIm) {
+    public NavListAdapter(Activity context, ArrayList<String> groupList, ArrayList<Object> childItems, ImageView indiIm) {
         this.groupItems = groupList;
         this.childItems = childItems;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        this.editTeam = tv;
+       // this.editTeam = tv;
         act = context;
         this.indiIm = indiIm;
     }
@@ -101,14 +101,14 @@ public class NavListAdapter extends BaseExpandableListAdapter {
     public void onGroupCollapsed(int groupPosition) {
         super.onGroupCollapsed(groupPosition);
         indiIm.setImageResource(R.drawable.ic_side_nav_expand);
-        editTeam.setVisibility(View.INVISIBLE);
+        //editTeam.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onGroupExpanded(int groupPosition) {
         super.onGroupExpanded(groupPosition);
         indiIm.setImageResource(R.drawable.ic_side_nav_collapse);
-        editTeam.setVisibility(View.VISIBLE);
+//        editTeam.setVisibility(View.VISIBLE);
     }
 
     @Override
