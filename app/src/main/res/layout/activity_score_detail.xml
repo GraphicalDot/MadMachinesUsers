@@ -1,0 +1,193 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ColorPrimary"
+    android:orientation="vertical"
+    tools:context="com.sports.unity.scores.ScoreDetailActivity">
+
+        <include
+            android:id="@+id/tool_bar"
+            layout="@layout/toolbar_score_details"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:minHeight="?android:attr/actionBarSize" />
+
+       <LinearLayout
+           android:id="@+id/horizontal_strip"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:background="@color/gray3"
+           android:orientation="vertical"
+           android:elevation="@dimen/toolbar_elevation"
+           >
+
+           <TextView
+               android:id="@+id/venue"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginLeft="@dimen/vertical_padding_small"
+               android:layout_marginTop="@dimen/vertical_padding_very_very_small"
+               android:textColor="@color/score_dark_grey"
+               android:textSize="@dimen/font_size_small_medium"
+               android:text=""
+               />
+
+           <TextView
+               android:id="@+id/date"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:layout_marginBottom="@dimen/vertical_padding_very_very_small"
+               android:layout_marginLeft="@dimen/vertical_padding_small"
+               android:textColor="@color/score_light_grey"
+               android:textSize="@dimen/font_size_small_medium"
+               android:text=""
+               />
+
+       </LinearLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gray3"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/vertical_padding_medium"
+            android:paddingBottom="@dimen/vertical_padding_medium"
+            android:paddingLeft="@dimen/horizontal_padding_large"
+            android:paddingRight="@dimen/horizontal_padding_large"
+            android:gravity="center">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="left"
+                >
+
+                <LinearLayout
+                    android:id="@+id/flag1_parent_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left"
+                    android:gravity="center">
+                    <ImageView
+                        android:id="@+id/team1_image"
+                        android:layout_width="@dimen/flag_size_large"
+                        android:layout_height="@dimen/flag_size_large"
+                        />
+                    <TextView
+                        android:id="@+id/team1_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="@dimen/font_size_small_large"
+                        android:paddingLeft="@dimen/horizontal_padding_very_small"
+                        />
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/team1_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text=""
+                    android:textColor="@color/gray1"
+                    android:textSize="@dimen/font_size_small_medium"
+                    android:singleLine="true"
+                    android:maxLength="30"
+                    />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/central_score"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text=""
+                android:paddingLeft="@dimen/horizontal_padding_small"
+                android:paddingRight="@dimen/horizontal_padding_small"
+                android:textSize="@dimen/font_size_medium"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="right"
+                >
+
+                <LinearLayout
+                    android:id="@+id/flag2_parent_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left"
+                    android:gravity="center">
+                    <ImageView
+                        android:id="@+id/team2_image"
+                        android:layout_width="@dimen/flag_size_large"
+                        android:layout_height="@dimen/flag_size_large"
+                        />
+                    <TextView
+                        android:id="@+id/team2_score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="@dimen/font_size_small_large"
+                        android:paddingLeft="@dimen/horizontal_padding_very_small"
+                        />
+                </LinearLayout>
+                <TextView
+                    android:id="@+id/team2_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:text=""
+                    android:textSize="@dimen/font_size_small_medium"
+                    android:textColor="@color/gray1"
+                    android:singleLine="true"
+                    android:maxLength="30"
+                    />
+
+            </LinearLayout>
+        </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray4"
+        ></LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/my_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scrollbars="vertical"
+            android:background="@color/gray3"
+            />
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            />
+        <include layout="@layout/error_layout"
+            android:id="@+id/error"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+        <TextView
+            android:id="@+id/no_comments"
+            android:text="No Comments"
+            android:textSize="@dimen/font_size_large"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            />
+    </FrameLayout>
+
+</LinearLayout>

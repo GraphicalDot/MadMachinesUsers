@@ -10,89 +10,93 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="5dp"
-        card_view:cardCornerRadius="2dp">
+        android:background="@color/ColorPrimary"
+        android:layout_marginBottom="@dimen/horizontal_padding_small"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-
             android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/img_url"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
-                android:layout_centerVertical="true"
-                android:scaleType="centerCrop" />
-
-            <TextView
-                android:id="@+id/TitleText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:paddingTop="10dp"
-                android:textColor="#333333"
-                android:textSize="18sp" />
-
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:paddingBottom="5dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp">
+                android:background="@color/news_strip"
+                android:padding="@dimen/vertical_padding_very_very_small" >
 
-                <TextView
-                    android:id="@+id/src"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Source: "
-                    android:textColor="@color/news_static"
-                    android:textSize="10sp" />
+                //android:layout_width="@dimen/news_fav_icon_large_width"
+                //android:layout_height="@dimen/news_fav_icon_height"
 
-                <TextView
-                    android:id="@+id/source"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/news_data"
-                    android:textSize="10sp" />
+                <ImageView
+                    android:id="@+id/fab_icon"
+                    android:layout_width="@dimen/news_fav_icon_large_width"
+                    android:layout_height="@dimen/news_fav_icon_height"
+                    android:scaleType="centerInside"
+                    android:layout_gravity="center"
+                    android:paddingLeft="@dimen/vertical_padding_very_small"
+                    android:paddingRight="@dimen/vertical_padding_very_small"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="7dp"
-                    android:layout_marginRight="7dp"
-                    android:layout_marginTop="2dp"
-                    android:text="•"
-                    android:textColor="#999999" />
-
-                <TextView
-                    android:id="@+id/pub"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Published: "
-                    android:textColor="@color/news_static"
-                    android:textSize="10sp" />
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="fill_parent"
+                    android:background="@color/news_vertical_strip" />
 
                 <TextView
                     android:id="@+id/published"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center"
                     android:textColor="@color/news_data"
-                    android:textSize="10sp" />
+                    android:text="published"
+                    android:textSize="@dimen/font_size_very_small"
+                    android:paddingLeft="@dimen/vertical_padding_very_small"
+                     />
+
+                <TextView
+                    android:id="@+id/type"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="right"
+                    android:textAllCaps="true"
+                    android:paddingRight="@dimen/vertical_padding_very_small"
+                    android:textColor="@color/app_theme_blue"
+                    android:textSize="@dimen/font_size_very_small"
+                    android:text="CRICKET" />
+
             </LinearLayout>
+
+            <ImageView
+                android:id="@+id/img_url"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/news_large_image_height"
+                android:layout_centerVertical="true"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/TitleText"
+                android:text="News in articles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/vertical_padding_very_small"
+                android:paddingRight="@dimen/vertical_padding_very_small"
+                android:paddingTop="@dimen/vertical_padding_very_small"
+                android:textColor="@color/news_headline_mini"
+                android:textSize="@dimen/font_size_medium" />
 
             <TextView
                 android:id="@+id/info_text"
+                android:text="Text subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:textColor="#333333" />
+                android:paddingBottom="@dimen/vertical_padding_very_small"
+                android:paddingLeft="@dimen/vertical_padding_very_small"
+                android:paddingRight="@dimen/vertical_padding_very_small"
+                android:textColor="@color/news_data"
+                android:textSize="@dimen/font_size_small_large"
+                />
         </LinearLayout>
     </android.support.v7.widget.CardView>
 

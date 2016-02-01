@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@android:color/black">
+
+    <FrameLayout
+        android:id="@+id/camera_preview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@android:color/transparent" />
+
+    <ImageView
+        android:id="@+id/taken_picture"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scaleType="center"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/top_recording_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/semi_transparent"
+        android:orientation="horizontal"
+        android:padding="@dimen/vertical_padding_very_very_small"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/send_to_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/horizontal_padding_very_small"
+            android:text="Send to"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_size_small_large" />
+
+        <TextView
+            android:id="@+id/identity"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/horizontal_padding_very_small"
+            android:text="Amandeep"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_size_medium" />
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="right"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/red_circle" />
+
+            <TextView
+                android:id="@+id/video_recording_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="@dimen/horizontal_padding_very_small"
+                android:text="00:00"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_small_large" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/camera_config_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/semi_transparent"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/vertical_padding_very_small"
+        android:paddingTop="@dimen/vertical_padding_very_small"
+        android:visibility="visible">
+
+        <TextView
+            android:id="@+id/hold_message"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/vertical_padding_very_small"
+            android:gravity="center"
+            android:text="@string/message_to_hold_button_for_video"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_size_small_large" />
+
+        <ImageView
+            android:id="@+id/flash"
+            android:layout_width="@dimen/camera_button_size"
+            android:layout_height="@dimen/camera_button_size"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@id/hold_message"
+            android:scaleType="center"
+            android:src="@drawable/ic_flash_on"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/capture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/hold_message"
+            android:layout_centerInParent="true"
+            android:scaleType="center"
+            android:src="@drawable/ic_capture" />
+
+        <ImageView
+            android:id="@+id/switch_camera"
+            android:layout_width="@dimen/camera_button_size"
+            android:layout_height="@dimen/camera_button_size"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/hold_message"
+            android:scaleType="center"
+            android:src="@drawable/ic_flip_camera" />
+    </RelativeLayout>
+
+
+    <VideoView
+        android:id="@+id/video_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:visibility="gone" />
+    <LinearLayout
+        android:id="@+id/send_discard_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:background="@color/semi_transparent"
+        android:gravity="bottom|center_horizontal"
+        android:orientation="horizontal"
+        android:paddingBottom="@dimen/vertical_padding_very_small"
+        android:paddingTop="@dimen/vertical_padding_very_small"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/discard_camera_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/camera_button_size"
+            android:background="@drawable/ic_circle"
+            android:scaleType="center"
+            android:src="@drawable/ic_cancel" />
+
+        <ImageView
+            android:id="@+id/send_camera_content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_circle"
+            android:scaleType="center"
+            android:src="@drawable/ic_send" />
+    </LinearLayout>
+
+
+</FrameLayout>

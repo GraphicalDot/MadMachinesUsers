@@ -1,0 +1,37 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.sports.unity.Activity.SelectSportsActivity">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonBottom"
+        android:layout_alignParentBottom="true"
+        android:background="#2c84cc">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="next"
+            android:textSize="@dimen/font_size_small_large"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="#ffffff"
+            android:background="@android:color/transparent"
+            android:id="@+id/next"
+            android:layout_alignParentRight="true"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="skip"
+            android:textSize="@dimen/font_size_small_large"
+            style="?android:attr/borderlessButtonStyle"
+            android:textColor="#ffffff"
+            android:background="@android:color/transparent"
+            android:id="@+id/skip"
+            android:layout_alignParentLeft="true"/>
+    </RelativeLayout>
+
+</RelativeLayout>

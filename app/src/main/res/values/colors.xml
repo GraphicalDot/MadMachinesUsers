@@ -9,14 +9,56 @@
     <color name="black_overlay">#66000000</color>
     <color name="grey_chat_bg">#ebebeb</color>
     <color name="horizontal_line_grey">#e5e5e5</color>'
-    <color name="app_theme_blue">#2c84cc</color>
+
+    <color name="app_theme_blue">#004d99</color>
+    <color name="progress_light">#bbbbbb</color>
+
+    <color name="custom_black_distace">#4d4d4d</color>
+
     <color name="terms_and_conditions">#999</color>
     <color name="chat_msg_bg">#ebebeb</color>
     <color name="last_msg">#666</color>
     <color name="messages_bg">#e1e1e1</color>
-    <color name="news_data">#b2b2b2</color>
+    <color name="news_data">#808080</color>
     <color name="news_static">#4c4c4c</color>
     <color name="news_headline_mini">#333333</color>
+    <color name="news_background">#e6e6e6</color>
+    <color name="news_strip">#f5f5f5</color>
     <color name="active_chatScreen">#959595</color>
 
+    <color name="gray1">#7d7d7d</color>
+    <color name="gray2">#4c4c4c</color>
+    <color name="gray3">#f2f2f2</color>
+    <color name="gray4">#b2b2b2</color>
+
+    <color name="divider_color">#e5e5e5</color>
+    <color name="tour_news_color">#f8b54f</color>
+    <color name="tour_score_color">#e8526d</color>
+    <color name="tour_people_color">#3fba91</color>
+    <color name="tour_details_color">#666</color>
+    <color name="popup_menu_options">#222222</color>
+    <color name="group_receive_name">#808080</color>
+    <color name="news_vertical_strip">#ababab</color>
+    <color name="list_selector">#30004d99</color>
+    <color name="take_a_minut">#b7cfe9</color>
+
+
+    <!-- camera related -->
+    <color name="semi_transparent">#44000000</color>
+    <color name="red_semi_transparent">#55ff0000</color>
+    <color name="brick_red">#e86369</color>
+
+    <color name="tab_seperator">#003e7a</color>
+
+    <color name="edit_view_hint_color">#587cb0</color>
+    <color name="facebook_button_separator">#004386</color>
+
+    <!-- score related -->
+    <color name="score_dark_grey">#333</color>
+    <color name="score_light_grey">#666666</color>
+
+    <!-- people around me -->
+    <color name="around_me_seekbar_progress_color">#cccccc</color>
+
+    <color name="dot_color_grey">#999999</color>
 </resources>

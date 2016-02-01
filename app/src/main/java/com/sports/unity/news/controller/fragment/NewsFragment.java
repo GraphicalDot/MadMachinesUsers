@@ -1,11 +1,14 @@
 package com.sports.unity.news.controller.fragment;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,95 +18,265 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.sports.unity.R;
+import com.sports.unity.common.controller.FilterActivity;
+import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.news.controller.activity.NewsSearchActivity;
+import com.sports.unity.news.model.NewsContentHandler;
+import com.sports.unity.util.Constants;
 
-import org.apache.http.Header;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-/**
- * Created by Edwin on 15/02/2015.
- */
-public class NewsFragment extends Fragment {
+public class NewsFragment extends Fragment implements NewsContentHandler.ContentListener {
 
-    RecyclerView mRecyclerView;
-    RecyclerView.Adapter mAdapter;
+    private NewsContentHandler newsContentHandler;
+
+    private BaseNewsAdapter mAdapter;
     private LinearLayoutManager mLayoutManager;
-    static int skip = 0;
-    static String url = "http://52.74.250.156:8080/football?skip=" + String.valueOf(skip) + "&limit=10&image_size=hdpi";
-    SwipeRefreshLayout mSwipeRefreshLayout;
-    ArrayList<String> summary;
-    ArrayList<String> title;
-    ArrayList<String> image_url;
-    ArrayList<Long> published;
-    ArrayList<String> newsLink;
-    ArrayList<String> website;
 
-    private int previousTotal = 0;
+    private RecyclerView mRecyclerView;
+    private SwipeRefreshLayout mSwipeRefreshLayout;
+
     private boolean loading = true;
-    private int visibleThreshold = 5;
-    int firstVisibleItem, visibleItemCount, totalItemCount;
 
-    private TinyDB tinyDB = TinyDB.getInstance(getActivity());
+    private boolean searchOn = false;
 
-    private static AsyncHttpClient client;
-
+    private int sportsSelectedNum = 0;
+    private ArrayList<String> sportSelected;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
+
+        searchOn = getArguments().getBoolean(Constants.INTENT_KEY_SEARCH_ON);
+
         View v = inflater.inflate(com.sports.unity.R.layout.news, container, false);
+        initViews(v);
+        sportsSelectedNum = UserUtil.getSportsSelected().size();
+        sportSelected = UserUtil.getSportsSelected();
+        return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        newsContentHandler.addContentListener(this);
+
+        if (newsContentHandler.isRequestInProgress()) {
+            showProgress(getView());
+            mSwipeRefreshLayout.setRefreshing(true);
+        } else {
+            hideProgress(getView());
+            mSwipeRefreshLayout.setRefreshing(false);
+        }
+
+
+        boolean isSportsChanged = false;
+        if (sportsSelectedNum != UserUtil.getSportsSelected().size()) {
+            isSportsChanged = true;
+        } else {
+            for (int i = 0; i < sportSelected.size(); i++) {
+                if (!sportSelected.get(0).equals(UserUtil.getSportsSelected().get(i))) {
+                    isSportsChanged = true;
+                }
+            }
+        }
+        if (isSportsChanged) {
+            newsContentHandler.clearContent();
+            mAdapter.notifyDataSetChanged();
+            newsContentHandler.selectedSportsChanged();
+            sportSelected = UserUtil.getSportsSelected();
+            sportsSelectedNum = UserUtil.getSportsSelected().size();
+            boolean success = newsContentHandler.refreshNews(true);
+            if (success == false) {
+                showErrorLayout(getView());
+                hideProgress(getView());
+
+                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
+            } else {
+                hideErrorLayout(getView());
+                showProgress(getView());
+            }
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        newsContentHandler.removeContentListener();
+
+        sportsSelectedNum = UserUtil.getSportsSelected().size();
+        sportSelected = UserUtil.getSportsSelected();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.fragment_news_menu, menu);
+
+        if ((TinyDB.getInstance(getActivity()).getBoolean("check", false))) {
+            menu.findItem(R.id.mini_cards).setChecked(true);
+            menu.findItem(R.id.mini_cards).setIcon(R.drawable.ic_thumb);
+        } else {
+            menu.findItem(R.id.mini_cards).setChecked(false);
+            menu.findItem(R.id.mini_cards).setIcon(R.drawable.ic_list);
+        }
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        int id = item.getItemId();
+
+        if (id == R.id.action_search) {
+            Intent intent = new Intent(getActivity(), NewsSearchActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        if (id == com.sports.unity.R.id.action_filter) {
+            Intent i = new Intent(getActivity(), FilterActivity.class);
+            startActivityForResult(i, 999);
+            return true;
+        }
+
+        if (id == R.id.mini_cards) {
+            if (item.isChecked()) {
+                item.setChecked(false);
+                item.setIcon(R.drawable.ic_list);
+                TinyDB.getInstance(getActivity()).putBoolean("check", false);
+            } else {
+                item.setChecked(true);
+                item.setIcon(R.drawable.ic_thumb);
+                TinyDB.getInstance(getActivity()).putBoolean("check", true);
+            }
+
+            addOrUpdateAdapter();
+            displayResult();
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void initViews(View v) {
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
-        mSwipeRefreshLayout.setColorSchemeColors(Color.parseColor("#2C84CC"));
+        mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.app_theme_blue));
+
         mRecyclerView = (RecyclerView) v.findViewById(com.sports.unity.R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
 
         mLayoutManager = new LinearLayoutManager(getActivity());
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        summary = new ArrayList<>();
-        title = new ArrayList<>();
-        image_url = new ArrayList<>();
-        published = new ArrayList<>();
-        newsLink = new ArrayList<>();
-        website = new ArrayList<>();
+        initProgress(v);
+        hideProgress(v);
 
-        getData(url);
+        initErrorLayout(v);
+        hideErrorLayout(v);
 
+        if (searchOn == false) {
+            newsContentHandler = NewsContentHandler.getInstance(getActivity().getBaseContext(), NewsContentHandler.KEY_BASE_CONTENT);
+        } else {
+            newsContentHandler = NewsContentHandler.getInstance(getActivity().getBaseContext(), NewsContentHandler.KEY_SEARCH_CONTENT);
+        }
 
-        if (mSwipeRefreshLayout != null) {
+        addOrUpdateAdapter();
 
-            mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    Toast.makeText(getActivity(), "Refreshing!", Toast.LENGTH_SHORT).show();
-                    //requestDataRefresh();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            getData(url);
+        if (searchOn == false) {
+            boolean success = newsContentHandler.refreshNews(false);
+            if (success) {
+                showProgress(v);
+            } else {
+
+            }
+        } else {
+            //nothing
+        }
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                new Handler().post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        Log.i("News Content", "Refresh Call");
+
+                        boolean canRefreshContent = false;
+                        if (searchOn) {
+                            if (newsContentHandler.getSearchKeyword() != null && newsContentHandler.getSearchKeyword().length() > 0) {
+                                canRefreshContent = true;
+                            } else {
+                                canRefreshContent = false;
+                            }
+                        } else {
+                            canRefreshContent = true;
+                        }
+
+                        if (canRefreshContent) {
+                            boolean success = newsContentHandler.refreshNews(true);
+                            if (success == false) {
+                                mSwipeRefreshLayout.setRefreshing(false);
+
+                                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
+                            } else {
+                                mSwipeRefreshLayout.setRefreshing(true);
+//                              showProgress(getView());
+                            }
+
+                        } else {
                             mSwipeRefreshLayout.setRefreshing(false);
                         }
-                    }, 2000);
-                }
-            });
-        }
+                    }
+
+                });
+            }
+
+        });
+
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+
+            private int visibleThreshold = 5;
+            private int previousTotal = 0;
+
+//            boolean hideToolBar = false;
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                super.onScrollStateChanged(recyclerView, newState);
+//                if (hideToolBar) {
+//                    ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
+//                } else {
+//                    ((AppCompatActivity)getActivity()).getSupportActionBar().show();
+//                }
+//            }
+
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
 
-                visibleItemCount = mRecyclerView.getChildCount();
-                totalItemCount = mLayoutManager.getItemCount();
-                firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+//                if (dy > 20) {
+//                    hideToolBar = true;
+//
+//                } else if (dy < -5) {
+//                    hideToolBar = false;
+//                }
+
+                int visibleItemCount = mRecyclerView.getChildCount();
+                int totalItemCount = mLayoutManager.getItemCount();
+                int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
 
                 if (loading) {
                     if (totalItemCount > previousTotal) {
@@ -111,146 +284,171 @@ public class NewsFragment extends Fragment {
                         previousTotal = totalItemCount;
                     }
                 }
+
                 if (!loading && (totalItemCount - visibleItemCount)
                         <= (firstVisibleItem + visibleThreshold)) {
-                    // End has been reached
+                    Log.i("News Content", "Load More Call");
 
-                    Log.i("Yaeye!", "end called");
-
-                    onLoadMore();
-
+                    newsContentHandler.loadMoreNews();
                     loading = true;
+                } else {
+                    //nothing
                 }
             }
         });
 
-        return v;
     }
 
-    private void onLoadMore() {
-        //loadLimit = loadLimit + 10;
-        skip += 10;
-        Log.i("sportunity", "Skip Limit " + skip);
-        url = "http://52.74.250.156:8080/football?skip=" + skip + "&limit=10&image_size=hdpi";
-        getData(url);
-        mAdapter.notifyDataSetChanged();
+    private void initErrorLayout(View view) {
+        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
 
+        TextView oops = (TextView) errorLayout.findViewById(R.id.oops);
+        oops.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
+
+        TextView something_wrong = (TextView) errorLayout.findViewById(R.id.something_wrong);
+        something_wrong.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
     }
 
-
-    public void getData(String url) {
-        client = new AsyncHttpClient();
-        client.get(url, new JsonHttpResponseHandler() {
-            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-                try {
-                    JSONArray jsonArray = response.getJSONArray("result");
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        JSONObject responseObject = jsonArray.getJSONObject(i);
-                        if (responseObject.getString("summary") != null) {
-                            summary.add(responseObject.getString("summary"));
-                            title.add(responseObject.getString("title"));
-                            if (responseObject.getString("hdpi") != null && !responseObject.getString("hdpi").isEmpty())
-                                image_url.add(responseObject.getString("hdpi"));
-                            else
-                                image_url.add("null");
-                            published.add(responseObject.getLong("publish_epoch"));
-                            newsLink.add(responseObject.getString("news_link"));
-                            website.add(responseObject.getString("website"));
-                            Log.i("Data", "downloaded");
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                Log.i("Dataaaaa", (String.valueOf(summary.size())));
-                mRecyclerView.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if ((tinyDB.getBoolean("check", false))) {
-                            if (mAdapter == null) {
-                                mAdapter = new NewsMinicardAdapter(summary, title, image_url, published, newsLink, getActivity().getApplicationContext(), getActivity());
-                                mRecyclerView.setAdapter(mAdapter);
-                            } else {
-                                if (mAdapter instanceof NewsMinicardAdapter) {
-                                    Log.i("sportunity", "no change in mini adapter");
-//                                mRecyclerView.setAdapter(mAdapter);
-                                } else {
-                                    Log.i("sportunity", "creating mini adapter");
-                                    mAdapter = new NewsMinicardAdapter(summary, title, image_url, published, newsLink, getActivity().getApplicationContext(), getActivity());
-                                    mRecyclerView.setAdapter(mAdapter);
-
-                                }
-                            }
-                            mAdapter.notifyDataSetChanged();
-
-                        } else {
-                            if (mAdapter == null) {
-                                Log.i("sportunity", "creating news adapter");
-                                mAdapter = new NewsAdapter(summary, title, image_url, published, newsLink, website, getActivity().getApplicationContext(), getActivity());
-                                mRecyclerView.setAdapter(mAdapter);
-                            } else {
-                                if (mAdapter instanceof NewsAdapter) {
-                                    Log.i("sportunity", "no change in news adapter");
-//                                mRecyclerView.setAdapter(mAdapter);
-                                } else {
-                                    Log.i("sportunity", "creating news adapter");
-                                    mAdapter = new NewsAdapter(summary, title, image_url, published, newsLink, website, getActivity().getApplicationContext(), getActivity());
-                                    mRecyclerView.setAdapter(mAdapter);
-                                }
-                            }
-                            mAdapter.notifyDataSetChanged();
-                        }
-                    }
-                });
-
-
-            }
-
-        });
-    }
-
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.fragment_news_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-        if ((tinyDB.getBoolean("check", false)))
-            menu.findItem(R.id.mini_cards).setChecked(true);
-        else
-            menu.findItem(R.id.mini_cards).setChecked(false);
-
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == com.sports.unity.R.id.action_settings) {
-            return true;
+    private void showErrorLayout(View view) {
+        if (mAdapter.getNews().size() == 0) {
+            LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+            errorLayout.setVisibility(View.VISIBLE);
         }
+    }
 
-        if (id == R.id.mini_cards) {
-            if (item.isChecked()) {
-                item.setChecked(false);
-                tinyDB.putBoolean("check", false);
-                mAdapter = new NewsAdapter(summary, title, image_url, published, newsLink, website, getActivity().getApplicationContext(), getActivity());
+    private void hideErrorLayout(View view) {
+        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        errorLayout.setVisibility(View.GONE);
+    }
+
+    private void initProgress(View view) {
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+    }
+
+    public void showProgress(View view) {
+        if (mAdapter.getNews().size() == 0) {
+            ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+            progressBar.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void hideProgress(View view) {
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar.setVisibility(View.GONE);
+    }
+
+    private void resetScrollFlag() {
+        loading = false;
+    }
+
+    private void displayResult() {
+        Log.i("News Content", "Display Result");
+
+        getActivity().runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                ArrayList<JSONObject> list = mAdapter.getNews();
+                Log.i("Adapter size", "Count:" + list.size());
+
+                if (list.size() == 0) {
+                    if (!searchOn) {
+                        showErrorLayout(getView());
+                        Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
+                    } else {
+//                        something_wrong.setText("No search results found for this search");
+                        Toast.makeText(getActivity(), "No search results found for this search", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    hideErrorLayout(getView());
+                    addOrUpdateAdapter();
+                }
+
+            }
+
+        });
+    }
+
+    private void addOrUpdateAdapter() {
+        boolean flag = TinyDB.getInstance(getActivity()).getBoolean("check", false);
+
+        ArrayList list = null;
+        if (flag) {
+            if (mAdapter == null) {
+                Log.d("News Content", "creating mini adapter");
+                list = new ArrayList();
+                mAdapter = new NewsMinicardAdapter(list, getActivity());
                 mRecyclerView.setAdapter(mAdapter);
-                mAdapter.notifyDataSetChanged();
+
+                newsContentHandler.init(list, searchOn);
             } else {
-                item.setChecked(true);
-                tinyDB.putBoolean("check", true);
-                mAdapter = new NewsMinicardAdapter(summary, title, image_url, published, newsLink, getActivity().getApplicationContext(), getActivity());
-                mRecyclerView.setAdapter(mAdapter);
-                mAdapter.notifyDataSetChanged();
+                if (mAdapter instanceof NewsMinicardAdapter) {
+                    Log.d("News Content", "no change in mini adapter");
+                } else {
+                    Log.d("News Content", "creating mini adapter");
+
+                    list = mAdapter.getNews();
+
+                    mAdapter = new NewsMinicardAdapter(list, getActivity());
+                    mRecyclerView.setAdapter(mAdapter);
+
+                }
             }
-            return true;
+            mAdapter.notifyDataSetChanged();
+        } else {
+            if (mAdapter == null) {
+                Log.d("News Content", "creating news adapter");
+                list = new ArrayList();
+                mAdapter = new NewsAdapter(list, getActivity());
+                mRecyclerView.setAdapter(mAdapter);
+
+                newsContentHandler.init(list, searchOn);
+            } else {
+                if (mAdapter instanceof NewsAdapter) {
+                    Log.d("News Content", "no change in news adapter");
+                } else {
+                    Log.d("News Content", "creating news adapter");
+
+                    list = mAdapter.getNews();
+
+                    mAdapter = new NewsAdapter(list, getActivity());
+                    mRecyclerView.setAdapter(mAdapter);
+                }
+            }
+
+            list = mAdapter.getNews();
+            Log.d("News Content", "Update Adapter List Object ID " + list);
+
+            mAdapter.notifyDataSetChanged();
         }
-
-
-        return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void handleContent(int responseCode) {
+        resetScrollFlag();
+
+        hideProgress(getView());
+        mSwipeRefreshLayout.setRefreshing(false);
+
+        if (responseCode == 1) {
+            Log.i("News Content", "Handle Response");
+
+            displayResult();
+        } else if (responseCode == 0) {
+            Log.i("News Content", "Handle Error");
+
+            getActivity().runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    showErrorLayout(getView());
+
+                    Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
+                }
+
+            });
+
+        }
+    }
 }

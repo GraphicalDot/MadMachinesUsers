@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/vertical_padding_medium_small"
+    android:paddingLeft="@dimen/vertical_padding_very_small"
+    android:paddingRight="@dimen/vertical_padding_very_small"
+    android:paddingTop="@dimen/vertical_padding_medium_small">
+
+    <TextView
+        android:id="@+id/tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:maxLength="30"
+        android:paddingLeft="@dimen/vertical_padding_very_small"
+        android:text="@string/cricket"
+        android:textColor="@color/gray1"
+        android:textSize="@dimen/font_size_small_large" />
+
+    <CheckBox
+        android:id="@+id/cb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:button="@drawable/favourite_checkbox"
+        android:clickable="false"
+        android:gravity="right" />
+</LinearLayout>

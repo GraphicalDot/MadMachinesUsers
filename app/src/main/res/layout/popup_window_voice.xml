@@ -1,15 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff"
-    android:id="@+id/popup_window_voice"
-    android:visibility="gone">
+    android:background="@android:color/white"
+    android:gravity="center"
+    android:visibility="gone"
+    android:id="@+id/popup_window_voice">
 
-    <TextView
+    <ImageButton
+        android:id="@+id/record_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Voice"
-        android:id="@+id/textView7"
-        android:layout_gravity="center_horizontal" />
-</LinearLayout>
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_record" />
+    <TextView
+        android:id="@+id/record_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Record"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/font_size_small_large"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center" />
+    <TextView
+        android:id="@+id/time_counter"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_above="@id/record_button"
+        android:paddingBottom="@dimen/vertical_padding_small"
+        android:gravity="center"
+        android:text="00:00"
+        android:textColor="@color/messages_bg"
+        android:textSize="@dimen/font_size_small_large"
+        />
+
+    <ImageButton
+        android:id="@+id/record_button_white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/white_circle"
+        android:background="@android:color/transparent"
+        android:layout_centerInParent="true"/>
+    <TextView
+        android:id="@+id/release_text"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Release to cancel recording"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/font_size_small_large"
+        android:layout_above="@id/record_button_white"
+        android:gravity="center"
+        android:paddingBottom="@dimen/vertical_padding_small"
+        />
+    <TextView
+        android:id="@+id/time_counter1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="00:00"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="@dimen/font_size_small_large"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center" />
+
+</RelativeLayout>

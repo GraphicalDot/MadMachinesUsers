@@ -1,50 +1,141 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/chat_msg_bg">
+    android:background="@android:color/transparent"
+    android:foreground="@color/list_selector">
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:id="@+id/message_Sent"
-        android:layout_marginTop="5dp"
+        android:layout_gravity="right"
+        android:layout_marginBottom="@dimen/vertical_space_between_chats"
+        android:layout_marginLeft="@dimen/horizontal_padding_large"
+        android:layout_marginRight="@dimen/horizontal_padding_very_small"
+        android:layout_marginTop="@dimen/vertical_space_between_chats"
         android:background="@drawable/chat_blue"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:padding="@dimen/vertical_padding_very_very_small">
+
+        <RelativeLayout
+            android:id="@+id/mediaPlayer"
+            android:layout_width="@dimen/media_msg_content_width"
+            android:layout_height="@dimen/audio_msg_content_height">
+
+            <FrameLayout
+                android:id="@+id/play_progress_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true">
+
+                <ImageView
+                    android:id="@+id/playAndPause"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/img_ic_bg_outline"
+                    android:src="@drawable/ic_play_blue" />
+
+                <ProgressBar
+                    android:id="@+id/progressBarAudio"
+                    style="@android:style/Widget.Holo.Light.ProgressBar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+                android:text="@string/default_audio_duration"
+                android:textColor="@color/app_theme_blue"
+                android:textSize="@dimen/font_size_very_small"
+                android:textStyle="bold" />
+
+            <SeekBar
+                android:id="@+id/seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/duration"
+                android:layout_toRightOf="@id/play_progress_layout"
+                android:focusable="false"
+                android:progressDrawable="@drawable/blue_scrubber_progress" />
+
+        </RelativeLayout>
+
+        <FrameLayout
+            android:id="@+id/image_message_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <ImageView
+                android:id="@+id/image_message"
+                android:layout_width="@dimen/media_msg_content_width"
+                android:layout_height="@dimen/media_msg_content_height" />
+
+            <ImageView
+                android:id="@+id/image_content_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/ic_circle"
+                android:scaleType="center"
+                android:src="@drawable/ic_play"
+                android:visibility="gone" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@android:style/Widget.Holo.Light.ProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+        </FrameLayout>
 
         <TextView
             android:id="@+id/singleMessageRight"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            android:autoLink="email|web|phone"
+            android:minWidth="@dimen/text_msg_minimum_width"
+            android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+            android:paddingRight="@dimen/horizontal_padding_very_very_small"
+            android:text="@string/dummy_text_message"
+            android:textColor="@android:color/black"
+            android:textColorLink="@color/app_theme_blue"
+            android:textSize="@dimen/font_size_small_large" />
 
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/message_send"
-        android:layout_marginLeft="5dp"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/message_Sent"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="3dp">
-
-        <TextView
-            android:id="@+id/timestampRight"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|end"
-            android:text="Enter"
-            android:layout_marginRight="16dp"
-            android:textSize="10sp" />
+            android:layout_gravity="end">
+
+            <TextView
+                android:id="@+id/timestampRight"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                android:text="@string/chat_sent_time"
+                android:textColor="@color/gray1"
+                android:textSize="@dimen/font_size_very_small" />
+
+            <ImageView
+                android:id="@+id/receivedStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
+                android:src="@drawable/ic_msg_pending" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
-
-</RelativeLayout>
+</FrameLayout>

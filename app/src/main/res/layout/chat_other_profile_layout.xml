@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:gravity="center_vertical|center_horizontal"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/vertical_padding_medium"
+        android:background="@android:color/transparent">
+
+        <LinearLayout
+            android:id="@+id/profile"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/profile_thumb_image_small"
+                        android:background="@drawable/shape_rounded_corners" />
+
+                    <ImageButton
+                        android:id="@+id/close_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:background="@android:color/transparent"
+                        android:padding="@dimen/horizontal_padding_very_small"
+                        android:src="@drawable/ic_close_blk" />
+
+                </RelativeLayout>
+
+
+                <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/user_pic"
+                    android:layout_width="@dimen/profile_thumb_image_xlarge"
+                    android:layout_height="@dimen/profile_thumb_image_xlarge"
+                    android:layout_gravity="center"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_user"
+                    app:civ_border_color="@color/gray3"
+                    app:civ_border_width="@dimen/circle_around_image_thickness" />
+
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:background="@color/gray3"
+                android:gravity="center_horizontal|center_vertical"
+                android:textSize="@dimen/font_size_medium" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/gray3"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="@dimen/vertical_padding_very_small">
+
+                <TextView
+                    android:id="@+id/distanceFromMe"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="@dimen/horizontal_padding_very_small"
+                    android:textColor="@color/custom_black_distace"
+                    android:textSize="@dimen/font_size_small_large" />
+
+                <ImageView
+                    android:id="@+id/dot"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:background="@drawable/dot_circle" />
+
+                <TextView
+                    android:id="@+id/sport"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/horizontal_padding_very_small"
+                    android:textColor="@color/gray4"
+                    android:textSize="@dimen/font_size_small_large" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/start_chat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/shape_rounded_corners_say_hello"
+                android:text="Say Hello"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_small_large" />
+        </LinearLayout>
+
+
+        <ProgressBar
+            android:id="@+id/progressBarProfile"
+            style="@android:style/Widget.Holo.Light.ProgressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+</LinearLayout>

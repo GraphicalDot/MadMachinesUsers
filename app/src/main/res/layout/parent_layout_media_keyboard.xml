@@ -2,9 +2,21 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@android:color/transparent"
     android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/popup_window_text"
+        android:layout_width="1dp"
+        android:layout_height="1dp"
+        android:background="@android:color/transparent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        >
+    </LinearLayout>
     <include layout = "@layout/popup_window_emoji"></include>
     <include layout = "@layout/popup_window_gallery"></include>
     <include layout = "@layout/popup_window_voice"></include>
     <include layout = "@layout/popup_window_camera"></include>
+
 </FrameLayout>

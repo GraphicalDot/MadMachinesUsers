@@ -1,241 +1,279 @@
 package com.sports.unity.common.controller;
 
-import android.app.ActivityManager;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
-import android.os.AsyncTask;
+import android.location.Location;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
-import com.sports.unity.common.model.ContactsHandler;
+import com.sports.unity.common.controller.fragment.NavigationFragment;
+import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.LocManager;
 
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
-import org.jivesoftware.smackx.search.UserSearchManager;
-import org.jivesoftware.smackx.xdata.Form;
 
-import java.io.IOException;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Edwin on 15/02/2015.
  */
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    // Declaring Your View and Variables
+    NavigationFragment navigationFragment;
+    public boolean isPaused;
 
-    Toolbar toolbar;
-    ViewPager pager;
-    ViewPagerAdapter adapter;
-    SlidingTabLayout tabs;
-    CharSequence Titles[] = {"Scores", "News", "Messages"};
-    int Numboftabs = 3;
-    public static UserSearchManager searchManager;
-    public static Form searchForm = null;
-    public static Form answerForm = null;
-    TextView title;
-    DrawerLayout mDrawer;
-    ActionBarDrawerToggle mDrawerToggle;
-
-    private TinyDB tinyDB = TinyDB.getInstance(this);
-
+    private XMPPTCPConnection con;
+    private SportsUnityDBHelper sportsUnityDBHelper;
+    public SearchView searchView;
+    LocManager locManager;
+    private PermissionResultHandler contactResultHandler,locationResultHandelar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(com.sports.unity.R.layout.activity_main);
 
-        new CheckConnection().execute();
+        SportsUnityDBHelper.getInstance(this).addDummyMessageIfNotExist();
+        XMPPService.startService(MainActivity.this);
 
-        // Creating The Toolbar and setting it as the Toolbar for the activity
+        initViews();
+        setNavigation(savedInstanceState);
 
-        toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        setSupportActionBar(toolbar);
-        title = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        title.setText("Sports Unity");
-        title.setTypeface(Typeface.createFromAsset(getAssets(), "RobotoCondensed-Regular.ttf"));
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        con = XMPPClient.getConnection();
+        sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
+        setNavigationProfile();
 
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        locManager = LocManager.getInstance(getApplicationContext());
+        locManager.buildApiClient();
+
+    }
+
+    public void setNavigationProfile() {
+
+        LinearLayout navHeader = (LinearLayout) findViewById(R.id.nav_header);
+
+        CircleImageView profile_photo = (CircleImageView) navHeader.findViewById(R.id.circleView);
+        TextView name = (TextView) navHeader.findViewById(R.id.name);
+
+        String user_name = TinyDB.getInstance(this).getString(TinyDB.KEY_PROFILE_NAME);
+        String user_details = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
+
+        Contacts contact = sportsUnityDBHelper.getContact(user_details);
 
 
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
+        if (contact.image != null) {
+            Bitmap bmp = BitmapFactory.decodeByteArray(contact.image, 0, contact.image.length);
+            profile_photo.setImageBitmap(bmp);
+        } else {
+            profile_photo.setImageResource(R.drawable.ic_user);
+        }
+
+
+        name.setText(user_name);
+
+    }
+
+    private void setNavigation(Bundle savedInstanceState) {
+        if (savedInstanceState == null) {
+            navigationFragment = new NavigationFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.nav_fragment, navigationFragment, "Nav_frag").commit();
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        locManager.connect();
+    }
+
+    private void initViews() {
+        Toolbar toolbar = initToolBar();
+
+        final DrawerLayout mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
 
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                // code here will execute once the drawer is opened( As I dont want anything happened whe drawer is
-                // open I am not going to put anything here)
+                invalidateOptionsMenu();
             }
 
             @Override
             public void onDrawerClosed(View drawerView) {
                 super.onDrawerClosed(drawerView);
-                // Code here will execute once drawer is closed
+                invalidateOptionsMenu();
             }
         };
+
+        mDrawerToggle.setDrawerIndicatorEnabled(false);
+        mDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mDrawer.openDrawer(Gravity.LEFT);
+            }
+
+        });
 
         mDrawer.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
-        // Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter = new ViewPagerAdapter(getSupportFragmentManager(), Titles, Numboftabs);
+        String titles[] = {getString(R.string.scores), getString(R.string.news), getString(R.string.messages)};
+        int numberOfTabs = titles.length;
+
+        // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
+        ViewPagerAdapterInMainActivity adapter = new ViewPagerAdapterInMainActivity(getSupportFragmentManager(), titles, numberOfTabs);
 
         // Assigning ViewPager View and setting the adapter
-        pager = (ViewPager) findViewById(com.sports.unity.R.id.pager);
+        ViewPager pager = (ViewPager) findViewById(com.sports.unity.R.id.pager);
         pager.setAdapter(adapter);
 
         // Assiging the Sliding Tab Layout View
-        tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
+        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
         tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
 
         // Setting Custom Color for the Scroll bar indicator of the Tab View
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return getResources().getColor(com.sports.unity.R.color.tabsScrollColor);
+                return getResources().getColor(R.color.ColorPrimary);
             }
         });
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
-        pager.setCurrentItem(getIntent().getIntExtra("page", 1));
 
-        /*
-         * Retain contact information
-         */
-        RetainDataFragment retainDataFragment = new RetainDataFragment();
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(retainDataFragment, "data");
-        fragmentTransaction.commit();
+        //set news pager as default
+        int tab_index = getIntent().getIntExtra("tab_index", 1);
+        pager.setCurrentItem(tab_index);
     }
 
-    public void getForms(XMPPTCPConnection con) {
-        searchManager = new UserSearchManager(con);
-        try {
-            searchForm = searchManager.getSearchForm("vjud.mm.io");
-        } catch (SmackException.NoResponseException e) {
-            e.printStackTrace();
-        } catch (XMPPException.XMPPErrorException e) {
-            e.printStackTrace();
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
-        }
-        answerForm = searchForm.createAnswerForm();
-        if (answerForm != null) {
-            new Users().execute();
-        }
+    private Toolbar initToolBar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar.setNavigationIcon(R.drawable.ic_menu);
+        setSupportActionBar(toolbar);
 
+        TextView title = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        title.setText(R.string.app_name);
+        title.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        return toolbar;
     }
 
-    private class Users extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            try {
-                new ContactsHandler(getApplicationContext()).updateRegisteredUsers();
-            } catch (XMPPException e) {
-                e.printStackTrace();
-            }
-            return null;
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (!isPaused) {
+            navigationFragment = new NavigationFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.nav_fragment, navigationFragment, "Nav_frag").commit();
         }
+        isPaused = false;
+        updateLocation();
     }
 
-    private boolean isMyServiceRunning(Class<?> serviceClass) {
-        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-            if (serviceClass.getName().equals(service.service.getClassName())) {
-                return true;
+    private void updateLocation() {
+        Location location = null;
+        if (locManager.ismGoogleApiClientConnected()) {
+            location = locManager.getLocation();
+            if (location != null) {
+                locManager.sendLatituteAndLongitude(location, false);
             }
+        } else {
+            //TODO
         }
-        return false;
-    }
-
-    private class CheckConnection extends AsyncTask<Void, Void, XMPPTCPConnection> {
-
-        @Override
-        protected XMPPTCPConnection doInBackground(Void... params) {
-            if (!XMPPClient.getConnection().isAuthenticated()) {
-                try {
-
-                    XMPPClient.getConnection().login(tinyDB.getString("username"), tinyDB.getString("password"));
-                } catch (XMPPException e) {
-                    e.printStackTrace();
-                } catch (SmackException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                return XMPPClient.getConnection();
-
-            } else
-
-            {
-                return XMPPClient.getConnection();
-            }
-        }
-
-        @Override
-        protected void onPostExecute(XMPPTCPConnection con) {
-            if (isMyServiceRunning(XMPPService.class) && XMPPClient.getConnection().isAuthenticated()) {
-                Log.i("Service is :", "Running");
-                getForms(con);
-
-            } else {
-                Intent serviceIntent = new Intent(MainActivity.this, XMPPService.class);
-                startService(serviceIntent);
-                if (XMPPClient.getConnection().isAuthenticated()) {
-                    getForms(con);
-                }
-            }
-
-
-        }
-
+//        GPSTracking.getInstance(getApplicationContext()).getLocation();
     }
 
     @Override
     public void onBackPressed() {
-        return;
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            if(searchView!=null) {
+                if (!searchView.isIconified()) {
+                    searchView.setIconified(true);
+                } else {
+                    super.onBackPressed();
+                }
+            }else{
+                super.onBackPressed();
+            }
+        }
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(com.sports.unity.R.menu.menu_main, menu);
-        return true;
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == Constants.REQUEST_CODE_NAV) {
+            navigationFragment.onActivityResult(requestCode, resultCode, data);
+            Log.d("max", "ONMAINRESULT");
+        }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == com.sports.unity.R.id.action_settings) {
-            return true;
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == Constants.REQUEST_CODE_CONTACT_PERMISSION) {
+            if (contactResultHandler != null) {
+                contactResultHandler.onPermissionResult(requestCode, grantResults);
+            } else {
+                PermissionUtil.getInstance().showSnackBar(this, "Sorry something went wrong");
+            }
+        }else if (requestCode == Constants.REQUEST_CODE_LOCATION_PERMISSION) {
+            if (locationResultHandelar != null) {
+                locationResultHandelar.onPermissionResult(requestCode, grantResults);
+            } else {
+                PermissionUtil.getInstance().showSnackBar(this, "Sorry something went wrong");
+            }
         }
 
-        return super.onOptionsItemSelected(item);
     }
 
+    public void addContactResultListener(PermissionResultHandler permissionResultHandler) {
+        this.contactResultHandler = permissionResultHandler;
+    }
 
+    public void removeContactResultListener() {
+        this.contactResultHandler = null;
+    }
+    public void addLocationResultListener(PermissionResultHandler permissionResultHandler) {
+        this.locationResultHandelar = permissionResultHandler;
+    }
+
+    public void removeLocationResultListener() {
+        this.locationResultHandelar = null;
+    }
+
+    public void setSearchView(SearchView searchView) {
+        this.searchView = searchView;
+    }
+
+    public interface PermissionResultHandler {
+        public void onPermissionResult(int requestCode, int[] grantResults);
+    }
+    
 }

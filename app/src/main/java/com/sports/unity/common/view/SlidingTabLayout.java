@@ -15,6 +15,8 @@ import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.sports.unity.R;
+
 
 public class SlidingTabLayout extends HorizontalScrollView {
 
@@ -30,7 +32,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     private static final int TITLE_OFFSET_DIPS = 24;
     private static final int TAB_VIEW_PADDING_DIPS = 16;
-    private static final int TAB_VIEW_TEXT_SIZE_SP = 12;
+    private static final int TAB_VIEW_TEXT_SIZE_SP = 14;
 
     private int mTitleOffset;
 
@@ -43,6 +45,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
     private ViewPager.OnPageChangeListener mViewPagerPageChangeListener;
 
     private final SlidingTabStrip mTabStrip;
+
+    private int colorSelectorId = com.sports.unity.R.color.selector;
 
     public SlidingTabLayout(Context context) {
         this(context, null);
@@ -125,6 +129,10 @@ public class SlidingTabLayout extends HorizontalScrollView {
         }
     }
 
+    public void setTabTextColor(int colorSelectorId){
+        this.colorSelectorId = colorSelectorId;
+    }
+
     /**
      * Create a default view to be used for tabs. This is called if a custom tab view is not set via
      * {@link #setCustomTabView(int, int)}.
@@ -190,9 +198,9 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 tabView.setSelected(true);
             }
 
-            tabTitleView.setTextColor(getResources().getColorStateList(com.sports.unity.R.color.selector));
+            tabTitleView.setTextColor(getResources().getColorStateList(colorSelectorId));
             tabTitleView.setTypeface(Typeface.createFromAsset(getContext().getAssets(),"RobotoCondensed-Regular.ttf"));
-            tabTitleView.setTextSize(14);
+            tabTitleView.setTextSize(TAB_VIEW_TEXT_SIZE_SP);
         }
     }
 

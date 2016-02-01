@@ -18,8 +18,38 @@
         android:title="Clear chat"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_search"
-        android:icon="@drawable/ic_menu_srch_blk"
+        android:id="@+id/delete"
+        android:icon="@drawable/ic_del"
+        android:orderInCategory="200"
+        android:title="delete"
+        app:showAsAction="ifRoom"></item>
+    <item
+        android:id="@+id/copy"
+        android:icon="@drawable/ic_copy"
+        android:orderInCategory="200"
+        android:title="copy"
+        app:showAsAction="ifRoom"></item>
+    <item
+        android:id="@+id/forward"
+        android:icon="@drawable/ic_fwd"
+        android:orderInCategory="200"
+        android:title="forward"
+        app:showAsAction="ifRoom"></item>
+    <item
+        android:id="@+id/navigating_up"
+        android:icon="@drawable/ic_up_arrow"
+        android:orderInCategory="200"
+        android:title="up"
+        app:showAsAction="ifRoom"></item>
+    <item
+        android:id="@+id/navigating_down"
+        android:icon="@drawable/ic_down_arrow"
+        android:orderInCategory="200"
+        android:title="down"
+        app:showAsAction="ifRoom"></item>
+    <item
+        android:id="@+id/searchChatScreen"
+        android:icon="@drawable/ic_menu_search"
         android:orderInCategory="200"
         android:title="Search"
         app:showAsAction="ifRoom"></item>

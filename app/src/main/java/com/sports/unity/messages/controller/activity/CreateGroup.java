@@ -1,128 +1,162 @@
 package com.sports.unity.messages.controller.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.util.SparseBooleanArray;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
-import com.sports.unity.XMPPManager.XMPPClient;
-
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.muc.MultiUserChatManager;
-import org.jivesoftware.smackx.xdata.Form;
-import org.jivesoftware.smackx.xdata.packet.DataForm;
+import com.sports.unity.common.controller.CustomAppCompatActivity;
+import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.messages.controller.fragment.ContactsFragment;
+import com.sports.unity.messages.controller.fragment.GroupDetailFragment;
+import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.messages.controller.model.GroupMessaging;
+import com.sports.unity.messages.controller.model.PubSubMessaging;
+import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 
-public class CreateGroup extends ActionBarActivity {
-    ListView contacts;
-    EditText groupName;
-    ArrayAdapter<String> adapter;
-    ArrayList<SportsUnityDBHelper.GroupParticipants> list = new ArrayList<>();
-    ArrayList<String> users = new ArrayList<>();
-    ArrayList<String> usernames = new ArrayList<>();
-    Button create;
-    private MultiUserChat muc;
+public class CreateGroup extends CustomAppCompatActivity {
+
+    private String groupName = null;
+    private String groupDescription = null;
+
+    private String currentUserPhoneNumber = null;
+    private byte[] groupImageArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_group);
-        contacts = (ListView) findViewById(R.id.contactsGroupAdd);
-        contacts.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
-        groupName = (EditText) findViewById(R.id.groupNameEnter);
+        setContentView(R.layout.activity_group_detail);
 
-        list = SportsUnityDBHelper.getInstance(this).readContactNames();
+        currentUserPhoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
 
-        for (int i = 0; i < list.size(); i++) {
-            usernames.add(list.get(i).name);
-        }
+        addGroupDetailFragment();
+    }
 
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_multiple_choice, usernames);
-        contacts.setAdapter(adapter);
+    private void addGroupDetailFragment() {
+        GroupDetailFragment groupDetailFragment = new GroupDetailFragment();
 
-        create = (Button) findViewById(R.id.createButton);
-        create.setOnClickListener(new View.OnClickListener() {
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.fragment_container, groupDetailFragment).commit();
+    }
+
+    public void moveToMembersListFragment() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(Constants.INTENT_KEY_CONTACT_FRAGMENT_USAGE, ContactsFragment.USAGE_FOR_MEMBERS);
+
+        ContactsFragment fragment = new ContactsFragment();
+        fragment.setArguments(bundle);
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.replace(R.id.fragment_container, fragment, "as_member");
+        fragmentTransaction.addToBackStack(null);
+        fragmentTransaction.commit();
+
+        setToolBarForMembersList();
+    }
+
+    public void setGroupDetails(String groupName, String groupDescription, byte[] groupImageArray) {
+        this.groupName = groupName;
+        this.groupDescription = groupDescription;
+        this.groupImageArray = groupImageArray;
+    }
+
+    private void setToolBarForMembersList() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
+
+        ((ImageView) toolbar.findViewById(R.id.backarrow)).setImageResource(R.drawable.ic_menu_back_blk);
+        toolbar.findViewById(R.id.backarrow).setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
-                SparseBooleanArray checked = contacts.getCheckedItemPositions();
-                if (checked != null) {
-                    for (int i = 0; i < checked.size(); i++) {
-                        // Item position in adapter
-                        int position = checked.keyAt(i);
-                        // Add users if it is checked i.e.) == TRUE!
-                        if (checked.valueAt(i)) {
-                            users.add(list.get(position).name);
-                        }
-                    }
-                }
-                if (!groupName.getText().toString().trim().isEmpty())
-                    createGroup();
-                else
-                    Toast.makeText(CreateGroup.this, "Please enter a Name", Toast.LENGTH_SHORT).show();
+                onBackPressed();
+            }
+        });
+
+        TextView title = (TextView) toolbar.findViewById(R.id.title);
+        title.setText(R.string.group_title_add_members);
+
+        TextView actionView = (TextView) toolbar.findViewById(R.id.actionButton);
+        actionView.setText(R.string.done);
+        actionView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+        actionView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                //TODO
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                ContactsFragment fragment = (ContactsFragment) fragmentManager.findFragmentByTag("as_member");
+
+                createGroup(fragment.getSelectedMembersList());
             }
 
         });
+
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    private void createGroup() {
-        MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(XMPPClient.getConnection());
-        muc = manager.getMultiUserChat(groupName.getText().toString() + "@conference.mm.io");
-        try {
-            muc.create(groupName.getText().toString());
-            muc.sendConfigurationForm(new Form(DataForm.Type.submit));
-        } catch (XMPPException.XMPPErrorException e) {
-            e.printStackTrace();
-        } catch (SmackException e) {
-            e.printStackTrace();
-        }
+    private void createGroup(ArrayList<Contacts> selectedMembers) {
+        GroupMessaging groupMessaging = GroupMessaging.getInstance(this);
+        String roomName = currentUserPhoneNumber + "" + System.currentTimeMillis();
+        roomName = roomName + "%" + groupName + "%%";
+        String subject = groupName;
 
-        inviteUsers();
-    }
+        boolean success = groupMessaging.createGroup(roomName, currentUserPhoneNumber, subject);
+        Contacts owner = SportsUnityDBHelper.getInstance(this).getContact(currentUserPhoneNumber);
+        if (success) {
+            groupMessaging.setGroupConfigDetail(roomName, groupName, groupDescription);
+            groupMessaging.joinGroup(roomName, currentUserPhoneNumber);
 
+            /*long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry(subject, owner.id, null, roomName);
+            SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, roomName);
 
-    private void inviteUsers() {
-        for (int i = 0; i < users.size(); i++) {
-            try {
-                muc.invite(list.get(i).number + "@mm.io", "Meet me in this excellent room");
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
+            ArrayList<Long> members = new ArrayList<>();
+            for (Contacts c :
+                    selectedMembers) {
+                members.add(c.id);
             }
+            SportsUnityDBHelper.getInstance(getApplicationContext()).createGroupUserEntry(chatId, members);*/
+
+        } else {
+            Toast.makeText(this, R.string.group_message_try_again, Toast.LENGTH_SHORT).show();
         }
 
-    }
+        PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance(this);
+        boolean nodesuccess = pubSubMessaging.createNode(roomName, this);
+        if (nodesuccess) {
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_create_group, menu);
-        return true;
-    }
+            long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry(subject, owner.id, null, roomName);
+            SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, roomName);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+            String groupmembersnumbers = "";
+            ArrayList<Long> members = new ArrayList<>();
+            for (Contacts c :
+                    selectedMembers) {
+                members.add(c.id);
+                groupmembersnumbers += c.id + ",";
+            }
+            SportsUnityDBHelper.getInstance(getApplicationContext()).createGroupUserEntry(chatId, members);
+            SportsUnityDBHelper.getInstance(getApplicationContext()).updateAdmin(TinyDB.getInstance(getApplicationContext()).KEY_USERNAME, roomName);
+            Log.i("sendinggroupinvitation", "true");
+            groupMessaging.inviteMembers(roomName, selectedMembers, "");
+            finish();
+        } else {
+            Toast.makeText(this, R.string.group_message_try_again, Toast.LENGTH_SHORT).show();
         }
 
-        return super.onOptionsItemSelected(item);
+
     }
+
 }

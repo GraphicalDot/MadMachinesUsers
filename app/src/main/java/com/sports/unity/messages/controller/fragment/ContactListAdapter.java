@@ -7,34 +7,45 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.messages.controller.model.Contacts;
 
 import java.util.ArrayList;
 
 /**
  * Created by madmachines on 2/9/15.
  */
-public class ContactListAdapter extends ArrayAdapter<SportsUnityDBHelper.Contacts> implements View.OnClickListener {
+public class ContactListAdapter extends ArrayAdapter<Contacts> implements View.OnClickListener {
 
     private final Activity context;
-    ArrayList<SportsUnityDBHelper.Contacts> contactsArrayList;
-    Button invite;
 
-    public ContactListAdapter(Activity context, int resource, ArrayList<SportsUnityDBHelper.Contacts> list) {
-        super(context, R.layout.list_contact_msgs, list);
+    private ArrayList<Contacts> originalContactList;
+    private ArrayList<Contacts> inUseContactListForAdapter;
+    private Button invite;
+
+    private int itemLayoutId = 0;
+    private boolean multipleSelection = false;
+
+    public ContactListAdapter(Activity context, int resource, ArrayList<Contacts> list, boolean multipleSelection) {
+        super(context, resource, list);
         this.context = context;
-        this.contactsArrayList = list;
+        this.inUseContactListForAdapter = list;
+        itemLayoutId = resource;
+        this.multipleSelection = multipleSelection;
     }
 
     public View getView(int position, View view, ViewGroup parent) {
+        Contacts contacts = getItem(position);
+
         LayoutInflater inflater = context.getLayoutInflater();
-        View rowView = inflater.inflate(R.layout.list_contact_msgs, null, true);
+        View rowView = inflater.inflate(itemLayoutId, null, true);
 
         ImageView userIcon = (ImageView) rowView.findViewById(R.id.user_icon);
 
@@ -44,20 +55,29 @@ public class ContactListAdapter extends ArrayAdapter<SportsUnityDBHelper.Contact
         TextView status = (TextView) rowView.findViewById(R.id.status);
         status.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoLight());
 
-        invite = (Button) rowView.findViewById(R.id.btn_invite);
-        invite.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
-        invite.setOnClickListener(this);
+        if (itemLayoutId == R.layout.list_contact_msgs) {
+            invite = (Button) rowView.findViewById(R.id.btn_invite);
+            invite.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
+            invite.setOnClickListener(this);
 
-        txtTitle.setText(contactsArrayList.get(position).name);
-        status.setText(contactsArrayList.get(position).status);
-
-        if (contactsArrayList.get(position).image != null) {
-            userIcon.setImageBitmap(BitmapFactory.decodeByteArray(contactsArrayList.get(position).image, 0, contactsArrayList.get(position).image.length));
+            if (contacts.registered) {
+                invite.setVisibility(View.INVISIBLE);
+            }
+        } else if (itemLayoutId == R.layout.list_item_members) {
+            if (multipleSelection) {
+                rowView.findViewById(R.id.checkbox).setVisibility(View.VISIBLE);
+            } else {
+                rowView.findViewById(R.id.checkbox).setVisibility(View.GONE);
+            }
         }
 
-        if (contactsArrayList.get(position).registered) {
-            invite.setVisibility(View.INVISIBLE);
+        txtTitle.setText(contacts.name);
+        status.setText(contacts.status);
+
+        if (contacts.image != null) {
+            userIcon.setImageBitmap(BitmapFactory.decodeByteArray(contacts.image, 0, contacts.image.length));
         }
+
         return rowView;
 
     }
@@ -66,6 +86,34 @@ public class ContactListAdapter extends ArrayAdapter<SportsUnityDBHelper.Contact
     public void onClick(View v) {
         Toast.makeText(context, "Not implemented yet", Toast.LENGTH_SHORT).show();
     }
+
+//    public void filter(String filterText) {
+//        if (filterText.length() == 0) {
+//            inUseContactListForAdapter.clear();
+//            inUseContactListForAdapter = null;
+//
+//            inUseContactListForAdapter = originalContactList;
+//            originalContactList = null;
+//        } else {
+//            if( originalContactList == null ){
+//                originalContactList = inUseContactListForAdapter;
+//            }
+//
+//            ArrayList<Contacts> contacts = originalContactList;
+//            inUseContactListForAdapter.clear();
+//            for (Contacts c : contacts) {
+//                if (c.name.contains(filterText)) {
+//                    inUseContactListForAdapter.add(c);
+//                }
+//            }
+//        }
+//        super.notifyDataSetChanged();
+//    }
+
+    public ArrayList<Contacts> getInUseContactListForAdapter() {
+        return inUseContactListForAdapter;
+    }
+
 }
 
 

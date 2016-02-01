@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <Switch
+        android:id="@+id/mute_switcher"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/menu_item_height"
+        android:layout_gravity="right"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:text="Mute"
+        android:textColor="@color/popup_menu_options"
+        android:focusable="false"
+        android:clickable="false"
+        />
+
+</LinearLayout>

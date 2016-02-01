@@ -1,64 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="horizontal">
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/horizontal_padding_very_very_small"
+    android:paddingTop="@dimen/horizontal_padding_very_very_small">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_icon"
+        android:layout_width="@dimen/profile_thumb_image_small"
+        android:layout_height="@dimen/profile_thumb_image_small"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/horizontal_padding_small"
+        android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
+        android:src="@drawable/ic_user" />
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp">
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center|left"
+        android:orientation="vertical">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/user_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="6dp"
-            android:src="@drawable/ic_user" />
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/contact_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:ellipsize="end"
+            android:text="@string/username"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/font_size_small_large" />
 
-            <TextView
-                android:id="@+id/contact_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="8dp"
-                android:text="@string/username"
-                android:textColor="@android:color/black"
-                android:textSize="15sp" />
-
-            <TextView
-                android:id="@+id/status"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/activeStatus"
-                android:textColor="@color/last_msg"
-                android:textSize="10sp" />
-
-        </LinearLayout>
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:text="@string/activeStatus"
+            android:textColor="@color/last_msg"
+            android:textSize="@dimen/font_size_very_small" />
 
     </LinearLayout>
-
 
     <Button
         android:id="@+id/btn_invite"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerInParent="true"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/invite_button"
+        android:layout_gravity="center"
+        android:layout_marginRight="@dimen/horizontal_padding_small"
+        android:background="@drawable/round_edge_box_blue"
         android:focusable="false"
-        android:minHeight="24dp"
+        android:minHeight="@dimen/invite_button_height"
         android:stateListAnimator="@null"
         android:text="@string/btn_invite"
         android:textColor="@android:color/white"
-        android:textSize="10dp" />
+        android:textSize="@dimen/font_size_very_small" />
+</LinearLayout>
 
-</RelativeLayout>
+
+

@@ -2,58 +2,85 @@
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
-    android:background="@android:color/white"
-    android:elevation="2dp"
+    android:background="@color/app_theme_blue"
+    android:elevation="@dimen/toolbar_elevation"
     android:minHeight="?android:attr/actionBarSize"
-    android:theme="@style/AppHomeTheme"
-    android:popupTheme="@style/PopupMenuListView">
+    android:popupTheme="@style/PopupMenuListView"
+    android:theme="@style/AppHomeTheme">
+
+    <ImageButton
+        android:id="@+id/backarrow"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:paddingRight="@dimen/horizontal_padding_small"
+        android:scaleType="center"
+        android:src="@drawable/ic_menu_back" />
+
+    <EditText
+        android:id="@+id/search_text"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:hint="Search..."
+        android:imeOptions="actionSearch"
+        android:textColor="@android:color/white"
+        android:textColorHint="@color/edit_view_hint_color"
+        android:textCursorDrawable="@null"
+        android:textSize="@dimen/font_size_medium"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/selectedItems"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:text="1"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/font_size_medium"
+        android:visibility="gone" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:id="@+id/profile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-        <ImageButton
-            android:id="@+id/backarrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="-16dp"
-            android:layout_marginRight="-8dp"
-            style="?android:attr/buttonBarButtonStyle"
-            android:src="@drawable/ic_menu_back_blk" />
-
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/user_picture"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="@dimen/profile_thumb_image_small"
+            android:layout_height="@dimen/profile_thumb_image_small"
             android:layout_gravity="center"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/stark" />
+            android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
+            android:src="@drawable/ic_user" />
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/chat_username"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="chat"
-                android:textSize="20dp" />
+                android:gravity="left"
+                android:singleLine="true"
+                android:text="@string/chat_activity_username"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_small_large" />
 
             <TextView
                 android:id="@+id/status_active"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Active 1 min ago"
-                android:textColor="@color/active_chatScreen"
-                android:textSize="10dp" />
+                android:text="@string/chat_activity_status"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_very_small" />
         </LinearLayout>
 
-
     </LinearLayout>
-
 
 </android.support.v7.widget.Toolbar>

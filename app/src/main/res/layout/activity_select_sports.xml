@@ -14,16 +14,50 @@
 
     <GridView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/gridview"
+        android:padding="@dimen/sports_unity_logo_height"
+        android:listSelector="@android:color/transparent"
         android:layout_below="@id/tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:columnWidth="100dp"
-        android:numColumns="auto_fit"
-        android:verticalSpacing="25dp"
-        android:horizontalSpacing="0dp"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:columnWidth="@dimen/sports_logo_large"
+        android:numColumns="1"
+        android:verticalSpacing="@dimen/sports_unity_logo_height"
+        android:horizontalSpacing="10dp"
         android:stretchMode="columnWidth"
         android:gravity="center"
         />
+
+    <!--<LinearLayout-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="0dp"-->
+        <!--android:weightSum="1"-->
+        <!--android:orientation="vertical"-->
+        <!--android:layout_below="@+id/tool_bar"-->
+        <!--android:layout_above="@+id/buttonBottom"-->
+        <!--android:gravity="center">-->
+
+        <!--<ImageView-->
+            <!--android:id="@+id/cricket"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="0.5"-->
+            <!--android:src="@drawable/btn_cricket_disabled"/>-->
+
+        <!--<View-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="1dp"-->
+            <!--android:background="@color/gray1"-->
+            <!--android:paddingLeft="@dimen/activity_vertical_margin_small"-->
+            <!--android:paddingRight="@dimen/activity_vertical_margin_small"/>-->
+         <!-- -->
+        <!--<ImageView-->
+            <!--android:id="@+id/football"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="0dp"-->
+            <!--android:layout_weight="0.5"-->
+            <!--android:src="@drawable/btn_football_disabled"/>-->
+
+    <!--</LinearLayout>-->
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -35,21 +69,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="next"
+            android:textSize="@dimen/font_size_small_large"
             style="?android:attr/borderlessButtonStyle"
             android:textColor="@android:color/white"
             android:background="@android:color/transparent"
             android:id="@+id/toLeagueSelect"
             android:layout_alignParentRight="true"/>
 
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="skip"
-            style="?android:attr/borderlessButtonStyle"
-            android:textColor="@android:color/white"
-            android:background="@android:color/transparent"
-            android:id="@+id/skipSelection"
-            android:layout_alignParentLeft="true"/>
     </RelativeLayout>
 
 </RelativeLayout>

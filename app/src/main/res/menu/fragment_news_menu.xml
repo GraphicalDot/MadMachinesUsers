@@ -9,10 +9,10 @@
         app:showAsAction="ifRoom"></item>
     <item
         android:id="@+id/mini_cards"
-        android:checkable="true"
-        android:title="Mini cards"
-        android:titleCondensed="Mini cards"
-        app:showAsAction="never" />
+        android:icon="@drawable/ic_thumb"
+        android:orderInCategory="200"
+        android:title="Card_Change"
+        app:showAsAction="ifRoom"></item>
     <item
         android:id="@+id/action_filter"
         android:icon="@drawable/ic_menu_filter"

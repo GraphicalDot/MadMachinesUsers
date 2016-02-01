@@ -1,13 +1,25 @@
 package com.sports.unity.XMPPManager;
 
+import android.content.Context;
 import android.util.Log;
 
+import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.messages.controller.model.PubSubMessaging;
+import com.sports.unity.util.CommonUtil;
+
 import org.jivesoftware.smack.ConnectionConfiguration;
+import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.packet.IQ;
+import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.provider.ProviderManager;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
 
@@ -19,18 +31,173 @@ public class XMPPClient {
     public static String SERVER_HOST = "54.169.217.88";
     public static int SERVER_PORT = 5222;
     public static String SERVICE_NAME = "mm.io";
-    public static XMPPTCPConnection connection = null;
-    public static ReconnectionManager reconnectionManager;
 
+    private static XMPPClient XMPP_CLIENT = null;
 
-    private static void openConnection() {
+    public static XMPPClient getInstance() {
+        if (XMPP_CLIENT == null) {
+            XMPP_CLIENT = new XMPPClient();
+        }
+        return XMPP_CLIENT;
+    }
+
+    public static XMPPTCPConnection getConnection() {
+        XMPPClient xmppClient = getInstance();
+        if (xmppClient.connection == null) {
+            XMPPService service = XMPPService.getXMPP_SERVICE();
+            if (service != null) {
+                XMPPClient.getInstance().reconnectConnection(service.getConnectionListener());
+            } else {
+                //nothing
+            }
+        }
+        return xmppClient.connection;
+    }
+
+    private XMPPTCPConnection connection = null;
+
+    private boolean chatRelatedListenersAdded = true;
+
+    public boolean isChatRelatedListenersAdded() {
+        return chatRelatedListenersAdded;
+    }
+
+    public void setChatRelatedListenersAdded(boolean chatRelatedListenersAdded) {
+        this.chatRelatedListenersAdded = chatRelatedListenersAdded;
+    }
+
+    synchronized public boolean reconnectConnection() {
+        boolean success = false;
+
+        XMPPService xmppService = XMPPService.getXMPP_SERVICE();
+        if (xmppService != null) {
+            ConnectionListener connectionListener = xmppService.getConnectionListener();
+            success = XMPPClient.getInstance().reconnectConnection(connectionListener);
+        } else {
+            //nothing
+        }
+
+        return success;
+    }
+
+    synchronized public boolean reconnectConnection(ConnectionListener connectionListener) {
+        boolean success = false;
+
+        if (connection == null) {
+            success = openConnection(connectionListener);
+        } else {
+            if (!connection.isConnected()) {
+                try {
+                    connection.connect();
+
+                    success = true;
+                } catch (SmackException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (XMPPException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                success = true;
+            }
+        }
+
+        addCustomExtensions();
+
+        if (success) {
+            ReadReceiptManager.getInstanceFor(connection);
+        } else {
+
+        }
+
+        return success;
+    }
+
+    public void sendOfflinePresence() {
+        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+            Presence presence = new Presence(Presence.Type.available);
+            presence.setStatus("Offline");
+            try {
+                connection.sendStanza(presence);
+            } catch (SmackException.NotConnectedException e) {
+                e.printStackTrace();
+            }
+
+            Message message = new Message("settimedev@mm.io", Message.Type.headline);
+            message.setBody(String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()));
+            try {
+                connection.sendPacket(message);
+            } catch (SmackException.NotConnectedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            //nothing
+        }
+    }
+
+    public void sendOnlinePresence() {
+        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
+            Presence presence = new Presence(Presence.Type.available);
+            presence.setStatus("Online");
+            Message message = new Message("settimedev@mm.io", Message.Type.headline);
+            message.setBody(String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()));
+            try {
+                connection.sendStanza(presence);
+                connection.sendStanza(message);
+            } catch (SmackException.NotConnectedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            //nothing
+        }
+    }
+
+    synchronized public boolean authenticateConnection(Context context) {
+        boolean success = false;
+
+        if (connection != null) {
+            if (!connection.isAuthenticated()) {
+                try {
+                    Log.i("XMPP Connection", "authenticating");
+
+                    TinyDB tinyDB = TinyDB.getInstance(context);
+                    connection.login(tinyDB.getString(TinyDB.KEY_USERNAME), tinyDB.getString(TinyDB.KEY_PASSWORD));
+
+                    success = true;
+
+                    //PubSubMessaging.getInstance(context).getJoinedGroups(context);
+                } catch (XMPPException e) {
+                    e.printStackTrace();
+                } catch (SmackException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                success = true;
+            }
+        } else {
+            //nothing
+        }
+
+        return success;
+    }
+
+    synchronized private boolean openConnection(ConnectionListener connectionListener) {
+        boolean success = false;
+
         try {
-            if (null == connection || !connection.isAuthenticated()) {
+            if (null == connection) {
+                Log.i("XMPP Connection", "making new connection");
+
                 XMPPTCPConnectionConfiguration.Builder configuration = XMPPTCPConnectionConfiguration.builder();
                 configuration.setHost(SERVER_HOST);
                 configuration.setPort(SERVER_PORT);
                 configuration.setServiceName(SERVICE_NAME);
-                configuration.setSecurityMode(ConnectionConfiguration.SecurityMode.disabled);
+                configuration.setSecurityMode(ConnectionConfiguration.SecurityMode.ifpossible);
                 configuration.setDebuggerEnabled(true);
                 configuration.setConnectTimeout(20000);
                 configuration.setSendPresence(true);
@@ -39,16 +206,30 @@ public class XMPPClient {
                 connection.setUseStreamManagement(true);
                 connection.setUseStreamManagementResumption(true);
 
-                reconnectionManager = ReconnectionManager.getInstanceFor(connection);
+                connection.setPacketReplyTimeout(20000);
+
+                Log.i("XMPP Connection", "adding connection listener");
+                connection.addConnectionListener(connectionListener);
+                chatRelatedListenersAdded = false;
+
+                XMPPTCPConnection.setUseStreamManagementDefault(true);
+                XMPPTCPConnection.setUseStreamManagementResumptiodDefault(true);
+
+                ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
                 reconnectionManager.enableAutomaticReconnection();
                 reconnectionManager.setReconnectionPolicy(ReconnectionManager.ReconnectionPolicy.RANDOM_INCREASING_DELAY);
 
-                Boolean k = reconnectionManager.isAutomaticReconnectEnabled();
-                Log.i("R Manager : ", k ? "yeah" : "no");
-
-                connection.connect();
-
+            } else {
+                //nothing
             }
+
+            if (!connection.isConnected()) {
+                connection.connect();
+            } else {
+                //nothing
+            }
+
+            success = true;
         } catch (XMPPException xe) {
             xe.printStackTrace();
         } catch (SmackException e) {
@@ -56,21 +237,39 @@ public class XMPPClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        return success;
     }
 
+    public boolean sendReadStatus(String to, String messagePacketID) {
+        boolean success = false;
+        try {
+            if (connection != null && connection.isAuthenticated()) {
+                Message message = new Message(to);
+                ReadReceipt read = new ReadReceipt(messagePacketID);
+                message.addExtension(read);
 
-    public static XMPPTCPConnection getConnection() {
-        if (connection == null) {
-            openConnection();
+                connection.sendPacket(message);
+
+                success = true;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        return connection;
+        return success;
     }
 
-    public static void closeConnection() {
+    private void addCustomExtensions() {
+        ProviderManager.addExtensionProvider(ReadReceipt.ELEMENT, ReadReceipt.NAMESPACE, new ReadReceipt.Provider());
+    }
+
+    private void closeConnection() {
         connection.disconnect();
         connection = null;
-
     }
 
+    private XMPPClient() {
+
+    }
 
 }

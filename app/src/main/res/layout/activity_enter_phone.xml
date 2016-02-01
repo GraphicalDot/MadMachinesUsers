@@ -1,62 +1,176 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context="com.sports.unity.common.controller.EnterPhoneActivity"
-    android:background="@drawable/splash_720">
+    android:id="@+id/rootview">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="100dp"
-        android:id="@+id/imageView"
-        android:src="@drawable/splash_logo"
-        android:layout_marginTop="76dp"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true" />
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/splash_bg" />
 
     <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="43dp"
-        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin">
 
-        android:layout_centerVertical="true"
-        android:layout_marginStart="30dp"
-        android:layout_marginEnd="30dp"
-        android:background="@drawable/number_bg">
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="43dp"
-            android:id="@+id/countryCode"
-            android:text="+91"
-            android:padding="10dp"
-            android:editable="false"
-            android:textColor="#FFFFFF"
-            android:background="@android:color/transparent"
-            android:layout_alignParentStart="true"/>
-
-        <EditText
+        <LinearLayout
+            android:id="@+id/logo"
             android:layout_width="fill_parent"
-            android:layout_height="43dp"
-            android:id="@+id/phoneNumber"
-            android:inputType="phone"
-            android:padding="10dp"
-            android:background="@android:color/transparent"
-            android:gravity="left"
-            android:textColor="@android:color/white"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/getotp"
-            android:layout_toEndOf="@+id/countryCode" />
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-        <Button
-            android:layout_width="40dp"
-            android:layout_height="43dp"
-            android:background="@drawable/next"
-            android:id="@+id/getotp"
-            android:onClick="NavigateToEnterOtp"
-            android:layout_alignParentEnd="true"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/vertical_padding_very_small"
+                android:layout_marginTop="@dimen/vertical_padding_small"
+                android:gravity="center"
+                android:orientation="horizontal">
 
-</RelativeLayout>
-</RelativeLayout>
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerInParent="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/white_circle" />
+
+                <ImageView
+                    android:id="@+id/imageView1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerInParent="true"
+                    android:layout_centerVertical="true"
+                    android:src="@drawable/logo" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/entr_ph_no"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:gravity="center"
+                    android:text="@string/enter_phone_number_text"
+                    android:textColor="@color/ColorPrimary"
+                    android:textSize="@dimen/font_size_large" />
+
+                <TextView
+                    android:id="@+id/txt_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="@dimen/horizontal_padding_medium"
+                    android:layout_marginStart="@dimen/horizontal_padding_medium"
+                    android:layout_marginTop="@dimen/horizontal_padding_very_very_small"
+                    android:gravity="center"
+                    android:paddingBottom="@dimen/vertical_padding_medium"
+                    android:text="@string/enter_phone_number_text_details"
+                    android:textColor="#b7cfe9"
+                    android:textSize="@dimen/font_size_small_large"
+                    />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/editContent"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/logo"
+            android:orientation="vertical">
+
+            <RelativeLayout
+
+                android:layout_width="fill_parent"
+                android:layout_height="@dimen/edit_view_height"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/horizontal_padding_medium"
+                android:layout_marginStart="@dimen/horizontal_padding_medium"
+                android:layout_marginTop="@dimen/horizontal_padding_very_very_small"
+                android:background="@drawable/number_bg">
+
+                <EditText
+                    android:id="@+id/countryCode"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:background="@android:color/transparent"
+                    android:editable="false"
+                    android:padding="@dimen/horizontal_padding_very_small"
+                    android:text="@string/country_code"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_size_medium"
+                    />
+
+                <EditText
+                    android:id="@+id/phoneNumber"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_toLeftOf="@+id/getOtp"
+                    android:layout_toRightOf="@+id/countryCode"
+                    android:background="@android:color/transparent"
+                    android:gravity="left"
+                    android:inputType="phone"
+                    android:maxLength="10"
+                    android:padding="@dimen/horizontal_padding_very_small"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_size_medium"
+                    android:textCursorDrawable="@null" />
+
+                <Button
+                    android:id="@+id/getOtp"
+                    android:layout_width="@dimen/edit_view_height"
+                    android:layout_height="@dimen/edit_view_height"
+                    android:layout_alignParentRight="true"
+                    android:background="@drawable/next"
+                    android:onClick="NavigateToEnterOtp" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/take_a_minut"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/horizontal_padding_very_small"
+                    android:gravity="center"
+                    android:text="Take a minute to review our"
+                    android:textColor="@color/take_a_minut"
+                    android:textSize="@dimen/font_size_small_large"
+                    />
+
+                <TextView
+                    android:id="@+id/privacy_policy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Privacy Policy"
+                    android:textColor="@color/ColorPrimary"
+                    android:textSize="@dimen/font_size_small_large"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+
+</FrameLayout>

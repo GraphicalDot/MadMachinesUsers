@@ -1,16 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="178dp"
-    android:orientation="vertical"
-    android:weightSum="1">
+    android:layout_height="wrap_content"
+    android:background="@color/gray3"
+    android:paddingTop="@dimen/horizontal_padding_medium"
+    android:paddingBottom="@dimen/horizontal_padding_very_small">
 
-
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/circleView"
+        android:layout_gravity="center"
+        android:layout_width="@dimen/profile_thumb_image_large"
+        android:layout_height="@dimen/profile_thumb_image_large"
+        android:layout_marginLeft="@dimen/horizontal_padding_small"
+        android:src="@drawable/ic_user"
+        android:layout_marginTop="@dimen/horizontal_padding_small"
+        android:layout_marginBottom="@dimen/horizontal_padding_small"
+        />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="56dp"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:layout_gravity="center"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true">
@@ -19,34 +30,55 @@
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
             android:textColor="#000"
             android:text="Anupam Gupta"
-            android:textSize="14sp"
+            android:textSize="@dimen/font_size_medium"
             android:textStyle="bold"
-
+            android:maxLines="1"
+            android:layout_marginLeft="@dimen/vertical_padding_very_very_small"
             />
 
-        <TextView
-            android:id="@+id/email"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="#000"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="5dp"
-            android:text="Member of 6 groups"
-            android:textSize="14sp"
-            android:textStyle="normal"
+            android:orientation="horizontal"
+            android:maxLines="1"
+            android:layout_marginLeft="@dimen/vertical_padding_very_very_small">
+
+            <TextView
+                android:id="@+id/member"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingRight="@dimen/vertical_padding_very_very_small"
+                android:textColor="@color/dot_color_grey"
+                android:text="Member of 0 groups"
+                android:textSize="@dimen/font_size_very_small"
+                android:textStyle="normal"
+                />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/dot_circle"
+                android:layout_gravity="center"
+                />
+
+
+            <TextView
+                android:id="@+id/admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingLeft="@dimen/vertical_padding_very_very_small"
+                android:textColor="@color/dot_color_grey"
+                android:text="Admin of 0 groups"
+                android:textSize="@dimen/font_size_very_small"
+                android:textStyle="normal"
+                />
 
             />
     </LinearLayout>
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:layout_marginLeft="16dp"
-        android:src="@drawable/ic_user"
-        android:layout_marginTop="38dp"
-        android:id="@+id/circleView"
-        />
-</RelativeLayout>
+   </LinearLayout>
+</LinearLayout>

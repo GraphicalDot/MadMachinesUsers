@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/actionBarSize"
+    android:background="@color/app_theme_blue"
+    android:elevation="@dimen/toolbar_elevation"
+    android:minHeight="?android:attr/actionBarSize"
+    android:theme="@style/Base.ThemeOverlay.AppCompat.Dark">
+
+    <ImageView
+        android:id="@+id/close_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingRight="@dimen/horizontal_padding_very_small"
+        android:src="@drawable/ic_close" />
+
+    <LinearLayout
+        android:id="@+id/myaddress"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start"
+            android:gravity="center_vertical"
+            android:text="Andul Gafar, Khan Marg"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_size_small_large" />
+
+        <TextView
+            android:id="@+id/secondary_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Vasant Kunj, New Delhi"
+            android:textColor="@color/gray3"
+            android:textSize="@dimen/font_size_very_small" />
+
+    </LinearLayout>
+
+</android.support.v7.widget.Toolbar>

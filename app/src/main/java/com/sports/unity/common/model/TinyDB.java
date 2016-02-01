@@ -24,14 +24,41 @@ import java.util.Map;
 
 public class TinyDB {
 
+    public static final String KEY_REGISTERED = "Registered";
+    public static final String KEY_PROFILE_CREATED = "profile_created";
+    public static final String KEY_SPORTS_SELECTED = "sports_selected";
+    public static final String KEY_OTP_SENT = "otp_sent";
+    public static final String KEY_GET_JOINED_GROUPS_ON_REGISTRATION = "get_groups";
+
+    public static final String KEY_CURRENT_LATITUDE = "lat";
+    public static final String KEY_CURRENT_LONGITUDE = "long";
+
+    public static final String KEY_ADDRESS_LOCATION = "location";
+    public static final String KEY_ADDRESS_STATE = "state";
+
+    public static final String KEY_USERNAME = "username";
+    public static final String KEY_PASSWORD = "password";
+
+    public static final String KEY_CONTACTS_COPIED_SUCESSFULLY = "contacts_copied";
+
+    public static final String KEY_PROFILE_NAME = "name";
+
+    /*Preference key used to manage filters*/
+    public static final String FAVOURITE_FILTERS = "favourite_filters";
+    public static final String LEAGUE_SELECTION = "league_selection";
+    public static final String TEAM_SELECTION = "team_selection";
+    public static final String PLAYER_SELECTION = "player_selection";
+    public static final String FILTER_COMPLETE = "filter_complete";
+
+
     private SharedPreferences preferences;
     private String DEFAULT_APP_IMAGEDATA_DIRECTORY;
     private String lastImagePath = "";
 
-    private  static TinyDB TINY_DB = null;
+    private static TinyDB TINY_DB = null;
 
-    synchronized public static TinyDB getInstance( Context context){
-        if( TINY_DB == null ){
+    synchronized public static TinyDB getInstance(Context context) {
+        if (TINY_DB == null) {
             TINY_DB = new TinyDB(context);
         }
         return TINY_DB;

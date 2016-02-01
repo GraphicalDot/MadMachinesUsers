@@ -3,6 +3,7 @@ package com.sports.unity.common.controller;
 import android.support.v4.app.Fragment;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.messages.controller.model.Contacts;
 
 import java.util.ArrayList;
 
@@ -11,10 +12,10 @@ import java.util.ArrayList;
  */
 public class RetainDataFragment extends Fragment {
 
-    private ArrayList<SportsUnityDBHelper.Contacts> contactList = null;
+    private ArrayList<Contacts> contactList = null;
 
-    public ArrayList<SportsUnityDBHelper.Contacts> getContactList() {
-        contactList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContactList();
+    public ArrayList<Contacts> getContactList() {
+        contactList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContactList_AvailableOnly(false);
         return contactList;
     }
 }

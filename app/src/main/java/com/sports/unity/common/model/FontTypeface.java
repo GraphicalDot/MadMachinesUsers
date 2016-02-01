@@ -27,6 +27,7 @@ public class FontTypeface {
     private Typeface robotoCondensedBold;
     private Typeface robotoCondensedRegular;
     private Typeface robotoSlabRegular;
+    private Typeface robotoSlabBold;
 
     private FontTypeface(Context context) {
         robotoLight = Typeface.createFromAsset( context.getAssets(), "Roboto-Light.ttf");
@@ -35,6 +36,7 @@ public class FontTypeface {
         robotoCondensedBold = Typeface.createFromAsset( context.getAssets(), "RobotoCondensed-Bold.ttf");
         robotoCondensedRegular = Typeface.createFromAsset( context.getAssets(), "RobotoCondensed-Regular.ttf");
         robotoSlabRegular = Typeface.createFromAsset( context.getAssets(), "RobotoSlab-Regular.ttf");
+        robotoSlabBold=Typeface.createFromAsset( context.getAssets(), "RobotoSlab-Bold.ttf");
 
 
     }
@@ -61,5 +63,9 @@ public class FontTypeface {
 
     public Typeface getRobotoSlabRegular() {
         return robotoSlabRegular;
+    }
+
+    public Typeface getRobotoSlabBold() {
+        return robotoSlabBold;
     }
 }
