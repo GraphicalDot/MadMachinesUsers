@@ -1,14 +1,10 @@
 package com.sports.unity.common.controller;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.location.Location;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -31,16 +27,12 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.view.SlidingTabLayout;
-import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.LocManager;
 
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -56,7 +48,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     private SportsUnityDBHelper sportsUnityDBHelper;
     public SearchView searchView;
     LocManager locManager;
-    private PermissionResultHandler contactResultHandler;
+    private PermissionResultHandler contactResultHandler,locationResultHandelar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,22 +112,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     private void initViews() {
         Toolbar toolbar = initToolBar();
 
-
-        final FloatingActionButton peopleAroundMeFab = (FloatingActionButton) findViewById(R.id.floatingbutton);
-        peopleAroundMeFab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.app_theme_blue)));
-        peopleAroundMeFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-                    startPeopleAroundMeActivity();
-                } else {
-                    if (PermissionUtil.getInstance().requestPermission( MainActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)), getResources().getString(R.string.location_permission_message), Constants.REQUEST_CODE_LOCATION_PERMISSION)) {
-                        startPeopleAroundMeActivity();
-                    }
-                }
-            }
-        });
-
         final DrawerLayout mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
 
@@ -175,32 +151,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         ViewPager pager = (ViewPager) findViewById(com.sports.unity.R.id.pager);
         pager.setAdapter(adapter);
 
-
-       pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-
-                switch (position) {
-                    case 2:
-                        peopleAroundMeFab.show();
-                        break;
-
-                    default:
-                        peopleAroundMeFab.hide();
-                        break;
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-
-            }
-        });
-
         // Assiging the Sliding Tab Layout View
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
         tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
@@ -231,11 +181,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         return toolbar;
-    }
-
-    private void startPeopleAroundMeActivity(){
-        Intent intent = new Intent(this, PeopleAroundMeMap.class);
-        startActivity(intent);
     }
 
     @Override
@@ -299,10 +244,10 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                 PermissionUtil.getInstance().showSnackBar(this, "Sorry something went wrong");
             }
         }else if (requestCode == Constants.REQUEST_CODE_LOCATION_PERMISSION) {
-            if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
-                startPeopleAroundMeActivity();
+            if (locationResultHandelar != null) {
+                locationResultHandelar.onPermissionResult(requestCode, grantResults);
             } else {
-                PermissionUtil.getInstance().showSnackBar(this, getString(R.string.permission_denied));
+                PermissionUtil.getInstance().showSnackBar(this, "Sorry something went wrong");
             }
         }
 
@@ -314,6 +259,13 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
     public void removeContactResultListener() {
         this.contactResultHandler = null;
+    }
+    public void addLocationResultListener(PermissionResultHandler permissionResultHandler) {
+        this.locationResultHandelar = permissionResultHandler;
+    }
+
+    public void removeLocationResultListener() {
+        this.locationResultHandelar = null;
     }
 
     public void setSearchView(SearchView searchView) {

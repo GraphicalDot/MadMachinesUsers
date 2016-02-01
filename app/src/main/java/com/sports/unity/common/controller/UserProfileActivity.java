@@ -5,31 +5,44 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.util.Constants;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.zip.Inflater;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserProfileActivity extends CustomAppCompatActivity {
 
     private String userOrGroupName;
-    private byte[] userOrGroupImage =null;
+    private byte[] userOrGroupImage = null;
     private String groupServerId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_profile);
         initView();
         setToolbar();
-        setTab();
-
+        setInitData();
     }
 
     private void getIntentExtras() {
@@ -52,18 +65,16 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         });
     }
 
-    private  void initView() {
+    private void initView() {
         CircleImageView profilePicture = (CircleImageView) findViewById(R.id.user_picture);
         TextView name = (TextView) findViewById(R.id.name);
-        TextView member = (TextView) findViewById(R.id.member);
-        TextView admin = (TextView) findViewById(R.id.admin);
 
         getIntentExtras();
 
         name.setText(userOrGroupName);
 
         if (userOrGroupImage == null) {
-            if(groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+            if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
                 profilePicture.setImageResource(R.drawable.ic_user);
             } else {
                 profilePicture.setImageResource(R.drawable.ic_group);
@@ -73,34 +84,78 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         }
     }
 
-    private  void setTab() {
+    private void setInitData() {
 
-        String titles[] = {"Groups", "Interests"};
 
-        int numberOfTabs = titles.length;
+        ListView teamListView = (ListView) findViewById(R.id.team_list);
+        ListView leagueListView = (ListView) findViewById(R.id.league_list);
+        ListView playerListView = (ListView) findViewById(R.id.player_list);
 
-        // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        ViewPagerAdapterForProfile adapter = new ViewPagerAdapterForProfile(getSupportFragmentManager(), titles, numberOfTabs);
+        ArrayList<String> savedList = UserUtil.getFavouriteFilters();
 
-        // Assigning ViewPager View and setting the adapter
-        ViewPager pager = (ViewPager) findViewById(com.sports.unity.R.id.pager);
-        pager.setAdapter(adapter);
+        List<String> teams = new ArrayList<>();
+        List<String> leagues = new ArrayList<String>();
+        List<String> players = new ArrayList<>();
 
-        // Assiging the Sliding Tab Layout View
-        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
-        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
-        tabs.setTabTextColor( R.color.profile_tab_selector);
-
-        // Setting Custom Color for the Scroll bar indicator of the Tab View
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.app_theme_blue);
+        for (String name : savedList) {
+            if (name.contains(Constants.NAV_COMP)) {
+                name = name.replace(Constants.NAV_COMP, "");
+                leagues.add(name);
+            } else if (name.contains(Constants.NAV_TEAM)) {
+                name = name.replace(Constants.NAV_TEAM, "");
+                teams.add(name);
+            } else if (name.contains(Constants.NAV_PLAYER)) {
+                name = name.replace(Constants.NAV_PLAYER, "");
+                players.add(name);
             }
-        });
-        // Setting the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(pager);
+        }
+
+        Collections.sort(teams);
+        Collections.sort(leagues);
+        Collections.sort(players);
+
+        ArrayAdapter<String> teamsListAdapter = new ArrayAdapter<String>(this, R.layout.textview_user_profile_activity, teams);
+        teamListView.setAdapter(teamsListAdapter);
+
+        ArrayAdapter<String> leaguesListAdapter = new ArrayAdapter<String>(this, R.layout.textview_user_profile_activity, leagues);
+        leagueListView.setAdapter(leaguesListAdapter);
+
+        ArrayAdapter<String> playerListAdapter = new ArrayAdapter<String>(this, R.layout.textview_user_profile_activity, players);
+        playerListView.setAdapter(playerListAdapter);
+
+        setListViewHeightBasedOnChildren(teamListView);
+        setListViewHeightBasedOnChildren(leagueListView);
+        setListViewHeightBasedOnChildren(playerListView);
     }
+
+    public void setListViewHeightBasedOnChildren(ListView listView) {
+        ListAdapter listAdapter = listView.getAdapter();
+        if (listAdapter != null) {
+
+            int numberOfItems = listAdapter.getCount();
+
+            // Get total height of all items.
+            int totalItemsHeight = 0;
+            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
+                View item = listAdapter.getView(itemPos, null, listView);
+                item.measure(0, 0);
+                totalItemsHeight += item.getMeasuredHeight();
+            }
+
+//            // Get total height of all item dividers.
+//            int totalDividersHeight = 2 * (numberOfItems + 7);
+
+            // Set list height.
+            ViewGroup.LayoutParams params = listView.getLayoutParams();
+            params.height = totalItemsHeight ;  //+ totalDividersHeight;
+            listView.setLayoutParams(params);
+            listView.requestLayout();
+
+        } else {
+            // nothing
+        }
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

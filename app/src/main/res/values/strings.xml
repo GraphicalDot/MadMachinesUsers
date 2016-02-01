@@ -169,4 +169,10 @@ Carrier SMS charges may apply.</string>
     <string name="permission_denied">Permissions were not granted.</string>
     
     <string name="dummy_team_1">India</string>
+
+    <string name="current_status">Your current status</string>
+    <string name="fav_team">My favourite team</string>
+    <string name="fav_league">My favourite league</string>
+    <string name="fav_player">My favourite player</string>
+    <string name="edit_caps">EDIT</string>
 </resources>

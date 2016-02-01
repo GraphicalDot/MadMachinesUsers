@@ -583,6 +583,7 @@ public class FavouriteContentHandler {
                         for (JSONObject obj : matches) {
                             try {
                                 String s = obj.getString("player_name");
+                                s = s.concat(Constants.NAV_PLAYER);
                                 FOOTBALL_FILTER_PLAYER.add(s);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -606,6 +607,7 @@ public class FavouriteContentHandler {
                         for (JSONObject obj : matches) {
                             try {
                                 String s = obj.getString("player_name");
+                                s = s.concat(Constants.NAV_PLAYER);
                                 CRICKET_FILTER_PLAYER.add(s);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -630,6 +632,8 @@ public class FavouriteContentHandler {
                                     s = s.concat(Constants.NAV_TEAM);
                                 } else if (isSearchLeague) {
                                     s = s.concat(Constants.NAV_COMP);
+                                } else if (isSearchPlayer) {
+                                    s = s.concat(Constants.NAV_PLAYER);
                                 }
                                 if (searchTag.equals(SEARCH_REQUEST_LEAGUE_TAG)) {
                                     if (!SEARCH_FOOTBALL_LEAGUE.contains(s)) {

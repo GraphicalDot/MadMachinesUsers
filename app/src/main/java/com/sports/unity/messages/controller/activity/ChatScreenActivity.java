@@ -69,7 +69,7 @@ import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChatScreenActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
+public class ChatScreenActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static ArrayList<Message> messageList;
     private static ChatScreenAdapter chatScreenAdapter;
@@ -92,7 +92,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     public static void viewProfile(Activity activity, byte[] profilePicture, String name, String groupServerId) {
 
         Intent intent = new Intent(activity, UserProfileActivity.class);
-
+        
         intent.putExtra("name", name);
         intent.putExtra("profilePicture", profilePicture);
         intent.putExtra("groupServerId", groupServerId);
@@ -683,7 +683,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
-            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload( mediaFileName, mimeType, chat, messageId, otherChat);
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, mimeType, chat, messageId, otherChat);
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
             String mediaFileName = (String) messageContent;
 
@@ -898,8 +898,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                                 byte[] content = DBUtil.loadContentFromExternalFileStorage(ChatScreenActivity.this.getBaseContext(), message.mediaFileName);
                                 mediaMap.put(message.mediaFileName, content);
 
-                                if ( (message.textData.length() == 0 && message.iAmSender == true) ) {
-                                    FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload( message.mediaFileName, message.mimeType, chat, message.id, otherChat);
+                                if ((message.textData.length() == 0 && message.iAmSender == true)) {
+                                    FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(message.mediaFileName, message.mimeType, chat, message.id, otherChat);
                                 } else {
                                     //nothing
                                 }
@@ -985,13 +985,13 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             } else {
                 PermissionUtil.getInstance().showSnackBar(this, getString(R.string.permission_denied));
             }
-        }else if (requestCode == Constants.REQUEST_CODE_GALLERY_STORAGE_PERMISSION) {
+        } else if (requestCode == Constants.REQUEST_CODE_GALLERY_STORAGE_PERMISSION) {
             if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
                 galleryPopup(findViewById(R.id.btn_gallery));
             } else {
                 PermissionUtil.getInstance().showSnackBar(this, getString(R.string.permission_denied));
             }
-        }else if (requestCode == Constants.REQUEST_CODE_RECORD_AUDIO_PERMISSION) {
+        } else if (requestCode == Constants.REQUEST_CODE_RECORD_AUDIO_PERMISSION) {
             if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
                 voicePopup(findViewById(R.id.btn_audiomsg));
             } else {

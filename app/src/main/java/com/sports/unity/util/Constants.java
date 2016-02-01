@@ -68,6 +68,8 @@ public class Constants {
 
     public static final String NAV_TEAM="nav_team";
     public static final String NAV_COMP="nav_comp";
+    public static final String NAV_PLAYER="nav_player";
+
     public static final int REQUEST_CODE_NAV = 2424;
     public static final String IS_FROM_NAV = "is_from_nav";
     public static final int REQUEST_CODE_SCORE = 4848;

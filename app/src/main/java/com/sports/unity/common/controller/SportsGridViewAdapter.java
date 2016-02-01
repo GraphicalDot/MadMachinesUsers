@@ -45,7 +45,7 @@ public class SportsGridViewAdapter extends BaseAdapter {
     private ArrayList<String> sports = new ArrayList<String>();
     public SportsGridViewAdapter(Context c) {
         mContext = c;
-       sports= UserUtil.getSportsSelected();
+        sports= UserUtil.getSportsSelected();
     }
 
     @Override
