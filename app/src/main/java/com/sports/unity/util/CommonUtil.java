@@ -4,12 +4,14 @@ import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.sports.unity.Database.DBUtil;
+import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPService;
 
 import org.joda.time.DateTime;
@@ -28,6 +30,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -121,16 +124,39 @@ public class CommonUtil {
 
     public static String getTimeDifference(long epochTime) {
         long currentTime = getCurrentGMTTimeInEpoch();
-        DateTime dateTime = new DateTime(epochTime * 1000);
-        DateTime dateTimenow = new DateTime(currentTime * 1000);
-        int days = Days.daysBetween(dateTime, dateTimenow).getDays();
-        if (days > 0) {
-            return String.valueOf(days);
-        }
+        Calendar time = Calendar.getInstance();
+        time.setTimeInMillis((epochTime) * 1000);
+        int day = time.get(Calendar.DAY_OF_MONTH);
+        time.setTimeInMillis((currentTime) * 1000);
+        int currentday = time.get(Calendar.DAY_OF_MONTH);
+//        DateTime dateTime = new DateTime(epochTime * 1000);
+//        DateTime dateTimenow = new DateTime(currentTime * 1000);
+//        int days = Days.daysBetween(dateTime, dateTimenow).getDays();
+//        if (days > 0) {
+//            return String.valueOf(days);
+//        }
 
-        return String.valueOf(0);
+        return String.valueOf(currentday - day);
     }
 
+    public static int getDrawable(String color, boolean toolbar) {
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        if (currentapiVersion >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            // Lollipop devices
+            if (toolbar) {
+                return R.drawable.image_view_selector;
+            } else {
+                return R.drawable.ripple_mask_drawable;
+            }
+        } else {
+            // Lower than Lollipop
+            if (color.equals(Constants.COLOR_WHITE)) {
+                return R.drawable.layout_white_bg_selector;
+            } else {
+                return R.drawable.layout_blue_bg_selector;
+            }
+        }
+    }
 //    public static int getStack(Context context) {
 //        int numOfActivities = 0;
 //        ActivityManager m = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);

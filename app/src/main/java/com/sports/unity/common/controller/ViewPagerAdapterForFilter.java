@@ -1,5 +1,6 @@
 package com.sports.unity.common.controller;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -7,6 +8,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.sports.unity.common.controller.fragment.FilterFragment;
 import com.sports.unity.common.controller.fragment.GroupsFragment;
 import com.sports.unity.common.controller.fragment.IntrestsFragment;
+import com.sports.unity.util.Constants;
 
 /**
  * Created by madmachines on 27/1/16.
@@ -34,15 +36,24 @@ public class ViewPagerAdapterForFilter extends FragmentStatePagerAdapter {
         if (position == 0) // if the position is 0 we are returning the First tab
         {
             FilterFragment filterFragment = new FilterFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.NAV_FILTER, Constants.NAV_TEAM);
+            filterFragment.setArguments(bundle);
             return filterFragment;
-        } else if (position == 1){
+        } else if (position == 1) {
             FilterFragment filterFragment = new FilterFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.NAV_FILTER, Constants.NAV_COMP);
+            filterFragment.setArguments(bundle);
             return filterFragment;
-        } else if (position == 2){
+        } else if (position == 2) {
             FilterFragment filterFragment = new FilterFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.NAV_FILTER, Constants.NAV_PLAYER);
+            filterFragment.setArguments(bundle);
             return filterFragment;
         }
-      return  null;
+        return null;
     }
 
     // This method return the titles for the Tabs in the Tab Strip
@@ -59,6 +70,4 @@ public class ViewPagerAdapterForFilter extends FragmentStatePagerAdapter {
         return numberOfTabs;
     }
 
-    {
-    }
 }

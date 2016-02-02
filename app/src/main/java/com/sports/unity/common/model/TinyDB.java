@@ -50,6 +50,24 @@ public class TinyDB {
     public static final String PLAYER_SELECTION = "player_selection";
     public static final String FILTER_COMPLETE = "filter_complete";
 
+    /**
+     * Settings Screen Options
+     */
+
+    public static final String NOTIFICATION_AND_SOUND_OPTIONS = "notification_and_sounds";
+    public static final String NOTIFICATION_PREVIEW = "notification_preview";
+    public static final String CONVERSATION_TONES = "conversation_tones";
+    public static final String VIBRATE = "vibrate";
+    public static final String LIGHT = "light";
+    public static final String NOTIFICATION_SOUND = "notification_sound";
+
+    public static final String LOCATION_OPTIONS = "show_my_location";
+    public static final String FRIENDS_ONLY = "friends_only";
+    public static final String SHOW_TO_ALL = "show_to_all";
+
+    public static final String MEDIA_OPTIONS = "media_options";
+    public static final String SAVE_INCOMING_MEDIA = "save_incoming_media";
+    public static final String SAVE_IN_APP_MEDIA_CAPTURE = "save_in_app_media_capture";
 
     private SharedPreferences preferences;
     private String DEFAULT_APP_IMAGEDATA_DIRECTORY;

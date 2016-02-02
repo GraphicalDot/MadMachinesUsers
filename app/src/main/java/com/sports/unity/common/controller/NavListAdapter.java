@@ -11,6 +11,8 @@ import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -30,7 +32,7 @@ public class NavListAdapter extends BaseExpandableListAdapter {
         this.groupItems = groupList;
         this.childItems = childItems;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-       // this.editTeam = tv;
+        // this.editTeam = tv;
         act = context;
         this.indiIm = indiIm;
     }
@@ -48,7 +50,7 @@ public class NavListAdapter extends BaseExpandableListAdapter {
 
         textView = (TextView) convertView.findViewById(R.id.itemtext);
         textView.setText(child.get(childPosition));
-        //textView.setTypeface(FontTypeface.getInstance(act).getRobotoCondensedRegular());
+        textView.setTypeface(FontTypeface.getInstance(act).getRobotoMedium());
         return convertView;
     }
 
@@ -62,12 +64,13 @@ public class NavListAdapter extends BaseExpandableListAdapter {
         }
 
         textView = (TextView) convertView.findViewById(R.id.itemheader);
-        if(isExpanded){
-            textView.setTextColor(act.getResources().getColor(R.color.gray1));
-        }else{
+        if (isExpanded) {
             textView.setTextColor(act.getResources().getColor(R.color.app_theme_blue));
+        } else {
+            textView.setTextColor(act.getResources().getColor(R.color.gray1));
         }
-        textView.setTypeface(FontTypeface.getInstance(act).getRobotoCondensedBold());
+        textView.setTypeface(FontTypeface.getInstance(act).getRobotoMedium());
+//        textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
         textView.setText(groupItems.get(groupPosition));
         return convertView;
     }
@@ -126,8 +129,8 @@ public class NavListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    public void updateChildList(ArrayList<Object> childItem){
-        this.childItems=childItem;
+    public void updateChildList(ArrayList<Object> childItem) {
+        this.childItems = childItem;
         this.notifyDataSetChanged();
     }
 }

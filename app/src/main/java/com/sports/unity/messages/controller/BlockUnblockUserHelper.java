@@ -9,7 +9,9 @@ import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
@@ -24,10 +26,12 @@ public class BlockUnblockUserHelper {
 
     private boolean blockStatus = false;
     private Activity activity = null;
+    private TextView lastSeenText;
 
-    public BlockUnblockUserHelper(boolean blockStatus, Activity activity) {
+    public BlockUnblockUserHelper(boolean blockStatus, Activity activity, TextView lastSeenText) {
         this.blockStatus = blockStatus;
         this.activity = activity;
+        this.lastSeenText = lastSeenText;
     }
 
     public boolean isBlockStatus() {
@@ -88,8 +92,10 @@ public class BlockUnblockUserHelper {
         ChatKeyboardHelper.getInstance(false).disableOrEnableKeyboardAndMediaButtons(blockStatus, activity);
         if (blockStatus == true) {
             item.setTitle("Unblock User");
+            lastSeenText.setVisibility(View.GONE);
         } else {
             item.setTitle("Block User");
+            lastSeenText.setVisibility(View.VISIBLE);
         }
     }
 

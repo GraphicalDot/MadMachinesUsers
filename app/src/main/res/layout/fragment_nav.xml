@@ -2,34 +2,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/horizontal_padding_medium">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/nav_item_margin">
+        android:layout_height="wrap_content">
 
         <ExpandableListView
             android:id="@+id/fav_team"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:divider="@null"
-            android:nestedScrollingEnabled="true"
             android:fitsSystemWindows="true"
+            android:nestedScrollingEnabled="true"
             android:scrollbars="none" />
 
         <!--<TextView-->
-            <!--android:id="@+id/edit_team"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="@dimen/drawer_header_height"-->
-            <!--android:layout_toLeftOf="@+id/favindi"-->
-            <!--android:gravity="center"-->
-            <!--android:paddingLeft="@dimen/horizontal_padding_small"-->
-            <!--android:paddingRight="@dimen/horizontal_padding_small"-->
-            <!--android:text="@string/nav_edit"-->
-            <!--android:textColor="@color/app_theme_blue"-->
-            <!--android:textSize="@dimen/font_size_very_small"-->
-            <!--android:visibility="invisible" />-->
+        <!--android:id="@+id/edit_team"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="@dimen/drawer_header_height"-->
+        <!--android:layout_toLeftOf="@+id/favindi"-->
+        <!--android:gravity="center"-->
+        <!--android:paddingLeft="@dimen/horizontal_padding_small"-->
+        <!--android:paddingRight="@dimen/horizontal_padding_small"-->
+        <!--android:text="@string/nav_edit"-->
+        <!--android:textColor="@color/app_theme_blue"-->
+        <!--android:textSize="@dimen/font_size_very_small"-->
+        <!--android:visibility="invisible" />-->
 
         <ImageView
             android:id="@+id/favindi"
@@ -49,8 +49,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/nav_item_margin">
+        android:layout_height="wrap_content">
 
 
         <ExpandableListView
@@ -58,9 +57,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/edit_comp"
-            android:nestedScrollingEnabled="true"
-            android:fitsSystemWindows="true"
             android:divider="@null"
+            android:fitsSystemWindows="true"
+            android:nestedScrollingEnabled="true"
             android:scrollbars="none" />
 
         <TextView
@@ -96,35 +95,46 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/nav_item_margin"
         android:layout_marginTop="@dimen/nav_item_margin_v"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/invite"
-            android:layout_width="wrap_content"
+            android:id="@+id/settings"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/drawer_header_height"
-            android:gravity="left"
-            android:text="@string/invite_friend"
-            android:textColor="@color/gray1"
-            android:textSize="@dimen/font_size_small_large" />
-
-        <TextView
-            android:id="@+id/rate"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/drawer_header_height"
-            android:gravity="left"
-            android:text="@string/app_rate"
+            android:gravity="center|left"
+            android:text="@string/settings"
             android:textColor="@color/gray1"
             android:textSize="@dimen/font_size_small_large" />
 
         <TextView
             android:id="@+id/feedback"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="@dimen/drawer_header_height"
-            android:gravity="left"
+            android:gravity="center|left"
             android:text="@string/feedback"
             android:textColor="@color/gray1"
             android:textSize="@dimen/font_size_small_large" />
+
+        <TextView
+            android:id="@+id/rate"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/drawer_header_height"
+            android:gravity="center|left"
+            android:text="@string/app_rate"
+            android:textColor="@color/gray1"
+            android:textSize="@dimen/font_size_small_large" />
+
+
+        <TextView
+            android:id="@+id/about"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/drawer_header_height"
+            android:gravity="center|left"
+            android:text="@string/about"
+            android:textColor="@color/gray1"
+            android:textSize="@dimen/font_size_small_large" />
+
+
     </LinearLayout>
 </LinearLayout>

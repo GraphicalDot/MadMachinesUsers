@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sports.unity.ChatScreenApplication;
@@ -78,7 +79,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     private static String JABBERID;
     private static String JABBERNAME;
     private static byte[] userImageBytes;
-    private ArrayList<Integer> selectedItemsList = new ArrayList<>();
 
     private ListView mChatView;
     private boolean otherChat = false;
@@ -92,7 +92,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     public static void viewProfile(Activity activity, byte[] profilePicture, String name, String groupServerId) {
 
         Intent intent = new Intent(activity, UserProfileActivity.class);
-        
+
         intent.putExtra("name", name);
         intent.putExtra("profilePicture", profilePicture);
         intent.putExtra("groupServerId", groupServerId);
@@ -162,7 +162,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                         } else if (object.toString().equals("available")) {
                             status.setText("Online");
                         } else if (object.toString().equals("unavailable")) {
-                            status.setText("");
                             personalMessaging.getLastTime(JABBERID);
                         } else {
                             status.setText("last seen " + object.toString());
@@ -316,6 +315,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
          */
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_chat);
         setSupportActionBar(toolbar);
+        toolbar.setContentInsetsAbsolute(0, 0);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         final Handler mHandler = new Handler();
 
@@ -342,10 +342,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
              * getting all the extras in the intent neccesary for communicating in chat and layout
              */
             getIntentExtras();
-
-            boolean blockStatus = getIntent().getBooleanExtra("blockStatus", false);
-            blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus, this);
-            disableChatIfUserBlocked();
         }
 
         if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
@@ -440,7 +436,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             chatKeyboardHelper.disableOrEnableKeyboardAndMediaButtons(blockUnblockUserHelper.isBlockStatus(), this);
         }
 
-
         LinearLayout messagecomposeLayout = (LinearLayout) findViewById(R.id.type_msg);
         messagecomposeLayout.setClickable(true);
         messagecomposeLayout.setOnClickListener(new View.OnClickListener() {
@@ -455,6 +450,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             }
         });
     }
+
+    /**
+     * For blocked users show message "user blocked. Tap here to unblock" and do not show his/her last seen and status
+     */
 
     private void displayAlertToUnblockUser() {
         AlertDialog.Builder build = new AlertDialog.Builder(
@@ -564,7 +563,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         user.setText(JABBERNAME);
         user.setTypeface(FontTypeface.getInstance(this).getRobotoRegular());
 
-        userPic = (CircleImageView) toolbar.findViewById(R.id.user_picture);
+        userPic = (CircleImageView) findViewById(R.id.user_picture);
         if (isGroupChat) {
             if (userImageBytes == null) {
                 userPic.setImageResource(R.drawable.ic_group);
@@ -598,6 +597,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         userImageBytes = getIntent().getByteArrayExtra("userpicture");
 
         groupServerId = getIntent().getStringExtra("groupServerId");
+
+        boolean blockStatus = getIntent().getBooleanExtra("blockStatus", false);
+        if (blockStatus) {
+            status.setVisibility(View.GONE);
+        } else {
+            status.setVisibility(View.VISIBLE);
+        }
+        blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus, this, status);
+        disableChatIfUserBlocked();
 
     }
 

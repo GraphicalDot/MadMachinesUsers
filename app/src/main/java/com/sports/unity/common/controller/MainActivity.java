@@ -12,10 +12,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.GetChars;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
@@ -48,7 +50,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     private SportsUnityDBHelper sportsUnityDBHelper;
     public SearchView searchView;
     LocManager locManager;
-    private PermissionResultHandler contactResultHandler,locationResultHandelar;
+    private PermissionResultHandler contactResultHandler, locationResultHandelar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,6 +115,12 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         Toolbar toolbar = initToolBar();
 
         final DrawerLayout mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        LinearLayout navigationHeader = (LinearLayout) mDrawer.findViewById(R.id.nav_header);
+        TextView name = (TextView) navigationHeader.findViewById(R.id.name);
+        name.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+
+        Switch shareLocation = (Switch) navigationHeader.findViewById(R.id.share_location);
+        shareLocation.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
 
             @Override
@@ -213,13 +221,13 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            if(searchView!=null) {
+            if (searchView != null) {
                 if (!searchView.isIconified()) {
                     searchView.setIconified(true);
                 } else {
                     super.onBackPressed();
                 }
-            }else{
+            } else {
                 super.onBackPressed();
             }
         }
@@ -228,7 +236,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == Constants.REQUEST_CODE_NAV) {
+        if (requestCode == Constants.REQUEST_CODE_NAV) {
             navigationFragment.onActivityResult(requestCode, resultCode, data);
             Log.d("max", "ONMAINRESULT");
         }
@@ -243,7 +251,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             } else {
                 PermissionUtil.getInstance().showSnackBar(this, "Sorry something went wrong");
             }
-        }else if (requestCode == Constants.REQUEST_CODE_LOCATION_PERMISSION) {
+        } else if (requestCode == Constants.REQUEST_CODE_LOCATION_PERMISSION) {
             if (locationResultHandelar != null) {
                 locationResultHandelar.onPermissionResult(requestCode, grantResults);
             } else {
@@ -260,6 +268,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     public void removeContactResultListener() {
         this.contactResultHandler = null;
     }
+
     public void addLocationResultListener(PermissionResultHandler permissionResultHandler) {
         this.locationResultHandelar = permissionResultHandler;
     }
@@ -275,5 +284,5 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     public interface PermissionResultHandler {
         public void onPermissionResult(int requestCode, int[] grantResults);
     }
-    
+
 }

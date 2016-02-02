@@ -11,6 +11,8 @@
     <color name="horizontal_line_grey">#e5e5e5</color>'
 
     <color name="app_theme_blue">#004d99</color>
+    <color name="app_theme_blue_translucent">#20004d99</color>
+    <color name="white_translucent">#20FFFFFF</color>
     <color name="progress_light">#bbbbbb</color>
 
     <color name="custom_black_distace">#4d4d4d</color>

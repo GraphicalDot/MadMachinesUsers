@@ -76,10 +76,10 @@
         android:background="@android:color/white"
         android:orientation="vertical">
 
-        <ListView
+        <se.emilsjolander.stickylistheaders.StickyListHeadersListView
             android:id="@+id/list_contacts"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@android:color/white"
             android:divider="@drawable/list_divider"
             android:dividerHeight="1dp" />

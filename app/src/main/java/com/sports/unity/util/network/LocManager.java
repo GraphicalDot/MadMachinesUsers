@@ -98,11 +98,11 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         retrieveLocation();
     }
 
-    public void sendLatituteAndLongitude(final Location mLastLocation, boolean peopleAroundMeActivity) {
+    public void sendLatituteAndLongitude(final Location mLastLocation, boolean forceSend) {
         if (uploadLocation != null && uploadLocation.isAlive()) {
             //do nothing
         } else {
-            if (peopleAroundMeActivity || dataSent == false) {
+            if (forceSend || dataSent == false) {
                 uploadLocation = new Thread(new Runnable() {
                     @Override
                     public void run() {

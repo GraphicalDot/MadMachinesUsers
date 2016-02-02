@@ -152,8 +152,8 @@ Carrier SMS charges may apply.</string>
     <string name="turn_on_gps_text">Please go to settings and enable GPS</string>
     <string name="location_turned_off_text">Your location services are turned off.</string>
     <string name="invite_friend">Invite Friend</string>
-    <string name="app_rate">App Rate</string>
-    <string name="feedback">Feedback</string>
+    <string name="app_rate">Rate Us</string>
+    <string name="feedback">Share Feedback</string>
     <string name="nav_edit">EDIT</string>
     <string name="no_users_nearby">We didn\'t find anyone :(</string>
     <string name="try_broadening_search_increasing_radius">Try broadening your search by increasing radius</string>
@@ -175,4 +175,32 @@ Carrier SMS charges may apply.</string>
     <string name="fav_league">My favourite league</string>
     <string name="fav_player">My favourite player</string>
     <string name="edit_caps">EDIT</string>
+    <string name="about">About</string>
+    <string name="settings">Settings</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+
+    <!--Setting Screen related strings-->
+    <string name="notification_and_sound_options">Notifications and Sounds</string>
+    <string name="notification_previews">Notification Previews</string>
+    <string name="show_name_message">show name and message</string>
+    <string name="conversation_tones">Conversation Tones</string>
+    <string name="play_sound_for_messages">play sound for incoming and outgoing messages</string>
+    <string name="notification_vibrate">Vibrate</string>
+    <string name="notification_light">Light</string>
+    <string name="notification_sound">Notification Sound</string>
+    <string name="notification_ping">Ping</string>
+    <string name="show_my_location">Show My Location</string>
+    <string name="friends_only">Friends Only</string>
+    <string name="show_location_to_friends">Show your location to your friends only</string>
+    <string name="show_to_all">Show to all</string>
+    <string name="show_location_to_spu_users">show your location to all Sports Unity users</string>
+    <string name="photos_and_media">Photos and media</string>
+    <string name="save_photo">Save Photo</string>
+    <string name="save_photos_to_gallery">Save incoming photos to your gallery</string>
+    <string name="save_on_capture">Save on capture</string>
+    <string name="save_new_photo_captured_in_gallery">Save new photo you take in the app in your gallery</string>
+    <string name="chats">Chats</string>
+    <string name="clear_all_chats">Clear all chats</string>
+    <string name="delete_all_chats">Delete all chats</string>
 </resources>
