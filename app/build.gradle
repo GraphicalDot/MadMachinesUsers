@@ -1,24 +1,33 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'sportsunityalias'
+            keyPassword 'info12345'
+            storeFile file('/home/madmachines/SportsUnityProjects/Sports_Unity_New_Dev_Branch/sportsunitykeystore.jks')
+            storePassword 'info12345'
+        }
+    }
     compileSdkVersion 23
-    buildToolsVersion '23.0.1'
+    buildToolsVersion "23.0.0"
     defaultConfig {
         applicationId 'com.sports.unity'
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     productFlavors {
     }
-
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
@@ -51,4 +60,5 @@ dependencies {
     compile 'com.android.support:cardview-v7:23.0.1'
     compile 'com.android.support:recyclerview-v7:23.0.1'
     compile 'com.android.support:design:23.0.1'
+    compile 'se.emilsjolander:stickylistheaders:2.7.0'
 }
