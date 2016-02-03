@@ -204,6 +204,17 @@ Carrier SMS charges may apply.</string>
     <string name="clear_all_chats">Clear all chats</string>
     <string name="delete_all_chats">Delete all chats</string>
     <string name="got_it">GOT IT</string>
+
+    <!--ShowcaseView related-->
     <string name="showcase_heading">Search more Favourites</string>
     <string name="showcase_message">Search your Favourite Teams, Leagues and Players</string>
+
+    <string name="showcase_filter_heading">Apply news filters</string>
+    <string name="showcase_filter_message">Filter news according to favourite sport</string>
+
+    <string name="showcase_search_heading">Search more news</string>
+    <string name="showcase_search_message">Search news for your Favourite Teams, Leagues and Players</string>
+
+    <string name="showcase_mini_card_heading">Switch news view</string>
+    <string name="showcase_mini_card_message">Switch news view to mini card layout</string>
 </resources>
