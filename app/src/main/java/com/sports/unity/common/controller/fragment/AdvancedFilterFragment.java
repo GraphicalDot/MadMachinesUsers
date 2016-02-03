@@ -51,12 +51,13 @@ public class AdvancedFilterFragment extends Fragment {
 
         FilterPagerAdapter filterPagerAdapter=new FilterPagerAdapter(getActivity().getSupportFragmentManager(),SPORTS_TYPE);
         ViewPager pager = (ViewPager) view.findViewById(R.id.pager);
+        pager.setOffscreenPageLimit(2);
         pager.setAdapter(filterPagerAdapter);
         pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
             @Override
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
-                ((AdvancedFilterActivity)getActivity()).closeSearch();
+                ((AdvancedFilterActivity) getActivity()).closeSearch();
             }
         });
         SlidingTabLayout tabs = (SlidingTabLayout) view.findViewById(R.id.tabs);

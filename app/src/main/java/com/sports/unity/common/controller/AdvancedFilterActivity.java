@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.method.MovementMethod;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -29,6 +28,8 @@ import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+
 /**
  * Created by Mad on 12/28/2015.
  */
@@ -49,6 +50,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     public boolean isFromNav;
     private int listSize = 0;
     int fragmentNum = 0;
+    private final String SHOWCASE_ID = "search_showcase68";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,7 +80,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         done.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
         if (!UserUtil.isFilterCompleted() || isFromNav) {
             done.setVisibility(View.INVISIBLE);
-        }else{
+        } else {
             done.setVisibility(View.VISIBLE);
         }
         done.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +96,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         skip.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
         if (!UserUtil.isFilterCompleted() || isFromNav) {
             skip.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             skip.setVisibility(View.INVISIBLE);
         }
         skip.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +118,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         next.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
         if (!UserUtil.isFilterCompleted() || isFromNav) {
             next.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             next.setVisibility(View.INVISIBLE);
         }
         next.setOnClickListener(new View.OnClickListener() {
@@ -155,14 +157,14 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
     private void handleNextClick() {
         UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
-        if (UserUtil.isFilterCompleted()&&!isFromNav) {
+        if (UserUtil.isFilterCompleted() && !isFromNav) {
             finish();
         } else if (fragmentNum < sportsSelected.size()) {
             bundle.putString(Constants.SPORTS_TYPE, sportsSelected.get(fragmentNum));
             replaceFragment(bundle);
             titleText.setText(CommonUtil.capitalize(sportsSelected.get(fragmentNum)));
-            fragmentNum ++;
-        } else  if(fragmentNum == sportsSelected.size()) {
+            fragmentNum++;
+        } else if (fragmentNum == sportsSelected.size()) {
             UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
             moveToNextActivity(MainActivity.class);
         }
@@ -179,6 +181,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         search = (ImageView) toolbar.findViewById(R.id.action_search);
         search.setVisibility(View.VISIBLE);
+        highLightSearch();
         titleLayout = (LinearLayout) toolbar.findViewById(R.id.title_layout);
         searchLayout = (LinearLayout) toolbar.findViewById(R.id.search_layout);
         searchText = (EditText) toolbar.findViewById(R.id.search_edit);
@@ -189,6 +192,8 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
                 onBack();
             }
         });
+        toolbar.bringToFront();
+        findViewById(R.id.rootview).invalidate();
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -243,6 +248,18 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         });
     }
 
+    private void highLightSearch() {
+        new MaterialShowcaseView.Builder(this)
+                .setTarget(search)
+                .setDismissText(getString(R.string.got_it))
+                .setMaskColour(getResources().getColor(R.color.semi_transparent_white))
+                .setContentText(R.string.showcase_message)
+                .setContentHeadingText(R.string.showcase_heading)
+                .setDelay(500) // optional but starting animations immediately in onCreate can make them choppy
+                .singleUse(SHOWCASE_ID) // provide a unique ID used to ensure it is only shown once
+                .show();
+    }
+
     public void addEditClickListener(OnEditFilterListener listener) {
         if (editFilterListener == null) {
             editFilterListener = new ArrayList<>();
@@ -254,19 +271,17 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         editFilterListener.remove(listener);
     }
 
-
     private void moveToNextActivity(Class nextActivityClass) {
         Intent mainIntent = new Intent(AdvancedFilterActivity.this, nextActivityClass);
-        mainIntent.putExtra(Constants.IS_FROM_NAV,isFromNav);
+        mainIntent.putExtra(Constants.IS_FROM_NAV, isFromNav);
         startActivity(mainIntent);
         finish();
     }
 
 
     private void initFragment() {
-            addFragment();
-        }
-
+        addFragment();
+    }
 
 
     public void closeSearch() {
@@ -295,20 +310,19 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private void replaceFragment(Bundle bundle) {
         editFilterListener = new ArrayList<>();
         FavouriteContentHandler.getInstance().resetListener();
-
         advancedFilterFragment = new AdvancedFilterFragment();
         advancedFilterFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.filter_container, advancedFilterFragment, bundle.getString(Constants.SPORTS_TYPE)).commit();
     }
 
     public interface OnEditFilterListener {
-        public void onEdit(boolean b);
+        public void onEdit(boolean b, String searhString);
     }
 
     private void performEdit() {
         if (editFilterListener.size() > 0) {
             for (OnEditFilterListener e : editFilterListener) {
-                e.onEdit(isSearchEdit);
+                e.onEdit(isSearchEdit, searchString);
             }
         } else {
             //nothing
@@ -316,23 +330,25 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     }
 
     private void onBack() {
-        fragmentNum--;
         if (isSearchEdit) {
             closeSearch();
-        } else if (UserUtil.isFilterCompleted()&&!isFromNav) {
-            if (isFromNav) {
-                setResult(RESULT_CANCELED);
-            }
-            finish();
-        } else if (fragmentNum !=0) {
-            bundle.putString(Constants.SPORTS_TYPE, sportsSelected.get(fragmentNum-1));
-            replaceFragment(bundle);
-            titleText.setText(CommonUtil.capitalize(UserUtil.getSportsSelected().get(fragmentNum - 1)));
-        } else if (fragmentNum == 0 ) {
-            if(!UserUtil.isFilterCompleted()||isFromNav){
-                moveToNextActivity(SelectSportsActivity.class);
-            } else {
+        } else {
+            fragmentNum--;
+            if (UserUtil.isFilterCompleted() && !isFromNav) {
+                if (isFromNav) {
+                    setResult(RESULT_CANCELED);
+                }
                 finish();
+            } else if (fragmentNum != 0) {
+                bundle.putString(Constants.SPORTS_TYPE, sportsSelected.get(fragmentNum - 1));
+                replaceFragment(bundle);
+                titleText.setText(CommonUtil.capitalize(UserUtil.getSportsSelected().get(fragmentNum - 1)));
+            } else if (fragmentNum == 0) {
+                if (!UserUtil.isFilterCompleted() || isFromNav) {
+                    moveToNextActivity(SelectSportsActivity.class);
+                } else {
+                    finish();
+                }
             }
         }
     }

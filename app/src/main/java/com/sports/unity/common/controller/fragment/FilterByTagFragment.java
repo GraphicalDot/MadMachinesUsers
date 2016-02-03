@@ -55,7 +55,6 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
 
         SPORTS_FILTER_TYPE = bundle.getString(Constants.SPORTS_FILTER_TYPE);
         SPORTS_TYPE = bundle.getString(Constants.SPORTS_TYPE);
-        ((AdvancedFilterActivity) getActivity()).addEditClickListener(this);
         isFilterCompleted = UserUtil.isFilterCompleted();
         isFromNav = ((AdvancedFilterActivity) getActivity()).isFromNav;
     }
@@ -63,6 +62,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     @Override
     public void onPause() {
         super.onPause();
+        ((AdvancedFilterActivity) getActivity()).removeEditClickListener(this);
         favouriteContentHandler.searchNum = 0;
         favouriteContentHandler.onPause();
         favouriteContentHandler.removePreparedListener(this);
@@ -74,13 +74,17 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     public void onResume() {
         super.onResume();
         favouriteContentHandler.onResume();
+        ((AdvancedFilterActivity) getActivity()).addEditClickListener(this);
         favouriteContentHandler.addPreparedListener(this);
         if (!favouriteContentHandler.isDisplay) {
             showProgress();
             favouriteContentHandler.makeRequest();
         }
     }
+public void setSearchListener(){
 
+    ((AdvancedFilterActivity) getActivity()).addEditClickListener(this);
+}
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -185,7 +189,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
      * and request current query to network.
      * @param b
      */
-    private void requestEdit(boolean b) {
+    private void requestEdit(boolean b,String SearchString) {
         if (b) {
             showProgress();
             /**
@@ -205,6 +209,15 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
                                         }
                                     }
                                     itemDataSet.add(0, f);
+                                }else if(!f.isChecked()){
+                                    for (int index = 0; index < itemDataSet.size(); index++) {
+                                        FavouriteItem f1 = itemDataSet.get(index);
+                                        if (f1.getName().equals(f.getName())) {
+                                            if(f1.isChecked()){
+                                                f1.setChecked(false);
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         } catch (ConcurrentModificationException e) {
@@ -217,7 +230,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
 
             }
             isEdit = true;
-            favouriteContentHandler.requestFavSearch(SPORTS_FILTER_TYPE, SPORTS_TYPE, ((AdvancedFilterActivity) getActivity()).searchString);
+            favouriteContentHandler.requestFavSearch(SPORTS_FILTER_TYPE, SPORTS_TYPE, SearchString);
 
         } else if ((isEdit && isFromNav) || (isEdit && !isFilterCompleted)) {
             searchList = itemAdapter.getItemDataSet();
@@ -233,6 +246,15 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
                                     }
                                 }
                                 itemDataSet.add(0, f);
+                            }else if(!f.isChecked()){
+                                for (int index = 0; index < itemDataSet.size(); index++) {
+                                    FavouriteItem f1 = itemDataSet.get(index);
+                                    if (f1.getName().equals(f.getName())) {
+                                        if(f1.isChecked()){
+                                            f1.setChecked(false);
+                                        }
+                                    }
+                                }
                             }
                         }
                     } catch (ConcurrentModificationException e) {
@@ -284,7 +306,6 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
             }
             try {
                 if (searchList.size() <= 0) {
-
                     showErrorLayout(noResultMessage);
                 } else {
                     itemAdapter.setItemDataSet(searchList, true);
@@ -369,8 +390,8 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
      * @param b
      */
     @Override
-    public void onEdit(boolean b) {
-        requestEdit(b);
+    public void onEdit(boolean b,String searchString) {
+        requestEdit(b,searchString);
 
     }
 

@@ -1,5 +1,6 @@
 package com.sports.unity.common.model;
 
+
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
 
@@ -89,9 +90,6 @@ public class FavouriteContentHandler {
     public int responseNum = 0;
     private ArrayList<Boolean> responseBool;
     public boolean isDisplay;
-    private boolean isSearchPlayer = false;
-    private boolean isSearchTeam = false;
-    private boolean isSearchLeague = false;
 
     public int searchNum = 0;
 
@@ -189,23 +187,14 @@ public class FavouriteContentHandler {
         searchNum++;
         clearSearchList();
         if (searchType.equals(Constants.FILTER_TYPE_LEAGUE)) {
-            isSearchLeague = true;
-            isSearchPlayer = false;
-            isSearchTeam = false;
             ScoresContentHandler.getInstance().requestFavouriteSearch(URL_LEAGUE_SEARCH, param, LISTENER_KEY, SEARCH_REQUEST_LEAGUE_TAG);
         } else if (searchType.equals(Constants.FILTER_TYPE_PLAYER)) {
-            isSearchLeague = false;
-            isSearchPlayer = true;
-            isSearchTeam = false;
             if (sportsType.equals(Constants.SPORTS_TYPE_CRICKET)) {
                 ScoresContentHandler.getInstance().requestFavouriteSearch(URL_CRICKET_PLAYER_SEARCH, param, LISTENER_KEY, SEARCH_CRICKET_PLAYER_TAG);
             } else if (sportsType.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
                 ScoresContentHandler.getInstance().requestFavouriteSearch(URL_FOOTBALL_PLAYER_SEARCH, param, LISTENER_KEY, SEARCH_FOOTBALL_PLAYER_TAG);
             }
         } else if (searchType.equals(Constants.FILTER_TYPE_TEAM)) {
-            isSearchLeague = false;
-            isSearchPlayer = false;
-            isSearchTeam = true;
             if (sportsType.equals(Constants.SPORTS_TYPE_CRICKET)) {
                 ScoresContentHandler.getInstance().requestFavouriteSearch(URL_CRICKET_TEAM_SEARCH, param, LISTENER_KEY, SEARCH_CRICKET_TEAM_TAG);
             } else if (sportsType.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
@@ -606,7 +595,7 @@ public class FavouriteContentHandler {
                         //TODO
                         for (JSONObject obj : matches) {
                             try {
-                                String s = obj.getString("player_name");
+                                String s = obj.getString("name");
                                 s = s.concat(Constants.NAV_PLAYER);
                                 CRICKET_FILTER_PLAYER.add(s);
                             } catch (JSONException e) {
@@ -616,42 +605,36 @@ public class FavouriteContentHandler {
                         prepareCricketPlayers();
                     } else if (searchTag.contains(SEARCH_REQUEST_TAG)) {
                         //TODO
-                        clearSearchList();
                         for (JSONObject obj : matches) {
                             try {
                                 String s = null;
-                                if (isSearchTeam) {
-                                    s = obj.getString("team_name");
-                                } else if (isSearchLeague) {
-                                    s = obj.getString("league_name");
-                                } else if (isSearchPlayer) {
-                                    s = obj.getString("name");
-                                }
-
-                                if (isSearchTeam) {
-                                    s = s.concat(Constants.NAV_TEAM);
-                                } else if (isSearchLeague) {
-                                    s = s.concat(Constants.NAV_COMP);
-                                } else if (isSearchPlayer) {
-                                    s = s.concat(Constants.NAV_PLAYER);
-                                }
                                 if (searchTag.equals(SEARCH_REQUEST_LEAGUE_TAG)) {
+                                    s = obj.getString("league_name");
+                                    s = s.concat(Constants.NAV_COMP);
                                     if (!SEARCH_FOOTBALL_LEAGUE.contains(s)) {
                                         SEARCH_FOOTBALL_LEAGUE.add(s);
                                     }
                                 } else if (searchTag.equals(SEARCH_CRICKET_PLAYER_TAG)) {
+                                    s = obj.getString("name");
+                                    s = s.concat(Constants.NAV_PLAYER);
                                     if (!SEARCH_CRICKET_PLAYER.contains(s)) {
                                         SEARCH_CRICKET_PLAYER.add(s);
                                     }
                                 } else if (searchTag.equals(SEARCH_CRICKET_TEAM_TAG)) {
+                                    s = obj.getString("team_name");
+                                    s = s.concat(Constants.NAV_TEAM);
                                     if (!SEARCH_CRICKET_TEAM.contains(s)) {
                                         SEARCH_CRICKET_TEAM.add(s);
                                     }
                                 } else if (searchTag.equals(SEARCH_FOOTBALL_PLAYER_TAG)) {
+                                    s = obj.getString("name");
+                                    s = s.concat(Constants.NAV_PLAYER);
                                     if (!SEARCH_FOOTBALL_PLAYER.contains(s)) {
                                         SEARCH_FOOTBALL_PLAYER.add(s);
                                     }
                                 } else if (searchTag.equals(SEARCH_FOOTBALL_TEAM_TAG)) {
+                                    s = obj.getString("team_name");
+                                    s = s.concat(Constants.NAV_TEAM);
                                     if (!SEARCH_FOOTBALL_TEAM.contains(s)) {
                                         SEARCH_FOOTBALL_TEAM.add(s);
                                     }
@@ -682,6 +665,7 @@ public class FavouriteContentHandler {
                     return;
                 }
             }
+
             if (!searchTag.contains(SEARCH_REQUEST_TAG)) {
                 if (responseNum >= 5) {
                     boolean x = true;
@@ -697,7 +681,7 @@ public class FavouriteContentHandler {
                     responseBool = new ArrayList<Boolean>();
                 }
             } else {
-                if (responseSearchnum == searchNum) {
+                if (responseSearchnum ==searchNum) {
                     try {
                         for (int i = 0; i < listPreparedListener.size(); i++) {
                             listPreparedListener.get(i).onListPrepared(true, noResultMessage);
@@ -717,11 +701,11 @@ public class FavouriteContentHandler {
     }
 
     /**
-     * Interface to add the list prepare listeners.
+     * Interface definition for a callback to be invoked when a favourite list is prepared.
      */
     public interface ListPreparedListener {
         /**
-         * callback for list prepared.
+         * called when a favourite list is prepared.
          *
          * @param success      success result of list preparing.
          * @param responseCode response code from network.

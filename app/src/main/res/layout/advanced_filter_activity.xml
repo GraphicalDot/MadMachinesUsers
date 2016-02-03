@@ -1,60 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rootview"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <include
-        android:id="@+id/toolbar_main"
-        layout="@layout/toolbar_filter"
-        android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:minHeight="?android:attr/actionBarSize" />
-
-    <FrameLayout
-        android:id="@+id/filter_container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/next_layout"
-        android:layout_below="@+id/toolbar_main"
-        android:background="@color/ColorPrimary" />
-
+    android:layout_height="match_parent">
 
     <RelativeLayout
-        android:id="@+id/next_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="@color/app_theme_blue">
-        <Button
-            android:id="@+id/skip"
-            android:layout_width="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/toolbar_main"
+            layout="@layout/toolbar_filter"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:minHeight="?android:attr/actionBarSize" />
+
+        <FrameLayout
+            android:id="@+id/filter_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/next_layout"
+            android:layout_below="@+id/toolbar_main"
+            android:background="@color/ColorPrimary" />
+
+
+        <RelativeLayout
+            android:id="@+id/next_layout"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="@string/skip"
-            android:textSize="@dimen/font_size_small_large"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_alignParentLeft="true"
-            android:background="@android:color/transparent"
-            android:textColor="@android:color/white" />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/done"
-            android:textSize="@dimen/font_size_small_large"
-            style="?android:attr/borderlessButtonStyle"
-            android:textColor="@android:color/white"
-            android:background="@android:color/transparent"
-            android:id="@+id/done"
-            android:layout_alignParentRight="true"/>
-        <Button
-            android:id="@+id/next"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/next"
-            android:textSize="@dimen/font_size_small_large"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_alignParentRight="true"
-            android:background="@android:color/transparent"
-            android:textColor="@android:color/white" />
+            android:layout_alignParentBottom="true"
+            android:background="@color/app_theme_blue">
+
+            <Button
+                android:id="@+id/skip"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:background="@android:color/transparent"
+                android:text="@string/skip"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_small_large" />
+
+            <Button
+                android:id="@+id/done"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="@android:color/transparent"
+                android:text="@string/done"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_small_large" />
+
+            <Button
+                android:id="@+id/next"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:background="@android:color/transparent"
+                android:text="@string/next"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_small_large" />
+        </RelativeLayout>
     </RelativeLayout>
-</RelativeLayout>
+</FrameLayout>

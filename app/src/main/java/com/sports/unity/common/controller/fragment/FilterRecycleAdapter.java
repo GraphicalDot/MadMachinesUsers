@@ -69,6 +69,7 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
             String s=favouriteItem.getName();
             s=s.replace(Constants.NAV_COMP,"");
             s=s.replace(Constants.NAV_TEAM,"");
+            s=s.replace(Constants.NAV_PLAYER,"");
             holder.tv.setText(s);
             if (favouriteItem.isChecked()) {
                 if (!((AdvancedFilterActivity) activity).favList.contains(favouriteItem.getName())) {
@@ -96,6 +97,7 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
            String s=favDataSet.get(position);
             s=s.replaceAll(Constants.NAV_COMP,"");
             s=s.replace(Constants.NAV_TEAM, "");
+            s=s.replace(Constants.NAV_PLAYER,"");
             final String searchString=s.replace(Constants.NAV_TEAM,"");
             holder.cb.setVisibility(View.INVISIBLE);
             holder.tv.setText(s);
