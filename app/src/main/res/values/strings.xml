@@ -146,7 +146,7 @@ Carrier SMS charges may apply.</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="hello_blank_fragment">Blank Fragment</string>
+    <string name="cricket_match_detail_fragment">Cricket Match Details</string>
     <string name="enable_location_button">Enable</string>
     <string name="enable_location_text">Enable Location</string>
     <string name="turn_on_gps_text">Please go to settings and enable GPS</string>
@@ -167,7 +167,7 @@ Carrier SMS charges may apply.</string>
     <string name="audio_permission_message">We need to access your microphone to record audio.</string>
     <string name="location_permission_message">We need to access your location to find people around you.</string>
     <string name="permission_denied">Permissions were not granted.</string>
-    
+
     <string name="dummy_team_1">India</string>
 
     <string name="current_status">Your current status</string>
@@ -175,4 +175,15 @@ Carrier SMS charges may apply.</string>
     <string name="fav_league">My favourite league</string>
     <string name="fav_player">My favourite player</string>
     <string name="edit_caps">EDIT</string>
+    <string name="search_title">Search</string>
+    <string name="football_match__score_detail_fragment">Football Match Score Detail</string>
+    <string name="summary">Summary</string>
+    <string name="commentary">Commentary</string>
+    <string name="scorecard">Scorecard</string>
+    <string name="fragment_filter">Blank Fragment</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="football_match_timelinefragment">Football Match Timeline Fragment</string>
+    <string name="cricket_match_score_fragment">Cricket Match Score Fragment</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.sports.unity.scores;
 
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -57,6 +59,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
     private Timer timerToRefreshContent = null;
 
     private RecyclerView mRecyclerView = null;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +110,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
     }
 
     private void initView() {
-        ((TextView)findViewById(R.id.venue)).setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+
+        /*((TextView)findViewById(R.id.venue)).setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(false);
@@ -116,7 +120,12 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         mRecyclerView.setAdapter(mAdapter);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(mLayoutManager);*/
+        // Added by Ashish for tab on scroe details page
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        String titles[] = {getString(R.string.summary), getString(R.string.commentary), getString(R.string.scorecard)};
+        int numberOfTabs = titles.length;
+
 
     }
 

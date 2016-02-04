@@ -1,43 +1,38 @@
 package com.sports.unity.scores.controller.fragment;
 
-import android.app.Activity;
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scores.model.ScoresJsonParser;
-import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
-import com.sports.unity.scores.model.football.FootballMatchJsonCaller;
 import com.sports.unity.scores.model.football.MatchCommentaryJsonCaller;
-import com.sports.unity.scores.model.football.MatchJsonCaller;
 
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by madmachines on 6/1/16.
  */
 public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdapter.ViewHolder> {
 
-    private Activity activity;
-    private ArrayList<JSONObject> list;
+    private Context context;
+    private ArrayList<CommentriesModel> list;
 
     private String sportsType = null;
-    private MatchCommentaryJsonCaller jsonCaller = new MatchCommentaryJsonCaller();
+   // private MatchCommentaryJsonCaller jsonCaller = new MatchCommentaryJsonCaller();
 
-    public BroadcastListAdapter(String sportsType, ArrayList<JSONObject> list, Activity activity) {
+    public BroadcastListAdapter(String sportsType, ArrayList<CommentriesModel> list, Context activity) {
         this.sportsType = sportsType;
         this.list = list;
-        this.activity = activity;
+        this.context = activity;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -68,17 +63,17 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
     @Override
     public void onBindViewHolder(BroadcastListAdapter.ViewHolder holder, int position) {
 
-        JSONObject jsonObject = list.get(position);
+        CommentriesModel jsonObject = list.get(position);
 
-        jsonCaller.setJsonObject(jsonObject);
+        //jsonCaller.setJsonObject(jsonObject);
 
         try {
-            holder.broadcast.setText(Html.fromHtml(jsonCaller.getComment()));
+            holder.broadcast.setText(Html.fromHtml(jsonObject.getComment()));
 
             if( sportsType.equals(ScoresJsonParser.CRICKET) ){
-                holder.commentTime.setText(jsonCaller.getOvers());
+                holder.commentTime.setText(jsonObject.getOver());
             } else if( sportsType.equals(ScoresJsonParser.FOOTBALL) ){
-                holder.commentTime.setText( Html.fromHtml(jsonCaller.getMinute()));
+                holder.commentTime.setText( Html.fromHtml(jsonObject.getMinute()));
             }
 
         }catch (Exception ex){
