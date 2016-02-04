@@ -167,7 +167,7 @@ Carrier SMS charges may apply.</string>
     <string name="audio_permission_message">We need to access your microphone to record audio.</string>
     <string name="location_permission_message">We need to access your location to find people around you.</string>
     <string name="permission_denied">Permissions were not granted.</string>
-
+    
     <string name="dummy_team_1">India</string>
 
     <string name="current_status">Your current status</string>
