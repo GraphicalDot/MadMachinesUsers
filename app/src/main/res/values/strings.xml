@@ -182,7 +182,7 @@ Carrier SMS charges may apply.</string>
     <string name="scorecard">Scorecard</string>
     <string name="fragment_filter">Blank Fragment</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="football_match_timelinefragment">Football Match Timeline Fragment</string>
     <string name="cricket_match_score_fragment">Cricket Match Score Fragment</string>
