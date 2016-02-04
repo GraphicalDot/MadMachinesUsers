@@ -89,13 +89,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     private static long chatID = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
 
-    public static void viewProfile(Activity activity, byte[] profilePicture, String name, String groupServerId) {
+    public static void viewProfile(Activity activity, byte[] profilePicture, String name, String groupServerId, String phoneNumber) {
 
         Intent intent = new Intent(activity, UserProfileActivity.class);
 
         intent.putExtra("name", name);
         intent.putExtra("profilePicture", profilePicture);
         intent.putExtra("groupServerId", groupServerId);
+        intent.putExtra("number", phoneNumber);
         activity.startActivity(intent);
     }
 
@@ -332,7 +333,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             @Override
             public void onClick(View v) {
 
-                viewProfile(ChatScreenActivity.this, userImageBytes, JABBERNAME, groupServerId);
+                viewProfile(ChatScreenActivity.this, userImageBytes, JABBERNAME, groupServerId, JABBERID);
             }
         });
         Button mSend = (Button) findViewById(R.id.send);
@@ -833,7 +834,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_view_contact) {
-            viewProfile(ChatScreenActivity.this, userImageBytes, JABBERNAME, groupServerId);
+            viewProfile(ChatScreenActivity.this, userImageBytes, JABBERNAME, groupServerId, JABBERID);
             return true;
         } else if (id == R.id.action_block_user) {
             blockUnblockUserHelper.onMenuItemSelected(this, contactID, JABBERID, menu);

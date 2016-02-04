@@ -23,6 +23,7 @@
         android:layout_marginRight="@dimen/activity_vertical_margin_small">
 
     <TextView
+        android:id="@+id/add_friend"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="ADD FRIEND"

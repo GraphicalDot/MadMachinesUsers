@@ -1,29 +1,71 @@
 package com.sports.unity.common.controller;
 
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.FacebookSdk;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
+import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.XMPPManager.XMPPService;
+import com.sports.unity.common.model.PermissionUtil;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.ImageUtil;
 
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.vcardtemp.VCardManager;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.Inflater;
@@ -35,26 +77,75 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     private String userOrGroupName;
     private byte[] userOrGroupImage = null;
     private String groupServerId;
+    private String phoneNumber;
+
+    private TextView addFriend;
+    private ImageView editStatus;
+    private EditText name;
+    private EditText status;
+    private FrameLayout facebook_button;
+    private CircleImageView profileimage;
+    private ImageView edit_name;
+
+    private byte[] byteArray;
+    private CallbackManager callbackManager;
+    private String profilePicUrl;
+    private boolean paused = false;
+    private boolean vCardSaved = false;
+
+    private static final int LOAD_IMAGE_GALLERY_CAMERA = 1;
+
+    private boolean ownProfile;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        XMPPService.startService(this);
+
+
         setContentView(R.layout.activity_user_profile);
+
+        Bundle bundle = getIntent().getExtras();
+
+        try {
+            ownProfile = bundle.getBoolean(Constants.IS_OWN_PROFILE, false);
+        } catch (NullPointerException booleanNull) {
+
+        }
+
         initView();
         setToolbar();
-        setInitData();
+
+        if( ownProfile) {
+            setInitDataOwn();
+        } else {
+            setInitDataOthers();
+        }
+
     }
 
-    private void getIntentExtras() {
+    private void getIntentExtrasForOthers() {
         userOrGroupName = getIntent().getStringExtra("name");
         userOrGroupImage = getIntent().getByteArrayExtra("profilePicture");
         groupServerId = getIntent().getStringExtra("groupServerId");
+        phoneNumber = getIntent().getStringExtra("number");
+
+    }
+
+    private void getIntentExtrasForOwn() {
+        userOrGroupName = getIntent().getStringExtra("name");
+        userOrGroupImage = getIntent().getByteArrayExtra("profilePicture");
+//        groupServerId = getIntent().getStringExtra("groupServerId");
+        phoneNumber = getIntent().getStringExtra("phoneNumber");
 
     }
 
     private void setToolbar() {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+
+        addFriend = (TextView) toolbar.findViewById(R.id.add_friend);
 
         ImageView back = (ImageView) toolbar.findViewById(R.id.backarrow);
         back.setOnClickListener(new View.OnClickListener() {
@@ -66,32 +157,172 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     }
 
     private void initView() {
-        CircleImageView profilePicture = (CircleImageView) findViewById(R.id.user_picture);
-        TextView name = (TextView) findViewById(R.id.name);
+        profileimage = (CircleImageView) findViewById(R.id.user_picture);
+        //editStatus = (ImageView) findViewById(R.id.edit);
+       // edit_name = (ImageView) findViewById(R.id.edit_name);
+        facebook_button = (FrameLayout) findViewById(R.id.faceBook_btn);
+        name = (EditText) findViewById(R.id.name);
+        status = (EditText) findViewById(R.id.your_status);
+        name.setFocusable(false);
+        status.setFocusable(false);
+    }
 
-        getIntentExtras();
+    private void setInitDataOwn() {
+
+        addFriend.setVisibility(View.GONE);
+        facebook_button.setVisibility(View.VISIBLE);
+       // editStatus.setVisibility(View.VISIBLE);
+       // edit_name.setVisibility(View.VISIBLE);
+
+//        edit_name.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                Intent intent = new Intent(UserProfileActivity.this, EditNameAndStatus.class);
+//                intent.putExtra("Data", name.getText().toString());
+//                intent.putExtra("Title", "Enter your name ");
+//                startActivity(intent);
+//            }
+//        });
+//
+//        editStatus.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                Intent intent = new Intent(UserProfileActivity.this, EditNameAndStatus.class);
+//                intent.putExtra("Data", status.getText().toString());
+//                intent.putExtra("Title", "Change your status");
+//                startActivity(intent);
+//            }
+//        });
+
+        getIntentExtrasForOwn();
+
+        name.setText(userOrGroupName);
+
+        if (userOrGroupImage == null) {
+                profileimage.setImageResource(R.drawable.ic_user);
+        } else {
+            profileimage.setImageBitmap(BitmapFactory.decodeByteArray(userOrGroupImage, 0, userOrGroupImage.length));
+        }
+
+        profileimage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                changeProfileImage();
+            }
+        });
+
+        facebook_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        ArrayList<String> savedList = UserUtil.getFavouriteFilters();
+
+        setFavouriteProfile(savedList);
+
+    }
+
+    private void setInitDataOthers() {
+
+        addFriend.setVisibility(View.VISIBLE);
+        facebook_button.setVisibility(View.GONE);
+//        editStatus.setVisibility(View.GONE);
+//        edit_name.setVisibility(View.GONE);
+
+        getIntentExtrasForOthers();
 
         name.setText(userOrGroupName);
 
         if (userOrGroupImage == null) {
             if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
-                profilePicture.setImageResource(R.drawable.ic_user);
+                profileimage.setImageResource(R.drawable.ic_user);
             } else {
-                profilePicture.setImageResource(R.drawable.ic_group);
+                profileimage.setImageResource(R.drawable.ic_group);
             }
         } else {
-            profilePicture.setImageBitmap(BitmapFactory.decodeByteArray(userOrGroupImage, 0, userOrGroupImage.length));
+            profileimage.setImageBitmap(BitmapFactory.decodeByteArray(userOrGroupImage, 0, userOrGroupImage.length));
+        }
+
+        JSONObject jsonObject = null;
+        JSONArray jsonArray = null;
+        ArrayList<String> savedList = new ArrayList<>();
+
+        try {
+            VCard vCard = new VCard();
+            vCard.load(XMPPClient.getConnection(), phoneNumber + "@mm.io");
+
+            Log.i("Fav String", "" + phoneNumber);
+            String favourite = vCard.getField("fav_list");
+            Log.i("Fav String", "" + favourite);
+
+            jsonObject = new JSONObject(favourite);
+            jsonArray = jsonObject.getJSONArray("recordset");
+
+            for(int i =0; i< jsonArray.length(); i++) {
+                savedList.add(jsonArray.get(i).toString());
+            }
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        setFavouriteProfile(savedList);
+    }
+
+    private void changeProfileImage() {
+
+        if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+            handleAddPhotoClick();
+        } else {
+            if (PermissionUtil.getInstance().requestPermission(UserProfileActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)), getResources().getString(R.string.camera_and_external_storage_permission_message), Constants.REQUEST_CODE_CAMERA_EXTERNAL_STORAGE_PERMISSION)) {
+                handleAddPhotoClick();
+            }
         }
     }
 
-    private void setInitData() {
+    public void handleAddPhotoClick() {
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryIntent.setType("image/*");
+
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.setType("image/*");
 
 
-        ListView teamListView = (ListView) findViewById(R.id.team_list);
-        ListView leagueListView = (ListView) findViewById(R.id.league_list);
-        ListView playerListView = (ListView) findViewById(R.id.player_list);
+        Intent chooser = new Intent(Intent.ACTION_CHOOSER);
+        chooser.putExtra(Intent.EXTRA_INTENT, galleryIntent);
+        chooser.putExtra(Intent.CATEGORY_OPENABLE, intent);
 
-        ArrayList<String> savedList = UserUtil.getFavouriteFilters();
+        Intent[] intentArray = {cameraIntent};
+        chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+        startActivityForResult(chooser, LOAD_IMAGE_GALLERY_CAMERA);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
+            CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
+
+            byteArray = ImageUtil.handleImageAndSetToView(data, circleImageView, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
+
+        } else {
+            //nothing
+        }
+    }
+
+    private void setFavouriteProfile(ArrayList<String> savedList) {
 
         List<String> teams = new ArrayList<>();
         List<String> leagues = new ArrayList<String>();
@@ -114,45 +345,33 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         Collections.sort(leagues);
         Collections.sort(players);
 
-        ArrayAdapter<String> teamsListAdapter = new ArrayAdapter<String>(this, R.layout.textview_user_profile_activity, teams);
-        teamListView.setAdapter(teamsListAdapter);
 
-        ArrayAdapter<String> leaguesListAdapter = new ArrayAdapter<String>(this, R.layout.textview_user_profile_activity, leagues);
-        leagueListView.setAdapter(leaguesListAdapter);
+        LinearLayout teamList = (LinearLayout) findViewById(R.id.teamlist);
+        LinearLayout leagueList = (LinearLayout) findViewById(R.id.leaguelist);
+        LinearLayout playerList = (LinearLayout) findViewById(R.id.playerlist);
 
-        ArrayAdapter<String> playerListAdapter = new ArrayAdapter<String>(this, R.layout.textview_user_profile_activity, players);
-        playerListView.setAdapter(playerListAdapter);
+        //TextView textView = (TextView) getLayoutInflater().inflate(R.layout.textview_user_profile_activity, null);
 
-        setListViewHeightBasedOnChildren(teamListView);
-        setListViewHeightBasedOnChildren(leagueListView);
-        setListViewHeightBasedOnChildren(playerListView);
-    }
+        for(int i=0;i<leagues.size(); i++) {
+            LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.textview_user_profile_activity, null);
+            TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
+            textView.setText(leagues.get(i));
+            leagueList.addView(linearLayout);
 
-    public void setListViewHeightBasedOnChildren(ListView listView) {
-        ListAdapter listAdapter = listView.getAdapter();
-        if (listAdapter != null) {
+        }
 
-            int numberOfItems = listAdapter.getCount();
+        for(int i=0;i<teams.size(); i++) {
+            LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.textview_user_profile_activity, null);
+            TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
+            textView.setText(teams.get(i));
+            teamList.addView(linearLayout);
+        }
 
-            // Get total height of all items.
-            int totalItemsHeight = 0;
-            for (int itemPos = 0; itemPos < numberOfItems; itemPos++) {
-                View item = listAdapter.getView(itemPos, null, listView);
-                item.measure(0, 0);
-                totalItemsHeight += item.getMeasuredHeight();
-            }
-
-//            // Get total height of all item dividers.
-//            int totalDividersHeight = 2 * (numberOfItems + 7);
-
-            // Set list height.
-            ViewGroup.LayoutParams params = listView.getLayoutParams();
-            params.height = totalItemsHeight ;  //+ totalDividersHeight;
-            listView.setLayoutParams(params);
-            listView.requestLayout();
-
-        } else {
-            // nothing
+        for(int i=0;i<players.size(); i++) {
+            LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.textview_user_profile_activity, null);
+            TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
+            textView.setText(players.get(i));
+            playerList.addView(linearLayout);
         }
     }
 

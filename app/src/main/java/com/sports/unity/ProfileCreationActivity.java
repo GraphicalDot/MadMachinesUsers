@@ -96,7 +96,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
 
     };
 
-    private void handleAddPhotoClick() {
+    public void handleAddPhotoClick() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galleryIntent.setType("image/*");
 

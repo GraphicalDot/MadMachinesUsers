@@ -74,6 +74,8 @@ public class Constants {
     public static final String COLOR_WHITE = "white";
     public static final String COLOR_BLUE = "blue";
 
+    public static final String IS_OWN_PROFILE = "is_own_profile";
+
 
     public static final int REQUEST_CODE_NAV = 2424;
     public static final String IS_FROM_NAV = "is_from_nav";

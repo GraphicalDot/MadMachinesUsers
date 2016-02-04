@@ -2,6 +2,7 @@ package com.sports.unity.common.controller;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.controller.fragment.AdvancedFilterFragment;
 import com.sports.unity.common.model.FavouriteContentHandler;
 import com.sports.unity.common.model.FontTypeface;
@@ -25,6 +27,14 @@ import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smackx.vcardtemp.VCardManager;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -51,6 +61,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private int listSize = 0;
     int fragmentNum = 0;
     private final String SHOWCASE_ID = "search_showcase68";
+    JSONObject jsonObject = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -168,7 +179,55 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
             moveToNextActivity(MainActivity.class);
         }
+
+        try {
+            jsonObject = createJsonFabList(UserUtil.getFavouriteFilters());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+         updateVCard();
         closeSearch();
+
+    }
+
+    public JSONObject createJsonFabList(ArrayList<String> favList) throws JSONException {
+
+        JSONObject jResult = new JSONObject();
+
+        JSONArray jArray = new JSONArray();
+
+        for (int i = 0; i < favList.size(); i++) {
+//            JSONObject jsonObject = new JSONObject();
+//
+//            jsonObject.put("fav_list_json", favList.get(i));
+            jArray.put(favList.get(i));
+
+           // jArray.put(jsonObject);
+        }
+
+        jResult.put("recordset", jArray);
+        return jResult;
+    }
+
+
+    private void updateVCard() {
+
+            try {
+
+                VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
+                VCard vCard = new VCard();
+                vCard.load(XMPPClient.getConnection());
+                vCard.setField("fav_list", jsonObject.toString());
+
+                manager.saveVCard(vCard);
+
+            } catch (SmackException.NoResponseException e) {
+                e.printStackTrace();
+            } catch (XMPPException.XMPPErrorException e) {
+                e.printStackTrace();
+            } catch (SmackException.NotConnectedException e) {
+                e.printStackTrace();
+            }
 
     }
 

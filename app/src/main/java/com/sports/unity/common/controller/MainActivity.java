@@ -21,6 +21,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
@@ -78,12 +79,12 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         LinearLayout navHeader = (LinearLayout) findViewById(R.id.nav_header);
 
         CircleImageView profile_photo = (CircleImageView) navHeader.findViewById(R.id.circleView);
-        TextView name = (TextView) navHeader.findViewById(R.id.name);
+        final TextView name = (TextView) navHeader.findViewById(R.id.name);
 
-        String user_name = TinyDB.getInstance(this).getString(TinyDB.KEY_PROFILE_NAME);
+        final String user_name = TinyDB.getInstance(this).getString(TinyDB.KEY_PROFILE_NAME);
         String user_details = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
 
-        Contacts contact = sportsUnityDBHelper.getContact(user_details);
+        final Contacts contact = sportsUnityDBHelper.getContact(user_details);
 
 
         if (contact.image != null) {
@@ -95,6 +96,17 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
 
         name.setText(user_name);
+
+        navHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
+                intent.putExtra(Constants.IS_OWN_PROFILE,true);
+                intent.putExtra("name", user_name);
+                intent.putExtra("profilePicture", contact.image);
+                startActivity(intent);
+            }
+        });
 
     }
 

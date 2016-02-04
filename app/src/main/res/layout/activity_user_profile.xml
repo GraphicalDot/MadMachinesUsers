@@ -33,24 +33,56 @@
                 android:layout_below="@+id/tool_bar"
                 android:background="@color/ColorPrimary"
                 android:orientation="vertical"
-                android:paddingBottom="@dimen/activity_horizontal_margin">
+                android:layout_marginBottom="@dimen/horizontal_padding_small">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/user_picture"
-                    android:layout_width="@dimen/profile_thumb_image_xlarge"
-                    android:layout_height="@dimen/profile_thumb_image_xlarge"
+                    android:layout_width="@dimen/profile_thumb_image_xxlarge"
+                    android:layout_height="@dimen/profile_thumb_image_xxlarge"
                     android:layout_gravity="center"
                     android:layout_margin="@dimen/vertical_padding_very_very_small"
                     android:src="@drawable/ic_user" />
 
-                <TextView
-                    android:id="@+id/name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="Gabriel"
-                    android:textColor="#000"
-                    android:textSize="@dimen/font_size_large" />
+                <!--<View-->
+                    <!--android:layout_width="fill_parent"-->
+                    <!--android:layout_height="1dp"-->
+                    <!--android:layout_marginTop="@dimen/activity_horizontal_margin"-->
+                    <!--android:background="@color/gray3" />-->
+
+                <!--<FrameLayout-->
+                    <!--android:layout_width="match_parent"-->
+                    <!--android:layout_height="wrap_content"-->
+                    <!--android:layout_gravity="center"-->
+                    <!--android:padding="@dimen/vertical_padding_very_small"-->
+                    <!-->-->
+
+                    <EditText
+                        android:id="@+id/name"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="Gabriel"
+                        android:textColor="#000"
+                        android:textSize="@dimen/font_size_large" />
+
+                    <!--<FrameLayout-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_gravity="center">-->
+                        <!--&lt;!&ndash;<ImageView&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:id="@+id/edit_name"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:src="@drawable/edit"&ndash;&gt;-->
+                            <!--&lt;!&ndash;android:layout_gravity="right"/>&ndash;&gt;-->
+                    <!--</FrameLayout>-->
+
+                <!--</FrameLayout>-->
+
+                <!--<View-->
+                    <!--android:layout_width="fill_parent"-->
+                    <!--android:layout_height="1dp"-->
+                    <!--android:background="@color/gray3" />-->
 
                 <!--<LinearLayout-->
                 <!--android:layout_width="match_parent"-->
@@ -89,8 +121,11 @@
                 <!--</LinearLayout>-->
 
                 <FrameLayout
+                    android:id="@+id/faceBook_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/flag_size_large"
+                    android:layout_marginTop="@dimen/activity_horizontal_margin"
+                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
                     android:layout_gravity="center">
 
                     <!--<com.facebook.login.widget.LoginButton xmlns:facebook="http://schemas.android.com/apk/res-auto"-->
@@ -170,13 +205,17 @@
                             android:text="@string/current_status"
                             android:textColor="@color/app_theme_blue" />
 
-                        <TextView
-                            android:id="@+id/edit"
+                        <FrameLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:gravity="right"
-                            android:text="@string/edit_caps"
-                            android:textColor="@color/app_theme_blue" />
+                            android:layout_gravity="center">
+                        <!--<ImageView-->
+                            <!--android:id="@+id/edit"-->
+                            <!--android:layout_width="wrap_content"-->
+                            <!--android:layout_height="wrap_content"-->
+                            <!--android:src="@drawable/edit"-->
+                            <!--android:layout_gravity="right" />-->
+                        </FrameLayout>
 
                     </LinearLayout>
 
@@ -185,7 +224,7 @@
                         android:layout_height="1dp"
                         android:background="@color/gray3" />
 
-                    <TextView
+                    <EditText
                         android:id="@+id/your_status"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -225,14 +264,19 @@
                         android:layout_height="1dp"
                         android:background="@color/gray3" />
 
-                    <ListView
-                        android:id="@+id/team_list"
+                    <LinearLayout
+                        android:id="@+id/teamlist"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:divider="@null"
-                        android:dividerHeight="0dp"
-                        android:textColor="@color/news_headline_mini"
-                        android:textSize="@dimen/font_size_small_large" />
+                        android:orientation="vertical"/>
+                    <!--<ListView-->
+                        <!--android:id="@+id/team_list"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:divider="@null"-->
+                        <!--android:dividerHeight="0dp"-->
+                        <!--android:textColor="@color/news_headline_mini"-->
+                        <!--android:textSize="@dimen/font_size_small_large" />-->
                 </LinearLayout>
             </LinearLayout>
 
@@ -265,14 +309,19 @@
                         android:layout_height="1dp"
                         android:background="@color/gray3" />
 
-                    <ListView
-                        android:id="@+id/league_list"
+                    <LinearLayout
+                        android:id="@+id/leaguelist"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:divider="@null"
-                        android:dividerHeight="0dp"
-                        android:textColor="@color/news_headline_mini"
-                        android:textSize="@dimen/font_size_small_large" />
+                        android:orientation="vertical"/>
+                    <!--<ListView-->
+                        <!--android:id="@+id/league_list"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:divider="@null"-->
+                        <!--android:dividerHeight="0dp"-->
+                        <!--android:textColor="@color/news_headline_mini"-->
+                        <!--android:textSize="@dimen/font_size_small_large" />-->
                 </LinearLayout>
             </LinearLayout>
 
@@ -312,14 +361,19 @@
                         android:layout_height="1dp"
                         android:background="@color/gray3" />
 
-                    <ListView
-                        android:id="@+id/player_list"
+                    <LinearLayout
+                        android:id="@+id/playerlist"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:divider="@null"
-                        android:dividerHeight="0dp"
-                        android:textColor="@color/news_headline_mini"
-                        android:textSize="@dimen/font_size_small_large" />
+                        android:orientation="vertical"/>
+                    <!--<ListView-->
+                        <!--android:id="@+id/player_list"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:divider="@null"-->
+                        <!--android:dividerHeight="0dp"-->
+                        <!--android:textColor="@color/news_headline_mini"-->
+                        <!--android:textSize="@dimen/font_size_small_large" />-->
                 </LinearLayout>
             </LinearLayout>
 
