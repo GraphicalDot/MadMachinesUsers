@@ -5,7 +5,6 @@
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
-
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
@@ -13,7 +12,6 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.WRITE_CONTACTS" />
@@ -22,7 +20,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.CAMERA" />
-
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.GET_TASKS" />
 
@@ -35,7 +32,6 @@
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
-
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyBsvw-Xbw84WZL_pCiSQvW4KCSTMirKKik" />
@@ -99,7 +95,7 @@
         <activity
             android:name=".messages.controller.activity.CreateGroup"
             android:label="@string/title_activity_create_group"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".news.controller.activity.NewsDetailsActivity"
             android:label="@string/title_activity_news_details"
@@ -107,38 +103,46 @@
         <activity
             android:name=".common.controller.FilterActivity"
             android:label="@string/title_activity_filter"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".common.controller.TourActivity"
             android:label="@string/title_activity_tour"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".common.controller.UserProfileActivity"
             android:label="@string/title_activity_user_profile"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".common.controller.AdvancedFilterActivity"
             android:label="@string/advanced_filter"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".messages.controller.activity.NativeCameraActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".news.controller.activity.NewsSearchActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".messages.controller.activity.ImageOrVideoViewActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".messages.controller.activity.ForwardSelectedItems"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".scores.ScoreDetailActivity"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".messages.controller.activity.PeopleAroundMeMap"
             android:label="@string/title_activity_people_around_me_map"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".playerprofile.view.PlayerProfileView"
+            android:label="@string/title_activity_player_profile_view"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".player.view.PlayerProfileView"
+            android:label="@string/title_activity_player_profile_view"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
