@@ -136,13 +136,10 @@
             android:label="@string/title_activity_people_around_me_map"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".playerprofile.view.PlayerProfileView"
-            android:label="@string/title_activity_player_profile_view"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".player.view.PlayerProfileView"
             android:label="@string/title_activity_player_profile_view"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme">
+        </activity>
     </application>
 
 </manifest>
