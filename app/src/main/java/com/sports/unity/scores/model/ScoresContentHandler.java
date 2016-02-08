@@ -210,8 +210,6 @@ public class ScoresContentHandler {
 
             String url = generateURL( baseUrl + matchId);
             requestContent(requestTag, listenerKey, url);
-        } else {
-            //nothin
         }
     }
 
@@ -221,8 +219,6 @@ public class ScoresContentHandler {
             VolleyRequestHandler.getInstance().addToRequestQueue(request);
 
             requestInProcess_RequestTagAndListenerKey.put(requestTag, listenerKey);
-        } else {
-            //nothing
         }
     }
 
@@ -245,8 +241,6 @@ public class ScoresContentHandler {
     public void requestFavouriteContent(String url,String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
             requestContent(requestTag, listenerKey, url);
-        } else {
-            //nothing
         }
     }
 
@@ -254,8 +248,6 @@ public class ScoresContentHandler {
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
             String url = generateFavURL(baseUrl,params);
             requestContent(requestTag, listenerKey, url);
-        } else {
-            //nothing
         }
     }
 

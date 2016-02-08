@@ -5,14 +5,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.scores.DataServiceContract;
+import com.sports.unity.scores.ErrorContract;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.scores.controller.fragment.BroadcastListAdapter;
 import com.sports.unity.util.Constants;
@@ -26,7 +31,7 @@ import java.util.Timer;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CommentaryFragment extends Fragment implements FragementInterface<CommentriesModel> ,DataServiceContract {
+public class CommentaryFragment extends Fragment implements FragementInterface<CommentriesModel>, DataServiceContract, ErrorContract {
     private RecyclerView mRecyclerView;
     private JSONObject matchScoreDetails = null;
     private ArrayList<CommentriesModel> commentaries = new ArrayList<>();
@@ -35,19 +40,19 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
     private String matchId = null;
 
     private Timer timerToRefreshContent = null;
-    BroadcastListAdapter mAdapter = null;
-
+    private BroadcastListAdapter mAdapter = null;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private DataServiceContract dataServiceContract;
     public CommentaryFragment() {
         // Required empty public constructor
     }
-
-    @Override
+   @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if(context instanceof DataServiceContract)
         {
-            ScoreDetailActivity scoreDetailActivity = (ScoreDetailActivity)context;
-            scoreDetailActivity.requestData(0);
+            dataServiceContract = (DataServiceContract)context;
+            dataServiceContract.requestData(0);
         }
     }
 
@@ -77,8 +82,16 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.commentary_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (dataServiceContract != null) {
+                    dataServiceContract.requestData(0);
+                }
+            }
+        });
     }
-
     @Override
     public List<CommentriesModel> getItems() {
         return commentaries;
@@ -86,13 +99,31 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
 
     @Override
     public void dataChanged() {
-        mRecyclerView.postInvalidate();
+        /*mRecyclerView.postInvalidate();
         mAdapter.notifyDataSetChanged();
+        swipeRefreshLayout.setRefreshing(false);
+*/
+    }
+
+   @Override
+    public void requestData(int methodType) {
 
     }
 
     @Override
-    public void requestData(int methodType) {
+    public void errorHandle() {
+      Log.i("Error", "errorHandle: ");
+        //swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
 
     }
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+
 }

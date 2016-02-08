@@ -172,7 +172,7 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/app_theme_blue"
+            android:background="@color/cardview_light_background"
             android:elevation="@dimen/toolbar_elevation" />
 
         <View

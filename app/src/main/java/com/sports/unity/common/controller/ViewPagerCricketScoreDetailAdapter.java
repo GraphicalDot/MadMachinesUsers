@@ -43,14 +43,13 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
 
         Fragment fragment = null;
         if (position == 0) {
+            fragment = new CricketMatchSummaryFragment();
+        } else if (position == 1) {
             fragment = new CommentaryFragment();
             Bundle cmBundel = new Bundle();
             cmBundel.putString(Constants.INTENT_KEY_TYPE, ScoresJsonParser.CRICKET);
-           // cmBundel.putString(Constants.INTENT_KEY_ID,ScoresJsonParser.CRICKET);
             cmBundel.putParcelableArrayList("commentries", commentries);
             fragment.setArguments(cmBundel);
-        } else if (position == 1) {
-            fragment = new CricketMatchSummaryFragment();
         } else {
             fragment = new CricketMatchScoreFragment();
 

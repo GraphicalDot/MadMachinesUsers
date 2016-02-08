@@ -3,6 +3,7 @@ package com.sports.unity.common.model;
 import android.content.Context;
 import android.util.Log;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -20,7 +21,7 @@ public class UserUtil {
     private static boolean teamSelected;
     private static boolean playerSelected;
     private static boolean filterCompleted;
-    private static ArrayList<String> favFilterList = null;
+    private static ArrayList<String> favFilterList = new ArrayList<>();
 
     public static void init(Context context) {
         TinyDB tinyDB = TinyDB.getInstance(context);

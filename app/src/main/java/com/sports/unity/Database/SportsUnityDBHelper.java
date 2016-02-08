@@ -149,16 +149,20 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     }
 
     public void addToContacts(String name, String number, boolean registered, String defaultStatus, boolean available) {
-        SQLiteDatabase db = this.getWritableDatabase();
+         try {
+             SQLiteDatabase db = this.getWritableDatabase();
 
-        ContentValues contentValues = new ContentValues();
-        contentValues.put(ContactsEntry.COLUMN_NAME, name);
-        contentValues.put(ContactsEntry.COLUMN_PHONENUMBER, number);
-        contentValues.put(ContactsEntry.COLUMN_REGISTERED, registered);
-        contentValues.put(ContactsEntry.COLUMN_STATUS, defaultStatus);
-        contentValues.put(ContactsEntry.COLUMN_AVAILABLE, available);
+             ContentValues contentValues = new ContentValues();
+             contentValues.put(ContactsEntry.COLUMN_NAME, name);
+             contentValues.put(ContactsEntry.COLUMN_PHONENUMBER, number);
+             contentValues.put(ContactsEntry.COLUMN_REGISTERED, registered);
+             contentValues.put(ContactsEntry.COLUMN_STATUS, defaultStatus);
+             contentValues.put(ContactsEntry.COLUMN_AVAILABLE, available);
 
-        db.insert(ContactsEntry.TABLE_NAME, null, contentValues);
+             db.insert(ContactsEntry.TABLE_NAME, null, contentValues);
+         }catch (Exception e) {
+             e.printStackTrace();
+         }
     }
 
     public ArrayList getAllContactsNumbersOnly() {
