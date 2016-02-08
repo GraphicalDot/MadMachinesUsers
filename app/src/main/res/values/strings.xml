@@ -187,4 +187,7 @@ Carrier SMS charges may apply.</string>
     <string name="football_match_timelinefragment">Football Match Timeline Fragment</string>
     <string name="cricket_match_score_fragment">Cricket Match Score Fragment</string>
     <string name="title_activity_player_profile_view">Player Profile</string>
+    <string name="matchstats">MATCHSTATS</string>
+    <string name="timeline">TIMELINE</string>
+    <string name="lineup">LINEUP</string>
 </resources>

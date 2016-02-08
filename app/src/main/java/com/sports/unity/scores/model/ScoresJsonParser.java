@@ -2,6 +2,8 @@ package com.sports.unity.scores.model;
 
 import android.util.Log;
 
+import com.sports.unity.scoredetails.CommentriesModel;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -80,8 +82,8 @@ public class ScoresJsonParser {
         return list;
     }
 
-    public static ArrayList<JSONObject> parseListOfMatchCommentaries(String jsonContent){
-        ArrayList<JSONObject> list = new ArrayList<>();
+    public static ArrayList<CommentriesModel> parseListOfMatchCommentaries(String jsonContent){
+       ArrayList<CommentriesModel> list = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(jsonContent);
 
@@ -91,7 +93,24 @@ public class ScoresJsonParser {
             if( success ) {
                 JSONArray array = (JSONArray) jsonObject.get("data");
                 for( int index=0; index < array.length(); index++){
-                    list.add( array.getJSONObject(index));
+                    CommentriesModel commentriesModel = new CommentriesModel();
+                    JSONObject object = array.getJSONObject(index);
+                    if(object == null){
+                        continue;
+                    } else {
+                        if(!object.isNull("comment")){
+                            commentriesModel.setComment(object.getString("comment"));
+                        }
+                        if(!object.isNull("comment_storing_time")){
+                            commentriesModel.setMinute(object.getString("comment_storing_time"));
+                        }
+                        if(!object.isNull("overs")){
+                            commentriesModel.setOver(object.getString("overs"));
+                        }
+                        list.add(commentriesModel);
+                    }
+
+
                 }
             } else {
                 list.clear();
@@ -102,6 +121,7 @@ public class ScoresJsonParser {
         }
 
         return list;
+
     }
 
     public static JSONObject parseScoreDetails(String jsonContent){
@@ -117,8 +137,6 @@ public class ScoresJsonParser {
                 if( array.length() == 1 ){
                     scoreDetails = array.getJSONObject(0);
                 }
-            } else {
-                //nothing
             }
         }catch (Exception ex){
             ex.printStackTrace();

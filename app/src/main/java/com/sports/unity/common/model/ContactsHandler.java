@@ -86,15 +86,18 @@ public class ContactsHandler {
     }
 
     public void updateRegisteredUsers(Context context) throws XMPPException {
+        try {
+            String currentUserPhoneNumber = TinyDB.getInstance(context).getString(TinyDB.KEY_USERNAME);
+            SportsUnityDBHelper.getInstance(context).addToContacts(currentUserPhoneNumber, currentUserPhoneNumber, true, ContactsHandler.getInstance().defaultStatus, false);
 
-        String currentUserPhoneNumber = TinyDB.getInstance(context).getString(TinyDB.KEY_USERNAME);
-        SportsUnityDBHelper.getInstance(context).addToContacts(currentUserPhoneNumber, currentUserPhoneNumber, true, ContactsHandler.getInstance().defaultStatus, false);
+            ArrayList<String> contactNumberList = SportsUnityDBHelper.getInstance(context).readContactNumbers();
+            syncContacts(context, contactNumberList);
 
-        ArrayList<String> contactNumberList = SportsUnityDBHelper.getInstance(context).readContactNumbers();
-        syncContacts(context, contactNumberList);
-
-        imgs = null;
-        status = null;
+            imgs = null;
+            status = null;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     void syncContacts(Context context, ArrayList<String> contactNumberList) throws XMPPException {

@@ -25,6 +25,7 @@ import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scoredetails.FragementInterface;
 import com.sports.unity.scores.controller.fragment.MatchListAdapter;
 import com.sports.unity.scores.model.ScoresContentHandler;
@@ -36,11 +37,12 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by cfeindia on 3/2/16.
  */
-public class CricketMatchDetailFragment extends Fragment{
+public class CricketMatchDetailFragment extends Fragment implements FragementInterface<CricketMatchDetailModel>{
 
 
 private static final String ARG_COLUMN_COUNT = "column-count";
@@ -111,7 +113,12 @@ private OnListFragmentInteractionListener mListener;
             mListener = null;
         }
 
-/**
+    @Override
+    public List<CricketMatchDetailModel> getItems() {
+        return null;
+    }
+
+    /**
  * This interface must be implemented by activities that contain this
  * fragment to allow an interaction in this fragment to be communicated
  * to the activity and potentially other fragments contained in that

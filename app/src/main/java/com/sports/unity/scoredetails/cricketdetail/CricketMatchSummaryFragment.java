@@ -8,11 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sports.unity.R;
+import com.sports.unity.scoredetails.CommentriesModel;
+import com.sports.unity.scoredetails.FragementInterface;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CricketMatchSummaryFragment extends Fragment {
+public class CricketMatchSummaryFragment extends Fragment implements FragementInterface<CricketMatchSummaryModel> {
 
 
     public CricketMatchSummaryFragment() {
@@ -27,4 +31,8 @@ public class CricketMatchSummaryFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_cricket_summary, container, false);
     }
 
+    @Override
+    public List<CricketMatchSummaryModel> getItems() {
+        return null;
+    }
 }

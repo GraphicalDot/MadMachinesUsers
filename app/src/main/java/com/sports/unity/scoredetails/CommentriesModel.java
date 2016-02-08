@@ -36,6 +36,9 @@ private String comment;
         this.minute = minute;
     }
 
+    public CommentriesModel(){
+
+    }
     protected CommentriesModel(Parcel in) {
         comment = in.readString();
         over = in.readString();

@@ -63,19 +63,22 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
     @Override
     public void onBindViewHolder(BroadcastListAdapter.ViewHolder holder, int position) {
 
-        CommentriesModel jsonObject = list.get(position);
+
 
         //jsonCaller.setJsonObject(jsonObject);
 
         try {
-            holder.broadcast.setText(Html.fromHtml(jsonObject.getComment()));
-
-            if( sportsType.equals(ScoresJsonParser.CRICKET) ){
-                holder.commentTime.setText(jsonObject.getOver());
-            } else if( sportsType.equals(ScoresJsonParser.FOOTBALL) ){
-                holder.commentTime.setText( Html.fromHtml(jsonObject.getMinute()));
+            if(list != null ) {
+                CommentriesModel jsonObject = list.get(position);
+                if(jsonObject.getComment() != null) {
+                    holder.broadcast.setText(Html.fromHtml(jsonObject.getComment()));
+                }
+                if (sportsType.equals(ScoresJsonParser.CRICKET)) {
+                    holder.commentTime.setText(jsonObject.getOver());
+                } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
+                    holder.commentTime.setText(Html.fromHtml(jsonObject.getMinute()));
+                }
             }
-
         }catch (Exception ex){
             ex.printStackTrace();
         }

@@ -3,7 +3,6 @@ package com.sports.unity.scores;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -18,10 +17,11 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
-import com.sports.unity.common.controller.CustomAppCompatActivity;
+import com.sports.unity.common.controller.ViewPagerCricketScoreDetailAdapter;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
-import com.sports.unity.scores.controller.fragment.BroadcastListAdapter;
+import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scores.controller.fragment.MatchListAdapter;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
@@ -30,7 +30,6 @@ import com.sports.unity.scores.model.football.FootballMatchJsonCaller;
 import com.sports.unity.util.Constants;
 
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -39,7 +38,7 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class ScoreDetailActivity extends CustomVolleyCallerActivity {
+public class ScoreDetailActivity extends CustomVolleyCallerActivity implements DataServiceContract {
 
     private static final String REQUEST_LISTENER_KEY = "score_detail_listener";
     private static final String SCORE_DETAIL_REQUEST_TAG = "score_detail_request_tag";
@@ -51,7 +50,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
     private FootballMatchJsonCaller footballMatchJsonCaller = new FootballMatchJsonCaller();
 
     private JSONObject matchScoreDetails = null;
-    private ArrayList<JSONObject> commentaries = new ArrayList<>();
+    private ArrayList<CommentriesModel> commentaries = new ArrayList<>();
 
     private String sportsType = null;
     private String matchId = null;
@@ -60,6 +59,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
     private RecyclerView mRecyclerView = null;
     private ViewPager mViewPager;
+    ViewPagerCricketScoreDetailAdapter adapter ;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +70,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         sportsType = getIntent().getStringExtra(Constants.INTENT_KEY_TYPE);
         matchId = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
 
-        initToolbar();
+        initToolBar();
         initView();
 
         {
@@ -93,6 +94,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         super.onResume();
 
         onComponentResume();
+
 
         {
             Log.i("Score Detail", "Through Resume");
@@ -123,35 +125,47 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         mRecyclerView.setLayoutManager(mLayoutManager);*/
         // Added by Ashish for tab on scroe details page
         mViewPager = (ViewPager) findViewById(R.id.pager);
-        String titles[] = {getString(R.string.summary), getString(R.string.commentary), getString(R.string.scorecard)};
-        int numberOfTabs = titles.length;
+        String cricketMatchtitles[] = {getString(R.string.summary), getString(R.string.commentary), getString(R.string.scorecard)};
+        int numberOfCricketTabs = cricketMatchtitles.length;
+        String footballMatchtitles[] = {getString(R.string.commentary),getString(R.string.matchstats),getString(R.string.timeline), getString(R.string.lineup)};
+        int numberOfFootballTabs = footballMatchtitles.length;
+
+
+        // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
+         adapter = new ViewPagerCricketScoreDetailAdapter(getSupportFragmentManager(), cricketMatchtitles, numberOfCricketTabs,commentaries);
+         mViewPager.setAdapter(adapter);
+        // Assiging the Sliding Tab Layout View
+        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
+        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
+
+        // Setting Custom Color for the Scroll bar indicator of the Tab View
+        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.ColorPrimary);
+            }
+        });
+        // Setting the ViewPager For the SlidingTabsLayout
+        tabs.setViewPager(mViewPager);
+
+        //set news pager as default
+        int tab_index = getIntent().getIntExtra("tab_index", 1);
+        mViewPager.setCurrentItem(tab_index);
 
 
     }
 
-    private void initToolbar() {
+    private Toolbar initToolBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar.setNavigationIcon(R.drawable.ic_menu);
+        setSupportActionBar(toolbar);
 
-        ImageView back_arrow = (ImageView) toolbar.findViewById(R.id.back_img);
-        back_arrow.setOnClickListener(new View.OnClickListener() {
+        TextView title = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        title.setText(R.string.app_name);
+        title.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
 
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-
-        });
-
-        ImageView refreshImageView = (ImageView) toolbar.findViewById(R.id.refresh);
-        refreshImageView.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                requestMatchScoreDetails();
-                showProgress(true);
-            }
-
-        });
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        return toolbar;
     }
 
     private void setTitle(){
@@ -184,7 +198,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
     private void renderComments(){
         Log.i("Score Detail", "Render Comments");
 
-        mRecyclerView.getAdapter().notifyDataSetChanged();
+//        mRecyclerView.getAdapter().notifyDataSetChanged();
     }
 
     private boolean renderScores(){
@@ -377,11 +391,16 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         Log.i("Score Detail", "Handle Content");
         boolean success = false;
 
-        ArrayList<JSONObject> list = ScoresJsonParser.parseListOfMatchCommentaries(content);
+        ArrayList<CommentriesModel> list = ScoresJsonParser.parseListOfMatchCommentaries(content);
         if( list.size() > 0 ){
             commentaries.clear();
             commentaries.addAll(list);
             success = true;
+            Fragment fragment= adapter.getItem(mViewPager.getCurrentItem());
+            if(fragment instanceof DataServiceContract) {
+            DataServiceContract listner = (DataServiceContract)fragment;
+                listner.dataChanged();
+            }
         } else {
             //nothing
         }
@@ -425,6 +444,18 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
             progressBar.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void dataChanged() {
+
+    }
+
+    @Override
+    public void requestData(int methodType) {
+     if(methodType== 0 ){
+         requestMatchCommentaries();
+     }
     }
 
     private class ScoreDetailComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {

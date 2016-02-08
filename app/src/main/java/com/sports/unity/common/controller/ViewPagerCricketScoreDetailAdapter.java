@@ -10,6 +10,9 @@ import com.sports.unity.news.controller.fragment.NewsFragment;
 import com.sports.unity.scoredetails.CommentaryFragment;
 import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scoredetails.cricketdetail.CricketMatchDetailFragment;
+import com.sports.unity.scoredetails.cricketdetail.CricketMatchScoreFragment;
+import com.sports.unity.scoredetails.cricketdetail.CricketMatchSummaryFragment;
+import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
 
 import org.json.JSONObject;
@@ -38,23 +41,21 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
     @Override
     public Fragment getItem(int position) {
 
-
+        Fragment fragment = null;
         if (position == 0) {
-            CommentaryFragment commentaryFragment = new CommentaryFragment();
+            fragment = new CommentaryFragment();
             Bundle cmBundel = new Bundle();
-            cmBundel.putParcelableArrayList("commentries",commentries);
-            return commentaryFragment;
+            cmBundel.putString(Constants.INTENT_KEY_TYPE, ScoresJsonParser.CRICKET);
+           // cmBundel.putString(Constants.INTENT_KEY_ID,ScoresJsonParser.CRICKET);
+            cmBundel.putParcelableArrayList("commentries", commentries);
+            fragment.setArguments(cmBundel);
         } else if (position == 1) {
-            NewsFragment newsFragment = new NewsFragment();
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(Constants.INTENT_KEY_SEARCH_ON, false);
-            newsFragment.setArguments(bundle);
-            return newsFragment;
+            fragment = new CricketMatchSummaryFragment();
         } else {
-            MessagesFragment messagesFragment = new MessagesFragment();
-            return messagesFragment;
-        }
+            fragment = new CricketMatchScoreFragment();
 
+        }
+        return fragment;
     }
 
     @Override
