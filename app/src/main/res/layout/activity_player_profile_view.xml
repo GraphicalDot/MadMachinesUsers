@@ -1,11 +1,18 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:grid="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/ColorPrimary"
     android:orientation="vertical"
     android:focusableInTouchMode="true"
     tools:context="com.sports.unity.common.controller.UserProfileActivity">
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/tool_bar_player_profile"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:minHeight="?android:attr/actionBarSize" />
     <ScrollView
         android:layout_below="@+id/tool_bar"
         android:layout_width="match_parent"
@@ -23,7 +30,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tool_bar"
-                android:background="@color/ColorPrimary"
+                android:background="@color/com_facebook_button_background_color"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/activity_horizontal_margin">
 
@@ -34,15 +41,32 @@
                     android:layout_gravity="center"
                     android:layout_margin="@dimen/vertical_padding_very_very_small"
                     android:src="@drawable/ic_user" />
+                <ImageView
+                    android:id="@+id/user_picture_tag"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_distance_slider_01"
+                    android:layout_marginTop="@dimen/marginTop_user_profile_tag"
+                    android:layout_marginLeft="@dimen/marginLeft_user_profile_tag"/>
 
+                <TextView
+                    android:id="@+id/player_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Lionel Messi"
+                    android:layout_gravity="center"
+                    android:textColor="@color/ColorPrimary"
+                    android:fontFamily="sans-serif"
+                    android:textSize="@dimen/font_size_xxlarge" />
                 <TextView
                     android:id="@+id/name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Gabriel"
-                    android:textColor="#000"
-                    android:textSize="@dimen/font_size_large" />
+                    android:text="Lionel Messi"
+                    android:textColor="@color/ColorPrimary"
+                    android:textSize="@dimen/font_size_xlarge" />
 
                 <FrameLayout
                     android:layout_width="wrap_content"
@@ -67,55 +91,101 @@
                 android:layout_marginBottom="@dimen/horizontal_padding_small"
                 android:layout_marginLeft="@dimen/horizontal_padding_small"
                 android:layout_marginRight="@dimen/horizontal_padding_small"
-                android:layout_marginTop="@dimen/horizontal_padding_small"
+                android:layout_marginTop="@dimen/marginTop_user_info_card"
                 android:background="@color/ColorPrimary">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/vertical_padding_very_small">
-
-                        <TextView
-                            android:id="@+id/current_status"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/current_status"
-                            android:textColor="@color/app_theme_blue" />
-
-                        <TextView
-                            android:id="@+id/edit"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="right"
-                            android:text="@string/edit_caps"
-                            android:textColor="@color/app_theme_blue" />
-
-                    </LinearLayout>
-
-                    <View
+                    android:orientation="horizontal">
+                    <TableLayout
                         android:layout_width="fill_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/gray3" />
+                        android:weightSum="4"
+                        android:layout_height="wrap_content">
+                        <TableRow>
+                            <TextView
+                                android:id="@+id/age_value"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="28"
+                                android:gravity="center"
+                                android:layout_weight="1"
+                                android:textSize="@dimen/font_size_large"
+                                android:textColor="@color/Very_dark_gray" />
+                            <TextView
+                                android:id="@+id/position_value"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:layout_weight="1"
+                                android:text="STRIKER"
+                                android:textSize="@dimen/font_size_large"
+                                android:textColor="@color/Very_dark_gray" />
+                            <TextView
+                                android:id="@+id/squad_number"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="10"
+                                android:gravity="center"
+                                android:layout_weight="1"
+                                android:textSize="@dimen/font_size_large"
+                                android:textColor="#1a1a1a" />
+                            <TextView
+                                android:id="@+id/nationality_value"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="india"
+                                android:gravity="center"
+                                android:layout_weight="1"
+                                android:textSize="@dimen/font_size_large"
+                                android:textColor="@color/Very_dark_gray" />
+                        </TableRow>
+                        <TableRow>
+                            <TextView
+                                android:id="@+id/age_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="age"
+                                android:gravity="center"
+                                android:layout_weight="1"
+                                android:textSize="@dimen/font_size_medium"
+                                android:textColor="@color/dot_color_grey" />
 
-                    <TextView
-                        android:id="@+id/your_status"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/vertical_padding_very_small"
-                        android:text="Good players inspire themselves, great players inspire others!!!"
-                        android:textColor="@color/news_headline_mini"
-                        android:textSize="@dimen/font_size_small_large" />
+                            <TextView
+                                android:id="@+id/position_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="position"
+                                android:gravity="center"
+                                android:layout_weight="1"
+                                android:textSize="@dimen/font_size_medium"
+                                android:textColor="@color/dot_color_grey" />
+                            <TextView
+                                android:id="@+id/squad_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:layout_weight="1"
+                                android:text="squad"
+                                android:textSize="@dimen/font_size_medium"
+                                android:textColor="@color/dot_color_grey" />
+
+                            <TextView
+                                android:id="@+id/nationality_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:layout_weight="1"
+                                android:text="nation"
+                                android:textSize="@dimen/font_size_medium"
+                                android:textColor="@color/dot_color_grey" />
+                        </TableRow>
+                    </TableLayout>
                 </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/team"
+                android:id="@+id/id_team_summery"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/status"
@@ -131,116 +201,402 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/fav_team"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/id_season"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/horizontal_padding_very_small"
-                        android:text="@string/fav_team"
-                        android:textColor="@color/app_theme_blue" />
-
+                        android:text="Season 2015-16"
+                        android:textSize="@dimen/font_size_large"
+                        android:textColor="@color/dark_blue"/>
                     <View
                         android:layout_width="fill_parent"
-                        android:layout_height="1dp"
+                        android:layout_height="@dimen/layout_height_card_divider"
                         android:background="@color/gray3" />
-
-                    <ListView
-                        android:id="@+id/team_list"
+                    <TableLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:divider="@null"
-                        android:dividerHeight="0dp"
-                        android:textColor="@color/news_headline_mini"
-                        android:textSize="@dimen/font_size_small_large" />
+                        android:layout_height="wrap_content">
+                        <TableRow>
+
+                        <ImageView
+                            android:id="@+id/ic_match_played"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_match_played"/>
+                        <TextView
+                            android:id="@+id/tv_match_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:paddingLeft="@dimen/horizontal_padding_large"
+                            android:textSize="@dimen/font_size_large"
+                            android:text="Match Played"/>
+                        <TextView
+                            android:id="@+id/tv_number_of_match"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:layout_weight="1"
+                            android:textSize="@dimen/font_size_large"
+                            android:text="1"/>
+                        </TableRow>
+                        <TableRow>
+                        <ImageView
+                            android:id="@+id/ic_goals_scored"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_goals_scored"/>
+
+                        <TextView
+                            android:id="@+id/tv_goals_scored"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/horizontal_padding_large"
+                            android:textSize="@dimen/font_size_large"
+                           android:gravity="center"
+                            android:text="Goals Scored"/>
+
+                        <TextView
+                            android:id="@+id/tv_goals_scored_number"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:layout_weight="1"
+                            android:layout_marginTop="@dimen/activity_vertical_margin_small"
+                            android:textSize="@dimen/font_size_large"
+                            android:text="1"/>
+                        </TableRow>
+                        <TableRow>
+                        <ImageView
+                            android:id="@+id/ic_assist"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_assist"/>
+                        <TextView
+                            android:id="@+id/tv_assist"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/horizontal_padding_large"
+                            android:textSize="@dimen/font_size_large"
+                            android:gravity="center"
+                            android:text="Assist"/>
+                        <TextView
+                            android:id="@+id/tv_number_of_assist"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:layout_weight="1"
+                            android:layout_marginTop="@dimen/activity_vertical_margin_small"
+                            android:textSize="@dimen/font_size_large"
+                            android:text="1"/>
+                        </TableRow>
+                        <TableRow>
+                        <ImageView
+                            android:id="@+id/ic_yellow_card"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                           android:layout_gravity="center"
+                            android:src="@drawable/ic_yellow_card"/>
+                        <TextView
+                            android:id="@+id/tv_yellow_card_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/horizontal_padding_large"
+                            android:textSize="@dimen/font_size_large"
+                            android:gravity="center"
+                            android:text="Yellow Card"/>
+                        <TextView
+                            android:id="@+id/tv_number_of_yellow_card"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:layout_weight="1"
+                            android:layout_marginTop="@dimen/activity_vertical_margin_small"
+                            android:textSize="@dimen/font_size_large"
+                            android:text="1"/>
+                        </TableRow>
+                        <TableRow>
+                        <ImageView
+                            android:id="@+id/ic_red_card"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:src="@drawable/ic_red_card"/>
+                        <TextView
+                            android:id="@+id/tv_red_card_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="@dimen/horizontal_padding_large"
+                            android:textSize="@dimen/font_size_large"
+                            android:gravity="center"
+                            android:text="Red Card"/>
+
+                        <TextView
+                            android:id="@+id/tv_number_of_red_card"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="right"
+                            android:layout_weight="1"
+                            android:layout_marginTop="@dimen/activity_vertical_margin_small"
+                            android:textSize="@dimen/font_size_large"
+                            android:text="1"/>
+                        </TableRow>
+                    </TableLayout>
                 </LinearLayout>
             </LinearLayout>
-
             <LinearLayout
-                android:id="@+id/league"
+                android:id="@+id/current_season"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/team"
-                android:layout_gravity="center"
+                android:layout_below="@+id/profile_info"
                 android:layout_marginBottom="@dimen/horizontal_padding_small"
                 android:layout_marginLeft="@dimen/horizontal_padding_small"
                 android:layout_marginRight="@dimen/horizontal_padding_small"
-                android:background="@color/ColorPrimary">
-
+                android:background="@color/ColorPrimary"
+                android:orientation="vertical">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/fav_league"
-                        android:layout_width="wrap_content"
+                        android:id="@+id/id_current_season"
+                        android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/horizontal_padding_very_small"
-                        android:text="@string/fav_league"
-                        android:textColor="@color/app_theme_blue" />
-
+                        android:text="Current Season Statistics"
+                        android:textSize="@dimen/font_size_large"
+                        android:textColor="@color/dark_blue"/>
                     <View
                         android:layout_width="fill_parent"
                         android:layout_height="1dp"
                         android:background="@color/gray3" />
-
-                    <ListView
-                        android:id="@+id/league_list"
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TableLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:divider="@null"
-                        android:dividerHeight="0dp"
-                        android:textColor="@color/news_headline_mini"
-                        android:textSize="@dimen/font_size_small_large" />
+                        android:weightSum="7"
+                        android:layout_height="wrap_content">
+                        <TableRow>
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_league"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_teams"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_match_played"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_goals_scored"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:src="@drawable/ic_assist"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_yellow_card"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:layout_gravity="center"
+                                android:src="@drawable/ic_red_card"/>
+
+                        </TableRow>
+                        <TableRow>
+                            <TextView
+                                android:id="@+id/league_label_current_season"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="A"
+                                android:gravity="center"
+                                android:layout_weight="1"
+                                android:textSize="@dimen/font_size_medium"
+                                android:textColor="@color/dot_color_grey" />
+
+                            <TextView
+                                android:id="@+id/team_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="B"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:textSize="@dimen/font_size_medium"
+                                android:textColor="@color/dot_color_grey" />
+                            <TextView
+                                android:id="@+id/geam_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="C"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:textSize="@dimen/font_size_medium"
+                                android:textColor="@color/dot_color_grey" />
+                            <TextView
+                                android:id="@+id/league_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="D"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:textSize="@dimen/font_size_medium"
+                                android:textColor="@color/dot_color_grey" />
+                            <TextView
+                                android:id="@+id/goals_label"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="E"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:textSize="@dimen/font_size_medium"
+                                android:textColor="@color/dot_color_grey" />
+                            <TextView
+                                android:id="@+id/yellow_label_season"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="F"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:textSize="@dimen/font_size_medium"
+                                android:textColor="@color/dot_color_grey" />
+                            <TextView
+                                android:id="@+id/red_label_season"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="G"
+                                android:layout_weight="1"
+                                android:gravity="center"
+                                android:textSize="@dimen/font_size_medium"
+                                android:textColor="@color/dot_color_grey" />
+                        </TableRow>
+
+                    </TableLayout>
                 </LinearLayout>
             </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/player"
+           <LinearLayout
+                android:id="@+id/footer_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/league"
-                android:layout_gravity="center"
+                android:layout_below="@+id/profile_info"
                 android:layout_marginBottom="@dimen/horizontal_padding_small"
                 android:layout_marginLeft="@dimen/horizontal_padding_small"
                 android:layout_marginRight="@dimen/horizontal_padding_small"
                 android:background="@color/ColorPrimary">
-
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
+                    android:orientation="horizontal">
                     <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/vertical_padding_very_small">
-
-                        <TextView
-                            android:id="@+id/fav_player"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/fav_player"
-                            android:textColor="@color/app_theme_blue" />
-
-                    </LinearLayout>
-
-                    <View
                         android:layout_width="fill_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/gray3" />
-
-                    <ListView
-                        android:id="@+id/player_list"
-                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:divider="@null"
-                        android:dividerHeight="0dp"
-                        android:textColor="@color/news_headline_mini"
-                        android:textSize="@dimen/font_size_small_large" />
+                        android:orientation="vertical"
+                        android:padding="@dimen/vertical_padding_very_small">
+                       <LinearLayout
+                           android:layout_width="wrap_content"
+                           android:layout_height="wrap_content">
+                           <TextView
+                               android:layout_width="fill_parent"
+                               android:layout_height="wrap_content"
+                               android:textColor="@color/dark_blue"
+                               android:textSize="@dimen/font_size_large"
+                               android:text="Next Game"/>
+                       </LinearLayout>
+                        <View
+                            android:layout_width="fill_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/gray3" />
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical">
+                                <ImageView
+                                    android:id="@+id/ic_league"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                                    android:src="@drawable/ic_goals_scored"/>
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:layout_marginLeft="@dimen/activity_horizontal_margin">
+                                <TextView
+                                    android:id="@+id/tv_next_game_name"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:textSize="@dimen/font_size_large"
+                                    android:text="Chelsea"/>
+                                <TextView
+                                    android:id="@+id/tv_next_game_details"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center"
+                                    android:textSize="@dimen/font_size_medium"
+                                    android:text="Chelsea"/>
+                            </LinearLayout>
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@color/gray4">
+                            <TextView
+                                android:id="@+id/next_game_venue"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/font_size_medium"
+                                android:text="VENUE NAME"/>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:background="@color/gray4">
+                            <TextView
+                                android:id="@+id/tv_next_game_date"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textSize="@dimen/font_size_medium"
+                                android:text="match date"/>
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="right"/>
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>
