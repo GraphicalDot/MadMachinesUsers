@@ -102,5 +102,12 @@
     <dimen name="app_bar_height">180dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
+    <!--  player profile view-->
+    <dimen name="marginTop_user_profile_tag">-40dp</dimen>
+    <dimen name="marginTop_user_info_card">-32dp</dimen>
+    <dimen name="marginLeft_user_profile_tag">300dp</dimen>
+    <dimen name="layout_height_card_divider">1dp</dimen>
+
+
 
 </resources>
