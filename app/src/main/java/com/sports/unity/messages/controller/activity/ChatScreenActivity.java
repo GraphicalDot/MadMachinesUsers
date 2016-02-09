@@ -87,8 +87,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     private ToolbarActionsForChatScreen toolbarActionsForChatScreen = null;
 //    private ArrayList<Integer> positions = new ArrayList<>();
 
-    private static long chatID = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
-
     public static void viewProfile(Activity activity, byte[] profilePicture, String name, String groupServerId, String phoneNumber) {
 
         Intent intent = new Intent(activity, UserProfileActivity.class);
@@ -97,8 +95,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         intent.putExtra("profilePicture", profilePicture);
         intent.putExtra("groupServerId", groupServerId);
         intent.putExtra("number", phoneNumber);
+        intent.putExtra("status", "available");
         activity.startActivity(intent);
     }
+
+    private static long chatID = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
 
     private static XMPPTCPConnection con;
 

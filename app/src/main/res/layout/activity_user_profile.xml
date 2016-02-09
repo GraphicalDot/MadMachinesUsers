@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/ColorPrimary"
     android:focusableInTouchMode="true"
-    android:orientation="vertical">
+    tools:context="com.sports.unity.common.controller.UserProfileActivity">
 
     <include
         android:id="@+id/tool_bar"
@@ -30,9 +30,9 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tool_bar"
-                android:layout_marginBottom="@dimen/horizontal_padding_small"
                 android:background="@color/ColorPrimary"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginBottom="@dimen/horizontal_padding_small">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/user_picture"
@@ -46,24 +46,35 @@
                     android:id="@+id/name"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/horizontal_padding_very_small"
                     android:gravity="center"
-                    android:text="Gabriel"
+                    android:padding="@dimen/horizontal_padding_very_small"
                     android:textColor="#000"
                     android:textSize="@dimen/font_size_large" />
 
+
                 <FrameLayout
                     android:id="@+id/faceBook_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/flag_size_large"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_marginBottom="@dimen/activity_horizontal_margin"
-                    android:layout_marginTop="@dimen/activity_horizontal_margin">
+                    android:layout_margin="@dimen/horizontal_padding_very_small"
+                    android:visibility="gone">
+
+                    <com.facebook.login.widget.LoginButton xmlns:facebook="http://schemas.android.com/apk/res-auto"
+                        android:id="@+id/login_button_facebook"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_below="@+id/nameView"
+                        android:layout_gravity="center"
+                        android:layout_marginEnd="@dimen/vertical_padding_medium"
+                        android:layout_marginStart="@dimen/vertical_padding_medium"
+                        android:textSize="@dimen/font_size_small_medium"
+                        facebook:com_facebook_login_text="USE MY FACEBOOK DETAILS" />
 
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
-                        android:layout_marginEnd="@dimen/activity_vertical_margin"
-                        android:layout_marginStart="@dimen/activity_vertical_margin"
                         android:background="@drawable/white_stroke_round_edge_button">
 
                         <ImageView
@@ -86,8 +97,6 @@
                             android:layout_height="fill_parent"
                             android:background="@android:color/transparent"
                             android:clickable="false"
-                            android:paddingLeft="@dimen/font_size_very_small"
-                            android:paddingRight="@dimen/font_size_very_small"
                             android:text="USE MY FACEBOOK DETAILS"
                             android:textColor="@color/ColorPrimary"
                             android:textSize="@dimen/font_size_small_medium" />
@@ -101,51 +110,34 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/profile_info"
-                android:layout_marginBottom="@dimen/horizontal_padding_small"
-                android:layout_marginLeft="@dimen/horizontal_padding_small"
-                android:layout_marginRight="@dimen/horizontal_padding_small"
-                android:layout_marginTop="@dimen/horizontal_padding_small"
-                android:background="@color/ColorPrimary">
+                android:layout_margin="@dimen/horizontal_padding_very_small"
+                android:background="@drawable/round_edge_black_box"
+                android:orientation="vertical">
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/current_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/horizontal_padding_small"
+                    android:text="@string/current_status"
+                    android:textColor="@color/app_theme_blue" />
+
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="0.3dp"
+                    android:background="@color/grayBorder" />
+
+                <EditText
+                    android:id="@+id/your_status"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:padding="@dimen/horizontal_padding_small"
+                    android:text="Good players inspire themselves, great players inspire others!!!"
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/font_size_small_large" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/vertical_padding_very_small">
 
-                        <TextView
-                            android:id="@+id/current_status"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/current_status"
-                            android:textColor="@color/app_theme_blue" />
-
-                        <FrameLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"></FrameLayout>
-
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/gray3" />
-
-                    <EditText
-                        android:id="@+id/your_status"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/vertical_padding_very_small"
-                        android:text="Good players inspire themselves, great players inspire others!!!"
-                        android:textColor="@color/news_headline_mini"
-                        android:textSize="@dimen/font_size_small_large" />
-                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -154,10 +146,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/status"
                 android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/horizontal_padding_small"
-                android:layout_marginLeft="@dimen/horizontal_padding_small"
-                android:layout_marginRight="@dimen/horizontal_padding_small"
-                android:background="@color/ColorPrimary">
+                android:layout_margin="@dimen/horizontal_padding_very_small"
+                android:background="@drawable/round_edge_black_box">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -168,14 +158,14 @@
                         android:id="@+id/fav_team"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_very_small"
+                        android:padding="@dimen/horizontal_padding_small"
                         android:text="@string/fav_team"
                         android:textColor="@color/app_theme_blue" />
 
                     <View
                         android:layout_width="fill_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/gray3" />
+                        android:layout_height="0.3dp"
+                        android:background="@color/grayBorder" />
 
                     <LinearLayout
                         android:id="@+id/teamlist"
@@ -191,10 +181,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/team"
                 android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/horizontal_padding_small"
-                android:layout_marginLeft="@dimen/horizontal_padding_small"
-                android:layout_marginRight="@dimen/horizontal_padding_small"
-                android:background="@color/ColorPrimary">
+                android:layout_margin="@dimen/horizontal_padding_very_small"
+                android:background="@drawable/round_edge_black_box">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -205,14 +193,14 @@
                         android:id="@+id/fav_league"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_very_small"
+                        android:padding="@dimen/horizontal_padding_small"
                         android:text="@string/fav_league"
                         android:textColor="@color/app_theme_blue" />
 
                     <View
                         android:layout_width="fill_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/gray3" />
+                        android:layout_height="0.3dp"
+                        android:background="@color/grayBorder" />
 
                     <LinearLayout
                         android:id="@+id/leaguelist"
@@ -228,46 +216,43 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/league"
                 android:layout_gravity="center"
-                android:layout_marginBottom="@dimen/horizontal_padding_small"
-                android:layout_marginLeft="@dimen/horizontal_padding_small"
-                android:layout_marginRight="@dimen/horizontal_padding_small"
-                android:background="@color/ColorPrimary">
+                android:layout_margin="@dimen/horizontal_padding_very_small"
+                android:background="@drawable/round_edge_black_box"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/fav_player"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/horizontal_padding_small"
+                    android:text="@string/fav_player"
+                    android:textColor="@color/app_theme_blue" />
+
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="0.3dp"
+                    android:background="@color/grayBorder" />
 
                 <LinearLayout
+                    android:id="@+id/playerlist"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/vertical_padding_very_small">
-
-                        <TextView
-                            android:id="@+id/fav_player"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/fav_player"
-                            android:textColor="@color/app_theme_blue" />
-
-                    </LinearLayout>
-
-                    <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/gray3" />
-
-                    <LinearLayout
-                        android:id="@+id/playerlist"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical" />
-                </LinearLayout>
+                    android:orientation="vertical" />
             </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone" />
+
 </RelativeLayout>
 
 

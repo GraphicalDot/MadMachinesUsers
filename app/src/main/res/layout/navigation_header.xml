@@ -4,8 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/gray3"
-    android:orientation="vertical"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/horizontal_padding_medium"
     android:paddingLeft="@dimen/horizontal_padding_medium"
+    android:paddingRight="@dimen/horizontal_padding_medium"
     android:paddingTop="@dimen/horizontal_padding_large">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -18,26 +20,31 @@
         app:civ_border_width="1dp" />
 
     <LinearLayout
+        android:id="@+id/my_profile_drawer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
         android:layout_gravity="center"
+        android:gravity="center|left"
         android:orientation="vertical"
-        android:paddingTop="@dimen/vertical_padding_small">
+        android:padding="@dimen/vertical_padding_small">
 
         <TextView
             android:id="@+id/name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="marquee"
             android:maxLines="1"
-            android:paddingBottom="@dimen/horizontal_padding_very_very_small"
-            android:paddingTop="@dimen/horizontal_padding_very_very_small"
             android:text="Anupam Gupta"
             android:textColor="#000"
-            android:textSize="@dimen/font_size_small_large"
+            android:textSize="@dimen/font_size_large"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/view_profile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/nav_drawer_view_profile"
+            android:textColor="@color/gray1" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -78,16 +85,6 @@
 
             />
         </LinearLayout>
-
-        <Switch
-            android:id="@+id/share_location"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="@dimen/horizontal_padding_small"
-            android:paddingRight="@dimen/horizontal_padding_small"
-            android:paddingTop="@dimen/horizontal_padding_very_very_small"
-            android:text="Share my Location"
-            android:textColor="@color/gray1" />
 
     </LinearLayout>
 </LinearLayout>

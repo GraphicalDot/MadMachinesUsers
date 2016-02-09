@@ -48,6 +48,7 @@
 
     <string name="message_login_failed">Login failed, try again.</string>
     <string name="message_submit_vcard_failed">Unable to save your info, try again.</string>
+    <string name="message_submit_vcard_sucess">Your info is saved.</string>
     <string name="title_activity_demo">demo</string>
     <string name="title_activity_news_details">NewsDetailsActivity</string>
     <string name="title_activity_filter">FilterActivity</string>
@@ -218,4 +219,5 @@ Carrier SMS charges may apply.</string>
 
     <string name="showcase_mini_card_heading">Switch news view</string>
     <string name="showcase_mini_card_message">Switch news view to mini card layout</string>
+    <string name="nav_drawer_view_profile">See Profile</string>
 </resources>

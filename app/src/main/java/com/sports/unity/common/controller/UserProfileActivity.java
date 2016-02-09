@@ -2,17 +2,21 @@ package com.sports.unity.common.controller;
 
 import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
 import android.util.Log;
@@ -20,16 +24,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,21 +41,19 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.sports.unity.Database.SportsUnityDBHelper;
-import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
-import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
+import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
 
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.json.JSONArray;
@@ -71,143 +67,228 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.zip.Inflater;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserProfileActivity extends CustomAppCompatActivity {
 
-    private String userOrGroupName;
-    private byte[] userOrGroupImage = null;
-    private String groupServerId;
-    private String phoneNumber;
+    private CallbackManager callbackManager;
 
-    private TextView addFriend;
-    private ImageView editStatus;
+    private String profilePicUrl = null;
+
+    private TextView toolbarActionButton;
     private EditText name;
     private EditText status;
-    private FrameLayout facebook_button;
     private CircleImageView profileimage;
-    private ImageView edit_name;
 
     private byte[] byteArray;
-    private CallbackManager callbackManager;
-    private String profilePicUrl;
-    private boolean paused = false;
-    private boolean vCardSaved = false;
-    ArrayList<FavouriteItem> savedList;
-    private static final int LOAD_IMAGE_GALLERY_CAMERA = 1;
-    private LayoutInflater mInflater;
+    private ProgressBar progressBar;
+
     private boolean ownProfile;
+
+    private static final String INFO_EDIT = "EDIT";
+    private static final String INFO_SAVE = "SAVE";
+    private static final String ADD_FRIEND = "ADD FRIEND";
+
+    private static final int LOAD_IMAGE_GALLERY_CAMERA = 1;
+
+    private ArrayList<FavouriteItem> savedList;
+    private LayoutInflater mInflater;
+    private Drawable oldBackground = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        XMPPService.startService(this);
-
+        initFacebookLogin();
 
         setContentView(R.layout.activity_user_profile);
+        mInflater = LayoutInflater.from(this);
 
-        mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        Bundle bundle = getIntent().getExtras();
+        ownProfile = getIntent().getBooleanExtra(Constants.IS_OWN_PROFILE, false);
+        setToolbar(ownProfile);
+        initView(ownProfile);
 
-        try {
-            ownProfile = bundle.getBoolean(Constants.IS_OWN_PROFILE, false);
-        } catch (NullPointerException booleanNull) {
+        if (ownProfile) {
+            addFacebookCallback();
+        } else {
+            //do nothing
+        }
+    }
 
+    private void addFacebookCallback() {
+        callbackManager = CallbackManager.Factory.create();
+        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button_facebook);
+        loginButton.setReadPermissions(Arrays.asList("public_profile, email"));
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(JSONObject object, GraphResponse response) {
+                        try {
+                            name.setText(object.getString("name"));
+                            JSONObject data = response.getJSONObject();
+                            if (data.has("picture")) {
+                                profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+                retrieveImage(profilePicUrl);
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+        });
+
+    }
+
+    private void retrieveImage(String profilePicUrl) {
+        new DownloadImageTask().execute(profilePicUrl);
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+
+        protected Bitmap doInBackground(String... urls) {
+            String urlDisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urlDisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return mIcon11;
         }
 
-        initView();
-        setToolbar();
+        protected void onPostExecute(Bitmap image) {
+            CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
+            circleImageView.setImageBitmap(image);
+        }
+
+    }
+
+
+    private void initFacebookLogin() {
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo("com.sports.unity", PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+
+        } catch (NoSuchAlgorithmException e) {
+
+        }
+    }
+
+    private void setToolbar(boolean ownProfile) {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbarActionButton = (TextView) toolbar.findViewById(R.id.toolbar_action_button);
+        toolbarActionButton.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
+        if (ownProfile) {
+            toolbarActionButton.setText(INFO_EDIT);
+        } else {
+            toolbarActionButton.setText(ADD_FRIEND);
+            toolbarActionButton.setBackground(getResources().getDrawable(R.drawable.round_edge_blue_box));
+        }
+        toolbarActionButton.setOnClickListener(onClickListener);
+        ImageView backButton = (ImageView) toolbar.findViewById(R.id.backarrow);
+        backButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
+        backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBack();
+            }
+        });
+
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+    }
+
+
+    TextView.OnClickListener onClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (toolbarActionButton.getText().equals(ADD_FRIEND)) {
+                //TODO
+            } else {
+                if (toolbarActionButton.getText().equals(INFO_SAVE)) {
+                    new SubmitVCardAsyncTask().execute();
+                } else {
+                    FrameLayout fbButton = (FrameLayout) findViewById(R.id.faceBook_btn);
+                    fbButton.setVisibility(View.VISIBLE);
+                    toolbarActionButton.setText(INFO_SAVE);
+                    name.setEnabled(true);
+                    name.setBackground(oldBackground);
+                    name.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
+                    status.setEnabled(true);
+                    status.setBackground(oldBackground);
+                    status.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
+                    profileimage.setBorderColor(getResources().getColor(R.color.app_theme_blue));
+                    profileimage.setBorderWidth(2);
+                }
+            }
+        }
+    };
+
+
+    private void initView(boolean ownProfile) {
+
+        name = (EditText) findViewById(R.id.name);
+        name.setText(getIntent().getStringExtra("name"));
+        oldBackground = name.getBackground();
+        name.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
+        name.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
+        name.setEnabled(false);
+
+        status = (EditText) findViewById(R.id.your_status);
+        status.setBackground(new ColorDrawable(Color.TRANSPARENT));
+        status.setText(getIntent().getStringExtra("status"));
+        status.setEnabled(false);
+
+        setcustomFont();
 
         if (ownProfile) {
             setInitDataOwn();
         } else {
             setInitDataOthers();
         }
-
     }
 
-    private void getIntentExtrasForOthers() {
-        userOrGroupName = getIntent().getStringExtra("name");
-        userOrGroupImage = getIntent().getByteArrayExtra("profilePicture");
-        groupServerId = getIntent().getStringExtra("groupServerId");
-        phoneNumber = getIntent().getStringExtra("number");
-
-    }
-
-    private void getIntentExtrasForOwn() {
-        userOrGroupName = getIntent().getStringExtra("name");
-        userOrGroupImage = getIntent().getByteArrayExtra("profilePicture");
-//        groupServerId = getIntent().getStringExtra("groupServerId");
-        phoneNumber = getIntent().getStringExtra("phoneNumber");
-
-    }
-
-    private void setToolbar() {
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-
-        addFriend = (TextView) toolbar.findViewById(R.id.add_friend);
-
-        ImageView back = (ImageView) toolbar.findViewById(R.id.backarrow);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-    }
-
-    private void initView() {
-        profileimage = (CircleImageView) findViewById(R.id.user_picture);
-        //editStatus = (ImageView) findViewById(R.id.edit);
-        // edit_name = (ImageView) findViewById(R.id.edit_name);
-        facebook_button = (FrameLayout) findViewById(R.id.faceBook_btn);
-        name = (EditText) findViewById(R.id.name);
-        status = (EditText) findViewById(R.id.your_status);
-        name.setFocusable(false);
-        status.setFocusable(false);
+    private void setcustomFont() {
+        status.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+        TextView currentStatus = (TextView) findViewById(R.id.current_status);
+        currentStatus.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+        TextView favTeam = (TextView) findViewById(R.id.fav_team);
+        favTeam.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+        TextView favLeague = (TextView) findViewById(R.id.fav_league);
+        favLeague.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+        TextView favPlayer = (TextView) findViewById(R.id.fav_player);
+        favPlayer.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
     }
 
     private void setInitDataOwn() {
 
-        addFriend.setVisibility(View.GONE);
-        facebook_button.setVisibility(View.VISIBLE);
-        // editStatus.setVisibility(View.VISIBLE);
-        // edit_name.setVisibility(View.VISIBLE);
-
-//        edit_name.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                Intent intent = new Intent(UserProfileActivity.this, EditNameAndStatus.class);
-//                intent.putExtra("Data", name.getText().toString());
-//                intent.putExtra("Title", "Enter your name ");
-//                startActivity(intent);
-//            }
-//        });
-//
-//        editStatus.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                Intent intent = new Intent(UserProfileActivity.this, EditNameAndStatus.class);
-//                intent.putExtra("Data", status.getText().toString());
-//                intent.putExtra("Title", "Change your status");
-//                startActivity(intent);
-//            }
-//        });
-
-        getIntentExtrasForOwn();
-
-        name.setText(userOrGroupName);
-
-        if (userOrGroupImage == null) {
-            profileimage.setImageResource(R.drawable.ic_user);
+        profileimage = (CircleImageView) findViewById(R.id.user_picture);
+        byte[] imageArray = getIntent().getByteArrayExtra("profilePicture");
+        if (imageArray != null) {
+            profileimage.setImageBitmap(BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length));
         } else {
-            profileimage.setImageBitmap(BitmapFactory.decodeByteArray(userOrGroupImage, 0, userOrGroupImage.length));
+            profileimage.setImageResource(R.drawable.ic_user);
         }
 
         profileimage.setOnClickListener(new View.OnClickListener() {
@@ -217,62 +298,138 @@ public class UserProfileActivity extends CustomAppCompatActivity {
             }
         });
 
-        facebook_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
-
         ArrayList<FavouriteItem> savedList = FavouriteItemWrapper.getInstance().getFavList(this);
-
         setFavouriteProfile(savedList);
 
     }
 
     private void setInitDataOthers() {
 
-        addFriend.setVisibility(View.VISIBLE);
-        facebook_button.setVisibility(View.GONE);
-//        editStatus.setVisibility(View.GONE);
-//        edit_name.setVisibility(View.GONE);
-
-        getIntentExtrasForOthers();
-
-        name.setText(userOrGroupName);
-
-        if (userOrGroupImage == null) {
-            if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+        profileimage = (CircleImageView) findViewById(R.id.user_picture);
+        byte[] imageArray = getIntent().getByteArrayExtra("profilePicture");
+        if (imageArray != null) {
+            profileimage.setImageBitmap(BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length));
+        } else {
+            if (getIntent().getStringExtra("groupServerId").equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
                 profileimage.setImageResource(R.drawable.ic_user);
             } else {
-                profileimage.setImageResource(R.drawable.ic_group);
+                //TODO
             }
-        } else {
-            profileimage.setImageBitmap(BitmapFactory.decodeByteArray(userOrGroupImage, 0, userOrGroupImage.length));
+        }
+        new FetchVcardTask(getIntent().getStringExtra("number")).execute();
+    }
+
+    private class FetchVcardTask extends AsyncTask<Void, Void, String> {
+
+        private boolean success = false;
+
+        String number = null;
+
+        public FetchVcardTask(String number) {
+            this.number = number;
         }
 
-        JSONObject jsonObject = null;
-        JSONArray jsonArray = null;
-
-        try {
-            VCard vCard = new VCard();
-            vCard.load(XMPPClient.getConnection(), phoneNumber + "@mm.io");
-
-            Log.i("Fav String", "" + phoneNumber);
-            String favourite = vCard.getField("fav_list");
-            Log.i("Fav String", "" + favourite);
-            savedList = FavouriteItemWrapper.getInstance().getFavListOfOthers(favourite);
-        } catch (SmackException.NoResponseException e) {
-            e.printStackTrace();
-        } catch (XMPPException.XMPPErrorException e) {
-            e.printStackTrace();
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
         }
 
-        setFavouriteProfile(savedList);
+        @Override
+        protected String doInBackground(Void... params) {
+            String favorite = null;
+            try {
+                VCard card = new VCard();
+                card.load(XMPPClient.getConnection(), number + "@mm.io");
+                favorite = card.getField("fav_list");
+                success = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return favorite;
+        }
+
+        @Override
+        protected void onPostExecute(String favorite) {
+            progressBar.setVisibility(View.GONE);
+            if (success) {
+                successfulVCardLoad(favorite);
+            } else {
+                onUnSuccessfulVCardLoad();
+            }
+        }
+    }
+
+    private void successfulVCardLoad(String favorite) {
+        ArrayList<FavouriteItem> savedList = null;
+        if (favorite != null) {
+            savedList = FavouriteItemWrapper.getInstance().getFavListOfOthers(favorite);
+            setFavouriteProfile(savedList);
+        }
+    }
+
+    private void onUnSuccessfulVCardLoad() {
+        Toast.makeText(UserProfileActivity.this, R.string.message_submit_vcard_failed, Toast.LENGTH_SHORT).show();
+    }
+
+    private class SubmitVCardAsyncTask extends AsyncTask<Void, Void, Void> {
+        private boolean success = false;
+        String nickname = name.getText().toString();
+        TextView currentStatus = (TextView) findViewById(R.id.current_status);
+        String status = currentStatus.getText().toString();
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
+                VCard vCard = new VCard();
+                vCard.setNickName(nickname);
+                vCard.setAvatar(byteArray);
+                vCard.setMiddleName(status);
+                vCard.setJabberId(XMPPClient.getConnection().getUser());
+                manager.saveVCard(vCard);
+                success = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void o) {
+            progressBar.setVisibility(View.GONE);
+            if (success) {
+                successfulVCardSubmit();
+            } else {
+                onUnSuccessfulVCardSubmit();
+            }
+        }
+    }
+
+    private void onUnSuccessfulVCardSubmit() {
+        Toast.makeText(UserProfileActivity.this, R.string.message_submit_vcard_failed, Toast.LENGTH_SHORT).show();
+    }
+
+    private void successfulVCardSubmit() {
+        initViewUI();
+        Toast.makeText(UserProfileActivity.this, R.string.message_submit_vcard_sucess, Toast.LENGTH_SHORT).show();
+    }
+
+    private void initViewUI() {
+        profileimage.setBorderWidth(0);
+        FrameLayout fbButton = (FrameLayout) findViewById(R.id.faceBook_btn);
+        fbButton.setVisibility(View.GONE);
+        toolbarActionButton.setText(INFO_EDIT);
+        name.setEnabled(false);
+        name.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
+        status.setEnabled(false);
+        status.setBackground(new ColorDrawable(Color.TRANSPARENT));
     }
 
     private void changeProfileImage() {
@@ -310,15 +467,17 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
-            CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
-
-            byteArray = ImageUtil.handleImageAndSetToView(data, circleImageView, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
-
+            setProfileImageFromByteArray(data);
         } else {
-            //nothing
+            //do nothing
         }
     }
 
+    private void setProfileImageFromByteArray(Intent data) {
+        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
+        byteArray = ImageUtil.handleImageAndSetToView(data, circleImageView, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
+    }
+    
     private void setFavouriteProfile(ArrayList<FavouriteItem> savedList) {
 
         List<FavouriteItem> teams = new ArrayList<>();
@@ -360,6 +519,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         for (int i = 0; i < leagues.size(); i++) {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
+            textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
             textView.setText(leagues.get(i).getName());
             leagueList.addView(linearLayout);
 
@@ -368,6 +528,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         for (int i = 0; i < teams.size(); i++) {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
+            textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
             textView.setText(teams.get(i).getName());
             teamList.addView(linearLayout);
         }
@@ -375,6 +536,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         for (int i = 0; i < players.size(); i++) {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
+            textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
             textView.setText(players.get(i).getName());
             playerList.addView(linearLayout);
         }
@@ -401,5 +563,48 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        onBack();
+    }
+
+    private void onBack() {
+        if (toolbarActionButton.getText().equals(INFO_SAVE)) {
+            AlertDialog.Builder build = new AlertDialog.Builder(
+                    UserProfileActivity.this);
+            build.setMessage("Do you want to discard these changes ? ");
+            build.setPositiveButton("Yes",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            discardchanges();
+                        }
+                    });
+            build.setNegativeButton("No",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            //TODO
+                        }
+                    });
+            AlertDialog dialog = build.create();
+            dialog.show();
+        } else {
+            finish();
+        }
+    }
+
+    private void discardchanges() {
+        profileimage.setBorderWidth(0);
+        toolbarActionButton.setText(INFO_EDIT);
+        FrameLayout fbButton = (FrameLayout) findViewById(R.id.faceBook_btn);
+        fbButton.setVisibility(View.GONE);
+        name.setText(getIntent().getStringExtra("name"));
+        status.setText(getIntent().getStringExtra("status"));
+        name.setEnabled(false);
+        status.setEnabled(false);
+        name.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
+        status.setBackground(new ColorDrawable(Color.TRANSPARENT));
+        setInitDataOwn();
     }
 }

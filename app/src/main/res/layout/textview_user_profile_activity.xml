@@ -2,13 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/transparent"
-   >
+    android:background="@android:color/transparent">
 
     <TextView
         android:id="@+id/list_item"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/image_view_selector"
         android:clickable="true"
-        android:padding="@dimen/vertical_padding_very_small"/>
+        android:padding="@dimen/horizontal_padding_small" />
 </LinearLayout>

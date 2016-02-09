@@ -79,32 +79,38 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
         LinearLayout navHeader = (LinearLayout) findViewById(R.id.nav_header);
 
-        CircleImageView profile_photo = (CircleImageView) navHeader.findViewById(R.id.circleView);
+        LinearLayout viewMyProfile = (LinearLayout) navHeader.findViewById(R.id.my_profile_drawer);
+
+        TextView viewProfile = (TextView) navHeader.findViewById(R.id.view_profile);
+        viewProfile.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+
+        CircleImageView profilePhoto = (CircleImageView) navHeader.findViewById(R.id.circleView);
         final TextView name = (TextView) navHeader.findViewById(R.id.name);
+        name.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
-        final String user_name = TinyDB.getInstance(this).getString(TinyDB.KEY_PROFILE_NAME);
-        String user_details = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
+        String userDetails = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
 
-        final Contacts contact = sportsUnityDBHelper.getContact(user_details);
+
+        final Contacts contact = sportsUnityDBHelper.getContact(userDetails);
 
 
         if (contact.image != null) {
             Bitmap bmp = BitmapFactory.decodeByteArray(contact.image, 0, contact.image.length);
-            profile_photo.setImageBitmap(bmp);
+            profilePhoto.setImageBitmap(bmp);
         } else {
-            profile_photo.setImageResource(R.drawable.ic_user);
+            profilePhoto.setImageResource(R.drawable.ic_user);
         }
 
+        name.setText(contact.name);
 
-        name.setText(user_name);
-
-        navHeader.setOnClickListener(new View.OnClickListener() {
+        viewMyProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
-                intent.putExtra(Constants.IS_OWN_PROFILE,true);
-                intent.putExtra("name", user_name);
+                intent.putExtra(Constants.IS_OWN_PROFILE, true);
+                intent.putExtra("name", contact.name);
                 intent.putExtra("profilePicture", contact.image);
+                intent.putExtra("status", contact.status);
                 startActivity(intent);
             }
         });
@@ -128,12 +134,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         Toolbar toolbar = initToolBar();
 
         final DrawerLayout mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        LinearLayout navigationHeader = (LinearLayout) mDrawer.findViewById(R.id.nav_header);
-        TextView name = (TextView) navigationHeader.findViewById(R.id.name);
-        name.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
-        Switch shareLocation = (Switch) navigationHeader.findViewById(R.id.share_location);
-        shareLocation.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
 
             @Override
