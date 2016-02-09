@@ -51,9 +51,6 @@ public class ContactsHandler {
 
     private boolean contactCopyInProgress = false;
 
-    private byte[] imgs;
-    private String status;
-
     private ContactsHandler() {
 
     }
@@ -92,9 +89,6 @@ public class ContactsHandler {
 
         ArrayList<String> contactNumberList = SportsUnityDBHelper.getInstance(context).readContactNumbers();
         syncContacts(context, contactNumberList);
-
-        imgs = null;
-        status = null;
     }
 
     void syncContacts(Context context, ArrayList<String> contactNumberList) throws XMPPException {
@@ -102,8 +96,12 @@ public class ContactsHandler {
         for (int i = 0; i < contactNumberList.size(); i++) {
             String number = contactNumberList.get(i);
             XMPPService.answerForm.setAnswer("user", number);
-            if (checkIfUserExists(number, XMPPService.searchManager, XMPPService.answerForm, roster)) {
-                SportsUnityDBHelper.getInstance(context).updateContacts(number, imgs, status);
+
+            UserVCardDetail userVCardDetail = getUserVCardDetail(number, XMPPService.searchManager, XMPPService.answerForm, roster);
+            if ( userVCardDetail.registered ) {
+                SportsUnityDBHelper.getInstance(context).updateContacts(number, userVCardDetail.profilePicture, userVCardDetail.status);
+            } else {
+                //nothing
             }
         }
     }
@@ -181,10 +179,9 @@ public class ContactsHandler {
 
     }
 
-    private Boolean checkIfUserExists(String number, UserSearchManager search, Form answerForm, Roster roster) throws XMPPException {
-        Boolean flag = false;
+    private UserVCardDetail getUserVCardDetail(String number, UserSearchManager search, Form answerForm, Roster roster) throws XMPPException {
+        UserVCardDetail userVCardDetail = new UserVCardDetail();
         try {
-
             ReportedData data = search.getSearchResults(answerForm, "vjud.mm.io");
             if (data.getRows() != null) {
                 Log.i("Inside IF", "Now");
@@ -193,19 +190,15 @@ public class ContactsHandler {
                     for (String value : row.getValues("jid")) {
                         VCard card = new VCard();
                         card.load(XMPPClient.getConnection(), number + "@mm.io");
-                        imgs = card.getAvatar();
-                        status = card.getMiddleName();
+                        userVCardDetail.profilePicture = card.getAvatar();
+                        userVCardDetail.status = card.getMiddleName();
                         String name = card.getNickName();
                         Log.i("Creating Entry", "true");
                         roster.createEntry(number, name, null);
 //                        addToContactList(number);
                         Log.i("Iterator values......", " " + value);
-                        flag = true;
+                        userVCardDetail.registered = true;
                     }
-                }
-                if (flag) {
-                    Log.i("Returning true Now", " ");
-                    return true;
                 }
             }
         } catch (SmackException.NoResponseException e) {
@@ -216,7 +209,7 @@ public class ContactsHandler {
             e.printStackTrace();
         }
 
-        return false;
+        return userVCardDetail;
     }
 
     private void addContactsToApplicationDB(Context context) {
@@ -259,6 +252,13 @@ public class ContactsHandler {
         } else {
             //nothing
         }
+    }
+
+    private class UserVCardDetail {
+        private boolean registered = false;
+        private String status = null;
+        private byte[] profilePicture = null;
+
     }
 
     private class AddContactThread extends Thread {

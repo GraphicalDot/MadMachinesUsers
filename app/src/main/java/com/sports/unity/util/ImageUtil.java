@@ -258,8 +258,10 @@ public class ImageUtil {
         int sampleScaleSize = 1;
 
         float scaleDownFactor = reqWidth > reqHeight ? (float)reqWidth/480 : (float)reqHeight/600;
-        reqWidth = (int)(reqWidth/scaleDownFactor);
-        reqHeight = (int)(reqHeight/scaleDownFactor);
+        if( scaleDownFactor > 1 ) {
+            reqWidth = (int) (reqWidth / scaleDownFactor);
+            reqHeight = (int) (reqHeight / scaleDownFactor);
+        }
 
         while (options.outWidth / sampleScaleSize >= reqWidth && options.outHeight / sampleScaleSize >= reqHeight) {
             sampleScaleSize++;
