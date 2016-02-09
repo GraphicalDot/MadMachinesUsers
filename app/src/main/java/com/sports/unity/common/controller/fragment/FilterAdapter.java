@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
@@ -62,6 +63,7 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
         }
         holder.textView.setText(mData.get(position).getName());
         holder.textView.setTypeface(FontTypeface.getInstance(context).getRobotoRegular());
+        holder.textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
         return convertView;
     }
 
@@ -78,7 +80,7 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
         } else {
             holder = (HeaderViewHolder) convertView.getTag();
         }
-        if (mData.get(position).getSportsType().subSequence(0, 7).toString().toLowerCase().contains(Constants.GAME_KEY_CRICKET)) {
+        if (mData.get(position).getSportsType().contains(Constants.GAME_KEY_CRICKET)) {
             headerText = "Cricket";
             holder.imageView.setImageResource(R.drawable.ic_cricket);
         } else {

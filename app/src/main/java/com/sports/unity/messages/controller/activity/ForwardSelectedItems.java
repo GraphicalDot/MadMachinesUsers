@@ -18,6 +18,7 @@ import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.messages.controller.fragment.ContactsFragment;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public class ForwardSelectedItems extends CustomAppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         toolbar.setContentInsetsAbsolute(0, 0);
         ImageView backArrow = (ImageView) findViewById(R.id.backarrow);
+        backArrow.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE,false));
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 public class NewsDetailsActivity extends CustomAppCompatActivity {
@@ -75,6 +76,7 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
 
 
         ImageView img = (ImageView) findViewById(R.id.img);
+        img.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         img.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 finish();

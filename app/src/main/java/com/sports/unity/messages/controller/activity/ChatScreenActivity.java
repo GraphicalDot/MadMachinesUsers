@@ -348,6 +348,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
          */
 
         back = (ImageView) toolbar.findViewById(R.id.backarrow);
+        back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         messageText = (EditText) findViewById(R.id.msg);
         status = (TextView) toolbar.findViewById(R.id.status_active);
         LinearLayout profile_link = (LinearLayout) toolbar.findViewById(R.id.profile);

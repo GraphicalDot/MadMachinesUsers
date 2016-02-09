@@ -521,6 +521,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
             textView.setText(leagues.get(i).getName());
+            textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
             leagueList.addView(linearLayout);
 
         }
@@ -530,6 +531,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
             textView.setText(teams.get(i).getName());
+            textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
             teamList.addView(linearLayout);
         }
 
@@ -538,6 +540,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
             textView.setText(players.get(i).getName());
+            textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
             playerList.addView(linearLayout);
         }
     }

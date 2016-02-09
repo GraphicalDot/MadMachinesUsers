@@ -16,6 +16,7 @@ import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.news.controller.activity.NewsSearchActivity;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
@@ -117,6 +118,7 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
         public FilterItemView(View itemView) {
             super(itemView);
             v=itemView;
+            v.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
             tv = (TextView) itemView.findViewById(R.id.tv);
             tv.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
             cb = (CheckBox) itemView.findViewById(R.id.cb);

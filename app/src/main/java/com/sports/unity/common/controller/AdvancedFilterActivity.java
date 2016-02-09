@@ -107,6 +107,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
     private void setUpSkipClick() {
         Button skip = (Button) findViewById(R.id.skip);
+        skip.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE,false));
         skip.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
         if (!UserUtil.isFilterCompleted() || isFromNav) {
             skip.setVisibility(View.VISIBLE);
@@ -129,6 +130,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private void setUpNextClick() {
 
         Button next = (Button) findViewById(R.id.next);
+        next.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         next.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
         if (!UserUtil.isFilterCompleted() || isFromNav) {
             next.setVisibility(View.VISIBLE);
@@ -224,14 +226,17 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         titleText = (TextView) toolbar.findViewById(R.id.toolbar_title);
         titleText.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
         back = (ImageView) toolbar.findViewById(R.id.img_back);
+        back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE,true));
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         search = (ImageView) toolbar.findViewById(R.id.action_search);
+        search.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE,true));
         search.setVisibility(View.VISIBLE);
         highLightSearch();
         titleLayout = (LinearLayout) toolbar.findViewById(R.id.title_layout);
         searchLayout = (LinearLayout) toolbar.findViewById(R.id.search_layout);
         searchText = (EditText) toolbar.findViewById(R.id.search_edit);
         searchClose = (ImageView) toolbar.findViewById(R.id.search_close);
+        searchClose.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE,true));
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

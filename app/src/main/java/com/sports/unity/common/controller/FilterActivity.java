@@ -15,6 +15,7 @@ import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 
@@ -65,7 +66,7 @@ public class FilterActivity extends AppCompatActivity {
     private void setToolBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
-
+        toolbar.findViewById(R.id.cancel).setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         toolbar.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -74,8 +75,10 @@ public class FilterActivity extends AppCompatActivity {
             }
         });
         TextView titleFilter = (TextView) toolbar.findViewById(R.id.toolbar_filter);
+        titleFilter.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         titleFilter.setTypeface(FontTypeface.getInstance(this).getRobotoSlabRegular());
         TextView title = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        title.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         title.setTypeface(FontTypeface.getInstance(this).getRobotoSlabRegular());
 
         title.setOnClickListener(new View.OnClickListener() {

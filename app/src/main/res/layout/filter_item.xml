@@ -6,7 +6,8 @@
     android:paddingBottom="@dimen/vertical_padding_medium_small"
     android:paddingLeft="@dimen/vertical_padding_very_small"
     android:paddingRight="@dimen/vertical_padding_very_small"
-    android:paddingTop="@dimen/vertical_padding_medium_small">
+    android:paddingTop="@dimen/vertical_padding_medium_small"
+    android:id="@+id/item">
 
     <TextView
         android:id="@+id/tv"

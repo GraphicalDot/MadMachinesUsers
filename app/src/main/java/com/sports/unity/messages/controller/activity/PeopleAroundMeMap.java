@@ -55,6 +55,8 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.NearByUserJsonCaller;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
+import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.LocManager;
 
 import org.jivesoftware.smack.SmackException;
@@ -341,6 +343,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         titleCity = (TextView) toolbar.findViewById(R.id.secondary_title);
         titleCity.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         setCurrentAddressOnToolbar(titleAddress, titleCity);
+        toolbar.findViewById(R.id.close_icon).setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         toolbar.findViewById(R.id.close_icon).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

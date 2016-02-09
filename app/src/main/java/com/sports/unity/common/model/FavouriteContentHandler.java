@@ -10,7 +10,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -78,7 +77,7 @@ public class FavouriteContentHandler {
     private static final String URL_CRICKET_PLAYER = "http://52.74.75.79:8080/top_cricket_players";
 
 
-    private static final String URL_LEAGUE_SEARCH = "http://52.76.74.188:9000/fav_league?league=";
+    private static final String URL_FOOTBALL_LEAGUE_SEARCH = "http://52.76.74.188:9000/fav_league?league=";
 
     private static final String URL_CRICKET_TEAM_SEARCH = "http://52.76.74.188:9000/fav_team?sport_type=cricket&team=";
     private static final String URL_CRICKET_PLAYER_SEARCH = "http://52.76.74.188:9000/fav_player?sport_type=cricket&player=";
@@ -190,7 +189,7 @@ public class FavouriteContentHandler {
         searchNum++;
         clearSearchList();
         if (searchType.equals(Constants.FILTER_TYPE_LEAGUE)) {
-            ScoresContentHandler.getInstance().requestFavouriteSearch(URL_LEAGUE_SEARCH, param, LISTENER_KEY, SEARCH_REQUEST_LEAGUE_TAG);
+            ScoresContentHandler.getInstance().requestFavouriteSearch(URL_FOOTBALL_LEAGUE_SEARCH, param, LISTENER_KEY, SEARCH_REQUEST_LEAGUE_TAG);
         } else if (searchType.equals(Constants.FILTER_TYPE_PLAYER)) {
             if (sportsType.equals(Constants.SPORTS_TYPE_CRICKET)) {
                 ScoresContentHandler.getInstance().requestFavouriteSearch(URL_CRICKET_PLAYER_SEARCH, param, LISTENER_KEY, SEARCH_CRICKET_PLAYER_TAG);
