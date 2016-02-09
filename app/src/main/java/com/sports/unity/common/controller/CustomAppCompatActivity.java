@@ -40,5 +40,4 @@ public class CustomAppCompatActivity extends AppCompatActivity {
         }
     }
 
-
 }

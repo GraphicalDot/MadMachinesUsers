@@ -80,4 +80,5 @@ public class Constants {
     public static final int REQUEST_CODE_GALLERY_STORAGE_PERMISSION = 105;
     public static final int REQUEST_CODE_RECORD_AUDIO_PERMISSION = 106;
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 107;
+    public static final String PLAYER_NAME ="player_name" ;
 }

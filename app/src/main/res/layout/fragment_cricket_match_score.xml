@@ -4,10 +4,78 @@
     android:layout_height="match_parent"
     tools:context="com.sports.unity.scoredetails.cricketdetail.CricketMatchScoreFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout
+        android:id="@+id/rootLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/cricket_match_score_fragment" />
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/lo_batting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gray3"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_batting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/vertical_padding_small"
+                android:layout_marginTop="@dimen/vertical_padding_very_very_small"
+                android:textColor="@color/dark_blue"
+                android:textSize="@dimen/font_size_small_large"
+                android:text="BATTING"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/lo_match_summery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/vertical_padding_very_very_small"
+            android:orientation="vertical">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/iv_player_first"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginRight="@dimen/activity_horizontal_margin"
+                    android:layout_marginLeft="@dimen/vertical_padding_small"
+                    android:src="@drawable/ic_user"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                   android:layout_marginLeft="@dimen/profile_thumb_image_small"
+                    android:layout_alignLeft="@+id/iv_player_first"
+                    android:layout_centerInParent="true"
+                    android:layout_alignRight="@+id/iv_player_second"
+                    android:layout_marginRight="@dimen/profile_thumb_image_small"
+                    android:background="@color/gray3" />
+                <TextView
+                    android:id="@+id/"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/vertical_padding_small"
+                    android:layout_marginTop="@dimen/vertical_padding_very_very_small"
+                    android:textColor="@color/dark_blue"
+                    android:textSize="@dimen/font_size_small_large"
+                    android:text="BATTING"
+                    />
+                <ImageView
+                    android:id="@+id/iv_player_second"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="@dimen/vertical_padding_small"
+                    android:src="@drawable/ic_user"/>
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
 
 </FrameLayout>
