@@ -71,6 +71,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
         {
             LinearLayout errorLayout = (LinearLayout) findViewById(R.id.error);
+            errorLayout.setVisibility(View.GONE);
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
 
             ScoreDetailComponentListener createUserComponentListener = new ScoreDetailComponentListener(progressBar, errorLayout);

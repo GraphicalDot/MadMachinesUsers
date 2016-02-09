@@ -129,7 +129,7 @@ public class NotificationHandler {
 
     public Bitmap getCroppedBitmap(Bitmap bitmap) {
 
-        bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, false);
+        bitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
 
         final int width = bitmap.getWidth();
         final int height = bitmap.getHeight();

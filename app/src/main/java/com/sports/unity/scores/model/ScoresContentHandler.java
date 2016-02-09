@@ -1,5 +1,6 @@
 package com.sports.unity.scores.model;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.VolleyError;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.Constants;
@@ -218,6 +219,7 @@ public class ScoresContentHandler {
     private void requestContent(String requestTag, String listenerKey, String url){
         if( url != null ) {
             VolleyTagRequest request = new VolleyTagRequest( requestTag, url, responseListener);
+            request.setRetryPolicy(new DefaultRetryPolicy( Constants.CONNECTION_READ_TIME_OUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             VolleyRequestHandler.getInstance().addToRequestQueue(request);
 
             requestInProcess_RequestTagAndListenerKey.put(requestTag, listenerKey);

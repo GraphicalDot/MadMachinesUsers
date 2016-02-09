@@ -313,7 +313,7 @@ public class AudioRecordingHelper {
 
                 @Override
                 public void postAction(Object object) {
-                    sendActionToCorrespondingActivityListener(1, ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_AUDIO, mFilename, voiceContent);
+                    ActivityActionHandler.getInstance().dispatchSendMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_AUDIO, mFilename, voiceContent);
                 }
 
             }.start();
@@ -321,19 +321,6 @@ public class AudioRecordingHelper {
             //nothing
             Log.d("Audio", "Audio is too small to handle");
         }
-    }
-
-    private boolean sendActionToCorrespondingActivityListener(int id, String key, String mimeType, Object messageContent, Object mediaContent) {
-        boolean success = false;
-
-        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
-
-        if (actionListener != null) {
-            actionListener.handleMediaContent(id, mimeType, messageContent, mediaContent);
-            success = true;
-        }
-        return success;
     }
 
     private void startRecording() {

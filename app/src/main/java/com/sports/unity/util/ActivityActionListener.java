@@ -11,4 +11,6 @@ public interface ActivityActionListener {
 
     public void handleMediaContent(int id, String mimeType, Object messageContent, Object mediaContent);
 
+    public void handleMediaContent(int id, String mimeType, Object messageContent, String thumbnailImage, Object mediaContent);
+
 }

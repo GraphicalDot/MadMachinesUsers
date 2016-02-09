@@ -244,6 +244,11 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
             //nothing
         }
 
+        @Override
+        public void handleMediaContent(int id, String mimeType, Object messageContent, String thumbnailImage, Object mediaContent) {
+            //nothing
+        }
+
     };
 
 

@@ -246,6 +246,12 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
         public void handleMediaContent(int id, String mimeType, Object messageContent, Object mediaContent) {
 
         }
+
+        @Override
+        public void handleMediaContent(int id, String mimeType, Object messageContent, String thumbnailImage, Object mediaContent) {
+            //nothing
+        }
+
     };
 
     @Override
