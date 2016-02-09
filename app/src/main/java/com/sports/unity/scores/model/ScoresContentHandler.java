@@ -20,6 +20,7 @@ public class ScoresContentHandler {
     public static final String CALL_NAME_MATCH_DETAIL = "MATCH_DETAILS";
     public static final String CALL_NAME_MATCH_COMMENTARIES = "MATCH_COMMENTARIES";
     public static final String CALL_NAME_NEAR_BY_USERS = "NEAR_BY_USERS";
+    public static final String CALL_NAME_PLAYER_PROFILE = "PLAYER_PROFILE";
 
     public static final String PARAM_SPORTS_TYPE = "SPORTS_TYPE";
     public static final String PARAM_ID = "ID";
@@ -39,6 +40,8 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_CRICKET_MATCH_DETAIL = "get_cricket_match_scores?match_key=";
     private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "get_cricket_match_commentary?match_key=";
     private static final String URL_PARAMS_FOR_FOOTBALL_COMMENTARY = "get_football_commentary?match_id=";
+    private static final String URL_PARAMS_FOR_PLAYER_PROFILE = "get_football_player_stats?player_name=";
+
 
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
 
@@ -73,17 +76,17 @@ public class ScoresContentHandler {
 
         @Override
         public void handleResponse(String tag, String response, int responseCode) {
-        if( requestInProcess_RequestTagAndListenerKey.containsKey(tag) ) {
-            String listenerKey = requestInProcess_RequestTagAndListenerKey.get(tag);
-            ContentListener contentListener = mapOfResponseListeners.get(listenerKey);
-            if( contentListener != null ) {
-                contentListener.handleContent(tag, response, responseCode);
-            } else {
-                //nothing
-            }
+            if( requestInProcess_RequestTagAndListenerKey.containsKey(tag) ) {
+                String listenerKey = requestInProcess_RequestTagAndListenerKey.get(tag);
+                ContentListener contentListener = mapOfResponseListeners.get(listenerKey);
+                if( contentListener != null ) {
+                    contentListener.handleContent(tag, response, responseCode);
+                } else {
+                    //nothing
+                }
 
-            requestInProcess_RequestTagAndListenerKey.remove(tag);
-        }
+                requestInProcess_RequestTagAndListenerKey.remove(tag);
+            }
         }
 
     };
@@ -119,6 +122,10 @@ public class ScoresContentHandler {
             String matchId = parameters.get(PARAM_ID);
             String sportsType = parameters.get(PARAM_SPORTS_TYPE);
             requestCommentaryOnMatch( sportsType, matchId, requestListenerKey, requestTag);
+        } else if(callName.equals(CALL_NAME_PLAYER_PROFILE)){
+            String playerId = parameters.get(PARAM_ID);
+            String sportsType = parameters.get(PARAM_SPORTS_TYPE);
+            requestPlayerProfile(sportsType, playerId, requestListenerKey, requestTag);
         }
     }
 
@@ -237,7 +244,7 @@ public class ScoresContentHandler {
         mapOfResponseListeners.clear();
         requestInProcess_RequestTagAndListenerKey.clear();
     }
-    
+
     public void requestFavouriteContent(String url,String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
             requestContent(requestTag, listenerKey, url);
@@ -247,6 +254,19 @@ public class ScoresContentHandler {
     public void requestFavouriteSearch(String baseUrl,String params,String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
             String url = generateFavURL(baseUrl,params);
+            requestContent(requestTag, listenerKey, url);
+        }
+    }
+    private void requestPlayerProfile(String sportType, String playerId, String listenerKey, String requestTag){
+        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+
+            String baseUrl = null;
+            if( sportType.equalsIgnoreCase(ScoresJsonParser.CRICKET) ){
+                baseUrl = URL_PARAMS_FOR_PLAYER_PROFILE;
+            } else if( sportType.equalsIgnoreCase(ScoresJsonParser.FOOTBALL) ){
+                baseUrl = URL_PARAMS_FOR_PLAYER_PROFILE;
+            }
+            String url = generateURL(baseUrl + playerId);
             requestContent(requestTag, listenerKey, url);
         }
     }

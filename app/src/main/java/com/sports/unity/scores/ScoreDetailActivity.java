@@ -78,7 +78,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         sportsType = getIntent().getStringExtra(Constants.INTENT_KEY_TYPE);
         matchId = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
 
-        initToolBar();
         initView();
 
         {
@@ -94,6 +93,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
             onComponentCreate(listeners, REQUEST_LISTENER_KEY);
         }
+
 
     }
 
@@ -132,57 +132,48 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);*/
         // Added by Ashish for tab on scroe details page
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        String cricketMatchtitles[] = { getString(R.string.summary),getString(R.string.commentary), getString(R.string.scorecard)};
-        int numberOfCricketTabs = cricketMatchtitles.length;
-        String footballMatchtitles[] = {getString(R.string.commentary),getString(R.string.matchstats),getString(R.string.timeline), getString(R.string.lineup)};
-        int numberOfFootballTabs = footballMatchtitles.length;
+        try {
+            mViewPager = (ViewPager) findViewById(R.id.pager);
+            String cricketMatchtitles[] = {getString(R.string.summary), getString(R.string.commentary), getString(R.string.scorecard)};
+            int numberOfCricketTabs = cricketMatchtitles.length;
+            String footballMatchtitles[] = {getString(R.string.commentary), getString(R.string.matchstats), getString(R.string.timeline), getString(R.string.lineup)};
+            int numberOfFootballTabs = footballMatchtitles.length;
 
 
-        // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        if(sportsType.equalsIgnoreCase(ScoresJsonParser.CRICKET))
-        {
-            cricketScoreDetailAdapter = new ViewPagerCricketScoreDetailAdapter(getSupportFragmentManager(), cricketMatchtitles, numberOfCricketTabs, commentaries);
-            mViewPager.setAdapter(cricketScoreDetailAdapter);
-        } else
-        {
-            footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitles, numberOfFootballTabs, commentaries);
-            mViewPager.setAdapter(footballScoreDetailAdapter);
+            // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
+            if (sportsType.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
+                cricketScoreDetailAdapter = new ViewPagerCricketScoreDetailAdapter(getSupportFragmentManager(), cricketMatchtitles, numberOfCricketTabs, commentaries);
+                mViewPager.setAdapter(cricketScoreDetailAdapter);
+            } else {
+                footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitles, numberOfFootballTabs, commentaries);
+                mViewPager.setAdapter(footballScoreDetailAdapter);
 
-        }
-        // Assiging the Sliding Tab Layout View
-        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
-        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
-
-        // Setting Custom Color for the Scroll bar indicator of the Tab View
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.app_theme_blue);
             }
-        });
-        // Setting the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(mViewPager);
+            // Assiging the Sliding Tab Layout View
+            SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
+            tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
 
-        //set news pager as default
-        int tab_index = getIntent().getIntExtra("tab_index", 1);
-        mViewPager.setCurrentItem(tab_index);
+            // Setting Custom Color for the Scroll bar indicator of the Tab View
+            tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+                @Override
+                public int getIndicatorColor(int position) {
+                    return getResources().getColor(R.color.app_theme_blue);
+                }
+            });
+            // Setting the ViewPager For the SlidingTabsLayout
+            tabs.setViewPager(mViewPager);
 
+            //set news pager as default
+            int tab_index = getIntent().getIntExtra("tab_index", 1);
+            mViewPager.setCurrentItem(tab_index);
+        }catch (Exception e){
+            Log.i("Exception Occured", "initView: ");
+            Toast.makeText(this,"Error Occured",Toast.LENGTH_LONG);
+            e.printStackTrace();
+        }
 
     }
 
-    private Toolbar initToolBar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        toolbar.setNavigationIcon(R.drawable.ic_menu);
-        setSupportActionBar(toolbar);
-
-        TextView title = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        title.setText(R.string.app_name);
-        title.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
-
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        return toolbar;
-    }
 
     private void setTitle(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
