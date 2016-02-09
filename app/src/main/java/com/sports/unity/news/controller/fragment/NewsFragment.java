@@ -86,34 +86,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
             mSwipeRefreshLayout.setRefreshing(false);
         }
 
-
-        boolean isSportsChanged = false;
-        if (sportsSelectedNum != UserUtil.getSportsSelected().size()) {
-            isSportsChanged = true;
-        } else {
-            for (int i = 0; i < sportSelected.size(); i++) {
-                if (!sportSelected.get(0).equals(UserUtil.getSportsSelected().get(i))) {
-                    isSportsChanged = true;
-                }
-            }
-        }
-        if (isSportsChanged) {
-            newsContentHandler.clearContent();
-            mAdapter.notifyDataSetChanged();
-            newsContentHandler.selectedSportsChanged();
-            sportSelected = UserUtil.getSportsSelected();
-            sportsSelectedNum = UserUtil.getSportsSelected().size();
-            boolean success = newsContentHandler.refreshNews(true);
-            if (success == false) {
-                showErrorLayout(getView());
-                hideProgress(getView());
-
-                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
-            } else {
-                hideErrorLayout(getView());
-                showProgress(getView());
-            }
-        }
+        handleIfSportsChanged();
     }
 
     @Override
@@ -303,6 +276,36 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
             }
         });
 
+    }
+
+    private void handleIfSportsChanged() {
+        boolean isSportsChanged = false;
+        if (sportsSelectedNum != UserUtil.getSportsSelected().size()) {
+            isSportsChanged = true;
+        } else {
+            for (int i = 0; i < sportSelected.size(); i++) {
+                if (!UserUtil.getSportsSelected().contains(sportSelected.get(i))) {
+                    isSportsChanged = true;
+                }
+            }
+        }
+        if (isSportsChanged) {
+            newsContentHandler.clearContent();
+            mAdapter.notifyDataSetChanged();
+            newsContentHandler.selectedSportsChanged();
+            sportSelected = UserUtil.getSportsSelected();
+            sportsSelectedNum = UserUtil.getSportsSelected().size();
+            boolean success = newsContentHandler.refreshNews(true);
+            if (success == false) {
+                showErrorLayout(getView());
+                hideProgress(getView());
+
+                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
+            } else {
+                hideErrorLayout(getView());
+                showProgress(getView());
+            }
+        }
     }
 
     private void initErrorLayout(View view) {

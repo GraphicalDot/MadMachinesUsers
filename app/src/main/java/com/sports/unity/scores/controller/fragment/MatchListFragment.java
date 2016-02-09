@@ -106,26 +106,10 @@ public class MatchListFragment extends Fragment {
             //nothing
         }
 
-
-        boolean isSportsChanged = false;
-        if (sportsSelectedNum != UserUtil.getSportsSelected().size()) {
-            isSportsChanged = true;
-        } else {
-            for (int i = 0; i < sportSelected.size(); i++) {
-                if (!sportSelected.get(0).equals(UserUtil.getSportsSelected().get(i))) {
-                    isSportsChanged = true;
-                }
-            }
-        }
-        if (isSportsChanged) {
-            mSwipeRefreshLayout.setRefreshing(true);
-            requestContent();
-            sportSelected = UserUtil.getSportsSelected();
-            sportsSelectedNum = UserUtil.getSportsSelected().size();
-        }
-
+        handleIfSportsChanged();
 
     }
+
 
     @Override
     public void onPause() {
@@ -175,6 +159,25 @@ public class MatchListFragment extends Fragment {
         });
     }
 
+    private void handleIfSportsChanged() {
+        boolean isSportsChanged = false;
+        if (sportsSelectedNum != UserUtil.getSportsSelected().size()) {
+            isSportsChanged = true;
+        } else {
+            for (int i = 0; i < sportSelected.size(); i++) {
+                if (!UserUtil.getSportsSelected().contains(sportSelected.get(i))) {
+                    isSportsChanged = true;
+                }
+            }
+        }
+        if (isSportsChanged) {
+            mSwipeRefreshLayout.setRefreshing(true);
+            requestContent();
+            sportSelected = UserUtil.getSportsSelected();
+            sportsSelectedNum = UserUtil.getSportsSelected().size();
+        }
+    }
+
     private void renderContent() {
         Log.i("List of Matches", "Render Content");
 
@@ -192,14 +195,14 @@ public class MatchListFragment extends Fragment {
                 matches.addAll(list);
             } else {
                 ArrayList<JSONObject> cricket = new ArrayList<>();
-                ArrayList<JSONObject> footbal = new ArrayList<>();
+                ArrayList<JSONObject> football = new ArrayList<>();
                 for (JSONObject obj : list) {
                     try {
                         String s = obj.getString(ScoresJsonParser.SPORTS_TYPE_PARAMETER);
                         if (s.equals(ScoresJsonParser.CRICKET)) {
                             cricket.add(obj);
                         } else {
-                            footbal.add(obj);
+                            football.add(obj);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -208,7 +211,7 @@ public class MatchListFragment extends Fragment {
                 if (UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET)) {
                     matches.addAll(cricket);
                 } else {
-                    matches.addAll(footbal);
+                    matches.addAll(football);
                 }
             }
             success = true;
