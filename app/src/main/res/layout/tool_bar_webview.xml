@@ -14,8 +14,9 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_centerVertical="true"
-        android:paddingRight="@dimen/horizontal_padding_small"
+        android:padding="@dimen/horizontal_padding_small"
         android:scaleType="center"
+        android:background="@drawable/image_view_selector"
         android:src="@drawable/ic_menu_back" />
 
     <TextView

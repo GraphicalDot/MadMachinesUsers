@@ -133,7 +133,7 @@ public class FilterActivity extends AppCompatActivity {
         ViewPagerAdapterForFilter adapter = new ViewPagerAdapterForFilter(getSupportFragmentManager());
 
         // Assigning ViewPager View and setting the adapter
-        ViewPager pager = (ViewPager) findViewById(com.sports.unity.R.id.pager);
+        ViewPager pager = (ViewPager) findViewById(R.id.filter_activity_pager);
         pager.setAdapter(adapter);
         pager.setOffscreenPageLimit(2);
         // Assiging the Sliding Tab Layout View

@@ -29,20 +29,20 @@ import java.util.ArrayList;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private static final boolean NOTIFICATION_AND_SOUNDS_DEFAULT_VALUE = true;
-    private static final boolean NOTIFICATION_PREVIEWS_DEFAULT_VALUE = true;
-    private static final boolean CONVERSATION_TONES_DEFAULT_VALUE = true;
-    private static final boolean VIBRATE_DEFAULT_VALUE = true;
-    private static final boolean LIGHT_DEFAULT_VALUE = true;
-    private static final boolean NOTIFICATION_SOUND_DEFAULT_VALUE = true;
+    public static final boolean NOTIFICATION_AND_SOUNDS_DEFAULT_VALUE = true;
+    public static final boolean NOTIFICATION_PREVIEWS_DEFAULT_VALUE = true;
+    public static final boolean CONVERSATION_TONES_DEFAULT_VALUE = true;
+    public static final boolean VIBRATE_DEFAULT_VALUE = true;
+    public static final boolean LIGHT_DEFAULT_VALUE = true;
+    public static final boolean NOTIFICATION_SOUND_DEFAULT_VALUE = true;
 
-    private static final boolean SHOW_MY_LOCATION_DEFAULT_VALUE = true;
-    private static final boolean FRIENDS_ONLY_DEFAULT_VALUE = true;
-    private static final boolean SHOW_TO_ALL_DEFAULT_VALUE = true;
+    public static final boolean SHOW_MY_LOCATION_DEFAULT_VALUE = true;
+    public static final boolean FRIENDS_ONLY_DEFAULT_VALUE = true;
+    public static final boolean SHOW_TO_ALL_DEFAULT_VALUE = true;
 
-    private static final boolean PHOTOS_AND_MEDIA_DEFAULT_VALUE = true;
-    private static final boolean SAVE_INCOMING_MEDIA_DEFAULT_VALUE = true;
-    private static final boolean SAVE_INAPP_CAPTURE_DEFAULT_VALUE = true;
+    public static final boolean PHOTOS_AND_MEDIA_DEFAULT_VALUE = true;
+    public static final boolean SAVE_INCOMING_MEDIA_DEFAULT_VALUE = true;
+    public static final boolean SAVE_INAPP_CAPTURE_DEFAULT_VALUE = true;
 
 
     private LinearLayout mNotificationPreviews;

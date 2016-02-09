@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
@@ -120,6 +121,16 @@ public class CommonUtil {
         simpleDateFormat.setTimeZone(TimeZone.getDefault());
         String time = String.valueOf(simpleDateFormat.format(gmtEpoch * 1000));
         return time;
+    }
+
+    public static String getDeviceDetails() {
+        String details = "\n" + "\n";
+        details += "\n OS Version: " + System.getProperty("os.version") + "(" + android.os.Build.VERSION.INCREMENTAL + ")";
+        details += "\n OS API Level: " + android.os.Build.VERSION.RELEASE + "(" + android.os.Build.VERSION.SDK_INT + ")";
+        details += "\n Device: " + android.os.Build.DEVICE;
+        details += "\n Model (and Product): " + android.os.Build.MODEL + " (" + android.os.Build.PRODUCT + ")";
+        details += "\n Brand : " + Build.BRAND;
+        return details;
     }
 
     public static String getTimeDifference(long epochTime) {

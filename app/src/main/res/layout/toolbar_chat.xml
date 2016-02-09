@@ -8,12 +8,12 @@
     android:popupTheme="@style/PopupMenuListView"
     android:theme="@style/AppHomeTheme">
 
-    <ImageButton
+    <ImageView
         android:id="@+id/backarrow"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:background="@android:color/transparent"
-        android:paddingRight="@dimen/horizontal_padding_small"
+        android:background="@drawable/image_view_selector"
+        android:padding="@dimen/vertical_padding_small"
         android:scaleType="center"
         android:src="@drawable/ic_menu_back" />
 

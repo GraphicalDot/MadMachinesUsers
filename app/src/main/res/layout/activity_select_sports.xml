@@ -12,69 +12,69 @@
         android:layout_height="?android:attr/actionBarSize"
         android:minHeight="?android:attr/actionBarSize" />
 
-    <GridView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/gridview"
-        android:padding="@dimen/sports_unity_logo_height"
-        android:listSelector="@android:color/transparent"
-        android:layout_below="@id/tool_bar"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:columnWidth="@dimen/sports_logo_large"
-        android:numColumns="1"
-        android:verticalSpacing="@dimen/sports_unity_logo_height"
-        android:horizontalSpacing="10dp"
-        android:stretchMode="columnWidth"
+    <!--<GridView xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:id="@+id/gridview"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="fill_parent"-->
+    <!--android:layout_below="@id/tool_bar"-->
+    <!--android:columnWidth="@dimen/sports_logo_large"-->
+    <!--android:gravity="center"-->
+    <!--android:horizontalSpacing="10dp"-->
+    <!--android:listSelector="@android:color/transparent"-->
+    <!--android:numColumns="1"-->
+    <!--android:padding="@dimen/sports_unity_logo_height"-->
+    <!--android:stretchMode="columnWidth"-->
+    <!--android:verticalSpacing="@dimen/sports_unity_logo_height" />-->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_above="@+id/buttonBottom"
+        android:layout_below="@+id/tool_bar"
         android:gravity="center"
-        />
+        android:orientation="vertical"
+        android:weightSum="1">
 
-    <!--<LinearLayout-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:weightSum="1"-->
-        <!--android:orientation="vertical"-->
-        <!--android:layout_below="@+id/tool_bar"-->
-        <!--android:layout_above="@+id/buttonBottom"-->
-        <!--android:gravity="center">-->
+        <ImageView
+            android:id="@+id/cricket"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:src="@drawable/btn_cricket_disabled" />
 
-        <!--<ImageView-->
-            <!--android:id="@+id/cricket"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="0dp"-->
-            <!--android:layout_weight="0.5"-->
-            <!--android:src="@drawable/btn_cricket_disabled"/>-->
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="0.3dp"
+            android:background="@color/gray1"
+            android:paddingLeft="@dimen/activity_vertical_margin_small"
+            android:paddingRight="@dimen/activity_vertical_margin_small" />
 
-        <!--<View-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:background="@color/gray1"-->
-            <!--android:paddingLeft="@dimen/activity_vertical_margin_small"-->
-            <!--android:paddingRight="@dimen/activity_vertical_margin_small"/>-->
-         <!-- -->
-        <!--<ImageView-->
-            <!--android:id="@+id/football"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="0dp"-->
-            <!--android:layout_weight="0.5"-->
-            <!--android:src="@drawable/btn_football_disabled"/>-->
+        <ImageView
+            android:id="@+id/football"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:src="@drawable/btn_football_disabled" />
 
-    <!--</LinearLayout>-->
+    </LinearLayout>
 
     <RelativeLayout
+        android:id="@+id/buttonBottom"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/buttonBottom"
         android:layout_alignParentBottom="true"
         android:background="@color/app_theme_blue">
+
         <Button
+            android:id="@+id/toLeagueSelect"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="next"
-            android:textSize="@dimen/font_size_small_large"
-            style="?android:attr/borderlessButtonStyle"
-            android:textColor="@android:color/white"
+            android:layout_alignParentRight="true"
             android:background="@android:color/transparent"
-            android:id="@+id/toLeagueSelect"
-            android:layout_alignParentRight="true"/>
+            android:text="next"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_size_small_large" />
 
     </RelativeLayout>
 

@@ -606,7 +606,6 @@ public class ChatKeyboardHelper {
                 absolutePathOfImage = cursor.getString(column_index_data);
                 listOfAllImages.add(absolutePathOfImage);
             }
-
             cursor.close();
         } else {
             //nothing

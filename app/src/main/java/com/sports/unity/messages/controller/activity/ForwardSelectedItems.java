@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,14 +29,16 @@ public class ForwardSelectedItems extends CustomAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forward_selected_items);
-        initToolber();
+        initToolbar();
         Intent intent = getIntent();
 
         ArrayList<Integer> selectedIdsITemList = intent.getIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS);
         addContactFragment(selectedIdsITemList);
     }
 
-    private void initToolber() {
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar.setContentInsetsAbsolute(0, 0);
         ImageView backArrow = (ImageView) findViewById(R.id.backarrow);
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -22,6 +22,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:name=".ChatScreenApplication"
@@ -134,6 +135,12 @@
         <activity
             android:name=".messages.controller.activity.PeopleAroundMeMap"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".common.controller.SettingsActivity"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".common.controller.About"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

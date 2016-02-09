@@ -43,7 +43,7 @@
             android:id="@+id/view_profile"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/nav_drawer_view_profile"
+            android:text="@string/nav_drawer_user_profile"
             android:textColor="@color/gray1" />
 
         <LinearLayout

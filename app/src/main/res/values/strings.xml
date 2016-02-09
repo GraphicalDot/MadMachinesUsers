@@ -219,5 +219,19 @@ Carrier SMS charges may apply.</string>
 
     <string name="showcase_mini_card_heading">Switch news view</string>
     <string name="showcase_mini_card_message">Switch news view to mini card layout</string>
-    <string name="nav_drawer_view_profile">See Profile</string>
+    <string name="nav_drawer_user_profile">See Profile</string>
+
+    <!--Share Feedback related-->
+
+    <string-array name="receipients">
+        <item>contact@sportsunity.club</item>
+    </string-array>
+    <string name="email_subject">Feedback/Questions about Sports Unity</string>
+
+    <!--About Screen related-->
+    <string name="title_activity_about">About</string>
+    <string name="copyright_sportsunity">© COPYRIGHT SPORTSUNITY 2016</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="terms_of_use">Terms of Use</string>
+    <string name="sportsunity.club">sportsunity.club</string>
 </resources>

@@ -3,9 +3,12 @@ package com.sports.unity.common.controller.fragment;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ExpandableListActivity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -25,6 +28,7 @@ import android.widget.Toast;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.common.controller.About;
 import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.NavListAdapter;
@@ -100,9 +104,46 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
             if (v.getId() == R.id.settings) {
                 Intent intent = new Intent(getActivity(), SettingsActivity.class);
                 startActivity(intent);
+            } else if (v.getId() == R.id.feedback) {
+                getEmailIntent();
+            } else if (v.getId() == R.id.rate) {
+                openPlayStoreListing();
+            } else if (v.getId() == R.id.about) {
+                openAboutPage();
             }
         }
     };
+
+    private void openAboutPage() {
+        Intent about = new Intent(getActivity(), About.class);
+        startActivity(about);
+    }
+
+    private void openPlayStoreListing() {
+        final String appPackageName = getActivity().getPackageName();
+        Log.i("packagename", appPackageName);
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException activityNotFoundException) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
+    }
+
+    private void getEmailIntent() {
+        Resources resources = getActivity().getApplicationContext().getResources();
+        String body = CommonUtil.getDeviceDetails();
+        Intent gmailIntent = new Intent();
+        gmailIntent.setClassName("com.google.android.gm", "com.google.android.gm.ComposeActivityGmail");
+        gmailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, resources.getStringArray(R.array.receipients));
+        gmailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, String.format(getString(R.string.email_subject)));
+        gmailIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
+        try {
+
+            getActivity().startActivity(gmailIntent);
+        } catch (ActivityNotFoundException ex) {
+            // handle error
+        }
+    }
 
     private void initTextViews(View view) {
         TextView settings = (TextView) view.findViewById(R.id.settings);

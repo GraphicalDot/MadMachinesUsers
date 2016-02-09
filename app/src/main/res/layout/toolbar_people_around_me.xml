@@ -11,14 +11,15 @@
         android:id="@+id/close_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:paddingRight="@dimen/horizontal_padding_very_small"
+        android:background="@drawable/image_view_selector"
+        android:padding="@dimen/vertical_padding_small"
         android:src="@drawable/ic_close" />
 
     <LinearLayout
         android:id="@+id/myaddress"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center_vertical"
+        android:gravity="center_vertical|start"
         android:orientation="vertical">
 
         <TextView

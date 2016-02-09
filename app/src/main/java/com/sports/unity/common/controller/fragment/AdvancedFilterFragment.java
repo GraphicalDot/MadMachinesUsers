@@ -7,6 +7,7 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.sports.unity.R;
 import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.common.model.UserUtil;
@@ -23,6 +24,7 @@ public class AdvancedFilterFragment extends Fragment {
     private Bundle bundle;
     private ArrayList<String> sportsSelected;
     private String SPORTS_TYPE;
+
     public AdvancedFilterFragment() {
     }
 
@@ -30,8 +32,8 @@ public class AdvancedFilterFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bundle = getArguments();
-        SPORTS_TYPE =bundle.getString(Constants.SPORTS_TYPE);
-        sportsSelected= UserUtil.getSportsSelected();
+        SPORTS_TYPE = bundle.getString(Constants.SPORTS_TYPE);
+        sportsSelected = UserUtil.getSportsSelected();
     }
 
     @Nullable
@@ -49,7 +51,7 @@ public class AdvancedFilterFragment extends Fragment {
 
     private void setTab(View view) {
 
-        FilterPagerAdapter filterPagerAdapter=new FilterPagerAdapter(getActivity().getSupportFragmentManager(),SPORTS_TYPE);
+        FilterPagerAdapter filterPagerAdapter = new FilterPagerAdapter(getActivity().getSupportFragmentManager(), SPORTS_TYPE);
         ViewPager pager = (ViewPager) view.findViewById(R.id.pager);
         pager.setOffscreenPageLimit(2);
         pager.setAdapter(filterPagerAdapter);

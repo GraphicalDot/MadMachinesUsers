@@ -3,6 +3,7 @@ package com.sports.unity.common.controller;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -84,13 +85,38 @@ public class SelectSportsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_sports);
         sports = UserUtil.getSportsSelected();
         try {
-           flag=getIntent().getBooleanExtra(Constants.IS_FROM_NAV, false);
+            flag = getIntent().getBooleanExtra(Constants.IS_FROM_NAV, false);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
         initView();
     }
+
+
+    ImageView.OnClickListener imageViewClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ImageView view = (ImageView) v;
+            if (v.getId() == R.id.cricket) {
+                if (sports.contains(Constants.GAME_KEY_CRICKET)) {
+                    view.setImageResource(R.drawable.btn_cricket_disabled);
+                    sports.remove(Constants.GAME_KEY_CRICKET);
+                } else {
+                    view.setImageResource(R.drawable.btn_cricket_selected);
+                    sports.add(Constants.GAME_KEY_CRICKET);
+                }
+            } else {
+                if (sports.contains(Constants.GAME_KEY_FOOTBALL)) {
+                    view.setImageResource(R.drawable.btn_football_disabled);
+                    sports.remove(Constants.GAME_KEY_FOOTBALL);
+                } else {
+                    view.setImageResource(R.drawable.btn_football_selected);
+                    sports.add(Constants.GAME_KEY_FOOTBALL);
+                }
+            }
+        }
+    };
 
     private void initView() {
 
@@ -107,22 +133,33 @@ public class SelectSportsActivity extends AppCompatActivity {
             mTitle.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
         }
 
-        GridView gridview = (GridView) findViewById(R.id.gridview);
-        gridview.setAdapter(new SportsGridViewAdapter(this));
-        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (!sports.contains(mSports[position])) {
-                    ImageView imageView = (ImageView) view;
-                    imageView.setImageResource(mThumbIdsSelected[position]);
-                    sports.add(mSports[position]);
-                } else {
-                    ImageView imageView = (ImageView) view;
-                    imageView.setImageResource(mThumbIds[position]);
-                    sports.remove(mSports[position]);
-                }
-            }
-        });
+//        GridView gridview = (GridView) findViewById(R.id.gridview);
+//        gridview.setAdapter(new SportsGridViewAdapter(this));
+//        gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+//                if (!sports.contains(mSports[position])) {
+//                    ImageView imageView = (ImageView) view;
+//                    imageView.setImageResource(mThumbIdsSelected[position]);
+//                    sports.add(mSports[position]);
+//                } else {
+//                    ImageView imageView = (ImageView) view;
+//                    imageView.setImageResource(mThumbIds[position]);
+//                    sports.remove(mSports[position]);
+//                }
+//            }
+//        });
+
+        ImageView cricket = (ImageView) findViewById(R.id.cricket);
+        ImageView football = (ImageView) findViewById(R.id.football);
+        cricket.setOnClickListener(imageViewClickListener);
+        football.setOnClickListener(imageViewClickListener);
+        if (sports.contains(Constants.GAME_KEY_FOOTBALL)) {
+            football.setImageResource(R.drawable.btn_football_selected);
+        }
+        if (sports.contains(Constants.GAME_KEY_CRICKET)) {
+            cricket.setImageResource(R.drawable.btn_cricket_selected);
+        }
 
 
         Button next = (Button) findViewById(R.id.toLeagueSelect);
@@ -144,7 +181,7 @@ public class SelectSportsActivity extends AppCompatActivity {
         executeThreadToUpdateInterests();
         UserUtil.setSportsSelected(SelectSportsActivity.this, sports);
         Intent intent = new Intent(SelectSportsActivity.this, AdvancedFilterActivity.class);
-        intent.putExtra(Constants.IS_FROM_NAV,flag);
+        intent.putExtra(Constants.IS_FROM_NAV, flag);
         intent.putExtra(Constants.SPORTS_TYPE, UserUtil.getSportsSelected().get(0));
         startActivity(intent);
 
