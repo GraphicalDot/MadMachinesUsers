@@ -29,6 +29,8 @@ import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.NavListAdapter;
 import com.sports.unity.common.controller.SettingsActivity;
+import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
@@ -51,10 +53,10 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
 
     public boolean isMannual;
     ArrayList<String> teamGroupItems = new ArrayList<String>();
-    private ArrayList<Object> teamChildItems = new ArrayList<Object>();
+    private ArrayList<FavouriteItem> teamChildItems = new ArrayList<FavouriteItem>();
 
     ArrayList<String> competeGroupItems = new ArrayList<String>();
-    private ArrayList<Object> competeChildItems = new ArrayList<Object>();
+    private ArrayList<FavouriteItem> competeChildItems = new ArrayList<FavouriteItem>();
 
     ExpandableListView teamList, competeList;
 
@@ -64,13 +66,19 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
 
     ImageView teamIndi, compIndi;
     boolean isTeam, isComp;
+    FavouriteItemWrapper favouriteItemWrapper;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initItemList();
+        favouriteItemWrapper = FavouriteItemWrapper.getInstance();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        initItemList();
+    }
 
     @Nullable
     @Override
@@ -226,10 +234,10 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
         switch (parent.getId()) {
             case R.id.fav_team:
-                Toast.makeText(getActivity(), ((ArrayList<String>) teamChildItems.get(groupPosition)).get(childPosition), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), teamChildItems.get(childPosition).getName(), Toast.LENGTH_SHORT).show();
                 break;
             case R.id.complist:
-                Toast.makeText(getActivity(), ((ArrayList<String>) competeChildItems.get(groupPosition)).get(childPosition), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), competeChildItems.get(childPosition).getName(), Toast.LENGTH_SHORT).show();
                 break;
         }
 
@@ -238,53 +246,16 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     }
 
     private void initItemList() {
-        ArrayList<String> savedList = UserUtil.getFavouriteFilters();
         teamGroupItems.add("Favourite Team");
         competeGroupItems.add("Favourite Leagues");
-        List<String> teamChild = new ArrayList<>();
-        List<String> compChild = new ArrayList<String>();
-        for (String name : savedList) {
-            if (name.contains(Constants.NAV_COMP)) {
-                name = name.replace(Constants.NAV_COMP, "");
-                compChild.add(name);
-            } else if (name.contains(Constants.NAV_TEAM)) {
-                name = name.replace(Constants.NAV_TEAM, "");
-                teamChild.add(name);
-            }
+        teamChildItems.addAll(favouriteItemWrapper.getAllTeams());
+        competeChildItems.addAll(favouriteItemWrapper.getAllLeagues());
+        if (teamList != null) {
+            teamAdapter.updateItem(teamChildItems);
         }
-        Collections.sort(teamChild);
-        Collections.sort(compChild);
-        teamChildItems.add(teamChild);
-        competeChildItems.add(compChild);
-    }
-
-    private void updateTeamChild() {
-        ArrayList<String> savedList = UserUtil.getFavouriteFilters();
-        List<String> teamChild = new ArrayList<>();
-        for (String name : savedList) {
-            if (name.contains(Constants.NAV_TEAM)) {
-                name = name.replace(Constants.NAV_TEAM, "");
-                teamChild.add(name);
-            }
+        if (compAdapter != null) {
+            compAdapter.updateItem(competeChildItems);
         }
-        Collections.sort(teamChild);
-        teamChildItems = new ArrayList<Object>();
-        teamChildItems.add(teamChild);
-    }
-
-    private void updateCompChild() {
-        ArrayList<String> savedList = UserUtil.getFavouriteFilters();
-        List<String> teamChild = new ArrayList<>();
-        List<String> compChild = new ArrayList<String>();
-        for (String name : savedList) {
-            if (name.contains(Constants.NAV_COMP)) {
-                name = name.replace(Constants.NAV_COMP, "");
-                compChild.add(name);
-            }
-        }
-        Collections.sort(compChild);
-        competeChildItems = new ArrayList<Object>();
-        competeChildItems.add(compChild);
     }
 
     @Override

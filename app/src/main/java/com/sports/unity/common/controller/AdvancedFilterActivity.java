@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.text.method.MovementMethod;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -22,6 +23,8 @@ import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.controller.fragment.AdvancedFilterFragment;
 import com.sports.unity.common.model.FavouriteContentHandler;
+import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
@@ -47,7 +50,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private Toolbar toolbar;
     private Bundle bundle;
     private AdvancedFilterFragment advancedFilterFragment;
-    public ArrayList<String> favList;
+    public ArrayList<FavouriteItem> favList;
     private ArrayList<String> sportsSelected;
     private TextView titleText;
     private ImageView back;
@@ -68,7 +71,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.advanced_filter_activity);
         editFilterListener = new ArrayList<OnEditFilterListener>();
-        favList = UserUtil.getFavouriteFilters();
+        favList = FavouriteItemWrapper.getInstance().getFavList(this);
         sportsSelected = UserUtil.getSportsSelected();
         bundle = getIntent().getExtras();
         try {
@@ -114,9 +117,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                TinyDB tinyDB = TinyDB.getInstance(AdvancedFilterActivity.this);
+                /*TinyDB tinyDB = TinyDB.getInstance(AdvancedFilterActivity.this);
                 favList = tinyDB.getListString(TinyDB.FAVOURITE_FILTERS);
-                UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
+                UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);*/
                 UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
                 moveToNextActivity(MainActivity.class);
             }
@@ -158,7 +161,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
                 edit.setText("Edit");
                 performEdit();
             }else{*/
-        UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
+        FavouriteItemWrapper.getInstance().saveList(this, favList);
         setResult(RESULT_OK);
         finish();
            /* }
@@ -167,7 +170,10 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     }
 
     private void handleNextClick() {
-        UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);
+        FavouriteItemWrapper.getInstance().saveList(this, favList);
+        for (FavouriteItem f : favList) {
+            Log.d("max", "saving=favlist==" + f.getName());
+        }
         if (UserUtil.isFilterCompleted() && !isFromNav) {
             finish();
         } else if (fragmentNum < sportsSelected.size()) {
@@ -177,57 +183,38 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             fragmentNum++;
         } else if (fragmentNum == sportsSelected.size()) {
             UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
+
+            /*try {
+                jsonObject = createJsonFabList(UserUtil.getFavouriteFilters());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }*/
+            updateVCard();
             moveToNextActivity(MainActivity.class);
         }
-
-        try {
-            jsonObject = createJsonFabList(UserUtil.getFavouriteFilters());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-         updateVCard();
         closeSearch();
 
-    }
-
-    public JSONObject createJsonFabList(ArrayList<String> favList) throws JSONException {
-
-        JSONObject jResult = new JSONObject();
-
-        JSONArray jArray = new JSONArray();
-
-        for (int i = 0; i < favList.size(); i++) {
-//            JSONObject jsonObject = new JSONObject();
-//
-//            jsonObject.put("fav_list_json", favList.get(i));
-            jArray.put(favList.get(i));
-
-           // jArray.put(jsonObject);
-        }
-
-        jResult.put("recordset", jArray);
-        return jResult;
     }
 
 
     private void updateVCard() {
 
-            try {
-
+        try {
+            if (UserUtil.isFilterCompleted()) {
                 VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
                 VCard vCard = new VCard();
                 vCard.load(XMPPClient.getConnection());
-                vCard.setField("fav_list", jsonObject.toString());
-
+                vCard.setField("fav_list", TinyDB.getInstance(this).getString(TinyDB.FAVOURITE_FILTERS));
                 manager.saveVCard(vCard);
-
-            } catch (SmackException.NoResponseException e) {
-                e.printStackTrace();
-            } catch (XMPPException.XMPPErrorException e) {
-                e.printStackTrace();
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
             }
+
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -256,7 +243,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         search.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (FavouriteContentHandler.getInstance().isDisplay) {
+                if (FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).isDisplay) {
                     if (titleLayout.getVisibility() == View.VISIBLE) {
                         titleLayout.setVisibility(View.GONE);
                         searchLayout.setVisibility(View.VISIBLE);
@@ -358,7 +345,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private void addFragment() {
         fragmentNum = 1;
         editFilterListener = new ArrayList<>();
-        FavouriteContentHandler.getInstance().resetListener();
+        FavouriteContentHandler.getInstance(this).resetListener();
         advancedFilterFragment = new AdvancedFilterFragment();
         advancedFilterFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().add(R.id.filter_container, advancedFilterFragment, bundle.getString(Constants.SPORTS_TYPE)).commit();
@@ -368,7 +355,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
     private void replaceFragment(Bundle bundle) {
         editFilterListener = new ArrayList<>();
-        FavouriteContentHandler.getInstance().resetListener();
+        FavouriteContentHandler.getInstance(this).resetListener();
         advancedFilterFragment = new AdvancedFilterFragment();
         advancedFilterFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().replace(R.id.filter_container, advancedFilterFragment, bundle.getString(Constants.SPORTS_TYPE)).commit();

@@ -20,7 +20,7 @@ import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 
-public class FilterActivity extends AppCompatActivity  {
+public class FilterActivity extends AppCompatActivity {
 
     private int[] sportsCategoryLayoutID = new int[]{R.id.cricket, R.id.football};
     private boolean[] checkedFlag = new boolean[]{false, false};
@@ -73,9 +73,10 @@ public class FilterActivity extends AppCompatActivity  {
                 moveOn(false);
             }
         });
-
+        TextView titleFilter = (TextView) toolbar.findViewById(R.id.toolbar_filter);
+        titleFilter.setTypeface(FontTypeface.getInstance(this).getRobotoSlabRegular());
         TextView title = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        title.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+        title.setTypeface(FontTypeface.getInstance(this).getRobotoSlabRegular());
 
         title.setOnClickListener(new View.OnClickListener() {
 
@@ -90,13 +91,13 @@ public class FilterActivity extends AppCompatActivity  {
 
     private void initViews() {
         TextView editSports = (TextView) findViewById(R.id.edit);
-        editSports.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+        editSports.setTypeface(FontTypeface.getInstance(this).getRobotoSlabRegular());
 
         TextView filterBySports = (TextView) findViewById(R.id.filter);
-        filterBySports.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+        filterBySports.setTypeface(FontTypeface.getInstance(this).getRobotoSlabRegular());
 
         TextView advanceFilter = (TextView) findViewById(R.id.filter3);
-        advanceFilter.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+        advanceFilter.setTypeface(FontTypeface.getInstance(this).getRobotoSlabRegular());
 
         for (int loop = 0; loop < sportsCategoryLayoutID.length; loop++) {
             initCheckBox(sportsCategoryLayoutID[loop], checkedFlag[loop], loop);
@@ -122,19 +123,19 @@ public class FilterActivity extends AppCompatActivity  {
 
     }
 
-    private  void setTab() {
+    private void setTab() {
 
         String titles[] = {"Teams", "Leagues", "Players"};
 
         int numberOfTabs = titles.length;
 
         // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        ViewPagerAdapterForFilter adapter = new ViewPagerAdapterForFilter(getSupportFragmentManager(), titles, numberOfTabs);
+        ViewPagerAdapterForFilter adapter = new ViewPagerAdapterForFilter(getSupportFragmentManager());
 
         // Assigning ViewPager View and setting the adapter
         ViewPager pager = (ViewPager) findViewById(com.sports.unity.R.id.pager);
         pager.setAdapter(adapter);
-
+        pager.setOffscreenPageLimit(2);
         // Assiging the Sliding Tab Layout View
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
         tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width

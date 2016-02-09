@@ -68,7 +68,8 @@
     <string name="edit_sports">EDIT SPORTS</string>
     <string name="clear_all_filters">Clear All Filters</string>
     <string name="apply_filters">Next</string>
-    <string name="advance_filters">ADVANCE FILTERS</string>
+    <string name="filters">Filters</string>
+    <string name="advance_filters">Advance Filters</string>
     <string name="filter_by_team">Filter By Teams</string>
     <string name="filter_by_leaugues_cups">Filter By Leagues/Cups</string>
     <string name="filter_by_players">Filter By Players</string>

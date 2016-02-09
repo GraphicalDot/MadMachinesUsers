@@ -3,9 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/ColorPrimary"
-    android:orientation="vertical"
     android:focusableInTouchMode="true"
-    tools:context="com.sports.unity.common.controller.UserProfileActivity">
+    android:orientation="vertical">
 
     <include
         android:id="@+id/tool_bar"
@@ -15,25 +14,25 @@
         android:minHeight="?android:attr/actionBarSize" />
 
     <ScrollView
-        android:layout_below="@+id/tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tool_bar">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:layout_below="@+id/tool_bar"
-            android:background="@color/gray3">
+            android:background="@color/gray3"
+            android:orientation="vertical">
 
             <LinearLayout
                 android:id="@+id/profile_info"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tool_bar"
+                android:layout_marginBottom="@dimen/horizontal_padding_small"
                 android:background="@color/ColorPrimary"
-                android:orientation="vertical"
-                android:layout_marginBottom="@dimen/horizontal_padding_small">
+                android:orientation="vertical">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/user_picture"
@@ -43,101 +42,22 @@
                     android:layout_margin="@dimen/vertical_padding_very_very_small"
                     android:src="@drawable/ic_user" />
 
-                <!--<View-->
-                    <!--android:layout_width="fill_parent"-->
-                    <!--android:layout_height="1dp"-->
-                    <!--android:layout_marginTop="@dimen/activity_horizontal_margin"-->
-                    <!--android:background="@color/gray3" />-->
-
-                <!--<FrameLayout-->
-                    <!--android:layout_width="match_parent"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:layout_gravity="center"-->
-                    <!--android:padding="@dimen/vertical_padding_very_small"-->
-                    <!-->-->
-
-                    <EditText
-                        android:id="@+id/name"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:text="Gabriel"
-                        android:textColor="#000"
-                        android:textSize="@dimen/font_size_large" />
-
-                    <!--<FrameLayout-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:layout_gravity="center">-->
-                        <!--&lt;!&ndash;<ImageView&ndash;&gt;-->
-                            <!--&lt;!&ndash;android:id="@+id/edit_name"&ndash;&gt;-->
-                            <!--&lt;!&ndash;android:layout_width="wrap_content"&ndash;&gt;-->
-                            <!--&lt;!&ndash;android:layout_height="wrap_content"&ndash;&gt;-->
-                            <!--&lt;!&ndash;android:src="@drawable/edit"&ndash;&gt;-->
-                            <!--&lt;!&ndash;android:layout_gravity="right"/>&ndash;&gt;-->
-                    <!--</FrameLayout>-->
-
-                <!--</FrameLayout>-->
-
-                <!--<View-->
-                    <!--android:layout_width="fill_parent"-->
-                    <!--android:layout_height="1dp"-->
-                    <!--android:background="@color/gray3" />-->
-
-                <!--<LinearLayout-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:gravity="center"-->
-                <!--android:orientation="horizontal"-->
-                <!--android:padding="@dimen/vertical_padding_very_very_small">-->
-
-                <!--<TextView-->
-                <!--android:id="@+id/member"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:paddingRight="@dimen/horizontal_padding_very_small"-->
-                <!--android:text="Member of 0 groups"-->
-                <!--android:textColor="@color/dot_color_grey"-->
-                <!--android:textSize="@dimen/font_size_small_large"-->
-                <!--android:textStyle="normal" />-->
-
-                <!--<ImageView-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:background="@drawable/dot_circle" />-->
-
-                <!--<TextView-->
-                <!--android:id="@+id/admin"-->
-                <!--android:layout_width="wrap_content"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_gravity="center"-->
-                <!--android:paddingLeft="@dimen/horizontal_padding_very_small"-->
-                <!--android:text="Admin of 0 groups"-->
-                <!--android:textColor="@color/dot_color_grey"-->
-                <!--android:textSize="@dimen/font_size_small_large"-->
-                <!--android:textStyle="normal" />-->
-                <!--</LinearLayout>-->
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="Gabriel"
+                    android:textColor="#000"
+                    android:textSize="@dimen/font_size_large" />
 
                 <FrameLayout
                     android:id="@+id/faceBook_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="@dimen/flag_size_large"
-                    android:layout_marginTop="@dimen/activity_horizontal_margin"
+                    android:layout_gravity="center"
                     android:layout_marginBottom="@dimen/activity_horizontal_margin"
-                    android:layout_gravity="center">
-
-                    <!--<com.facebook.login.widget.LoginButton xmlns:facebook="http://schemas.android.com/apk/res-auto"-->
-                    <!--android:id="@+id/login_button"-->
-                    <!--android:layout_width="fill_parent"-->
-                    <!--android:layout_height="fill_parent"-->
-                    <!--android:layout_below="@+id/nameView"-->
-                    <!--android:layout_gravity="center"-->
-                    <!--android:layout_marginEnd="@dimen/vertical_padding_medium"-->
-                    <!--android:layout_marginStart="@dimen/vertical_padding_medium"-->
-                    <!--android:textSize="@dimen/font_size_small_medium"-->
-                    <!--facebook:com_facebook_login_text="USE MY FACEBOOK DETAILS" />-->
+                    android:layout_marginTop="@dimen/activity_horizontal_margin">
 
                     <LinearLayout
                         android:layout_width="fill_parent"
@@ -208,14 +128,7 @@
                         <FrameLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center">
-                        <!--<ImageView-->
-                            <!--android:id="@+id/edit"-->
-                            <!--android:layout_width="wrap_content"-->
-                            <!--android:layout_height="wrap_content"-->
-                            <!--android:src="@drawable/edit"-->
-                            <!--android:layout_gravity="right" />-->
-                        </FrameLayout>
+                            android:layout_gravity="center"></FrameLayout>
 
                     </LinearLayout>
 
@@ -268,15 +181,7 @@
                         android:id="@+id/teamlist"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"/>
-                    <!--<ListView-->
-                        <!--android:id="@+id/team_list"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:divider="@null"-->
-                        <!--android:dividerHeight="0dp"-->
-                        <!--android:textColor="@color/news_headline_mini"-->
-                        <!--android:textSize="@dimen/font_size_small_large" />-->
+                        android:orientation="vertical" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -313,15 +218,7 @@
                         android:id="@+id/leaguelist"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"/>
-                    <!--<ListView-->
-                        <!--android:id="@+id/league_list"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:divider="@null"-->
-                        <!--android:dividerHeight="0dp"-->
-                        <!--android:textColor="@color/news_headline_mini"-->
-                        <!--android:textSize="@dimen/font_size_small_large" />-->
+                        android:orientation="vertical" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -365,15 +262,7 @@
                         android:id="@+id/playerlist"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"/>
-                    <!--<ListView-->
-                        <!--android:id="@+id/player_list"-->
-                        <!--android:layout_width="match_parent"-->
-                        <!--android:layout_height="wrap_content"-->
-                        <!--android:divider="@null"-->
-                        <!--android:dividerHeight="0dp"-->
-                        <!--android:textColor="@color/news_headline_mini"-->
-                        <!--android:textSize="@dimen/font_size_small_large" />-->
+                        android:orientation="vertical" />
                 </LinearLayout>
             </LinearLayout>
 

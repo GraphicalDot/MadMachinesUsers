@@ -51,7 +51,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
         super.onCreate(savedInstanceState);
         bundle = getArguments();
 
-        favouriteContentHandler = FavouriteContentHandler.getInstance();
+        favouriteContentHandler = FavouriteContentHandler.getInstance(getActivity());
 
         SPORTS_FILTER_TYPE = bundle.getString(Constants.SPORTS_FILTER_TYPE);
         SPORTS_TYPE = bundle.getString(Constants.SPORTS_TYPE);
@@ -169,7 +169,7 @@ public void setSearchListener(){
         if (!isFilterCompleted || isFromNav) {
             itemAdapter = new FilterRecycleAdapter(getActivity(), itemDataSet, true);
             filterRecyclerView.setAdapter(itemAdapter);
-        } else {
+        } /*else {
             ArrayList<String> favList = new ArrayList<String>();
             ArrayList<String> savedFavlist = UserUtil.getFavouriteFilters();
             for (FavouriteItem f : itemDataSet) {
@@ -180,7 +180,7 @@ public void setSearchListener(){
             itemAdapter = new FilterRecycleAdapter(getActivity(), favList);
             filterRecyclerView.setAdapter(itemAdapter);
 
-        }
+        }*/
     }
 
     /**

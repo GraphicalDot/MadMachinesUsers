@@ -265,7 +265,6 @@ public class TinyDB {
     public long getLong(String key, long defaultValue) {
         return preferences.getLong(key, defaultValue);
     }
-
     /**
      * Get float value from SharedPreferences at 'key'. If key not found, return 'defaultValue'
      *
@@ -559,5 +558,9 @@ public class TinyDB {
 
         return Environment.MEDIA_MOUNTED.equals(state) ||
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
+    }
+
+    public boolean contains(String key) {
+        return preferences.contains(key);
     }
 }

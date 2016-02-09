@@ -26,6 +26,7 @@ import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.fragment.NavigationFragment;
+import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
@@ -56,7 +57,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        FavouriteItemWrapper.getInstance().getFavList(this);
         setContentView(com.sports.unity.R.layout.activity_main);
 
         SportsUnityDBHelper.getInstance(this).addDummyMessageIfNotExist();

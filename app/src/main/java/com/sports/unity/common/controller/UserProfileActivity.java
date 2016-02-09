@@ -2,6 +2,7 @@ package com.sports.unity.common.controller;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -46,6 +47,8 @@ import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
+import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
@@ -92,9 +95,9 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     private String profilePicUrl;
     private boolean paused = false;
     private boolean vCardSaved = false;
-
+    ArrayList<FavouriteItem> savedList;
     private static final int LOAD_IMAGE_GALLERY_CAMERA = 1;
-
+    private LayoutInflater mInflater;
     private boolean ownProfile;
 
     @Override
@@ -106,6 +109,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
         setContentView(R.layout.activity_user_profile);
 
+        mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         Bundle bundle = getIntent().getExtras();
 
         try {
@@ -117,7 +121,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         initView();
         setToolbar();
 
-        if( ownProfile) {
+        if (ownProfile) {
             setInitDataOwn();
         } else {
             setInitDataOthers();
@@ -159,7 +163,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     private void initView() {
         profileimage = (CircleImageView) findViewById(R.id.user_picture);
         //editStatus = (ImageView) findViewById(R.id.edit);
-       // edit_name = (ImageView) findViewById(R.id.edit_name);
+        // edit_name = (ImageView) findViewById(R.id.edit_name);
         facebook_button = (FrameLayout) findViewById(R.id.faceBook_btn);
         name = (EditText) findViewById(R.id.name);
         status = (EditText) findViewById(R.id.your_status);
@@ -171,8 +175,8 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
         addFriend.setVisibility(View.GONE);
         facebook_button.setVisibility(View.VISIBLE);
-       // editStatus.setVisibility(View.VISIBLE);
-       // edit_name.setVisibility(View.VISIBLE);
+        // editStatus.setVisibility(View.VISIBLE);
+        // edit_name.setVisibility(View.VISIBLE);
 
 //        edit_name.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -201,7 +205,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         name.setText(userOrGroupName);
 
         if (userOrGroupImage == null) {
-                profileimage.setImageResource(R.drawable.ic_user);
+            profileimage.setImageResource(R.drawable.ic_user);
         } else {
             profileimage.setImageBitmap(BitmapFactory.decodeByteArray(userOrGroupImage, 0, userOrGroupImage.length));
         }
@@ -220,7 +224,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
             }
         });
 
-        ArrayList<String> savedList = UserUtil.getFavouriteFilters();
+        ArrayList<FavouriteItem> savedList = FavouriteItemWrapper.getInstance().getFavList(this);
 
         setFavouriteProfile(savedList);
 
@@ -249,7 +253,6 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
         JSONObject jsonObject = null;
         JSONArray jsonArray = null;
-        ArrayList<String> savedList = new ArrayList<>();
 
         try {
             VCard vCard = new VCard();
@@ -258,13 +261,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
             Log.i("Fav String", "" + phoneNumber);
             String favourite = vCard.getField("fav_list");
             Log.i("Fav String", "" + favourite);
-
-            jsonObject = new JSONObject(favourite);
-            jsonArray = jsonObject.getJSONArray("recordset");
-
-            for(int i =0; i< jsonArray.length(); i++) {
-                savedList.add(jsonArray.get(i).toString());
-            }
+            savedList = FavouriteItemWrapper.getInstance().getFavListOfOthers(favourite);
         } catch (SmackException.NoResponseException e) {
             e.printStackTrace();
         } catch (XMPPException.XMPPErrorException e) {
@@ -322,13 +319,13 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         }
     }
 
-    private void setFavouriteProfile(ArrayList<String> savedList) {
+    private void setFavouriteProfile(ArrayList<FavouriteItem> savedList) {
 
-        List<String> teams = new ArrayList<>();
-        List<String> leagues = new ArrayList<String>();
-        List<String> players = new ArrayList<>();
+        List<FavouriteItem> teams = new ArrayList<>();
+        List<FavouriteItem> leagues = new ArrayList<FavouriteItem>();
+        List<FavouriteItem> players = new ArrayList<>();
 
-        for (String name : savedList) {
+        /*for (String name : savedList) {
             if (name.contains(Constants.NAV_COMP)) {
                 name = name.replace(Constants.NAV_COMP, "");
                 leagues.add(name);
@@ -339,8 +336,16 @@ public class UserProfileActivity extends CustomAppCompatActivity {
                 name = name.replace(Constants.NAV_PLAYER, "");
                 players.add(name);
             }
+        }*/
+        for (FavouriteItem f : savedList) {
+            if (f.getFilterType().equals(Constants.FILTER_TYPE_LEAGUE)) {
+                leagues.add(f);
+            } else if (f.getFilterType().equals(Constants.FILTER_TYPE_TEAM)) {
+                teams.add(f);
+            } else if (f.getFilterType().equals(Constants.FILTER_TYPE_PLAYER)) {
+                players.add(f);
+            }
         }
-
         Collections.sort(teams);
         Collections.sort(leagues);
         Collections.sort(players);
@@ -352,25 +357,25 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
         //TextView textView = (TextView) getLayoutInflater().inflate(R.layout.textview_user_profile_activity, null);
 
-        for(int i=0;i<leagues.size(); i++) {
-            LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.textview_user_profile_activity, null);
+        for (int i = 0; i < leagues.size(); i++) {
+            LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
-            textView.setText(leagues.get(i));
+            textView.setText(leagues.get(i).getName());
             leagueList.addView(linearLayout);
 
         }
 
-        for(int i=0;i<teams.size(); i++) {
-            LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.textview_user_profile_activity, null);
+        for (int i = 0; i < teams.size(); i++) {
+            LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
-            textView.setText(teams.get(i));
+            textView.setText(teams.get(i).getName());
             teamList.addView(linearLayout);
         }
 
-        for(int i=0;i<players.size(); i++) {
-            LinearLayout linearLayout = (LinearLayout) getLayoutInflater().inflate(R.layout.textview_user_profile_activity, null);
+        for (int i = 0; i < players.size(); i++) {
+            LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
-            textView.setText(players.get(i));
+            textView.setText(players.get(i).getName());
             playerList.addView(linearLayout);
         }
     }

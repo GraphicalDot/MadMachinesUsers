@@ -20,7 +20,7 @@ public class UserUtil {
     private static boolean teamSelected;
     private static boolean playerSelected;
     private static boolean filterCompleted;
-    private static ArrayList<String> favFilterList = null;
+    private static String favFilterList = null;
 
     public static void init(Context context) {
         TinyDB tinyDB = TinyDB.getInstance(context);
@@ -30,7 +30,7 @@ public class UserUtil {
 
         SPORTS_SELECTED = tinyDB.getListString(TinyDB.KEY_SPORTS_SELECTED);
 
-        favFilterList = tinyDB.getListString(TinyDB.FAVOURITE_FILTERS);
+        favFilterList = tinyDB.getString(TinyDB.FAVOURITE_FILTERS);
 
         leagueSelected =tinyDB.getBoolean(TinyDB.LEAGUE_SELECTION, false);
         teamSelected =tinyDB.getBoolean(TinyDB.TEAM_SELECTION, false);
@@ -124,14 +124,16 @@ public class UserUtil {
     public static boolean isFilterCompleted(){
         return filterCompleted;
     }
-    public static void setFavouriteFilters(Context context, ArrayList<String> footballFilterTeam) {
-        favFilterList = new ArrayList<String>(footballFilterTeam);
+    public static void setFavouriteFilters(Context context, String favItems) {
 
         TinyDB tinyDB = TinyDB.getInstance(context);
-        tinyDB.putListString(TinyDB.FAVOURITE_FILTERS, favFilterList);
+        if(tinyDB.contains(TinyDB.FAVOURITE_FILTERS)) {
+            tinyDB.remove(TinyDB.FAVOURITE_FILTERS);
+        }
+        tinyDB.putString(TinyDB.FAVOURITE_FILTERS,favItems);
     }
 
-    public static ArrayList<String> getFavouriteFilters() {
+    public static String getFavouriteFilters() {
         return favFilterList;
     }
 

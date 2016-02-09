@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.sports.unity.common.controller.fragment.FilterFragment;
 import com.sports.unity.common.controller.fragment.GroupsFragment;
 import com.sports.unity.common.controller.fragment.IntrestsFragment;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
 
 /**
@@ -17,14 +18,20 @@ public class ViewPagerAdapterForFilter extends FragmentStatePagerAdapter {
 
     private String Titles[]; // This will Store the Titles of the Tabs which are Going to be passed when ViewPagerAdapterInMainActivity is created
     private int numberOfTabs; // Store the number of tabs, this will also be passed when the ViewPagerAdapterInMainActivity is created
-
+    private String[] titleFootball = {Constants.FILTER_TYPE_TEAM, Constants.FILTER_TYPE_LEAGUE, Constants.FILTER_TYPE_PLAYER};
+    private String[] titleCricket = {Constants.FILTER_TYPE_TEAM, Constants.FILTER_TYPE_PLAYER};
 
     // Build a Constructor and assign the passed Values to appropriate values in the class
-    public ViewPagerAdapterForFilter(FragmentManager fm, String mTitles[], int numberOfTabs) {
+    public ViewPagerAdapterForFilter(FragmentManager fm) {
         super(fm);
+        if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
 
-        this.Titles = mTitles;
-        this.numberOfTabs = numberOfTabs;
+            this.Titles = titleFootball;
+            this.numberOfTabs = 3;
+        } else {
+            this.Titles = titleCricket;
+            this.numberOfTabs = 2;
+        }
 
     }
 
@@ -37,19 +44,27 @@ public class ViewPagerAdapterForFilter extends FragmentStatePagerAdapter {
         {
             FilterFragment filterFragment = new FilterFragment();
             Bundle bundle = new Bundle();
-            bundle.putString(Constants.NAV_FILTER, Constants.NAV_TEAM);
+            bundle.putString(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_TEAM);
             filterFragment.setArguments(bundle);
             return filterFragment;
         } else if (position == 1) {
-            FilterFragment filterFragment = new FilterFragment();
-            Bundle bundle = new Bundle();
-            bundle.putString(Constants.NAV_FILTER, Constants.NAV_COMP);
-            filterFragment.setArguments(bundle);
-            return filterFragment;
+            if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
+                FilterFragment filterFragment = new FilterFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_LEAGUE);
+                filterFragment.setArguments(bundle);
+                return filterFragment;
+            } else {
+                FilterFragment filterFragment = new FilterFragment();
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_PLAYER);
+                filterFragment.setArguments(bundle);
+                return filterFragment;
+            }
         } else if (position == 2) {
             FilterFragment filterFragment = new FilterFragment();
             Bundle bundle = new Bundle();
-            bundle.putString(Constants.NAV_FILTER, Constants.NAV_PLAYER);
+            bundle.putString(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_PLAYER);
             filterFragment.setArguments(bundle);
             return filterFragment;
         }

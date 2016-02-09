@@ -67,21 +67,18 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
         if(!UserUtil.isFilterCompleted()||isEditMode) {
             final FavouriteItem favouriteItem=itemDataSet.get(position);
             String s=favouriteItem.getName();
-            s=s.replace(Constants.NAV_COMP,"");
-            s=s.replace(Constants.NAV_TEAM,"");
-            s=s.replace(Constants.NAV_PLAYER,"");
             holder.tv.setText(s);
             if (favouriteItem.isChecked()) {
-                if (!((AdvancedFilterActivity) activity).favList.contains(favouriteItem.getName())) {
-                    ((AdvancedFilterActivity) activity).favList.add(favouriteItem.getName());
+                if (!((AdvancedFilterActivity) activity).favList.contains(favouriteItem)) {
+                    ((AdvancedFilterActivity) activity).favList.add(favouriteItem);
                 }
                 holder.cb.setChecked(favouriteItem.isChecked());
                 holder.tv.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
             } else {
                 holder.cb.setChecked(favouriteItem.isChecked());
                 holder.tv.setTextColor(activity.getResources().getColor(R.color.gray1));
-                if (((AdvancedFilterActivity) activity).favList.contains(favouriteItem.getName())) {
-                    ((AdvancedFilterActivity) activity).favList.remove(favouriteItem.getName());
+                if (((AdvancedFilterActivity) activity).favList.contains(favouriteItem)) {
+                    ((AdvancedFilterActivity) activity).favList.remove(favouriteItem);
                 }
             }
             holder.v.setOnClickListener(new View.OnClickListener() {
@@ -94,17 +91,13 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
                 }
             });
         }else{
-           String s=favDataSet.get(position);
-            s=s.replaceAll(Constants.NAV_COMP,"");
-            s=s.replace(Constants.NAV_TEAM, "");
-            s=s.replace(Constants.NAV_PLAYER,"");
-            final String searchString=s.replace(Constants.NAV_TEAM,"");
+           final String s=favDataSet.get(position);
             holder.cb.setVisibility(View.INVISIBLE);
             holder.tv.setText(s);
             holder.v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    searchNews(searchString);
+                    searchNews(s);
                 }
             });
         }
@@ -130,12 +123,7 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
         }
     }
     public ArrayList<FavouriteItem> getItemDataSet(){
-        ArrayList<FavouriteItem> search = new ArrayList<>();
-        for(FavouriteItem item : itemDataSet){
-            search.add(new FavouriteItem(item));
-        }
-
-        return search;
+        return itemDataSet;
     }
     public void setItemDataSet(ArrayList<FavouriteItem> itemDataSet,boolean isEditMode){
         this.itemDataSet=itemDataSet;

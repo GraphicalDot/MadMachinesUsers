@@ -66,11 +66,6 @@ public class Constants {
     public static final String SPORTS_TYPE_FOOTBALL = "football";
     public static final String FILTER_SEARCH_EXTRA = "filter_search";
 
-    public static final String NAV_FILTER = "nav_filter";
-    public static final String NAV_TEAM = "nav_team";
-    public static final String NAV_COMP = "nav_comp";
-    public static final String NAV_PLAYER = "nav_player";
-
     public static final String COLOR_WHITE = "white";
     public static final String COLOR_BLUE = "blue";
 

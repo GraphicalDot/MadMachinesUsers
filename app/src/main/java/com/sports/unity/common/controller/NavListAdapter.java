@@ -2,6 +2,7 @@ package com.sports.unity.common.controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,7 +10,9 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.sports.unity.R;
+import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -22,13 +25,13 @@ import java.util.Objects;
  */
 public class NavListAdapter extends BaseExpandableListAdapter {
     ArrayList<String> groupItems = new ArrayList<String>();
-    private ArrayList<Object> childItems = new ArrayList<Object>();
+    private ArrayList<FavouriteItem> childItems = new ArrayList<FavouriteItem>();
     LayoutInflater inflater;
     View editTeam;
     ImageView indiIm;
     Activity act;
 
-    public NavListAdapter(Activity context, ArrayList<String> groupList, ArrayList<Object> childItems, ImageView indiIm) {
+    public NavListAdapter(Activity context, ArrayList<String> groupList, ArrayList<FavouriteItem> childItems, ImageView indiIm) {
         this.groupItems = groupList;
         this.childItems = childItems;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -40,17 +43,27 @@ public class NavListAdapter extends BaseExpandableListAdapter {
     @Override
     public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
-        ArrayList<String> child = (ArrayList<String>) childItems.get(groupPosition);
-
         TextView textView = null;
-
+        ImageView iv = null;
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.nav_list_item, null);
         }
 
         textView = (TextView) convertView.findViewById(R.id.itemtext);
-        textView.setText(child.get(childPosition));
+        iv = (ImageView) convertView.findViewById(R.id.flag);
+        textView.setText(childItems.get(childPosition).getName());
         textView.setTypeface(FontTypeface.getInstance(act).getRobotoMedium());
+        String uri = null;
+        try {
+            uri = childItems.get(childPosition).getFlagImageUrl();
+        } catch (NullPointerException e) {
+        }
+        if (uri != null) {
+
+            Glide.with(act).load(Uri.parse(uri)).into(iv);
+        } else {
+            iv.setVisibility(View.GONE);
+        }
         return convertView;
     }
 
@@ -77,7 +90,7 @@ public class NavListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return ((ArrayList<String>) childItems.get(groupPosition)).get(childPosition);
+        return childItems.get(childPosition);
     }
 
     @Override
@@ -87,7 +100,7 @@ public class NavListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return ((ArrayList<String>) childItems.get(groupPosition)).size();
+        return childItems.size();
     }
 
     @Override
@@ -129,8 +142,9 @@ public class NavListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    public void updateChildList(ArrayList<Object> childItem) {
-        this.childItems = childItem;
+    public void updateItem(ArrayList<FavouriteItem> childItems) {
+        this.childItems = childItems;
         this.notifyDataSetChanged();
     }
+
 }
