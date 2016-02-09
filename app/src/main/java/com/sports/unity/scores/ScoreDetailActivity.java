@@ -78,7 +78,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         sportsType = getIntent().getStringExtra(Constants.INTENT_KEY_TYPE);
         matchId = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
 
-        initToolBar();
+       // initToolBar();
         initView();
 
         {
