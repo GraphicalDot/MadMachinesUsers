@@ -19,12 +19,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:weightSum="3">
+        android:weightSum="5">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_height="0dp"
+            android:layout_weight="2"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -37,9 +37,9 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:gravity="center_horizontal"
             android:orientation="vertical">
 
             <TextView
@@ -48,29 +48,38 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/horizontal_padding_very_small"
                 android:text="@string/sportsunity.club"
-                android:textColor="@android:color/white" />
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_small_medium" />
 
-            <TextView
-                android:id="@+id/terms"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/horizontal_padding_very_small"
-                android:text="@string/terms_of_use"
-                android:textColor="@android:color/white" />
-
-            <TextView
-                android:id="@+id/privacy_policy"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/horizontal_padding_very_small"
-                android:text="@string/privacy_policy"
-                android:textColor="@android:color/white" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/terms"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/horizontal_padding_very_small"
+                    android:text="@string/terms_of_use"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_size_small_large" />
+                <TextView
+                    android:id="@+id/privacy_policy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/horizontal_padding_very_small"
+                    android:text="@string/privacy_policy"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_size_small_large"
+                    />
+            </LinearLayout>
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_weight="1"
             android:gravity="center"
             android:orientation="horizontal">

@@ -263,7 +263,7 @@ public class ImageUtil {
             reqHeight = (int) (reqHeight / scaleDownFactor);
         }
 
-        while (options.outWidth / sampleScaleSize >= reqWidth && options.outHeight / sampleScaleSize >= reqHeight) {
+        while (options.outWidth / sampleScaleSize >= reqWidth || options.outHeight / sampleScaleSize >= reqHeight) {
             sampleScaleSize++;
         }
 
