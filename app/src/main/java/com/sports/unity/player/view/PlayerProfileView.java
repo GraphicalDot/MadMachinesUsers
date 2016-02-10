@@ -72,13 +72,15 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player_profile_view);
+        getIntentExtras();
         initView();
+        setInitData();
         setToolbar();
         {
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
-            PlayerProfileComponentListener createUserComponentListener = new PlayerProfileComponentListener(progressBar);
+            PlayerProfileComponentListener playerProfileComponentListener = new PlayerProfileComponentListener(progressBar);
             ArrayList<CustomComponentListener> listeners = new ArrayList<>();
-            listeners.add(createUserComponentListener);
+            listeners.add(playerProfileComponentListener);
             onComponentCreate(listeners, REQUEST_LISTENER_KEY);
         }
     }
@@ -86,7 +88,6 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
     private void setToolbar() {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-
         ImageView back = (ImageView) toolbar.findViewById(R.id.backarrow);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,15 +120,20 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             tvNextGameDate = (TextView) findViewById(R.id.tv_next_game_date);
             notificationImage = (ImageView) findViewById(R.id.notificationicon_image);
             recyclerView= (RecyclerView) findViewById(R.id.recycle_view);
+
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
     private void setInitData() {
-        HashMap<String, String> parameters = new HashMap<>();
-        parameters.put(Constants.PLAYER_NAME, playerNameKey);
-        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_PLAYER_PROFILE, parameters, REQUEST_LISTENER_KEY, PLAYER_PROFILE_REQUEST_TAG);
+        try {
+            HashMap<String, String> parameters = new HashMap<>();
+            parameters.put(Constants.PLAYER_NAME, playerNameKey);
+            ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_PLAYER_PROFILE, parameters, REQUEST_LISTENER_KEY, PLAYER_PROFILE_REQUEST_TAG);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 
@@ -173,7 +179,9 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
                 JSONObject response = new JSONObject(content);
                 if (response.getString("status").equals("200")) {
                     this.success = true;
-                 Log.i("playerprofile",content);
+                    Log.i("playerprofile",content);
+                    populateData(content);
+
                 } else {
                     this.success = false;
                 }
@@ -196,6 +204,18 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
 
 
     }
+
+
+    private void getIntentExtras() {
+        playerNameKey = getIntent().getStringExtra("name");
+
+    }
+
+    private void populateData(String content){
+
+    }
+
+
 
 
 

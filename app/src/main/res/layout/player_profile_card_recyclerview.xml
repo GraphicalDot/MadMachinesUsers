@@ -9,6 +9,5 @@
     android:layout_height="match_parent"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
-    app:layoutManager="LinearLayoutManager"
-
-    tools:listitem="@layout/player_profile_card_recyclerview"/>
+    tools:listitem="@layout/player_profile_card_recyclerview"
+    app:layoutManager="com.sports.unity.player.view.MyLinearLayoutManager"/>

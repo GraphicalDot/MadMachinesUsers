@@ -1,19 +1,18 @@
 package com.sports.unity.player.view;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.crittercism.app.Transaction;
 import com.sports.unity.R;
 
 import java.util.List;
 
 /**
- * Created by madmachines on 9/2/16.
+ * Created by Ashish Katiyar on 9/2/16.
  */
 public class PlayerScorecardRecyclerView extends RecyclerView.Adapter<PlayerScorecardRecyclerView.ViewHolder> {
 
@@ -57,7 +56,6 @@ public class PlayerScorecardRecyclerView extends RecyclerView.Adapter<PlayerScor
         public final TextView    assist;
         public final TextView    yc;
         public final TextView    rc;
-
         public PlayerScoreCardDTO dto;
 
         public ViewHolder(View view) {
@@ -70,7 +68,6 @@ public class PlayerScorecardRecyclerView extends RecyclerView.Adapter<PlayerScor
             assist = (TextView) view.findViewById(R.id.assist);
             yc = (TextView) view.findViewById(R.id.yc);
             rc = (TextView) view.findViewById(R.id.rc);
-
         }
     }
 

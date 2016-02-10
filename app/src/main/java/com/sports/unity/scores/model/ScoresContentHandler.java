@@ -40,7 +40,8 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_CRICKET_MATCH_DETAIL = "get_cricket_match_scores?match_key=";
     private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "get_cricket_match_commentary?match_key=";
     private static final String URL_PARAMS_FOR_FOOTBALL_COMMENTARY = "get_football_commentary?match_id=";
-    private static final String URL_PARAMS_FOR_PLAYER_PROFILE = "get_football_player_stats?player_name=";
+    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = "get_football_player_stats?player_name=";
+    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_CRICKET = "get_football_player_stats?player_name=";
 
 
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
@@ -123,9 +124,9 @@ public class ScoresContentHandler {
             String sportsType = parameters.get(PARAM_SPORTS_TYPE);
             requestCommentaryOnMatch( sportsType, matchId, requestListenerKey, requestTag);
         } else if(callName.equals(CALL_NAME_PLAYER_PROFILE)){
-            String playerId = parameters.get(PARAM_ID);
+            String playerName = parameters.get(Constants.PLAYER_NAME);
             String sportsType = parameters.get(PARAM_SPORTS_TYPE);
-            requestPlayerProfile(sportsType, playerId, requestListenerKey, requestTag);
+            requestPlayerProfile(sportsType, playerName, requestListenerKey, requestTag);
         }
     }
 
@@ -262,9 +263,9 @@ public class ScoresContentHandler {
 
             String baseUrl = null;
             if( sportType.equalsIgnoreCase(ScoresJsonParser.CRICKET) ){
-                baseUrl = URL_PARAMS_FOR_PLAYER_PROFILE;
+                baseUrl = URL_PARAMS_FOR_PLAYER_PROFILE_CRICKET;
             } else if( sportType.equalsIgnoreCase(ScoresJsonParser.FOOTBALL) ){
-                baseUrl = URL_PARAMS_FOR_PLAYER_PROFILE;
+                baseUrl = URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL;
             }
             String url = generateURL(baseUrl + playerId);
             requestContent(requestTag, listenerKey, url);
