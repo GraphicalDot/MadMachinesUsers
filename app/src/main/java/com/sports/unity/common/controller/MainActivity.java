@@ -89,6 +89,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         name.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
         String userDetails = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
+        final String userName = TinyDB.getInstance(this).getString(TinyDB.KEY_PROFILE_NAME);
 
 
         final Contacts contact = sportsUnityDBHelper.getContact(userDetails);
@@ -101,14 +102,14 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             profilePhoto.setImageResource(R.drawable.ic_user);
         }
 
-        name.setText(contact.name);
+        name.setText(userName);
 
         viewMyProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
                 intent.putExtra(Constants.IS_OWN_PROFILE, true);
-                intent.putExtra("name", contact.name);
+                intent.putExtra("name", userName);
                 intent.putExtra("profilePicture", contact.image);
                 intent.putExtra("status", contact.status);
                 startActivity(intent);

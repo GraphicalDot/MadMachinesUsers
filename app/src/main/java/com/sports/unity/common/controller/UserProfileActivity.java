@@ -80,6 +80,8 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     private EditText name;
     private EditText status;
     private CircleImageView profileimage;
+    private TextView editTeam, editPlayer, editLeague;
+    private LinearLayout clickAction;
 
     private byte[] byteArray;
     private ProgressBar progressBar;
@@ -94,7 +96,9 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
     private ArrayList<FavouriteItem> savedList;
     private LayoutInflater mInflater;
-    private Drawable oldBackground = null;
+
+    private Drawable oldBackgroundForNameEditView = null;
+    private Drawable oldBackgroundForStatusEditView = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,77 +112,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         ownProfile = getIntent().getBooleanExtra(Constants.IS_OWN_PROFILE, false);
         setToolbar(ownProfile);
         initView(ownProfile);
-
-        if (ownProfile) {
-            addFacebookCallback();
-        } else {
-            //do nothing
-        }
     }
-
-    private void addFacebookCallback() {
-        callbackManager = CallbackManager.Factory.create();
-        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button_facebook);
-        loginButton.setReadPermissions(Arrays.asList("public_profile, email"));
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                GraphRequest graphRequest = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(JSONObject object, GraphResponse response) {
-                        try {
-                            name.setText(object.getString("name"));
-                            JSONObject data = response.getJSONObject();
-                            if (data.has("picture")) {
-                                profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-                retrieveImage(profilePicUrl);
-            }
-
-            @Override
-            public void onCancel() {
-
-            }
-
-            @Override
-            public void onError(FacebookException error) {
-
-            }
-        });
-
-    }
-
-    private void retrieveImage(String profilePicUrl) {
-        new DownloadImageTask().execute(profilePicUrl);
-    }
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-
-        protected Bitmap doInBackground(String... urls) {
-            String urlDisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urlDisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap image) {
-            CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
-            circleImageView.setImageBitmap(image);
-        }
-
-    }
-
 
     private void initFacebookLogin() {
         FacebookSdk.sdkInitialize(getApplicationContext());
@@ -198,6 +132,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
     private void setToolbar(boolean ownProfile) {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        clickAction = (LinearLayout) toolbar.findViewById(R.id.click_action);
         toolbarActionButton = (TextView) toolbar.findViewById(R.id.toolbar_action_button);
         toolbarActionButton.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
         if (ownProfile) {
@@ -206,7 +141,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
             toolbarActionButton.setText(ADD_FRIEND);
             toolbarActionButton.setBackground(getResources().getDrawable(R.drawable.round_edge_blue_box));
         }
-        toolbarActionButton.setOnClickListener(onClickListener);
+        clickAction.setOnClickListener(onClickListener);
         ImageView backButton = (ImageView) toolbar.findViewById(R.id.backarrow);
         backButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -215,8 +150,6 @@ public class UserProfileActivity extends CustomAppCompatActivity {
                 onBack();
             }
         });
-
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
     }
 
 
@@ -229,36 +162,70 @@ public class UserProfileActivity extends CustomAppCompatActivity {
                 if (toolbarActionButton.getText().equals(INFO_SAVE)) {
                     new SubmitVCardAsyncTask().execute();
                 } else {
+                    LinearLayout favDetails = (LinearLayout) findViewById(R.id.favDetails);
+                    favDetails.setVisibility(View.GONE);
+
                     FrameLayout fbButton = (FrameLayout) findViewById(R.id.faceBook_btn);
                     fbButton.setVisibility(View.VISIBLE);
                     toolbarActionButton.setText(INFO_SAVE);
                     name.setEnabled(true);
-                    name.setBackground(oldBackground);
+                    name.setBackground(oldBackgroundForNameEditView);
                     name.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
                     status.setEnabled(true);
-                    status.setBackground(oldBackground);
+
+                    int pL = status.getPaddingLeft();
+                    int pT = status.getPaddingTop();
+                    int pR = status.getPaddingRight();
+                    int pB = status.getPaddingBottom();
+
+                    status.setBackground(oldBackgroundForStatusEditView);
+                    status.setPadding(pL,pT,pR,pB);
                     status.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
                     profileimage.setBorderColor(getResources().getColor(R.color.app_theme_blue));
+                    profileimage.setEnabled(true);
                     profileimage.setBorderWidth(2);
+                    addListnerToProfilePicture();
                 }
             }
         }
     };
 
+    private void addListnerToProfilePicture() {
+        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
+        circleImageView.setOnClickListener(profilePictureonOnClickListener);
+    }
 
     private void initView(boolean ownProfile) {
 
+        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setVisibility(View.GONE);
         name = (EditText) findViewById(R.id.name);
         name.setText(getIntent().getStringExtra("name"));
-        oldBackground = name.getBackground();
+        oldBackgroundForNameEditView = name.getBackground();
         name.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
         name.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
         name.setEnabled(false);
 
         status = (EditText) findViewById(R.id.your_status);
-        status.setBackground(new ColorDrawable(Color.TRANSPARENT));
         status.setText(getIntent().getStringExtra("status"));
+        oldBackgroundForStatusEditView = status.getBackground();
+        status.setBackground(new ColorDrawable(Color.TRANSPARENT));
         status.setEnabled(false);
+        name.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
+        status.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
+        profileimage = (CircleImageView) findViewById(R.id.user_picture);
+        profileimage.setEnabled(false);
+
+        editTeam = (TextView) findViewById(R.id.edit_team);
+        editPlayer = (TextView) findViewById(R.id.edit_player);
+        editLeague = (TextView) findViewById(R.id.edit_league);
+        editLeague.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+        editPlayer.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+        editTeam.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+
+        editLeague.setVisibility(View.VISIBLE);
+        editTeam.setVisibility(View.VISIBLE);
+        editPlayer.setVisibility(View.VISIBLE);
 
         setcustomFont();
 
@@ -283,7 +250,10 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
     private void setInitDataOwn() {
 
+        addFacebookCallback();
+
         profileimage = (CircleImageView) findViewById(R.id.user_picture);
+
         byte[] imageArray = getIntent().getByteArrayExtra("profilePicture");
         if (imageArray != null) {
             profileimage.setImageBitmap(BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length));
@@ -291,19 +261,46 @@ public class UserProfileActivity extends CustomAppCompatActivity {
             profileimage.setImageResource(R.drawable.ic_user);
         }
 
-        profileimage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                changeProfileImage();
-            }
-        });
-
         ArrayList<FavouriteItem> savedList = FavouriteItemWrapper.getInstance().getFavList(this);
         setFavouriteProfile(savedList);
 
+       editLeague.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+                moveToSelectSports();
+           }
+       });
+
+        editPlayer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                moveToSelectSports();
+            }
+        });
+
+        editTeam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                moveToSelectSports();
+            }
+        });
     }
 
+        private void moveToSelectSports(){
+            Intent intent = new Intent(UserProfileActivity.this, SelectSportsActivity.class);
+            intent.putExtra(Constants.IS_FROM_NAV, true);
+            startActivity(intent);
+        }
+
     private void setInitDataOthers() {
+
+        editTeam = (TextView) findViewById(R.id.edit_team);
+        editPlayer = (TextView) findViewById(R.id.edit_player);
+        editLeague = (TextView) findViewById(R.id.edit_league);
+
+        editLeague.setVisibility(View.GONE);
+        editTeam.setVisibility(View.GONE);
+        editPlayer.setVisibility(View.GONE);
 
         profileimage = (CircleImageView) findViewById(R.id.user_picture);
         byte[] imageArray = getIntent().getByteArrayExtra("profilePicture");
@@ -317,6 +314,80 @@ public class UserProfileActivity extends CustomAppCompatActivity {
             }
         }
         new FetchVcardTask(getIntent().getStringExtra("number")).execute();
+    }
+
+    private void addFacebookCallback() {
+        callbackManager = CallbackManager.Factory.create();
+        name = (EditText) findViewById(R.id.name);
+        LoginButton loginButton = (LoginButton) findViewById(R.id.login_button_facebook);
+        loginButton.setReadPermissions(Arrays.asList("public_profile, email"));
+        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Toast.makeText(getApplicationContext(), loginResult.getAccessToken().getUserId().toString(), Toast.LENGTH_LONG).show();
+                GraphRequest request = GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(),
+                        new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(
+                                    JSONObject object,
+                                    GraphResponse response) {
+                                try {
+                                    name.setText(object.getString("name"));
+                                    TinyDB.getInstance(UserProfileActivity.this).putString(TinyDB.KEY_PROFILE_NAME, name.getText().toString());
+                                    JSONObject data = response.getJSONObject();
+                                    if (data.has("picture")) {
+                                        profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
+                                        new DownloadImageTask().execute(profilePicUrl);
+                                        Log.i("PICURL : ", profilePicUrl);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,name,link,picture.type(large)");
+                request.setParameters(parameters);
+                request.executeAsync();
+            }
+
+            @Override
+            public void onCancel() {
+                Toast.makeText(getApplicationContext(), R.string.profile_facebook_login_cancelled, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onError(FacebookException e) {
+                Toast.makeText(getApplicationContext(), R.string.profile_facebook_login_failed, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+
+        protected Bitmap doInBackground(String... urls) {
+            String urlDisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urlDisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap image) {
+            setProfileImage(image);
+        }
+
+    }
+
+    private void setProfileImage(Bitmap image) {
+        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
+        circleImageView.setImageBitmap(image);
+        byteArray = ImageUtil.getCompressedBytes(image);
     }
 
     private class FetchVcardTask extends AsyncTask<Void, Void, String> {
@@ -386,6 +457,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         @Override
         protected Void doInBackground(Void... params) {
             try {
+                TinyDB.getInstance(UserProfileActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nickname);
                 VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
                 VCard vCard = new VCard();
                 vCard.setNickName(nickname);
@@ -422,7 +494,10 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     }
 
     private void initViewUI() {
+        LinearLayout favDetails = (LinearLayout) findViewById(R.id.favDetails);
+        favDetails.setVisibility(View.VISIBLE);
         profileimage.setBorderWidth(0);
+        profileimage.setEnabled(false);
         FrameLayout fbButton = (FrameLayout) findViewById(R.id.faceBook_btn);
         fbButton.setVisibility(View.GONE);
         toolbarActionButton.setText(INFO_EDIT);
@@ -430,18 +505,24 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         name.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
         status.setEnabled(false);
         status.setBackground(new ColorDrawable(Color.TRANSPARENT));
+        name.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
+        status.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
     }
 
-    private void changeProfileImage() {
+    private View.OnClickListener profilePictureonOnClickListener = new View.OnClickListener() {
 
-        if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-            handleAddPhotoClick();
-        } else {
-            if (PermissionUtil.getInstance().requestPermission(UserProfileActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)), getResources().getString(R.string.camera_and_external_storage_permission_message), Constants.REQUEST_CODE_CAMERA_EXTERNAL_STORAGE_PERMISSION)) {
+        @Override
+        public void onClick(View v) {
+            if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
                 handleAddPhotoClick();
+            } else {
+                if (PermissionUtil.getInstance().requestPermission(UserProfileActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)), getResources().getString(R.string.camera_and_external_storage_permission_message), Constants.REQUEST_CODE_CAMERA_EXTERNAL_STORAGE_PERMISSION)) {
+                    handleAddPhotoClick();
+                }
             }
         }
-    }
+
+    };
 
     public void handleAddPhotoClick() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
@@ -467,15 +548,13 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
-            setProfileImageFromByteArray(data);
-        } else {
-            //do nothing
-        }
-    }
+            CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
 
-    private void setProfileImageFromByteArray(Intent data) {
-        CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
-        byteArray = ImageUtil.handleImageAndSetToView(data, circleImageView, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
+            byteArray = ImageUtil.handleImageAndSetToView(data, circleImageView, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
+        } else {
+            callbackManager.onActivityResult(requestCode, resultCode, data);
+        }
+
     }
     
     private void setFavouriteProfile(ArrayList<FavouriteItem> savedList) {
@@ -484,18 +563,6 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         List<FavouriteItem> leagues = new ArrayList<FavouriteItem>();
         List<FavouriteItem> players = new ArrayList<>();
 
-        /*for (String name : savedList) {
-            if (name.contains(Constants.NAV_COMP)) {
-                name = name.replace(Constants.NAV_COMP, "");
-                leagues.add(name);
-            } else if (name.contains(Constants.NAV_TEAM)) {
-                name = name.replace(Constants.NAV_TEAM, "");
-                teams.add(name);
-            } else if (name.contains(Constants.NAV_PLAYER)) {
-                name = name.replace(Constants.NAV_PLAYER, "");
-                players.add(name);
-            }
-        }*/
         for (FavouriteItem f : savedList) {
             if (f.getFilterType().equals(Constants.FILTER_TYPE_LEAGUE)) {
                 leagues.add(f);
@@ -577,14 +644,15 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         if (toolbarActionButton.getText().equals(INFO_SAVE)) {
             AlertDialog.Builder build = new AlertDialog.Builder(
                     UserProfileActivity.this);
-            build.setMessage("Do you want to discard these changes ? ");
-            build.setPositiveButton("Yes",
+            build.setTitle("Discard Edits ? ");
+            build.setMessage("If you cancel now, your edits will be discarded.");
+            build.setPositiveButton("DISCARD",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             discardchanges();
                         }
                     });
-            build.setNegativeButton("No",
+            build.setNegativeButton("KEEP",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             //TODO
@@ -598,16 +666,22 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     }
 
     private void discardchanges() {
+        LinearLayout favDetails = (LinearLayout) findViewById(R.id.favDetails);
+        favDetails.setVisibility(View.VISIBLE);
         profileimage.setBorderWidth(0);
         toolbarActionButton.setText(INFO_EDIT);
         FrameLayout fbButton = (FrameLayout) findViewById(R.id.faceBook_btn);
         fbButton.setVisibility(View.GONE);
         name.setText(getIntent().getStringExtra("name"));
         status.setText(getIntent().getStringExtra("status"));
+        status.setBackground(new ColorDrawable(Color.TRANSPARENT));
         name.setEnabled(false);
         status.setEnabled(false);
+        name.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
+        status.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
         name.setBackground(getResources().getDrawable(R.drawable.round_edge_black_box));
-        status.setBackground(new ColorDrawable(Color.TRANSPARENT));
+        profileimage.setEnabled(false);
+        profileimage.setBackground(new ColorDrawable(Color.TRANSPARENT));
         setInitDataOwn();
     }
 }

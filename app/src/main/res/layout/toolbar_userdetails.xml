@@ -21,18 +21,19 @@
             android:src="@drawable/ic_menu_back_blk" />
 
         <LinearLayout
+            android:id="@+id/click_action"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
-            android:gravity="center"
-            android:padding="@dimen/horizontal_padding_very_very_small">
+            android:layout_marginRight="@dimen/horizontal_padding_very_small"
+            android:gravity="center" >
 
             <TextView
                 android:id="@+id/toolbar_action_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:padding="@dimen/horizontal_padding_very_very_small"
+                android:padding="@dimen/horizontal_padding_very_small"
                 android:text="ADD FRIEND"
                 android:textColor="@color/app_theme_blue" />
         </LinearLayout>
