@@ -300,4 +300,5 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         public void onPermissionResult(int requestCode, int[] grantResults);
     }
 
+
 }

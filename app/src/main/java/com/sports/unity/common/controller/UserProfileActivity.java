@@ -68,8 +68,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserProfileActivity extends CustomAppCompatActivity {
 
-    private static final String INFO_EDIT = "EDIT";
-    private static final String INFO_SAVE = "SAVE";
+    private static final String INFO_EDIT = "EDIT PROFILE";
+    private static final String INFO_SAVE = "SAVE PROFILE";
     private static final String ADD_FRIEND = "ADD FRIEND";
 
     private static final int LOAD_IMAGE_GALLERY_CAMERA = 1;
@@ -82,7 +82,8 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     private EditText name;
     private EditText status;
     private CircleImageView profileImage;
-    private TextView editTeam, editPlayer, editLeague;
+    private TextView editFavourite, statusTitle;
+    private LinearLayout statusView;
 
     private byte[] byteArray;
     private ProgressBar progressBar;
@@ -90,6 +91,8 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     private boolean ownProfile;
 
     private LayoutInflater mInflater;
+
+    private int statusValue[] = {R.string.available,R.string.busy,R.string.movie,R.string.work};
 
     private Drawable oldBackgroundForNameEditView = null;
     private Drawable oldBackgroundForStatusEditView = null;
@@ -116,6 +119,15 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         @Override
         public void onClick(View v) {
             onClickEditFavorites();
+        }
+
+    };
+
+    private View.OnClickListener statusClickListener = new View.OnClickListener(){
+
+        @Override
+        public void onClick(View view) {
+            onClickStatus(view);
         }
 
     };
@@ -190,6 +202,8 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         LinearLayout favDetails = (LinearLayout) findViewById(R.id.favDetails);
         favDetails.setVisibility(View.GONE);
 
+        statusView.setVisibility(View.VISIBLE);
+
         FrameLayout fbButton = (FrameLayout) findViewById(R.id.faceBook_btn);
         fbButton.setVisibility(View.VISIBLE);
 
@@ -206,7 +220,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
         status.setEnabled(true);
         status.setBackground(oldBackgroundForStatusEditView);
-        status.setPadding(pL,pT,pR,pB);
+        status.setPadding(pL, pT, pR, pB);
         status.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
 
         profileImage.setBorderColor(getResources().getColor(R.color.app_theme_blue));
@@ -214,6 +228,31 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         profileImage.setBorderWidth(2);
 
         addListnerToProfilePicture();
+    }
+
+    private void addStatusList() {
+
+        LinearLayout statusList = (LinearLayout) findViewById(R.id.list);
+
+        for (int i = 0; i < statusValue.length; i++) {
+            LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
+            TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
+            textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+            textView.setText(statusValue[i]);
+            textView.setTag(statusValue[i]);
+            textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+            textView.setOnClickListener(statusClickListener);
+            statusList.addView(linearLayout);
+        }
+    }
+
+    private void onClickStatus(View view){
+        Integer status = (Integer)view.getTag();
+        if( status != null ){
+            this.status.setText(getResources().getString(status));
+        } else {
+            //nothing
+        }
     }
 
     private void addListnerToProfilePicture() {
@@ -246,17 +285,13 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         profileImage = (CircleImageView) findViewById(R.id.user_picture);
         profileImage.setEnabled(false);
 
-        editTeam = (TextView) findViewById(R.id.edit_team);
-        editPlayer = (TextView) findViewById(R.id.edit_player);
-        editLeague = (TextView) findViewById(R.id.edit_league);
+        editFavourite = (TextView) findViewById(R.id.edit_fav);
 
-        editLeague.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
-        editPlayer.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
-        editTeam.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+        editFavourite.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
+        editFavourite.setVisibility(View.VISIBLE);
 
-        editLeague.setVisibility(View.VISIBLE);
-        editTeam.setVisibility(View.VISIBLE);
-        editPlayer.setVisibility(View.VISIBLE);
+        statusView = (LinearLayout) findViewById(R.id.status_list);
+        statusView.setVisibility(View.GONE);
 
         setcustomFont();
 
@@ -277,11 +312,18 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         favLeague.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
         TextView favPlayer = (TextView) findViewById(R.id.fav_player);
         favPlayer.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+        TextView fav = (TextView) findViewById(R.id.fav);
+        fav.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+        statusTitle = (TextView) findViewById(R.id.select_status);
+        statusTitle.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
     }
 
     private void setInitDataOwn() {
 
         addFacebookCallback();
+
+        addStatusList();
+
 
         profileImage = (CircleImageView) findViewById(R.id.user_picture);
 
@@ -295,9 +337,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         ArrayList<FavouriteItem> savedList = FavouriteItemWrapper.getInstance().getFavList(this);
         setFavouriteProfile(savedList);
 
-        editLeague.setOnClickListener(editFavoritesClickListener);
-        editPlayer.setOnClickListener(editFavoritesClickListener);
-        editTeam.setOnClickListener(editFavoritesClickListener);
+        editFavourite.setOnClickListener(editFavoritesClickListener);
     }
 
     private void onClickEditFavorites(){
@@ -312,13 +352,11 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
     private void setInitDataOthers() {
 
-        editTeam = (TextView) findViewById(R.id.edit_team);
-        editPlayer = (TextView) findViewById(R.id.edit_player);
-        editLeague = (TextView) findViewById(R.id.edit_league);
+        editFavourite = (TextView) findViewById(R.id.edit_fav);
 
-        editLeague.setVisibility(View.GONE);
-        editTeam.setVisibility(View.GONE);
-        editPlayer.setVisibility(View.GONE);
+        editFavourite.setVisibility(View.GONE);
+        statusView.setVisibility(View.GONE);
+
 
         profileImage = (CircleImageView) findViewById(R.id.user_picture);
         byte[] imageArray = getIntent().getByteArrayExtra("profilePicture");
@@ -494,6 +532,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         @Override
         protected void onPostExecute(Void o) {
             progressBar.setVisibility(View.GONE);
+            statusView.setVisibility(View.GONE);
             if (success) {
                 successfulVCardSubmit();
             } else {

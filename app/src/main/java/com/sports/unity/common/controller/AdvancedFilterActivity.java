@@ -292,6 +292,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
     private void moveToNextActivity(Class nextActivityClass) {
         Intent mainIntent = new Intent(AdvancedFilterActivity.this, nextActivityClass);
+        mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         mainIntent.putExtra(Constants.IS_FROM_NAV, isFromNav);
         startActivity(mainIntent);
         finish();
