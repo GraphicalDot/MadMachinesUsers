@@ -24,10 +24,12 @@ import com.sports.unity.common.controller.EnterOtpActivity;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
+import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -207,11 +209,63 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
 
 
     private void getIntentExtras() {
-        playerNameKey = getIntent().getStringExtra("name");
+        //playerNameKey = getIntent().getStringExtra("name");
+        playerNameKey="";
 
     }
 
     private void populateData(String content){
+        try {
+
+          JSONObject jsonObject = new JSONObject(content);
+
+            boolean success = jsonObject.getBoolean("success");
+            boolean error = jsonObject.getBoolean("error");
+
+            if( success ) {
+                JSONArray array = (JSONArray) jsonObject.get("data");
+                for( int index=0; index < array.length(); index++){
+                    JSONObject object = array.getJSONObject(index);
+                    if(object == null){
+                        continue;
+                    } else {
+                        if(!object.isNull("name")){
+                            playerName.setText(object.getString("name"));
+                        }
+                        if(!object.isNull("yellow_cards")){
+                            tvNumberOfYellowCard.setText(object.getString("yellow_cards"));
+                        }
+                        if(!object.isNull("red_cards")){
+                            tvNumberOfRedCard.setText(object.getString("red_cards"));
+                        }
+                        if(!object.isNull("age")){
+                            playerAge.setText(object.getString("age"));
+                        }
+                        if(!object.isNull("assists")){
+                            tvNumberOfAssist.setText(object.getString("assists"));
+                        }
+                        if(!object.isNull("goals")){
+                            goalsScoredNumber.setText(object.getString("goals"));
+                        }
+                        if(!object.isNull("nationality")){
+                            nationality.setText(object.getString("nationality"));
+                        }
+                        if(!object.isNull("position")){
+                            positionValue.setText(object.getString("position"));
+                        }
+                    }
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.player_details_not_exists, Toast.LENGTH_SHORT).show();
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+            Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+        }
+
+
+
+
 
     }
 

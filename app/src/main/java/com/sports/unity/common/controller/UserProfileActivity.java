@@ -85,8 +85,6 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     }
 
     private void setInitData() {
-
-
         ListView teamListView = (ListView) findViewById(R.id.team_list);
         ListView leagueListView = (ListView) findViewById(R.id.league_list);
         ListView playerListView = (ListView) findViewById(R.id.player_list);

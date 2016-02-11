@@ -12,6 +12,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.sports.unity.Database.NewsDBHelper;
+import com.sports.unity.R;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -154,15 +155,17 @@ public class NewsContentHandler {
 
     public void selectedSportsChanged() {
         selectedSports = UserUtil.getSportsSelected();
+         if(selectedSports != null) {
+             StringBuilder stringBuilder = new StringBuilder();
+             for (int i = 0; i < selectedSports.size(); i++) {
+                 stringBuilder.append("&type_1=");
+                 stringBuilder.append(selectedSports.get(i));
+             }
 
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < selectedSports.size(); i++) {
-            stringBuilder.append( "&type_1=");
-            stringBuilder.append( selectedSports.get(i));
-        }
-
-        subUrl_HavingSelectedSports = stringBuilder.toString();
-
+             subUrl_HavingSelectedSports = stringBuilder.toString();
+         } else {
+             Toast.makeText(context, R.string.select_atleast_one_sport_message,Toast.LENGTH_SHORT).show();
+         }
         Log.i("News Content Handler", "Selected Sports Changed");
     }
 

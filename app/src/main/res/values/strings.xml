@@ -190,4 +190,5 @@ Carrier SMS charges may apply.</string>
     <string name="matchstats">MATCHSTATS</string>
     <string name="timeline">TIMELINE</string>
     <string name="lineup">LINEUP</string>
+    <string name="player_details_not_exists">Player Profile Not Exists</string>
 </resources>

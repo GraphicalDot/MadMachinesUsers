@@ -1,9 +1,8 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.sports.unity.scoredetails.cricketdetail.CricketMatchScoreFragment">
-
     <LinearLayout
         android:id="@+id/rootLayout"
         android:layout_width="match_parent"
@@ -76,4 +75,4 @@
 
     </LinearLayout>
 
-</FrameLayout>
+</LinearLayout>
