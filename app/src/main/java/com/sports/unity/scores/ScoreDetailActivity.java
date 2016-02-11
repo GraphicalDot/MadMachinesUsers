@@ -1,5 +1,6 @@
 package com.sports.unity.scores;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -46,6 +47,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private static final String REQUEST_LISTENER_KEY = "score_detail_listener";
     private static final String SCORE_DETAIL_REQUEST_TAG = "score_detail_request_tag";
     private static final String LIST_OF_COMMENTARIES_REQUEST_TAG = "list_commentaries_request_tag";
+    private static final String LIST_OF_SUMMARY_REQUEST_TAG = "list_summary_request_tag";
 
 //    private ScoresContentListener contentListener = new ScoresContentListener();
 
@@ -80,6 +82,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
 
         initView();
+        setToolbar();
 
         {
             LinearLayout errorLayout = (LinearLayout) findViewById(R.id.error);
@@ -167,6 +170,18 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             //set news pager as default
             int tab_index = getIntent().getIntExtra("tab_index", 1);
             mViewPager.setCurrentItem(tab_index);
+            ImageView img = (ImageView) findViewById(R.id.back_img);
+            img.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    finish();
+                }
+            });
+            ImageView refreshImage = (ImageView) findViewById(R.id.refresh);
+            refreshImage.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+
+                }
+            });
         }catch (Exception e){
             Log.i("Exception Occured", "initView: ");
             Toast.makeText(this,"Error Occured",Toast.LENGTH_LONG);
@@ -175,6 +190,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
     }
 
+    private void setToolbar() {
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+   }
 
     private void setTitle(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
@@ -239,7 +258,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 Glide.with(this).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(flag1);
                 Glide.with(this).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(flag2);
 
-                findViewById(R.id.central_score).setVisibility(View.GONE);
+                //findViewById(R.id.central_score).setVisibility(View.GONE);
 
                 ((TextView)findViewById(R.id.venue)).setText(cricketMatchJsonCaller.getVenue());
                 ((TextView)findViewById(R.id.date)).setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
@@ -318,7 +337,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-
                 TextView textView = (TextView) findViewById(R.id.team1_name);
                 textView.setText(footballMatchJsonCaller.getHomeTeam());
 
@@ -349,7 +367,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     score.append(" - ");
                     score.append(footballMatchJsonCaller.getAwayTeamScore());
 
-                    textView = (TextView)findViewById(R.id.central_score);
+                    //textView = (TextView)findViewById(R.id.central_score);
                     textView.setText(score.toString());
 
                     requestCommentaries = true;
@@ -426,6 +444,28 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         }
         return success;
     }
+    private boolean handleSummary(String content){
+        Log.i("Score Detail", "Handle Content");
+        boolean success = false;
+
+        ArrayList<CommentriesModel> list = ScoresJsonParser.parseListOfMatchCommentaries(content);
+        if( list.size() > 0 ){
+            commentaries.clear();
+            commentaries.addAll(list);
+            success = true;
+            Fragment fragment= null;
+            if(sportsType.equals(ScoresJsonParser.CRICKET)) {
+                fragment= cricketScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
+            } else {
+                fragment = footballScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
+            }
+            if(fragment instanceof DataServiceContract) {
+                DataServiceContract listner = (DataServiceContract)fragment;
+                listner.dataChanged();
+            }
+        }
+        return success;
+    }
 
     private void requestMatchScoreDetails() {
         Log.i("Score Detail", "Request Score Details");
@@ -464,7 +504,14 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         }
     }
 
-
+    private boolean handleScoreCard(String content){
+        Log.i("Score Detail", "Handle Content");
+        boolean success = false;
+        if(content != null){
+            success = true;
+        }
+        return success;
+    }
 
     private class ScoreDetailComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
 
@@ -566,5 +613,122 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             }
         }
     }
+
+
+
+
+    private class MatchSummaryComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
+
+        private boolean successfulResponse = false;
+
+        public MatchSummaryComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
+            super( LIST_OF_SUMMARY_REQUEST_TAG, progressBar, errorLayout);
+        }
+
+        @Override
+        public boolean handleContent(String tag, String content) {
+            successfulResponse = ScoreDetailActivity.this.handleSummary(content);
+            return true;
+        }
+
+        @Override
+        public void handleErrorContent(String tag) {
+
+        }
+
+        @Override
+        protected void hideErrorLayout() {
+            super.hideErrorLayout();
+
+            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
+        }
+
+        @Override
+        protected void showErrorLayout() {
+            Fragment fragment= null;
+            if(sportsType.equals(ScoresJsonParser.CRICKET)) {
+                fragment= cricketScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
+            } else {
+                fragment = footballScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
+            }
+            if(fragment instanceof ErrorContract) {
+                ErrorContract contract = (ErrorContract)fragment;
+                contract.errorHandle();
+            }
+            if( commentaries.size() == 0 ) {
+                super.showErrorLayout();
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+            }
+        }
+       @Override
+        public void changeUI() {
+            if (successfulResponse) {
+                ScoreDetailActivity.this.renderComments();
+            } else {
+                Log.i("Score Detail", "Error In Handling Content");
+                showNoCommentaries();
+            }
+        }
+    }
+
+    private class MatchScoreCardComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
+
+        private boolean successfulResponse = false;
+
+        public MatchScoreCardComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
+            super( LIST_OF_SUMMARY_REQUEST_TAG, progressBar, errorLayout);
+        }
+
+        @Override
+        public boolean handleContent(String tag, String content) {
+            successfulResponse = ScoreDetailActivity.this.handleScoreCard(content);
+            return true;
+        }
+
+        @Override
+        public void handleErrorContent(String tag) {
+
+        }
+
+        @Override
+        protected void hideErrorLayout() {
+            super.hideErrorLayout();
+
+            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
+        }
+
+        @Override
+        protected void showErrorLayout() {
+            Fragment fragment= null;
+            if(sportsType.equals(ScoresJsonParser.CRICKET)) {
+                fragment= cricketScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
+            } else {
+                fragment = footballScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
+            }
+            if(fragment instanceof ErrorContract) {
+                ErrorContract contract = (ErrorContract)fragment;
+                contract.errorHandle();
+            }
+            if( commentaries.size() == 0 ) {
+                super.showErrorLayout();
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+            }
+        }
+        @Override
+        public void changeUI() {
+            if (successfulResponse) {
+                ScoreDetailActivity.this.renderComments();
+            } else {
+                Log.i("Score Detail", "Error In Handling Content");
+                showNoCommentaries();
+            }
+        }
+    }
+
+
+
+
 
 }
