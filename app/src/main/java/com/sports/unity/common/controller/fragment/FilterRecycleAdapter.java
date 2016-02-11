@@ -98,17 +98,9 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
             holder.v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    searchNews(s);
                 }
             });
         }
-    }
-
-    private void searchNews(String s) {
-
-        Intent newsSearch=new Intent(activity,NewsSearchActivity.class);
-        newsSearch.putExtra(Constants.FILTER_SEARCH_EXTRA,s);
-        activity.startActivity(newsSearch);
     }
 
     public class FilterItemView extends RecyclerView.ViewHolder {

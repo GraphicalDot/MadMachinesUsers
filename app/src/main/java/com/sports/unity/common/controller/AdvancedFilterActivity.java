@@ -71,9 +71,8 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         sportsSelected = UserUtil.getSportsSelected();
         bundle = getIntent().getExtras();
         try {
-            isFromNav = bundle.getBoolean(Constants.IS_FROM_NAV, false);
-            isResultRequired = bundle.getBoolean(Constants.RESULT_NAV, false);
-            Log.d("max", "Resultrequired" + isResultRequired);
+            isFromNav = true;
+            isResultRequired = getIntent().getExtras().getBoolean(Constants.FROM_ADD_SPORTS);
         } catch (NullPointerException booleanNull) {
 
         }
@@ -83,24 +82,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
         }
         setUpNextClick();
-        setUpDoneClick();
         setUpSkipClick();
-    }
-
-    private void setUpDoneClick() {
-        final Button done = (Button) findViewById(R.id.done);
-        done.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
-        if (!UserUtil.isFilterCompleted() || isFromNav) {
-            done.setVisibility(View.INVISIBLE);
-        } else {
-            done.setVisibility(View.VISIBLE);
-        }
-        done.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                handleDoneClick(done);
-            }
-        });
     }
 
     private void setUpSkipClick() {
@@ -115,10 +97,6 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                /*TinyDB tinyDB = TinyDB.getInstance(AdvancedFilterActivity.this);
-                favList = tinyDB.getListString(TinyDB.FAVOURITE_FILTERS);
-                UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);*/
                 UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
                 FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).invalidate(AdvancedFilterActivity.this);
                 if (isResultRequired) {
@@ -149,32 +127,6 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         });
     }
 
-    private void handleDoneClick(Button edit) {
-        /*if (!isEditMode) {
-            edit.setText("Done");
-            search.setVisibility(View.VISIBLE);
-            isEditMode = true;
-            performEdit();
-        } else {
-            if(!isFromNav) {
-                isEditMode = false;
-                isSearchEdit = false;
-                search.setVisibility(View.INVISIBLE);
-                if (searchLayout.getVisibility() == View.VISIBLE) {
-                    titleLayout.setVisibility(View.VISIBLE);
-                    searchLayout.setVisibility(View.GONE);
-                }
-                edit.setText("Edit");
-                performEdit();
-            }else{*/
-        FavouriteItemWrapper.getInstance().saveList(this, favList);
-        setResult(RESULT_OK);
-        finish();
-           /* }
-
-        }*/
-    }
-
     private void handleNextClick() {
         FavouriteItemWrapper.getInstance().saveList(this, favList);
 
@@ -190,7 +142,8 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             VcardThread updateVcard = new VcardThread();
             updateVcard.start();
             if (isResultRequired) {
-                setResult(RESULT_OK);
+                Log.d("max","setting result"+RESULT_OK);
+                setResult(RESULT_OK, getIntent());
                 finish();
             } else {
                 moveToNextActivity(MainActivity.class);
@@ -292,8 +245,6 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
     private void moveToNextActivity(Class nextActivityClass) {
         Intent mainIntent = new Intent(AdvancedFilterActivity.this, nextActivityClass);
-        mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        mainIntent.putExtra(Constants.IS_FROM_NAV, isFromNav);
         startActivity(mainIntent);
         finish();
     }
@@ -365,7 +316,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
                 replaceFragment(bundle);
                 titleText.setText(CommonUtil.capitalize(UserUtil.getSportsSelected().get(fragmentNum - 1)));
             } else if (fragmentNum == 0) {
-                if (!UserUtil.isFilterCompleted() || isFromNav) {
+                if (!isResultRequired) {
                     moveToNextActivity(SelectSportsActivity.class);
                 } else {
                     if (isResultRequired) {

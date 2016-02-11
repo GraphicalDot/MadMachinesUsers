@@ -35,12 +35,10 @@ import java.util.ArrayList;
 public class SelectSportsActivity extends AppCompatActivity {
 
     private ArrayList<String> sports = new ArrayList<String>();
-
+    private boolean isResultRequired;
     private Thread sendInterestsThread = null;
     private String base_url = "http://54.169.217.88/set_user_interests?username=";
     private String urlToRequest = "";
-    private boolean flag = false;
-private boolean isResultRequired=false;
     /*For future use: to add all the sports
      in sports selection screen*/
     /*private Integer[] mThumbIds = {
@@ -81,12 +79,15 @@ private boolean isResultRequired=false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            isResultRequired = getIntent().getExtras().getBoolean(Constants.FROM_ADD_SPORTS);
+        } catch (NullPointerException booleanNull) {
+
+        }
 
         setContentView(R.layout.activity_select_sports);
         sports = UserUtil.getSportsSelected();
         try {
-            flag = getIntent().getBooleanExtra(Constants.IS_FROM_NAV, false);
-            isResultRequired=getIntent().getBooleanExtra(Constants.RESULT_NAV, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -126,7 +127,6 @@ private boolean isResultRequired=false;
         {
             Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
             setSupportActionBar(toolbar);
-
             getSupportActionBar().setDisplayShowTitleEnabled(false);
             TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
             mTitle.setText(R.string.select_your_favourite_sports);
@@ -178,20 +178,17 @@ private boolean isResultRequired=false;
     }
 
 
-
-
-
     private void moveOn() {
         executeThreadToUpdateInterests();
         UserUtil.setSportsSelected(SelectSportsActivity.this, sports);
-        Intent intent = new Intent(SelectSportsActivity.this, AdvancedFilterActivity.class);
-        intent.putExtra(Constants.IS_FROM_NAV, flag);
+        Intent intent = new Intent(getIntent());
+        intent.setClass(this, AdvancedFilterActivity.class);
         intent.putExtra(Constants.SPORTS_TYPE, UserUtil.getSportsSelected().get(0));
-        if(!isResultRequired) {
+        if (!isResultRequired) {
             startActivity(intent);
             finish();
-        }else{
-            startActivityForResult(intent,Constants.REQUEST_CODE_NAV);
+        } else {
+            startActivityForResult(intent, Constants.REQUEST_CODE_ADD_SPORT);
         }
 
     }
@@ -245,9 +242,12 @@ private boolean isResultRequired=false;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);if(resultCode==RESULT_OK && requestCode==Constants.REQUEST_CODE_NAV){
-            Log.d("max","requestcode--"+requestCode+"--Resultcode--"+resultCode);
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == Constants.REQUEST_CODE_ADD_SPORT) {
             setResult(resultCode);
+            finish();
+        } else {
+            setResult(RESULT_CANCELED);
             finish();
         }
 

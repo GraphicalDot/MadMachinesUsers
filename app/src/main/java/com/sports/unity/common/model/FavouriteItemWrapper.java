@@ -69,7 +69,7 @@ public class FavouriteItemWrapper {
         for (FavouriteItem f : favouriteItems) {
             jsonArray.put(f.getJsonObject());
         }
-        updtaeFavList(jsonArray.toString());
+        updtaeFavList(favouriteItems);
         UserUtil.setFavouriteFilters(context, jsonArray.toString());
     }
 
@@ -79,50 +79,32 @@ public class FavouriteItemWrapper {
      * lists of {@link #FavouriteItemWrapper} class without
      * retrieving them from shared preference.
      *
-     * @param favItem {@link ArrayList} of {@link FavouriteItem}
+     * @param favouriteItems {@link ArrayList} of {@link FavouriteItem}
      */
-    private void updtaeFavList(String favItem) {
+    private void updtaeFavList(ArrayList<FavouriteItem> favouriteItems) {
         {
             savedFootballLeagues = new ArrayList<FavouriteItem>();
             savedFootballTeams = new ArrayList<FavouriteItem>();
             savedFootballPlayers = new ArrayList<FavouriteItem>();
             savedCricketTeams = new ArrayList<FavouriteItem>();
             savedCricketPlayers = new ArrayList<FavouriteItem>();
-            List<FavouriteItem> favouriteItems = new ArrayList<FavouriteItem>();
-            try {
-                JSONArray favArray = new JSONArray(favItem);
-                for (int i = 0; i < favArray.length(); i++) {
-                    FavouriteItem item = new FavouriteItem();
-                    JSONObject object = favArray.getJSONObject(i);
-                    item.setName(object.getString(name));
-                    String sportsType = object.getString(this.sportsType);
-                    String filterType = object.getString(this.filterType);
-                    item.setSportsType(sportsType);
-                    item.setFilterType(filterType);
-                    try {
-                        item.setFlagImageUrl(object.getString(this.flag));
-                    } catch (NullPointerException e) {
-                    }
-                    favouriteItems.add(item);
+            for (FavouriteItem f : favouriteItems) {
 
-                    if (sportsType.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
-                        if (filterType.equals(Constants.FILTER_TYPE_LEAGUE)) {
-                            savedFootballLeagues.add(item);
-                        } else if (filterType.equals(Constants.FILTER_TYPE_TEAM)) {
-                            savedFootballTeams.add(item);
-                        } else if (filterType.equals(Constants.FILTER_TYPE_PLAYER)) {
-                            savedFootballPlayers.add(item);
-                        }
-                    } else if (filterType.equals(Constants.SPORTS_TYPE_CRICKET)) {
-                        if (filterType.equals(Constants.FILTER_TYPE_TEAM)) {
-                            savedCricketTeams.add(item);
-                        } else if (filterType.equals(Constants.FILTER_TYPE_PLAYER)) {
-                            savedCricketPlayers.add(item);
-                        }
+                if (f.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                    if (f.getFilterType().equals(Constants.FILTER_TYPE_LEAGUE)) {
+                        savedFootballLeagues.add(f);
+                    } else if (f.getFilterType().equals(Constants.FILTER_TYPE_TEAM)) {
+                        savedFootballTeams.add(f);
+                    } else if (f.getFilterType().equals(Constants.FILTER_TYPE_PLAYER)) {
+                        savedFootballPlayers.add(f);
+                    }
+                } else if (f.getSportsType().equals(Constants.SPORTS_TYPE_CRICKET)) {
+                    if (f.getFilterType().equals(Constants.FILTER_TYPE_TEAM)) {
+                        savedCricketTeams.add(f);
+                    } else if (f.getFilterType().equals(Constants.FILTER_TYPE_PLAYER)) {
+                        savedCricketPlayers.add(f);
                     }
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
         }
     }

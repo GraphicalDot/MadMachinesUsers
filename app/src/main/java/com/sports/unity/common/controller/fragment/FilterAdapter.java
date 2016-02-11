@@ -80,7 +80,7 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
         } else {
             holder = (HeaderViewHolder) convertView.getTag();
         }
-        if (mData.get(position).getSportsType().contains(Constants.GAME_KEY_CRICKET)) {
+        if (mData.get(position).getSportsType().equals(Constants.GAME_KEY_CRICKET)) {
             headerText = "Cricket";
             holder.imageView.setImageResource(R.drawable.ic_cricket);
         } else {
@@ -95,7 +95,7 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
 
     @Override
     public long getHeaderId(int position) {
-        if (mData.get(position).getSportsType().subSequence(0, 7).toString().toLowerCase().contains(Constants.GAME_KEY_CRICKET)) {
+        if (mData.get(position).getSportsType().equals(Constants.GAME_KEY_CRICKET)) {
             return (long) 0.0;
         } else {
             return (long) 1.0;

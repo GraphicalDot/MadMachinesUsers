@@ -30,6 +30,8 @@ public class FilterActivity extends AppCompatActivity {
     private ArrayList<String> sportsSelected;
     private ViewPagerAdapterForFilter adapter;
     private ViewPager pager;
+    private ArrayList<OnResultReceivedListener> resultReceivedListeners;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,6 +42,7 @@ public class FilterActivity extends AppCompatActivity {
         initCheckedFlagList();
         initViews();
         setTab();
+        resultReceivedListeners = new ArrayList<OnResultReceivedListener>();
     }
 
     private void initCheckedFlagList() {
@@ -107,14 +110,13 @@ public class FilterActivity extends AppCompatActivity {
         for (int loop = 0; loop < sportsCategoryLayoutID.length; loop++) {
             initCheckBox(sportsCategoryLayoutID[loop], checkedFlag[loop], loop);
         }
-
+        editSports.setVisibility(View.INVISIBLE);
         editSports.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(FilterActivity.this, SelectSportsActivity.class);
-                intent.putExtra(Constants.IS_FROM_NAV, true);
-                intent.putExtra(Constants.RESULT_NAV,false);
-                startActivity(intent);
+                intent.putExtra(Constants.FROM_ADD_SPORTS, true);
+                startActivityForResult(intent, Constants.REQUEST_CODE_EDIT_SPORT);
             }
         });
 
@@ -221,42 +223,36 @@ public class FilterActivity extends AppCompatActivity {
         onClickCheckBox(view.getId());
     }
 
-//    @Override
-//    public void onClick(View view) {
-//        switch (view.getId()) {
-//            case R.id.adv1:
-//                Intent advancedFilterTeam = new Intent(this, AdvancedFilterActivity.class);
-//                advancedFilterTeam.putExtra(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_TEAM);
-//                startActivity(advancedFilterTeam);
-//                break;
-//            case R.id.adv2:
-//                if(sportsSelected.contains(Constants.GAME_KEY_FOOTBALL)) {
-//                    Intent advancedFilterLeague = new Intent(this, AdvancedFilterActivity.class);
-//                    advancedFilterLeague.putExtra(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_LEAGUE);
-//                    startActivity(advancedFilterLeague);
-//                }else{
-//                    Toast.makeText(this,"Please follow football to view leagues.",Toast.LENGTH_SHORT).show();
-//                }
-//                break;
-//            case R.id.adv3:
-//                Intent advancedFilterPlayer = new Intent(this, AdvancedFilterActivity.class);
-//                advancedFilterPlayer.putExtra(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_PLAYER);
-//                startActivity(advancedFilterPlayer);
-//                break;
-//        }
-//    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("max","requestcode--"+requestCode+"--Resultcode--"+resultCode);
-        if(resultCode==RESULT_OK && requestCode==Constants.REQUEST_CODE_NAV){
-            Log.d("max","updatingrequestcode--"+requestCode+"--Resultcode--"+resultCode);
-            adapter = new ViewPagerAdapterForFilter(getSupportFragmentManager());
+        if (resultCode == RESULT_OK && requestCode == Constants.REQUEST_CODE_ADD_SPORT) {
+            for (int i = 0; i < resultReceivedListeners.size(); i++) {
+                resultReceivedListeners.get(i).updateData();
+            }
+        } else if (resultCode == RESULT_OK && requestCode == Constants.REQUEST_CODE_EDIT_SPORT) {
+            setResult(resultCode);
+            finish();
 
-            // Assigning ViewPager View and setting the adapter
-            pager.setAdapter(adapter);
-            pager.setOffscreenPageLimit(2);
         }
+    }
+
+    public void addListener(OnResultReceivedListener listener) {
+        resultReceivedListeners.add(listener);
+    }
+
+    public void removeListener(OnResultReceivedListener listener) {
+        resultReceivedListeners.remove(listener);
+    }
+
+    /**
+     * Interface definition for the callback to be
+     * invoked in onActivityResult of FilterActivity class
+     * which is caused by the ADD Sport action of FilterFragment class.
+     * After receiving result the data in the FilterFragment class must be updated
+     * so FilterFragment class will implement this interface.
+     */
+    public interface OnResultReceivedListener {
+        public void updateData();
     }
 }

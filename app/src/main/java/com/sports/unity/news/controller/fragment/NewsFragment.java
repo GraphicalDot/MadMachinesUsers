@@ -57,7 +57,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
     private int sportsSelectedNum = 0;
     private ArrayList<String> sportSelected;
-    private final String Showcase_News_Id = "new_showcase_id";
+    private final String Showcase_News_Id = "news_showcase_id";
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -126,7 +126,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
         if (id == com.sports.unity.R.id.action_filter) {
             Intent i = new Intent(getActivity(), FilterActivity.class);
-            startActivityForResult(i, 999);
+            startActivityForResult(i, Constants.REQUEST_CODE_NEWS);
             return true;
         }
 
@@ -492,5 +492,11 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                 }
             }
         });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("max", "IN_NEWS-request>>>" + requestCode+"--result-->>>"+resultCode);
     }
 }

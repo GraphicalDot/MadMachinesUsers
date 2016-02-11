@@ -85,4 +85,8 @@ public class ViewPagerAdapterForFilter extends FragmentStatePagerAdapter {
         return numberOfTabs;
     }
 
+    @Override
+    public int getItemPosition(Object object) {
+        return POSITION_NONE;
+    }
 }

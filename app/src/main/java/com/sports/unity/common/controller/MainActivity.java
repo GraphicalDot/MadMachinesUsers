@@ -251,10 +251,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == Constants.REQUEST_CODE_NAV) {
-            navigationFragment.onActivityResult(requestCode, resultCode, data);
-            Log.d("max", "ONMAINRESULT");
-        }
     }
 
     @Override

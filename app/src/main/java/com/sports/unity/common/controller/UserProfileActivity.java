@@ -114,7 +114,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
     };
 
-    private View.OnClickListener editFavoritesClickListener = new View.OnClickListener(){
+    private View.OnClickListener editFavoritesClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
@@ -190,15 +190,15 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         });
     }
 
-    private void onClickAddFriend(){
+    private void onClickAddFriend() {
         //TODO
     }
 
-    private void onClickSaveButton(){
+    private void onClickSaveButton() {
         new SubmitVCardAsyncTask().execute();
     }
 
-    private void onClickEditButton(){
+    private void onClickEditButton() {
         LinearLayout favDetails = (LinearLayout) findViewById(R.id.favDetails);
         favDetails.setVisibility(View.GONE);
 
@@ -340,13 +340,12 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         editFavourite.setOnClickListener(editFavoritesClickListener);
     }
 
-    private void onClickEditFavorites(){
+    private void onClickEditFavorites() {
         moveToSelectSports();
     }
 
-    private void moveToSelectSports(){
+    private void moveToSelectSports() {
         Intent intent = new Intent(UserProfileActivity.this, SelectSportsActivity.class);
-        intent.putExtra(Constants.IS_FROM_NAV, true);
         startActivity(intent);
     }
 
@@ -613,7 +612,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         }
 
     }
-    
+
     private void setFavouriteProfile(ArrayList<FavouriteItem> savedList) {
 
         List<FavouriteItem> teams = new ArrayList<>();
@@ -712,11 +711,11 @@ public class UserProfileActivity extends CustomAppCompatActivity {
             });
             build.setNegativeButton("KEEP", new DialogInterface.OnClickListener() {
 
-                        public void onClick(DialogInterface dialog, int id) {
-                            //nothing
-                        }
+                public void onClick(DialogInterface dialog, int id) {
+                    //nothing
+                }
 
-                    });
+            });
 
             final AlertDialog dialog = build.create();
             dialog.setOnShowListener(new DialogInterface.OnShowListener() {
@@ -726,7 +725,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
                     dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.app_theme_blue));
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.app_theme_blue));
 
-                    ((TextView)dialog.findViewById(android.R.id.message)).setTextColor(getResources().getColor(R.color.gray1));
+                    ((TextView) dialog.findViewById(android.R.id.message)).setTextColor(getResources().getColor(R.color.gray1));
                 }
             });
             dialog.show();
