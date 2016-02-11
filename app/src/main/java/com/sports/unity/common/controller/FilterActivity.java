@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -27,7 +28,8 @@ public class FilterActivity extends AppCompatActivity {
     private boolean[] checkedFlag = new boolean[]{false, false};
     private LinearLayout teamFilter, leagueFilter, playerFilter;
     private ArrayList<String> sportsSelected;
-
+    private ViewPagerAdapterForFilter adapter;
+    private ViewPager pager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,6 +113,7 @@ public class FilterActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(FilterActivity.this, SelectSportsActivity.class);
                 intent.putExtra(Constants.IS_FROM_NAV, true);
+                intent.putExtra(Constants.RESULT_NAV,false);
                 startActivity(intent);
             }
         });
@@ -133,10 +136,10 @@ public class FilterActivity extends AppCompatActivity {
         int numberOfTabs = titles.length;
 
         // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        ViewPagerAdapterForFilter adapter = new ViewPagerAdapterForFilter(getSupportFragmentManager());
+        adapter = new ViewPagerAdapterForFilter(getSupportFragmentManager());
 
         // Assigning ViewPager View and setting the adapter
-        ViewPager pager = (ViewPager) findViewById(R.id.filter_activity_pager);
+        pager = (ViewPager) findViewById(R.id.filter_activity_pager);
         pager.setAdapter(adapter);
         pager.setOffscreenPageLimit(2);
         // Assiging the Sliding Tab Layout View
@@ -242,4 +245,18 @@ public class FilterActivity extends AppCompatActivity {
 //                break;
 //        }
 //    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("max","requestcode--"+requestCode+"--Resultcode--"+resultCode);
+        if(resultCode==RESULT_OK && requestCode==Constants.REQUEST_CODE_NAV){
+            Log.d("max","updatingrequestcode--"+requestCode+"--Resultcode--"+resultCode);
+            adapter = new ViewPagerAdapterForFilter(getSupportFragmentManager());
+
+            // Assigning ViewPager View and setting the adapter
+            pager.setAdapter(adapter);
+            pager.setOffscreenPageLimit(2);
+        }
+    }
 }

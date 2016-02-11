@@ -296,5 +296,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
             }
         }
     }
-
+public SlidingTabStrip getTabStrip(){
+    return mTabStrip;
+}
 }

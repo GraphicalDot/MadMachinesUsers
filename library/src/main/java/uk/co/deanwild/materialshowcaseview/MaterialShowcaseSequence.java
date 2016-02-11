@@ -1,10 +1,13 @@
 package uk.co.deanwild.materialshowcaseview;
 
 import android.app.Activity;
+import android.util.TypedValue;
 import android.view.View;
 
 import java.util.LinkedList;
 import java.util.Queue;
+
+import uk.co.deanwild.materialshowcaseview.shape.RectangleShape;
 
 
 public class MaterialShowcaseSequence implements IDetachedListener {
@@ -29,12 +32,30 @@ public class MaterialShowcaseSequence implements IDetachedListener {
         this.singleUse(sequenceID);
     }
 
-    public MaterialShowcaseSequence addSequenceItem(View targetView,String heading, String content, String dismissText) {
+    public MaterialShowcaseSequence addSequenceItem(View targetView, String heading, String content, String dismissText) {
 
         MaterialShowcaseView sequenceItem = new MaterialShowcaseView.Builder(mActivity)
                 .setTarget(targetView)
                 .setDismissText(dismissText)
                 .setContentHeadingText(heading)
+                .setShapePadding(20)
+                .setContentText(content)
+                .build();
+
+        if (mConfig != null) {
+            sequenceItem.setConfig(mConfig);
+        }
+
+        mShowcaseQueue.add(sequenceItem);
+        return this;
+    }
+
+    public MaterialShowcaseSequence addSequenceItemWithRectShape(View targetView, String heading, String content, String dismissText) {
+        MaterialShowcaseView sequenceItem = new MaterialShowcaseView.Builder(mActivity)
+                .setTarget(targetView)
+                .setDismissText(dismissText)
+                .setContentHeadingText(heading)
+                .setSmallCircle(true).setShape(new RectangleShape(targetView.getWidth(),targetView.getHeight()))
                 .setContentText(content)
                 .build();
 

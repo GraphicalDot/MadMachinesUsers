@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/error"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:visibility="gone">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:src="@drawable/img_something_went_wrong" />
+
+    <TextView
+        android:id="@+id/oops"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="No Teams selected :("
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/font_size_xlarge"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/something_wrong"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/vertical_padding_very_small"
+        android:text="Add your favourite teams \n to see more details"
+        android:textColor="@color/gray2"
+        android:textSize="@dimen/font_size_small_large" />
+    <TextView
+        android:id="@+id/addteam"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/filter_next_height"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:paddingLeft="@dimen/horizontal_padding_small"
+        android:paddingRight="@dimen/horizontal_padding_small"
+        android:layout_marginTop="@dimen/nav_item_margin_v"
+        android:background="@drawable/round_edge_box_blue"
+        android:text="ADD TEAM"
+        android:textColor="@color/ColorPrimary"
+        android:textSize="@dimen/font_size_small_xlarge"
+        />
+</LinearLayout>

@@ -81,10 +81,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
             favouriteContentHandler.makeRequest();
         }
     }
-public void setSearchListener(){
 
-    ((AdvancedFilterActivity) getActivity()).addEditClickListener(this);
-}
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

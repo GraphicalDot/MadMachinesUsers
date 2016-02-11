@@ -12,9 +12,13 @@ import com.sports.unity.R;
 import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.common.view.SlidingTabStrip;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
+
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
 
 /**
  * Created by Mad on 12/28/2015.
@@ -22,8 +26,10 @@ import java.util.ArrayList;
 public class AdvancedFilterFragment extends Fragment {
 
     private Bundle bundle;
-    private ArrayList<String> sportsSelected;
     private String SPORTS_TYPE;
+    private final String SHOWCASE_ID = "filter_showcase1";
+    private final String[] heading = {"Select your favourite leagues", "Select your favourite teams", "Select your favourite players"};
+    private final String[] message = {"Add a star to your favourite leagues for easy use.", "Add a star to your favourite team for easy use.", "Add a star to your favourite players to get an update."};
 
     public AdvancedFilterFragment() {
     }
@@ -33,7 +39,6 @@ public class AdvancedFilterFragment extends Fragment {
         super.onCreate(savedInstanceState);
         bundle = getArguments();
         SPORTS_TYPE = bundle.getString(Constants.SPORTS_TYPE);
-        sportsSelected = UserUtil.getSportsSelected();
     }
 
     @Nullable
@@ -71,6 +76,24 @@ public class AdvancedFilterFragment extends Fragment {
             }
         });
         tabs.setViewPager(pager);
+        startShowcase(tabs.getTabStrip());
 
     }
+
+    private void startShowcase(SlidingTabStrip strip) {
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+        final MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity(), SHOWCASE_ID);
+        sequence.addSequenceItem(((AdvancedFilterActivity) getActivity()).search, getActivity().getResources().getString(R.string.showcase_heading), getActivity().getResources().getString(R.string.showcase_message), getActivity().getResources().getString(R.string.got_it));
+        for (int i = 0; i < strip.getChildCount(); i++) {
+            if (strip.getChildCount() < 3) {
+                sequence.addSequenceItemWithRectShape(strip.getChildAt(i), heading[i + 1], message[i + 1], getActivity().getResources().getString(R.string.got_it));
+            } else {
+                sequence.addSequenceItemWithRectShape(strip.getChildAt(i), heading[i], message[i], getActivity().getResources().getString(R.string.got_it));
+            }
+        }
+        sequence.start();
+
+    }
+
 }

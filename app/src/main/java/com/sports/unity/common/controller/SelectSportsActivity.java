@@ -40,7 +40,7 @@ public class SelectSportsActivity extends AppCompatActivity {
     private String base_url = "http://54.169.217.88/set_user_interests?username=";
     private String urlToRequest = "";
     private boolean flag = false;
-
+private boolean isResultRequired=false;
     /*For future use: to add all the sports
      in sports selection screen*/
     /*private Integer[] mThumbIds = {
@@ -86,7 +86,7 @@ public class SelectSportsActivity extends AppCompatActivity {
         sports = UserUtil.getSportsSelected();
         try {
             flag = getIntent().getBooleanExtra(Constants.IS_FROM_NAV, false);
-
+            isResultRequired=getIntent().getBooleanExtra(Constants.RESULT_NAV, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -177,15 +177,23 @@ public class SelectSportsActivity extends AppCompatActivity {
 
     }
 
+
+
+
+
     private void moveOn() {
         executeThreadToUpdateInterests();
         UserUtil.setSportsSelected(SelectSportsActivity.this, sports);
         Intent intent = new Intent(SelectSportsActivity.this, AdvancedFilterActivity.class);
         intent.putExtra(Constants.IS_FROM_NAV, flag);
         intent.putExtra(Constants.SPORTS_TYPE, UserUtil.getSportsSelected().get(0));
-        startActivity(intent);
+        if(!isResultRequired) {
+            startActivity(intent);
+            finish();
+        }else{
+            startActivityForResult(intent,Constants.REQUEST_CODE_NAV);
+        }
 
-        finish();
     }
 
     private void executeThreadToUpdateInterests() {
@@ -235,5 +243,14 @@ public class SelectSportsActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);if(resultCode==RESULT_OK && requestCode==Constants.REQUEST_CODE_NAV){
+            Log.d("max","requestcode--"+requestCode+"--Resultcode--"+resultCode);
+            setResult(resultCode);
+            finish();
+        }
+
+    }
 }
 

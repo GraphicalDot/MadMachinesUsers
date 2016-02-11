@@ -21,6 +21,7 @@ public class UserUtil {
     private static boolean playerSelected;
     private static boolean filterCompleted;
     private static String favFilterList = null;
+    private static boolean isFavouriteVcardUpdated;
 
     public static void init(Context context) {
         TinyDB tinyDB = TinyDB.getInstance(context);
@@ -32,10 +33,11 @@ public class UserUtil {
 
         favFilterList = tinyDB.getString(TinyDB.FAVOURITE_FILTERS);
 
-        leagueSelected =tinyDB.getBoolean(TinyDB.LEAGUE_SELECTION, false);
-        teamSelected =tinyDB.getBoolean(TinyDB.TEAM_SELECTION, false);
-        playerSelected =tinyDB.getBoolean(TinyDB.PLAYER_SELECTION, false);
-        filterCompleted=tinyDB.getBoolean(TinyDB.FILTER_COMPLETE, false);
+        leagueSelected = tinyDB.getBoolean(TinyDB.LEAGUE_SELECTION, false);
+        teamSelected = tinyDB.getBoolean(TinyDB.TEAM_SELECTION, false);
+        playerSelected = tinyDB.getBoolean(TinyDB.PLAYER_SELECTION, false);
+        filterCompleted = tinyDB.getBoolean(TinyDB.FILTER_COMPLETE, false);
+        isFavouriteVcardUpdated = tinyDB.getBoolean(TinyDB.VCARD_UPDATED, false);
     }
 
     public static void setUserRegistered(Context context, boolean userRegistered) {
@@ -92,7 +94,8 @@ public class UserUtil {
         TinyDB tinyDB = TinyDB.getInstance(context);
         tinyDB.putBoolean(TinyDB.LEAGUE_SELECTION, isLeagueSelected);
     }
-    public static boolean isLeagueSelected(){
+
+    public static boolean isLeagueSelected() {
         return leagueSelected;
     }
 
@@ -102,7 +105,8 @@ public class UserUtil {
         TinyDB tinyDB = TinyDB.getInstance(context);
         tinyDB.putBoolean(TinyDB.TEAM_SELECTION, isTeamSelected);
     }
-    public static boolean isTeamSelected(){
+
+    public static boolean isTeamSelected() {
         return teamSelected;
     }
 
@@ -112,29 +116,42 @@ public class UserUtil {
         TinyDB tinyDB = TinyDB.getInstance(context);
         tinyDB.putBoolean(TinyDB.PLAYER_SELECTION, isPlayerSelected);
     }
-    public static boolean isPlayerSelected(){
+
+    public static boolean isPlayerSelected() {
         return playerSelected;
     }
+
     public static void setFilterCompleted(Context context, boolean isFilterCompleted) {
         filterCompleted = isFilterCompleted;
 
         TinyDB tinyDB = TinyDB.getInstance(context);
         tinyDB.putBoolean(TinyDB.FILTER_COMPLETE, isFilterCompleted);
     }
-    public static boolean isFilterCompleted(){
+
+    public static boolean isFilterCompleted() {
         return filterCompleted;
     }
+
     public static void setFavouriteFilters(Context context, String favItems) {
 
         TinyDB tinyDB = TinyDB.getInstance(context);
-        if(tinyDB.contains(TinyDB.FAVOURITE_FILTERS)) {
+        if (tinyDB.contains(TinyDB.FAVOURITE_FILTERS)) {
             tinyDB.remove(TinyDB.FAVOURITE_FILTERS);
         }
-        tinyDB.putString(TinyDB.FAVOURITE_FILTERS,favItems);
+        tinyDB.putString(TinyDB.FAVOURITE_FILTERS, favItems);
     }
 
     public static String getFavouriteFilters() {
         return favFilterList;
     }
 
+    public static void setFavouriteVcardUpdated(Context context, boolean isFavouriteVcardUpdated) {
+        UserUtil.isFavouriteVcardUpdated = isFavouriteVcardUpdated;
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putBoolean(TinyDB.VCARD_UPDATED, isFavouriteVcardUpdated);
+    }
+
+    public static boolean isIsFavouriteVcardUpdated() {
+        return isFavouriteVcardUpdated;
+    }
 }

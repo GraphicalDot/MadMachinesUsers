@@ -2,11 +2,9 @@ package com.sports.unity.common.controller;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.text.method.MovementMethod;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -35,8 +33,6 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -55,15 +51,15 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private TextView titleText;
     private ImageView back;
     private ArrayList<OnEditFilterListener> editFilterListener;
-    private ImageView search, searchClose;
+    public ImageView search, searchClose;
     private LinearLayout titleLayout, searchLayout;
     private EditText searchText;
     public boolean isSearchEdit;
     public String searchString;
     public boolean isFromNav;
+    private boolean isResultRequired;
     private int listSize = 0;
     int fragmentNum = 0;
-    private final String SHOWCASE_ID = "search_showcase68";
     JSONObject jsonObject = null;
 
     @Override
@@ -76,6 +72,8 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         bundle = getIntent().getExtras();
         try {
             isFromNav = bundle.getBoolean(Constants.IS_FROM_NAV, false);
+            isResultRequired = bundle.getBoolean(Constants.RESULT_NAV, false);
+            Log.d("max", "Resultrequired" + isResultRequired);
         } catch (NullPointerException booleanNull) {
 
         }
@@ -107,7 +105,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
     private void setUpSkipClick() {
         Button skip = (Button) findViewById(R.id.skip);
-        skip.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE,false));
+        skip.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
         skip.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
         if (!UserUtil.isFilterCompleted() || isFromNav) {
             skip.setVisibility(View.VISIBLE);
@@ -122,7 +120,13 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
                 favList = tinyDB.getListString(TinyDB.FAVOURITE_FILTERS);
                 UserUtil.setFavouriteFilters(AdvancedFilterActivity.this, favList);*/
                 UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
-                moveToNextActivity(MainActivity.class);
+                FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).invalidate(AdvancedFilterActivity.this);
+                if (isResultRequired) {
+                    setResult(RESULT_OK);
+                    finish();
+                } else {
+                    moveToNextActivity(MainActivity.class);
+                }
             }
         });
     }
@@ -173,9 +177,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
     private void handleNextClick() {
         FavouriteItemWrapper.getInstance().saveList(this, favList);
-        for (FavouriteItem f : favList) {
-            Log.d("max", "saving=favlist==" + f.getName());
-        }
+
         if (UserUtil.isFilterCompleted() && !isFromNav) {
             finish();
         } else if (fragmentNum < sportsSelected.size()) {
@@ -185,40 +187,19 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             fragmentNum++;
         } else if (fragmentNum == sportsSelected.size()) {
             UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
-
-            /*try {
-                jsonObject = createJsonFabList(UserUtil.getFavouriteFilters());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
-            updateVCard();
-            moveToNextActivity(MainActivity.class);
+            VcardThread updateVcard = new VcardThread();
+            updateVcard.start();
+            if (isResultRequired) {
+                setResult(RESULT_OK);
+                finish();
+            } else {
+                moveToNextActivity(MainActivity.class);
+            }
         }
         closeSearch();
 
     }
 
-
-    private void updateVCard() {
-
-        try {
-            if (UserUtil.isFilterCompleted()) {
-                VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
-                VCard vCard = new VCard();
-                vCard.load(XMPPClient.getConnection());
-                vCard.setField("fav_list", TinyDB.getInstance(this).getString(TinyDB.FAVOURITE_FILTERS));
-                manager.saveVCard(vCard);
-            }
-
-        } catch (SmackException.NoResponseException e) {
-            e.printStackTrace();
-        } catch (XMPPException.XMPPErrorException e) {
-            e.printStackTrace();
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
-        }
-
-    }
 
     private void setUpToolBar() {
         toolbar = (Toolbar) findViewById(R.id.toolbar_main);
@@ -226,17 +207,16 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         titleText = (TextView) toolbar.findViewById(R.id.toolbar_title);
         titleText.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
         back = (ImageView) toolbar.findViewById(R.id.img_back);
-        back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE,true));
+        back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         search = (ImageView) toolbar.findViewById(R.id.action_search);
-        search.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE,true));
+        search.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         search.setVisibility(View.VISIBLE);
-        highLightSearch();
         titleLayout = (LinearLayout) toolbar.findViewById(R.id.title_layout);
         searchLayout = (LinearLayout) toolbar.findViewById(R.id.search_layout);
         searchText = (EditText) toolbar.findViewById(R.id.search_edit);
         searchClose = (ImageView) toolbar.findViewById(R.id.search_close);
-        searchClose.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE,true));
+        searchClose.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -297,18 +277,6 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
                 return false;
             }
         });
-    }
-
-    private void highLightSearch() {
-        new MaterialShowcaseView.Builder(this)
-                .setTarget(search)
-                .setDismissText(getString(R.string.got_it))
-                .setMaskColour(getResources().getColor(R.color.semi_transparent_white))
-                .setContentText(R.string.showcase_message)
-                .setContentHeadingText(R.string.showcase_heading)
-                .setDelay(500) // optional but starting animations immediately in onCreate can make them choppy
-                .singleUse(SHOWCASE_ID) // provide a unique ID used to ensure it is only shown once
-                .show();
     }
 
     public void addEditClickListener(OnEditFilterListener listener) {
@@ -384,9 +352,10 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         if (isSearchEdit) {
             closeSearch();
         } else {
+            FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).invalidate(AdvancedFilterActivity.this);
             fragmentNum--;
             if (UserUtil.isFilterCompleted() && !isFromNav) {
-                if (isFromNav) {
+                if (isResultRequired) {
                     setResult(RESULT_CANCELED);
                 }
                 finish();
@@ -398,7 +367,10 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
                 if (!UserUtil.isFilterCompleted() || isFromNav) {
                     moveToNextActivity(SelectSportsActivity.class);
                 } else {
-                    finish();
+                    if (isResultRequired) {
+                        setResult(RESULT_CANCELED);
+                        finish();
+                    }
                 }
             }
         }
@@ -407,5 +379,33 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     @Override
     public void onBackPressed() {
         onBack();
+    }
+
+    private class VcardThread extends Thread {
+        @Override
+        public void run() {
+            super.run();
+
+            try {
+                if (UserUtil.isFilterCompleted() && XMPPClient.getConnection() != null) {
+                    VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
+                    VCard vCard = new VCard();
+                    vCard.load(XMPPClient.getConnection());
+                    vCard.setField("fav_list", TinyDB.getInstance(AdvancedFilterActivity.this).getString(TinyDB.FAVOURITE_FILTERS));
+                    manager.saveVCard(vCard);
+                    UserUtil.setFavouriteVcardUpdated(AdvancedFilterActivity.this, true);
+
+                } else {
+                    UserUtil.setFavouriteVcardUpdated(AdvancedFilterActivity.this, false);
+                }
+
+            } catch (SmackException.NoResponseException e) {
+                e.printStackTrace();
+            } catch (XMPPException.XMPPErrorException e) {
+                e.printStackTrace();
+            } catch (SmackException.NotConnectedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

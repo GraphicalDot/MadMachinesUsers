@@ -8,8 +8,10 @@ import android.graphics.Color;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -105,7 +107,7 @@ public class PermissionUtil {
             }
         }
         if (isGranted) {
-            final Snackbar sb = Snackbar.make(activity.findViewById(R.id.rootview), message,
+            final Snackbar sb = Snackbar.make(activity.findViewById(android.R.id.content), message,
                     Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.allow, new View.OnClickListener() {
                         @Override
@@ -166,7 +168,7 @@ public class PermissionUtil {
      * @param message  denial message.
      */
     public void showSnackBar(final Activity activity, String message) {
-        Snackbar sb = Snackbar.make(activity.getWindow().getDecorView().findViewById(R.id.rootview), message,
+        Snackbar sb = Snackbar.make(activity.findViewById(android.R.id.content), message,
                 Snackbar.LENGTH_LONG);
         View v = sb.getView();
         sb.setActionTextColor(activity.getResources().getColor(R.color.app_theme_blue));

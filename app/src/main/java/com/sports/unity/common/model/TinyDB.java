@@ -49,6 +49,7 @@ public class TinyDB {
     public static final String TEAM_SELECTION = "team_selection";
     public static final String PLAYER_SELECTION = "player_selection";
     public static final String FILTER_COMPLETE = "filter_complete";
+    public static final String VCARD_UPDATED = "vcard_updated";
 
     /**
      * Settings Screen Options
@@ -265,6 +266,7 @@ public class TinyDB {
     public long getLong(String key, long defaultValue) {
         return preferences.getLong(key, defaultValue);
     }
+
     /**
      * Get float value from SharedPreferences at 'key'. If key not found, return 'defaultValue'
      *

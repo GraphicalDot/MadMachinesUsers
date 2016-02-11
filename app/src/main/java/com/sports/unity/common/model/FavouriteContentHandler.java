@@ -456,11 +456,73 @@ public class FavouriteContentHandler {
     }
 
     /**
+     * If after selecting the favourite if user presses back
+     * or skip button this method invalidate all the favourites lists.
+     *
+     * @param context COntext of origin activity
+     */
+    public void invalidate(Context context) {
+        if (UserUtil.isFilterCompleted()) {
+            ArrayList<FavouriteItem> favList = FavouriteItemWrapper.getInstance().getFavList(context);
+            for (FavouriteItem f : favCricketTeams) {
+                if (favList.contains(f)) {
+                    f.setChecked(true);
+                } else {
+                    f.setChecked(false);
+                }
+            }
+            for (FavouriteItem f : favCricketPlayers) {
+                if (favList.contains(f)) {
+                    f.setChecked(true);
+                } else {
+                    f.setChecked(false);
+                }
+            }
+            for (FavouriteItem f : favFootballTeams) {
+                if (favList.contains(f)) {
+                    f.setChecked(true);
+                } else {
+                    f.setChecked(false);
+                }
+            }
+            for (FavouriteItem f : favFootballPlayers) {
+                if (favList.contains(f)) {
+                    f.setChecked(true);
+                } else {
+                    f.setChecked(false);
+                }
+            }
+            for (FavouriteItem f : favFootballLeagues) {
+                if (favList.contains(f)) {
+                    f.setChecked(true);
+                } else {
+                    f.setChecked(false);
+                }
+            }
+        } else {
+            for (FavouriteItem f : favCricketTeams) {
+                f.setChecked(false);
+            }
+            for (FavouriteItem f : favCricketPlayers) {
+                f.setChecked(false);
+            }
+            for (FavouriteItem f : favFootballTeams) {
+                f.setChecked(false);
+            }
+            for (FavouriteItem f : favFootballPlayers) {
+                f.setChecked(false);
+            }
+            for (FavouriteItem f : favFootballLeagues) {
+                f.setChecked(false);
+            }
+        }
+    }
+
+    /**
      * Make request to network API for favourites.
      */
     public void makeRequest() {
         savedFavList = FavouriteItemWrapper.getInstance().getFavList(context);
-
         favFootballLeagues = new ArrayList<FavouriteItem>();
         favFootballTeams = new ArrayList<FavouriteItem>();
         favFootballPlayers = new ArrayList<FavouriteItem>();

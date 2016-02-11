@@ -18,6 +18,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -76,6 +77,7 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
     List<IShowcaseListener> mListeners; // external listeners who want to observe when we show and dismiss
     private UpdateOnGlobalLayout mLayoutListener;
     private IDetachedListener mDetachedListener;
+    private boolean isSmall = false;
 
     public MaterialShowcaseView(Context context) {
         super(context);
@@ -190,10 +192,15 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
         strokepaint.setColor(Color.argb(255, 255, 255, 255));
         strokepaint.setStrokeWidth(15f);
         strokepaint.setMaskFilter(new BlurMaskFilter(25, BlurMaskFilter.Blur.NORMAL));
-        mShape.draw(mCanvas, strokepaint, mXPosition, mYPosition, mShapePadding);
-        mShape.draw(mCanvas, mEraser, mXPosition, mYPosition, mShapePadding);
-        mShape.draw(mCanvas, strokepaint1, mXPosition, mYPosition, mShapePadding - 20);
-        mShape.draw(mCanvas, strokepaint1, mXPosition, mYPosition, mShapePadding);
+        if (!isSmall) {
+            mShape.draw(mCanvas, strokepaint, mXPosition, mYPosition, mShapePadding);
+            mShape.draw(mCanvas, mEraser, mXPosition, mYPosition, mShapePadding);
+            mShape.draw(mCanvas, strokepaint1, mXPosition, mYPosition, mShapePadding - 20);
+            mShape.draw(mCanvas, strokepaint1, mXPosition, mYPosition, mShapePadding);
+        } else {
+            mShape.draw(mCanvas, mEraser, mXPosition, mYPosition, mShapePadding-(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics()));
+            mShape.draw(mCanvas, strokepaint1, mXPosition, mYPosition, mShapePadding-(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics()));
+        }
 
         // Draw the bitmap on our views  canvas.
         canvas.drawBitmap(mBitmap, 0, 0, null);
@@ -366,10 +373,14 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
             mContentTextView.setText(Html.fromHtml(contentText));
         }
     }
+
     private void setContentHeadingText(String contentText) {
         if (mContentHeadingTextView != null) {
             mContentHeadingTextView.setText(Html.fromHtml(contentText));
         }
+    }
+    private void setSmallCircle(boolean isSmall) {
+        this.isSmall=isSmall;
     }
 
     private void setDismissText(CharSequence dismissText) {
@@ -385,6 +396,7 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
             mContentTextView.setTextColor(textColour);
         }
     }
+
     private void setContentHeadingTextColor(int textColour) {
         if (mContentHeadingTextView != null) {
             mContentHeadingTextView.setTextColor(textColour);
@@ -522,6 +534,7 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
             showcaseView.setDismissText(dismissText);
             return this;
         }
+
         /**
          * Set the title heading text shown on the ShowcaseView.
          */
@@ -534,6 +547,10 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
          */
         public Builder setContentHeadingText(String text) {
             showcaseView.setContentHeadingText(text);
+            return this;
+        }
+        public Builder setSmallCircle(boolean isSmall){
+            showcaseView.setSmallCircle(isSmall);
             return this;
         }
         /**
@@ -561,6 +578,7 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
             showcaseView.setMaskColour(maskColour);
             return this;
         }
+
         public Builder setContentHeadingTextColor(int textColour) {
             showcaseView.setContentHeadingTextColor(textColour);
             return this;
