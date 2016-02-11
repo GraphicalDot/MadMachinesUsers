@@ -287,7 +287,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
         editFavourite = (TextView) findViewById(R.id.edit_fav);
 
-        editFavourite.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
+        editFavourite.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
         editFavourite.setVisibility(View.VISIBLE);
 
         statusView = (LinearLayout) findViewById(R.id.status_list);
@@ -313,7 +313,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         TextView favPlayer = (TextView) findViewById(R.id.fav_player);
         favPlayer.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
         TextView fav = (TextView) findViewById(R.id.fav);
-        fav.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+        fav.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
         statusTitle = (TextView) findViewById(R.id.select_status);
         statusTitle.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
     }

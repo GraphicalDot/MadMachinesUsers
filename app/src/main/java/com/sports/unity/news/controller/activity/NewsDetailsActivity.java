@@ -70,9 +70,18 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
     }
 
     private void initViews() {
-        WebView webview = (WebView) findViewById(R.id.webview);
-        progressBar = (ProgressBar) findViewById(R.id.progress);
 
+        TextView titleText = (TextView) findViewById(R.id.TitleText);
+        TextView InfoData = (TextView) findViewById(R.id.info_text);
+        TextView published = (TextView) findViewById(R.id.published);
+        TextView sportType = (TextView) findViewById(R.id.type);
+        ImageView image = (ImageView) findViewById(R.id.img_url);
+        ImageView fabIcon = (ImageView) findViewById(R.id.fab_icon);
+
+
+        titleText.setText(title);
+        InfoData.setText(content);
+        sportType.setText(type);
 
 
         ImageView img = (ImageView) findViewById(R.id.img);
@@ -82,27 +91,6 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
                 finish();
             }
         });
-        final Activity activity = this;
-
-        webview.setWebViewClient(new MyWebViewClient());
-
-//        webview.setWebViewClient(new WebViewClient() {
-//            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-//                Toast.makeText(activity, "Oh no! " + description, Toast.LENGTH_SHORT).show();
-//            }
-//        });
-        webview.getSettings().setJavaScriptEnabled(true);
-        webview.getSettings().setLoadWithOverviewMode(true);
-        webview.getSettings().setUseWideViewPort(true);
-
-        webview.getSettings().setSupportZoom(true);
-        webview.getSettings().setBuiltInZoomControls(true);
-        webview.getSettings().setDisplayZoomControls(false);
-
-        webview.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-        webview.setScrollbarFadingEnabled(false);
-
-        webview.loadUrl(url);
     }
 
     @Override
@@ -130,38 +118,5 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
 
-
-    }
-
-    private class MyWebViewClient extends WebViewClient {
-
-
-        @Override
-        public void onPageStarted(WebView view, String url, Bitmap favicon) {
-
-            super.onPageStarted(view, url, favicon);
-            progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        public void onPageFinished(WebView view, String url) {
-            progressBar.setVisibility(View.GONE);
-        }
-
-        @Override
-        public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            view.loadUrl(url);
-
-            progressBar.setVisibility(View.GONE);
-
-            return true;
-        }
-
-        @Override
-        public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-            super.onReceivedError(view, errorCode, description, failingUrl);
-
-        }
     }
 }
