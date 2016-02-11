@@ -107,7 +107,7 @@
     <dimen name="marginTop_user_info_card">-32dp</dimen>
     <dimen name="marginLeft_user_profile_tag">300dp</dimen>
     <dimen name="layout_height_card_divider">1dp</dimen>
-
-
+    <!--  player current match summery-->
+    <dimen name="margin_divider">80dp</dimen>
 
 </resources>

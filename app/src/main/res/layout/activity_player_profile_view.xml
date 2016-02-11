@@ -33,21 +33,26 @@
                 android:background="@color/com_facebook_button_background_color"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/activity_horizontal_margin">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/player_profile_image"
+        android:layout_width="@dimen/profile_thumb_image_xlarge"
+        android:layout_height="@dimen/profile_thumb_image_xlarge"
+        android:layout_gravity="center"
+        android:layout_centerInParent="true"
+        android:layout_margin="@dimen/vertical_padding_very_very_small"
+        android:src="@drawable/ic_user" />
+    <ImageView
+        android:layout_toRightOf="@id/player_profile_image"
+        android:id="@+id/player_tag_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/player_profile_image"
+        android:src="@drawable/ic_distance_slider_01" />
+</RelativeLayout>
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/player_profile_image"
-                    android:layout_width="@dimen/profile_thumb_image_xlarge"
-                    android:layout_height="@dimen/profile_thumb_image_xlarge"
-                    android:layout_gravity="center"
-                    android:layout_margin="@dimen/vertical_padding_very_very_small"
-                    android:src="@drawable/ic_user" />
-                <ImageView
-                    android:id="@+id/player_tag_image"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_distance_slider_01"
-                    android:layout_marginTop="@dimen/marginTop_user_profile_tag"
-                    android:layout_marginLeft="@dimen/marginLeft_user_profile_tag"/>
 
                 <TextView
                     android:id="@+id/player_name"
