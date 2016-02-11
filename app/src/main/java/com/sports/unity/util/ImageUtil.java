@@ -257,11 +257,24 @@ public class ImageUtil {
     private static int calculateInSampleSize( BitmapFactory.Options options, int reqWidth, int reqHeight) {
         int sampleScaleSize = 1;
 
-        float scaleDownFactor = reqWidth > reqHeight ? (float)reqWidth/480 : (float)reqHeight/600;
-        if( scaleDownFactor > 1 ) {
-            reqWidth = (int) (reqWidth / scaleDownFactor);
-            reqHeight = (int) (reqHeight / scaleDownFactor);
+        int maxLimit = 800;
+        if( reqWidth > maxLimit || reqHeight > maxLimit ) {
+            if ( reqWidth > reqHeight ) {
+                float ratio = reqWidth/reqHeight;
+                reqWidth = maxLimit;
+                reqHeight = (int)(maxLimit / ratio);
+            } else {
+                float ratio = reqHeight/reqWidth;
+                reqHeight = maxLimit;
+                reqWidth = (int)(maxLimit / ratio);
+            }
         }
+
+//        float scaleDownFactor = reqWidth > reqHeight ? (float)reqWidth/480 : (float)reqHeight/600;
+//        if( scaleDownFactor > 1 ) {
+//            reqWidth = (int) (reqWidth / scaleDownFactor);
+//            reqHeight = (int) (reqHeight / scaleDownFactor);
+//        }
 
         while (options.outWidth / sampleScaleSize >= reqWidth || options.outHeight / sampleScaleSize >= reqHeight) {
             sampleScaleSize++;

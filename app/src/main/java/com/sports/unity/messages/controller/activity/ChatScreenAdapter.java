@@ -343,8 +343,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                 image.setTag(position);
             } else {
                 if( message.media != null ) {
-                    content = Base64.decode(message.media, Base64.DEFAULT);
-                    image.setImageBitmap(BitmapFactory.decodeByteArray(content, 0, content.length));
+                    image.setImageBitmap(BitmapFactory.decodeByteArray(message.media, 0, message.media.length));
                 } else {
                     image.setImageResource(R.drawable.grey_bg_rectangle);
                 }
