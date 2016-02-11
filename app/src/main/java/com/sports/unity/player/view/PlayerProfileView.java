@@ -137,9 +137,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             e.printStackTrace();
         }
     }
-
-
-    @Override
+   @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_user_profile, menu);
@@ -210,7 +208,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
 
     private void getIntentExtras() {
         //playerNameKey = getIntent().getStringExtra("name");
-        playerNameKey="";
+        playerNameKey="Cristiano Ronaldo";
 
     }
 

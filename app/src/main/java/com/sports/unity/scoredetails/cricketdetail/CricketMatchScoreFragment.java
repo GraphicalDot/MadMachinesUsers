@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.scoredetails.CommentriesModel;
@@ -24,6 +26,10 @@ import java.util.List;
 public class CricketMatchScoreFragment extends Fragment implements FragementInterface<CricketMatchScoreModel> {
 
 
+
+
+
+
     private OnFragmentInteractionListener mListener;
 
 
@@ -34,8 +40,7 @@ public class CricketMatchScoreFragment extends Fragment implements FragementInte
         return inflater.inflate(R.layout.fragment_cricket_match_score, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
         }
@@ -63,7 +68,12 @@ public class CricketMatchScoreFragment extends Fragment implements FragementInte
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
+
+
+
+
 }

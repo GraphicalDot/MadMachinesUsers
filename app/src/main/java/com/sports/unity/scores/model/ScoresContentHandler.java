@@ -22,6 +22,7 @@ public class ScoresContentHandler {
     public static final String CALL_NAME_NEAR_BY_USERS = "NEAR_BY_USERS";
     public static final String CALL_NAME_PLAYER_PROFILE = "PLAYER_PROFILE";
 
+
     public static final String PARAM_SPORTS_TYPE = "SPORTS_TYPE";
     public static final String PARAM_ID = "ID";
 
@@ -124,6 +125,10 @@ public class ScoresContentHandler {
             String sportsType = parameters.get(PARAM_SPORTS_TYPE);
             requestCommentaryOnMatch( sportsType, matchId, requestListenerKey, requestTag);
         } else if(callName.equals(CALL_NAME_PLAYER_PROFILE)){
+            String playerName = parameters.get(Constants.PLAYER_NAME);
+            String sportsType = parameters.get(PARAM_SPORTS_TYPE);
+            requestPlayerProfile(sportsType, playerName, requestListenerKey, requestTag);
+        }else if(callName.equals(CALL_NAME_PLAYER_PROFILE)){
             String playerName = parameters.get(Constants.PLAYER_NAME);
             String sportsType = parameters.get(PARAM_SPORTS_TYPE);
             requestPlayerProfile(sportsType, playerName, requestListenerKey, requestTag);

@@ -102,8 +102,6 @@ public class MatchListFragment extends Fragment {
 
             showProgress(getView());
             requestContent();
-        } else {
-            //nothing
         }
 
 
@@ -306,8 +304,6 @@ public class MatchListFragment extends Fragment {
 
                 hideProgress(getView());
                 mSwipeRefreshLayout.setRefreshing(false);
-            } else {
-                //nothing
             }
         }
     }
