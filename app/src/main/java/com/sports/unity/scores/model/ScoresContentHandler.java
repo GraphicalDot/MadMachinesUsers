@@ -17,6 +17,7 @@ public class ScoresContentHandler {
 
     public static final String CALL_NAME_CREATE_USER = "CREATE_USER";
     public static final String CALL_NAME_ASK_OTP = "ASK_OTP";
+    public static final String CALL_NAME_NEWS_DETAIL = "NEWS_DETAIL";
     public static final String CALL_NAME_MATCHES_LIST = "MATCHES_LIST";
     public static final String CALL_NAME_MATCH_DETAIL = "MATCH_DETAILS";
     public static final String CALL_NAME_MATCH_COMMENTARIES = "MATCH_COMMENTARIES";
@@ -29,10 +30,17 @@ public class ScoresContentHandler {
     public static final String PARAM_LONGITUDE = "LONGITUDE";
     public static final String PARAM_RADIUS = "RADIUS";
 
+    public static final String PARAM_NEWS_IMAGE_DPI = "IMAGE_DPI";
+    public static final String PARAM_NEWS_ID = "NEWS_ID";
+
     private static final String URL_CREATE = "http://54.169.217.88/create?";
     public static final String URL_REGISTER = "http://54.169.217.88/register?";
     private static final String URL_REQUEST_OTP = "http://54.169.217.88/create?";
     private static final String URL_NEAR_BY = "http://54.169.217.88/retrieve_nearby_users?";
+
+    public static final String URL_NEWS = "http://52.76.74.188:8000/mixed?";
+    private static final String URL_PARAMS_NEWS_IMAGE_DPI = "image_size";
+    private static final String URL_PARAMS_NEWS_ID = "news_id";
 
     private static final String SCORES_BASE_URL = "http://52.74.75.79:8080/";
     private static final String URL_PARAMS_FOR_LIST_OF_MATCHES = "get_all_matches_list";
@@ -105,6 +113,10 @@ public class ScoresContentHandler {
         } else if( callName.equals(CALL_NAME_ASK_OTP) ){
             String phoneNumber = parameters.get(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER);
             requestForOtp(phoneNumber, requestListenerKey, requestTag);
+        } else if( callName.equals(CALL_NAME_NEWS_DETAIL) ){
+            String imageDpi = parameters.get(PARAM_NEWS_IMAGE_DPI);
+            String newsId = parameters.get(PARAM_NEWS_ID);
+            requestForNewsDetail( imageDpi, newsId, requestListenerKey, requestTag);
         } else if( callName.equals(CALL_NAME_NEAR_BY_USERS) ){
             String lat = parameters.get(PARAM_LATITUDE);
             String lng = parameters.get(PARAM_LONGITUDE);
@@ -115,11 +127,11 @@ public class ScoresContentHandler {
         } else if( callName.equals(CALL_NAME_MATCH_DETAIL) ){
             String matchId = parameters.get(PARAM_ID);
             String sportsType = parameters.get(PARAM_SPORTS_TYPE);
-            requestScoresOfMatch( sportsType, matchId, requestListenerKey, requestTag);
+            requestScoresOfMatch(sportsType, matchId, requestListenerKey, requestTag);
         } else if( callName.equals(CALL_NAME_MATCH_COMMENTARIES) ){
             String matchId = parameters.get(PARAM_ID);
             String sportsType = parameters.get(PARAM_SPORTS_TYPE);
-            requestCommentaryOnMatch( sportsType, matchId, requestListenerKey, requestTag);
+            requestCommentaryOnMatch(sportsType, matchId, requestListenerKey, requestTag);
         }
     }
 
@@ -150,6 +162,23 @@ public class ScoresContentHandler {
             urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER);
             urlBuilder.append("=");
             urlBuilder.append(phoneNumber);
+
+            requestContent(requestTag, listenerKey, urlBuilder.toString());
+        } else {
+            //nothing
+        }
+    }
+
+    private void requestForNewsDetail(String imageDpi, String newsId, String listenerKey, String requestTag){
+        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+            StringBuilder urlBuilder = new StringBuilder(URL_NEWS);
+            urlBuilder.append(URL_PARAMS_NEWS_IMAGE_DPI);
+            urlBuilder.append("=");
+            urlBuilder.append(imageDpi);
+            urlBuilder.append("&");
+            urlBuilder.append(URL_PARAMS_NEWS_ID);
+            urlBuilder.append("=");
+            urlBuilder.append(newsId);
 
             requestContent(requestTag, listenerKey, urlBuilder.toString());
         } else {

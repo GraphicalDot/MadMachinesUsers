@@ -6,7 +6,9 @@
     android:background="@color/ColorPrimary"
     android:minHeight="?android:attr/actionBarSize"
     android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
-    app:layout_scrollFlags="scroll|enterAlways">
+    app:layout_scrollFlags="scroll|enterAlways"
+    android:elevation="@dimen/toolbar_elevation"
+    >
 
 
     <LinearLayout

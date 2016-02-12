@@ -83,6 +83,7 @@
                 android:paddingLeft="@dimen/vertical_padding_very_small"
                 android:paddingRight="@dimen/vertical_padding_very_small"
                 android:paddingTop="@dimen/vertical_padding_very_small"
+                android:paddingBottom="@dimen/vertical_padding_very_small"
                 android:textColor="@color/news_headline_mini"
                 android:textSize="@dimen/font_size_medium" />
 
@@ -94,6 +95,7 @@
                 android:paddingBottom="@dimen/vertical_padding_very_small"
                 android:paddingLeft="@dimen/vertical_padding_very_small"
                 android:paddingRight="@dimen/vertical_padding_very_small"
+                android:lineSpacingExtra="@dimen/vertical_padding_very_very_small"
                 android:textColor="@color/news_data"
                 android:textSize="@dimen/font_size_small_large"
                 />

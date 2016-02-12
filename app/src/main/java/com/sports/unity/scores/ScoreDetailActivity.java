@@ -403,7 +403,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(ScoresContentHandler.PARAM_SPORTS_TYPE, sportsType);
         parameters.put(ScoresContentHandler.PARAM_ID, matchId);
-        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_DETAIL, parameters, REQUEST_LISTENER_KEY, SCORE_DETAIL_REQUEST_TAG);
+        requestContent(ScoresContentHandler.CALL_NAME_MATCH_DETAIL, parameters, SCORE_DETAIL_REQUEST_TAG);
     }
 
     private void requestMatchCommentaries() {

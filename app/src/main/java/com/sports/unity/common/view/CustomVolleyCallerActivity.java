@@ -70,7 +70,11 @@ public class CustomVolleyCallerActivity extends CustomAppCompatActivity {
                 customComponentListener.hideErrorLayout();
                 customComponentListener.showProgress();
             } else {
-                //nothing
+                if( customComponentListener.isRequestSuccess ) {
+                   //nothing
+                } else {
+                    customComponentListener.showErrorLayout();
+                }
             }
         }
         addCustomContentListener();
@@ -160,16 +164,19 @@ public class CustomVolleyCallerActivity extends CustomAppCompatActivity {
             if( responseCode == HttpURLConnection.HTTP_OK ) {
                 boolean success = customComponentListener.handleContent(requestTag, content);
                 if( success ){
+                    customComponentListener.isRequestSuccess = true;
                     if( ! customComponentListener.isComponentPaused() ){
                         customComponentListener.changeUI();
                     }
                 } else {
+                    customComponentListener.isRequestSuccess = false;
                     if( ! customComponentListener.isComponentPaused() ) {
                         customComponentListener.showErrorLayout();
                     }
                 }
             } else {
                 customComponentListener.handleErrorContent(requestTag);
+                customComponentListener.isRequestSuccess = false;
 
                 if( ! customComponentListener.isComponentPaused() ) {
                     customComponentListener.showErrorLayout();
@@ -190,6 +197,8 @@ public class CustomVolleyCallerActivity extends CustomAppCompatActivity {
 
         private String requestTag = null;
         private boolean componentPaused = false;
+
+        private boolean isRequestSuccess = false;
 
         public CustomComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
             this.progressBar = progressBar;
@@ -230,6 +239,7 @@ public class CustomVolleyCallerActivity extends CustomAppCompatActivity {
         }
 
         protected void showErrorLayout(){
+            isRequestSuccess = false;
             if( errorLayout != null  ) {
                 errorLayout.setVisibility(View.VISIBLE);
             }

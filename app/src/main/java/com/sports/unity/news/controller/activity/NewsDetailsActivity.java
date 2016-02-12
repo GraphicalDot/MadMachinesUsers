@@ -1,102 +1,100 @@
 package com.sports.unity.news.controller.activity;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
-import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.sports.unity.R;
-import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.view.CustomVolleyCallerActivity;
+import com.sports.unity.news.model.NewsJsonCaller;
+import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.JsonObjectCaller;
 
-public class NewsDetailsActivity extends CustomAppCompatActivity {
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.Days;
+import org.joda.time.Hours;
+import org.joda.time.LocalDate;
+import org.joda.time.Minutes;
+import org.json.JSONObject;
 
-    private String content = null;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-    private String url = null;
+public class NewsDetailsActivity extends CustomVolleyCallerActivity {
+
+    private static final String REQUEST_LISTENER_KEY = "news_detail_listener";
+    private static final String NEWS_DETAIL_REQUEST_TAG = "news_detail_request_tag";
+
+    private Menu menu = null;
+
+    private String id = null;
     private String title = null;
-    private String type = null;
+    private String shareContent = null;
 
-    private ProgressBar progressBar;
+    private JSONObject newsJsonObject = null;
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_news_details);
+        initView();
 
-        url = getIntent().getStringExtra(Constants.INTENT_KEY_URL);
-        title = getIntent().getStringExtra(Constants.INTENT_KEY_TITLE);
-        type = getIntent().getStringExtra(Constants.INTENT_KEY_TYPE);
+        {
+            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+            LinearLayout errorLayout = (LinearLayout) findViewById(R.id.error);
+            initErrorLayout(errorLayout);
 
-        content = title + "\n\n" + url;
+            NewsDetailComponentListener createUserComponentListener = new NewsDetailComponentListener(progressBar, errorLayout);
 
-        setToolBar();
-        initViews();
+            ArrayList<CustomComponentListener> listeners = new ArrayList<>();
+            listeners.add(createUserComponentListener);
+
+            onComponentCreate(listeners, REQUEST_LISTENER_KEY);
+        }
+
+        requestNewsDetail();
     }
 
-    private void setToolBar() {
-        Toolbar toolbar = (Toolbar) findViewById(com.sports.unity.R.id.tool_bar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+    @Override
+    public void onResume() {
+        super.onResume();
 
-        TextView tv = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        tv.setText(type);
-        tv.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
+        onComponentResume();
     }
 
-    private void initViews() {
+    @Override
+    public void onPause() {
+        super.onPause();
 
-        TextView titleText = (TextView) findViewById(R.id.TitleText);
-        TextView InfoData = (TextView) findViewById(R.id.info_text);
-        TextView published = (TextView) findViewById(R.id.published);
-        TextView sportType = (TextView) findViewById(R.id.type);
-        ImageView image = (ImageView) findViewById(R.id.img_url);
-        ImageView fabIcon = (ImageView) findViewById(R.id.fab_icon);
-
-
-        titleText.setText(title);
-        InfoData.setText(content);
-        sportType.setText(type);
-
-
-        ImageView img = (ImageView) findViewById(R.id.img);
-        img.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
-        img.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        onComponentPause();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.menu_news_details, menu);
+
         return true;
     }
 
@@ -111,7 +109,7 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
                 sharingIntent.putExtra(Intent.EXTRA_SUBJECT, title);
-                sharingIntent.putExtra(Intent.EXTRA_TEXT, content);
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
                 return true;
             default:
@@ -119,4 +117,191 @@ public class NewsDetailsActivity extends CustomAppCompatActivity {
         }
 
     }
+
+    private void initView(){
+        id = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+
+        String title = getIntent().getStringExtra(Constants.INTENT_KEY_TITLE);
+        setToolBar(title);
+
+        initViews();
+    }
+
+    private void setToolBar(String title) {
+        Toolbar toolbar = (Toolbar) findViewById(com.sports.unity.R.id.tool_bar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        TextView tv = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        tv.setText(title);
+        tv.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+    }
+
+    private void initViews() {
+        ImageView img = (ImageView) findViewById(R.id.img);
+        img.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
+        img.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                finish();
+            }
+
+        });
+    }
+
+    private void initErrorLayout(LinearLayout errorLayout){
+        errorLayout.setVisibility(View.GONE);
+        TextView message = (TextView)errorLayout.findViewById(R.id.something_wrong);
+        message.setText("Tap here, to reload news article.");
+        errorLayout.setClickable(true);
+        errorLayout.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                requestNewsDetail();
+            }
+
+        });
+    }
+
+    private boolean handleNewsDetailResponse(String response){
+        boolean success = false;
+        try{
+            JSONObject responseJson = new JSONObject(response);
+            if( responseJson.getBoolean("success") ){
+                newsJsonObject = responseJson.getJSONObject("result");
+
+                success = true;
+            } else {
+                success = false;
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return success;
+    }
+
+    private boolean renderResponse(){
+        boolean success = false;
+        if( newsJsonObject != null ){
+
+            TextView titleText = (TextView) findViewById(R.id.TitleText);
+            TextView sportType = (TextView) findViewById(R.id.type);
+
+            TextView infoData = (TextView) findViewById(R.id.info_text);
+            TextView published = (TextView) findViewById(R.id.published);
+
+            ImageView image = (ImageView) findViewById(R.id.img_url);
+            ImageView fabIcon = (ImageView) findViewById(R.id.fab_icon);
+
+            infoData.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
+            titleText.setTypeface(FontTypeface.getInstance(this).getRobotoSlabRegular());
+            published.setTypeface(FontTypeface.getInstance(this).getRobotoRegular());
+
+            NewsJsonCaller newsJsonCaller = new NewsJsonCaller();
+            newsJsonCaller.setJsonObject(newsJsonObject);
+
+            try {
+                title = newsJsonCaller.getTitle();
+                shareContent = newsJsonCaller.getTitle() + "\n\n" + newsJsonCaller.getNewsLink();
+
+                infoData.setText( newsJsonCaller.getNews());
+
+                titleText.setText(title);
+                sportType.setText(newsJsonCaller.getType());
+
+                {
+                    DateTime dateTime = new DateTime(newsJsonCaller.getPublishEpoch() * 1000);
+                    DateTime dateTime1 = new DateTime(LocalDate.now(DateTimeZone.forID("Asia/Kolkata")).toDateTimeAtCurrentTime());
+                    int days = Days.daysBetween(dateTime, dateTime1).getDays();
+                    int hours = Hours.hoursBetween(dateTime, dateTime1).getHours();
+                    int minutes = Minutes.minutesBetween(dateTime, dateTime1).getMinutes();
+                    if (days > 0) {
+                        published.setText(String.valueOf(days) + " day" + (days == 1 ? "" : "s") + " ago");
+                    } else if (hours > 0) {
+                        published.setText(String.valueOf(hours) + " hour" + (hours == 1 ? "" : "s") + " ago");
+                    } else if (minutes >= 0) {
+                        published.setText(String.valueOf(minutes) + " minute" + (minutes == 1 ? "" : "s") + " ago");
+                    } else {
+                        published.setText("");
+                    }
+                }
+
+                if (newsJsonCaller.getImage_link() != null && !newsJsonCaller.getImage_link().equals("null")) {
+                    image.setVisibility(View.VISIBLE);
+                    String myUri = newsJsonCaller.getImage_link();
+                    Glide.with(this).load(myUri).into(image);
+                } else {
+                    image.setVisibility(View.GONE);
+                }
+
+                if (newsJsonCaller.getFabIcon_link() != null && !newsJsonCaller.getFabIcon_link().equals("null")) {
+                    fabIcon.setVisibility(View.VISIBLE);
+                    String myUri = newsJsonCaller.getFabIcon_link();
+                    Glide.with(this).load(myUri).into(fabIcon);
+                } else {
+                    fabIcon.setVisibility(View.GONE);
+                }
+
+                findViewById(R.id.news_layout).setVisibility(View.VISIBLE);
+                success  = true;
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+        } else {
+            //nothing
+        }
+
+        if ( success ) {
+            menu.findItem(R.id.action_share).setVisible(true);
+        }
+        return success;
+    }
+
+    private void requestNewsDetail() {
+        Log.i("News Detail", "Request news Details");
+
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put(ScoresContentHandler.PARAM_NEWS_IMAGE_DPI, "hdpi");
+        parameters.put(ScoresContentHandler.PARAM_NEWS_ID, id);
+        requestContent(ScoresContentHandler.CALL_NAME_NEWS_DETAIL, parameters, NEWS_DETAIL_REQUEST_TAG);
+    }
+
+    private class NewsDetailComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
+
+        public NewsDetailComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
+            super( NEWS_DETAIL_REQUEST_TAG, progressBar, errorLayout);
+        }
+
+        @Override
+        public boolean handleContent(String tag, String content) {
+            return NewsDetailsActivity.this.handleNewsDetailResponse(content);
+        }
+
+        @Override
+        public void handleErrorContent(String tag) {
+
+        }
+
+        @Override
+        protected void showErrorLayout() {
+            super.showErrorLayout();
+
+            if( CommonUtil.isInternetConnectionAvailable(NewsDetailsActivity.this) ){
+                Toast.makeText(NewsDetailsActivity.this, R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void changeUI() {
+            boolean success = renderResponse();
+            if( ! success ){
+                showErrorLayout();
+            } else {
+                //nothing
+            }
+        }
+
+    }
+
 }
