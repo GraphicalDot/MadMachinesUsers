@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -115,7 +114,7 @@ public class FilterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(FilterActivity.this, SelectSportsActivity.class);
-                intent.putExtra(Constants.FROM_ADD_SPORTS, true);
+                intent.putExtra(Constants.RESULT_REQUIRED, true);
                 startActivityForResult(intent, Constants.REQUEST_CODE_EDIT_SPORT);
             }
         });

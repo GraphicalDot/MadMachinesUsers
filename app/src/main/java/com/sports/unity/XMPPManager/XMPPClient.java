@@ -114,6 +114,16 @@ public class XMPPClient {
         return success;
     }
 
+    public boolean isConnectionAuthenticated(){
+        boolean authenticated = false;
+        if( connection != null && connection.isAuthenticated() ){
+            authenticated = true;
+        } else {
+            //nothing
+        }
+        return authenticated;
+    }
+
     public void sendOfflinePresence() {
         if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
             Presence presence = new Presence(Presence.Type.available);

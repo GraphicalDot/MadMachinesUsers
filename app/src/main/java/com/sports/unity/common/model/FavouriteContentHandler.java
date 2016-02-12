@@ -463,7 +463,7 @@ public class FavouriteContentHandler {
      */
     public void invalidate(Context context) {
         if (UserUtil.isFilterCompleted()) {
-            ArrayList<FavouriteItem> favList = FavouriteItemWrapper.getInstance().getFavList(context);
+            ArrayList<FavouriteItem> favList = FavouriteItemWrapper.getInstance(context).getFavList();
             for (FavouriteItem f : favCricketTeams) {
                 if (favList.contains(f)) {
                     f.setChecked(true);
@@ -522,7 +522,7 @@ public class FavouriteContentHandler {
      * Make request to network API for favourites.
      */
     public void makeRequest() {
-        savedFavList = FavouriteItemWrapper.getInstance().getFavList(context);
+        savedFavList = FavouriteItemWrapper.getInstance(context).getFavList();
         favFootballLeagues = new ArrayList<FavouriteItem>();
         favFootballTeams = new ArrayList<FavouriteItem>();
         favFootballPlayers = new ArrayList<FavouriteItem>();

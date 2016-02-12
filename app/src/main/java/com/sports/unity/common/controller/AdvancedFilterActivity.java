@@ -37,8 +37,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
-
 /**
  * Created by Mad on 12/28/2015.
  */
@@ -67,12 +65,12 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.advanced_filter_activity);
         editFilterListener = new ArrayList<OnEditFilterListener>();
-        favList = FavouriteItemWrapper.getInstance().getFavList(this);
+        favList = FavouriteItemWrapper.getInstance(this).getFavList();
         sportsSelected = UserUtil.getSportsSelected();
         bundle = getIntent().getExtras();
         try {
             isFromNav = true;
-            isResultRequired = getIntent().getExtras().getBoolean(Constants.FROM_ADD_SPORTS);
+            isResultRequired = getIntent().getExtras().getBoolean(Constants.RESULT_REQUIRED);
         } catch (NullPointerException booleanNull) {
 
         }
@@ -128,7 +126,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     }
 
     private void handleNextClick() {
-        FavouriteItemWrapper.getInstance().saveList(this, favList);
+        FavouriteItemWrapper.getInstance(this).saveList(this, favList);
 
         if (UserUtil.isFilterCompleted() && !isFromNav) {
             finish();

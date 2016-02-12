@@ -3,15 +3,10 @@ package com.sports.unity.common.controller.fragment;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sports.unity.R;
@@ -19,13 +14,10 @@ import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.SelectSportsActivity;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
-import com.sports.unity.common.model.UserUtil;
-import com.sports.unity.news.controller.activity.NewsSearchActivity;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 
-import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 
@@ -67,11 +59,11 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
         bundle = getArguments();
         filter = bundle.getString(Constants.SPORTS_FILTER_TYPE);
         if (filter.equals(Constants.FILTER_TYPE_TEAM)) {
-            favList = FavouriteItemWrapper.getInstance().getAllTeams();
+            favList = FavouriteItemWrapper.getInstance(getActivity()).getAllTeams();
         } else if (filter.equals(Constants.FILTER_TYPE_PLAYER)) {
-            favList = FavouriteItemWrapper.getInstance().getAllPlayers();
+            favList = FavouriteItemWrapper.getInstance(getActivity()).getAllPlayers();
         } else if (filter.equals(Constants.FILTER_TYPE_LEAGUE)) {
-            favList = FavouriteItemWrapper.getInstance().getAllLeagues();
+            favList = FavouriteItemWrapper.getInstance(getActivity()).getAllLeagues();
         }
         if (favList.size() > 0) {
             filterAdapter = new FilterAdapter(getActivity(), favList);
@@ -109,7 +101,7 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), SelectSportsActivity.class);
-                intent.putExtra(Constants.FROM_ADD_SPORTS, true);
+                intent.putExtra(Constants.RESULT_REQUIRED, true);
                 getActivity().startActivityForResult(intent, Constants.REQUEST_CODE_ADD_SPORT);
             }
         });
@@ -125,11 +117,11 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
     public void updateData() {
         try {
             if (filter.equals(Constants.FILTER_TYPE_TEAM)) {
-                favList = FavouriteItemWrapper.getInstance().getAllTeams();
+                favList = FavouriteItemWrapper.getInstance(getActivity()).getAllTeams();
             } else if (filter.equals(Constants.FILTER_TYPE_PLAYER)) {
-                favList = FavouriteItemWrapper.getInstance().getAllPlayers();
+                favList = FavouriteItemWrapper.getInstance(getActivity()).getAllPlayers();
             } else if (filter.equals(Constants.FILTER_TYPE_LEAGUE)) {
-                favList = FavouriteItemWrapper.getInstance().getAllLeagues();
+                favList = FavouriteItemWrapper.getInstance(getActivity()).getAllLeagues();
             }
             if (favList.size() > 0) {
                 hideErrorLayout(getView());

@@ -1,32 +1,21 @@
 package com.sports.unity.common.controller;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
-import com.sports.unity.XMPPManager.XMPPClient;
-import com.sports.unity.common.controller.SportsGridViewAdapter;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
-import com.sports.unity.util.network.LocManager;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -80,7 +69,7 @@ public class SelectSportsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
-            isResultRequired = getIntent().getExtras().getBoolean(Constants.FROM_ADD_SPORTS);
+            isResultRequired = getIntent().getExtras().getBoolean(Constants.RESULT_REQUIRED);
         } catch (NullPointerException booleanNull) {
 
         }

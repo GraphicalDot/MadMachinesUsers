@@ -1,7 +1,6 @@
 package com.sports.unity.common.model;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.sports.unity.util.Constants;
 
@@ -10,7 +9,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,6 +33,7 @@ public class FavouriteItemWrapper {
     private List<FavouriteItem> savedFootballPlayers;
     private List<FavouriteItem> savedCricketTeams;
     private List<FavouriteItem> savedCricketPlayers;
+    private List<FavouriteItem> savedFavlist;
     public static FavouriteItemWrapper favouriteItemWrapper;
 
     /**
@@ -42,9 +41,9 @@ public class FavouriteItemWrapper {
      *
      * @return single instance of {@link #FavouriteItemWrapper}.
      */
-    public static FavouriteItemWrapper getInstance() {
+    public static FavouriteItemWrapper getInstance(Context context) {
         if (favouriteItemWrapper == null) {
-            favouriteItemWrapper = new FavouriteItemWrapper();
+            favouriteItemWrapper = new FavouriteItemWrapper(context);
         }
         return favouriteItemWrapper;
     }
@@ -52,7 +51,58 @@ public class FavouriteItemWrapper {
     /**
      * Private constructor so that no one can instantiate this class.
      */
-    private FavouriteItemWrapper() {
+    private FavouriteItemWrapper(Context context) {
+        savedFootballLeagues = new ArrayList<FavouriteItem>();
+        savedFootballLeagues = new ArrayList<FavouriteItem>();
+        savedFootballTeams = new ArrayList<FavouriteItem>();
+        savedFootballPlayers = new ArrayList<FavouriteItem>();
+        savedCricketTeams = new ArrayList<FavouriteItem>();
+        savedCricketPlayers = new ArrayList<FavouriteItem>();
+        savedFavlist = new ArrayList<FavouriteItem>();
+        List<FavouriteItem> favouriteItems = new ArrayList<FavouriteItem>();
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        String favItem = tinyDB.getString(TinyDB.FAVOURITE_FILTERS);
+        try {
+            JSONArray favArray = new JSONArray(favItem);
+            for (int i = 0; i < favArray.length(); i++) {
+                FavouriteItem item = new FavouriteItem();
+                JSONObject object = favArray.getJSONObject(i);
+                item.setName(object.getString(name));
+                String sportsType = object.getString(this.sportsType);
+                String filterType = object.getString(this.filterType);
+                item.setSportsType(sportsType);
+                item.setFilterType(filterType);
+
+                try {
+                    item.setFlagImageUrl(object.getString(this.flag));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                favouriteItems.add(item);
+
+                if (sportsType.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                    if (filterType.equals(Constants.FILTER_TYPE_LEAGUE)) {
+                        savedFootballLeagues.add(item);
+                    } else if (filterType.equals(Constants.FILTER_TYPE_TEAM)) {
+                        savedFootballTeams.add(item);
+                    } else if (filterType.equals(Constants.FILTER_TYPE_PLAYER)) {
+                        savedFootballPlayers.add(item);
+                    }
+                } else {
+                    if (sportsType.equals(Constants.SPORTS_TYPE_CRICKET)) {
+                        if (filterType.equals(Constants.FILTER_TYPE_TEAM)) {
+                            savedCricketTeams.add(item);
+                        } else if (filterType.equals(Constants.FILTER_TYPE_PLAYER)) {
+                            savedCricketPlayers.add(item);
+                        }
+                    }
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Collections.sort(favouriteItems);
+        savedFavlist.addAll(favouriteItems);
     }
 
 
@@ -69,7 +119,7 @@ public class FavouriteItemWrapper {
         for (FavouriteItem f : favouriteItems) {
             jsonArray.put(f.getJsonObject());
         }
-        updtaeFavList(favouriteItems);
+        updateFavList(favouriteItems);
         UserUtil.setFavouriteFilters(context, jsonArray.toString());
     }
 
@@ -81,13 +131,15 @@ public class FavouriteItemWrapper {
      *
      * @param favouriteItems {@link ArrayList} of {@link FavouriteItem}
      */
-    private void updtaeFavList(ArrayList<FavouriteItem> favouriteItems) {
+    private void updateFavList(ArrayList<FavouriteItem> favouriteItems) {
         {
             savedFootballLeagues = new ArrayList<FavouriteItem>();
             savedFootballTeams = new ArrayList<FavouriteItem>();
             savedFootballPlayers = new ArrayList<FavouriteItem>();
             savedCricketTeams = new ArrayList<FavouriteItem>();
             savedCricketPlayers = new ArrayList<FavouriteItem>();
+            savedFavlist = new ArrayList<>(favouriteItems);
+            Collections.sort(savedFavlist);
             for (FavouriteItem f : favouriteItems) {
 
                 if (f.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
@@ -145,63 +197,12 @@ public class FavouriteItemWrapper {
     }
 
     /**
-     * This method helps to retrieve the Favourite selection.
+     * This method returns list of all selected favourites.
      *
-     * @param context Context of origin Activity.
      * @return ArrayList of {@link FavouriteItem}
      */
-    public ArrayList<FavouriteItem> getFavList(Context context) {
-
-        savedFootballLeagues = new ArrayList<FavouriteItem>();
-        savedFootballLeagues = new ArrayList<FavouriteItem>();
-        savedFootballTeams = new ArrayList<FavouriteItem>();
-        savedFootballPlayers = new ArrayList<FavouriteItem>();
-        savedCricketTeams = new ArrayList<FavouriteItem>();
-        savedCricketPlayers = new ArrayList<FavouriteItem>();
-        List<FavouriteItem> favouriteItems = new ArrayList<FavouriteItem>();
-        TinyDB tinyDB = TinyDB.getInstance(context);
-        String favItem = tinyDB.getString(TinyDB.FAVOURITE_FILTERS);
-        try {
-            JSONArray favArray = new JSONArray(favItem);
-            for (int i = 0; i < favArray.length(); i++) {
-                FavouriteItem item = new FavouriteItem();
-                JSONObject object = favArray.getJSONObject(i);
-                item.setName(object.getString(name));
-                String sportsType = object.getString(this.sportsType);
-                String filterType = object.getString(this.filterType);
-                item.setSportsType(sportsType);
-                item.setFilterType(filterType);
-
-                try {
-                    item.setFlagImageUrl(object.getString(this.flag));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                favouriteItems.add(item);
-
-                if (sportsType.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
-                    if (filterType.equals(Constants.FILTER_TYPE_LEAGUE)) {
-                        savedFootballLeagues.add(item);
-                    } else if (filterType.equals(Constants.FILTER_TYPE_TEAM)) {
-                        savedFootballTeams.add(item);
-                    } else if (filterType.equals(Constants.FILTER_TYPE_PLAYER)) {
-                        savedFootballPlayers.add(item);
-                    }
-                } else {
-                    if (sportsType.equals(Constants.SPORTS_TYPE_CRICKET)) {
-                        if (filterType.equals(Constants.FILTER_TYPE_TEAM)) {
-                            savedCricketTeams.add(item);
-                        } else if (filterType.equals(Constants.FILTER_TYPE_PLAYER)) {
-                            savedCricketPlayers.add(item);
-                        }
-                    }
-                }
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        Collections.sort(favouriteItems);
-        return new ArrayList<>(favouriteItems);
+    public ArrayList<FavouriteItem> getFavList() {
+        return new ArrayList<FavouriteItem>(savedFavlist);
     }
 
     /**

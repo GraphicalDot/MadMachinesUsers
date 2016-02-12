@@ -346,7 +346,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
             profileImage.setImageResource(R.drawable.ic_user);
         }
 
-        ArrayList<FavouriteItem> savedList = FavouriteItemWrapper.getInstance().getFavList(this);
+        ArrayList<FavouriteItem> savedList = FavouriteItemWrapper.getInstance(this).getFavList();
         setFavouriteProfile(savedList);
 
         editFavourite.setOnClickListener(editFavoritesClickListener);
@@ -357,8 +357,9 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     }
 
     private void moveToSelectSports() {
-        Intent intent = new Intent(UserProfileActivity.this, SelectSportsActivity.class);
-        startActivity(intent);
+        Intent intent = new Intent(this, SelectSportsActivity.class);
+        intent.putExtra(Constants.RESULT_REQUIRED, true);
+        startActivityForResult(intent, Constants.REQUEST_CODE_PROFILE);
     }
 
     private void setInitDataOthers() {
@@ -501,7 +502,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     private void successfulVCardLoad(String favorite) {
         ArrayList<FavouriteItem> savedList = null;
         if (favorite != null) {
-            savedList = FavouriteItemWrapper.getInstance().getFavListOfOthers(favorite);
+            savedList = FavouriteItemWrapper.getInstance(this).getFavListOfOthers(favorite);
             setFavouriteProfile(savedList);
         }
     }
@@ -524,6 +525,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         protected Void doInBackground(Void... params) {
             try {
                 TinyDB.getInstance(UserProfileActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nickname);
+                TinyDB.getInstance(UserProfileActivity.this).putString(TinyDB.KEY_PROFILE_STATUS, status);
                 VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
                 VCard vCard = new VCard();
                 vCard.setNickName(nickname);
@@ -616,6 +618,8 @@ public class UserProfileActivity extends CustomAppCompatActivity {
             CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
 
             byteArray = ImageUtil.handleImageAndSetToView(data, circleImageView, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
+        } else if (requestCode == Constants.REQUEST_CODE_PROFILE && resultCode == Activity.RESULT_OK) {
+            setFavouriteProfile(FavouriteItemWrapper.getInstance(this).getFavList());
         } else {
             callbackManager.onActivityResult(requestCode, resultCode, data);
         }
@@ -645,12 +649,14 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         LinearLayout teamList = (LinearLayout) findViewById(R.id.teamlist);
         LinearLayout leagueList = (LinearLayout) findViewById(R.id.leaguelist);
         LinearLayout playerList = (LinearLayout) findViewById(R.id.playerlist);
+        teamList.removeAllViews();
+        leagueList.removeAllViews();
+        playerList.removeAllViews();
 
         //TextView textView = (TextView) getLayoutInflater().inflate(R.layout.textview_user_profile_activity, null);
 
         for (int i = 0; i < leagues.size(); i++) {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
-            linearLayout.removeAllViews();
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
             textView.setText(leagues.get(i).getName());
@@ -661,7 +667,6 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
         for (int i = 0; i < teams.size(); i++) {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
-            linearLayout.removeAllViews();
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
             textView.setText(teams.get(i).getName());
@@ -671,7 +676,6 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
         for (int i = 0; i < players.size(); i++) {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
-            linearLayout.removeAllViews();
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
             textView.setText(players.get(i).getName());
@@ -709,7 +713,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     }
 
     private void onBack() {
-        if (toolbarActionButton.getText().equals(INFO_SAVE) && progressBar.getVisibility()==View.INVISIBLE) {
+        if (toolbarActionButton.getText().equals(INFO_SAVE) && progressBar.getVisibility() == View.INVISIBLE) {
             AlertDialog.Builder build = new AlertDialog.Builder(
                     UserProfileActivity.this);
             build.setTitle("Discard Edits ? ");
@@ -770,5 +774,4 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
         setInitDataOwn();
     }
-
 }

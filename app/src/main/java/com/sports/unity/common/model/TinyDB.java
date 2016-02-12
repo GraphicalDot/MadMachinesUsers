@@ -42,6 +42,7 @@ public class TinyDB {
     public static final String KEY_CONTACTS_COPIED_SUCESSFULLY = "contacts_copied";
 
     public static final String KEY_PROFILE_NAME = "name";
+    public static final String KEY_PROFILE_STATUS = "status";
 
     /*Preference key used to manage filters*/
     public static final String FAVOURITE_FILTERS = "favourite_filters";

@@ -57,7 +57,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        FavouriteItemWrapper.getInstance().getFavList(this);
+        FavouriteItemWrapper.getInstance(this);
         setContentView(com.sports.unity.R.layout.activity_main);
 
         SportsUnityDBHelper.getInstance(this).addDummyMessageIfNotExist();

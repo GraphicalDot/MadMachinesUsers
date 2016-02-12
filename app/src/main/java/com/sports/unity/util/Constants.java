@@ -56,7 +56,7 @@ public class Constants {
     public static final String SPORTS_TYPE_FOOTBALL = "football";
     public static final String FILTER_SEARCH_EXTRA = "filter_search";
 
-    public static final String FROM_ADD_SPORTS = "from_add_sports";
+    public static final String RESULT_REQUIRED = "from_add_sports";
 
     public static final String COLOR_WHITE = "white";
     public static final String COLOR_BLUE = "blue";
@@ -67,6 +67,7 @@ public class Constants {
     public static final int REQUEST_CODE_NEWS = 1397;
     public static final int REQUEST_CODE_EDIT_SPORT = 1496;
     public static final int REQUEST_CODE_ADD_SPORT = 1595;
+    public static final int REQUEST_CODE_PROFILE = 1199;
     public static final int REQUEST_CODE_CAMERA_EXTERNAL_STORAGE_PERMISSION = 101;
     public static final int REQUEST_CODE_CONTACT_PERMISSION = 102;
     public static final int REQUEST_CODE_PHONE_STATE_PERMISSION = 103;

@@ -75,7 +75,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        favouriteItemWrapper = FavouriteItemWrapper.getInstance();
+        favouriteItemWrapper = FavouriteItemWrapper.getInstance(getActivity());
     }
 
     @Override
