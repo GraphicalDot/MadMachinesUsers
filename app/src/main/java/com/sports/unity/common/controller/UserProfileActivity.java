@@ -17,6 +17,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -73,9 +74,10 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     private static final String ADD_FRIEND = "ADD FRIEND";
 
     private static final int LOAD_IMAGE_GALLERY_CAMERA = 1;
+    private String uName;
+    private String uStatus;
 
     private CallbackManager callbackManager;
-
     private String profilePicUrl = null;
 
     private TextView toolbarActionButton;
@@ -84,15 +86,17 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     private CircleImageView profileImage;
     private TextView editFavourite, statusTitle;
     private LinearLayout statusView;
-
+    private LinearLayout statusList;
+    private LinearLayout favDetails;
+    private FrameLayout fbButton;
     private byte[] byteArray;
     private ProgressBar progressBar;
-
+    private TextView currentStatus;
     private boolean ownProfile;
 
     private LayoutInflater mInflater;
 
-    private int statusValue[] = {R.string.available,R.string.busy,R.string.movie,R.string.work};
+    private int statusValue[] = {R.string.available, R.string.busy, R.string.movie, R.string.work};
 
     private Drawable oldBackgroundForNameEditView = null;
     private Drawable oldBackgroundForStatusEditView = null;
@@ -123,7 +127,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
     };
 
-    private View.OnClickListener statusClickListener = new View.OnClickListener(){
+    private View.OnClickListener statusClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View view) {
@@ -195,16 +199,23 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     }
 
     private void onClickSaveButton() {
-        new SubmitVCardAsyncTask().execute();
+        if (!TextUtils.isEmpty(name.getText().toString()) && !TextUtils.isEmpty(status.getText().toString())) {
+            new SubmitVCardAsyncTask().execute();
+        } else {
+            if (TextUtils.isEmpty(name.getText().toString())) {
+                Toast.makeText(this, "Please enter your name", Toast.LENGTH_SHORT).show();
+
+            } else if (TextUtils.isEmpty(status.getText().toString())) {
+                Toast.makeText(this, "Please enter your status", Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 
     private void onClickEditButton() {
-        LinearLayout favDetails = (LinearLayout) findViewById(R.id.favDetails);
         favDetails.setVisibility(View.GONE);
-
         statusView.setVisibility(View.VISIBLE);
 
-        FrameLayout fbButton = (FrameLayout) findViewById(R.id.faceBook_btn);
         fbButton.setVisibility(View.VISIBLE);
 
         toolbarActionButton.setText(INFO_SAVE);
@@ -226,14 +237,13 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         profileImage.setBorderColor(getResources().getColor(R.color.app_theme_blue));
         profileImage.setEnabled(true);
         profileImage.setBorderWidth(2);
-
         addListnerToProfilePicture();
     }
 
     private void addStatusList() {
 
-        LinearLayout statusList = (LinearLayout) findViewById(R.id.list);
-
+        statusList = (LinearLayout) findViewById(R.id.list);
+        statusList.removeAllViews();
         for (int i = 0; i < statusValue.length; i++) {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
@@ -246,9 +256,9 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         }
     }
 
-    private void onClickStatus(View view){
-        Integer status = (Integer)view.getTag();
-        if( status != null ){
+    private void onClickStatus(View view) {
+        Integer status = (Integer) view.getTag();
+        if (status != null) {
             this.status.setText(getResources().getString(status));
         } else {
             //nothing
@@ -262,9 +272,10 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
     private void initView(boolean ownProfile) {
 
+        favDetails = (LinearLayout) findViewById(R.id.favDetails);
+        fbButton = (FrameLayout) findViewById(R.id.faceBook_btn);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.setVisibility(View.GONE);
-
         name = (EditText) findViewById(R.id.name);
         oldBackgroundForNameEditView = name.getBackground();
 
@@ -273,7 +284,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         name.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
         name.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
         name.setEnabled(false);
-
+        favDetails = (LinearLayout) findViewById(R.id.favDetails);
         status = (EditText) findViewById(R.id.your_status);
         oldBackgroundForStatusEditView = status.getBackground();
 
@@ -282,6 +293,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         status.setBackground(new ColorDrawable(Color.TRANSPARENT));
         status.setEnabled(false);
 
+        currentStatus = (TextView) findViewById(R.id.current_status);
         profileImage = (CircleImageView) findViewById(R.id.user_picture);
         profileImage.setEnabled(false);
 
@@ -501,7 +513,6 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     private class SubmitVCardAsyncTask extends AsyncTask<Void, Void, Void> {
         private boolean success = false;
         String nickname = name.getText().toString();
-        TextView currentStatus = (TextView) findViewById(R.id.current_status);
         String status = currentStatus.getText().toString();
 
         @Override
@@ -531,7 +542,6 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         @Override
         protected void onPostExecute(Void o) {
             progressBar.setVisibility(View.GONE);
-            statusView.setVisibility(View.GONE);
             if (success) {
                 successfulVCardSubmit();
             } else {
@@ -546,15 +556,14 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
     private void successfulVCardSubmit() {
         initViewUI();
+        statusView.setVisibility(View.GONE);
         Toast.makeText(UserProfileActivity.this, R.string.message_submit_vcard_sucess, Toast.LENGTH_SHORT).show();
     }
 
     private void initViewUI() {
-        LinearLayout favDetails = (LinearLayout) findViewById(R.id.favDetails);
         favDetails.setVisibility(View.VISIBLE);
         profileImage.setBorderWidth(0);
         profileImage.setEnabled(false);
-        FrameLayout fbButton = (FrameLayout) findViewById(R.id.faceBook_btn);
         fbButton.setVisibility(View.GONE);
         toolbarActionButton.setText(INFO_EDIT);
         name.setEnabled(false);
@@ -641,6 +650,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
         for (int i = 0; i < leagues.size(); i++) {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
+            linearLayout.removeAllViews();
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
             textView.setText(leagues.get(i).getName());
@@ -651,6 +661,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
         for (int i = 0; i < teams.size(); i++) {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
+            linearLayout.removeAllViews();
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
             textView.setText(teams.get(i).getName());
@@ -660,6 +671,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
         for (int i = 0; i < players.size(); i++) {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
+            linearLayout.removeAllViews();
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
             textView.setText(players.get(i).getName());
@@ -697,7 +709,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     }
 
     private void onBack() {
-        if (toolbarActionButton.getText().equals(INFO_SAVE)) {
+        if (toolbarActionButton.getText().equals(INFO_SAVE) && progressBar.getVisibility()==View.INVISIBLE) {
             AlertDialog.Builder build = new AlertDialog.Builder(
                     UserProfileActivity.this);
             build.setTitle("Discard Edits ? ");
@@ -713,6 +725,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
                 public void onClick(DialogInterface dialog, int id) {
                     //nothing
+
                 }
 
             });
@@ -735,10 +748,8 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     }
 
     private void discardChanges() {
-        LinearLayout favDetails = (LinearLayout) findViewById(R.id.favDetails);
         favDetails.setVisibility(View.VISIBLE);
-
-        FrameLayout fbButton = (FrameLayout) findViewById(R.id.faceBook_btn);
+        statusView.setVisibility(View.GONE);
         fbButton.setVisibility(View.GONE);
 
         profileImage.setBorderWidth(0);

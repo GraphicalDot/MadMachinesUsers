@@ -68,7 +68,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
         con = XMPPClient.getConnection();
         sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
-        setNavigationProfile();
 
         locManager = LocManager.getInstance(getApplicationContext());
         locManager.buildApiClient();
@@ -212,6 +211,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         if (!isPaused) {
             navigationFragment = new NavigationFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.nav_fragment, navigationFragment, "Nav_frag").commit();
+            setNavigationProfile();
         }
         isPaused = false;
         updateLocation();

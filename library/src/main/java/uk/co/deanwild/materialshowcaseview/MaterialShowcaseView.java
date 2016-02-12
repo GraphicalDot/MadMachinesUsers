@@ -198,8 +198,8 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
             mShape.draw(mCanvas, strokepaint1, mXPosition, mYPosition, mShapePadding - 20);
             mShape.draw(mCanvas, strokepaint1, mXPosition, mYPosition, mShapePadding);
         } else {
-            mShape.draw(mCanvas, mEraser, mXPosition, mYPosition, mShapePadding-(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics()));
-            mShape.draw(mCanvas, strokepaint1, mXPosition, mYPosition, mShapePadding-(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics()));
+            mShape.draw(mCanvas, mEraser, mXPosition, mYPosition, mShapePadding-(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics()));
+            mShape.draw(mCanvas, strokepaint1, mXPosition, mYPosition, mShapePadding-(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics()));
         }
 
         // Draw the bitmap on our views  canvas.

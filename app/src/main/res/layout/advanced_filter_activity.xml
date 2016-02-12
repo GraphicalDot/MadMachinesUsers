@@ -44,17 +44,6 @@
                 android:textSize="@dimen/font_size_small_large" />
 
             <Button
-                android:id="@+id/done"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:background="@android:color/transparent"
-                android:text="@string/done"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/font_size_small_large" />
-
-            <Button
                 android:id="@+id/next"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
