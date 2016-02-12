@@ -1,0 +1,116 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ColorPrimary"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    tools:context="com.sports.unity.common.controller.UserProfileActivity">
+
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/tool_bar_player_profile"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:minHeight="?android:attr/actionBarSize" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tool_bar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/tool_bar"
+            android:background="@color/gray3"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/profile_info"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tool_bar"
+                android:background="@color/com_facebook_button_background_color"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/activity_horizontal_margin">
+                <FrameLayout
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/player_profile_image"
+                        android:layout_width="@dimen/profile_thumb_image_xlarge"
+                        android:layout_height="@dimen/profile_thumb_image_xlarge"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/vertical_padding_very_very_small"
+                        android:src="@drawable/ic_user" />
+                </FrameLayout>
+                <TextView
+                    android:id="@+id/tv_player_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center"
+                    android:text="Yuvraj Singh"
+                    android:textColor="@color/ColorPrimary"
+                    android:textSize="@dimen/font_size_xxlarge" />
+
+                <TextView
+                    android:id="@+id/tv_player_nation_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="India"
+                    android:textColor="@color/ColorPrimary"
+                    android:textSize="@dimen/font_size_xlarge" />
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="@dimen/flag_size_large"
+                    android:layout_gravity="center">
+
+                    <LinearLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:layout_marginEnd="@dimen/activity_vertical_margin"
+                        android:layout_marginStart="@dimen/activity_vertical_margin"
+                        android:background="@drawable/white_stroke_round_edge_button"></LinearLayout>
+                </FrameLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/tab_seperator" />
+
+                <com.sports.unity.common.view.SlidingTabLayout
+                    android:id="@+id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/cardview_light_background"
+                    android:elevation="@dimen/toolbar_elevation" />
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/ColorPrimary" />
+
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                </android.support.v4.view.ViewPager>
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+</RelativeLayout>

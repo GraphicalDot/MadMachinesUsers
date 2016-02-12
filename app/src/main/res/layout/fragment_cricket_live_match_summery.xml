@@ -28,7 +28,7 @@
                 android:layout_marginTop="@dimen/vertical_padding_very_very_small"
                 android:textColor="@color/dark_blue"
                 android:textSize="@dimen/font_size_medium"
-                android:text="RECENT"
+                android:text="@string/recent"
                 />
         </LinearLayout>
         <View
@@ -102,7 +102,7 @@
                 android:layout_marginTop="@dimen/vertical_padding_very_very_small"
                 android:textColor="@color/dark_blue"
                 android:textSize="@dimen/font_size_medium"
-                android:text="BATTING"
+                android:text="@string/batting"
                 />
         </LinearLayout>
         <View
@@ -140,7 +140,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_divider"
+                    android:layout_toRightOf="@+id/iv_player_first"
                     android:layout_alignParentRight="true"
                     android:orientation="vertical">
                     <TextView
@@ -165,8 +165,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="@dimen/margin_divider"
-                    android:layout_alignParentRight="true"
+                    android:layout_toLeftOf="@+id/iv_player_second"
                     android:orientation="vertical">
                     <TextView
                         android:id="@+id/tv_second_player_name"
@@ -198,8 +197,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/margin_divider"
-                    android:layout_marginRight="@dimen/margin_divider"
+                    android:layout_toRightOf="@+id/iv_player_first"
+                    android:layout_toLeftOf="@+id/iv_player_second"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin_small"
                     android:layout_alignBottom="@+id/iv_player_first">
 
 
@@ -260,7 +260,7 @@
                 android:layout_marginTop="@dimen/vertical_padding_very_very_small"
                 android:textColor="@color/dark_blue"
                 android:textSize="@dimen/font_size_medium"
-                android:text="UPCOMING"
+                android:text="@string/upcoming"
                 />
         </LinearLayout>
         <View
@@ -374,7 +374,7 @@
                 android:layout_marginTop="@dimen/vertical_padding_very_very_small"
                 android:textColor="@color/dark_blue"
                 android:textSize="@dimen/font_size_medium"
-                android:text="BOWLING"
+                android:text="@string/blowing"
                 />
             <View
                 android:layout_width="match_parent"
