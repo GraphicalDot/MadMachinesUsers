@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingRight="@dimen/horizontal_padding_very_small"
+    >
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/horizontal_padding_very_small"
+        android:layout_marginRight="@dimen/horizontal_padding_very_small"
+        >
+        <ImageView
+            android:id="@+id/leftIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/ic_settings_notification"
+            android:visibility="gone"
+            />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/clickableLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/settings_item_height"
+            android:gravity="left|center_vertical"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/notification_previews"
+                android:textSize="@dimen/font_size_small_large"
+                android:singleLine="true"
+                />
+
+            <TextView
+                android:id="@+id/subTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/show_name_message"
+                android:textColor="@color/gray1"
+                android:singleLine="true"
+                />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/radio"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            android:button="@drawable/checkbox"
+            android:clickable="false"
+            android:layout_gravity="right"
+            android:visibility="gone"
+            />
+        <ImageView
+            android:id="@+id/nextIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/next"
+            android:layout_gravity="right"
+            android:visibility="gone"
+            />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.3dp"
+            android:layout_gravity="bottom"
+            android:background="@color/gray4" />
+    </FrameLayout>
+
+
+</LinearLayout>
