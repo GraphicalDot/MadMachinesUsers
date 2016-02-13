@@ -72,7 +72,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:background="@android:color/transparent"
-            android:text="next"
+            android:text="NEXT"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_size_small_large" />
 

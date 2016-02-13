@@ -718,6 +718,8 @@ public class FavouriteContentHandler {
                                 FavouriteItem item = new FavouriteItem();
                                 String s = obj.getString("name");
                                 item.setName(s);
+                                s = obj.getString("player_id");
+                                item.setId(s);
                                 item.setSportsType(Constants.SPORTS_TYPE_CRICKET);
                                 item.setFilterType(Constants.FILTER_TYPE_PLAYER);
                                 if (savedFavList.contains(item)) {

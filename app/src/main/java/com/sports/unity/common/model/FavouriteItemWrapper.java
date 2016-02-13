@@ -75,6 +75,7 @@ public class FavouriteItemWrapper {
 
                 try {
                     item.setFlagImageUrl(object.getString(this.flag));
+                    item.setId(object.getString(this.id));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -211,8 +212,6 @@ public class FavouriteItemWrapper {
      * @return ArrayList of Favourite teams.
      */
     public ArrayList<FavouriteItem> getAllTeams() {
-        Collections.sort(savedCricketTeams);
-        Collections.sort(savedFootballTeams);
         ArrayList<FavouriteItem> savedTeams = new ArrayList<FavouriteItem>();
         if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
             savedTeams.addAll(savedCricketTeams);
@@ -220,6 +219,7 @@ public class FavouriteItemWrapper {
         if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
             savedTeams.addAll(savedFootballTeams);
         }
+        Collections.sort(savedTeams);
         return savedTeams;
     }
 
@@ -229,16 +229,15 @@ public class FavouriteItemWrapper {
      * @return ArrayList of Favourite teams.
      */
     public ArrayList<FavouriteItem> getAllPlayers() {
-        Collections.sort(savedCricketPlayers);
-        Collections.sort(savedFootballPlayers);
-        ArrayList<FavouriteItem> savedTeams = new ArrayList<FavouriteItem>();
+        ArrayList<FavouriteItem> savedPlayers = new ArrayList<FavouriteItem>();
         if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
-            savedTeams.addAll(savedCricketPlayers);
+            savedPlayers.addAll(savedCricketPlayers);
         }
         if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
-            savedTeams.addAll(savedFootballPlayers);
+            savedPlayers.addAll(savedFootballPlayers);
         }
-        return savedTeams;
+        Collections.sort(savedPlayers);
+        return savedPlayers;
     }
 
 
@@ -248,10 +247,27 @@ public class FavouriteItemWrapper {
      * @return ArrayList of Favourite leagues.
      */
     public ArrayList<FavouriteItem> getAllLeagues() {
-        Collections.sort(savedFootballLeagues);
         ArrayList<FavouriteItem> savedLeagues = new ArrayList<FavouriteItem>();
         savedLeagues.addAll(savedFootballLeagues);
+        Collections.sort(savedLeagues);
         return savedLeagues;
+    }
+
+    /**
+     * This method returns list of sports selected.
+     *
+     * @return ArrayList of Favourite leagues.
+     */
+    public ArrayList<FavouriteItem> getAllSports() {
+        ArrayList<String> sportsSelected = UserUtil.getSportsSelected();
+        ArrayList<FavouriteItem> savedSports = new ArrayList<FavouriteItem>();
+        for (String s : sportsSelected) {
+            FavouriteItem f = new FavouriteItem();
+            f.setName(s.substring(0, 1).toUpperCase() + s.substring(1));
+            savedSports.add(f);
+        }
+        Collections.sort(savedSports);
+        return savedSports;
     }
 
     /**

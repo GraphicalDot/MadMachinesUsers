@@ -14,11 +14,8 @@ import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FontTypeface;
-import com.sports.unity.util.CommonUtil;
-import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * Created by Mad on 12/22/2015.
@@ -27,17 +24,19 @@ public class NavListAdapter extends BaseExpandableListAdapter {
     ArrayList<String> groupItems = new ArrayList<String>();
     private ArrayList<FavouriteItem> childItems = new ArrayList<FavouriteItem>();
     LayoutInflater inflater;
-    View editTeam;
+    View editView;
     ImageView indiIm;
     Activity act;
+    boolean isEditable;
 
-    public NavListAdapter(Activity context, ArrayList<String> groupList, ArrayList<FavouriteItem> childItems, ImageView indiIm) {
+    public NavListAdapter(Activity context, ArrayList<String> groupList, ArrayList<FavouriteItem> childItems, ImageView indiIm, boolean isEditable, TextView tv) {
         this.groupItems = groupList;
         this.childItems = childItems;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        // this.editTeam = tv;
+        this.editView = tv;
         act = context;
         this.indiIm = indiIm;
+        this.isEditable = isEditable;
     }
 
     @Override
@@ -117,14 +116,16 @@ public class NavListAdapter extends BaseExpandableListAdapter {
     public void onGroupCollapsed(int groupPosition) {
         super.onGroupCollapsed(groupPosition);
         indiIm.setImageResource(R.drawable.ic_side_nav_expand);
-        //editTeam.setVisibility(View.INVISIBLE);
+        if (isEditable)
+            editView.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onGroupExpanded(int groupPosition) {
         super.onGroupExpanded(groupPosition);
         indiIm.setImageResource(R.drawable.ic_side_nav_collapse);
-//        editTeam.setVisibility(View.VISIBLE);
+        if (isEditable)
+            editView.setVisibility(View.VISIBLE);
     }
 
     @Override

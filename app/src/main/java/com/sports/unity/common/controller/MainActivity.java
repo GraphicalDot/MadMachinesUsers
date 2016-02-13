@@ -1,5 +1,6 @@
 package com.sports.unity.common.controller;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.graphics.Bitmap;
@@ -46,13 +47,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class MainActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     NavigationFragment navigationFragment;
-    public boolean isPaused;
 
     private XMPPTCPConnection con;
     private SportsUnityDBHelper sportsUnityDBHelper;
     public SearchView searchView;
     LocManager locManager;
     private PermissionResultHandler contactResultHandler, locationResultHandelar;
+    DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,10 +133,9 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
     private void initViews() {
         Toolbar toolbar = initToolBar();
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        final DrawerLayout mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-
-        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
+        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
 
             @Override
             public void onDrawerOpened(View drawerView) {
@@ -155,12 +155,12 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
             @Override
             public void onClick(View v) {
-                mDrawer.openDrawer(Gravity.LEFT);
+                drawer.openDrawer(Gravity.LEFT);
             }
 
         });
 
-        mDrawer.setDrawerListener(mDrawerToggle);
+        drawer.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
         String titles[] = {getString(R.string.scores), getString(R.string.news), getString(R.string.messages)};
@@ -208,12 +208,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isPaused) {
-            navigationFragment = new NavigationFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.nav_fragment, navigationFragment, "Nav_frag").commit();
-            setNavigationProfile();
-        }
-        isPaused = false;
+        setNavigationProfile();
         updateLocation();
     }
 
@@ -230,9 +225,15 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 //        GPSTracking.getInstance(getApplicationContext()).getLocation();
     }
 
+    public void closeDrawer() {
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        }
+    }
+
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {

@@ -713,7 +713,8 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     }
 
     private void onBack() {
-        if (toolbarActionButton.getText().equals(INFO_SAVE) && progressBar.getVisibility() == View.INVISIBLE) {
+        Log.d("max","actiontext----"+toolbarActionButton.getText());
+        if (toolbarActionButton.getText().toString().equals(INFO_SAVE) && progressBar.getVisibility() == View.INVISIBLE) {
             AlertDialog.Builder build = new AlertDialog.Builder(
                     UserProfileActivity.this);
             build.setTitle("Discard Edits ? ");
