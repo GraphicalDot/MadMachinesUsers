@@ -106,4 +106,8 @@
     <dimen name="filter_header_margin">5dp</dimen>
 
 
+    <!--Setting Related -->
+    <dimen name="settings_item_height">80dp</dimen>
+    <!-- ends -->
+
 </resources>

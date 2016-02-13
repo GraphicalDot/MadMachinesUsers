@@ -20,6 +20,7 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.SettingsActivity;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -108,7 +109,7 @@ public class NotificationHandler {
             //nothing
         }
 
-        if (TinyDB.getInstance(context).getBoolean(TinyDB.NOTIFICATION_PREVIEW, SettingsActivity.NOTIFICATION_PREVIEWS_DEFAULT_VALUE)) {
+        if ( UserUtil.isNotificationPreviews() ) {
             builder.setContentText(messageArrived.getTitleMessage());
         } else {
             builder.setContentText("Message from " + messageArrived.from);
@@ -151,7 +152,7 @@ public class NotificationHandler {
     private void comboMessageNotification(Context context, PendingIntent pendingIntent, NotificationMessage messageArrived, int chatCount, int messageCount) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
-        if (TinyDB.getInstance(context).getBoolean(TinyDB.NOTIFICATION_PREVIEW, SettingsActivity.NOTIFICATION_PREVIEWS_DEFAULT_VALUE)) {
+        if ( UserUtil.isNotificationPreviews() ) {
             builder.setSmallIcon(R.drawable.ic_stat_notification);
             if (chatCount == 1) {
                 if (messageArrived.getProfileImage() != null) {
@@ -227,7 +228,7 @@ public class NotificationHandler {
     }
 
     private boolean vibrationEnabled(Context context) {
-        if (TinyDB.getInstance(context).getBoolean(TinyDB.VIBRATE, SettingsActivity.VIBRATE_DEFAULT_VALUE)) {
+        if ( UserUtil.isConversationVibrate() ) {
             return true;
         } else {
             return false;
@@ -235,7 +236,7 @@ public class NotificationHandler {
     }
 
     private boolean soundEnabled(Context context) {
-        if (TinyDB.getInstance(context).getBoolean(TinyDB.NOTIFICATION_SOUND, SettingsActivity.NOTIFICATION_SOUND_DEFAULT_VALUE)) {
+        if ( UserUtil.isNotificationSound() ) {
             return true;
         } else {
             return false;
@@ -243,7 +244,7 @@ public class NotificationHandler {
     }
 
     private boolean lightEnabled(Context context) {
-        if (TinyDB.getInstance(context).getBoolean(TinyDB.LIGHT, SettingsActivity.LIGHT_DEFAULT_VALUE)) {
+        if ( UserUtil.isNotificationLight() ) {
             return true;
         } else {
             return false;

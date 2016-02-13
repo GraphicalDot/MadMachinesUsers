@@ -3,6 +3,8 @@ package com.sports.unity.common.model;
 import android.content.Context;
 import android.util.Log;
 
+import com.sports.unity.common.controller.SettingsActivity;
+
 import java.util.ArrayList;
 
 /**
@@ -13,9 +15,8 @@ public class UserUtil {
     private static boolean USER_REGISTERED = false;
     private static boolean OTP_SENT = false;
     private static boolean PROFILE_CREATED = false;
+
     private static ArrayList<String> SPORTS_SELECTED = null;
-
-
     private static boolean leagueSelected;
     private static boolean teamSelected;
     private static boolean playerSelected;
@@ -23,21 +24,32 @@ public class UserUtil {
     private static String favFilterList = null;
     private static boolean isFavouriteVcardUpdated;
 
+
+    /*
+     * setting related preferences.
+     */
+    private static boolean NOTIFICATION_AND_SOUND = true;
+    private static boolean NOTIFICATION_PREVIEWS = true;
+    private static boolean CONVERSATION_TONES = true;
+    private static boolean CONVERSATION_VIBRATE = true;
+    private static boolean NOTIFICATION_LIGHT = true;
+    private static boolean NOTIFICATION_SOUND = true;
+
+    private static boolean SHOW_MY_LOCATION = true;
+    private static boolean SHOW_TO_FRIENDS_LOCATION = true;
+    private static boolean SHOW_TO_ALL_LOCATION = true;
+
+    private static boolean SAVE_INCOMING_MEDIA_TO_GALLERY = true;
+    private static boolean SAVE_IN_APP_CAPTURE_MEDIA_TO_GALLERY = true;
+
+    private static boolean READ_RECEIPTS = true;
+
     public static void init(Context context) {
         TinyDB tinyDB = TinyDB.getInstance(context);
-        USER_REGISTERED = tinyDB.getBoolean(TinyDB.KEY_REGISTERED, false);
-        PROFILE_CREATED = tinyDB.getBoolean(TinyDB.KEY_PROFILE_CREATED, false);
-        OTP_SENT = tinyDB.getBoolean(TinyDB.KEY_OTP_SENT, false);
 
-        SPORTS_SELECTED = tinyDB.getListString(TinyDB.KEY_SPORTS_SELECTED);
-
-        favFilterList = tinyDB.getString(TinyDB.FAVOURITE_FILTERS);
-
-        leagueSelected = tinyDB.getBoolean(TinyDB.LEAGUE_SELECTION, false);
-        teamSelected = tinyDB.getBoolean(TinyDB.TEAM_SELECTION, false);
-        playerSelected = tinyDB.getBoolean(TinyDB.PLAYER_SELECTION, false);
-        filterCompleted = tinyDB.getBoolean(TinyDB.FILTER_COMPLETE, false);
-        isFavouriteVcardUpdated = tinyDB.getBoolean(TinyDB.VCARD_UPDATED, false);
+        loadBasicPreferences(tinyDB);
+        loadFavoritePreferences(tinyDB);
+        loadSettingPreferences(tinyDB);
     }
 
     public static void setUserRegistered(Context context, boolean userRegistered) {
@@ -154,4 +166,173 @@ public class UserUtil {
     public static boolean isIsFavouriteVcardUpdated() {
         return isFavouriteVcardUpdated;
     }
+
+    public static boolean isNotificationAndSound() {
+        return NOTIFICATION_AND_SOUND;
+    }
+
+    public static void setNotificationAndSound(Context context, boolean notificationAndSound) {
+        NOTIFICATION_AND_SOUND = notificationAndSound;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putBoolean(TinyDB.NOTIFICATION_AND_SOUND_OPTIONS, notificationAndSound);
+    }
+
+    public static boolean isNotificationPreviews() {
+        return NOTIFICATION_PREVIEWS;
+    }
+
+    public static void setNotificationPreviews(Context context, boolean notificationPreviews) {
+        NOTIFICATION_PREVIEWS = notificationPreviews;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putBoolean(TinyDB.NOTIFICATION_PREVIEW, notificationPreviews);
+    }
+
+    public static boolean isConversationTones() {
+        return CONVERSATION_TONES;
+    }
+
+    public static void setConversationTones(Context context, boolean conversationTones) {
+        CONVERSATION_TONES = conversationTones;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putBoolean(TinyDB.CONVERSATION_TONES, conversationTones);
+    }
+
+    public static boolean isConversationVibrate() {
+        return CONVERSATION_VIBRATE;
+    }
+
+    public static void setConversationVibrate(Context context, boolean conversationVibrate) {
+        CONVERSATION_VIBRATE = conversationVibrate;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putBoolean(TinyDB.VIBRATE, conversationVibrate);
+    }
+
+    public static boolean isNotificationLight() {
+        return NOTIFICATION_LIGHT;
+    }
+
+    public static void setNotificationLight(Context context, boolean notificationLight) {
+        NOTIFICATION_LIGHT = notificationLight;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putBoolean(TinyDB.LIGHT, notificationLight);
+    }
+
+    public static boolean isNotificationSound() {
+        return NOTIFICATION_SOUND;
+    }
+
+    public static void setNotificationSound(Context context, boolean notificationSound) {
+        NOTIFICATION_SOUND = notificationSound;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putBoolean(TinyDB.NOTIFICATION_SOUND, notificationSound);
+    }
+
+    public static boolean isShowMyLocation() {
+        return SHOW_MY_LOCATION;
+    }
+
+    public static void setShowMyLocation(Context context, boolean showMyLocation) {
+        SHOW_MY_LOCATION = showMyLocation;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putBoolean(TinyDB.LOCATION_OPTIONS, showMyLocation);
+    }
+
+    public static boolean isShowToFriendsLocation() {
+        return SHOW_TO_FRIENDS_LOCATION;
+    }
+
+    public static void setShowToFriendsLocation(Context context, boolean showToFriendsLocation) {
+        SHOW_TO_FRIENDS_LOCATION = showToFriendsLocation;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putBoolean(TinyDB.FRIENDS_ONLY, showToFriendsLocation);
+    }
+
+    public static boolean isShowToAllLocation() {
+        return SHOW_TO_ALL_LOCATION;
+    }
+
+    public static void setShowToAllLocation(Context context, boolean showToAllLocation) {
+        SHOW_TO_ALL_LOCATION = showToAllLocation;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putBoolean(TinyDB.SHOW_TO_ALL, showToAllLocation);
+    }
+
+    public static boolean isSaveIncomingMediaToGallery() {
+        return SAVE_INCOMING_MEDIA_TO_GALLERY;
+    }
+
+    public static void setSaveIncomingMediaToGallery(Context context, boolean saveIncomingMediaToGallery) {
+        SAVE_INCOMING_MEDIA_TO_GALLERY = saveIncomingMediaToGallery;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putBoolean(TinyDB.SAVE_INCOMING_MEDIA, saveIncomingMediaToGallery);
+    }
+
+    public static boolean isSaveInAppCaptureMediaToGallery() {
+        return SAVE_IN_APP_CAPTURE_MEDIA_TO_GALLERY;
+    }
+
+    public static void setSaveInAppCaptureMediaToGallery(Context context, boolean saveInAppCaptureMediaToGallery) {
+        SAVE_IN_APP_CAPTURE_MEDIA_TO_GALLERY = saveInAppCaptureMediaToGallery;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putBoolean(TinyDB.SAVE_IN_APP_MEDIA_CAPTURE, saveInAppCaptureMediaToGallery);
+    }
+
+    public static boolean isReadReceipts() {
+        return READ_RECEIPTS;
+    }
+
+    public static void setReadReceipts(Context context, boolean readReceipts) {
+        READ_RECEIPTS = readReceipts;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putBoolean(TinyDB.READ_RECEIPTS, readReceipts);
+    }
+
+    private static void loadBasicPreferences(TinyDB tinyDB){
+        USER_REGISTERED = tinyDB.getBoolean(TinyDB.KEY_REGISTERED, false);
+        PROFILE_CREATED = tinyDB.getBoolean(TinyDB.KEY_PROFILE_CREATED, false);
+        OTP_SENT = tinyDB.getBoolean(TinyDB.KEY_OTP_SENT, false);
+    }
+
+    private static void loadFavoritePreferences(TinyDB tinyDB){
+        SPORTS_SELECTED = tinyDB.getListString(TinyDB.KEY_SPORTS_SELECTED);
+
+        favFilterList = tinyDB.getString(TinyDB.FAVOURITE_FILTERS);
+
+        leagueSelected = tinyDB.getBoolean(TinyDB.LEAGUE_SELECTION, false);
+        teamSelected = tinyDB.getBoolean(TinyDB.TEAM_SELECTION, false);
+        playerSelected = tinyDB.getBoolean(TinyDB.PLAYER_SELECTION, false);
+        filterCompleted = tinyDB.getBoolean(TinyDB.FILTER_COMPLETE, false);
+        isFavouriteVcardUpdated = tinyDB.getBoolean(TinyDB.VCARD_UPDATED, false);
+    }
+
+    private static void loadSettingPreferences(TinyDB tinyDB){
+        NOTIFICATION_AND_SOUND = tinyDB.getBoolean(TinyDB.NOTIFICATION_AND_SOUND_OPTIONS, NOTIFICATION_AND_SOUND);
+        NOTIFICATION_PREVIEWS = tinyDB.getBoolean(TinyDB.NOTIFICATION_PREVIEW, NOTIFICATION_PREVIEWS);
+        CONVERSATION_TONES = tinyDB.getBoolean(TinyDB.CONVERSATION_TONES, CONVERSATION_TONES);
+        CONVERSATION_VIBRATE = tinyDB.getBoolean(TinyDB.VIBRATE, CONVERSATION_VIBRATE);
+        NOTIFICATION_LIGHT = tinyDB.getBoolean(TinyDB.LIGHT, NOTIFICATION_LIGHT);
+        NOTIFICATION_SOUND = tinyDB.getBoolean(TinyDB.NOTIFICATION_SOUND, NOTIFICATION_SOUND);
+
+        SHOW_MY_LOCATION = tinyDB.getBoolean(TinyDB.LOCATION_OPTIONS, SHOW_MY_LOCATION);
+        SHOW_TO_FRIENDS_LOCATION = tinyDB.getBoolean(TinyDB.FRIENDS_ONLY, SHOW_TO_FRIENDS_LOCATION);
+        SHOW_TO_ALL_LOCATION = tinyDB.getBoolean(TinyDB.SHOW_TO_ALL, SHOW_TO_ALL_LOCATION);
+
+        SAVE_INCOMING_MEDIA_TO_GALLERY = tinyDB.getBoolean(TinyDB.SAVE_INCOMING_MEDIA, SAVE_INCOMING_MEDIA_TO_GALLERY);
+        SAVE_IN_APP_CAPTURE_MEDIA_TO_GALLERY = tinyDB.getBoolean(TinyDB.SAVE_IN_APP_MEDIA_CAPTURE, SAVE_IN_APP_CAPTURE_MEDIA_TO_GALLERY);
+
+        READ_RECEIPTS = tinyDB.getBoolean(TinyDB.READ_RECEIPTS, READ_RECEIPTS);
+    }
+
 }

@@ -216,6 +216,16 @@ Carrier SMS charges may apply.</string>
     <string name="delete_all_chats">Delete all chats</string>
     <string name="got_it">GOT IT</string>
 
+    <string name="privacy">Privacy</string>
+    <string name="last_seen">Last Seen</string>
+    <string name="profile_photo">Profile Photo</string>
+    <string name="status">Status</string>
+    <string name="my_contacts">My Contacts</string>
+    <string name="read_receipts">Read Receipts</string>
+    <string name="blocked_contacts">Blocked Contacts</string>
+    <string name="list_of_blocked_contacts">List of contacts that you have blocked.</string>
+    <!-- end -->
+
     <!--ShowcaseView related-->
     <string name="showcase_heading">Search your favourite Teams, Leagues &amp; Players</string>
     <string name="showcase_message">Search and Select your favourite teams, leagues, players and start the experience.</string>
