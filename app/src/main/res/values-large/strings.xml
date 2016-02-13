@@ -16,4 +16,12 @@
     <string name="toss">TOSS</string>
     <string name="batting_performance_analisis">BATTING PERFORMANCE ANALIYSIS</string>
     <string name="blowing_performance_analisis">BOWLING PERFORMANCE ANALISIS</string>
+    <string name="teams">TEAMS</string>
+    <string name="match_date">(2016-2017)</string>
+    <string name="p">P</string>
+    <string name="w">W</string>
+    <string name="d">D</string>
+    <string name="l">L</string>
+    <string name="pts">Pts</string>
+    <string name="pl">PL</string>
 </resources>
