@@ -12,6 +12,15 @@ import java.util.ArrayList;
  */
 public class UserUtil {
 
+    public static final int NO_MEDIA = 1;
+    public static final int IMAGE_MEDIA = 3;
+    public static final int AUDIO_MEDIA = 5;
+    public static final int VIDEO_MEDIA = 7;
+
+    public static final int EVERY_ONE = 10;
+    public static final int ONLY_FRIENDS = 11;
+    public static final int NOBODY = 12;
+
     private static boolean USER_REGISTERED = false;
     private static boolean OTP_SENT = false;
     private static boolean PROFILE_CREATED = false;
@@ -41,7 +50,12 @@ public class UserUtil {
 
     private static boolean SAVE_INCOMING_MEDIA_TO_GALLERY = true;
     private static boolean SAVE_IN_APP_CAPTURE_MEDIA_TO_GALLERY = true;
+    private static int MEDIA_USING_MOBILE_DATA = IMAGE_MEDIA * AUDIO_MEDIA * VIDEO_MEDIA;
+    private static int MEDIA_USING_WIFI = IMAGE_MEDIA * AUDIO_MEDIA * VIDEO_MEDIA;
 
+    private static int PRIVACY_LAST_SEEN = EVERY_ONE;
+    private static int PRIVACY_PROFILE_PHOTO = EVERY_ONE;
+    private static int PRIVACY_STATUS = EVERY_ONE;
     private static boolean READ_RECEIPTS = true;
 
     public static void init(Context context) {
@@ -288,6 +302,69 @@ public class UserUtil {
         tinyDB.putBoolean(TinyDB.SAVE_IN_APP_MEDIA_CAPTURE, saveInAppCaptureMediaToGallery);
     }
 
+    public static void setMediaUsingMobileData(Context context, int value){
+        MEDIA_USING_MOBILE_DATA = value;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putInt(TinyDB.MEDIA_MOBILE_DATA, MEDIA_USING_MOBILE_DATA);
+    }
+
+    public static boolean isMediaEnabledUsingMobileData(int media){
+        boolean enabled = false;
+        if( MEDIA_USING_MOBILE_DATA % media == 0 ){
+            enabled = true;
+        }
+        return enabled;
+    }
+
+    public static void setMediaUsingWIFI(Context context, int value){
+        MEDIA_USING_WIFI = value;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putInt(TinyDB.MEDIA_USING_WIFI, MEDIA_USING_WIFI);
+    }
+
+    public static boolean isMediaEnabledUsingWIFI(int media){
+        boolean enabled = false;
+        if( MEDIA_USING_WIFI % media == 0 ){
+            enabled = true;
+        }
+        return enabled;
+    }
+
+    public static int getPrivacyLastSeen() {
+        return PRIVACY_LAST_SEEN;
+    }
+
+    public static void setPrivacyLastSeen(Context context, int privacyLastSeen) {
+        PRIVACY_LAST_SEEN = privacyLastSeen;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putInt(TinyDB.PRIVACY_LAST_SEEN, PRIVACY_LAST_SEEN);
+    }
+
+    public static int getPrivacyProfilePhoto() {
+        return PRIVACY_PROFILE_PHOTO;
+    }
+
+    public static void setPrivacyProfilePhoto(Context context, int privacyProfilePhoto) {
+        PRIVACY_PROFILE_PHOTO = privacyProfilePhoto;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putInt(TinyDB.PRIVACY_PROFILE_PHOTO, PRIVACY_PROFILE_PHOTO);
+    }
+
+    public static int getPrivacyStatus() {
+        return PRIVACY_STATUS;
+    }
+
+    public static void setPrivacyStatus(Context context, int privacyStatus) {
+        PRIVACY_STATUS = privacyStatus;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putInt(TinyDB.PRIVACY_STATUS, PRIVACY_STATUS);
+    }
+
     public static boolean isReadReceipts() {
         return READ_RECEIPTS;
     }
@@ -331,7 +408,12 @@ public class UserUtil {
 
         SAVE_INCOMING_MEDIA_TO_GALLERY = tinyDB.getBoolean(TinyDB.SAVE_INCOMING_MEDIA, SAVE_INCOMING_MEDIA_TO_GALLERY);
         SAVE_IN_APP_CAPTURE_MEDIA_TO_GALLERY = tinyDB.getBoolean(TinyDB.SAVE_IN_APP_MEDIA_CAPTURE, SAVE_IN_APP_CAPTURE_MEDIA_TO_GALLERY);
+        MEDIA_USING_MOBILE_DATA = tinyDB.getInt(TinyDB.MEDIA_MOBILE_DATA, MEDIA_USING_MOBILE_DATA);
+        MEDIA_USING_WIFI = tinyDB.getInt(TinyDB.MEDIA_USING_WIFI, MEDIA_USING_WIFI);
 
+        PRIVACY_LAST_SEEN = tinyDB.getInt(TinyDB.PRIVACY_LAST_SEEN, PRIVACY_LAST_SEEN);
+        PRIVACY_PROFILE_PHOTO = tinyDB.getInt(TinyDB.PRIVACY_PROFILE_PHOTO, PRIVACY_PROFILE_PHOTO);
+        PRIVACY_STATUS = tinyDB.getInt(TinyDB.PRIVACY_STATUS, PRIVACY_STATUS);
         READ_RECEIPTS = tinyDB.getBoolean(TinyDB.READ_RECEIPTS, READ_RECEIPTS);
     }
 

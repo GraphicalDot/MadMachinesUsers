@@ -68,7 +68,12 @@ public class TinyDB {
 
     public static final String SAVE_INCOMING_MEDIA = "save_incoming_media";
     public static final String SAVE_IN_APP_MEDIA_CAPTURE = "save_in_app_media_capture";
+    public static final String MEDIA_MOBILE_DATA = "media_mobile_data";
+    public static final String MEDIA_USING_WIFI = "media_using_wifi";
 
+    public static final String PRIVACY_LAST_SEEN = "privacy_last_seen";
+    public static final String PRIVACY_PROFILE_PHOTO = "privacy_profile_photo";
+    public static final String PRIVACY_STATUS = "privacy_status";
     public static final String READ_RECEIPTS = "read_receipts";
 
     private SharedPreferences preferences;

@@ -24,7 +24,9 @@
     <FrameLayout
         android:id="@+id/clickableLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/horizontal_padding_very_small"
+        >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/settings_item_height"
@@ -65,7 +67,7 @@
             android:id="@+id/nextIcon"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:src="@drawable/next"
+            android:src="@drawable/next_vector"
             android:layout_gravity="right"
             android:visibility="gone"
             />

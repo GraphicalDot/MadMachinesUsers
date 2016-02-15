@@ -192,7 +192,7 @@ Carrier SMS charges may apply.</string>
 
 
     <!--Setting Screen related strings-->
-    <string name="notification_and_sound_options">Notifications and Sounds</string>
+    <string name="notification_and_sound_options">Notifications &amp; Sounds</string>
     <string name="notification_previews">Notification Previews</string>
     <string name="show_name_message">show name and message</string>
     <string name="conversation_tones">Conversation Tones</string>
@@ -206,11 +206,13 @@ Carrier SMS charges may apply.</string>
     <string name="show_location_to_friends">Show your location to your friends only</string>
     <string name="show_to_all">Show to all</string>
     <string name="show_location_to_spu_users">show your location to all Sports Unity users</string>
-    <string name="photos_and_media">Photos and media</string>
+    <string name="photos_and_media">Photos &amp; Media</string>
     <string name="save_photo">Save Photo</string>
     <string name="save_photos_to_gallery">Save incoming photos to your gallery</string>
     <string name="save_on_capture">Save on capture</string>
     <string name="save_new_photo_captured_in_gallery">Save new photo you take in the app in your gallery</string>
+    <string name="media_using_mobile_data">When using Mobile Data</string>
+    <string name="media_using_wifi">When Connected on Wi-Fi</string>
     <string name="chats">Chats</string>
     <string name="clear_all_chats">Clear all chats</string>
     <string name="delete_all_chats">Delete all chats</string>
@@ -224,6 +226,15 @@ Carrier SMS charges may apply.</string>
     <string name="read_receipts">Read Receipts</string>
     <string name="blocked_contacts">Blocked Contacts</string>
     <string name="list_of_blocked_contacts">List of contacts that you have blocked.</string>
+
+    <string name="everyone">Everyone</string>
+    <string name="my_friends">My Friends</string>
+    <string name="nobody">Nobody</string>
+
+    <string name="image">Image</string>
+    <string name="audio">Audio</string>
+    <string name="video">Video</string>
+
     <!-- end -->
 
     <!--ShowcaseView related-->

@@ -11,6 +11,7 @@
         <item name="android:dropDownListViewStyle">@style/PopupMenuListView</item>
         <item name="dropDownListViewStyle">@style/PopupMenuListView</item>
         <item name="android:colorControlActivated">@color/app_theme_blue</item>
+        <item name="colorAccent">@color/app_theme_blue</item>
 
     </style>
 
@@ -31,6 +32,7 @@
         <item name="android:dropDownListViewStyle">@style/PopupMenuListView</item>
         <item name="dropDownListViewStyle">@style/PopupMenuListView</item>
         <item name="colorControlHighlight">@android:color/darker_gray</item>
+        <item name="colorAccent">@color/app_theme_blue</item>
     </style>
 
     <style name="PopupMenuListView" parent="android:style/Widget.Holo.ListView.DropDown">

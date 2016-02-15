@@ -1,5 +1,6 @@
 package com.sports.unity.common.controller;
 
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.media.RingtoneManager;
@@ -9,65 +10,33 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
-import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.SettingsHelper;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.NotificationHandler;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    private static final int SETTINGS_MAIN_ID = 0;
-
-    private static final int NOTIFICATIONS_AND_SOUND_ITEM_ID = 1;
-    private static final int NOTIFICATION_PREVIEW_ITEM_ID = 2;
-    private static final int NOTIFICATIONS_CONVERSATION_TONE_ITEM_ID = 3;
-    private static final int NOTIFICATIONS_VIBRATE_ITEM_ID = 4;
-    private static final int NOTIFICATIONS_LIGHT_ITEM_ID = 5;
-    private static final int NOTIFICATIONS_SOUND_ITEM_ID = 6;
-
-    private static final int SHOW_MY_LOCATION_ITEM_ID = 10;
-    private static final int FRIEND_ONLY_LOCATION_ITEM_ID = 11;
-    private static final int ALL_USER_LOCATION_ITEM_ID = 12;
-
-    private static final int PHOTO_AND_MEDIA_ITEM_ID = 20;
-    private static final int SAVE_INCOMING_PHOTO_TO_GALLERY_ITEM_ID = 21;
-    private static final int SAVE_CAPTURED_PHOTO_TO_GALLERY_ITEM_ID = 22;
-
-    private static final int CHATS_ITEM_ID = 30;
-    private static final int CLEAR_ALL_CHATS_ITEM_ID = 31;
-    private static final int DELETE_ALL_CHATS_ITEM_ID = 32;
-
-    private static final int PRIVACY_ITEM_ID = 40;
-    private static final int LAST_SEEN_ITEM_ID = 41;
-    private static final int PROFILE_PHOTO_ITEM_ID = 42;
-    private static final int STATUS_ITEM_ID = 43;
-    private static final int READ_RECEIPTS_ITEM_ID = 44;
-    private static final int BLOCKED_CONTACTS_ITEM_ID = 45;
-
     private HashMap<Integer, int[]> drillDownItemsMap = new HashMap<>();
-    private int currentItemId = SETTINGS_MAIN_ID;
+    private int currentItemId = SettingsHelper.SETTINGS_MAIN_ID;
 
     private ItemEventListener itemEventListener = new ItemEventListener();
 
@@ -77,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_settings);
 
-        initDrillDownMap();
+        SettingsHelper.initDrillDownMap(drillDownItemsMap);
 
         initToolbar();
         renderDrillDownItems(currentItemId);
@@ -85,10 +54,10 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if ( currentItemId == SETTINGS_MAIN_ID ) {
+        if ( currentItemId == SettingsHelper.SETTINGS_MAIN_ID ) {
             super.onBackPressed();
         } else {
-            renderDrillDownItems(SETTINGS_MAIN_ID);
+            renderDrillDownItems(SettingsHelper.SETTINGS_MAIN_ID);
         }
     }
 
@@ -106,21 +75,15 @@ public class SettingsActivity extends AppCompatActivity {
 
         });
 
-        TextView settingTitle = (TextView) toolbar.findViewById(R.id.toolbarTitle);
-        settingTitle.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoSlabBold());
+        TextView title = (TextView) toolbar.findViewById(R.id.toolbarTitle);
+        title.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoSlabBold());
+
+        TextView subtitle = (TextView) toolbar.findViewById(R.id.toolbarSubTitle);
+        subtitle.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoSlabBold());
 
         Switch switcher = (Switch)toolbar.findViewById(R.id.toolbarSwitcher);
         switcher.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoSlabBold());
 
-    }
-
-    private void initDrillDownMap(){
-        drillDownItemsMap.put(SETTINGS_MAIN_ID, new int[]{ NOTIFICATIONS_AND_SOUND_ITEM_ID, SHOW_MY_LOCATION_ITEM_ID, PHOTO_AND_MEDIA_ITEM_ID, CHATS_ITEM_ID, PRIVACY_ITEM_ID });
-        drillDownItemsMap.put(NOTIFICATIONS_AND_SOUND_ITEM_ID, new int[]{NOTIFICATION_PREVIEW_ITEM_ID, NOTIFICATIONS_CONVERSATION_TONE_ITEM_ID, NOTIFICATIONS_VIBRATE_ITEM_ID, NOTIFICATIONS_LIGHT_ITEM_ID, NOTIFICATIONS_SOUND_ITEM_ID});
-        drillDownItemsMap.put(SHOW_MY_LOCATION_ITEM_ID, new int[]{FRIEND_ONLY_LOCATION_ITEM_ID, ALL_USER_LOCATION_ITEM_ID});
-        drillDownItemsMap.put(PHOTO_AND_MEDIA_ITEM_ID, new int[]{SAVE_INCOMING_PHOTO_TO_GALLERY_ITEM_ID, SAVE_CAPTURED_PHOTO_TO_GALLERY_ITEM_ID});
-        drillDownItemsMap.put(CHATS_ITEM_ID, new int[]{CLEAR_ALL_CHATS_ITEM_ID, DELETE_ALL_CHATS_ITEM_ID});
-        drillDownItemsMap.put(PRIVACY_ITEM_ID, new int[]{LAST_SEEN_ITEM_ID, PROFILE_PHOTO_ITEM_ID, STATUS_ITEM_ID, READ_RECEIPTS_ITEM_ID, BLOCKED_CONTACTS_ITEM_ID});
     }
 
     private void renderDrillDownItems(int itemId){
@@ -147,27 +110,27 @@ public class SettingsActivity extends AppCompatActivity {
         TextView subTitle = (TextView) toolbar.findViewById(R.id.toolbarSubTitle);
         Switch switcher = (Switch)toolbar.findViewById(R.id.toolbarSwitcher);
 
-        if( currentItemId == SETTINGS_MAIN_ID ){
+        if( currentItemId == SettingsHelper.SETTINGS_MAIN_ID ){
             toolbar.setBackgroundColor(getResources().getColor(R.color.app_theme_blue));
             back.setImageResource(R.drawable.ic_menu_back);
+            back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
 
-            SettingsItem settingsItem = new SettingsItem(currentItemId);
-            title.setText(settingsItem.getTitle());
+            title.setText(SettingsHelper.getTitle(currentItemId, this));
             title.setVisibility(View.VISIBLE);
             title.setGravity(Gravity.CENTER);
             title.setTextColor(getResources().getColor(android.R.color.white));
 
             switcher.setVisibility(View.GONE);
             subTitle.setVisibility(View.GONE);
-        } else if( currentItemId == NOTIFICATIONS_AND_SOUND_ITEM_ID || currentItemId == SHOW_MY_LOCATION_ITEM_ID ){
+        } else if( currentItemId == SettingsHelper.NOTIFICATIONS_AND_SOUND_ITEM_ID || currentItemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID ){
             toolbar.setBackgroundColor(getResources().getColor(android.R.color.white));
             back.setImageResource(R.drawable.ic_menu_back_blk);
+            back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
 
-            SettingsItem settingsItem = new SettingsItem(currentItemId);
-            switcher.setText(settingsItem.getTitle());
+            switcher.setText(SettingsHelper.getTitle( currentItemId, this));
             switcher.setVisibility(View.VISIBLE);
             switcher.setTag(currentItemId);
-            switcher.setChecked(settingsItem.getCheckedValue());
+            switcher.setChecked(SettingsHelper.getCheckedValue(currentItemId));
             switcher.setOnCheckedChangeListener(itemEventListener);
 
             title.setVisibility(View.GONE);
@@ -175,9 +138,9 @@ public class SettingsActivity extends AppCompatActivity {
         } else {
             toolbar.setBackgroundColor(getResources().getColor(android.R.color.white));
             back.setImageResource(R.drawable.ic_menu_back_blk);
+            back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
 
-            SettingsItem settingsItem = new SettingsItem(currentItemId);
-            subTitle.setText(settingsItem.getTitle());
+            subTitle.setText(SettingsHelper.getTitle( currentItemId, this));
             subTitle.setVisibility(View.VISIBLE);
 
             switcher.setVisibility(View.GONE);
@@ -200,6 +163,50 @@ public class SettingsActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    private TextView getSubTitleView(int itemId){
+        TextView view = null;
+        LinearLayout itemsContainer = (LinearLayout)findViewById(R.id.items_container);
+
+        int[] items = drillDownItemsMap.get(currentItemId);
+        int matchIndex = -1;
+        for(int index = 0; index< items.length ; index++ ){
+            if( items[index] == itemId ){
+                matchIndex = index;
+                break;
+            }
+        }
+
+        if( matchIndex != -1 ){
+            ViewGroup settingsItemLayout = (ViewGroup)itemsContainer.getChildAt(matchIndex);
+            if( settingsItemLayout != null ){
+                view = (TextView)settingsItemLayout.findViewById(R.id.subTitle);
+            }
+        }
+
+        return view;
+    }
+
+    private void updateViewBasedOnPopupSelection(int itemId) {
+        if( itemId == SettingsHelper.NOTIFICATIONS_SOUND_ITEM_ID ){
+            //TODO
+        } else if( itemId == SettingsHelper.LAST_SEEN_ITEM_ID ){
+            TextView view = getSubTitleView(itemId);
+            view.setText(SettingsHelper.getSubTitle(itemId, SettingsActivity.this));
+        } else if( itemId == SettingsHelper.PROFILE_PHOTO_ITEM_ID ){
+            TextView view = getSubTitleView(itemId);
+            view.setText(SettingsHelper.getSubTitle(itemId, SettingsActivity.this));
+        } else if( itemId == SettingsHelper.STATUS_ITEM_ID ){
+            TextView view = getSubTitleView(itemId);
+            view.setText(SettingsHelper.getSubTitle(itemId, SettingsActivity.this));
+        } else if( itemId == SettingsHelper.MEDIA_USING_MOBILE_DATA_ITEM_ID ){
+            TextView view = getSubTitleView(itemId);
+            view.setText(SettingsHelper.getMediaListingForMobileData());
+        } else if( itemId == SettingsHelper.MEDIA_WHEN_CONNECTED_TO_WIFI_ITEM_ID ){
+            TextView view = getSubTitleView(itemId);
+            view.setText(SettingsHelper.getMediaListingForWifi());
+        }
     }
 
     private ArrayList<ToneItem> listRingTones() {
@@ -274,71 +281,108 @@ public class SettingsActivity extends AppCompatActivity {
             int itemId = (Integer)view.getTag();
             int itemType = (Integer)view.getTag(R.layout.settings_item);
 
-            if( itemType == SettingsItem.ITEM_TYPE_DRILL_DOWN && drillDownItemsMap.containsKey(itemId) ){
+            if( itemType == SettingsHelper.ITEM_TYPE_DRILL_DOWN ){
                 renderDrillDownItems(itemId);
-            } else if( itemType == SettingsItem.ITEM_TYPE_RADIO ) {
+            } else if( itemType == SettingsHelper.ITEM_TYPE_RADIO ) {
                 CheckBox checkBox = (CheckBox)view.findViewById(R.id.radio);
                 checkBox.setChecked(!checkBox.isChecked());
-            } else if( itemType == SettingsItem.ITEM_TYPE_CLICK ) {
-                if( itemId == CLEAR_ALL_CHATS_ITEM_ID ){
+            } else if( itemType == SettingsHelper.ITEM_TYPE_CLICK ) {
+                if( itemId == SettingsHelper.CLEAR_ALL_CHATS_ITEM_ID ){
                     clearAllChat();
-                } else if( itemId == DELETE_ALL_CHATS_ITEM_ID ){
+                } else if (itemId == SettingsHelper.DELETE_ALL_CHATS_ITEM_ID ){
                     deleteAllChat();
-                } else if( itemId == BLOCKED_CONTACTS_ITEM_ID ){
+                } else if( itemId == SettingsHelper.BLOCKED_CONTACTS_ITEM_ID ){
                     //TODO
                 }
-            } else if( itemType == SettingsItem.ITEM_TYPE_POPUP ) {
-                if( itemId == NOTIFICATIONS_SOUND_ITEM_ID ){
+            } else if( itemType == SettingsHelper.ITEM_TYPE_POPUP ) {
+                if( itemId == SettingsHelper.NOTIFICATIONS_SOUND_ITEM_ID ){
                     //TODO
-                } else if( itemId == LAST_SEEN_ITEM_ID ){
-                    //TODO
-                } else if( itemId == PROFILE_PHOTO_ITEM_ID ){
-                    //TODO
-                } else if( itemId == STATUS_ITEM_ID ){
-                    //TODO
+                } else if( itemId == SettingsHelper.LAST_SEEN_ITEM_ID ){
+                    SingleSelectionAlertDialog alertDialog = new SingleSelectionAlertDialog( itemId, SettingsHelper.getTitle(itemId, SettingsActivity.this),
+                            new int[]{ SettingsHelper.EVERY_ONE_ITEM_ID, SettingsHelper.ONLY_FRIENDS_ITEM_ID, SettingsHelper.NOBODY_ITEM_ID }, UserUtil.getPrivacyLastSeen());
+                    alertDialog.show();
+                } else if( itemId == SettingsHelper.PROFILE_PHOTO_ITEM_ID ){
+                    SingleSelectionAlertDialog alertDialog = new SingleSelectionAlertDialog( itemId, SettingsHelper.getTitle(itemId, SettingsActivity.this),
+                            new int[]{ SettingsHelper.EVERY_ONE_ITEM_ID, SettingsHelper.ONLY_FRIENDS_ITEM_ID, SettingsHelper.NOBODY_ITEM_ID }, UserUtil.getPrivacyProfilePhoto());
+                    alertDialog.show();
+                } else if( itemId == SettingsHelper.STATUS_ITEM_ID ){
+                    SingleSelectionAlertDialog alertDialog = new SingleSelectionAlertDialog( itemId, SettingsHelper.getTitle(itemId, SettingsActivity.this),
+                            new int[]{ SettingsHelper.EVERY_ONE_ITEM_ID, SettingsHelper.ONLY_FRIENDS_ITEM_ID, SettingsHelper.NOBODY_ITEM_ID }, UserUtil.getPrivacyStatus());
+                    alertDialog.show();
+                } else if( itemId == SettingsHelper.MEDIA_USING_MOBILE_DATA_ITEM_ID ){
+                    boolean checked[] = new boolean[]{ UserUtil.isMediaEnabledUsingMobileData(UserUtil.IMAGE_MEDIA), UserUtil.isMediaEnabledUsingMobileData(UserUtil.AUDIO_MEDIA), UserUtil.isMediaEnabledUsingMobileData(UserUtil.VIDEO_MEDIA) };
+                    ListingAlertDialog listingAlertDialog = new ListingAlertDialog( itemId, SettingsHelper.getTitle(itemId, SettingsActivity.this), drillDownItemsMap.get(itemId), checked);
+                    listingAlertDialog.show(SettingsActivity.this);
+                } else if( itemId == SettingsHelper.MEDIA_WHEN_CONNECTED_TO_WIFI_ITEM_ID ){
+                    boolean checked[] = new boolean[]{ UserUtil.isMediaEnabledUsingWIFI(UserUtil.IMAGE_MEDIA), UserUtil.isMediaEnabledUsingWIFI(UserUtil.AUDIO_MEDIA), UserUtil.isMediaEnabledUsingWIFI(UserUtil.VIDEO_MEDIA) };
+                    ListingAlertDialog listingAlertDialog = new ListingAlertDialog( itemId, SettingsHelper.getTitle(itemId, SettingsActivity.this), drillDownItemsMap.get(itemId), checked);
+                    listingAlertDialog.show(SettingsActivity.this);
                 }
+            }
+        }
+
+        public void onSingleSelection(int itemId, int selection){
+            if( itemId == SettingsHelper.NOTIFICATIONS_SOUND_ITEM_ID ){
+                //TODO
+            } else if( itemId == SettingsHelper.LAST_SEEN_ITEM_ID ){
+                int value = SettingsHelper.getPopUpItemValue(selection);
+                UserUtil.setPrivacyLastSeen(SettingsActivity.this, value);
+                updateViewBasedOnPopupSelection(itemId);
+            } else if( itemId == SettingsHelper.PROFILE_PHOTO_ITEM_ID ){
+                int value = SettingsHelper.getPopUpItemValue(selection);
+                UserUtil.setPrivacyProfilePhoto(SettingsActivity.this, value);
+                updateViewBasedOnPopupSelection(itemId);
+            } else if( itemId == SettingsHelper.STATUS_ITEM_ID ){
+                int value = SettingsHelper.getPopUpItemValue(selection);
+                UserUtil.setPrivacyStatus(SettingsActivity.this, value);
+                updateViewBasedOnPopupSelection(itemId);
+            }
+        }
+
+        public void onMultipleSelection(int itemId, ArrayList<Integer> selectedOnes){
+            if( itemId == SettingsHelper.MEDIA_USING_MOBILE_DATA_ITEM_ID ){
+                int value = SettingsHelper.getPopUpMediaItemValue(selectedOnes);
+                UserUtil.setMediaUsingMobileData(SettingsActivity.this, value);
+                updateViewBasedOnPopupSelection(itemId);
+            } else if( itemId == SettingsHelper.MEDIA_WHEN_CONNECTED_TO_WIFI_ITEM_ID ){
+                int value = SettingsHelper.getPopUpMediaItemValue(selectedOnes);
+                UserUtil.setMediaUsingWIFI(SettingsActivity.this, value);
+                updateViewBasedOnPopupSelection(itemId);
             }
         }
 
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             int itemId = (Integer)buttonView.getTag();
-            if ( itemId == NOTIFICATIONS_AND_SOUND_ITEM_ID ) {
+            if ( itemId == SettingsHelper.NOTIFICATIONS_AND_SOUND_ITEM_ID ) {
                 UserUtil.setNotificationAndSound(SettingsActivity.this, isChecked);
                 changeAllRadioButtons(isChecked);
-            } else if ( itemId == NOTIFICATION_PREVIEW_ITEM_ID ) {
+            } else if ( itemId == SettingsHelper.NOTIFICATION_PREVIEW_ITEM_ID ) {
                 UserUtil.setNotificationPreviews(SettingsActivity.this, isChecked);
-            } else if ( itemId == NOTIFICATIONS_CONVERSATION_TONE_ITEM_ID ) {
+            } else if ( itemId == SettingsHelper.NOTIFICATIONS_CONVERSATION_TONE_ITEM_ID ) {
                 UserUtil.setConversationTones(SettingsActivity.this, isChecked);
-            } else if ( itemId == NOTIFICATIONS_VIBRATE_ITEM_ID ) {
+            } else if ( itemId == SettingsHelper.NOTIFICATIONS_VIBRATE_ITEM_ID ) {
                 UserUtil.setConversationVibrate(SettingsActivity.this, isChecked);
-            } else if ( itemId == NOTIFICATIONS_LIGHT_ITEM_ID ) {
+            } else if ( itemId == SettingsHelper.NOTIFICATIONS_LIGHT_ITEM_ID ) {
                 UserUtil.setNotificationLight(SettingsActivity.this, isChecked);
-            } else if ( itemId == NOTIFICATIONS_SOUND_ITEM_ID ) {
+            } else if ( itemId == SettingsHelper.NOTIFICATIONS_SOUND_ITEM_ID ) {
                 UserUtil.setNotificationSound(SettingsActivity.this, isChecked);
-            } else if ( itemId == SHOW_MY_LOCATION_ITEM_ID ) {
+            } else if ( itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID ) {
                 UserUtil.setShowMyLocation(SettingsActivity.this, isChecked);
                 changeAllRadioButtons(isChecked);
-            } else if ( itemId == FRIEND_ONLY_LOCATION_ITEM_ID ) {
+            } else if ( itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID ) {
                 UserUtil.setShowToFriendsLocation(SettingsActivity.this, isChecked);
-            } else if ( itemId == ALL_USER_LOCATION_ITEM_ID ) {
+            } else if ( itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID ) {
                 UserUtil.setShowToAllLocation(SettingsActivity.this, isChecked);
-            } else if ( itemId == SAVE_INCOMING_PHOTO_TO_GALLERY_ITEM_ID ) {
+            } else if ( itemId == SettingsHelper.SAVE_INCOMING_PHOTO_TO_GALLERY_ITEM_ID ) {
                 UserUtil.setSaveIncomingMediaToGallery(SettingsActivity.this, isChecked);
-            } else if ( itemId == SAVE_CAPTURED_PHOTO_TO_GALLERY_ITEM_ID) {
+            } else if ( itemId == SettingsHelper.SAVE_CAPTURED_PHOTO_TO_GALLERY_ITEM_ID) {
                 UserUtil.setSaveInAppCaptureMediaToGallery(SettingsActivity.this, isChecked);
             }
         }
     }
 
     private class SettingsItem {
-
-        private static final int ITEM_TYPE_DRILL_DOWN = 1;
-        private static final int ITEM_TYPE_RADIO = 2;
-        private static final int ITEM_TYPE_CLICK = 3;
-        private static final int ITEM_TYPE_POPUP = 4;
-
-        private static final int ITEM__WITH_NO_ICON = -1;
 
         private int id = 0;
         private int iconResId = 0;
@@ -350,11 +394,11 @@ public class SettingsActivity extends AppCompatActivity {
         private SettingsItem(int id){
             this.id = id;
 
-            this.title = getTitle();
-            this.subTitle = getSubTitle();
+            this.title = SettingsHelper.getTitle(this.id, SettingsActivity.this);
+            this.subTitle = SettingsHelper.getSubTitle(this.id, SettingsActivity.this);
 
-            this.itemType = getItemType();
-            this.iconResId = getItemIcon();
+            this.itemType = SettingsHelper.getItemType(this.id);
+            this.iconResId = SettingsHelper.getItemIcon(this.id);
         }
 
         private ViewGroup getItemLayout(){
@@ -364,8 +408,9 @@ public class SettingsActivity extends AppCompatActivity {
             clickableLayout.setTag(id);
             clickableLayout.setTag(R.layout.settings_item, itemType);
             clickableLayout.setOnClickListener(itemEventListener);
+            clickableLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
 
-            if( iconResId != ITEM__WITH_NO_ICON ){
+            if( iconResId != SettingsHelper.ITEM__WITH_NO_ICON ){
                 ImageView icon = (ImageView)viewGroup.findViewById(R.id.leftIcon);
                 icon.setImageResource(iconResId);
                 icon.setVisibility(View.VISIBLE);
@@ -375,7 +420,11 @@ public class SettingsActivity extends AppCompatActivity {
 
             TextView titleTextView = (TextView)clickableLayout.findViewById(R.id.title);
             titleTextView.setText(title);
-            titleTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+            if( currentItemId == SettingsHelper.SETTINGS_MAIN_ID ) {
+                titleTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoSlabRegular());
+            } else {
+                titleTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+            }
 
             TextView subtitleTextView = (TextView)clickableLayout.findViewById(R.id.subTitle);
             if( subTitle != null && !subTitle.isEmpty() ) {
@@ -385,13 +434,13 @@ public class SettingsActivity extends AppCompatActivity {
                 subtitleTextView.setVisibility(View.GONE);
             }
 
-            if( itemType == ITEM_TYPE_DRILL_DOWN ){
+            if( itemType == SettingsHelper.ITEM_TYPE_DRILL_DOWN ){
                 clickableLayout.findViewById(R.id.nextIcon).setVisibility(View.VISIBLE);
-            } else if( itemType == ITEM_TYPE_CLICK ){
+            } else if( itemType == SettingsHelper.ITEM_TYPE_CLICK ){
 
-            } else if( itemType == ITEM_TYPE_RADIO ){
+            } else if( itemType == SettingsHelper.ITEM_TYPE_RADIO ){
                 CheckBox checkBox = (CheckBox)clickableLayout.findViewById(R.id.radio);
-                checkBox.setChecked(getCheckedValue());
+                checkBox.setChecked(SettingsHelper.getCheckedValue(id));
                 checkBox.setVisibility(View.VISIBLE);
                 checkBox.setTag(id);
                 checkBox.setOnCheckedChangeListener(itemEventListener);
@@ -400,202 +449,108 @@ public class SettingsActivity extends AppCompatActivity {
             return viewGroup;
         }
 
-        private String getTitle(){
-            String title = null;
-            if( id == SETTINGS_MAIN_ID ){
-                title = getResources().getString(R.string.settings);
-            } else if( id == NOTIFICATIONS_AND_SOUND_ITEM_ID ){
-                title = getResources().getString(R.string.notification_and_sound_options);
-            } else if( id == NOTIFICATION_PREVIEW_ITEM_ID ){
-                title = getResources().getString(R.string.notification_previews);
-            } else if( id == NOTIFICATIONS_CONVERSATION_TONE_ITEM_ID ){
-                title = getResources().getString(R.string.conversation_tones);
-            } else if( id == NOTIFICATIONS_VIBRATE_ITEM_ID ){
-                title = getResources().getString(R.string.notification_vibrate);
-            } else if( id == NOTIFICATIONS_LIGHT_ITEM_ID ){
-                title = getResources().getString(R.string.notification_light);
-            } else if( id == NOTIFICATIONS_SOUND_ITEM_ID ){
-                title = getResources().getString(R.string.notification_sound);
-            } else if( id == SHOW_MY_LOCATION_ITEM_ID ){
-                title = getResources().getString(R.string.show_my_location);
-            } else if( id == FRIEND_ONLY_LOCATION_ITEM_ID ){
-                title = getResources().getString(R.string.friends_only);
-            } else if( id == ALL_USER_LOCATION_ITEM_ID ){
-                title = getResources().getString(R.string.show_to_all);
-            } else if( id == PHOTO_AND_MEDIA_ITEM_ID ){
-                title = getResources().getString(R.string.photos_and_media);
-            } else if( id == SAVE_INCOMING_PHOTO_TO_GALLERY_ITEM_ID ){
-                title = getResources().getString(R.string.save_photo);
-            } else if( id == SAVE_CAPTURED_PHOTO_TO_GALLERY_ITEM_ID ){
-                title = getResources().getString(R.string.save_on_capture);
-            } else if( id == CHATS_ITEM_ID ){
-                title = getResources().getString(R.string.chats);
-            } else if( id == CLEAR_ALL_CHATS_ITEM_ID ){
-                title = getResources().getString(R.string.clear_all_chats);
-            } else if( id ==  DELETE_ALL_CHATS_ITEM_ID){
-                title = getResources().getString(R.string.delete_all_chats);
-            } else if( id == PRIVACY_ITEM_ID ){
-                title = getResources().getString(R.string.privacy);
-            } else if( id == LAST_SEEN_ITEM_ID ){
-                title = getResources().getString(R.string.last_seen);
-            } else if( id == PROFILE_PHOTO_ITEM_ID ){
-                title = getResources().getString(R.string.profile_photo);
-            } else if( id == STATUS_ITEM_ID ){
-                title = getResources().getString(R.string.status);
-            } else if( id == READ_RECEIPTS_ITEM_ID ){
-                title = getResources().getString(R.string.read_receipts);
-            } else if( id == BLOCKED_CONTACTS_ITEM_ID ){
-                title = getResources().getString(R.string.blocked_contacts);
-            }
-            return title;
+    }
+
+    public class SingleSelectionAlertDialog {
+
+        private int itemId = 0;
+        private String dialogTitle = null;
+        private int[] optionsItem = null;
+
+        private int selectedItem = 0;
+
+        public SingleSelectionAlertDialog(int itemId, String dialogTitle, int[] optionsItem, int selectedItem){
+            this.itemId = itemId;
+            this.dialogTitle = dialogTitle;
+            this.optionsItem = optionsItem;
+
+            this.selectedItem = selectedItem;
         }
 
-        private String getSubTitle(){
-            String subTitle = null;
-            if( id == SETTINGS_MAIN_ID ){
-                subTitle = getResources().getString(R.string.settings);
-            } else if( id == NOTIFICATIONS_AND_SOUND_ITEM_ID ){
-                subTitle = UserUtil.isNotificationAndSound() ? "ON" : "OFF";
-            } else if( id == NOTIFICATION_PREVIEW_ITEM_ID ){
-                subTitle = getResources().getString(R.string.show_name_message);
-            } else if( id == NOTIFICATIONS_CONVERSATION_TONE_ITEM_ID ){
-                subTitle = getResources().getString(R.string.play_sound_for_messages);
-            } else if( id == NOTIFICATIONS_VIBRATE_ITEM_ID ){
-                subTitle = "";
-            } else if( id == NOTIFICATIONS_LIGHT_ITEM_ID ){
-                subTitle = "";
-            } else if( id == NOTIFICATIONS_SOUND_ITEM_ID ){
-                subTitle = getResources().getString(R.string.notification_ping);
-            } else if( id == SHOW_MY_LOCATION_ITEM_ID ){
-                subTitle = UserUtil.isShowMyLocation() ? "ON" : "OFF";
-            } else if( id == FRIEND_ONLY_LOCATION_ITEM_ID ){
-                subTitle = getResources().getString(R.string.show_location_to_friends);
-            } else if( id == ALL_USER_LOCATION_ITEM_ID ){
-                subTitle = getResources().getString(R.string.show_location_to_spu_users);
-            } else if( id == PHOTO_AND_MEDIA_ITEM_ID ){
-                subTitle = "";
-            } else if( id == SAVE_INCOMING_PHOTO_TO_GALLERY_ITEM_ID ){
-                subTitle = getResources().getString(R.string.save_photos_to_gallery);
-            } else if( id == SAVE_CAPTURED_PHOTO_TO_GALLERY_ITEM_ID ){
-                subTitle = getResources().getString(R.string.save_new_photo_captured_in_gallery);
-            } else if( id == CHATS_ITEM_ID ){
-                subTitle = "";
-            } else if( id == CLEAR_ALL_CHATS_ITEM_ID ){
-                subTitle = "";
-            } else if( id ==  DELETE_ALL_CHATS_ITEM_ID){
-                subTitle = "";
-            } else if( id == PRIVACY_ITEM_ID ){
-                subTitle = "";
-            } else if( id == LAST_SEEN_ITEM_ID ){
-                subTitle = getResources().getString(R.string.my_contacts);
-            } else if( id == PROFILE_PHOTO_ITEM_ID ){
-                subTitle = getResources().getString(R.string.my_contacts);
-            } else if( id == STATUS_ITEM_ID ){
-                subTitle = getResources().getString(R.string.my_contacts);
-            } else if( id == READ_RECEIPTS_ITEM_ID ){
-                subTitle = "";
-            } else if( id == BLOCKED_CONTACTS_ITEM_ID ){
-                subTitle = getResources().getString(R.string.list_of_blocked_contacts);
-            }
-            return subTitle;
-        }
+        private void show(){
 
-        private int getItemType(){
-            int itemType = 0;
-            if( id == SETTINGS_MAIN_ID ){
-                itemType = ITEM_TYPE_DRILL_DOWN;
-            } else if( id == NOTIFICATIONS_AND_SOUND_ITEM_ID ){
-                itemType = ITEM_TYPE_DRILL_DOWN;
-            } else if( id == NOTIFICATION_PREVIEW_ITEM_ID ){
-                itemType = ITEM_TYPE_RADIO;
-            } else if( id == NOTIFICATIONS_CONVERSATION_TONE_ITEM_ID ){
-                itemType = ITEM_TYPE_RADIO;
-            } else if( id == NOTIFICATIONS_VIBRATE_ITEM_ID ){
-                itemType = ITEM_TYPE_RADIO;
-            } else if( id == NOTIFICATIONS_LIGHT_ITEM_ID ){
-                itemType = ITEM_TYPE_RADIO;
-            } else if( id == NOTIFICATIONS_SOUND_ITEM_ID ){
-                itemType = ITEM_TYPE_POPUP;
-            } else if( id == SHOW_MY_LOCATION_ITEM_ID ){
-                itemType = ITEM_TYPE_DRILL_DOWN;
-            } else if( id == FRIEND_ONLY_LOCATION_ITEM_ID ){
-                itemType = ITEM_TYPE_RADIO;
-            } else if( id == ALL_USER_LOCATION_ITEM_ID ){
-                itemType = ITEM_TYPE_RADIO;
-            } else if( id == PHOTO_AND_MEDIA_ITEM_ID ){
-                itemType = ITEM_TYPE_DRILL_DOWN;
-            } else if( id == SAVE_INCOMING_PHOTO_TO_GALLERY_ITEM_ID ){
-                itemType = ITEM_TYPE_RADIO;
-            } else if( id == SAVE_CAPTURED_PHOTO_TO_GALLERY_ITEM_ID ){
-                itemType = ITEM_TYPE_RADIO;
-            } else if( id == CHATS_ITEM_ID ){
-                itemType = ITEM_TYPE_DRILL_DOWN;
-            } else if( id == CLEAR_ALL_CHATS_ITEM_ID ){
-                itemType = ITEM_TYPE_CLICK;
-            } else if( id ==  DELETE_ALL_CHATS_ITEM_ID){
-                itemType = ITEM_TYPE_CLICK;
-            } else if( id == PRIVACY_ITEM_ID ){
-                itemType = ITEM_TYPE_DRILL_DOWN;
-            } else if( id == LAST_SEEN_ITEM_ID ){
-                itemType = ITEM_TYPE_POPUP;
-            } else if( id == PROFILE_PHOTO_ITEM_ID ){
-                itemType = ITEM_TYPE_POPUP;
-            } else if( id == STATUS_ITEM_ID ){
-                itemType = ITEM_TYPE_POPUP;
-            } else if( id == READ_RECEIPTS_ITEM_ID ){
-                itemType = ITEM_TYPE_RADIO;
-            } else if( id == BLOCKED_CONTACTS_ITEM_ID ){
-                itemType = ITEM_TYPE_CLICK;
-            }
-            return itemType;
-        }
-
-        private int getItemIcon(){
-            int icon = ITEM__WITH_NO_ICON;
-
-            if( id == NOTIFICATIONS_AND_SOUND_ITEM_ID ){
-                icon = R.drawable.ic_settings_notification;
-            } else if( id == SHOW_MY_LOCATION_ITEM_ID ){
-                icon = R.drawable.ic_show_my_location;
-            } else if( id == PHOTO_AND_MEDIA_ITEM_ID ){
-                icon = R.drawable.ic_media;
-            } else if( id == CHATS_ITEM_ID ){
-                icon = R.drawable.ic_chats;
-            } else if( id == PRIVACY_ITEM_ID ){
-                icon = R.drawable.privacy;
+            String[] options = new String[optionsItem.length];
+            for(int index = 0; index < options.length ; index++ ){
+                options[index] = SettingsHelper.getPopUpTitle( optionsItem[index], SettingsActivity.this);
             }
 
-            return icon;
+            AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+            builder.setTitle(dialogTitle)
+
+                    .setItems( SettingsHelper.getPopUpOptions(itemId, SettingsActivity.this), new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+                            int item = optionsItem[which];
+                            itemEventListener.onSingleSelection(itemId, item);
+                        }
+
+                    });
+
+            builder.create().show();
         }
 
-        private boolean getCheckedValue(){
-            boolean checked = false;
-            if( id == NOTIFICATIONS_AND_SOUND_ITEM_ID ){
-                checked = UserUtil.isNotificationAndSound();
-            } else if( id == NOTIFICATION_PREVIEW_ITEM_ID ){
-                checked = UserUtil.isNotificationPreviews();
-            } else if( id == NOTIFICATIONS_CONVERSATION_TONE_ITEM_ID ){
-                checked = UserUtil.isConversationTones();
-            } else if( id == NOTIFICATIONS_VIBRATE_ITEM_ID ){
-                checked = UserUtil.isConversationVibrate();
-            } else if( id == NOTIFICATIONS_LIGHT_ITEM_ID ){
-                checked = UserUtil.isNotificationLight();
-            } else if( id == SHOW_MY_LOCATION_ITEM_ID ){
-                checked = UserUtil.isShowMyLocation();
-            } else if( id == FRIEND_ONLY_LOCATION_ITEM_ID ){
-                checked = UserUtil.isShowToFriendsLocation();
-            } else if( id == ALL_USER_LOCATION_ITEM_ID ){
-                checked = UserUtil.isShowToAllLocation();
-            } else if( id == SAVE_INCOMING_PHOTO_TO_GALLERY_ITEM_ID ){
-                checked = UserUtil.isSaveIncomingMediaToGallery();
-            } else if( id == SAVE_CAPTURED_PHOTO_TO_GALLERY_ITEM_ID ){
-                checked = UserUtil.isSaveInAppCaptureMediaToGallery();
-            } else if( id == READ_RECEIPTS_ITEM_ID ){
-                checked = UserUtil.isReadReceipts();
+    }
+
+    public class ListingAlertDialog implements DialogInterface.OnMultiChoiceClickListener {
+
+        private int itemId = 0;
+        private String dialogTitle = null;
+        private int[] optionsItem = null;
+
+        private boolean[] checkedItems = null;
+
+        public ListingAlertDialog(int itemId, String dialogTitle, int[] optionsItem, boolean[] checkedItems){
+            this.itemId = itemId;
+            this.dialogTitle = dialogTitle;
+            this.optionsItem = optionsItem;
+            this.checkedItems = checkedItems;
+        }
+
+        public void show(Activity activity){
+            String[] options = new String[optionsItem.length];
+            for(int index = 0; index < options.length ; index++ ){
+                options[index] = SettingsHelper.getPopUpTitle( optionsItem[index], SettingsActivity.this);
             }
-            return checked;
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+            builder.setTitle(dialogTitle);
+            builder.setMultiChoiceItems(options, checkedItems, this);
+
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+
+            });
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (itemEventListener != null) {
+                        ArrayList<Integer> selectedItems = new ArrayList<>();
+                        for (int index = 0; index < checkedItems.length; index++) {
+                            if (checkedItems[index] == true) {
+                                selectedItems.add(optionsItem[index]);
+                            }
+                        }
+                        itemEventListener.onMultipleSelection(itemId, selectedItems);
+                    }
+                }
+
+            });
+
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+
         }
 
+        @Override
+        public void onClick(DialogInterface dialog, int which, boolean isChecked) {
+            checkedItems[which] = isChecked;
+        }
     }
 
 }

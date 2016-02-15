@@ -713,10 +713,8 @@ public class UserProfileActivity extends CustomAppCompatActivity {
     }
 
     private void onBack() {
-        Log.d("max","actiontext----"+toolbarActionButton.getText());
-        if (toolbarActionButton.getText().toString().equals(INFO_SAVE) && progressBar.getVisibility() == View.INVISIBLE) {
-            AlertDialog.Builder build = new AlertDialog.Builder(
-                    UserProfileActivity.this);
+        if (toolbarActionButton.getText().equals(INFO_SAVE) && progressBar.getVisibility() == View.INVISIBLE) {
+            AlertDialog.Builder build = new AlertDialog.Builder(UserProfileActivity.this);
             build.setTitle("Discard Edits ? ");
             build.setMessage("If you cancel now, your edits will be discarded.");
             build.setPositiveButton("DISCARD", new DialogInterface.OnClickListener() {
@@ -735,17 +733,7 @@ public class UserProfileActivity extends CustomAppCompatActivity {
 
             });
 
-            final AlertDialog dialog = build.create();
-            dialog.setOnShowListener(new DialogInterface.OnShowListener() {
-
-                @Override
-                public void onShow(DialogInterface dialogInterface) {
-                    dialog.getButton(AlertDialog.BUTTON_NEGATIVE).setTextColor(getResources().getColor(R.color.app_theme_blue));
-                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(getResources().getColor(R.color.app_theme_blue));
-
-                    ((TextView) dialog.findViewById(android.R.id.message)).setTextColor(getResources().getColor(R.color.gray1));
-                }
-            });
+            AlertDialog dialog = build.create();
             dialog.show();
         } else {
             finish();
