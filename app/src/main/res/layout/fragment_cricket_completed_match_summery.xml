@@ -22,7 +22,7 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/horizontal_padding_very_small"
                 android:text="PLAYER OF THE MATCH"
-                android:textSize="@dimen/font_size_large"
+                android:textSize="@dimen/font_size_medium"
                 android:textColor="@color/score_light_grey"/>
             <View
                 android:layout_width="match_parent"
@@ -59,7 +59,7 @@
                android:layout_marginTop="@dimen/activity_vertical_margin_large"
                android:layout_marginLeft="@dimen/activity_vertical_margin_small"
                android:layout_toRightOf="@id/player_info_layout"
-               android:textSize="@dimen/font_size_medium"
+               android:textSize="@dimen/font_size_small_large"
                android:text="Martin Guptill"
                />
            <View
@@ -123,7 +123,7 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/horizontal_padding_very_small"
                 android:text="MATCH INFO"
-                android:textSize="@dimen/font_size_large"
+                android:textSize="@dimen/font_size_medium"
                 android:textColor="@color/score_light_grey"/>
             <View
                 android:layout_width="fill_parent"
@@ -133,6 +133,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
             android:orientation="vertical">
             <LinearLayout
                 android:layout_width="match_parent"
@@ -142,7 +143,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="MATCH"
-                    android:textSize="@dimen/font_size_medium"
+                    android:textSize="@dimen/font_size_small_large"
                     />
                 <TextView
                     android:layout_width="wrap_content"
@@ -150,7 +151,7 @@
                     android:text="Ist ODI , New Zeland Vs India"
                     android:textColor="@color/score_light_grey"
                     android:layout_marginLeft="@dimen/horizontal_padding_small"
-                    android:textSize="@dimen/font_size_small_large"
+                    android:textSize="@dimen/font_size_very_small"
                     />
             </LinearLayout>
             <LinearLayout
@@ -161,7 +162,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="DATE"
-                    android:textSize="@dimen/font_size_medium"
+                    android:textSize="@dimen/font_size_small_large"
                     />
                 <TextView
                     android:layout_width="wrap_content"
@@ -169,7 +170,7 @@
                     android:text="3rd Feb"
                     android:textColor="@color/score_light_grey"
                     android:layout_marginLeft="@dimen/horizontal_padding_small"
-                    android:textSize="@dimen/font_size_small_large"
+                    android:textSize="@dimen/font_size_very_small"
                     />
             </LinearLayout><LinearLayout
             android:layout_width="match_parent"
@@ -179,7 +180,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TOSS"
-                android:textSize="@dimen/font_size_medium"
+                android:textSize="@dimen/font_size_small_large"
                 />
             <TextView
                 android:layout_width="wrap_content"
@@ -187,7 +188,7 @@
                 android:text="India won the toss"
                 android:textColor="@color/score_light_grey"
                 android:layout_marginLeft="@dimen/horizontal_padding_small"
-                android:textSize="@dimen/font_size_small_large"
+                android:textSize="@dimen/font_size_very_small"
                 />
         </LinearLayout>
             <LinearLayout
@@ -198,7 +199,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Umpires"
-                    android:textSize="@dimen/font_size_medium"
+                    android:textSize="@dimen/font_size_small_large"
                     />
                 <TextView
                     android:layout_width="wrap_content"
@@ -206,7 +207,7 @@
                     android:text="Rahul"
                     android:textColor="@color/score_light_grey"
                     android:layout_marginLeft="@dimen/horizontal_padding_small"
-                    android:textSize="@dimen/font_size_small_large"
+                    android:textSize="@dimen/font_size_very_small"
                     />
             </LinearLayout>
             <LinearLayout
@@ -217,7 +218,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="MATCH REFEREE"
-                    android:textSize="@dimen/font_size_medium"
+                    android:textSize="@dimen/font_size_small_large"
                     />
                 <TextView
                     android:layout_width="wrap_content"
@@ -225,11 +226,10 @@
                     android:text="Board , BCC"
                     android:textColor="@color/score_light_grey"
                     android:layout_marginLeft="@dimen/horizontal_padding_small"
-                    android:textSize="@dimen/font_size_small_large"
+                    android:textSize="@dimen/font_size_very_small"
                     />
             </LinearLayout>
         </LinearLayout>
 
     </LinearLayout>
-
 </LinearLayout>

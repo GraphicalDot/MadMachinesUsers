@@ -1,6 +1,5 @@
 package com.sports.unity.scoredetails.cricketdetail;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sports.unity.R;
-import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scoredetails.FragementInterface;
 
 import java.util.List;
@@ -19,11 +17,11 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CricketMatchScoreFragment.OnFragmentInteractionListener} interface
+ * {@link CricketLiveMatchSummeryFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class CricketMatchScoreFragment extends Fragment implements FragementInterface<CricketMatchScoreModel> {
+public class CricketLiveMatchSummeryFragment extends Fragment implements FragementInterface<CricketMatchScoreModel> {
 
 
 
@@ -37,7 +35,7 @@ public class CricketMatchScoreFragment extends Fragment implements FragementInte
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cricket_match_score, container, false);
+        return inflater.inflate(R.layout.fragment_cricket_live_match_summery, container, false);
     }
 
      public void onButtonPressed(Uri uri) {

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        card:cardCornerRadius="5dp">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/layout_batting"
+                android:layout_width="match_parent"
+                android:background="@color/ColorPrimary"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/tv_player_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/vertical_padding_small"
+                    android:textSize="@dimen/font_size_small_large"
+                    android:layout_weight=".5"
+                    android:text="Martin Guptile"/>
+                <TextView
+                    android:id="@+id/tv_player_run"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_small_large"
+                    android:layout_weight=".1"
+                    android:text="35"/>
+                <TextView
+                    android:id="@+id/tv_ball_play_by_player"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_small_large"
+                    android:layout_weight=".1"
+                    android:text="42"/>
+                <TextView
+                    android:id="@+id/tv_four_gain_by_player"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_small_large"
+                    android:layout_weight=".1"
+                    android:text="5"/>
+                <TextView
+                    android:id="@+id/tv_six_gain_by_player"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_small_large"
+                    android:layout_weight=".1"
+                    android:text="0"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/font_size_small_large"
+                    android:layout_weight=".1"
+                    android:text="83.33"/>
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/tv_sr_rate_of_player"
+                android:layout_width="match_parent"
+                android:background="@color/ColorPrimary"
+                android:layout_below="@+id/layout_batting"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/vertical_padding_small"
+                    android:textSize="@dimen/font_size_very_small"
+                    android:layout_weight="1"
+                    android:textColor="@color/score_light_grey"
+                    android:text="Run out (Maxwell)"/>
+                </LinearLayout>
+
+        </RelativeLayout>
+
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
