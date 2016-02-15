@@ -33,13 +33,13 @@ import java.util.Timer;
  */
 public class CommentaryFragment extends Fragment implements FragementInterface<CommentriesModel>, DataServiceContract, ErrorContract {
     private RecyclerView mRecyclerView;
-    private JSONObject matchScoreDetails = null;
+    private JSONObject matchScoreDetails;
     private ArrayList<CommentriesModel> commentaries = new ArrayList<>();
 
-    private String sportsType = null;
-    private String matchId = null;
+    private String sportsType;
+    private String matchId;
 
-    private Timer timerToRefreshContent = null;
+
     private BroadcastListAdapter mAdapter = null;
     private SwipeRefreshLayout swipeRefreshLayout;
     private DataServiceContract dataServiceContract;
@@ -88,6 +88,7 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
             public void onRefresh() {
                 if (dataServiceContract != null) {
                     dataServiceContract.requestData(0);
+                    swipeRefreshLayout.setRefreshing(false);
                 }
             }
         });
@@ -99,10 +100,10 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
 
     @Override
     public void dataChanged() {
-        /*mRecyclerView.postInvalidate();
+       /* mRecyclerView.postInvalidate();
         mAdapter.notifyDataSetChanged();
-        swipeRefreshLayout.setRefreshing(false);
-*/
+        swipeRefreshLayout.setRefreshing(false);*/
+
     }
 
    @Override

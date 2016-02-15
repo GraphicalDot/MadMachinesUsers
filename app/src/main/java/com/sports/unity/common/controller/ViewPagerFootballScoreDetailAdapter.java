@@ -20,9 +20,7 @@ import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 
-/**
- * Created by cfeindia on 3/2/16.
- */
+
 public class ViewPagerFootballScoreDetailAdapter extends FragmentStatePagerAdapter {
 
 
