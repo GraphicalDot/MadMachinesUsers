@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:card="http://schemas.android.com/apk/res-auto"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        card:cardCornerRadius="5dp">
+
+        <LinearLayout
+            android:id="@+id/rootLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/ScoreLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/vertical_padding_very_very_small"
+                android:weightSum="4"
+                android:orientation="horizontal">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                   android:layout_gravity="start"
+                    android:layout_weight="1"
+                    android:src="@drawable/ic_user"/>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chelsea"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chelsea"/>
+                </LinearLayout>
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:background="@color/gray3" />
+                <LinearLayoutPrevious
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chelsea"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chelsea"/>
+                </LinearLayoutPrevious>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/footer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/gray3"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tv_venue"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/vertical_padding_small"
+                    android:layout_marginTop="@dimen/vertical_padding_very_very_small"
+                    android:textColor="@color/score_dark_grey"
+                    android:textSize="@dimen/font_size_small_medium"
+                    android:text="San Siro"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="@dimen/vertical_padding_very_very_small"
+                    android:layout_marginLeft="@dimen/vertical_padding_small"
+                    android:textColor="@color/score_light_grey"
+                    android:textSize="@dimen/font_size_small_medium"
+                    android:text="Friday, January 01, 00:00 (IST)"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

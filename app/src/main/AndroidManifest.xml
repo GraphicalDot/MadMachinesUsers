@@ -138,8 +138,15 @@
         <activity
             android:name=".player.view.PlayerProfileView"
             android:label="@string/title_activity_player_profile_view"
-            android:theme="@style/AppTheme">
-        </activity>
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".scoredetails.cricketdetail.PlayerCricketBioDataActivity"
+            android:label="@string/title_activity_player_cricket_bio_data"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".scoredetails.footballdetail.FootballDetailsActivity"
+            android:label="@string/title_activity_football_deatils"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
