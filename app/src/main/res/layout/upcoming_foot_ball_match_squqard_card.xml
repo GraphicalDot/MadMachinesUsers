@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_margin="@dimen/vertical_padding_very_very_small"
+        android:background="@color/ColorPrimary"
         card_view:cardCornerRadius="@dimen/card_edge_curve_radius">
 
         <LinearLayout
@@ -95,6 +96,7 @@
                     android:text="7"
                     />
             </LinearLayout>
+
         </LinearLayout>
 
 

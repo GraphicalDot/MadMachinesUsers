@@ -24,4 +24,11 @@
     <string name="l">L</string>
     <string name="pts">Pts</string>
     <string name="pl">PL</string>
+    <string name="point">POINT</string>
+    <string name="win">WINS</string>
+    <string name="draw">DRAW</string>
+    <string name="draws">DRAWS</string>
+    <string name="loss">LOSS</string>
+    <string name="premiera_division">PREMIERA DIVISION</string>
+    <string name="caption">CAPTION</string>
 </resources>

@@ -129,6 +129,7 @@
                     android:src="@drawable/ic_user"/>
                 <View
                     android:id="@+id/v_divider"
+                    android:layout_below="@+id/layout_batting"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginLeft="@dimen/margin_divider"
@@ -138,10 +139,12 @@
                     android:layout_marginRight="@dimen/margin_divider"
                     android:background="@color/gray3" />
                 <LinearLayout
+                    android:id="@+id/layout_batting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/activity_vertical_margin_small"
                     android:layout_toRightOf="@+id/iv_player_first"
-                    android:layout_alignParentRight="true"
+                    android:layout_toLeftOf="@+id/iv_player_second"
                     android:orientation="vertical">
                     <TextView
                         android:id="@+id/tv_first_player_name"
@@ -165,6 +168,7 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginRight="@dimen/activity_vertical_margin_small"
                     android:layout_toLeftOf="@+id/iv_player_second"
                     android:orientation="vertical">
                     <TextView
@@ -207,6 +211,7 @@
                         android:id="@+id/tv_first_player_run_on_ball"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:paddingLeft="@dimen/activity_vertical_margin_small"
                         android:textSize="@dimen/font_size_very_small"
                         android:text="6(7)"
                         android:gravity="left"
@@ -226,6 +231,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="@dimen/font_size_very_small"
+                        android:layout_marginRight="@dimen/activity_vertical_margin_small"
                         android:text="3(5)"
                         android:layout_weight="1"
                         android:gravity="right"
