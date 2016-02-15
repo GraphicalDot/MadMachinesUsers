@@ -6,6 +6,7 @@ import android.util.Log;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
@@ -114,9 +115,9 @@ public class XMPPClient {
         return success;
     }
 
-    public boolean isConnectionAuthenticated(){
+    public boolean isConnectionAuthenticated() {
         boolean authenticated = false;
-        if( connection != null && connection.isAuthenticated() ){
+        if (connection != null && connection.isAuthenticated()) {
             authenticated = true;
         } else {
             //nothing
@@ -165,14 +166,15 @@ public class XMPPClient {
 
     synchronized public boolean authenticateConnection(Context context) {
         boolean success = false;
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        String jid = tinyDB.getString(TinyDB.KEY_USER_JID);
+        String password = tinyDB.getString(TinyDB.KEY_PASSWORD);
 
         if (connection != null) {
             if (!connection.isAuthenticated()) {
                 try {
                     Log.i("XMPP Connection", "authenticating");
-
-                    TinyDB tinyDB = TinyDB.getInstance(context);
-                    connection.login(tinyDB.getString(TinyDB.KEY_USERNAME), tinyDB.getString(TinyDB.KEY_PASSWORD));
+                    connection.login(jid, password);
 
                     success = true;
 
@@ -192,7 +194,6 @@ public class XMPPClient {
         } else {
             //nothing
         }
-
         return success;
     }
 

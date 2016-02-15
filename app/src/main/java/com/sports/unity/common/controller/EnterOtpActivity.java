@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
+import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
@@ -27,6 +28,7 @@ import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.scores.model.ScoresContentHandler;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import org.json.JSONException;
@@ -198,6 +200,8 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, phoneNumber);
         parameters.put(Constants.REQUEST_PARAMETER_KEY_AUTH_CODE, otp);
+        parameters.put(Constants.REQUEST_PARAMETER_KEY_APK_VERSION, CommonUtil.getBuildConfig());
+        parameters.put(Constants.REQUEST_PARAMETER_KEY_UDID, CommonUtil.getDeviceId(this));
         requestContent(ScoresContentHandler.CALL_NAME_CREATE_USER, parameters, CREATE_USER_REQUEST_TAG);
     }
 
@@ -207,6 +211,8 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         String phoneNumber = "91" + getPhoneNumber();
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, phoneNumber);
+        parameters.put(Constants.REQUEST_PARAMETER_KEY_APK_VERSION, CommonUtil.getBuildConfig());
+        parameters.put(Constants.REQUEST_PARAMETER_KEY_UDID, CommonUtil.getDeviceId(this));
         requestContent(ScoresContentHandler.CALL_NAME_ASK_OTP, parameters, RESEND_OTP_REQUEST_TAG);
     }
 
@@ -249,8 +255,9 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
                 JSONObject response = new JSONObject(content);
                 if (response.getString("status").equals("200")) {
                     String password = response.getString(Constants.REQUEST_PARAMETER_KEY_PASSWORD);
+                    String userJid = response.getString(Constants.REQUEST_PARAMETER_KEY_USER_NAME);
+                    TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_USER_JID, userJid);
                     TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
-
                     UserUtil.setOtpSent(EnterOtpActivity.this, false);
                     UserUtil.setUserRegistered(EnterOtpActivity.this, true);
 

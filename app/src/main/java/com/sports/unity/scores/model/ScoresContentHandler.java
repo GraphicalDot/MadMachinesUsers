@@ -1,5 +1,7 @@
 package com.sports.unity.scores.model;
 
+import android.util.Log;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.VolleyError;
 import com.sports.unity.scores.ScoreDetailActivity;
@@ -52,14 +54,14 @@ public class ScoresContentHandler {
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
 
     public static ScoresContentHandler getInstance() {
-        if ( SCORES_CONTENT_HANDLER == null ) {
+        if (SCORES_CONTENT_HANDLER == null) {
             SCORES_CONTENT_HANDLER = new ScoresContentHandler();
         }
         return SCORES_CONTENT_HANDLER;
     }
 
-    public static void clean(){
-        if( SCORES_CONTENT_HANDLER != null ){
+    public static void clean() {
+        if (SCORES_CONTENT_HANDLER != null) {
             SCORES_CONTENT_HANDLER.cleanUp();
             SCORES_CONTENT_HANDLER = null;
         }
@@ -74,7 +76,7 @@ public class ScoresContentHandler {
     private HashMap<String, ContentListener> mapOfResponseListeners = new HashMap<>();
     private HashMap<String, String> requestInProcess_RequestTagAndListenerKey = new HashMap<>();
 
-    private ScoresContentHandler(){
+    private ScoresContentHandler() {
 
     }
 
@@ -82,65 +84,71 @@ public class ScoresContentHandler {
 
         @Override
         public void handleResponse(String tag, String response, int responseCode) {
-        if( requestInProcess_RequestTagAndListenerKey.containsKey(tag) ) {
-            String listenerKey = requestInProcess_RequestTagAndListenerKey.get(tag);
-            ContentListener contentListener = mapOfResponseListeners.get(listenerKey);
-            if( contentListener != null ) {
-                contentListener.handleContent(tag, response, responseCode);
-            } else {
-                //nothing
-            }
+            if (requestInProcess_RequestTagAndListenerKey.containsKey(tag)) {
+                String listenerKey = requestInProcess_RequestTagAndListenerKey.get(tag);
+                ContentListener contentListener = mapOfResponseListeners.get(listenerKey);
+                if (contentListener != null) {
+                    contentListener.handleContent(tag, response, responseCode);
+                } else {
+                    //nothing
+                }
 
-            requestInProcess_RequestTagAndListenerKey.remove(tag);
-        }
+                requestInProcess_RequestTagAndListenerKey.remove(tag);
+            }
         }
 
     };
 
-    public void addResponseListener(ContentListener responseListener, String listenerKey){
+    public void addResponseListener(ContentListener responseListener, String listenerKey) {
         mapOfResponseListeners.put(listenerKey, responseListener);
     }
 
-    public void removeResponseListener(String listenerKey){
+    public void removeResponseListener(String listenerKey) {
         mapOfResponseListeners.remove(listenerKey);
     }
 
-    public void requestCall(String callName, HashMap<String, String> parameters, String requestListenerKey, String requestTag){
-        if( callName.equals(CALL_NAME_CREATE_USER) ){
+    public void requestCall(String callName, HashMap<String, String> parameters, String requestListenerKey, String requestTag) {
+        if (callName.equals(CALL_NAME_CREATE_USER)) {
             String phoneNumber = parameters.get(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER);
             String otp = parameters.get(Constants.REQUEST_PARAMETER_KEY_AUTH_CODE);
-            requestToCreateUser(phoneNumber, otp, requestListenerKey, requestTag);
-        } else if( callName.equals(CALL_NAME_ASK_OTP) ){
+            String apk_version = parameters.get(Constants.REQUEST_PARAMETER_KEY_APK_VERSION);
+            String udid = parameters.get(Constants.REQUEST_PARAMETER_KEY_UDID);
+            requestToCreateUser(phoneNumber, otp, apk_version, udid, requestListenerKey, requestTag);
+        } else if (callName.equals(CALL_NAME_ASK_OTP)) {
             String phoneNumber = parameters.get(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER);
-            requestForOtp(phoneNumber, requestListenerKey, requestTag);
-        } else if( callName.equals(CALL_NAME_NEWS_DETAIL) ){
+            String apk_version = parameters.get(Constants.REQUEST_PARAMETER_KEY_APK_VERSION);
+            String udid = parameters.get(Constants.REQUEST_PARAMETER_KEY_UDID);
+            requestForOtp(phoneNumber, apk_version, udid, requestListenerKey, requestTag);
+        } else if (callName.equals(CALL_NAME_NEWS_DETAIL)) {
             String imageDpi = parameters.get(PARAM_NEWS_IMAGE_DPI);
             String newsId = parameters.get(PARAM_NEWS_ID);
-            requestForNewsDetail( imageDpi, newsId, requestListenerKey, requestTag);
-        } else if( callName.equals(CALL_NAME_NEAR_BY_USERS) ){
+            requestForNewsDetail(imageDpi, newsId, requestListenerKey, requestTag);
+        } else if (callName.equals(CALL_NAME_NEAR_BY_USERS)) {
             String lat = parameters.get(PARAM_LATITUDE);
             String lng = parameters.get(PARAM_LONGITUDE);
             String radius = parameters.get(PARAM_RADIUS);
-            requestNearByUsers(lat, lng, radius, requestListenerKey, requestTag);
-        } else if( callName.equals(CALL_NAME_MATCHES_LIST) ){
+            String apk_version = parameters.get(Constants.REQUEST_PARAMETER_KEY_APK_VERSION);
+            String udid = parameters.get(Constants.REQUEST_PARAMETER_KEY_UDID);
+            requestNearByUsers(apk_version,udid,lat, lng, radius, requestListenerKey, requestTag);
+        } else if (callName.equals(CALL_NAME_MATCHES_LIST)) {
             requestListOfMatches(requestListenerKey, requestTag);
-        } else if( callName.equals(CALL_NAME_MATCH_DETAIL) ){
+        } else if (callName.equals(CALL_NAME_MATCH_DETAIL)) {
             String matchId = parameters.get(PARAM_ID);
             String sportsType = parameters.get(PARAM_SPORTS_TYPE);
             requestScoresOfMatch(sportsType, matchId, requestListenerKey, requestTag);
-        } else if( callName.equals(CALL_NAME_MATCH_COMMENTARIES) ){
+        } else if (callName.equals(CALL_NAME_MATCH_COMMENTARIES)) {
             String matchId = parameters.get(PARAM_ID);
             String sportsType = parameters.get(PARAM_SPORTS_TYPE);
             requestCommentaryOnMatch(sportsType, matchId, requestListenerKey, requestTag);
         }
     }
 
-    public boolean isRequestInProcess(String requestTag){
+    public boolean isRequestInProcess(String requestTag) {
         return requestInProcess_RequestTagAndListenerKey.containsKey(requestTag);
     }
 
-    private void requestToCreateUser(String phoneNumber, String otp, String listenerKey, String requestTag){
-        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+    private void requestToCreateUser(String phoneNumber, String otp, String apk_version, String udid, String listenerKey, String requestTag) {
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             StringBuilder urlBuilder = new StringBuilder(URL_CREATE);
             urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER);
             urlBuilder.append("=");
@@ -149,28 +157,44 @@ public class ScoresContentHandler {
             urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_AUTH_CODE);
             urlBuilder.append("=");
             urlBuilder.append(otp);
-
+            urlBuilder.append("&");
+            urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_APK_VERSION);
+            urlBuilder.append("=");
+            urlBuilder.append(apk_version);
+            urlBuilder.append("&");
+            urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_UDID);
+            urlBuilder.append("=");
+            urlBuilder.append(udid);
+            Log.d("max","Create user URI>>"+urlBuilder.toString());
             requestContent(requestTag, listenerKey, urlBuilder.toString());
         } else {
             //nothing
         }
     }
 
-    private void requestForOtp(String phoneNumber, String listenerKey, String requestTag){
-        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+    private void requestForOtp(String phoneNumber, String apk_version, String udid, String listenerKey, String requestTag) {
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             StringBuilder urlBuilder = new StringBuilder(URL_REGISTER);
             urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER);
             urlBuilder.append("=");
             urlBuilder.append(phoneNumber);
-
+            urlBuilder.append("&");
+            urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_APK_VERSION);
+            urlBuilder.append("=");
+            urlBuilder.append(apk_version);
+            urlBuilder.append("&");
+            urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_UDID);
+            urlBuilder.append("=");
+            urlBuilder.append(udid);
+            Log.d("max", "OTP URI>>" + urlBuilder.toString());
             requestContent(requestTag, listenerKey, urlBuilder.toString());
         } else {
             //nothing
         }
     }
 
-    private void requestForNewsDetail(String imageDpi, String newsId, String listenerKey, String requestTag){
-        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+    private void requestForNewsDetail(String imageDpi, String newsId, String listenerKey, String requestTag) {
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             StringBuilder urlBuilder = new StringBuilder(URL_NEWS);
             urlBuilder.append(URL_PARAMS_NEWS_IMAGE_DPI);
             urlBuilder.append("=");
@@ -186,8 +210,8 @@ public class ScoresContentHandler {
         }
     }
 
-    private void requestNearByUsers(String lat, String lng, String radius, String listenerKey, String requestTag){
-        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+    private void requestNearByUsers(String apk_version,String udid,String lat, String lng, String radius, String listenerKey, String requestTag) {
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             StringBuilder urlBuilder = new StringBuilder(URL_NEAR_BY);
             urlBuilder.append("lat=");
             urlBuilder.append(lat);
@@ -195,60 +219,67 @@ public class ScoresContentHandler {
             urlBuilder.append(lng);
             urlBuilder.append("&radius=");
             urlBuilder.append(radius);
-
+            urlBuilder.append("&");
+            urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_APK_VERSION);
+            urlBuilder.append("=");
+            urlBuilder.append(apk_version);
+            urlBuilder.append("&");
+            urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_UDID);
+            urlBuilder.append("=");
+            urlBuilder.append(udid);
             requestContent(requestTag, listenerKey, urlBuilder.toString());
         } else {
             //nothing
         }
     }
 
-    private void requestListOfMatches(String listenerKey, String requestTag){
-        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
-            String url = generateURL( URL_PARAMS_FOR_LIST_OF_MATCHES);
+    private void requestListOfMatches(String listenerKey, String requestTag) {
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
+            String url = generateURL(URL_PARAMS_FOR_LIST_OF_MATCHES);
             requestContent(requestTag, listenerKey, url);
         } else {
             //nothing
         }
     }
 
-    private void requestScoresOfMatch(String sportType, String matchId, String listenerKey, String requestTag){
-        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+    private void requestScoresOfMatch(String sportType, String matchId, String listenerKey, String requestTag) {
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
 
             String baseUrl = null;
-            if( sportType.equalsIgnoreCase(ScoresJsonParser.CRICKET) ){
+            if (sportType.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
                 baseUrl = URL_PARAMS_FOR_CRICKET_MATCH_DETAIL;
-            } else if( sportType.equalsIgnoreCase(ScoresJsonParser.FOOTBALL) ){
+            } else if (sportType.equalsIgnoreCase(ScoresJsonParser.FOOTBALL)) {
                 baseUrl = URL_PARAMS_FOR_FOOTBALL_MATCH_DETAIL;
             }
 
-            String url = generateURL( baseUrl + matchId);
+            String url = generateURL(baseUrl + matchId);
             requestContent(requestTag, listenerKey, url);
         } else {
             //nothing
         }
     }
 
-    private void requestCommentaryOnMatch(String sportType, String matchId, String listenerKey, String requestTag){
-        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+    private void requestCommentaryOnMatch(String sportType, String matchId, String listenerKey, String requestTag) {
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
 
             String baseUrl = null;
-            if( sportType.equalsIgnoreCase(ScoresJsonParser.CRICKET) ){
+            if (sportType.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
                 baseUrl = URL_PARAMS_FOR_CRICKET_COMMENTARY;
-            } else if( sportType.equalsIgnoreCase(ScoresJsonParser.FOOTBALL) ){
+            } else if (sportType.equalsIgnoreCase(ScoresJsonParser.FOOTBALL)) {
                 baseUrl = URL_PARAMS_FOR_FOOTBALL_COMMENTARY;
             }
 
-            String url = generateURL( baseUrl + matchId);
+            String url = generateURL(baseUrl + matchId);
             requestContent(requestTag, listenerKey, url);
         } else {
             //nothin
         }
     }
 
-    private void requestContent(String requestTag, String listenerKey, String url){
-        if( url != null ) {
-            VolleyTagRequest request = new VolleyTagRequest( requestTag, url, responseListener);
-            request.setRetryPolicy(new DefaultRetryPolicy( Constants.CONNECTION_READ_TIME_OUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+    private void requestContent(String requestTag, String listenerKey, String url) {
+        if (url != null) {
+            VolleyTagRequest request = new VolleyTagRequest(requestTag, url, responseListener);
+            request.setRetryPolicy(new DefaultRetryPolicy(Constants.CONNECTION_READ_TIME_OUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             VolleyRequestHandler.getInstance().addToRequestQueue(request);
 
             requestInProcess_RequestTagAndListenerKey.put(requestTag, listenerKey);
@@ -257,33 +288,34 @@ public class ScoresContentHandler {
         }
     }
 
-    private String generateURL(String parameters){
+    private String generateURL(String parameters) {
         StringBuilder stringBuilder = new StringBuilder(SCORES_BASE_URL);
         stringBuilder.append(parameters);
         return stringBuilder.toString();
     }
-    private String generateFavURL(String baseUrl,String parameters){
+
+    private String generateFavURL(String baseUrl, String parameters) {
         StringBuilder stringBuilder = new StringBuilder(baseUrl);
         stringBuilder.append(parameters);
         return stringBuilder.toString();
     }
 
-    private void cleanUp(){
+    private void cleanUp() {
         mapOfResponseListeners.clear();
         requestInProcess_RequestTagAndListenerKey.clear();
     }
-    
-    public void requestFavouriteContent(String url,String listenerKey, String requestTag){
-        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+
+    public void requestFavouriteContent(String url, String listenerKey, String requestTag) {
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             requestContent(requestTag, listenerKey, url);
         } else {
             //nothing
         }
     }
 
-    public void requestFavouriteSearch(String baseUrl,String params,String listenerKey, String requestTag){
-        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
-            String url = generateFavURL(baseUrl,params);
+    public void requestFavouriteSearch(String baseUrl, String params, String listenerKey, String requestTag) {
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
+            String url = generateFavURL(baseUrl, params);
             requestContent(requestTag, listenerKey, url);
         } else {
             //nothing

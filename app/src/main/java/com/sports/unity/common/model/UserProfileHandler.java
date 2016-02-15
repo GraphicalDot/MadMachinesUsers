@@ -32,6 +32,7 @@ import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,6 +49,17 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Helper class to handle the events related to user profile.
  */
 public class UserProfileHandler {
+
+    public static final String FB_REQUEST_TAG = "fb_request_tag";
+    public static final String DOWNLOAD_IMAGE_REQUEST_TAG = "download_image_request_tag";
+    public static final String CONNECT_XMPP_SERVER_TAG = "connect_xmpp_server_request_tag";
+    public static final String SUBMIT_PROFILE_REQUEST_TAG = "submit_profile_tag";
+    public static final String LOAD_PROFILE_REQUEST_TAG = "load_profile_tag";
+
+    public static int REQUEST_STATUS_QUEUED = 1;
+    public static int REQUEST_STATUS_ALREADY_EXIST = 2;
+    public static int REQUEST_STATUS_FAILED = 3;
+
     private static UserProfileHandler USER_PROFILE_HANDLER;
 
     public static UserProfileHandler getInstance() {
@@ -57,96 +69,150 @@ public class UserProfileHandler {
         return USER_PROFILE_HANDLER;
     }
 
-    private HashMap<String,ContentListener> contentListenerHashMap = new HashMap<>();
+    private HashMap<String, ContentListener> contentListenerHashMap = new HashMap<>();
+    private HashMap<String, String> requestInProcess_RequestTagAndListenerKey = new HashMap<>();
 
     private UserProfileHandler() {
-        USER_PROFILE_HANDLER = new UserProfileHandler();
+
     }
 
-    public void addContentListener(String key, ContentListener contentListener){
+    public void addContentListener(String key, ContentListener contentListener) {
         contentListenerHashMap.put(key, contentListener);
     }
 
-    public void removeContentListener(String key){
+    public void removeContentListener(String key) {
         contentListenerHashMap.remove(key);
     }
 
-    public boolean loadMyProfile(String listenerKey){
-        String jid = null; //TODO
-        return loadProfile(jid, listenerKey);
-    }
+    public int connectToXmppServer(final Context context, String listenerKey) {
+        int requestStatus = REQUEST_STATUS_FAILED;
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(CONNECT_XMPP_SERVER_TAG)) {
 
-    public boolean loadProfile(String jid, String listenerKey){
-        boolean loading = false;
-        if( XMPPClient.getInstance().isConnectionAuthenticated() ){
-            loading = true;
+            requestInProcess_RequestTagAndListenerKey.put(CONNECT_XMPP_SERVER_TAG, listenerKey);
+            requestStatus = REQUEST_STATUS_QUEUED;
 
-            UserThreadTask userThreadTask = new UserThreadTask( listenerKey, jid) {
+            UserThreadTask userThreadTask = new UserThreadTask(CONNECT_XMPP_SERVER_TAG, null) {
 
                 @Override
                 public Object process() {
-                    VCard card = new VCard();
-                    try {
-                        card.load(XMPPClient.getConnection(), (String)object);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        card = null;
-                    }
-                    return card;
-                }
-
-            };
-            userThreadTask.start();
-        } else {
-            //nothing
-        }
-
-        return loading;
-    }
-
-    public boolean submitUserProfile(Contacts contacts, String listenerKey){
-        boolean submitting = false;
-        if( XMPPClient.getInstance().isConnectionAuthenticated() ){
-            submitting = true;
-
-            UserThreadTask userThreadTask = new UserThreadTask( listenerKey, contacts) {
-
-                @Override
-                public Object process() {
-                    Boolean success = false;
-                    try {
-                        Contacts userContact = (Contacts)object;
-
-                        VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
-                        VCard vCard = new VCard();
-                        vCard.setNickName(userContact.name);
-                        vCard.setAvatar(userContact.image);
-                        vCard.setMiddleName(userContact.status);
-                        vCard.setJabberId(XMPPClient.getConnection().getUser());
-                        manager.saveVCard(vCard);
-
-                        success = true;
-                    } catch (SmackException.NoResponseException e) {
-                        e.printStackTrace();
-                    } catch (XMPPException.XMPPErrorException e) {
-                        e.printStackTrace();
-                    } catch (SmackException.NotConnectedException e) {
-                        e.printStackTrace();
+                    Boolean success = XMPPClient.getInstance().reconnectConnection();
+                    if (success) {
+                        success = XMPPClient.getInstance().authenticateConnection(context);
+                    } else {
+                        //nothing
                     }
                     return success;
                 }
 
             };
             userThreadTask.start();
+
         } else {
-            //nothing
+            requestStatus = REQUEST_STATUS_ALREADY_EXIST;
         }
 
-        return submitting;
+        return requestStatus;
     }
 
-    private void fetchMyProfileFromDB(String listenerKey){
-        UserThreadTask userThreadTask = new UserThreadTask( listenerKey, null) {
+    public int loadMyProfile(String listenerKey) {
+        String jid = null; //TODO
+        return loadProfile(jid, listenerKey);
+    }
+
+    public int loadProfile(String jid, String listenerKey) {
+        Log.d("max", "loading profile" + jid);
+        int requestStatus = REQUEST_STATUS_FAILED;
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(LOAD_PROFILE_REQUEST_TAG)) {
+
+            if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+                requestInProcess_RequestTagAndListenerKey.put(LOAD_PROFILE_REQUEST_TAG, listenerKey);
+                requestStatus = REQUEST_STATUS_QUEUED;
+
+                Log.d("max", "initiatingtask---" + requestStatus);
+                UserThreadTask userThreadTask = new UserThreadTask(LOAD_PROFILE_REQUEST_TAG, jid) {
+
+                    @Override
+                    public Object process() {
+                        VCard card = new VCard();
+                        try {
+                            card.load(XMPPClient.getConnection(), (String) object);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            card = null;
+                        }
+                        Log.d("max", "returning vcard");
+                        return card;
+                    }
+
+                };
+                Log.d("max", "startingtask---" + requestStatus);
+                userThreadTask.start();
+            } else {
+                //nothing
+            }
+        } else {
+            requestStatus = REQUEST_STATUS_ALREADY_EXIST;
+
+            Log.d("max", "requesttag---" + requestStatus);
+        }
+
+        return requestStatus;
+    }
+
+    public int submitUserProfile(Contacts contacts, String listenerKey) {
+        int requestStatus = REQUEST_STATUS_FAILED;
+        Log.d("max", "initiating---");
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(SUBMIT_PROFILE_REQUEST_TAG)) {
+
+            if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+
+                requestInProcess_RequestTagAndListenerKey.put(SUBMIT_PROFILE_REQUEST_TAG, listenerKey);
+                requestStatus = REQUEST_STATUS_QUEUED;
+
+                Log.d("max", "authenticated---");
+                UserThreadTask userThreadTask = new UserThreadTask(SUBMIT_PROFILE_REQUEST_TAG, contacts) {
+
+                    @Override
+                    public Object process() {
+                        Boolean success = false;
+                        try {
+                            Contacts userContact = (Contacts) object;
+
+                            VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
+                            VCard vCard = new VCard();
+                            vCard.setNickName(userContact.name);
+                            vCard.setAvatar(userContact.image);
+                            vCard.setMiddleName(userContact.status);
+                            vCard.setJabberId(XMPPClient.getConnection().getUser());
+                            manager.saveVCard(vCard);
+
+                            success = true;
+                            Log.d("max", "submitsuccess---");
+                        } catch (SmackException.NoResponseException e) {
+                            e.printStackTrace();
+                        } catch (XMPPException.XMPPErrorException e) {
+                            e.printStackTrace();
+                        } catch (SmackException.NotConnectedException e) {
+                            e.printStackTrace();
+                        }
+                        Log.d("max", "resultsuccess---");
+                        Log.d("max", "returning inside---" + success);
+                        return success;
+                    }
+
+                };
+                userThreadTask.start();
+            } else {
+                //nothing
+            }
+        } else {
+            requestStatus = REQUEST_STATUS_ALREADY_EXIST;
+        }
+        return requestStatus;
+    }
+
+    private void fetchMyProfileFromDB(String listenerKey) {
+        UserThreadTask userThreadTask = new UserThreadTask(listenerKey, null) {
 
             @Override
             public Object process() {
@@ -158,12 +224,12 @@ public class UserProfileHandler {
         userThreadTask.start();
     }
 
-    private void saveMyProfileInDB(String listenerKey, Contacts contacts){
-        UserThreadTask userThreadTask = new UserThreadTask( listenerKey, contacts) {
+    private void saveMyProfileInDB(String listenerKey, Contacts contacts) {
+        UserThreadTask userThreadTask = new UserThreadTask(listenerKey, contacts) {
 
             @Override
             public Object process() {
-                Contacts userContact = (Contacts)object;
+                Contacts userContact = (Contacts) object;
                 //TODO save user profile in db.
                 return null;
             }
@@ -188,8 +254,8 @@ public class UserProfileHandler {
         }
     }
 
-    public void setFacebookDetails(final Context context, LoginButton loginButton, final String listenerKey) {
-        CallbackManager callbackManager = CallbackManager.Factory.create();
+    public void setFacebookDetails(final Context context, LoginButton loginButton, final String listenerKey, CallbackManager callback) {
+        CallbackManager callbackManager = callback;
         loginButton.setReadPermissions(Arrays.asList("public_profile, email"));
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -202,22 +268,26 @@ public class UserProfileHandler {
                             public void onCompleted(JSONObject object, GraphResponse response) {
                                 ContentListener contentListener = contentListenerHashMap.get(listenerKey);
                                 if (contentListener != null) {
-                                    contentListener.handleContent(object);
+                                    try {
+                                        ProfileDetail profileDetail = new ProfileDetail();
+                                        profileDetail.setName(object.getString("name"));
+
+                                        JSONObject data = response.getJSONObject();
+                                        if (data.has("picture")) {
+                                            String profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
+                                            profileDetail.setProfilePicUri(profilePicUrl);
+
+                                            UserProfileHandler.getInstance().downloadImageFromUri(profileDetail, listenerKey, FB_REQUEST_TAG);
+                                        } else {
+                                            contentListener.handleContent(listenerKey, profileDetail);
+                                        }
+
+                                    } catch (Exception ex) {
+                                        ex.printStackTrace();
+                                    }
                                 } else {
                                     //nothing
                                 }
-//                                try {
-//                                    userNameTextView.setText(object.getString("name"));
-//                                    TinyDB.getInstance(context.getApplicationContext()).putString((String) object.get("name"), TinyDB.KEY_PROFILE_NAME);
-//                                    JSONObject data = response.getJSONObject();
-//                                    if (data.has("picture")) {
-//                                        final String profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
-//                                        downloadUserImageFromUri(profileImageView, profilePicUrl);
-//                                        Log.i("PICURL : ", profilePicUrl);
-//                                    }
-//                                } catch (JSONException e) {
-//                                    e.printStackTrace();
-//                                }
                             }
 
                         });
@@ -239,38 +309,88 @@ public class UserProfileHandler {
         });
     }
 
-    public void downloadImageFromUri(String imageUri, String listenerKey) {
-        UserThreadTask userThreadTask = new UserThreadTask(listenerKey, imageUri){
+    public void downloadProfileImage(ProfileDetail profileDetail, String listenerKey) {
+        downloadImageFromUri(profileDetail, listenerKey, DOWNLOAD_IMAGE_REQUEST_TAG);
+    }
 
-            @Override
-            public Object process() {
-                String urlDisplay = (String)object;
-                Bitmap bitmap = null;
-                InputStream in = null;
-                try {
-                    in = new java.net.URL(urlDisplay).openStream();
-                    bitmap = BitmapFactory.decodeStream(in);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } finally {
-                    try{
-                        in.close();
-                    }catch (Exception ex){}
+    private void downloadProfileImage(ProfileDetail profileDetail, String listenerKey, String requestTag) {
+        downloadImageFromUri(profileDetail, listenerKey, requestTag);
+    }
+
+    private int downloadImageFromUri(ProfileDetail profileDetail, String listenerKey, String requestTag) {
+        int requestStatus = REQUEST_STATUS_FAILED;
+
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
+
+            requestInProcess_RequestTagAndListenerKey.put(requestTag, listenerKey);
+            requestStatus = REQUEST_STATUS_QUEUED;
+
+            UserThreadTask userThreadTask = new UserThreadTask(requestTag, profileDetail) {
+
+                @Override
+                public Object process() {
+                    ProfileDetail profileDetail = (ProfileDetail) object;
+                    InputStream in = null;
+                    try {
+                        in = new java.net.URL(profileDetail.getProfilePicUri()).openStream();
+                        profileDetail.bitmap = BitmapFactory.decodeStream(in);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    } finally {
+                        try {
+                            in.close();
+                        } catch (Exception ex) {
+                        }
+                    }
+                    return profileDetail;
                 }
-                return bitmap;
-            }
 
-        };
-        userThreadTask.start();
+            };
+            userThreadTask.start();
+        } else {
+            requestStatus = REQUEST_STATUS_ALREADY_EXIST;
+        }
+
+        return requestStatus;
+    }
+
+    public static class ProfileDetail {
+        private String name = null;
+        private String profilePicUri = null;
+        private Bitmap bitmap = null;
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setProfilePicUri(String profilePicUri) {
+            this.profilePicUri = profilePicUri;
+        }
+
+        public String getProfilePicUri() {
+            return profilePicUri;
+        }
+
+        public void setBitmap(Bitmap bitmap) {
+            this.bitmap = bitmap;
+        }
+
+        public Bitmap getBitmap() {
+            return bitmap;
+        }
     }
 
     private abstract class UserThreadTask extends ThreadTask {
 
-        private String listenerKey = null;
+        private String requestTag = null;
 
-        public UserThreadTask(String listenerKey, Object helperObject){
+        public UserThreadTask(String requestTag, Object helperObject) {
             super(helperObject);
-            this.listenerKey = listenerKey;
+            this.requestTag = requestTag;
         }
 
         @Override
@@ -278,18 +398,23 @@ public class UserProfileHandler {
 
         @Override
         public void postAction(Object content) {
-            ContentListener contentListener = contentListenerHashMap.get(listenerKey);
-            if( contentListener != null ){
-                contentListener.handleContent( content);
+            if (requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
+                ContentListener contentListener = contentListenerHashMap.get(requestInProcess_RequestTagAndListenerKey.get(requestTag));
+                requestInProcess_RequestTagAndListenerKey.remove(requestTag);
+                if (contentListener != null) {
+                    contentListener.handleContent(requestTag, content);
+                } else {
+                    //nothing
+                }
             } else {
-                //nothing
+
             }
         }
     }
 
     public interface ContentListener {
 
-        public void handleContent(Object content);
+        public void handleContent(String listenerKey, Object content);
 
     }
 

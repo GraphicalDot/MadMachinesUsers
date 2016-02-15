@@ -15,6 +15,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
@@ -48,6 +49,9 @@ import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserProfileHandler;
+import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
@@ -67,11 +71,13 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class UserProfileActivity extends CustomAppCompatActivity {
+public class UserProfileActivity extends CustomAppCompatActivity implements UserProfileHandler.ContentListener {
 
     private static final String INFO_EDIT = "EDIT PROFILE";
     private static final String INFO_SAVE = "SAVE PROFILE";
     private static final String ADD_FRIEND = "ADD FRIEND";
+
+    private static final String LISTENER_KEY = "profile_listener_key";
 
     private static final int LOAD_IMAGE_GALLERY_CAMERA = 1;
     private String uName;
@@ -198,9 +204,28 @@ public class UserProfileActivity extends CustomAppCompatActivity {
         //TODO
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        UserProfileHandler.getInstance().addContentListener(LISTENER_KEY, this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        UserProfileHandler.getInstance().removeContentListener(LISTENER_KEY);
+    }
+
     private void onClickSaveButton() {
         if (!TextUtils.isEmpty(name.getText().toString()) && !TextUtils.isEmpty(status.getText().toString())) {
-            new SubmitVCardAsyncTask().execute();
+            //new SubmitVCardAsyncTask().execute();
+            String nickname = name.getText().toString();
+            String status = currentStatus.getText().toString();
+            String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
+            TinyDB.getInstance(UserProfileActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nickname);
+            TinyDB.getInstance(UserProfileActivity.this).putString(TinyDB.KEY_PROFILE_STATUS, status);
+            Contacts contacts = new Contacts(nickname, phoneNumber, true, byteArray, 1, status);
+            UserProfileHandler.getInstance().submitUserProfile(contacts, LISTENER_KEY);
         } else {
             if (TextUtils.isEmpty(name.getText().toString())) {
                 Toast.makeText(this, "Please enter your name", Toast.LENGTH_SHORT).show();
@@ -381,13 +406,17 @@ public class UserProfileActivity extends CustomAppCompatActivity {
                 //TODO
             }
         }
-        new FetchVcardTask(getIntent().getStringExtra("number")).execute();
+        String phoneNumber = getIntent().getStringExtra("number");
+        UserProfileHandler.getInstance().loadProfile(phoneNumber, LISTENER_KEY);
+        //new FetchVcardTask(getIntent().getStringExtra("number")).execute();
     }
 
     private void addFacebookCallback() {
-        callbackManager = CallbackManager.Factory.create();
-        name = (EditText) findViewById(R.id.name);
+
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button_facebook);
+        callbackManager = CallbackManager.Factory.create();
+        UserProfileHandler.getInstance().setFacebookDetails(this, loginButton, LISTENER_KEY, callbackManager);
+       /* LoginButton loginButton = (LoginButton) findViewById(R.id.login_button_facebook);
         loginButton.setReadPermissions(Arrays.asList("public_profile, email"));
         loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
@@ -429,7 +458,73 @@ public class UserProfileActivity extends CustomAppCompatActivity {
             public void onError(FacebookException e) {
                 Toast.makeText(getApplicationContext(), R.string.profile_facebook_login_failed, Toast.LENGTH_LONG).show();
             }
-        });
+        });*/
+    }
+
+    @Override
+    public void handleContent(String requestTag, final Object content) {
+
+        Log.d("max", "getting content--->" + requestTag + "<<Contect>>" + content);
+
+        if (requestTag.equals(UserProfileHandler.FB_REQUEST_TAG) && content != null) {
+            final UserProfileHandler.ProfileDetail profileDetail = (UserProfileHandler.ProfileDetail) content;
+
+            if (Looper.myLooper() == Looper.getMainLooper()) {
+                setProfileDetail(profileDetail);
+            } else {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        setProfileDetail(profileDetail);
+                    }
+                });
+            }
+        } else if (requestTag.equals(UserProfileHandler.LOAD_PROFILE_REQUEST_TAG) && content != null) {
+
+            final boolean success = (boolean) content;
+            Log.d("max", "getting content---" + success);
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if (success) {
+                        String favorite = null;
+                        VCard card = new VCard();
+                        card = (VCard) content;
+                        favorite = card.getField("fav_list");
+                        successfulVCardLoad(favorite);
+                    } else {
+                        onUnSuccessfulVCardLoad();
+                    }
+                }
+            });
+
+        } else if (requestTag.equals(UserProfileHandler.SUBMIT_PROFILE_REQUEST_TAG) && content != null) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    final boolean success = (boolean) content;
+                    progressBar.setVisibility(View.GONE);
+                    if (success) {
+                        successfulVCardSubmit();
+                    } else {
+                        onUnSuccessfulVCardSubmit();
+                    }
+                }
+            });
+
+        }
+    }
+
+    private void setProfileDetail(UserProfileHandler.ProfileDetail profileDetail) {
+        name = (EditText) findViewById(R.id.name);
+        name.setText(profileDetail.getName());
+
+        if (profileDetail.getBitmap() != null) {
+            setProfileImage(profileDetail.getBitmap());
+        } else {
+            //nothing
+        }
     }
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {

@@ -8,12 +8,15 @@ import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.sports.unity.BuildConfig;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPService;
+import com.sports.unity.common.model.FontTypeface;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -72,6 +75,16 @@ public class CommonUtil {
                 .toString();
     }
 
+    public static String getBuildConfig() {
+        return BuildConfig.VERSION_NAME;
+    }
+
+    public static String getDeviceId(Context context) {
+
+        String id= Settings.Secure.getString(context.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        return id;
+    }
 
     public static boolean isInternetConnectionAvailable(Context context) {
         ConnectivityManager connMgr = (ConnectivityManager)

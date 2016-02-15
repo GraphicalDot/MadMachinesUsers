@@ -410,7 +410,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         parameters.put(ScoresContentHandler.PARAM_LATITUDE, String.valueOf(latitude));
         parameters.put(ScoresContentHandler.PARAM_LONGITUDE, String.valueOf(longitude));
         parameters.put(ScoresContentHandler.PARAM_RADIUS, String.valueOf(radius));
-        ScoresContentHandler.getInstance().requestCall( ScoresContentHandler.CALL_NAME_NEAR_BY_USERS, parameters, REQUEST_LISTENER_KEY, REQUEST_TAG);
+        parameters.put(Constants.REQUEST_PARAMETER_KEY_APK_VERSION, CommonUtil.getBuildConfig());
+        parameters.put(Constants.REQUEST_PARAMETER_KEY_UDID, CommonUtil.getDeviceId(this));
+        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_NEAR_BY_USERS, parameters, REQUEST_LISTENER_KEY, REQUEST_TAG);
     }
 
     public boolean createContact(String number, Context context, VCard vCard) {
