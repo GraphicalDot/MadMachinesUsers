@@ -182,7 +182,6 @@ public class MatchListFragment extends Fragment {
     private boolean handleContent(String content) {
         Log.i("List of Matches", "Handle Content");
         boolean success = false;
-
         ArrayList<JSONObject> list = ScoresJsonParser.parseListOfMatches(content);
         if (list.size() > 0) {
             matches.clear();

@@ -198,11 +198,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
             boolean success = newsContentHandler.refreshNews(false);
             if (success) {
                 showProgress(v);
-            } else {
-
             }
-        } else {
-            //nothing
         }
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -291,8 +287,6 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
                     newsContentHandler.loadMoreNews();
                     loading = true;
-                } else {
-                    //nothing
                 }
             }
         });

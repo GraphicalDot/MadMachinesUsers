@@ -21,6 +21,9 @@ public class ScoresContentHandler {
     public static final String CALL_NAME_MATCH_COMMENTARIES = "MATCH_COMMENTARIES";
     public static final String CALL_NAME_NEAR_BY_USERS = "NEAR_BY_USERS";
     public static final String CALL_NAME_PLAYER_PROFILE = "PLAYER_PROFILE";
+    public static final String CALL_NAME_MATCH_TIMELINE = "MATCH_TIMELINE";
+    public static final String CALL_NAME_MATCH_LINEUP = "MATCH_LINEUP";
+    public static final String CALL_NAME_MATCH_STAT = "MATCH_STAT";
 
 
     public static final String PARAM_SPORTS_TYPE = "SPORTS_TYPE";
@@ -32,7 +35,7 @@ public class ScoresContentHandler {
 
     private static final String URL_CREATE = "http://54.169.217.88/create?";
     public static final String URL_REGISTER = "http://54.169.217.88/register?";
-    private static final String URL_REQUEST_OTP = "http://54.169.217.88/create?";
+    /*   private static final String URL_REQUEST_OTP = "http://54.169.217.88/create?";*/
     private static final String URL_NEAR_BY = "http://54.169.217.88/retrieve_nearby_users?";
 
     private static final String SCORES_BASE_URL = "http://52.74.75.79:8080/";
@@ -42,7 +45,11 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "get_cricket_match_commentary?match_key=";
     private static final String URL_PARAMS_FOR_FOOTBALL_COMMENTARY = "get_football_commentary?match_id=";
     private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = "get_football_player_stats?player_name=";
-    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_CRICKET = "get_football_player_stats?player_name=";
+    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_CRICKET = "get_cricket_player_stats?player_name=";
+
+    private static final String URL_PARAMS_FOR_FOOTBALL_TIMELINE = "get_football_match_timeline?match_id=";
+    private static final String URL_PARAMS_FOR_MATCHLINEUP = "get_match_teams?match_id=";
+    private static final String URL_PARAMS_FOR_STAT = "get_match_player_stats?match_id=";
 
 
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
@@ -83,8 +90,6 @@ public class ScoresContentHandler {
                 ContentListener contentListener = mapOfResponseListeners.get(listenerKey);
                 if( contentListener != null ) {
                     contentListener.handleContent(tag, response, responseCode);
-                } else {
-                    //nothing
                 }
 
                 requestInProcess_RequestTagAndListenerKey.remove(tag);
@@ -132,6 +137,15 @@ public class ScoresContentHandler {
             String playerName = parameters.get(Constants.PLAYER_NAME);
             String sportsType = parameters.get(PARAM_SPORTS_TYPE);
             requestPlayerProfile(sportsType, playerName, requestListenerKey, requestTag);
+        } else if(callName.equals(CALL_NAME_MATCH_TIMELINE)){
+            String matchId = parameters.get(PARAM_ID);
+            requestMatchTimeline(matchId, requestListenerKey, requestTag);
+        } else if(callName.equals(CALL_NAME_MATCH_LINEUP)){
+            String matchId = parameters.get(PARAM_ID);
+            requestMatchLineup(matchId, requestListenerKey, requestTag);
+        } else if(callName.equals(CALL_NAME_MATCH_STAT)){
+            String matchId = parameters.get(PARAM_ID);
+            requestMatchStat(matchId, requestListenerKey, requestTag);
         }
     }
 
@@ -206,8 +220,6 @@ public class ScoresContentHandler {
 
             String url = generateURL( baseUrl + matchId);
             requestContent(requestTag, listenerKey, url);
-        } else {
-            //nothing
         }
     }
 
@@ -225,7 +237,24 @@ public class ScoresContentHandler {
             requestContent(requestTag, listenerKey, url);
         }
     }
-
+    private void requestMatchLineup(String matchId, String listenerKey, String requestTag){
+        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+            String url = generateURL(URL_PARAMS_FOR_MATCHLINEUP  + matchId);
+            requestContent(requestTag, listenerKey, url);
+        }
+    }
+    private void requestMatchTimeline(String matchId, String listenerKey, String requestTag){
+        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+            String url = generateURL(URL_PARAMS_FOR_FOOTBALL_TIMELINE  + matchId);
+            requestContent(requestTag, listenerKey, url);
+        }
+    }
+    private void requestMatchStat(String matchId, String listenerKey, String requestTag){
+        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
+            String url = generateURL(URL_PARAMS_FOR_STAT + matchId);
+            requestContent(requestTag, listenerKey, url);
+        }
+    }
     private void requestContent(String requestTag, String listenerKey, String url){
         if( url != null ) {
             VolleyTagRequest request = new VolleyTagRequest( requestTag, url, responseListener);

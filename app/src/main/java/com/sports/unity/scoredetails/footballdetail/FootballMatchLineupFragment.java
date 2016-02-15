@@ -27,4 +27,5 @@ public class FootballMatchLineupFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_football_match_lineup, container, false);
     }
 
+
 }

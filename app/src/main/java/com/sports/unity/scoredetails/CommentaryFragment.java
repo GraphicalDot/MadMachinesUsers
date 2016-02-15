@@ -33,14 +33,13 @@ import java.util.Timer;
  */
 public class CommentaryFragment extends Fragment implements FragementInterface<CommentriesModel>, DataServiceContract, ErrorContract {
     private RecyclerView mRecyclerView;
-    private JSONObject matchScoreDetails;
     private ArrayList<CommentriesModel> commentaries = new ArrayList<>();
 
     private String sportsType;
     private String matchId;
 
 
-    private BroadcastListAdapter mAdapter = null;
+    private BroadcastListAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private DataServiceContract dataServiceContract;
     public CommentaryFragment() {

@@ -48,6 +48,9 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private static final String SCORE_DETAIL_REQUEST_TAG = "score_detail_request_tag";
     private static final String LIST_OF_COMMENTARIES_REQUEST_TAG = "list_commentaries_request_tag";
     private static final String LIST_OF_SUMMARY_REQUEST_TAG = "list_summary_request_tag";
+    private static final String LIST_OF_LINEUP_REQUEST_TAG = "footballmatch_lineup_request_tag";
+    private static final String LIST_OF_FOOTBALLMATCH_STAT_REQUEST_TAG = "footballmatch_stat_request_tag";
+    private static final String LIST_OF_FOOTBALLMATCH_TIMELINE_REQUEST_TAG = "footbalmatch_timeline_request_tag";
 
 //    private ScoresContentListener contentListener = new ScoresContentListener();
 
@@ -66,21 +69,12 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private ViewPager mViewPager;
     private ViewPagerCricketScoreDetailAdapter cricketScoreDetailAdapter ;
     private ViewPagerFootballScoreDetailAdapter footballScoreDetailAdapter;
-
-
-
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_score_detail);
-
         sportsType = getIntent().getStringExtra(Constants.INTENT_KEY_TYPE);
         matchId = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-
-
         initView();
         setToolbar();
 
@@ -89,7 +83,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
 
             ScoreDetailComponentListener createUserComponentListener = new ScoreDetailComponentListener(progressBar, errorLayout);
-            MatchCommentariesComponentListener resendOtpComponentListener = new MatchCommentariesComponentListener(progressBar, errorLayout);
+            MatchCommentariesComponentListener matchCommentariesComponentListener = new MatchCommentariesComponentListener(progressBar, errorLayout);
             MatchScoreCardComponentListener matchScoreCardComponentListener = new MatchScoreCardComponentListener(progressBar,errorLayout);
             MatchSummaryComponentListener matchSummaryComponentListener = new MatchSummaryComponentListener(progressBar, errorLayout);
             FootballLineupComponentListener footballLineupComponentListener = new FootballLineupComponentListener(progressBar,errorLayout);
@@ -97,12 +91,14 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             FootballMatchTimeLineComponentListener footballMatchTimeLineComponentListener = new FootballMatchTimeLineComponentListener(progressBar, errorLayout);
             ArrayList<CustomComponentListener> listeners = new ArrayList<>();
             listeners.add(createUserComponentListener);
-            listeners.add(resendOtpComponentListener);
-
+            listeners.add(matchCommentariesComponentListener);
+            listeners.add(matchScoreCardComponentListener);
+            listeners.add(matchSummaryComponentListener);
+            listeners.add(footballLineupComponentListener);
+            listeners.add(footballMatchStatComponentListener);
+            listeners.add(footballMatchTimeLineComponentListener);
             onComponentCreate(listeners, REQUEST_LISTENER_KEY);
         }
-
-
     }
 
     @Override
@@ -110,11 +106,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         super.onResume();
 
         onComponentResume();
-
-
         {
             Log.i("Score Detail", "Through Resume");
-
             requestMatchScoreDetails();
         }
     }
@@ -233,7 +226,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
     private boolean renderScores(){
         Log.i("Score Detail", "Render Scores");
-
         boolean requestCommentaries = false;
         TextView tvNeededRun = (TextView) findViewById(R.id.tv_needed_run);
         TextView tvCurrentScore = (TextView) findViewById(R.id.tv_current_score);
@@ -498,6 +490,41 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_COMMENTARIES, parameters, REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
     }
 
+    private void requestScoreCardDetail() {
+        Log.i("Score Detail", "Request Score Details");
+
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put(ScoresContentHandler.PARAM_ID, matchId);
+        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_DETAIL, parameters, REQUEST_LISTENER_KEY, SCORE_DETAIL_REQUEST_TAG);
+    }
+
+    private void requestFootballTimeLine() {
+        Log.i("Score Detail", "Request Score Details");
+
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put(ScoresContentHandler.PARAM_ID, matchId);
+        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_TIMELINE, parameters, REQUEST_LISTENER_KEY, SCORE_DETAIL_REQUEST_TAG);
+    }
+
+
+    private void requestFootballMatchStat() {
+        Log.i("Score Detail", "Request Score Details");
+
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put(ScoresContentHandler.PARAM_ID, matchId);
+        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_STAT, parameters, REQUEST_LISTENER_KEY, SCORE_DETAIL_REQUEST_TAG);
+    }
+
+
+    private void requestFootballMatchLineup() {
+        Log.i("Score Detail", "Request Score Details");
+
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put(ScoresContentHandler.PARAM_ID, matchId);
+        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_LINEUP, parameters, REQUEST_LISTENER_KEY, SCORE_DETAIL_REQUEST_TAG);
+    }
+
+
     private void showProgress(boolean force){
         if( commentaries.size() == 0 || force ) {
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
@@ -525,6 +552,35 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         }
         return success;
     }
+    private boolean handleFootballTimeLine(String content){
+        Log.i("Score Detail", "Handle Content");
+        boolean success = false;
+        if(content != null){
+            success = true;
+        }
+        return success;
+    }
+
+    private boolean handleFootballMatchStat(String content){
+        Log.i("Score Detail", "Handle Content");
+        boolean success = false;
+        if(content != null){
+            success = true;
+        }
+        return success;
+    }
+
+    private boolean handleFootballLineUp(String content){
+        Log.i("Linup ", "Handle Content");
+        boolean success = false;
+        if(content != null){
+            success = true;
+        }
+        return success;
+    }
+
+
+
 
     private class ScoreDetailComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
 
@@ -560,8 +616,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             }
         }
-
-        @Override
+       @Override
         public void changeUI() {
             ScoreDetailActivity.this.setTitle();
             boolean requestCommentaries = ScoreDetailActivity.this.renderScores();
@@ -638,7 +693,11 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
         @Override
         public boolean handleContent(String tag, String content) {
-            successfulResponse = ScoreDetailActivity.this.handleSummary(content);
+            try{successfulResponse = ScoreDetailActivity.this.handleSummary(content);
+
+            } catch (Exception e){e.printStackTrace();}
+
+
             return true;
         }
 
@@ -745,12 +804,12 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         private boolean successfulResponse = false;
 
         public FootballLineupComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
-            super( LIST_OF_SUMMARY_REQUEST_TAG, progressBar, errorLayout);
+            super( LIST_OF_LINEUP_REQUEST_TAG, progressBar, errorLayout);
         }
 
         @Override
         public boolean handleContent(String tag, String content) {
-            successfulResponse = ScoreDetailActivity.this.handleScoreCard(content);
+            successfulResponse = ScoreDetailActivity.this.handleFootballLineUp(content);
             return true;
         }
 
@@ -758,31 +817,15 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         public void handleErrorContent(String tag) {
 
         }
-
         @Override
         protected void hideErrorLayout() {
             super.hideErrorLayout();
 
             ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
         }
-
         @Override
         protected void showErrorLayout() {
-            Fragment fragment= null;
-            if(sportsType.equals(ScoresJsonParser.CRICKET)) {
-                fragment= cricketScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
-            } else {
-                fragment = footballScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
-            }
-            if(fragment instanceof ErrorContract) {
-                ErrorContract contract = (ErrorContract)fragment;
-                contract.errorHandle();
-            }
-            if( commentaries.size() == 0 ) {
-                super.showErrorLayout();
-            } else {
-                Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-            }
+            super.showErrorLayout();
         }
         @Override
         public void changeUI() {
@@ -800,12 +843,12 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         private boolean successfulResponse = false;
 
         public FootballMatchStatComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
-            super( LIST_OF_SUMMARY_REQUEST_TAG, progressBar, errorLayout);
+            super( LIST_OF_FOOTBALLMATCH_STAT_REQUEST_TAG, progressBar, errorLayout);
         }
 
         @Override
         public boolean handleContent(String tag, String content) {
-            successfulResponse = ScoreDetailActivity.this.handleScoreCard(content);
+            successfulResponse = ScoreDetailActivity.this.handleFootballMatchStat(content);
             return true;
         }
 
@@ -854,12 +897,12 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         private boolean successfulResponse = false;
 
         public FootballMatchTimeLineComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
-            super( LIST_OF_SUMMARY_REQUEST_TAG, progressBar, errorLayout);
+            super( LIST_OF_FOOTBALLMATCH_TIMELINE_REQUEST_TAG, progressBar, errorLayout);
         }
 
         @Override
         public boolean handleContent(String tag, String content) {
-            successfulResponse = ScoreDetailActivity.this.handleScoreCard(content);
+            successfulResponse = ScoreDetailActivity.this.handleFootballTimeLine(content);
             return true;
         }
 
@@ -877,21 +920,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
         @Override
         protected void showErrorLayout() {
-            Fragment fragment= null;
-            if(sportsType.equals(ScoresJsonParser.CRICKET)) {
-                fragment= cricketScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
-            } else {
-                fragment = footballScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
-            }
-            if(fragment instanceof ErrorContract) {
-                ErrorContract contract = (ErrorContract)fragment;
-                contract.errorHandle();
-            }
-            if( commentaries.size() == 0 ) {
-                super.showErrorLayout();
-            } else {
-                Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-            }
+            super.showErrorLayout();
         }
         @Override
         public void changeUI() {

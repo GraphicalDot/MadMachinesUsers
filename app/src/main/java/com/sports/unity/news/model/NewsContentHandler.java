@@ -72,7 +72,7 @@ public class NewsContentHandler {
 
     public interface ContentListener {
 
-        public void handleContent(int responseCode);
+        void handleContent(int responseCode);
 
     }
 
@@ -209,12 +209,8 @@ public class NewsContentHandler {
                 queue.add(stringRequest);
 
                 requestInProcess.add(REQUEST_CONTENT_TAG);
-            } else {
-                //nothing
             }
 
-        } else {
-            //nothing
         }
     }
 
@@ -233,12 +229,8 @@ public class NewsContentHandler {
                 queue.add(stringRequest);
 
                 requestInProcess.add(REQUEST_MORE_CONTENT_TAG);
-            } else {
-                //nothing
             }
 
-        } else {
-            //nothing
         }
     }
 
@@ -267,8 +259,6 @@ public class NewsContentHandler {
             if ( summary == null) {
                 list.remove(index);
                 index--;
-            } else {
-                //nothing
             }
         }
 
@@ -303,22 +293,14 @@ public class NewsContentHandler {
             }catch (Exception ex){
                 ex.printStackTrace();
             }
-        } else {
-            //nothing
         }
 
-        if(searchOn) {
-            //nothing
-        } else {
+        if(!searchOn) {
             insertIntoDb();
         }
-
         if(contentListener != null) {
             contentListener.handleContent(1);
-        } else {
-           //nothing
         }
-
     }
 
     private void handleErrorResponse(VolleyError volleyError) {
@@ -326,8 +308,6 @@ public class NewsContentHandler {
 
         if(contentListener != null) {
             contentListener.handleContent(0);
-        } else {
-            //nothing
         }
     }
 
@@ -339,8 +319,6 @@ public class NewsContentHandler {
             for(int i = 0; i < DB_CONTENT_LIMIT; i++) {
                 if( ! filteredNewsArticle.isEmpty() ) {
                     newsListForInsert.add(filteredNewsArticle.get(i));
-                } else {
-                    //nothing
                 }
 
             }
@@ -366,14 +344,10 @@ public class NewsContentHandler {
             }catch (Exception ex){
                 ex.printStackTrace();
             }
-        } else {
-            //nothing
         }
 
         if(contentListener != null) {
             contentListener.handleContent(1);
-        } else {
-            //nothing
         }
     }
 
@@ -415,14 +389,10 @@ public class NewsContentHandler {
                     e.printStackTrace();
                 }
 
-            } else {
-                //nothing
             }
         } else  {
             if (timestampLast != null) {
                 url = BASE_URL + screen_type + subUrl_HavingSelectedSports + BASE_SUBSET_URL_DOWN + timestampLast;
-            } else {
-                //nothing
             }
         }
 

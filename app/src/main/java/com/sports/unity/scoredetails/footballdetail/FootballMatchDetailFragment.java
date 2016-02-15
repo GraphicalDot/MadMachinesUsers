@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by cfeindia on 3/2/16.
+ * Created by Madmachines on 3/2/16.
  */
 public class FootballMatchDetailFragment extends Fragment implements FragementInterface<FootballMatchDetailModel> {
 
@@ -54,7 +54,7 @@ public class FootballMatchDetailFragment extends Fragment implements FragementIn
     private ScoresContentListener contentListener = new ScoresContentListener();
 
     private MatchListAdapter mAdapter;
-    private int sportsSelectedNum = 0;
+    private int sportsSelectedNum;
     private ArrayList<String> sportSelected;
 
     @Override
@@ -81,8 +81,6 @@ public class FootballMatchDetailFragment extends Fragment implements FragementIn
         int id = item.getItemId();
 
         if (id == R.id.action_search) {
-//            Intent intent = new Intent(getActivity(), NewsSearchActivity.class);
-//            startActivity(intent);
             return true;
         }
 
@@ -104,8 +102,6 @@ public class FootballMatchDetailFragment extends Fragment implements FragementIn
 
             showProgress(getView());
             requestContent();
-        } else {
-            //nothing
         }
 
 
@@ -215,8 +211,6 @@ public class FootballMatchDetailFragment extends Fragment implements FragementIn
             }
             success = true;
             mAdapter.updateChild(matches);
-        } else {
-            //nothing
         }
         return success;
     }
@@ -275,15 +269,6 @@ public class FootballMatchDetailFragment extends Fragment implements FragementIn
 
         HashMap<String, String> parameters = new HashMap<>();
         ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCHES_LIST, parameters, LIST_LISTENER_KEY, LIST_OF_MATCHES_REQUEST_TAG);
-//        ScoresContentHandler.getInstance().requestListOfMatches(LIST_LISTENER_KEY, LIST_OF_MATCHES_REQUEST_TAG);
-
-//        Calendar c = Calendar.getInstance();
-//        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-//        String formattedDate = df.format(c.getTime());
-//
-//        String liveScore = "http://52.74.142.219:8080/get_league_fixtures?league_id=1204&date=" + formattedDate;
-//        String URL_UPCOMING_MATCHES = "http://52.74.142.219:8080/get_football_upcoming_fixtures";
-//
     }
 
     @Override
@@ -313,8 +298,6 @@ public class FootballMatchDetailFragment extends Fragment implements FragementIn
 
                 hideProgress(getView());
                 mSwipeRefreshLayout.setRefreshing(false);
-            } else {
-                //nothing
             }
         }
     }

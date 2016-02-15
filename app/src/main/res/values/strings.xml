@@ -224,4 +224,6 @@ Carrier SMS charges may apply.</string>
     <string name="loss">LOSS</string>
     <string name="premiera_division">PREMIERA DIVISION</string>
     <string name="caption">CAPTION</string>
+    <string name="PLAYER_BIO">BIO</string>
+    <string name="PLAYER_STATS">STATS</string>
 </resources>
