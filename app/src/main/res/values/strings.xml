@@ -238,4 +238,6 @@ Carrier SMS charges may apply.</string>
     <string name="m">M</string>
     <string name="ext">Ext</string>
     <string name="fall_of_wicket">FALL OF WICKETS</string>
+    <string name="total">Total:</string>
+    <string name="run_rate">RR:</string>
 </resources>
