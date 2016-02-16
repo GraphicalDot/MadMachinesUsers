@@ -31,4 +31,16 @@
     <string name="loss">LOSS</string>
     <string name="premiera_division">PREMIERA DIVISION</string>
     <string name="caption">CAPTION</string>
+    <string name="line_up">LINE-sUP</string>
+    <string name="substitutes">SUBSTITUTES</string>
+    <string name="r">R</string>
+    <string name="b">B</string>
+    <string name="s">4s</string>
+    <string name="sixs">6s</string>
+    <string name="sr">SR</string>
+    <string name="bowlaing">BOWLING</string>
+    <string name="o">O</string>
+    <string name="m">M</string>
+    <string name="ext">Ext</string>
+    <string name="fall_of_wicket">FALL OF WICKETS</string>
 </resources>
