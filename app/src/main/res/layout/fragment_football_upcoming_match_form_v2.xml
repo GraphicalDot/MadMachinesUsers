@@ -76,83 +76,63 @@
                         android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_height="wrap_content">
-                        <TextView
-                            android:id="@+id/tv_first_match_team_first"
+                        <ImageView
+                            android:id="@+id/iv_first_match_team_first"
                             android:layout_marginTop="@dimen/activity_vertical_margin_small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:layout_marginLeft="@dimen/activity_vertical_margin_large"
-                            android:textSize="@dimen/font_size_very_small"
-                            android:background="@drawable/ic_match_status_circle"
-                            android:textColor="@color/ColorPrimary"
-                            android:text="W"/>
+                            android:layout_marginLeft="@dimen/activity_vertical_margin_large" />
                     </FrameLayout>
 
                     <FrameLayout
                         android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_height="wrap_content">
-                        <TextView
-                            android:id="@+id/tv_second_match_team_first"
+                        <ImageView
+                            android:id="@+id/iv_second_match_team_first"
                             android:layout_marginTop="@dimen/activity_vertical_margin_small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:layout_marginLeft="@dimen/activity_vertical_margin"
-                            android:textSize="@dimen/font_size_very_small"
-                            android:background="@drawable/ic_match_status_circle"
-                            android:textColor="@color/ColorPrimary"
-                            android:text="W"/>
+                            android:layout_marginLeft="@dimen/activity_vertical_margin"/>
                     </FrameLayout>
                     <FrameLayout
                         android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_height="wrap_content">
-                        <TextView
-                            android:id="@+id/tv_third_match_team_first"
+                        <ImageView
+                            android:id="@+id/iv_third_match_team_first"
                             android:layout_marginTop="@dimen/activity_vertical_margin_small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:layout_marginLeft="@dimen/activity_vertical_margin"
-                            android:textSize="@dimen/font_size_very_small"
-                            android:background="@drawable/ic_match_status_circle"
-                            android:textColor="@color/ColorPrimary"
-                            android:text="W"/>
+                            android:layout_marginLeft="@dimen/activity_vertical_margin"/>
                     </FrameLayout>
                     <FrameLayout
                         android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_height="wrap_content">
-                        <TextView
-                            android:id="@+id/tv_forth_match_team_first"
+                        <ImageView
+                            android:id="@+id/iv_forth_match_team_first"
                             android:layout_marginTop="@dimen/activity_vertical_margin_small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:layout_marginLeft="@dimen/activity_vertical_margin"
-                            android:textSize="@dimen/font_size_very_small"
-                            android:background="@drawable/ic_match_status_circle"
-                            android:textColor="@color/ColorPrimary"
-                            android:text="W"/>
+                            android:layout_marginLeft="@dimen/activity_vertical_margin"/>
                     </FrameLayout>
                     <FrameLayout
                         android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_gravity="center"
                         android:layout_height="wrap_content">
-                        <TextView
-                            android:id="@+id/tv_fifth_match_team_first"
+                        <ImageView
+                            android:id="@+id/iv_fifth_match_team_first"
                             android:layout_marginTop="@dimen/activity_vertical_margin_small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:layout_marginLeft="@dimen/activity_vertical_margin"
-                            android:textSize="@dimen/font_size_very_small"
-                            android:background="@drawable/ic_match_status_circle"
-                            android:textColor="@color/ColorPrimary"
-                            android:text="W"/>
+                            android:layout_marginLeft="@dimen/activity_vertical_margin"/>
                     </FrameLayout>
                 </LinearLayout>
                 <View
@@ -301,85 +281,65 @@
                         android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_height="wrap_content">
-                        <TextView
+                        <ImageView
                             android:id="@+id/tv_first_match_team_second"
                             android:layout_marginTop="@dimen/activity_vertical_margin_small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:layout_marginLeft="@dimen/activity_vertical_margin_large"
-                            android:textSize="@dimen/font_size_very_small"
-                            android:background="@drawable/ic_match_status_circle"
-                            android:textColor="@color/ColorPrimary"
-                            android:text="W"/>
+                            />
                     </FrameLayout>
 
                     <FrameLayout
                         android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_height="wrap_content">
-                        <TextView
+                        <ImageView
                             android:id="@+id/tv_second_match_team_second"
                             android:layout_marginTop="@dimen/activity_vertical_margin_small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:layout_marginLeft="@dimen/activity_vertical_margin"
-                            android:textSize="@dimen/font_size_very_small"
-                            android:background="@drawable/ic_match_status_circle"
-                            android:textColor="@color/ColorPrimary"
-                            android:text="W"/>
+                            android:layout_marginLeft="@dimen/activity_vertical_margin"/>
                     </FrameLayout>
                     <FrameLayout
                         android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_height="wrap_content">
-                        <TextView
+                        <ImageView
                             android:id="@+id/tv_third_match_team_second"
                             android:layout_marginTop="@dimen/activity_vertical_margin_small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:layout_marginLeft="@dimen/activity_vertical_margin"
-                            android:textSize="@dimen/font_size_very_small"
-                            android:background="@drawable/ic_match_status_circle"
-                            android:backgroundTint="@color/com_facebook_blue"
-                            android:textColor="@color/ColorPrimary"
-                            android:text="W"/>
+                            />
                     </FrameLayout>
                     <FrameLayout
                         android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_height="wrap_content">
-                        <TextView
+                        <ImageView
                             android:id="@+id/tv_forth_match_team_second"
                             android:layout_marginTop="@dimen/activity_vertical_margin_small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:layout_marginLeft="@dimen/activity_vertical_margin"
-                            android:textSize="@dimen/font_size_very_small"
-                            android:background="@drawable/ic_match_status_circle"
-                            android:textColor="@color/ColorPrimary"
-                            android:backgroundTint="@color/com_facebook_blue"
-                            android:text="W"/>
+                            android:layout_marginLeft="@dimen/activity_vertical_margin"/>
                     </FrameLayout>
                     <FrameLayout
                         android:layout_width="wrap_content"
                         android:layout_weight="1"
                         android:layout_gravity="center"
                         android:layout_height="wrap_content">
-                        <TextView
+                        <ImageView
                             android:id="@+id/tv_fifth_match_team_second"
                             android:layout_marginTop="@dimen/activity_vertical_margin_small"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:layout_marginLeft="@dimen/activity_vertical_margin"
-                            android:textSize="@dimen/font_size_very_small"
-                            android:background="@drawable/ic_match_status_circle"
-                            android:textColor="@color/ColorPrimary"
-                            android:text="W"/>
+                            android:layout_marginLeft="@dimen/activity_vertical_margin"/>
                     </FrameLayout>
                 </LinearLayout>
                 <LinearLayout

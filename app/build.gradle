@@ -29,6 +29,9 @@ repositories {
     maven {
         url 'https://oss.sonatype.org/content/repositories/snapshots'
     }
+    maven {
+        url 'http://dl.bintray.com/amulyakhare/maven'
+    }
 
     mavenCentral()
 }
@@ -51,6 +54,7 @@ dependencies {
     compile 'com.android.support:cardview-v7:23.1.1'
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
+    compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile 'com.google.code.gson:gson:1.7.2'
 
 }

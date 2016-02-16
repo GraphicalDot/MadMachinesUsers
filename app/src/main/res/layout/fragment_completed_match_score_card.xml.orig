@@ -4,10 +4,17 @@
     android:layout_height="match_parent"
     android:background="@color/ColorPrimary"
     android:focusableInTouchMode="true"
+<<<<<<< HEAD
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/layout_inning"
+=======
     android:orientation="vertical"
     tools:context="com.sports.unity.common.controller.UserProfileActivity">
     <ScrollView
         android:layout_below="@+id/tool_bar"
+>>>>>>> 1668da19f253cc963134e8fc5bcb4456fa714d4c
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
