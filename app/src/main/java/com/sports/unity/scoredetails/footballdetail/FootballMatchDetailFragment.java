@@ -23,9 +23,7 @@ import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
-import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scoredetails.FragementInterface;
-import com.sports.unity.scoredetails.cricketdetail.CricketMatchDetailModel;
 import com.sports.unity.scores.controller.fragment.MatchListAdapter;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
@@ -67,7 +65,6 @@ public class FootballMatchDetailFragment extends Fragment implements FragementIn
         sportSelected = UserUtil.getSportsSelected();
         return view;
     }
-
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);

@@ -170,6 +170,10 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     *
+     * @param v as view
+     */
     private void initViews(View v) {
         mSwipeRefreshLayout = (SwipeRefreshLayout) v.findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.app_theme_blue));
@@ -200,8 +204,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                 showProgress(v);
             }
         }
-
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+    mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
             public void onRefresh() {

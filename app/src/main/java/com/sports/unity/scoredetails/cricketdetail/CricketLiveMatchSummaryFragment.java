@@ -6,22 +6,21 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.scoredetails.FragementInterface;
+import com.sports.unity.scoredetails.model.CricketScoreCard;
 
 import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CricketLiveMatchSummeryFragment.OnFragmentInteractionListener} interface
+ * {@link CricketLiveMatchSummaryFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  * create an instance of this fragment.
  */
-public class CricketLiveMatchSummeryFragment extends Fragment implements FragementInterface<CricketMatchScoreModel> {
+public class CricketLiveMatchSummaryFragment extends Fragment implements FragementInterface<CricketScoreCard> {
 
 
 
@@ -35,6 +34,7 @@ public class CricketLiveMatchSummeryFragment extends Fragment implements Frageme
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_cricket_live_match_summery, container, false);
     }
 
@@ -51,7 +51,7 @@ public class CricketLiveMatchSummeryFragment extends Fragment implements Frageme
     }
 
     @Override
-    public List<CricketMatchScoreModel> getItems() {
+    public List<CricketScoreCard> getItems() {
         return null;
     }
 

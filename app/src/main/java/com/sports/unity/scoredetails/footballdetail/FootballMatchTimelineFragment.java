@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class FootballMatchTimelineFragment extends Fragment implements Response.ErrorListener, Response.Listener {
 
-    public static final String REQUEST_TAG = "MainVolleyActivity";
+    public static final String REQUEST_TAG = "FootballMatchTimeline";
     private TextView mTextView;
     private RequestQueue mQueue;
     private String url=  "http://52.74.75.79:8080/get_football_match_timeline?match_id=";

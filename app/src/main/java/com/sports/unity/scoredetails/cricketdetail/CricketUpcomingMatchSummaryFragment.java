@@ -13,12 +13,12 @@ import com.sports.unity.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link CricketUpcomingMatchSummeryFragment.OnFragmentInteractionListener} interface
+ * {@link CricketUpcomingMatchSummaryFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
- * Use the {@link CricketUpcomingMatchSummeryFragment#newInstance} factory method to
+ * Use the {@link CricketUpcomingMatchSummaryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class CricketUpcomingMatchSummeryFragment extends Fragment {
+public class CricketUpcomingMatchSummaryFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -30,7 +30,7 @@ public class CricketUpcomingMatchSummeryFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    public CricketUpcomingMatchSummeryFragment() {
+    public CricketUpcomingMatchSummaryFragment() {
         // Required empty public constructor
     }
 
@@ -40,11 +40,11 @@ public class CricketUpcomingMatchSummeryFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment CricketUpcomingMatchSummeryFragment.
+     * @return A new instance of fragment CricketUpcomingMatchSummaryFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static CricketUpcomingMatchSummeryFragment newInstance(String param1, String param2) {
-        CricketUpcomingMatchSummeryFragment fragment = new CricketUpcomingMatchSummeryFragment();
+    public static CricketUpcomingMatchSummaryFragment newInstance(String param1, String param2) {
+        CricketUpcomingMatchSummaryFragment fragment = new CricketUpcomingMatchSummaryFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);

@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.sports.unity.scoredetails.CommentaryFragment;
 import com.sports.unity.scoredetails.CommentriesModel;
-import com.sports.unity.scoredetails.cricketdetail.CricketLiveMatchSummeryFragment;
+import com.sports.unity.scoredetails.cricketdetail.CricketLiveMatchSummaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketMatchSummaryFragment;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
@@ -45,7 +45,7 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
             cmBundel.putParcelableArrayList("commentries", commentries);
             fragment.setArguments(cmBundel);
         } else {
-            fragment = new CricketLiveMatchSummeryFragment();
+            fragment = new CricketLiveMatchSummaryFragment();
 
         }
         return fragment;

@@ -4,8 +4,7 @@
     android:layout_height="match_parent"
     android:background="@color/ColorPrimary"
     android:focusableInTouchMode="true"
-    android:orientation="vertical"
-    tools:context="com.sports.unity.common.controller.UserProfileActivity">
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/layout_inning"

@@ -55,6 +55,7 @@ public class MatchListFragment extends Fragment {
     private int sportsSelectedNum = 0;
     private ArrayList<String> sportSelected;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);

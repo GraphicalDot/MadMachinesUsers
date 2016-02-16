@@ -174,11 +174,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 }
             });
             ImageView refreshImage = (ImageView) findViewById(R.id.refresh);
-            refreshImage.setOnClickListener(new View.OnClickListener() {
+            /*refreshImage.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-
                 }
-            });
+            });*/
         }catch (Exception e){
             Log.i("Exception Occured", "initView: ");
             Toast.makeText(this,"Error Occured",Toast.LENGTH_LONG);
@@ -260,16 +259,15 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                 ((TextView)findViewById(R.id.venue)).setText(cricketMatchJsonCaller.getVenue());
                 ((TextView)findViewById(R.id.date)).setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
-
+                tvNeededRun.setText(cricketMatchJsonCaller.getTeam1() + " vs " + cricketMatchJsonCaller.getTeam2() + ", " + cricketMatchJsonCaller.getMatchNumber());
                 if ( cricketMatchJsonCaller.getStatus().equals("notstarted") ) {
+                    tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
                     showNoCommentaries();
 
                 } else {
 
                     if ( cricketMatchJsonCaller.getStatus().equals("completed") ) {
-
-
-
+                         tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
                     } else {
                         enableAutoRefreshContent();
                     }
@@ -299,14 +297,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                         stringBuilder.append(" (");
                         stringBuilder.append(cricketMatchJsonCaller.getOvers(scoreJsonObject));
                         stringBuilder.append(")");
-
                         textView = (TextView) findViewById(R.id.team2_score);
                         textView.setText(stringBuilder.toString());
-
                         textView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
                     }
-                    //tvNeededRun.setText(cricketMatchJsonCaller.getResult());
-                    tvCurrentScore.setText(cricketMatchJsonCaller.getStatus());
 
                     requestCommentaries = true;
                 }
@@ -356,10 +350,11 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 findViewById(R.id.team2_score).setVisibility(View.GONE);
 
                 ((TextView)findViewById(R.id.venue)).setText(footballMatchJsonCaller.getStadium());
-                ((TextView)findViewById(R.id.date)).setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
-                // tvNeededRun.setText(cricketMatchJsonCaller.getResult());
+                ((TextView) findViewById(R.id.date)).setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
+                if(footballMatchJsonCaller.getResult() != null && footballMatchJsonCaller.getResult().equalsIgnoreCase("home_team ")) {
+                    tvNeededRun.setText(footballMatchJsonCaller.getHomeTeam());
+                }
                 tvCurrentScore.setText(footballMatchJsonCaller.getMatchStatus());
-
                 if ("?".equals(footballMatchJsonCaller.getAwayTeamScore())) {
                     showNoCommentaries();
                 } else {
@@ -377,12 +372,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                     requestCommentaries = true;
                 }
-
             }catch (Exception ex){
                 ex.printStackTrace();
             }
         }
-
         return requestCommentaries;
     }
 
@@ -490,13 +483,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_COMMENTARIES, parameters, REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
     }
 
-    private void requestScoreCardDetail() {
-        Log.i("Score Detail", "Request Score Details");
-
-        HashMap<String, String> parameters = new HashMap<>();
-        parameters.put(ScoresContentHandler.PARAM_ID, matchId);
-        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_DETAIL, parameters, REQUEST_LISTENER_KEY, SCORE_DETAIL_REQUEST_TAG);
-    }
 
     private void requestFootballTimeLine() {
         Log.i("Score Detail", "Request Score Details");
@@ -579,9 +565,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         return success;
     }
 
-
-
-
     private class ScoreDetailComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
 
 
@@ -616,7 +599,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             }
         }
-       @Override
+        @Override
         public void changeUI() {
             ScoreDetailActivity.this.setTitle();
             boolean requestCommentaries = ScoreDetailActivity.this.renderScores();
