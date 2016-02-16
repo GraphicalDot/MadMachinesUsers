@@ -190,7 +190,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void updateViewBasedOnPopupSelection(int itemId) {
         if( itemId == SettingsHelper.NOTIFICATIONS_SOUND_ITEM_ID ){
-            //TODO
+            TextView view = getSubTitleView(itemId);
+            view.setText(UserUtil.getNotificationSoundTitle());
         } else if( itemId == SettingsHelper.LAST_SEEN_ITEM_ID ){
             TextView view = getSubTitleView(itemId);
             view.setText(SettingsHelper.getSubTitle(itemId, SettingsActivity.this));
@@ -214,6 +215,7 @@ public class SettingsActivity extends AppCompatActivity {
         manager.setType(RingtoneManager.TYPE_NOTIFICATION);
 
         ArrayList<ToneItem> toneItems = new ArrayList<>();
+        toneItems.add(new ToneItem( "None", null));
         Cursor cursor = manager.getCursor();
         if( cursor != null ) {
             while (cursor.moveToNext()) {
@@ -244,6 +246,29 @@ public class SettingsActivity extends AppCompatActivity {
             SportsUnityDBHelper.getInstance(this).clearChatEntry(chatObject.chatid);
             NotificationHandler.getInstance().clearNotificationMessages(chatObject.chatid);
         }
+    }
+
+    private void showNotificationToneDialog(final int itemId, String title){
+        final ArrayList<ToneItem> toneItems = listRingTones();
+
+        String[] options = new String[toneItems.size()];
+        for(int index = 0; index < toneItems.size() ; index++ ){
+            options[index] = toneItems.get(index).title;
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+        builder.setTitle(title)
+
+                .setItems( options, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        ToneItem selectedTone = toneItems.get(which);
+                        itemEventListener.onSoundSelection( itemId, selectedTone.title, selectedTone.uri);
+                    }
+
+                });
+
+        builder.create().show();
     }
 
     private class ToneItem {
@@ -296,7 +321,7 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             } else if( itemType == SettingsHelper.ITEM_TYPE_POPUP ) {
                 if( itemId == SettingsHelper.NOTIFICATIONS_SOUND_ITEM_ID ){
-                    //TODO
+                    showNotificationToneDialog( itemId, SettingsHelper.getTitle(itemId, SettingsActivity.this));
                 } else if( itemId == SettingsHelper.LAST_SEEN_ITEM_ID ){
                     SingleSelectionAlertDialog alertDialog = new SingleSelectionAlertDialog( itemId, SettingsHelper.getTitle(itemId, SettingsActivity.this),
                             new int[]{ SettingsHelper.EVERY_ONE_ITEM_ID, SettingsHelper.ONLY_FRIENDS_ITEM_ID, SettingsHelper.NOBODY_ITEM_ID }, UserUtil.getPrivacyLastSeen());
@@ -322,9 +347,7 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         public void onSingleSelection(int itemId, int selection){
-            if( itemId == SettingsHelper.NOTIFICATIONS_SOUND_ITEM_ID ){
-                //TODO
-            } else if( itemId == SettingsHelper.LAST_SEEN_ITEM_ID ){
+            if( itemId == SettingsHelper.LAST_SEEN_ITEM_ID ){
                 int value = SettingsHelper.getPopUpItemValue(selection);
                 UserUtil.setPrivacyLastSeen(SettingsActivity.this, value);
                 updateViewBasedOnPopupSelection(itemId);
@@ -336,6 +359,17 @@ public class SettingsActivity extends AppCompatActivity {
                 int value = SettingsHelper.getPopUpItemValue(selection);
                 UserUtil.setPrivacyStatus(SettingsActivity.this, value);
                 updateViewBasedOnPopupSelection(itemId);
+            }
+        }
+
+        public void onSoundSelection(int itemId, String soundTitle, String soundUri){
+            if( itemId == SettingsHelper.NOTIFICATIONS_SOUND_ITEM_ID ){
+                UserUtil.setNotificationSoundTitle(SettingsActivity.this, soundTitle);
+                UserUtil.setNotificationSoundURI(SettingsActivity.this, soundUri);
+
+                updateViewBasedOnPopupSelection(itemId);
+            } else {
+
             }
         }
 
@@ -365,8 +399,6 @@ public class SettingsActivity extends AppCompatActivity {
                 UserUtil.setConversationVibrate(SettingsActivity.this, isChecked);
             } else if ( itemId == SettingsHelper.NOTIFICATIONS_LIGHT_ITEM_ID ) {
                 UserUtil.setNotificationLight(SettingsActivity.this, isChecked);
-            } else if ( itemId == SettingsHelper.NOTIFICATIONS_SOUND_ITEM_ID ) {
-                UserUtil.setNotificationSound(SettingsActivity.this, isChecked);
             } else if ( itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID ) {
                 UserUtil.setShowMyLocation(SettingsActivity.this, isChecked);
                 changeAllRadioButtons(isChecked);
@@ -470,7 +502,7 @@ public class SettingsActivity extends AppCompatActivity {
         private void show(){
 
             String[] options = new String[optionsItem.length];
-            for(int index = 0; index < options.length ; index++ ){
+            for(int index = 0; index < optionsItem.length ; index++ ){
                 options[index] = SettingsHelper.getPopUpTitle( optionsItem[index], SettingsActivity.this);
             }
 

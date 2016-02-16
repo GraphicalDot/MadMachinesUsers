@@ -138,7 +138,7 @@ public class SettingsHelper {
         } else if( id == NOTIFICATIONS_LIGHT_ITEM_ID ){
             subTitle = "";
         } else if( id == NOTIFICATIONS_SOUND_ITEM_ID ){
-            subTitle = context.getResources().getString(R.string.notification_ping);
+            subTitle = UserUtil.getNotificationSoundTitle();
         } else if( id == SHOW_MY_LOCATION_ITEM_ID ){
             subTitle = UserUtil.isShowMyLocation() ? "ON" : "OFF";
         } else if( id == FRIEND_ONLY_LOCATION_ITEM_ID ){

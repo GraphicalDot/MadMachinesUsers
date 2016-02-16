@@ -165,9 +165,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
+                    android:padding="@dimen/horizontal_padding_very_small"
                     android:text="Privacy Policy"
                     android:textColor="@color/ColorPrimary"
                     android:textSize="@dimen/font_size_small_large"
+                    android:clickable="true"
                     />
             </LinearLayout>
         </LinearLayout>

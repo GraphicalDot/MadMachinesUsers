@@ -61,7 +61,8 @@ public class TinyDB {
     public static final String CONVERSATION_TONES = "conversation_tones";
     public static final String VIBRATE = "vibrate";
     public static final String LIGHT = "light";
-    public static final String NOTIFICATION_SOUND = "notification_sound";
+    public static final String NOTIFICATION_SOUND_TITLE = "notification_sound_title";
+    public static final String NOTIFICATION_SOUND_URI = "notification_sound_uri";
 
     public static final String LOCATION_OPTIONS = "show_my_location";
     public static final String FRIENDS_ONLY = "friends_only";

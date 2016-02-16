@@ -18,6 +18,21 @@ import com.sports.unity.util.Constants;
 
 public class About extends AppCompatActivity {
 
+    private View.OnClickListener onClickListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.back_button) {
+                onBackPressed();
+            } else if (v.getId() == R.id.terms) {
+                CommonUtil.openLinkOnBrowser(About.this, getResources().getString(R.string.link_of_terms_of_use));
+            } else if (v.getId() == R.id.privacy_policy) {
+                CommonUtil.openLinkOnBrowser(About.this, getResources().getString(R.string.link_of_privacy_policy));
+            }
+        }
+
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,21 +66,11 @@ public class About extends AppCompatActivity {
         versionNumber.setText(pInfo.versionName);
 
         terms.setOnClickListener(onClickListener);
-        privacyPolicy.setOnClickListener(onClickListener);
-    }
+        terms.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
 
-    View.OnClickListener onClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (v.getId() == R.id.back_button) {
-                onBackPressed();
-            } else if (v.getId() == R.id.terms) {
-                //TODO
-            } else if (v.getId() == R.id.privacy_policy) {
-                //TODO
-            }
-        }
-    };
+        privacyPolicy.setOnClickListener(onClickListener);
+        privacyPolicy.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
+    }
 
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -75,4 +80,5 @@ public class About extends AppCompatActivity {
         backButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         backButton.setOnClickListener(onClickListener);
     }
+
 }

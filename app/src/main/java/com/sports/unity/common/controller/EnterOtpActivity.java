@@ -3,10 +3,7 @@ package com.sports.unity.common.controller;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -14,13 +11,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
-import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
@@ -134,14 +131,19 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.gray1), android.graphics.PorterDuff.Mode.MULTIPLY);
 
-        Button editNumberButton = (Button) findViewById(R.id.editnumber);
-        editNumberButton.setOnClickListener(new View.OnClickListener() {
+        LinearLayout editNumberLayout = (LinearLayout) findViewById(R.id.editNumberLayout);
+        editNumberLayout.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
+
         });
-        editNumberButton.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+        editNumberLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+
+        TextView editNumberTextView = (TextView) findViewById(R.id.editNumber);
+        editNumberTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
         final Button sendOtpButton = (Button) findViewById(com.sports.unity.R.id.sendOtpButton);
         sendOtpButton.setVisibility(View.INVISIBLE);
@@ -150,6 +152,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         Button resendButton = (Button) findViewById(R.id.resend);
         resendButton.setOnClickListener(resendOtpButtonClickListener);
         resendButton.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+        resendButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
 
         TextView otpText = (TextView) findViewById(com.sports.unity.R.id.enterotpText);
         otpText.setText(getString(R.string.otp_message_verification) + getPhoneNumber());
@@ -206,7 +209,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
     }
 
     private void resendOtp() {
-        Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending, Toast.LENGTH_SHORT).show();
+        Toast.makeText(EnterOtpActivity.this, R.string.otp_message_sending, Toast.LENGTH_SHORT).show();
 
         String phoneNumber = "91" + getPhoneNumber();
         HashMap<String, String> parameters = new HashMap<>();
@@ -245,6 +248,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
 
         @Override
         protected void showErrorLayout() {
+            super.showErrorLayout();
             Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
         }
 
@@ -298,6 +302,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
 
         @Override
         protected void showErrorLayout() {
+            super.showErrorLayout();
             Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
         }
 

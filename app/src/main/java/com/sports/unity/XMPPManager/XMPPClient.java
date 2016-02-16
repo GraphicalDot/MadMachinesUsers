@@ -29,7 +29,8 @@ import java.io.IOException;
  */
 public class XMPPClient {
 
-    public static String SERVER_HOST = "54.169.217.88";
+    public static String SERVER_HOST = "52.74.142.219"; //staging server
+//    public static String SERVER_HOST = "54.169.217.88"; //production server
     public static int SERVER_PORT = 5222;
     public static String SERVICE_NAME = "mm.io";
 

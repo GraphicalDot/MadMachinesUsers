@@ -3,10 +3,12 @@ package com.sports.unity.util;
 import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -205,6 +207,11 @@ public class CommonUtil {
             // no camera on this device
             return false;
         }
+    }
+
+    public static void openLinkOnBrowser(Context context, String url){
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        context.startActivity(browserIntent);
     }
 
     public static String getMD5EncryptedString(byte[] content) {

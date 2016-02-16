@@ -39,11 +39,18 @@ import java.util.HashMap;
 
 public class EnterPhoneActivity extends CustomVolleyCallerActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private View.OnClickListener sendButtonClickListener = new View.OnClickListener() {
+    private View.OnClickListener viewClickListener = new View.OnClickListener() {
+
         @Override
-        public void onClick(View v) {
-            createUser();
+        public void onClick(View view) {
+            int viewId = view.getId();
+            if( viewId == R.id.getOtp ) {
+                createUser();
+            } else if ( viewId == R.id.privacy_policy ) {
+                CommonUtil.openLinkOnBrowser(EnterPhoneActivity.this, getResources().getString(R.string.link_of_privacy_policy));
+            }
         }
+
     };
 
     @Override
@@ -57,15 +64,11 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
     @Override
     protected void onResume() {
         super.onResume();
-
-        onComponentResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        onComponentPause();
     }
 
     private void init() {
@@ -80,10 +83,12 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
 
         TextView privacy_policy = (TextView) findViewById(R.id.privacy_policy);
         privacy_policy.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
+        privacy_policy.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
+        privacy_policy.setOnClickListener(viewClickListener);
 
         final Button continueButton = (Button) findViewById(R.id.getOtp);
         continueButton.setVisibility(View.INVISIBLE);
-        continueButton.setOnClickListener(sendButtonClickListener);
+        continueButton.setOnClickListener(viewClickListener);
 
         final EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
         if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {

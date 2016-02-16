@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
@@ -26,7 +27,7 @@ public class SelectSportsActivity extends AppCompatActivity {
     private ArrayList<String> sports = new ArrayList<String>();
     private boolean isResultRequired;
     private Thread sendInterestsThread = null;
-    private String base_url = "http://54.169.217.88/set_user_interests?username=";
+    private String base_url = "http://" + XMPPClient.SERVER_HOST + "/set_user_interests?username=";
     private String urlToRequest = "";
     /*For future use: to add all the sports
      in sports selection screen*/

@@ -25,7 +25,7 @@ import java.util.Locale;
  */
 public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private static String base_url = "http://54.169.217.88/set_location?user=";
+    private static String base_url = "http://" + XMPPClient.SERVER_HOST + "/set_location?user=";
     private static LocManager locManager = null;
 
     private Thread uploadLocation = null;

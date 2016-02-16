@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Sports Unity</string>
-    <string name="title_activity_splash">Sports Unity</string>
+
+    <string name="facebook_app_id">1641376076109497</string>
+    <string name="link_of_terms_of_use">http://www.google.com</string>
+    <string name="link_of_privacy_policy">http://www.youtube.com</string>
 
     <string name="action_settings">Settings</string>
     <string name="common_message_internet_not_available">Internet Unavailable</string>
@@ -14,8 +17,6 @@
     <string name="splashText">Messaging app for Sports lover</string>
     <string name="welcome">Welcome to Sports Unity</string>
     <string name="terms">By continuing, you accept the Terms of Use and Privacy Policy</string>
-
-    <string name="facebook_app_id">1641376076109497</string>
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
@@ -81,7 +82,7 @@
     <string name="please_enter_valid_10_digit_numbers">Please enter a valid 10 digit number</string>
 
     <string name="otp_message_verification">Enter the verification number we sent to +91&#160;</string>
-    <string name="otp_message_resending">Resending...</string>
+    <string name="otp_message_sending">Sending...</string>
     <string name="otp_message_otp_sent">Otp sent.</string>
     <string name="otp_message_resending_failed">Failed in sending otp, please try again.</string>
     <string name="otp_message_wrong_expired_token">Wrong or Expired token</string>

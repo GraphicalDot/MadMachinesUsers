@@ -42,7 +42,9 @@ public class UserUtil {
     private static boolean CONVERSATION_TONES = true;
     private static boolean CONVERSATION_VIBRATE = true;
     private static boolean NOTIFICATION_LIGHT = true;
-    private static boolean NOTIFICATION_SOUND = true;
+
+    private static String NOTIFICATION_SOUND_TITLE = "None";
+    private static String NOTIFICATION_SOUND_URI = null;
 
     private static boolean SHOW_MY_LOCATION = true;
     private static boolean SHOW_TO_FRIENDS_LOCATION = true;
@@ -236,16 +238,28 @@ public class UserUtil {
         tinyDB.putBoolean(TinyDB.LIGHT, notificationLight);
     }
 
-    public static boolean isNotificationSound() {
-        return NOTIFICATION_SOUND;
+    public static String getNotificationSoundTitle() {
+        return NOTIFICATION_SOUND_TITLE;
     }
 
-    public static void setNotificationSound(Context context, boolean notificationSound) {
-        NOTIFICATION_SOUND = notificationSound;
+    public static void setNotificationSoundTitle(Context context, String notificationSoundTitle) {
+        NOTIFICATION_SOUND_TITLE = notificationSoundTitle;
 
         TinyDB tinyDB = TinyDB.getInstance(context);
-        tinyDB.putBoolean(TinyDB.NOTIFICATION_SOUND, notificationSound);
+        tinyDB.putString(TinyDB.NOTIFICATION_SOUND_TITLE, notificationSoundTitle);
     }
+
+    public static String getNotificationSoundURI() {
+        return NOTIFICATION_SOUND_URI;
+    }
+
+    public static void setNotificationSoundURI(Context context, String notificationSoundUri) {
+        NOTIFICATION_SOUND_URI = notificationSoundUri;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putString(TinyDB.NOTIFICATION_SOUND_URI, notificationSoundUri);
+    }
+
 
     public static boolean isShowMyLocation() {
         return SHOW_MY_LOCATION;
@@ -400,7 +414,9 @@ public class UserUtil {
         CONVERSATION_TONES = tinyDB.getBoolean(TinyDB.CONVERSATION_TONES, CONVERSATION_TONES);
         CONVERSATION_VIBRATE = tinyDB.getBoolean(TinyDB.VIBRATE, CONVERSATION_VIBRATE);
         NOTIFICATION_LIGHT = tinyDB.getBoolean(TinyDB.LIGHT, NOTIFICATION_LIGHT);
-        NOTIFICATION_SOUND = tinyDB.getBoolean(TinyDB.NOTIFICATION_SOUND, NOTIFICATION_SOUND);
+
+        NOTIFICATION_SOUND_TITLE = tinyDB.getString(TinyDB.NOTIFICATION_SOUND_TITLE);
+        NOTIFICATION_SOUND_URI = tinyDB.getString(TinyDB.NOTIFICATION_SOUND_URI);
 
         SHOW_MY_LOCATION = tinyDB.getBoolean(TinyDB.LOCATION_OPTIONS, SHOW_MY_LOCATION);
         SHOW_TO_FRIENDS_LOCATION = tinyDB.getBoolean(TinyDB.FRIENDS_ONLY, SHOW_TO_FRIENDS_LOCATION);

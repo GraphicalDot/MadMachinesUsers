@@ -55,7 +55,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:background="@android:color/transparent"
+                >
+
                 <TextView
                     android:id="@+id/terms"
                     android:layout_width="wrap_content"
@@ -63,7 +66,9 @@
                     android:padding="@dimen/horizontal_padding_very_small"
                     android:text="@string/terms_of_use"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/font_size_small_large" />
+                    android:textSize="@dimen/font_size_small_large"
+                    android:clickable="true"
+                    />
                 <TextView
                     android:id="@+id/privacy_policy"
                     android:layout_width="wrap_content"
@@ -72,7 +77,9 @@
                     android:text="@string/privacy_policy"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/font_size_small_large"
+                    android:clickable="true"
                     />
+
             </LinearLayout>
 
         </LinearLayout>

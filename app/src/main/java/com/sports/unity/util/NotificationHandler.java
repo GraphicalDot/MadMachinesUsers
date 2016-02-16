@@ -236,7 +236,8 @@ public class NotificationHandler {
     }
 
     private boolean soundEnabled(Context context) {
-        if ( UserUtil.isNotificationSound() ) {
+        //TODO handle sound value and how to pick default tone.
+        if ( UserUtil.getNotificationSoundURI() != null ) {
             return true;
         } else {
             return false;

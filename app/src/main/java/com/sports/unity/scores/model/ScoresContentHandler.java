@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.VolleyError;
+import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.VolleyRequestHandler;
@@ -35,10 +36,10 @@ public class ScoresContentHandler {
     public static final String PARAM_NEWS_IMAGE_DPI = "IMAGE_DPI";
     public static final String PARAM_NEWS_ID = "NEWS_ID";
 
-    private static final String URL_CREATE = "http://54.169.217.88/create?";
-    public static final String URL_REGISTER = "http://54.169.217.88/register?";
-    private static final String URL_REQUEST_OTP = "http://54.169.217.88/create?";
-    private static final String URL_NEAR_BY = "http://54.169.217.88/retrieve_nearby_users?";
+    private static final String URL_CREATE = "http://" + XMPPClient.SERVER_HOST + "/create?";
+    public static final String URL_REGISTER = "http://" + XMPPClient.SERVER_HOST + "/register?";
+    private static final String URL_REQUEST_OTP = "http://" + XMPPClient.SERVER_HOST + "/create?";
+    private static final String URL_NEAR_BY = "http://" + XMPPClient.SERVER_HOST + "/retrieve_nearby_users?";
 
     public static final String URL_NEWS = "http://52.76.74.188:8000/mixed?";
     private static final String URL_PARAMS_NEWS_IMAGE_DPI = "image_size";
@@ -278,6 +279,8 @@ public class ScoresContentHandler {
 
     private void requestContent(String requestTag, String listenerKey, String url) {
         if (url != null) {
+            Log.i("Request Content", url);
+
             VolleyTagRequest request = new VolleyTagRequest(requestTag, url, responseListener);
             request.setRetryPolicy(new DefaultRetryPolicy(Constants.CONNECTION_READ_TIME_OUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             VolleyRequestHandler.getInstance().addToRequestQueue(request);
