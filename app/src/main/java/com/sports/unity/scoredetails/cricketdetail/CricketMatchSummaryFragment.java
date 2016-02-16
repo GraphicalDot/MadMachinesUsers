@@ -27,7 +27,7 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class CricketMatchSummaryFragment extends Fragment implements CricketMatchSummaryHandler.ContentListener {
-    private TextView tvBatting;
+  /*  private TextView tvBatting;
     private ImageView ivPlayerFrst;
     private TextView tvFirstPlayerName;
     private TextView tvFirstPlayerRunRate;
@@ -57,7 +57,11 @@ public class CricketMatchSummaryFragment extends Fragment implements CricketMatc
     private TextView tvbowlerwr;
     private RecyclerView mreRecyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
-
+*/
+    // upcomming match summary card
+    private TextView tvMatchName;
+    private TextView tvMatchDate;
+    private TextView tossStatus;
 
 
 
@@ -76,12 +80,19 @@ public class CricketMatchSummaryFragment extends Fragment implements CricketMatc
     }
 
     @Override
-    public void handleContent(int responseCode) {
+    public void handleContent(final int responseCode) {
       if(responseCode == 0){
-          displayResult();
+
       }
     }
-    private void displayResult() {
 
-    }
+  @Override
+  public void processData(String content) {
+
+  }
+
+
+
+
+
 }

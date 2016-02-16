@@ -85,7 +85,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             ScoreDetailComponentListener createUserComponentListener = new ScoreDetailComponentListener(progressBar, errorLayout);
             MatchCommentariesComponentListener matchCommentariesComponentListener = new MatchCommentariesComponentListener(progressBar, errorLayout);
             MatchScoreCardComponentListener matchScoreCardComponentListener = new MatchScoreCardComponentListener(progressBar,errorLayout);
-            MatchSummaryComponentListener matchSummaryComponentListener = new MatchSummaryComponentListener(progressBar, errorLayout);
             FootballLineupComponentListener footballLineupComponentListener = new FootballLineupComponentListener(progressBar,errorLayout);
             FootballMatchStatComponentListener footballMatchStatComponentListener = new FootballMatchStatComponentListener(progressBar,errorLayout);
             FootballMatchTimeLineComponentListener footballMatchTimeLineComponentListener = new FootballMatchTimeLineComponentListener(progressBar, errorLayout);
@@ -93,7 +92,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             listeners.add(createUserComponentListener);
             listeners.add(matchCommentariesComponentListener);
             listeners.add(matchScoreCardComponentListener);
-            listeners.add(matchSummaryComponentListener);
             listeners.add(footballLineupComponentListener);
             listeners.add(footballMatchStatComponentListener);
             listeners.add(footballMatchTimeLineComponentListener);
@@ -664,67 +662,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             }
         }
     }
-
-
-    private class MatchSummaryComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
-
-        private boolean successfulResponse = false;
-
-        public MatchSummaryComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
-            super( LIST_OF_SUMMARY_REQUEST_TAG, progressBar, errorLayout);
-        }
-
-        @Override
-        public boolean handleContent(String tag, String content) {
-            try{successfulResponse = ScoreDetailActivity.this.handleSummary(content);
-
-            } catch (Exception e){e.printStackTrace();}
-
-
-            return true;
-        }
-
-        @Override
-        public void handleErrorContent(String tag) {
-
-        }
-
-        @Override
-        protected void hideErrorLayout() {
-            super.hideErrorLayout();
-
-            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
-        }
-
-        @Override
-        protected void showErrorLayout() {
-            Fragment fragment= null;
-            if(sportsType.equals(ScoresJsonParser.CRICKET)) {
-                fragment= cricketScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
-            } else {
-                fragment = footballScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
-            }
-            if(fragment instanceof ErrorContract) {
-                ErrorContract contract = (ErrorContract)fragment;
-                contract.errorHandle();
-            }
-            if( commentaries.size() == 0 ) {
-                super.showErrorLayout();
-            } else {
-                Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-            }
-        }
-        @Override
-        public void changeUI() {
-            if (successfulResponse) {
-                ScoreDetailActivity.this.renderComments();
-            } else {
-                Log.i("Score Detail", "Error In Handling Content");
-                showNoCommentaries();
-            }
-        }
-    }
-
 
 
     private class MatchScoreCardComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {

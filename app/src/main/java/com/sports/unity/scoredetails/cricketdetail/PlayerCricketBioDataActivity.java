@@ -104,8 +104,6 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
                     finish();
                 }
             });
-
-
             playerProfileImage = (CircleImageView) findViewById(R.id.cricket_player_profile_image);
             playerName = (TextView) findViewById(R.id.player_name);
             playerNationName = (TextView) findViewById(R.id.tv_player_nation_name);
