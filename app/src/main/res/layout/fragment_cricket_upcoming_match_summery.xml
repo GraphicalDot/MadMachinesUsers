@@ -30,7 +30,7 @@
                     android:layout_height="wrap_content"
                     android:padding="@dimen/horizontal_padding_very_small"
                     android:text="@string/match_info"
-                    android:textSize="@dimen/font_size_medium"
+                    android:textSize="@dimen/font_size_small_large"
                     android:textColor="@color/score_light_grey"/>
                 <View
                     android:layout_width="fill_parent"
