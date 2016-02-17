@@ -1,10 +1,13 @@
 package com.sports.unity.common.controller;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
@@ -15,8 +18,16 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.GetChars;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.ActionMenuView;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -54,6 +65,12 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     LocManager locManager;
     private PermissionResultHandler contactResultHandler, locationResultHandelar;
     DrawerLayout drawer;
+    public SlidingTabLayout tabs;
+    private Toolbar toolbar;
+    private TextView title;
+    private ViewPager pager;
+    private ViewPagerAdapterInMainActivity adapter;
+    ImageView back;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +151,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     private void initViews() {
         Toolbar toolbar = initToolBar();
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
 
             @Override
@@ -167,14 +183,14 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         int numberOfTabs = titles.length;
 
         // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        ViewPagerAdapterInMainActivity adapter = new ViewPagerAdapterInMainActivity(getSupportFragmentManager(), titles, numberOfTabs);
+        adapter = new ViewPagerAdapterInMainActivity(getSupportFragmentManager(), titles, numberOfTabs);
 
         // Assigning ViewPager View and setting the adapter
-        ViewPager pager = (ViewPager) findViewById(com.sports.unity.R.id.pager);
+        pager = (ViewPager) findViewById(com.sports.unity.R.id.pager);
         pager.setAdapter(adapter);
 
         // Assiging the Sliding Tab Layout View
-        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
+        tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
         tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
 
         // Setting Custom Color for the Scroll bar indicator of the Tab View
@@ -193,14 +209,21 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     }
 
     private Toolbar initToolBar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
         toolbar.setNavigationIcon(R.drawable.ic_menu);
         setSupportActionBar(toolbar);
-
-        TextView title = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        title = (TextView) toolbar.findViewById(R.id.toolbar_title);
         title.setText(R.string.app_name);
         title.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
-
+        back = (ImageView) toolbar.findViewById(R.id.img_back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!searchView.isIconified()) {
+                    searchView.setIconified(true);
+                }
+            }
+        });
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         return toolbar;
     }
@@ -289,8 +312,58 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         this.locationResultHandelar = null;
     }
 
-    public void setSearchView(SearchView searchView) {
-        this.searchView = searchView;
+    public void setSearchView(SearchView search) {
+        this.searchView = search;
+        this.searchView.setOnSearchClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                enableSearch();
+            }
+        });
+        this.searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+            @Override
+            public boolean onClose() {
+                disableSearch();
+                return false;
+            }
+        });
+    }
+
+
+
+    private void disableSearch() {
+        pager.setOnTouchListener(null);
+        searchView.clearFocus();
+        InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        mgr.hideSoftInputFromWindow(getWindow().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        tabs.setVisibility(View.VISIBLE);
+        title.setVisibility(View.VISIBLE);
+        back.setVisibility(View.GONE);
+        findViewById(R.id.seprator).setVisibility(View.VISIBLE);
+        toolbar.setBackgroundColor(getResources().getColor(R.color.app_theme_blue));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setElevation(0);
+        }
+    }
+
+
+    private void enableSearch() {
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        tabs.setVisibility(View.GONE);
+        title.setVisibility(View.GONE);
+        findViewById(R.id.seprator).setVisibility(View.GONE);
+        back.setVisibility(View.VISIBLE);
+        toolbar.setBackgroundColor(getResources().getColor(R.color.textColorPrimary));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
+        }
+        pager.setOnTouchListener(new View.OnTouchListener() {
+
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+                return true;
+            }
+        });
     }
 
     public interface PermissionResultHandler {

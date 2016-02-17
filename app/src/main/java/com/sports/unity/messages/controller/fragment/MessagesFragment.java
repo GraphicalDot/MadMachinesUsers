@@ -11,6 +11,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -30,13 +32,14 @@ import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.Constants;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
  * Created by Agupta on 8/13/2015.
  */
-public class MessagesFragment extends Fragment implements View.OnClickListener,MainActivity.PermissionResultHandler{
+public class MessagesFragment extends Fragment implements View.OnClickListener, MainActivity.PermissionResultHandler {
 
     private OnSearchViewQueryListener mListener = null;
 
@@ -110,11 +113,13 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
         getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
         return v;
     }
-    private void startPeopleAroundMeActivity(){
+
+    private void startPeopleAroundMeActivity() {
 
         Intent intent = new Intent(getActivity(), PeopleAroundMeMap.class);
         startActivity(intent);
     }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -185,11 +190,13 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
         inflater.inflate(R.menu.fragment_messages_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        searchView.setGravity(Gravity.LEFT);
         ((MainActivity) getActivity()).setSearchView(searchView);
         int searchImgId = android.support.v7.appcompat.R.id.search_button;
         ImageView v = (ImageView) searchView.findViewById(searchImgId);
         v.setImageResource(R.drawable.ic_menu_search);
         searchView.setQueryHint("Search...");
+        updateSearchViewUI();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -213,6 +220,24 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
                 }
             }
         });
+    }
+
+    private void updateSearchViewUI() {
+        try {
+            Field searchCloseButton = SearchView.class.getDeclaredField("mCloseButton");
+            searchCloseButton.setAccessible(true);
+            ImageView closeBtn = (ImageView) searchCloseButton.get(searchView);
+            closeBtn.setImageResource(R.drawable.ic_close_blk);
+            Field searchEditField = SearchView.class.getDeclaredField("mSearchSrcTextView");
+            searchEditField.setAccessible(true);
+            EditText editText = (EditText) searchEditField.get(searchView);
+            editText.setTextColor(getResources().getColor(R.color.gray1));
+            editText.setBackgroundColor(getResources().getColor(R.color.textColorPrimary));
+            editText.setHintTextColor(getResources().getColor(R.color.textColorPrimary));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

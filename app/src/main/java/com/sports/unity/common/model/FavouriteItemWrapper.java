@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Helper class to save the favourite selection locally.
+ * Helper singleton class to save the favourite selection locally.
  * It convert the {@link ArrayList} of
  * {@link FavouriteItem} to {@link JSONArray} and
  * save it {@link android.content.SharedPreferences} as {@link String}.
@@ -212,6 +212,8 @@ public class FavouriteItemWrapper {
      * @return ArrayList of Favourite teams.
      */
     public ArrayList<FavouriteItem> getAllTeams() {
+        Collections.sort(savedCricketTeams);
+        Collections.sort(savedFootballTeams);
         ArrayList<FavouriteItem> savedTeams = new ArrayList<FavouriteItem>();
         if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
             savedTeams.addAll(savedCricketTeams);
@@ -219,7 +221,6 @@ public class FavouriteItemWrapper {
         if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
             savedTeams.addAll(savedFootballTeams);
         }
-        Collections.sort(savedTeams);
         return savedTeams;
     }
 
@@ -229,6 +230,8 @@ public class FavouriteItemWrapper {
      * @return ArrayList of Favourite teams.
      */
     public ArrayList<FavouriteItem> getAllPlayers() {
+        Collections.sort(savedCricketPlayers);
+        Collections.sort(savedFootballPlayers);
         ArrayList<FavouriteItem> savedPlayers = new ArrayList<FavouriteItem>();
         if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
             savedPlayers.addAll(savedCricketPlayers);
@@ -236,7 +239,6 @@ public class FavouriteItemWrapper {
         if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
             savedPlayers.addAll(savedFootballPlayers);
         }
-        Collections.sort(savedPlayers);
         return savedPlayers;
     }
 
@@ -276,6 +278,7 @@ public class FavouriteItemWrapper {
      * @return ArrayList of Favourite Cricket Team.
      */
     public ArrayList<FavouriteItem> getCricketTeams() {
+        Collections.sort(savedCricketTeams);
         return new ArrayList<FavouriteItem>(savedCricketTeams);
     }
 
@@ -285,6 +288,7 @@ public class FavouriteItemWrapper {
      * @return ArrayList of Favourite Cricket players.
      */
     public ArrayList<FavouriteItem> getCricketPlayers() {
+        Collections.sort(savedCricketPlayers);
         return new ArrayList<FavouriteItem>(savedCricketPlayers);
     }
 
@@ -294,6 +298,7 @@ public class FavouriteItemWrapper {
      * @return ArrayList of Favourite Football leagues.
      */
     public ArrayList<FavouriteItem> getFootballLeagues() {
+        Collections.sort(savedFootballLeagues);
         return new ArrayList<FavouriteItem>(savedFootballLeagues);
     }
 
@@ -304,6 +309,7 @@ public class FavouriteItemWrapper {
      * @return ArrayList of Favourite Football Teams.
      */
     public ArrayList<FavouriteItem> getFootballTeams() {
+        Collections.sort(savedFootballTeams);
         return new ArrayList<FavouriteItem>(savedFootballTeams);
     }
 
@@ -314,6 +320,8 @@ public class FavouriteItemWrapper {
      * @return ArrayList of Favourite Football Players.
      */
     public ArrayList<FavouriteItem> getFootballPlayers() {
+        Collections.sort(savedFootballPlayers);
+        Collections.sort(savedFootballPlayers);
         return new ArrayList<FavouriteItem>(savedFootballPlayers);
     }
 }
