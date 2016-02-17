@@ -51,6 +51,8 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     Button others;
     LinearLayout buttonContainerLayout;
     Activity activity;
+    Fragment currentFragment;
+    LinearLayout childStripLayout;
 
     @Override
     public void onAttach(Activity activity) {
@@ -74,7 +76,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         others.setOnClickListener(this);
         others.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
         buttonContainerLayout = (LinearLayout) v.findViewById(com.sports.unity.R.id.fragmentChangeButtonLayout);
-
+        childStripLayout= (LinearLayout) v.findViewById(R.id.fragmentChangeButtonContainer);
 
         FloatingActionButton peopleAroundMeFab = (FloatingActionButton) v.findViewById(R.id.floatingbutton);
         peopleAroundMeFab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.app_theme_blue)));
@@ -133,6 +135,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         switch (v.getId()) {
             case R.id.btn_chat: {
                 ChatFragment fragment = new ChatFragment();
+                currentFragment = fragment;
                 mListener = fragment;
                 getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
                 buttonContainerLayout.setBackgroundResource(R.drawable.btn_chat_focused);
@@ -147,6 +150,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
 
                 ContactsFragment fragment = new ContactsFragment();
                 mListener = fragment;
+                currentFragment = fragment;
                 fragment.setArguments(bundle);
 
                 getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
@@ -159,7 +163,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
             case R.id.btn_others: {
                 OthersFragment fragment = new OthersFragment();
                 mListener = fragment;
-
+                currentFragment = fragment;
                 getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
                 buttonContainerLayout.setBackgroundResource(R.drawable.btn_others_focused);
                 others.setTextColor(getResources().getColor(R.color.ColorPrimary));
@@ -189,9 +193,9 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_messages_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        searchView.setGravity(Gravity.LEFT);
-        ((MainActivity) getActivity()).setSearchView(searchView);
+        ((MainActivity) getActivity()).setSearchView(searchView, menu.findItem(R.id.action_search));
         int searchImgId = android.support.v7.appcompat.R.id.search_button;
         ImageView v = (ImageView) searchView.findViewById(searchImgId);
         v.setImageResource(R.drawable.ic_menu_search);
@@ -234,7 +238,21 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
             editText.setTextColor(getResources().getColor(R.color.gray1));
             editText.setBackgroundColor(getResources().getColor(R.color.textColorPrimary));
             editText.setHintTextColor(getResources().getColor(R.color.textColorPrimary));
-
+            this.searchView.setOnSearchClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    childStripLayout.setVisibility(View.GONE);
+                    ((MainActivity) getActivity()).enableSearch();
+                }
+            });
+            this.searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+                @Override
+                public boolean onClose() {
+                    childStripLayout.setVisibility(View.VISIBLE);
+                    ((MainActivity) getActivity()).disableSearch();
+                    return false;
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -243,13 +261,13 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onPause() {
         super.onPause();
-
         mListener = null;
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        mListener = (OnSearchViewQueryListener) currentFragment;
         if (PermissionUtil.getInstance().isRuntimePermissionRequired()) {
             ((MainActivity) getActivity()).addLocationResultListener(this);
         }
@@ -271,4 +289,5 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         super.onDestroy();
         ((MainActivity) getActivity()).removeLocationResultListener();
     }
+
 }

@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -71,6 +72,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     private ViewPager pager;
     private ViewPagerAdapterInMainActivity adapter;
     ImageView back;
+    private MenuItem menuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,10 +218,13 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         title.setText(R.string.app_name);
         title.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
         back = (ImageView) toolbar.findViewById(R.id.img_back);
+        back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!searchView.isIconified()) {
+                    searchView.setIconified(true);
+                    //Intentionally written twice, please don't delete.
                     searchView.setIconified(true);
                 }
             }
@@ -263,6 +268,9 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             if (searchView != null) {
                 if (!searchView.isIconified()) {
                     searchView.setIconified(true);
+                    //Intentionally written twice, please don't delete.
+                    searchView.setIconified(true);
+                    searchView.clearFocus();
                 } else {
                     super.onBackPressed();
                 }
@@ -312,30 +320,17 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         this.locationResultHandelar = null;
     }
 
-    public void setSearchView(SearchView search) {
+    public void setSearchView(SearchView search, MenuItem item) {
         this.searchView = search;
-        this.searchView.setOnSearchClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                enableSearch();
-            }
-        });
-        this.searchView.setOnCloseListener(new SearchView.OnCloseListener() {
-            @Override
-            public boolean onClose() {
-                disableSearch();
-                return false;
-            }
-        });
+        menuItem = item;
+
     }
 
 
-
-    private void disableSearch() {
+    public void disableSearch() {
         pager.setOnTouchListener(null);
-        searchView.clearFocus();
         InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        mgr.hideSoftInputFromWindow(getWindow().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        mgr.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         tabs.setVisibility(View.VISIBLE);
         title.setVisibility(View.VISIBLE);
@@ -348,7 +343,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     }
 
 
-    private void enableSearch() {
+    public void enableSearch() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         tabs.setVisibility(View.GONE);
         title.setVisibility(View.GONE);

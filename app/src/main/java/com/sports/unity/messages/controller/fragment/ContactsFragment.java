@@ -65,13 +65,13 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             ContactListAdapter contactListAdapter = (ContactListAdapter) contacts.getAdapter();
-            ArrayList<Contacts> contactList = contactListAdapter.getInUseContactListForAdapter();
+            Contacts c = contactListAdapter.getItem(position);
 
-            if (contactList.get(position).registered) {
-                String number = contactList.get(position).jid;
-                String name = contactList.get(position).name;
-                long contactId = contactList.get(position).id;
-                byte[] userPicture = contactList.get(position).image;
+            if (c.registered) {
+                String number = c.jid;
+                String name = c.name;
+                long contactId = c.id;
+                byte[] userPicture = c.image;
 
                 String groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
                 long chatId = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatEntryID(contactId, groupServerId);
@@ -319,8 +319,8 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     }
 
     public void filterResults(String filter) {
-        ContactListAdapter adapter = (ContactListAdapter) contacts.getAdapter();
-        adapter.getFilter().filter(filter);
+        ((ContactListAdapter) contacts.getAdapter()).getFilter().filter(filter);
+        Log.d("max", "Filtering");
     }
 
     public ArrayList<Contacts> getSelectedMembersList() {
