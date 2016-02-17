@@ -163,8 +163,8 @@ Carrier SMS charges may apply.</string>
 
     <!--Marshmallow runtime permission handling related-->
     <string name="camera_and_external_storage_permission_message">We need to access your camera and external storage to complete this action.</string>
-    <string name="read_contact_permission_message">We need to access your contacts to see which of your friends are using this app.</string>
-    <string name="read_phone_permission_message">We need to access your sim card to get your phone number.</string>
+    <string name="read_contact_permission_message">We need to access your contacts to allow you to chat with your friends.</string>
+    <string name="read_phone_permission_message">We need access to your messages and phone to auto fetch OTP.</string>
     <string name="camera_permission_message">We need to access your camera to click images</string>
     <string name="gallery_permission_message">We need to access your photo gallery to complete this action.</string>
     <string name="audio_permission_message">We need to access your microphone to record audio.</string>

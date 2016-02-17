@@ -73,6 +73,17 @@ public class PermissionUtil {
         return isAlreadyGranted;
     }
 
+    public boolean requestPermission(Activity activity, final ArrayList<String> permission) {
+        boolean isAlreadyGranted = true;
+        for (String s : permission) {
+            if (ActivityCompat.checkSelfPermission(activity, s)
+                    != PackageManager.PERMISSION_GRANTED) {
+                isAlreadyGranted = false;
+            }
+        }
+        return isAlreadyGranted;
+    }
+
     /**
      * checks if the requested permission is already granted or not
      *

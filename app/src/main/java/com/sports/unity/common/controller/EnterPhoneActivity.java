@@ -95,7 +95,7 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
 
             setUserPhoneNumber(phoneNumberEditText, continueButton);
         } else {
-            if (PermissionUtil.getInstance().requestPermission(EnterPhoneActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.READ_PHONE_STATE)), getResources().getString(R.string.read_phone_permission_message), Constants.REQUEST_CODE_PHONE_STATE_PERMISSION)) {
+            if (PermissionUtil.getInstance().requestPermission(EnterPhoneActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.READ_PHONE_STATE,Manifest.permission.RECEIVE_SMS)), getResources().getString(R.string.read_phone_permission_message), Constants.REQUEST_CODE_PHONE_STATE_PERMISSION)) {
 
                 setUserPhoneNumber(phoneNumberEditText, continueButton);
             }

@@ -55,7 +55,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
     private static final String RESEND_OTP_REQUEST_TAG = "ResendOtpTag";
 
     private boolean moved = false;
-    private  AlertDialog.Builder build;
+    private AlertDialog.Builder build;
     private AlertDialog dialog;
 
     private EditText otpEditText;
@@ -161,19 +161,19 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
                     dialog.cancel();
 
                     final Object[] pdusObj = (Object[]) bundle.get("pdus");
-                    for (int i = 0; i < pdusObj .length; i++) {
-                        SmsMessage currentMessage = SmsMessage.createFromPdu((byte[])pdusObj[i]);
+                    for (int i = 0; i < pdusObj.length; i++) {
+                        SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
                         String phoneNumber = currentMessage.getDisplayOriginatingAddress();
-                        String senderNum = phoneNumber ;
-                        String message = currentMessage .getDisplayMessageBody();
+                        String senderNum = phoneNumber;
+                        String message = currentMessage.getDisplayMessageBody();
 
                         try {
-                            if (senderNum .contains("SPOUNI")) {
+                            if (senderNum.contains("SPOUNI")) {
                                 String str = message.replaceAll("\\D+", "");
                                 otpEditText.setText(str);
                                 createUser();
                             }
-                        } catch(Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
 
@@ -401,10 +401,17 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         public void changeUI() {
             if (resendSuccessful) {
                 Toast.makeText(EnterOtpActivity.this, R.string.otp_message_otp_sent, Toast.LENGTH_SHORT).show();
+                if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
 
-                displayDialog();
+                    displayDialog();
+                    registerReceiver(smsReceiverBroadcast, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
 
-                registerReceiver(smsReceiverBroadcast, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
+                } else if (PermissionUtil.getInstance().requestPermission(EnterOtpActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.RECEIVE_SMS)))) {
+
+                    displayDialog();
+                    registerReceiver(smsReceiverBroadcast, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
+
+                }
             } else {
                 Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
             }
@@ -429,6 +436,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         dialog = build.create();
         dialog.show();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
