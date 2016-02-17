@@ -86,13 +86,5 @@ public class CricketMatchSummaryFragment extends Fragment implements CricketMatc
       }
     }
 
-  @Override
-  public void processData(String content) {
-
-  }
-
-
-
-
 
 }

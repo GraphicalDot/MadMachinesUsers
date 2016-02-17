@@ -10,8 +10,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.sports.unity.scoredetails.model.CricketScoreCard;
 
 import java.util.HashSet;
 
@@ -39,7 +37,6 @@ public class CricketMatchSummaryHandler {
     public interface ContentListener {
 
         void handleContent(int responseCode);
-        void processData(String content);
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {

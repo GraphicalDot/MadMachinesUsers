@@ -1,8 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_height="match_parent"
-    tools:context="com.sports.unity.scoredetails.cricketdetail.CricketMatchScoreFragment">
+    android:layout_height="match_parent">
 
     <include layout="@layout/error_layout"
         android:id="@+id/error"
