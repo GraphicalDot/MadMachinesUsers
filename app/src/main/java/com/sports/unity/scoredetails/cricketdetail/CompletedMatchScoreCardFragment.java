@@ -7,14 +7,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.sports.unity.R;
-import com.sports.unity.news.model.NewsContentHandler;
-import com.sports.unity.scoredetails.ScoreCardModel;
 
 
 public class CompletedMatchScoreCardFragment extends Fragment implements CompletedMatchScoreCardHandler.ContentListener{
-    private ScoreCardModel scoreCardModel;
+
+
+      private TextView tvFirstTeamInning;
+
 
 
 

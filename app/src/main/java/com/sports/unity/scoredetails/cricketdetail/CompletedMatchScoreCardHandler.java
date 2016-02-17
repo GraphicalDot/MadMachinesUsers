@@ -10,15 +10,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
-import com.sports.unity.scoredetails.ScoreCardModel;
 import com.sports.unity.scoredetails.model.CricketScoreCard;
-import com.sports.unity.scores.model.ScoresContentHandler;
-import com.sports.unity.util.Constants;
 
-import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 
 /**

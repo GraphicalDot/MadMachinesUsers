@@ -2,6 +2,7 @@ package com.sports.unity.scoredetails.cricketdetail;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -9,8 +10,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.sports.unity.scoredetails.model.CricketScoreCard;
 
 import java.util.HashSet;
 
@@ -18,11 +17,11 @@ import java.util.HashSet;
  * Created by madmachines on 16/2/16.
  */
 public class CricketMatchSummaryHandler {
-    private static final String REQUEST_LISTENER_KEY = "COMPLETED_MATCH_SCREEN_LISTENER";
+
     private static final String REQUEST_TAG = "SUMMARY_TAG";
     private Context context;
     private String matchId = null;
-    private String url = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
+    private String url = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
 
     private ContentListener contentListener = null;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -54,7 +53,6 @@ public class CricketMatchSummaryHandler {
             CricketMatchSummaryHandler.this.handleErrorResponse(volleyError);
         }
     };
-
     public void requestCricketMatchSummary() {
         Log.i("Score Detail", "Request Score Details");
 
@@ -70,6 +68,7 @@ public class CricketMatchSummaryHandler {
 
         try{
             Log.i("Score Card", "handleResponse: "+response.toString());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,7 +79,7 @@ public class CricketMatchSummaryHandler {
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
         if(contentListener != null) {
-            contentListener.handleContent(0);
+            Log.i("handleErrorResponse: ",volleyError.getMessage() );
         }
     }
 }

@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/ColorPrimary"
     android:focusableInTouchMode="true"
-    android:orientation="vertical"
-    tools:context="com.sports.unity.common.controller.UserProfileActivity">
+    android:orientation="vertical">
     <ScrollView
         android:layout_below="@+id/tool_bar"
         android:layout_width="match_parent"

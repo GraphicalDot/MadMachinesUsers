@@ -53,6 +53,7 @@
                         android:textSize="@dimen/font_size_small_large"
                         />
                     <TextView
+                        android:id="@+id/tv_match_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Ist ODI , New Zeland Vs India"
@@ -72,6 +73,7 @@
                         android:textSize="@dimen/font_size_small_large"
                         />
                     <TextView
+                        android:id="@+id/tv_match_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="3rd Feb"
@@ -90,6 +92,7 @@
                     android:textSize="@dimen/font_size_small_large"
                     />
                 <TextView
+                    android:id="@+id/tv_match_toss"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Team will be announced at  the toss."
