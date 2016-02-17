@@ -9,12 +9,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sports.unity.R;
-import com.sports.unity.news.model.NewsContentHandler;
-import com.sports.unity.scoredetails.ScoreCardModel;
 
 
 public class CompletedMatchScoreCardFragment extends Fragment implements CompletedMatchScoreCardHandler.ContentListener{
-    private ScoreCardModel scoreCardModel;
+
 
 
 
