@@ -21,7 +21,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="@android:color/transparent"
-                android:paddingRight="@dimen/horizontal_padding_very_small"
+                android:paddingRight="@dimen/horizontal_padding_small"
+                android:paddingTop="@dimen/horizontal_padding_small"
+                android:paddingBottom="@dimen/horizontal_padding_small"
+                android:scaleType="center"
                 android:src="@drawable/ic_menu_back" />
             <FrameLayout
                 android:layout_width="match_parent"

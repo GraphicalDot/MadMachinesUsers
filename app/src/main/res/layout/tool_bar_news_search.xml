@@ -22,7 +22,10 @@
             android:id="@+id/img_back"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:padding="@dimen/horizontal_padding_small"
+            android:layout_centerVertical="true"
+            android:paddingRight="@dimen/horizontal_padding_small"
+            android:paddingTop="@dimen/horizontal_padding_small"
+            android:paddingBottom="@dimen/horizontal_padding_small"
             android:scaleType="center"
             android:src="@drawable/ic_menu_back_blk" />
 

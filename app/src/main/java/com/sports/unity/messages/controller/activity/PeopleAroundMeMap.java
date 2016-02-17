@@ -154,7 +154,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
 
         hideSoftKeyboard();
         initToolbar();
-//        openMap();
+       // openMap();
         InitSeekbar();
         setsportSelectionButtons();
         setCustomButtonsForNavigationAndUsers();
@@ -698,8 +698,6 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         if (getCurrentFocus() != null) {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-
-
         }
     }
 
@@ -716,29 +714,6 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         dismissDialog();
         ScoresContentHandler.getInstance().removeResponseListener(REQUEST_LISTENER_KEY);
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_people_around_me_map, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
 
     private class GetVcardForUser extends AsyncTask<String, Void, VCard> {
         private boolean success = false;

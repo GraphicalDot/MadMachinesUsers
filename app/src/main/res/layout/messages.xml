@@ -2,7 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:fab="http://schemas.android.com/tools">
 
     <LinearLayout
         android:id="@+id/fragmentChangeButtonContainer"
@@ -78,6 +79,7 @@
             android:src="@drawable/ic_ppl_around_u"
             app:borderWidth="0dp"
             app:layout_anchorGravity="bottom|right|end" />
+
 
     </FrameLayout>
 

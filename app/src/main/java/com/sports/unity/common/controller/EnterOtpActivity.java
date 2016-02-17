@@ -1,9 +1,21 @@
 package com.sports.unity.common.controller;
 
 import android.Manifest;
+import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Telephony;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
+import android.telephony.gsm.SmsMessage;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -43,6 +55,12 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
     private static final String RESEND_OTP_REQUEST_TAG = "ResendOtpTag";
 
     private boolean moved = false;
+    private  AlertDialog.Builder build;
+    private AlertDialog dialog;
+
+    private EditText otpEditText;
+
+    private SMSReceiverBroadcast smsReceiverBroadcast = new SMSReceiverBroadcast();
 
     private View.OnClickListener sendButtonClickListener = new View.OnClickListener() {
         @Override
@@ -63,6 +81,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         super.onCreate(savedInstanceState);
 
         setContentView(com.sports.unity.R.layout.activity_enter_otp);
+
         initViews();
 
         {
@@ -95,6 +114,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
                 }
             }
         }
+
     }
 
     @Override
@@ -127,6 +147,46 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         super.onBackPressed();
     }
 
+    private class SMSReceiverBroadcast extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            Log.i("Sms Broadcast receiver", "testing");
+
+            final Bundle bundle = intent.getExtras();
+            try {
+                if (bundle != null) {
+
+                    dialog.cancel();
+
+                    final Object[] pdusObj = (Object[]) bundle.get("pdus");
+                    for (int i = 0; i < pdusObj .length; i++) {
+                        SmsMessage currentMessage = SmsMessage.createFromPdu((byte[])pdusObj[i]);
+                        String phoneNumber = currentMessage.getDisplayOriginatingAddress();
+                        String senderNum = phoneNumber ;
+                        String message = currentMessage .getDisplayMessageBody();
+
+                        try {
+                            if (senderNum .contains("SPOUNI")) {
+                                String str = message.replaceAll("\\D+", "");
+                                otpEditText.setText(str);
+                                createUser();
+                            }
+                        } catch(Exception e){
+                            e.printStackTrace();
+                        }
+
+                    }
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
     private void initViews() {
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.gray1), android.graphics.PorterDuff.Mode.MULTIPLY);
@@ -140,6 +200,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
             }
 
         });
+
         editNumberLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
 
         TextView editNumberTextView = (TextView) findViewById(R.id.editNumber);
@@ -158,7 +219,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         otpText.setText(getString(R.string.otp_message_verification) + getPhoneNumber());
         otpText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
-        EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
+        otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         otpEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -196,6 +257,8 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
     }
 
     private void createUser() {
+        unregisterReceiver(smsReceiverBroadcast);
+
         EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         String otp = otpEditText.getText().toString();
         String phoneNumber = "91" + getPhoneNumber();
@@ -338,6 +401,10 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         public void changeUI() {
             if (resendSuccessful) {
                 Toast.makeText(EnterOtpActivity.this, R.string.otp_message_otp_sent, Toast.LENGTH_SHORT).show();
+
+                displayDialog();
+
+                registerReceiver(smsReceiverBroadcast, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
             } else {
                 Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
             }
@@ -345,6 +412,23 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
 
     }
 
+    private void displayDialog() {
+
+        build = new AlertDialog.Builder(EnterOtpActivity.this);
+
+        build.setMessage("Waiting to automatically detect an SMS.");
+
+        build.setNegativeButton("Enter Manually", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int id) {
+
+                unregisterReceiver(smsReceiverBroadcast);
+            }
+        });
+
+        dialog = build.create();
+        dialog.show();
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);

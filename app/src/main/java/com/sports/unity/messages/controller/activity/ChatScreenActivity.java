@@ -339,7 +339,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
          */
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_chat);
         setSupportActionBar(toolbar);
-        toolbar.setContentInsetsAbsolute(0, 0);
+       // toolbar.setContentInsetsAbsolute(0, 0);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         final Handler mHandler = new Handler();
 
