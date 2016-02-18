@@ -2,7 +2,6 @@ package com.sports.unity.messages.controller.fragment;
 
 import android.app.Activity;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,10 +58,10 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
             }
 
         } else {
-            if (chatArrayList.get(position).groupImage == null) {
+            if (chatArrayList.get(position).chatImage == null) {
                 userPic.setImageResource(R.drawable.ic_group);
             } else {
-                userPic.setImageBitmap(BitmapFactory.decodeByteArray(chatArrayList.get(position).groupImage, 0, chatArrayList.get(position).groupImage.length));
+                userPic.setImageBitmap(BitmapFactory.decodeByteArray(chatArrayList.get(position).chatImage, 0, chatArrayList.get(position).chatImage.length));
             }
         }
 
@@ -100,7 +99,7 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
                 }
 
             } else {
-                int days = Integer.parseInt(CommonUtil.getTimeDifference(Long.parseLong(chatArrayList.get(position).recieved)));
+                int days = Integer.parseInt(CommonUtil.getTimeDifference(Long.parseLong(chatArrayList.get(position).received)));
                 if (days > 0) {
                     if (days == 1) {
                         lastMsgTime.setText("YESTERDAY");
@@ -109,7 +108,7 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
                     }
                 } else {
 
-                    lastMsgTime.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(chatArrayList.get(position).recieved)));
+                    lastMsgTime.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(chatArrayList.get(position).received)));
                 }
             }
         }

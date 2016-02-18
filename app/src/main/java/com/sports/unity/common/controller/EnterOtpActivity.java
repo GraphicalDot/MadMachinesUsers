@@ -1,19 +1,13 @@
 package com.sports.unity.common.controller;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.Telephony;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.telephony.gsm.SmsMessage;
 import android.text.Editable;
@@ -55,12 +49,11 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
     private static final String RESEND_OTP_REQUEST_TAG = "ResendOtpTag";
 
     private boolean moved = false;
-    private AlertDialog.Builder build;
-    private AlertDialog dialog;
 
+    private AlertDialog otpWaitingDialog;
     private EditText otpEditText;
 
-    private SMSReceiverBroadcast smsReceiverBroadcast = new SMSReceiverBroadcast();
+    private SMSReceiverBroadcast smsReceiverBroadcast = null;
 
     private View.OnClickListener sendButtonClickListener = new View.OnClickListener() {
         @Override
@@ -151,14 +144,10 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            Log.i("Sms Broadcast receiver", "testing");
-
-            final Bundle bundle = intent.getExtras();
+            Bundle bundle = intent.getExtras();
             try {
                 if (bundle != null) {
-
-                    dialog.cancel();
+                    otpWaitingDialog.cancel();
 
                     final Object[] pdusObj = (Object[]) bundle.get("pdus");
                     for (int i = 0; i < pdusObj.length; i++) {
@@ -176,8 +165,8 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
                     }
+
                 }
 
             } catch (Exception e) {
@@ -257,7 +246,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
     }
 
     private void createUser() {
-        unregisterReceiver(smsReceiverBroadcast);
+        unRegisterSmsBroadcastReceiver();
 
         EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         String otp = otpEditText.getText().toString();
@@ -402,15 +391,11 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
             if (resendSuccessful) {
                 Toast.makeText(EnterOtpActivity.this, R.string.otp_message_otp_sent, Toast.LENGTH_SHORT).show();
                 if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-
-                    displayDialog();
-                    registerReceiver(smsReceiverBroadcast, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
-
+                    displayOtpWaitingDialog();
+                    registerSmsBroadcastReceiver();
                 } else if (PermissionUtil.getInstance().requestPermission(EnterOtpActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.RECEIVE_SMS)))) {
-
-                    displayDialog();
-                    registerReceiver(smsReceiverBroadcast, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
-
+                    displayOtpWaitingDialog();
+                    registerSmsBroadcastReceiver();
                 }
             } else {
                 Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
@@ -419,22 +404,33 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
 
     }
 
-    private void displayDialog() {
+    private void registerSmsBroadcastReceiver(){
+        smsReceiverBroadcast = new SMSReceiverBroadcast();
+        registerReceiver(smsReceiverBroadcast, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
+    }
 
-        build = new AlertDialog.Builder(EnterOtpActivity.this);
+    private void unRegisterSmsBroadcastReceiver(){
+        if( smsReceiverBroadcast != null ){
+            unregisterReceiver(smsReceiverBroadcast);
+            smsReceiverBroadcast = null;
+        }
+    }
 
+    private void displayOtpWaitingDialog() {
+
+        AlertDialog.Builder build = new AlertDialog.Builder(EnterOtpActivity.this);
         build.setMessage("Waiting to automatically detect an SMS.");
-
         build.setNegativeButton("Enter Manually", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int id) {
 
-                unregisterReceiver(smsReceiverBroadcast);
+                unRegisterSmsBroadcastReceiver();
+
             }
         });
 
-        dialog = build.create();
-        dialog.show();
+        otpWaitingDialog = build.create();
+        otpWaitingDialog.show();
     }
 
     @Override

@@ -104,7 +104,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
                             ChatScreenActivity.viewProfile(getActivity(), chatObject.userImage, chatObject.name,
                                     chatObject.groupServerId,SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid);
                         } else {
-                            ChatScreenActivity.viewProfile(getActivity(), chatObject.groupImage, chatObject.name, chatObject.groupServerId,
+                            ChatScreenActivity.viewProfile(getActivity(), chatObject.chatImage, chatObject.name, chatObject.groupServerId,
                                     SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid);
                         }
                         alert.dismiss();

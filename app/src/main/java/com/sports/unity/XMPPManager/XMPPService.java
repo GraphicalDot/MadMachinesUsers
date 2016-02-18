@@ -243,7 +243,7 @@ public class XMPPService extends Service {
 
 
             /**
-             * Listener for acknowledging recieved receipts
+             * Listener for acknowledging received receipts
              */
             DeliveryReceiptManager.getInstanceFor(connection).addReceiptReceivedListener(new ReceiptReceivedListener() {
                 @Override

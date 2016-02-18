@@ -1,16 +1,15 @@
 package com.sports.unity.messages.controller.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Switch;
 
@@ -21,7 +20,6 @@ import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
-import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
@@ -110,7 +108,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
                             ChatScreenActivity.viewProfile(getActivity(), chatObject.userImage, chatObject.name, chatObject.groupServerId,
                                     SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid);
                         } else {
-                            ChatScreenActivity.viewProfile(getActivity(), chatObject.groupImage, chatObject.name, chatObject.groupServerId,
+                            ChatScreenActivity.viewProfile(getActivity(), chatObject.chatImage, chatObject.name, chatObject.groupServerId,
                                     SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid);
                         }
                         alert.dismiss();
@@ -195,7 +193,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
             String number = groupSeverId;
             String name = chatObject.name;
             long chatId = chatObject.chatid;
-            byte[] groupImage = chatObject.groupImage;
+            byte[] groupImage = chatObject.chatImage;
 
             intent.putExtra("number", number);
             intent.putExtra("name", name);
@@ -295,6 +293,26 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
 
     @Override
     public void onSearchQuery(String filterText) {
-        filterResults(filterText);
+
+        Log.d("Chat Fragment", "search query " + filterText);
+
+        ArrayList<Chats> chatArrayList = null;
+        if(filterText.length() > 0 ) {
+            chatArrayList = SportsUnityDBHelper.getInstance(getActivity()).getChatList(filterText, false);
+        } else {
+            chatArrayList = SportsUnityDBHelper.getInstance(getActivity()).getChatList(false);
+        }
+
+        ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
+        ArrayList<Chats> chatsList = adapter.getChatArrayList();
+
+        if( chatArrayList != null && chatArrayList.size() > 0 ) {
+            chatsList.clear();
+            chatArrayList.addAll(chatArrayList);
+            adapter.notifyDataSetChanged();
+        }
+
+//        filterResults(filterText);
     }
+
 }

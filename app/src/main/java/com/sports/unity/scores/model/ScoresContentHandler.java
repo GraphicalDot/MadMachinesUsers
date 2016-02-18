@@ -3,13 +3,13 @@ package com.sports.unity.scores.model;
 import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.VolleyError;
 import com.sports.unity.XMPPManager.XMPPClient;
-import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.VolleyRequestHandler;
 import com.sports.unity.util.network.VolleyResponseListener;
 import com.sports.unity.util.network.VolleyTagRequest;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
 

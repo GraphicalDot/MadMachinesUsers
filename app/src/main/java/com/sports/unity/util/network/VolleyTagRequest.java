@@ -1,5 +1,6 @@
 package com.sports.unity.util.network;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -31,6 +32,11 @@ public class VolleyTagRequest extends Request<String> {
     }
 
     @Override
+    public byte[] getBody() throws AuthFailureError {
+        return super.getBody();
+    }
+
+    @Override
     protected Response<String> parseNetworkResponse(NetworkResponse response) {
         try{
             String parsed = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
@@ -51,7 +57,7 @@ public class VolleyTagRequest extends Request<String> {
     @Override
     public void deliverError(VolleyError error) {
         if(responseListener != null ) {
-            responseListener.handleResponse(tag, null, 0);
+            responseListener.handleResponse(tag, (String)null, 0);
         }
     }
 

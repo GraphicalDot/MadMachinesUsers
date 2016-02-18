@@ -12,7 +12,10 @@ import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Vibrator;
+import android.provider.Settings;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
@@ -202,6 +205,9 @@ public class NotificationHandler {
         defaults = getDefaults(context, defaults, builder);
         builder.setDefaults(defaults);
         builder.setAutoCancel(true);
+
+        Uri uri= Settings.System.getUriFor(UserUtil.getNotificationSoundURI());
+        builder.setSound(uri);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NotificationHandler.NOTIFICATION_ID, builder.build());

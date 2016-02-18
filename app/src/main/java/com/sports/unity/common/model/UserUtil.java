@@ -1,6 +1,7 @@
 package com.sports.unity.common.model;
 
 import android.content.Context;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.sports.unity.common.controller.SettingsActivity;
@@ -43,8 +44,8 @@ public class UserUtil {
     private static boolean CONVERSATION_VIBRATE = true;
     private static boolean NOTIFICATION_LIGHT = true;
 
-    private static String NOTIFICATION_SOUND_TITLE = "None";
-    private static String NOTIFICATION_SOUND_URI = null;
+    private static String NOTIFICATION_SOUND_TITLE = "Default";
+    private static String NOTIFICATION_SOUND_URI = Settings.System.NOTIFICATION_SOUND;
 
     private static boolean SHOW_MY_LOCATION = true;
     private static boolean SHOW_TO_FRIENDS_LOCATION = true;
