@@ -3,29 +3,38 @@ package com.sports.unity.scoredetails.cricketdetail;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.player.view.PlayerScoreCardDTO;
+import com.sports.unity.player.view.PlayerScorecardAdapter;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by madmachines on 15/2/16.
  */
 public class CricketPlayerMachStatFragment extends Fragment  implements CricketPlayerMatchStatHandler.CricketPlayerMatchStatContentListener{
-/*
-    private TextView tvPlayerbirthOfPlace;
-    private TextView tvPlayerDateOfBirth;
-    private TextView tvPlayerbattingStyle;
-    private TextView tvPlayerBowingStyle;
-    private TextView tvPlayerMajorTeam;*/
+    private GridLayout glBattingPerformanceSummery;
+    private GridLayout glBowlingPerformanceSummary;
+    private ImageView battingImageView;
+    private ImageView bowlingImageView;
+    private CricketPlayerMatchBattingStatAdapter cricketPlayerMatchBattingStatAdapter;
+    private List<CricketPlayerMatchStatDTO> playerMatchStatDTOList = new ArrayList<>();
+    private RecyclerView mRecyclerView;
     public CricketPlayerMachStatFragment() {
         super();
     }
@@ -48,12 +57,32 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
         return view;
     }
     private void initView(View view) {
-        /*tvPlayerDateOfBirth = (TextView) view.findViewById(R.id.tv_player_date_of_birth);
-        tvPlayerbattingStyle = (TextView) view.findViewById(R.id.tv_player_batting_style);
-        tvPlayerBowingStyle = (TextView) view.findViewById(R.id.tv_player_bowing_style);
-        tvPlayerMajorTeam = (TextView) view.findViewById(R.id.tv_player_major_team);
-        tvPlayerbirthOfPlace = (TextView) view.findViewById(R.id.tv_player_birth_of_place);
-       */ initErrorLayout(view);
+        glBattingPerformanceSummery = (GridLayout) view.findViewById(R.id.gl_batting_performance_summary);
+        glBowlingPerformanceSummary = (GridLayout) view.findViewById(R.id.gl_bowling_performance_summary);
+        battingImageView = (ImageView) view.findViewById(R.id.iv_down);
+        bowlingImageView = (ImageView) view.findViewById(R.id.iv_down_second);
+        battingImageView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(glBattingPerformanceSummery.getVisibility()== View.GONE){
+                    glBattingPerformanceSummery.setVisibility(View.VISIBLE);
+                } else {
+                    glBattingPerformanceSummery.setVisibility(View.GONE);
+                }
+            }
+        });
+        bowlingImageView.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if(glBowlingPerformanceSummary.getVisibility()== View.GONE){
+                    glBowlingPerformanceSummary.setVisibility(View.VISIBLE);
+                } else {
+                    glBowlingPerformanceSummary.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        cricketPlayerMatchBattingStatAdapter = new CricketPlayerMatchBattingStatAdapter(playerMatchStatDTOList);
+        mRecyclerView.setAdapter(cricketPlayerMatchBattingStatAdapter);
+        initErrorLayout(view);
 
     }
 
@@ -81,6 +110,7 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
     }
     private void initErrorLayout(View view) {
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        errorLayout.setVisibility(View.GONE);
 
     }
 
@@ -92,37 +122,36 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
     }
 
     private void renderDisplay(JSONObject jsonObject) throws JSONException {
+        glBattingPerformanceSummery.setVisibility(View.VISIBLE);
+        glBowlingPerformanceSummary.setVisibility(View.VISIBLE);
         final JSONObject data = (JSONObject) jsonObject.get("data");
-        final JSONObject playerInfo = (JSONObject) data.get("info");
+       // final JSONObject playerInfo = (JSONObject) data.get("info");
+        final JSONArray playerStatsArray = (JSONArray) data.get("stats");
         PlayerCricketBioDataActivity activity = (PlayerCricketBioDataActivity) getActivity();
         if (activity != null) {
-            //activity.setProfileInfo(playerInfo);
+            activity.setProfileInfo(data);
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
+                        for (int i = 0; i < playerStatsArray.length(); i++) {
 
-                        /*if (!playerInfo.isNull("Born")) {
-                            tvPlayerDateOfBirth.setText(playerInfo.getString("Born"));
-                        }
-                        if (!playerInfo.isNull("Batting style")) {
-                            tvPlayerbattingStyle.setText(playerInfo.getString("Batting style"));
-                        }
-                        if (!playerInfo.isNull("Bowling style")) {
-                            tvPlayerBowingStyle.setText(playerInfo.getString("Bowling style"));
-                        }
-                        if (!playerInfo.isNull("Place of birth")) {
-                            tvPlayerbirthOfPlace.setText(playerInfo.getString("Place of birth"));
-                        }
+                            JSONObject battingJsonObject= (JSONObject) playerStatsArray.get(i);
+                            JSONArray battingArray = battingJsonObject.getJSONArray("batting") ;
+                            if(battingArray != null){
+                                CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
+                               for(int j = 0; j < battingArray.length(); j++){
+                                   JSONObject batting = (JSONObject) battingArray.get(i);
+                                   cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
+                                   if(batting != null) {
+                                       cricketPlayerMatchStatDTO.setInnings(batting.getString("innings"));
+                                       cricketPlayerMatchStatDTO.setRuns(batting.getString("runs"));
+                                   }
 
-                        if (!data.isNull("teams_played_for")) {
-                            JSONArray array = data.getJSONArray("teams_played_for");
-                            for (int i = 0; i < array.length(); i++) {
-
-                                tvPlayerMajorTeam.setText(array.get(i).toString()+"\\n");
+                                   playerMatchStatDTOList.add(cricketPlayerMatchStatDTO);
+                               }
                             }
-
-                       }*/
+                            }
 
                     } catch (Exception ex) {
                         ex.printStackTrace();

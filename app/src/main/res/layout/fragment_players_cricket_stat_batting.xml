@@ -33,13 +33,15 @@
                 android:src="@drawable/ic_droable"/>
         </RelativeLayout>
         <GridLayout
-            android:id="@+id/gl_batting_performance_summery"
+            android:id="@+id/gl_batting_performance_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:numColumns="auto_fit"
             android:verticalSpacing="8dp"
-            android:horizontalSpacing="4dp">
+            android:horizontalSpacing="4dp"
+            android:columnCount="4">
+
         </GridLayout>
     </LinearLayout>
     <LinearLayout
@@ -68,7 +70,7 @@
                 android:src="@drawable/ic_droable"/>
         </RelativeLayout>
         <GridLayout
-            android:id="@+id/gl_bowling_performance_summery"
+            android:id="@+id/gl_bowling_performance_summary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -82,5 +84,6 @@
         android:id="@+id/error"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         />
 </LinearLayout>

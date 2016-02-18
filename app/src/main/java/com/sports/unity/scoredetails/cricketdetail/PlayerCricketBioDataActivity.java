@@ -111,15 +111,18 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             @Override
             public void run() {
                 try {
+
+                    final JSONObject playerInfo = (JSONObject) object.get("info");
                     if (object != null) {
                         if (!object.isNull("image")) {
+                            Log.i("run: ",object.getString("image"));
                             Glide.with(PlayerCricketBioDataActivity.this).load(object.getString("image")).placeholder(R.drawable.ic_no_img).into(playerProfileImage);
                         }
-                        if (!object.isNull("Full Name")) {
-                            playerName.setText(object.getString("Full Name"));
+                        if (!playerInfo.isNull("Full Name")) {
+                            playerName.setText(playerInfo.getString("Full Name"));
                         }
-                        if (!object.isNull("Place of birth")) {
-                            playerNationName.setText(object.getString("Place of birth"));
+                        if (!playerInfo.isNull("Place of birth")) {
+                            playerNationName.setText(playerInfo.getString("Place of birth"));
                         }
 
                     }

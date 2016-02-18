@@ -89,6 +89,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     }
     private void initErrorLayout(View view) {
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        errorLayout.setVisibility(View.GONE);
 
     }
 
@@ -104,7 +105,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
         final JSONObject playerInfo = (JSONObject) data.get("info");
         PlayerCricketBioDataActivity activity = (PlayerCricketBioDataActivity) getActivity();
         if (activity != null) {
-            activity.setProfileInfo(playerInfo);
+            activity.setProfileInfo(data);
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -127,7 +128,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
                             JSONArray array = data.getJSONArray("teams_played_for");
                             for (int i = 0; i < array.length(); i++) {
 
-                                tvPlayerMajorTeam.setText(array.get(i).toString()+"\\n");
+                                tvPlayerMajorTeam.setText(array.get(i).toString()+"\n");
                             }
 
                         }
