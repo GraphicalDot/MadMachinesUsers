@@ -1,11 +1,9 @@
 package com.sports.unity.scoredetails.cricketdetail;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +14,8 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
-import com.sports.unity.scores.controller.fragment.BroadcastListAdapter;
-import com.sports.unity.util.Constants;
 
-import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -78,18 +74,8 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
             boolean error = jsonObject.getBoolean("error");
 
             if( success ) {
-                JSONObject data = (JSONObject) jsonObject.get("data");
-                JSONObject playerInfo = (JSONObject)data.get("info");
-                if(!playerInfo.isNull("Full Name"))
-                {
-                    playerName.setText(playerInfo.getString("Full Name"));
-                }
-                if(!playerInfo.isNull("Born"))
-                {
-                    tvPlayerDateOfBirth.setText(playerInfo.getString("Born"));
-                }
 
-
+                renderDisplay(jsonObject);
 
             } else {
                 Toast.makeText(getActivity(), R.string.player_details_not_exists, Toast.LENGTH_SHORT).show();
@@ -99,8 +85,6 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
             ex.printStackTrace();
             Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
         }
-
-
     }
     private void initErrorLayout(View view) {
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
@@ -116,6 +100,30 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
 
             LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
             errorLayout.setVisibility(View.VISIBLE);
+
+    }
+
+    private void renderDisplay(JSONObject jsonObject) throws JSONException {
+        final JSONObject data = (JSONObject) jsonObject.get("data");
+        final JSONObject playerInfo = (JSONObject) data.get("info");
+        Activity activity = getActivity();
+        if (activity != null) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (!playerInfo.isNull("Full Name")) {
+                            playerName.setText(playerInfo.getString("Full Name"));
+                        }
+                        if (!playerInfo.isNull("Born")) {
+                            tvPlayerDateOfBirth.setText(playerInfo.getString("Born"));
+                        }
+                    } catch (Exception ex) {
+
+                    }
+                }
+            });
+        }
 
     }
 }
