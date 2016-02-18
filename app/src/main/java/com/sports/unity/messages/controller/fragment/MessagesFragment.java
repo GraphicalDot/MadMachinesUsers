@@ -5,12 +5,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -23,13 +24,19 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
+import com.sports.unity.messages.controller.activity.CreateGroup;
 import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
+import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.Constants;
 
 import java.lang.reflect.Field;
@@ -43,8 +50,6 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
 
     private OnSearchViewQueryListener mListener = null;
 
-    private static final String CURRENT_FRAGMENT = "current_fragment";
-
     FrameLayout frame;
     Button contacts;
     Button chats;
@@ -54,11 +59,29 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     Fragment currentFragment;
     LinearLayout childStripLayout;
 
+    TextView friendsUnreadCount;
+    TextView othersUnreadCount;
+
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
+    }
 
+    private void getAndSetUnreadCount() {
+        int friendsChatUnreadCount = SportsUnityDBHelper.getInstance(getContext()).getTotalUnreadCount(0);
+        int otherChatUnreadCount = SportsUnityDBHelper.getInstance(getContext()).getTotalUnreadCount(1);
+        if (friendsChatUnreadCount == 0) {
+            friendsUnreadCount.setVisibility(View.GONE);
+        } else {
+            friendsUnreadCount.setText(String.valueOf(friendsChatUnreadCount));
+        }
+        if (otherChatUnreadCount == 0) {
+            othersUnreadCount.setVisibility(View.GONE);
+        } else {
+            othersUnreadCount.setText(String.valueOf(otherChatUnreadCount));
+        }
     }
 
     @Override
@@ -76,10 +99,17 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         others.setOnClickListener(this);
         others.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
         buttonContainerLayout = (LinearLayout) v.findViewById(com.sports.unity.R.id.fragmentChangeButtonLayout);
-        childStripLayout= (LinearLayout) v.findViewById(R.id.fragmentChangeButtonContainer);
+        childStripLayout = (LinearLayout) v.findViewById(R.id.fragmentChangeButtonContainer);
 
-        FloatingActionButton peopleAroundMeFab = (FloatingActionButton) v.findViewById(R.id.floatingbutton);
-        peopleAroundMeFab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.app_theme_blue)));
+        friendsUnreadCount = (TextView) v.findViewById(R.id.friends_unread_count);
+        othersUnreadCount = (TextView) v.findViewById(R.id.others_unread_count);
+
+        getAndSetUnreadCount();
+
+
+        FloatingActionMenu fabMenu = (FloatingActionMenu) v.findViewById(R.id.fab_menu);
+
+        FloatingActionButton peopleAroundMeFab = (FloatingActionButton) v.findViewById(R.id.people_around_me);
         peopleAroundMeFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -93,22 +123,14 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
             }
         });
 
-//        ImageButton createGroup = (ImageButton) v.findViewById(R.id.create_group);
-//        createGroup.setOnClickListener(this);
-//        ImageButton joinGroup = (ImageButton) v.findViewById(R.id.join_group);
-//        joinGroup.setOnClickListener(this);
-//        ImageButton peopleAroundMe = (ImageButton) v.findViewById(R.id.people_around_me);
-//        peopleAroundMe.setOnClickListener(this);
-//
-//        TextView createGrp = (TextView) v.findViewById(R.id.create_group_txt);
-//        createGrp.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
-//        createGrp.setOnClickListener(this);
-//
-//        TextView joinGrp = (TextView) v.findViewById(R.id.join_group_txt);
-//        joinGrp.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
-//
-//        TextView pplAroundMe = (TextView) v.findViewById(R.id.ppl_around_me_txt);
-//        pplAroundMe.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
+        FloatingActionButton createGroupFab = (FloatingActionButton) v.findViewById(R.id.create_group);
+        createGroupFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), CreateGroup.class);
+                startActivity(intent);
+            }
+        });
 
         ChatFragment fragment = new ChatFragment();
         mListener = fragment;
@@ -142,6 +164,10 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
                 chats.setTextColor(getResources().getColor(R.color.ColorPrimary));
                 contacts.setTextColor(getResources().getColor(R.color.app_theme_blue));
                 others.setTextColor(getResources().getColor(R.color.app_theme_blue));
+                othersUnreadCount.setBackgroundResource(R.drawable.ic_msg_notification);
+                othersUnreadCount.setTextColor(getResources().getColor(android.R.color.white));
+                friendsUnreadCount.setBackgroundResource(R.drawable.ic_msg_notification_white);
+                friendsUnreadCount.setTextColor(getResources().getColor(android.R.color.black));
                 break;
             }
             case R.id.btn_contacts: {
@@ -158,6 +184,10 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
                 contacts.setTextColor(getResources().getColor(R.color.ColorPrimary));
                 chats.setTextColor(getResources().getColor(R.color.app_theme_blue));
                 others.setTextColor(getResources().getColor(R.color.app_theme_blue));
+                othersUnreadCount.setBackgroundResource(R.drawable.ic_msg_notification);
+                othersUnreadCount.setTextColor(getResources().getColor(android.R.color.white));
+                friendsUnreadCount.setBackgroundResource(R.drawable.ic_msg_notification);
+                friendsUnreadCount.setTextColor(getResources().getColor(android.R.color.white));
                 break;
             }
             case R.id.btn_others: {
@@ -169,21 +199,12 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
                 others.setTextColor(getResources().getColor(R.color.ColorPrimary));
                 contacts.setTextColor(getResources().getColor(R.color.app_theme_blue));
                 chats.setTextColor(getResources().getColor(R.color.app_theme_blue));
+                othersUnreadCount.setBackgroundResource(R.drawable.ic_msg_notification_white);
+                othersUnreadCount.setTextColor(getResources().getColor(android.R.color.black));
+                friendsUnreadCount.setBackgroundResource(R.drawable.ic_msg_notification);
+                friendsUnreadCount.setTextColor(getResources().getColor(android.R.color.white));
                 break;
             }
-//            case R.id.create_group:
-//                Intent intent = new Intent(getActivity(), CreateGroup.class);
-//                startActivity(intent);
-//                Log.i("createGroupActivity : ", "shown");
-//                break;
-//            case R.id.join_group:
-//                //TODO
-//                Toast.makeText(getActivity(), "Not implemented yet", Toast.LENGTH_SHORT).show();
-//                break;
-//            case R.id.people_around_me:
-//                //TODO
-//                Toast.makeText(getActivity(), "Not implemented yet", Toast.LENGTH_SHORT).show();
-//                break;
         }
     }
 
@@ -193,7 +214,6 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_messages_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
-
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
         ((MainActivity) getActivity()).setSearchView(searchView, menu.findItem(R.id.action_search));
         int searchImgId = android.support.v7.appcompat.R.id.search_button;
@@ -261,6 +281,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onPause() {
         super.onPause();
+
         mListener = null;
     }
 
@@ -289,5 +310,4 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         super.onDestroy();
         ((MainActivity) getActivity()).removeLocationResultListener();
     }
-
 }

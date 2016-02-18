@@ -19,6 +19,7 @@ import com.sports.unity.Database.DBUtil;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.messages.controller.model.Contacts;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -83,7 +84,7 @@ public class CommonUtil {
 
     public static String getDeviceId(Context context) {
 
-        String id= Settings.Secure.getString(context.getContentResolver(),
+        String id = Settings.Secure.getString(context.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
         return id;
     }
@@ -163,6 +164,19 @@ public class CommonUtil {
 //        }
 
         return String.valueOf(currentday - day);
+    }
+
+    public static void openSMSIntent(Contacts contact, Context context) {
+        String inviteText = context.getString(R.string.download_sports_unity);
+//        Intent intent = new Intent(Intent.ACTION_VIEW);
+//        intent.putExtra("address", contact.jid);
+//        intent.putExtra("sms_body", inviteText);
+//        intent.setType("vnd.android-dir/mms-sms");
+//        context.startActivity(intent);
+        Uri uri = Uri.parse("smsto:" + contact.jid);
+        Intent it = new Intent(Intent.ACTION_SENDTO, uri);
+        it.putExtra("sms_body", inviteText);
+        context.startActivity(it);
     }
 
     public static int getDrawable(String color, boolean toolbar) {

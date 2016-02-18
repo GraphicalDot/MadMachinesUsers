@@ -65,4 +65,8 @@
     <color name="around_me_seekbar_progress_color">#cccccc</color>
 
     <color name="dot_color_grey">#999999</color>
+
+    <!-- floating action menu-->
+    <color name="people_around_me">#c51162</color>
+    <color name="create_group">#9c27b0</color>
 </resources>

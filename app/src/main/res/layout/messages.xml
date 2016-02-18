@@ -9,7 +9,8 @@
         android:id="@+id/fragmentChangeButtonContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/messages_bg"
+        android:background="@android:color/white"
+        android:orientation="vertical"
         android:paddingBottom="@dimen/vertical_padding_very_small"
         android:paddingEnd="@dimen/horizontal_padding_medium"
         android:paddingStart="@dimen/horizontal_padding_medium"
@@ -22,155 +23,133 @@
             android:layout_height="40dp"
             android:background="@drawable/btn_chat_focused">
 
-            <Button
-                android:id="@+id/btn_chat"
-                style="?android:attr/buttonBarButtonStyle"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_chat"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:text="@string/friends"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_size_small_large" />
+
+                <TextView
+                    android:id="@+id/friends_unread_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_msg_notification_white"
+                    android:gravity="center"
+                    android:text="99+"
+                    android:textColor="@android:color/black" />
+
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:text="@string/friends"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/font_size_small_large"
-                />
+                android:layout_weight="1">
 
-            <Button
-                android:id="@+id/btn_contacts"
-                style="?android:attr/buttonBarButtonStyle"
+                <Button
+                    android:id="@+id/btn_contacts"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:text="@string/contacts"
+                    android:textColor="@color/app_theme_blue"
+                    android:textSize="@dimen/font_size_small_large" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:text="@string/contacts"
-                android:textColor="@color/app_theme_blue"
-                android:textSize="@dimen/font_size_small_large"
-                />
+                android:gravity="center"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btn_others"
-                style="?android:attr/buttonBarButtonStyle"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:text="@string/others"
-                android:textColor="@color/app_theme_blue"
-                android:textSize="@dimen/font_size_small_large"
-                />
+                <Button
+                    android:id="@+id/btn_others"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:text="@string/others"
+                    android:textColor="@color/app_theme_blue"
+                    android:textSize="@dimen/font_size_small_large" />
+
+                <TextView
+                    android:id="@+id/others_unread_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/ic_msg_notification"
+                    android:gravity="center"
+                    android:text="99+"
+                    android:textColor="@android:color/white" />
+            </LinearLayout>
+
+
         </LinearLayout>
-
     </LinearLayout>
 
-    <FrameLayout
-        android:id="@+id/childFragmentContainer"
+    <View
+        android:id="@+id/seperator"
+        android:layout_width="match_parent"
+        android:layout_height="0.3dp"
+        android:layout_below="@id/fragmentChangeButtonContainer"
+        android:background="@color/gray4" />
+
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/fragmentChangeButtonContainer"
-        android:background="@android:color/white"
-      >
+        android:layout_below="@id/seperator"
+        android:background="@android:color/white">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/floatingbutton"
+
+        <FrameLayout
+            android:id="@+id/childFragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </FrameLayout>
+
+        <com.github.clans.fab.FloatingActionMenu
+            android:id="@+id/fab_menu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|right"
-            android:layout_margin="@dimen/vertical_padding_small"
-            android:clickable="true"
-            android:src="@drawable/ic_ppl_around_u"
-            app:borderWidth="0dp"
-            app:layout_anchorGravity="bottom|right|end" />
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            fab:menu_colorNormal="@color/app_theme_blue"
+            fab:menu_labels_colorNormal="@android:color/white"
+            fab:menu_labels_textColor="@android:color/black">
 
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/create_group"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_create_group"
+                app:fab_colorNormal="@color/create_group"
+                fab:fab_label="Create Group"
+                fab:fab_size="mini" />
 
-    </FrameLayout>
+            <com.github.clans.fab.FloatingActionButton
+                android:id="@+id/people_around_me"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_ppl_around_me"
+                app:fab_colorNormal="@color/people_around_me"
+                fab:fab_label="People around me"
+                fab:fab_size="mini" />
 
-    <!--<LinearLayout-->
-    <!--android:layout_above="@+id/chatButtons"-->
-    <!--android:id="@+id/chatButtons"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignParentBottom="true"-->
-    <!--android:background="@color/app_theme_blue"-->
-    <!--android:weightSum="3">-->
+        </com.github.clans.fab.FloatingActionMenu>
 
-    <!--<LinearLayout-->
-    <!--android:id="@+id/create_group_layout"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginTop="-10dp"-->
-    <!--android:layout_weight="1"-->
-    <!--android:orientation="vertical">-->
-
-    <!--<ImageButton-->
-    <!--android:id="@+id/create_group"-->
-    <!--style="?android:attr/buttonBarButtonStyle"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:src="@drawable/ic_create_group" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/create_group_txt"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="center_horizontal"-->
-    <!--android:layout_marginBottom="0dp"-->
-    <!--android:layout_marginTop="-14dp"-->
-    <!--android:text="@string/create_group_text"-->
-    <!--android:textColor="@android:color/white"-->
-    <!--android:textSize="8dp" />-->
-    <!--</LinearLayout>-->
-
-    <!--<LinearLayout-->
-    <!--android:id="@+id/join_group_layout"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginTop="-10dp"-->
-    <!--android:layout_weight="1"-->
-    <!--android:orientation="vertical">-->
-
-    <!--<ImageButton-->
-    <!--android:id="@+id/join_group"-->
-    <!--style="?android:attr/buttonBarButtonStyle"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:src="@drawable/ic_join_group" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/join_group_txt"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="center_horizontal"-->
-    <!--android:layout_marginBottom="0dp"-->
-    <!--android:layout_marginTop="-14dp"-->
-    <!--android:text="@string/join_group_text"-->
-    <!--android:textColor="@android:color/white"-->
-    <!--android:textSize="8dp" />-->
-    <!--</LinearLayout>-->
-
-    <!--<LinearLayout-->
-    <!--android:id="@+id/people_around_me_layout"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_marginTop="-10dp"-->
-    <!--android:layout_weight="1"-->
-    <!--android:orientation="vertical">-->
-
-    <!--<ImageButton-->
-    <!--android:id="@+id/people_around_me"-->
-    <!--style="?android:attr/buttonBarButtonStyle"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:src="@drawable/ic_ppl_around_u" />-->
-
-    <!--<TextView-->
-    <!--android:id="@+id/ppl_around_me_txt"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_gravity="center_horizontal"-->
-    <!--android:layout_marginBottom="0dp"-->
-    <!--android:layout_marginTop="-14dp"-->
-    <!--android:text="@string/people_around_me_text"-->
-    <!--android:textColor="@android:color/white"-->
-    <!--android:textSize="8dp" />-->
-    <!--</LinearLayout>-->
-    <!--</LinearLayout>-->
+    </android.support.design.widget.CoordinatorLayout>
 </RelativeLayout>

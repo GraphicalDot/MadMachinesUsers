@@ -1,14 +1,18 @@
 package com.sports.unity.messages.controller.fragment;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Telephony;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +28,7 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 /**
  * Created by madmachines on 2/9/15.
  */
-public class ContactListAdapter extends ArrayAdapter<Contacts> implements View.OnClickListener, StickyListHeadersAdapter {
+public class ContactListAdapter extends ArrayAdapter<Contacts> implements StickyListHeadersAdapter {
 
     private final Activity context;
     private LayoutInflater inflater;
@@ -47,7 +51,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements View.O
         this.frequentContactCount = frequentContactCount;
     }
 
-    public View getView(int position, View view, ViewGroup parent) {
+    public View getView(final int position, View view, ViewGroup parent) {
         Contacts contacts = getItem(position);
 
         LayoutInflater inflater = context.getLayoutInflater();
@@ -64,7 +68,6 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements View.O
         if (itemLayoutId == R.layout.list_contact_msgs) {
             invite = (Button) rowView.findViewById(R.id.btn_invite);
             invite.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
-            invite.setOnClickListener(this);
 
             if (contacts.registered) {
                 invite.setVisibility(View.INVISIBLE);
@@ -87,12 +90,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements View.O
 
     }
 
-    @Override
-    public void onClick(View v) {
-        Toast.makeText(context, "Not implemented yet", Toast.LENGTH_SHORT).show();
-    }
-
-//    public void filter(String filterText) {
+    //    public void filter(String filterText) {
 //        if (filterText.length() == 0) {
 //            inUseContactListForAdapter.clear();
 //            inUseContactListForAdapter = null;
@@ -136,7 +134,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements View.O
         if (position < frequentContactCount) {
             headerText = "Recents";
         } else {
-            headerText = "" + inUseContactListForAdapter.get(position).toString().subSequence(0, 1).charAt(0);
+            headerText = "" + getHeader(position);
         }
         holder.text.setText(headerText);
         return convertView;
@@ -147,9 +145,20 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements View.O
         if (position < frequentContactCount) {
             return (long) 0.0;
         } else {
-            return inUseContactListForAdapter.get(position).name.subSequence(0, 1).charAt(0);
+            return getHeader(position);
         }
 
+    }
+
+    public char getHeader(int position) {
+        char c = inUseContactListForAdapter.get(position).name.subSequence(0, 1).charAt(0);
+        boolean isAlphababet = Character.isAlphabetic(c);
+        if (isAlphababet) {
+            c = Character.toUpperCase(c);
+        } else {
+            //do nothing
+        }
+        return c;
     }
 
     class HeaderViewHolder {

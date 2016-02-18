@@ -191,7 +191,6 @@ Carrier SMS charges may apply.</string>
     <string name="work">At Work</string>
 
 
-
     <!--Setting Screen related strings-->
     <string name="notification_and_sound_options">Notifications &amp; Sounds</string>
     <string name="notification_previews">Notification Previews</string>
@@ -265,4 +264,7 @@ Carrier SMS charges may apply.</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="terms_of_use">Terms of Use</string>
     <string name="sportsunity.club">sportsunity.club</string>
+
+    <!--Sending invite related-->
+    <string name="download_sports_unity">Check out Sports Unity for your smartphone. Download it from https://goo.gl/mQUaiy</string>
 </resources>

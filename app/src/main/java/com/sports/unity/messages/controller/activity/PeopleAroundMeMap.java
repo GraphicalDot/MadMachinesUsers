@@ -116,7 +116,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
                     if (users.size() > 1) {
                         plotMarkers(users, sportSelection);
                     } else {
-                        map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                        map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                         LayoutInflater inflater = PeopleAroundMeMap.this.getLayoutInflater();
                         View view = inflater.inflate(R.layout.chat_other_profile_layout, null);
 //                        AlertDialog.Builder otherProfileBuilder = new AlertDialog.Builder(PeopleAroundMeMap.this);
@@ -343,7 +343,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         titleCity = (TextView) toolbar.findViewById(R.id.secondary_title);
         titleCity.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         setCurrentAddressOnToolbar(titleAddress, titleCity);
-        toolbar.findViewById(R.id.close_icon).setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
+        toolbar.setContentInsetsAbsolute(0, 0);
         toolbar.findViewById(R.id.close_icon).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

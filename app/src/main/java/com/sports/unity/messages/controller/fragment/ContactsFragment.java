@@ -27,6 +27,7 @@ import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.ToolbarActionsForChatScreen;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import java.lang.reflect.Array;
@@ -87,7 +88,8 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
                 chatScreenIntent.putExtra("blockStatus", blockStatus);
                 startActivity(chatScreenIntent);
             } else {
-                Toast.makeText(getActivity().getApplicationContext(), "Invite to sports Unity!", Toast.LENGTH_SHORT).show();
+                CommonUtil.openSMSIntent(c, getContext());
+//                Toast.makeText(getActivity().getApplicationContext(), "Invite to sports Unity!", Toast.LENGTH_SHORT).show();
             }
         }
 
