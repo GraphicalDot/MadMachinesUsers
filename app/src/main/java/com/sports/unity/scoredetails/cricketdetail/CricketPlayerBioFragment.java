@@ -29,7 +29,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class CricketPlayerBioFragment extends Fragment implements CricketPlayerbioHandler.ContentListener {
 
-    private TextView tvPlayerDateOfPlace;
+    private TextView tvPlayerbirthOfPlace;
     private TextView tvPlayerDateOfBirth;
     private TextView tvPlayerbattingStyle;
     private TextView tvPlayerBowingStyle;
@@ -56,10 +56,11 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
         return view;
     }
     private void initView(View view) {
-           tvPlayerDateOfBirth = (TextView) view.findViewById(R.id.tv_player_date_of_birth);
+        tvPlayerDateOfBirth = (TextView) view.findViewById(R.id.tv_player_date_of_birth);
         tvPlayerbattingStyle = (TextView) view.findViewById(R.id.tv_player_batting_style);
         tvPlayerBowingStyle = (TextView) view.findViewById(R.id.tv_player_bowing_style);
         tvPlayerMajorTeam = (TextView) view.findViewById(R.id.tv_player_major_team);
+        tvPlayerbirthOfPlace = (TextView) view.findViewById(R.id.tv_player_birth_of_place);
         initErrorLayout(view);
 
     }
@@ -118,6 +119,10 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
                         if (!playerInfo.isNull("Bowling style")) {
                             tvPlayerBowingStyle.setText(playerInfo.getString("Bowling style"));
                         }
+                        if (!playerInfo.isNull("Place of birth")) {
+                            tvPlayerbirthOfPlace.setText(playerInfo.getString("Place of birth"));
+                        }
+
                         if (!data.isNull("teams_played_for")) {
                             JSONArray array = data.getJSONArray("teams_played_for");
                             for (int i = 0; i < array.length(); i++) {

@@ -52,7 +52,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             initView();
             setInitData();
             setToolbar();
-            
+
         }catch (Exception e) {
             Log.i("playerProfile","Player is not Exists");
             e.printStackTrace();
@@ -96,16 +96,6 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
                 }
             });*/
 
-            /*
-            tvPlayerDateOfPlace = (TextView) findViewById(R.id.tv_player_date_of_place);
-            tvPlayerDateOfBirth = (TextView) findViewById(R.id.tv_player_date_of_birth);
-            tvPlayerbattingStyle = (TextView) findViewById(R.id.tv_player_batting_style);
-            tvPlayerBowingStyle = (TextView) findViewById(R.id.tv_player_bowing_style);
-            tvPlayerMajorTeam = (TextView) findViewById(R.id.tv_player_major_team);
-            ivDown = (ImageView) findViewById(R.id.iv_down);
-            ivDownSecond = (ImageView) findViewById(R.id.iv_down_second);
-            battingGridLayout = (GridLayout) findViewById(R.id.gl_batting_performance_summery);
-            bowlingGridLayout = (GridLayout) findViewById(R.id.gl_bowling_performance_summery);*/
         }catch (Exception e){
             e.printStackTrace();
         }

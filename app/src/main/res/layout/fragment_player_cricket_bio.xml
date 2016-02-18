@@ -29,7 +29,7 @@
                        android:layout_weight="1"
                        android:text="@string/player_of_birth"/>
                    <TextView
-                       android:id="@+id/tv_player_date_of_place"
+                       android:id="@+id/tv_player_birth_of_place"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:textSize="@dimen/font_size_small_large"
