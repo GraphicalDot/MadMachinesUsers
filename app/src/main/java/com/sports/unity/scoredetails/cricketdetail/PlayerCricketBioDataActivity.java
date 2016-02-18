@@ -11,8 +11,12 @@ import com.sports.unity.R;
 import com.sports.unity.common.controller.CricketPlayerProfileAdapter;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.scores.model.ScoresContentHandler;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONObject;
+
+import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -97,10 +101,10 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
     }
     private void setInitData() {
         try {
-           /* HashMap<String, String> parameters = new HashMap<>();
+           HashMap<String, String> parameters = new HashMap<>();
             parameters.put(Constants.PLAYER_NAME, playerNameKey);
-            ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_PLAYER_PROFILE, parameters, REQUEST_LISTENER_KEY, PLAYER_PROFILE_REQUEST_TAG);
-     */   }catch (Exception e){
+           /* ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_PLAYER_PROFILE, parameters, REQUEST_LISTENER_KEY, PLAYER_PROFILE_REQUEST_TAG);*/
+      }catch (Exception e){
             e.printStackTrace();
         }
     }
