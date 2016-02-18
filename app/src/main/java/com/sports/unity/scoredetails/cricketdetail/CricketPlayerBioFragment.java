@@ -27,7 +27,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by madmachines on 15/2/16.
  */
-public class CricketPlayerBioFragment extends Fragment implements CricketPlayerbioHandler.ContentListener {
+public class CricketPlayerBioFragment extends Fragment implements CricketPlayerbioHandler.CricketPlayerbioContentListener {
 
     private TextView tvPlayerbirthOfPlace;
     private TextView tvPlayerDateOfBirth;

@@ -53,8 +53,8 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
     }
     private void initView() {
         try{
-            playerProfileImage = (CircleImageView) findViewById(R.id.cricket_player_profile_image);
-            playerName = (TextView) findViewById(R.id.player_name);
+            playerProfileImage = (CircleImageView) findViewById(R.id.iv_cricket_player_profile_image);
+            playerName = (TextView) findViewById(R.id.tv_player_name);
             playerNationName = (TextView) findViewById(R.id.tv_player_nation_name);
             mViewPager = (ViewPager) findViewById(R.id.cricket_player_pager);
             String cricketMatchPlayer[] = {getString(R.string.PLAYER_BIO), getString(R.string.PLAYER_STATS)};

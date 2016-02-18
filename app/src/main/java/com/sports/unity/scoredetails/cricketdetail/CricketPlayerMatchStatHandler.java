@@ -17,13 +17,12 @@ import java.util.HashSet;
  */
 public class CricketPlayerMatchStatHandler {
 
-    private static final String REQUEST_TAG = "CRICKET_PLAYER_BIO_TAG";
+    private static final String REQUEST_TAG = "CRICKET_PLAYER_STATS_TAG";
     private static Context mContext;
-    private String playerId = null;
     private String url = " http://52.76.74.188:5400/get_player_stats?player_id=";
 
 
-    private ContentListener contentListener = null;
+    private CricketPlayerMatchStatContentListener mContentListener = null;
     private HashSet<String> requestInProcess = new HashSet<>();
 
     public static CricketPlayerMatchStatHandler getInstance(Context context) {
@@ -31,17 +30,12 @@ public class CricketPlayerMatchStatHandler {
         CricketPlayerMatchStatHandler handler = new CricketPlayerMatchStatHandler();
         return handler;
     }
-
-    public void addListener(ContentListener contentListener) {
-        this.contentListener = contentListener;
-    }
-
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
-    public interface ContentListener {
+    public interface CricketPlayerMatchStatContentListener {
 
-        void handleContent( String content);
+        void handleContent(String content);
 
 
     }
@@ -59,7 +53,7 @@ public class CricketPlayerMatchStatHandler {
             CricketPlayerMatchStatHandler.this.handleErrorResponse(volleyError);
         }
     };
-    public void requestData() {
+    public void requestData(String playerId) {
         Log.i("Score Detail", "Request Score Details");
 
         url = url+playerId;
@@ -69,25 +63,26 @@ public class CricketPlayerMatchStatHandler {
         queue.add(stringRequest);
 
         requestInProcess.add(REQUEST_TAG);
+
     }
     private void handleResponse(String response) {
         try{
             Log.i("Score Card", "handleResponse: "+response.toString());
-            if (contentListener != null){
-                contentListener.handleContent(response);
-            }
+            mContentListener.handleContent(response);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-
     }
     private void handleErrorResponse(VolleyError volleyError) {
-       // Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
-        if(contentListener != null) {
-          //  Log.i("handleErrorResponse: ",volleyError.getMessage() );
+        //Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
+        if(mContentListener != null) {
+            //Log.i("handleErrorResponse: ",volleyError.getMessage() );
         }
     }
+
+    public void addListener(CricketPlayerMatchStatContentListener contentListener) {
+        mContentListener = contentListener;
+    }
+
 }
