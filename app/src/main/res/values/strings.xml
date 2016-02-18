@@ -240,4 +240,21 @@ Carrier SMS charges may apply.</string>
     <string name="fall_of_wicket">FALL OF WICKETS</string>
     <string name="total">Total:</string>
     <string name="run_rate">RR:</string>
+    <string name="league">League</string>
+    <string name="team">Team</string>
+    <string name="geam">Geam</string>
+    <string name="games">Games</string>
+    <string name="goals">Goals</string>
+    <string name="assists">Assists</string>
+    <string name="rc">Rc</string>
+    <string name="yc">Yc</string>
+    <string name="age">AGE</string>
+    <string name="position">POSITION</string>
+    <string name="scored">SQUAD NO.</string>
+    <string name="nation">NATION</string>
+    <string name="match_played">Match played</string>
+    <string name="goals_scored">Goals Scored</string>
+    <string name="yellow_card">Yellow Card</string>
+    <string name="red_card">Red Card</string>
+    <string name="venue_name">VENUE NAME</string>
 </resources>

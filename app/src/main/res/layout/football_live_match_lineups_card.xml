@@ -7,71 +7,51 @@
         android:padding="@dimen/horizontal_padding_small"
         android:layout_margin="@dimen/activity_vertical_margin"
         card:cardCornerRadius="@dimen/card_edge_curve_radius">
-
         <LinearLayout
             android:id="@+id/rootLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
+            android:weightSum="5"
             android:padding="@dimen/horizontal_padding_small"
-            android:weightSum="7"
             android:orientation="horizontal">
-               <TextView
-                   android:id="@+id/league_name"
+               <ImageView
+                   android:id="@+id/tv_player_number_or_replace"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:gravity="center"
                    android:layout_weight="1"
-                   android:textSize="@dimen/font_size_small_medium"
-                   android:text="league"/>
+                   android:src="@drawable/ic_distance_slider_01"/>
                <TextView
-                   android:id="@+id/team_name"
+                   android:id="@+id/tv_player_name"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:layout_weight="1"
                    android:gravity="center"
                    android:textSize="@dimen/font_size_small_medium"
                    android:text="tem"/>
-               <TextView
-                   android:id="@+id/game_count"
+               <ImageView
+                   android:id="@+id/iv_card_type"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:gravity="center"
                    android:layout_weight="1"
-                   android:textSize="@dimen/font_size_small_medium"
-                   android:text="1"/>
-               <TextView
-                   android:id="@+id/goals_count"
+                   android:src="@drawable/ic_yellow_card"/>
+               <ImageView
+                   android:id="@+id/iv_ball_pass"
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:gravity="center"
                    android:layout_weight="1"
-                   android:textSize="@dimen/font_size_small_medium"
-                   android:text="3"/>
-               <TextView
-                   android:id="@+id/assist"
+                   android:src="@drawable/ic_football"/>
+               <ImageView
+                   android:id="@+id/iv_enter_exit"
                    android:layout_weight="1"
                    android:layout_width="wrap_content"
                    android:gravity="center"
                    android:layout_height="wrap_content"
-                   android:textSize="@dimen/font_size_small_medium"
-                   android:text="6"/>
-               <TextView
-                   android:id="@+id/yc"
-                   android:text="2"
-                   android:layout_width="wrap_content"
-                   android:gravity="center"
-                   android:layout_height="wrap_content"
-                   android:textSize="@dimen/font_size_small_medium"
-                   android:layout_weight="1"/>
-               <TextView
-                   android:id="@+id/rc"
-                   android:text="8"
-                   android:layout_weight="1"
-                   android:layout_width="wrap_content"
-                   android:gravity="center"
-                   android:layout_height="wrap_content"
-                   android:textSize="@dimen/font_size_small_medium"/>
-           </LinearLayout>
+                   android:src="@drawable/ic_red_arrow"
+                  />
+        </LinearLayout>
     </android.support.v7.widget.CardView>
 
