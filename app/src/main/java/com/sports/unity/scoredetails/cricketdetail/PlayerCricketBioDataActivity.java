@@ -1,34 +1,18 @@
 package com.sports.unity.scoredetails.cricketdetail;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.View;
-import android.widget.GridLayout;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CricketPlayerProfileAdapter;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.view.SlidingTabLayout;
-import com.sports.unity.scores.model.ScoresContentHandler;
-import com.sports.unity.util.Constants;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -122,20 +106,28 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
     }
 
 
-
-    public void setProfileInfo(JSONObject object) {
-        try{
-        if (object != null){
-            if(!object.isNull("image")){
-                Glide.with(this).load(object.getString("image")).placeholder(R.drawable.ic_no_img).into(playerProfileImage);
-            }
-            if (!object.isNull("Full Name")) {
+    public void setProfileInfo(final JSONObject object) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (object != null) {
+                        if (!object.isNull("image")) {
+                            Glide.with(PlayerCricketBioDataActivity.this).load(object.getString("image")).placeholder(R.drawable.ic_no_img).into(playerProfileImage);
+                        }
+                        if (!object.isNull("Full Name")) {
                             playerName.setText(object.getString("Full Name"));
                         }
-            if (!object.isNull("Place of birth")) {
-                playerNationName.setText(object.getString("Place of birth"));
-            }
+                        if (!object.isNull("Place of birth")) {
+                            playerNationName.setText(object.getString("Place of birth"));
+                        }
 
-        }}catch (Exception e){e.printStackTrace();}
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
     }
 }
