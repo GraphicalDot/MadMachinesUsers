@@ -23,6 +23,7 @@ public class CricketMatchSummaryHandler {
     private String matchId = null;
     private String url = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
 
+
     private ContentListener contentListener = null;
     private HashSet<String> requestInProcess = new HashSet<>();
 
@@ -36,7 +37,8 @@ public class CricketMatchSummaryHandler {
     }
     public interface ContentListener {
 
-        void handleContent(int responseCode);
+        void handleContent(int responseCode, String content);
+
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -65,7 +67,6 @@ public class CricketMatchSummaryHandler {
         requestInProcess.add(REQUEST_TAG);
     }
     private void handleResponse(String response) {
-
         try{
             Log.i("Score Card", "handleResponse: "+response.toString());
 

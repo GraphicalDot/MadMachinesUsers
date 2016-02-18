@@ -12,10 +12,13 @@ import com.sports.unity.R;
 /**
  * Created by madmachines on 15/2/16.
  */
-public class CricketPlayerMachStatFragment extends Fragment {
+public class CricketPlayerMachStatFragment extends Fragment  implements CricketPlayerMatchStatHandler.ContentListener{
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        CricketPlayerMatchStatHandler cricketPlayerMatchStatHandler = CricketPlayerMatchStatHandler.getInstance(context);
+        cricketPlayerMatchStatHandler.addListener(this);
+        cricketPlayerMatchStatHandler.requestData();
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -25,6 +28,12 @@ public class CricketPlayerMachStatFragment extends Fragment {
         return view;
     }
     private void initView(View view) {
+
+
+    }
+
+    @Override
+    public void handleContent( String content) {
 
     }
 }

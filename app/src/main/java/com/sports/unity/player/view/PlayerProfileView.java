@@ -17,6 +17,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
@@ -65,6 +66,8 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
     private ImageView notificationImage;
     private RecyclerView recyclerView;
     private String playerNameKey;
+    private PlayerScorecardAdapter mplayerScorecardAdapter;
+    private List<PlayerScoreCardDTO> playerScoreCardDTOs = new ArrayList<>();
 
     private static final String REQUEST_LISTENER_KEY = "PLAYER_PROFILE_SCREEN_LISTENER";
 
@@ -76,7 +79,6 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
         setContentView(R.layout.activity_player_profile_view);
         getIntentExtras();
         initView();
-        setInitData();
         setToolbar();
         {
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
@@ -85,18 +87,19 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             listeners.add(playerProfileComponentListener);
             onComponentCreate(listeners, REQUEST_LISTENER_KEY);
         }
+        setInitData();
     }
 
     private void setToolbar() {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        ImageView back = (ImageView) toolbar.findViewById(R.id.backarrow);
+        /*ImageView back = (ImageView) toolbar.findViewById(R.id.backarrow);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
-        });
+        });*/
     }
 
     private void initView() {
@@ -121,9 +124,11 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             tvNextGameVenue = (TextView) findViewById(R.id.next_game_venue);
             tvNextGameDate = (TextView) findViewById(R.id.tv_next_game_date);
             notificationImage = (ImageView) findViewById(R.id.notificationicon_image);
-            recyclerView= (RecyclerView) findViewById(R.id.recycle_view);
+            recyclerView= (RecyclerView) findViewById(R.id.player_season_recycler);
+            mplayerScorecardAdapter = new PlayerScorecardAdapter(playerScoreCardDTOs);
+            recyclerView.setAdapter(mplayerScorecardAdapter);
 
-        }catch (Exception e){
+      }catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -132,6 +137,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
         try {
             HashMap<String, String> parameters = new HashMap<>();
             parameters.put(Constants.PLAYER_NAME, playerNameKey);
+            parameters.put(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_FOOTBALL);
             ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_PLAYER_PROFILE, parameters, REQUEST_LISTENER_KEY, PLAYER_PROFILE_REQUEST_TAG);
         }catch (Exception e){
             e.printStackTrace();
@@ -159,10 +165,11 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             boolean success = false;
             try {
                 JSONObject response = new JSONObject(content);
-                if (response.getString("status").equals("200")) {
+                if (response.getBoolean("success")) {
                     this.success = true;
-                    Log.i("player profile",content);
+                    Log.i("player profile", content);
                     populateData(content);
+
 
                 } else {
                     this.success = false;
@@ -233,6 +240,10 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
                         if(!object.isNull("position")){
                             positionValue.setText(object.getString("position"));
                         }
+                        if(!object.isNull("image")){
+                            Glide.with(this).load(object.getString("image")).placeholder(R.drawable.ic_no_img).into(playerProfileImage);
+                        }
+
                     }
                 }
             } else {

@@ -19,7 +19,6 @@ import java.util.HashSet;
  */
 public class CricketLiveMatchSummaryHandler {
 
-    private static final String REQUEST_LISTENER_KEY = "COMPLETED_MATCH_SCREEN_LISTENER";
     private static final String REQUEST_TAG = "SUMMARY_TAG";
     private Context context;
     private String matchId = null;
@@ -75,9 +74,6 @@ public class CricketLiveMatchSummaryHandler {
             if(scoreCardModel.isSuccess()){
                 Log.i("Score Card",scoreCardModel.toString());
             }
-
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }

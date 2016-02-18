@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/ColorPrimary"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
@@ -378,7 +379,7 @@
                                 android:textSize="@dimen/font_size_large" />
                         </TableRow>
                     </TableLayout>
- </LinearLayout>
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -546,14 +547,27 @@
                                 android:textColor="@color/dot_color_grey"
                                 android:textSize="@dimen/font_size_medium" />
                         </TableRow>
+                        <LinearLayout
+                            android:id="@+id/gl_player_season_score"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:background="@color/ColorPrimary">
+                            <android.support.v7.widget.RecyclerView
+                                android:id="@+id/player_season_recycler"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                app:layoutManager="com.sports.unity.common.view.CustomLinearLayoutManager"></android.support.v7.widget.RecyclerView>
+                        </LinearLayout>
 
                     </TableLayout>
+
                 </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/footer_card"
-               android:layout_width="match_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/profile_info"
                 android:layout_marginBottom="@dimen/horizontal_padding_small"
@@ -574,7 +588,7 @@
 
                         <LinearLayout
                             android:layout_width="wrap_content"
-                          android:layout_height="wrap_content">
+                            android:layout_height="wrap_content">
 
                             <TextView
                                 android:layout_width="fill_parent"
