@@ -1,11 +1,9 @@
 package com.sports.unity.player.view;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import com.sports.unity.R;
 
@@ -14,17 +12,17 @@ import java.util.List;
 /**
  * Created by Ashish Katiyar on 9/2/16.
  */
-public class PlayerScorecardRecyclerView extends RecyclerView.Adapter<PlayerScorecardRecyclerView.ViewHolder> {
+public class PlayerScorecardAdapter extends RecyclerView.Adapter<PlayerScorecardAdapter.ViewHolder> {
 
     private final List<PlayerScoreCardDTO> mValues;
 
-    PlayerScorecardRecyclerView(List<PlayerScoreCardDTO> mValues) {
+    PlayerScorecardAdapter(List<PlayerScoreCardDTO> mValues) {
         this.mValues = mValues;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.player_profile_card_recyclerview,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.player_profile_card,parent,false);
         return new ViewHolder(view);
     }
 

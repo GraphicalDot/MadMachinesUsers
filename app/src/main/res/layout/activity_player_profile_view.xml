@@ -88,8 +88,6 @@
                         android:background="@drawable/white_stroke_round_edge_button"></LinearLayout>
                 </FrameLayout>
             </LinearLayout>
-
-
             <LinearLayout
                 android:id="@+id/status"
                 android:layout_width="match_parent"
@@ -554,8 +552,7 @@
                         android:layout_height="wrap_content"
                         android:padding="@dimen/horizontal_padding_small"
                         tools:listitem="@layout/player_profile_card"
-                        app:layoutManager="com.sports.unity.common.view.CustomLinearLayoutManager"
-                        >
+                        app:layoutManager="com.sports.unity.common.view.CustomLinearLayoutManager">
                     </android.support.v7.widget.RecyclerView>
                 </LinearLayout>
             </LinearLayout>

@@ -56,11 +56,7 @@
             android:name=".common.controller.SplashScreenActivity"
             android:label="@string/title_activity_splash"
             android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".common.controller.MainActivity"
@@ -138,11 +134,18 @@
         <activity
             android:name=".player.view.PlayerProfileView"
             android:label="@string/title_activity_player_profile_view"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme" >
+
+            </activity>
         <activity
             android:name=".scoredetails.cricketdetail.PlayerCricketBioDataActivity"
             android:label="@string/title_activity_player_cricket_bio_data"
-            android:theme="@style/AppTheme" />
+            android:theme="@style/AppTheme" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
         <activity
             android:name=".scoredetails.footballdetail.FootballDetailsActivity"
             android:label="@string/title_activity_football_deatils"

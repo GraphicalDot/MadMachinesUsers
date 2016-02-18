@@ -1,5 +1,7 @@
 package com.sports.unity.scores.model;
 
+import android.util.Log;
+
 import com.android.volley.VolleyError;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.Constants;
@@ -7,6 +9,7 @@ import com.sports.unity.util.network.VolleyRequestHandler;
 import com.sports.unity.util.network.VolleyResponseListener;
 import com.sports.unity.util.network.VolleyTagRequest;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 
 /**
@@ -127,15 +130,11 @@ public class ScoresContentHandler {
             requestScoresOfMatch( sportsType, matchId, requestListenerKey, requestTag);
         } else if( callName.equals(CALL_NAME_MATCH_COMMENTARIES) ){
             String matchId = parameters.get(PARAM_ID);
-            String sportsType = parameters.get(PARAM_SPORTS_TYPE);
+            String sportsType = parameters.get(Constants.SPORTS_TYPE);
             requestCommentaryOnMatch( sportsType, matchId, requestListenerKey, requestTag);
         } else if(callName.equals(CALL_NAME_PLAYER_PROFILE)){
             String playerName = parameters.get(Constants.PLAYER_NAME);
-            String sportsType = parameters.get(PARAM_SPORTS_TYPE);
-            requestPlayerProfile(sportsType, playerName, requestListenerKey, requestTag);
-        }else if(callName.equals(CALL_NAME_PLAYER_PROFILE)){
-            String playerName = parameters.get(Constants.PLAYER_NAME);
-            String sportsType = parameters.get(PARAM_SPORTS_TYPE);
+            String sportsType = parameters.get(Constants.SPORTS_TYPE);
             requestPlayerProfile(sportsType, playerName, requestListenerKey, requestTag);
         } else if(callName.equals(CALL_NAME_MATCH_TIMELINE)){
             String matchId = parameters.get(PARAM_ID);
@@ -292,7 +291,7 @@ public class ScoresContentHandler {
             requestContent(requestTag, listenerKey, url);
         }
     }
-    private void requestPlayerProfile(String sportType, String playerId, String listenerKey, String requestTag){
+    private void requestPlayerProfile(String sportType, String playerName, String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
 
             String baseUrl = null;
@@ -301,7 +300,9 @@ public class ScoresContentHandler {
             } else if( sportType.equalsIgnoreCase(ScoresJsonParser.FOOTBALL) ){
                 baseUrl = URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL;
             }
-            String url = generateURL(baseUrl + playerId);
+
+            String url = generateURL(baseUrl + URLEncoder.encode(playerName));
+            Log.i( "requestPlayerProfile: ", url);
             requestContent(requestTag, listenerKey, url);
         }
     }

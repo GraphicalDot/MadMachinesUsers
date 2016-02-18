@@ -80,7 +80,7 @@ public class CricketMatchSummaryFragment extends Fragment implements CricketMatc
     }
 
     @Override
-    public void handleContent(final int responseCode) {
+    public void handleContent(final int responseCode,String content) {
       if(responseCode == 0){
 
       }
