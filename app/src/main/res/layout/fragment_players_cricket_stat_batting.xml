@@ -76,5 +76,11 @@
             android:verticalSpacing="8dp"
             android:horizontalSpacing="4dp">
         </GridLayout>
+
     </LinearLayout>
+    <include layout="@layout/error_layout"
+        android:id="@+id/error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
 </LinearLayout>

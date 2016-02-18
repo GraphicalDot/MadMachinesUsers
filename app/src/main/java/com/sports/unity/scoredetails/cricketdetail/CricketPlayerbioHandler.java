@@ -22,7 +22,7 @@ public class CricketPlayerbioHandler {
     private String url = " http://52.76.74.188:5400/get_player_stats?player_id=";
 
 
-    private ContentListener mContentListener = null;
+    private CricketPlayerbioContentListener mContentListener = null;
     private HashSet<String> requestInProcess = new HashSet<>();
 
     public static CricketPlayerbioHandler getInstance(Context context) {
@@ -33,7 +33,7 @@ public class CricketPlayerbioHandler {
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
-    public interface ContentListener {
+    public interface CricketPlayerbioContentListener {
 
         void handleContent(String content);
 
@@ -81,7 +81,7 @@ public class CricketPlayerbioHandler {
         }
     }
 
-    public void addListener(ContentListener contentListener) {
+    public void addListener(CricketPlayerbioContentListener contentListener) {
         mContentListener = contentListener;
     }
 

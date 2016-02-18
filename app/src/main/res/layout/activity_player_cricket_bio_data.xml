@@ -39,7 +39,7 @@
                     android:layout_height="wrap_content">
 
                     <de.hdodenhof.circleimageview.CircleImageView
-                        android:id="@+id/cricket_player_profile_image"
+                        android:id="@+id/iv_cricket_player_profile_image"
                         android:layout_width="@dimen/profile_thumb_image_xlarge"
                         android:layout_height="@dimen/profile_thumb_image_xlarge"
                         android:layout_gravity="center"
