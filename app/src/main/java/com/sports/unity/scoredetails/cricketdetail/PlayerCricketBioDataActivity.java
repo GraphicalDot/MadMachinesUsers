@@ -15,6 +15,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CricketPlayerProfileAdapter;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
@@ -33,20 +34,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
     private String playerNameKey;
-    private static final String REQUEST_LISTENER_KEY = "PLAYER_PROFILE_SCREEN_LISTENER";
-    private static final String PLAYER_PROFILE_REQUEST_TAG = "playerProfileTag";
-    private CircleImageView playerProfileImage;
+     private CircleImageView playerProfileImage;
     private TextView playerName;
     private TextView playerNationName;
-    private TextView tvPlayerDateOfPlace;
-    private TextView tvPlayerDateOfBirth;
-    private TextView tvPlayerbattingStyle;
-    private TextView tvPlayerBowingStyle;
-    private TextView tvPlayerMajorTeam;
-    private ImageView ivDown;
-    private ImageView ivDownSecond;
-    private GridLayout battingGridLayout;
-    private GridLayout bowlingGridLayout;
     private ViewPager mViewPager;
     private CricketPlayerProfileAdapter cricketPlayerProfileAdapter;
 
@@ -62,13 +52,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             initView();
             setInitData();
             setToolbar();
-            {
-                //ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
-               // PlayerProfileComponentListener playerProfileComponentListener = new PlayerProfileComponentListener(progressBar);
-               /* ArrayList<CustomComponentListener> listeners = new ArrayList<>();
-                listeners.add(playerProfileComponentListener);
-                onComponentCreate(listeners, REQUEST_LISTENER_KEY);*/
-            }
+            
         }catch (Exception e) {
             Log.i("playerProfile","Player is not Exists");
             e.printStackTrace();
@@ -81,6 +65,9 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
     }
     private void initView() {
         try{
+            playerProfileImage = (CircleImageView) findViewById(R.id.cricket_player_profile_image);
+            playerName = (TextView) findViewById(R.id.player_name);
+            playerNationName = (TextView) findViewById(R.id.tv_player_nation_name);
             mViewPager = (ViewPager) findViewById(R.id.cricket_player_pager);
             String cricketMatchPlayer[] = {getString(R.string.PLAYER_BIO), getString(R.string.PLAYER_STATS)};
             int numberOfplayerProfileTabs = cricketMatchPlayer.length;
@@ -108,9 +95,8 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
                     finish();
                 }
             });*/
-            /*playerProfileImage = (CircleImageView) findViewById(R.id.cricket_player_profile_image);
-            playerName = (TextView) findViewById(R.id.player_name);
-            playerNationName = (TextView) findViewById(R.id.tv_player_nation_name);
+
+            /*
             tvPlayerDateOfPlace = (TextView) findViewById(R.id.tv_player_date_of_place);
             tvPlayerDateOfBirth = (TextView) findViewById(R.id.tv_player_date_of_birth);
             tvPlayerbattingStyle = (TextView) findViewById(R.id.tv_player_batting_style);
@@ -120,7 +106,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             ivDownSecond = (ImageView) findViewById(R.id.iv_down_second);
             battingGridLayout = (GridLayout) findViewById(R.id.gl_batting_performance_summery);
             bowlingGridLayout = (GridLayout) findViewById(R.id.gl_bowling_performance_summery);*/
-       }catch (Exception e){
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -144,88 +130,22 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             e.printStackTrace();
         }
     }
-    /*private class PlayerProfileComponentListener extends CustomComponentListener {
 
-        private boolean success;
 
-        public PlayerProfileComponentListener(ProgressBar progressBar) {
-            super(PLAYER_PROFILE_REQUEST_TAG, progressBar, null);
-        }
 
-        @Override
-        protected void showErrorLayout() {
-            Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public boolean handleContent(String tag, String content) {
-            boolean success = false;
-            try {
-                JSONObject response = new JSONObject(content);
-                if (response.getString("status").equals("200")) {
-                    this.success = true;
-                    Log.i("player profile", content);
-                    populateData(content);
-
-                } else {
-                    this.success = false;
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+    public void setProfileInfo(JSONObject object) {
+        try{
+        if (object != null){
+            if(!object.isNull("image")){
+                Glide.with(this).load(object.getString("image")).placeholder(R.drawable.ic_no_img).into(playerProfileImage);
             }
-            success = true;
-            return success;
-        }
-
-        @Override
-        public void handleErrorContent(String tag) {
-
-        }
-
-        @Override
-        public void changeUI() {
-
-        }
-
-
-    }*/
-    private void populateData(String content){
-        try {
-
-            JSONObject jsonObject = new JSONObject(content);
-
-            boolean success = jsonObject.getBoolean("success");
-            boolean error = jsonObject.getBoolean("error");
-
-            if( success ) {
-                JSONArray array = (JSONArray) jsonObject.get("data");
-                for( int index=0; index < array.length(); index++){
-                    JSONObject object = array.getJSONObject(index);
-                    if(object == null){
-                        continue;
-                    } else {
-                        if(!object.isNull("name")){
-                            playerName.setText(object.getString("name"));
-
+            if (!object.isNull("Full Name")) {
+                            playerName.setText(object.getString("Full Name"));
                         }
-                        if(!object.isNull("name")){
-                            playerNationName.setText(object.getString("name"));
-                        }
-                    }
-                }
-            } else {
-                Toast.makeText(getApplicationContext(), R.string.player_details_not_exists, Toast.LENGTH_SHORT).show();
+            if (!object.isNull("Place of birth")) {
+                playerNationName.setText(object.getString("Place of birth"));
             }
-        }catch (Exception ex){
-            ex.printStackTrace();
-            Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-        }
 
-
-
-
-
+        }}catch (Exception e){e.printStackTrace();}
     }
-
-
 }

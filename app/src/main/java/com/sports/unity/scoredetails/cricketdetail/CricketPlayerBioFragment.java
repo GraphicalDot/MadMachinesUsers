@@ -15,8 +15,12 @@ import android.widget.Toast;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -25,16 +29,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class CricketPlayerBioFragment extends Fragment implements CricketPlayerbioHandler.ContentListener {
 
-    private CircleImageView playerProfileImage;
-    private TextView playerName;
-    private TextView playerNationName;
     private TextView tvPlayerDateOfPlace;
     private TextView tvPlayerDateOfBirth;
     private TextView tvPlayerbattingStyle;
     private TextView tvPlayerBowingStyle;
     private TextView tvPlayerMajorTeam;
-    private ImageView ivDown;
-    private ImageView ivDownSecond;
     public CricketPlayerBioFragment() {
         super();
     }
@@ -57,9 +56,10 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
         return view;
     }
     private void initView(View view) {
-        playerProfileImage = (CircleImageView) view.findViewById(R.id.cricket_player_profile_image);
-        playerName = (TextView) view.findViewById(R.id.player_name);
-        playerNationName = (TextView) view.findViewById(R.id.tv_player_nation_name);
+           tvPlayerDateOfBirth = (TextView) view.findViewById(R.id.tv_player_date_of_birth);
+        tvPlayerbattingStyle = (TextView) view.findViewById(R.id.tv_player_batting_style);
+        tvPlayerBowingStyle = (TextView) view.findViewById(R.id.tv_player_bowing_style);
+        tvPlayerMajorTeam = (TextView) view.findViewById(R.id.tv_player_major_team);
         initErrorLayout(view);
 
     }
@@ -89,11 +89,6 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     private void initErrorLayout(View view) {
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
 
-        TextView oops = (TextView) errorLayout.findViewById(R.id.oops);
-        oops.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
-
-        TextView something_wrong = (TextView) errorLayout.findViewById(R.id.something_wrong);
-        something_wrong.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
     }
 
     private void showErrorLayout(View view) {
@@ -106,20 +101,35 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     private void renderDisplay(JSONObject jsonObject) throws JSONException {
         final JSONObject data = (JSONObject) jsonObject.get("data");
         final JSONObject playerInfo = (JSONObject) data.get("info");
-        Activity activity = getActivity();
+        PlayerCricketBioDataActivity activity = (PlayerCricketBioDataActivity) getActivity();
         if (activity != null) {
+            activity.setProfileInfo(playerInfo);
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        if (!playerInfo.isNull("Full Name")) {
-                            playerName.setText(playerInfo.getString("Full Name"));
-                        }
-                        if (!playerInfo.isNull("Born")) {
+
+                      if (!playerInfo.isNull("Born")) {
                             tvPlayerDateOfBirth.setText(playerInfo.getString("Born"));
                         }
-                    } catch (Exception ex) {
+                        if (!playerInfo.isNull("Batting style")) {
+                            tvPlayerbattingStyle.setText(playerInfo.getString("Batting style"));
+                        }
+                        if (!playerInfo.isNull("Bowling style")) {
+                            tvPlayerBowingStyle.setText(playerInfo.getString("Bowling style"));
+                        }
+                        if (!data.isNull("teams_played_for")) {
+                            JSONArray array = data.getJSONArray("teams_played_for");
+                            for (int i = 0; i < array.length(); i++) {
 
+                                tvPlayerMajorTeam.setText(array.get(i).toString()+"\\n");
+                            }
+
+                        }
+
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        showErrorLayout(getView());
                     }
                 }
             });
