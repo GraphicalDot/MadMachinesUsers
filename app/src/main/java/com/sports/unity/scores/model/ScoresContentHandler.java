@@ -78,7 +78,7 @@ public class ScoresContentHandler {
     }
 
     private HashMap<String, ContentListener> mapOfResponseListeners = new HashMap<>();
-    private HashMap<String, String> requestInProcess_RequestTagAndListenerKey = new HashMap<>();
+    private HashMap<String, String>requestInProcess_RequestTagAndListenerKey = new HashMap<>();
 
     private ScoresContentHandler(){
 
