@@ -5,7 +5,6 @@
     android:background="@color/ColorPrimary"
     android:orientation="vertical"
     tools:context=".scoredetails.footballdetail.FootballDetailsActivity">
-
     <include
         android:id="@+id/tool_bar"
         layout="@layout/toolbar_score_details"
@@ -47,11 +46,8 @@
                 android:textSize="@dimen/font_size_small_medium"
                 android:text="Wednesday, February 3, 6:30 AM (IST)"
                 />
-
         </LinearLayout>
     </LinearLayout>
-
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -170,7 +166,6 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:background="@color/tab_seperator" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -192,16 +187,11 @@
             android:layout_width="fill_parent"
             android:layout_height="1dp"
             android:background="@color/ColorPrimary" />
-
         <android.support.v4.view.ViewPager
-            android:id="@+id/pager"
+            android:id="@+id/lvp_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1">
-
         </android.support.v4.view.ViewPager>
     </LinearLayout>
-
-
-
 </LinearLayout>

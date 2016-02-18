@@ -124,7 +124,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             tvNextGameVenue = (TextView) findViewById(R.id.next_game_venue);
             tvNextGameDate = (TextView) findViewById(R.id.tv_next_game_date);
             notificationImage = (ImageView) findViewById(R.id.notificationicon_image);
-            recyclerView= (RecyclerView) findViewById(R.id.player_season_recycler);
+            recyclerView= (RecyclerView) findViewById(R.id.rc_player_details);
             mplayerScorecardAdapter = new PlayerScorecardAdapter(playerScoreCardDTOs);
             recyclerView.setAdapter(mplayerScorecardAdapter);
 
