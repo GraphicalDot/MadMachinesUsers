@@ -15,8 +15,20 @@ import java.io.UnsupportedEncodingException;
  */
 public class VolleyTagRequest extends Request<String> {
 
-    private String tag;
+    private final String tag;
+    private final String mRequestBody;
+
     private VolleyResponseListener responseListener = null;
+
+    public VolleyTagRequest(String tag, String url, String requestBody, VolleyResponseListener responseListener){
+        super(Method.POST, url, null);
+
+        setTag(tag);
+
+        this.tag = tag;
+        this.mRequestBody = requestBody;
+        this.responseListener = responseListener;
+    }
 
     public VolleyTagRequest(String tag, String url, VolleyResponseListener responseListener){
         super(Method.GET, url, null);
@@ -24,6 +36,7 @@ public class VolleyTagRequest extends Request<String> {
         setTag(tag);
 
         this.tag = tag;
+        this.mRequestBody = null;
         this.responseListener = responseListener;
     }
 
@@ -32,8 +45,19 @@ public class VolleyTagRequest extends Request<String> {
     }
 
     @Override
+    public String getBodyContentType() {
+        return "UTF-8";
+    }
+
+    @Override
     public byte[] getBody() throws AuthFailureError {
-        return super.getBody();
+        byte[] body = null;
+        try {
+            body = mRequestBody == null ? null : mRequestBody.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            ex.printStackTrace();
+        }
+        return body;
     }
 
     @Override
@@ -57,7 +81,7 @@ public class VolleyTagRequest extends Request<String> {
     @Override
     public void deliverError(VolleyError error) {
         if(responseListener != null ) {
-            responseListener.handleResponse(tag, (String)null, 0);
+            responseListener.handleResponse(tag, null, 0);
         }
     }
 

@@ -1,16 +1,21 @@
 package com.sports.unity.scores.model;
 
+import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.VolleyRequestHandler;
 import com.sports.unity.util.network.VolleyResponseListener;
 import com.sports.unity.util.network.VolleyTagRequest;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -25,6 +30,7 @@ public class ScoresContentHandler {
     public static final String CALL_NAME_MATCH_DETAIL = "MATCH_DETAILS";
     public static final String CALL_NAME_MATCH_COMMENTARIES = "MATCH_COMMENTARIES";
     public static final String CALL_NAME_NEAR_BY_USERS = "NEAR_BY_USERS";
+    public static final String CALL_NAME_GET_CONTACT_JIDS = "GET_CONTACT_JIDS";
 
     public static final String PARAM_SPORTS_TYPE = "SPORTS_TYPE";
     public static final String PARAM_ID = "ID";
@@ -40,6 +46,7 @@ public class ScoresContentHandler {
     public static final String URL_REGISTER = "http://" + XMPPClient.SERVER_HOST + "/register?";
     private static final String URL_REQUEST_OTP = "http://" + XMPPClient.SERVER_HOST + "/create?";
     private static final String URL_NEAR_BY = "http://" + XMPPClient.SERVER_HOST + "/retrieve_nearby_users?";
+    private static final String URL_REQUEST_CONTACT_JIDS = "http://" + XMPPClient.SERVER_HOST + "/get_contact_jids";
 
     public static final String URL_NEWS = "http://52.76.74.188:8000/mixed?";
     private static final String URL_PARAMS_NEWS_IMAGE_DPI = "image_size";
@@ -141,6 +148,20 @@ public class ScoresContentHandler {
             String matchId = parameters.get(PARAM_ID);
             String sportsType = parameters.get(PARAM_SPORTS_TYPE);
             requestCommentaryOnMatch(sportsType, matchId, requestListenerKey, requestTag);
+        }
+
+    }
+
+    public void requestCall(String callName, Object requestContent, String requestListenerKey, String requestTag, Context context) {
+        if (callName.equals(CALL_NAME_GET_CONTACT_JIDS)) {
+            String username = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
+            String password = TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD);
+            String apk_version = CommonUtil.getBuildConfig();
+            String udid = CommonUtil.getDeviceId(context);
+
+            requestContactJIDs( username, password, apk_version, udid, (ArrayList) requestContent, requestListenerKey, requestTag);
+        } else {
+            //nothing
         }
     }
 
@@ -277,6 +298,17 @@ public class ScoresContentHandler {
         }
     }
 
+    private void requestContactJIDs( String username, String password, String apkVersion, String udid, ArrayList<String> contacts, String listenerKey, String requestTag ){
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
+            String url = URL_REQUEST_CONTACT_JIDS;
+            String requestContent = getRequestJsonContentForGetContactList( username, password, apkVersion, udid, contacts);
+
+            requestContent(requestTag, listenerKey, url, requestContent);
+        } else {
+            //nothin
+        }
+    }
+
     private void requestContent(String requestTag, String listenerKey, String url) {
         if (url != null) {
             Log.i("Request Content", url);
@@ -289,6 +321,38 @@ public class ScoresContentHandler {
         } else {
             //nothing
         }
+    }
+
+    private void requestContent(String requestTag, String listenerKey, String url, String requestBody) {
+        if (url != null) {
+            Log.i("Request Content", url);
+
+            VolleyTagRequest request = new VolleyTagRequest(requestTag, url, requestBody, responseListener);
+            request.setRetryPolicy(new DefaultRetryPolicy(Constants.CONNECTION_READ_TIME_OUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            VolleyRequestHandler.getInstance().addToRequestQueue(request);
+
+            requestInProcess_RequestTagAndListenerKey.put(requestTag, listenerKey);
+        } else {
+            //nothing
+        }
+    }
+
+    private String getRequestJsonContentForGetContactList(String username, String password, String apkVersion, String udid, ArrayList<String> contacts){
+        JSONObject jsonObject = new JSONObject();
+
+        try{
+            JSONArray jsonArray = new JSONArray();
+
+            jsonObject.put("username", username);
+            jsonObject.put("password", password);
+            jsonObject.put("apk_version", apkVersion);
+            jsonObject.put("udid", udid);
+            jsonObject.put("contacts", jsonArray);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        return jsonObject.toString();
     }
 
     private String generateURL(String parameters) {
