@@ -30,6 +30,7 @@ public class CricketMatchSummaryHandler {
     public static CricketMatchSummaryHandler getInstance(Context context) {
         CricketMatchSummaryHandler completedMatchScoreCardHandler = null;
         completedMatchScoreCardHandler = new CricketMatchSummaryHandler();
+        completedMatchScoreCardHandler.context = context;
         return completedMatchScoreCardHandler;
     }
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {

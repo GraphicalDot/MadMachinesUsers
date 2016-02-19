@@ -422,7 +422,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     }
 
     private void showNoCommentaries(){
-        findViewById(R.id.no_comments).setVisibility(View.VISIBLE);
+//        findViewById(R.id.no_comments).setVisibility(View.VISIBLE);
     }
 
     private boolean handleCommentaries(String content){
@@ -604,7 +604,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         protected void hideErrorLayout() {
             super.hideErrorLayout();
 
-            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
+//            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
         }
 
         @Override
@@ -649,7 +649,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         protected void hideErrorLayout() {
             super.hideErrorLayout();
 
-            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
+//            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
         }
 
         @Override
@@ -706,7 +706,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         protected void hideErrorLayout() {
             super.hideErrorLayout();
 
-            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
+//            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
         }
 
         @Override
@@ -760,7 +760,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         protected void hideErrorLayout() {
             super.hideErrorLayout();
 
-            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
+//            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
         }
         @Override
         protected void showErrorLayout() {
@@ -800,7 +800,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         protected void hideErrorLayout() {
             super.hideErrorLayout();
 
-            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
+//            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
         }
 
         @Override
@@ -854,13 +854,14 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         protected void hideErrorLayout() {
             super.hideErrorLayout();
 
-            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
+//            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
         }
 
         @Override
         protected void showErrorLayout() {
             super.showErrorLayout();
         }
+
         @Override
         public void changeUI() {
             if (successfulResponse) {
@@ -870,11 +871,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 showNoCommentaries();
             }
         }
+
     }
-
-
-
-
-
 
 }
