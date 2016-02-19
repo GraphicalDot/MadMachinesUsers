@@ -144,8 +144,11 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
                                    JSONObject batting = (JSONObject) battingArray.get(i);
                                    cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
                                    if(batting != null) {
-                                       cricketPlayerMatchStatDTO.setInnings(batting.getString("innings"));
-                                       cricketPlayerMatchStatDTO.setRuns(batting.getString("runs"));
+                                       cricketPlayerMatchStatDTO.setTitles(batting.getString("matches"));
+                                       cricketPlayerMatchStatDTO.setTestsMatch(batting.getString("runs"));
+                                       cricketPlayerMatchStatDTO.setOdis(batting.getString("matches"));
+                                       cricketPlayerMatchStatDTO.setT20s(batting.getString("runs"));
+
                                    }
 
                                    playerMatchStatDTOList.add(cricketPlayerMatchStatDTO);

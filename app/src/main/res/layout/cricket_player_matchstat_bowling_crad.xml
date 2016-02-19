@@ -16,7 +16,7 @@
         android:weightSum="7"
         android:orientation="horizontal">
         <TextView
-            android:id="@+id/innings"
+            android:id="@+id/tv_head"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -24,7 +24,7 @@
             android:textSize="@dimen/font_size_small_medium"
             android:text="league"/>
         <TextView
-            android:id="@+id/team_name"
+            android:id="@+id/tv_tests"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -32,7 +32,7 @@
             android:textSize="@dimen/font_size_small_medium"
             android:text="tem"/>
         <TextView
-            android:id="@+id/game_count"
+            android:id="@+id/tv_odis"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -40,37 +40,14 @@
             android:textSize="@dimen/font_size_small_medium"
             android:text="1"/>
         <TextView
-            android:id="@+id/goals_count"
+            android:id="@+id/tv_t20s"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_weight="1"
             android:textSize="@dimen/font_size_small_medium"
             android:text="3"/>
-        <TextView
-            android:id="@+id/assist"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:gravity="center"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_small_medium"
-            android:text="6"/>
-        <TextView
-            android:id="@+id/yc"
-            android:text="2"
-            android:layout_width="wrap_content"
-            android:gravity="center"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_small_medium"
-            android:layout_weight="1"/>
-        <TextView
-            android:id="@+id/rc"
-            android:text="8"
-            android:layout_weight="1"
-            android:layout_width="wrap_content"
-            android:gravity="center"
-            android:layout_height="wrap_content"
-            android:textSize="@dimen/font_size_small_medium"/>
+
     </LinearLayout>
 </android.support.v7.widget.CardView>
 

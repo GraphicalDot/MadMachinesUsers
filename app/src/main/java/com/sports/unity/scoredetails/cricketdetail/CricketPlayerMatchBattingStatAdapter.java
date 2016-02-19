@@ -23,22 +23,20 @@ public class CricketPlayerMatchBattingStatAdapter extends RecyclerView.Adapter<C
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.player_profile_card,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cricket_player_matchstat_batting_crad,parent,false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.dto = mValues.get(position);
-        holder.innings.setText(holder.dto.getInnings());
-        holder.runs.setText(holder.dto.getRuns());
-        holder.format.setText(holder.dto.getFormat());
-        holder.matches.setText(holder.dto.getMatches());
-        holder.average.setText(holder.dto.getAverage());
-        holder.strikeRate.setText(holder.dto.getStrikeRate());
-        holder.highest.setText(holder.dto.getHighest());
-        holder.hundreds.setText(holder.dto.getHundreds());
-        holder.notOut.setText(holder.dto.getNotOut());
+        holder.tvHeads.setText(holder.dto.getTitles());
+        holder.tvTests.setText(holder.dto.getTestsMatch());
+        holder.tvOdis.setText(holder.dto.getOdis());
+        holder.tvT20s.setText(holder.dto.getT20s());
+
+
+
     }
 
     @Override
@@ -50,28 +48,21 @@ public class CricketPlayerMatchBattingStatAdapter extends RecyclerView.Adapter<C
     public class ViewHolder extends RecyclerView.ViewHolder
     {
         public final View mView;
-        private TextView innings;
-        private TextView runs;
-        private TextView format;
-        private TextView matches;
-        private TextView average;
-        private TextView strikeRate;
-        private TextView highest;
-        private TextView hundreds;
-        private TextView notOut;
+        private TextView tvHeads;
+        private TextView tvTests;
+        private TextView tvOdis;
+        private TextView tvT20s;
+
 
         public CricketPlayerMatchStatDTO dto;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            /*leagueName = (TextView) view.findViewById(R.id.league_name);
-            teamName = (TextView) view.findViewById(R.id.team_name);
-            gameCount = (TextView) view.findViewById(R.id.game_count);
-            goalsCount = (TextView) view.findViewById(R.id.goals_count);
-            assist = (TextView) view.findViewById(R.id.assist);
-            yc = (TextView) view.findViewById(R.id.yc);
-            rc = (TextView) view.findViewById(R.id.rc);*/
+            tvHeads = (TextView) view.findViewById(R.id.tv_head);
+            tvTests = (TextView) view.findViewById(R.id.tv_tests);
+            tvOdis = (TextView) view.findViewById(R.id.tv_odis);
+            tvT20s = (TextView) view.findViewById(R.id.tv_t20s);
         }
     }
 }
