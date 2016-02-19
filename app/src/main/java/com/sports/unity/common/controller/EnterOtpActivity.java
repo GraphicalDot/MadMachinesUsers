@@ -102,7 +102,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
             if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
                 copyContacts();
             } else {
-                if (PermissionUtil.getInstance().requestPermission(EnterOtpActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)), getResources().getString(R.string.read_contact_permission_message), Constants.REQUEST_CODE_CONTACT_PERMISSION)) {
+                if (PermissionUtil.getInstance().requestPermission(EnterOtpActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)))) {
                     copyContacts();
                 }
             }

@@ -750,31 +750,58 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
         //TextView textView = (TextView) getLayoutInflater().inflate(R.layout.textview_user_profile_activity, null);
 
-        for (int i = 0; i < leagues.size(); i++) {
+        if( leagues.size() > 0) {
+            for (int i = 0; i < leagues.size(); i++) {
+                LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
+                TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
+                textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+                textView.setText(leagues.get(i).getName());
+                textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+                leagueList.addView(linearLayout);
+            }
+        } else {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
-            textView.setText(leagues.get(i).getName());
-            textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+            textView.setText("Add favourite league");
+            textView.setTextColor(getResources().getColor(R.color.gray1));
+            //textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
             leagueList.addView(linearLayout);
-
         }
 
-        for (int i = 0; i < teams.size(); i++) {
+        if( teams.size() > 0) {
+            for (int i = 0; i < teams.size(); i++) {
+                LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
+                TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
+                textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+                textView.setText(teams.get(i).getName());
+                textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+                teamList.addView(linearLayout);
+            }
+        } else {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
-            textView.setText(teams.get(i).getName());
-            textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+            textView.setText("Add favourite team");
+            textView.setTextColor(getResources().getColor(R.color.gray1));
             teamList.addView(linearLayout);
         }
 
-        for (int i = 0; i < players.size(); i++) {
+        if( players.size() > 0) {
+            for (int i = 0; i < players.size(); i++) {
+                LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
+                TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
+                textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+                textView.setText(players.get(i).getName());
+                textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+                playerList.addView(linearLayout);
+            }
+        } else {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
-            textView.setText(players.get(i).getName());
-            textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+            textView.setText("Add favourite player");
+            textView.setTextColor(getResources().getColor(R.color.gray1));
             playerList.addView(linearLayout);
         }
     }

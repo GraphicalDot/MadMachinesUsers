@@ -343,7 +343,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         titleCity = (TextView) toolbar.findViewById(R.id.secondary_title);
         titleCity.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         setCurrentAddressOnToolbar(titleAddress, titleCity);
-        toolbar.setContentInsetsAbsolute(0, 0);
+        //toolbar.setContentInsetsAbsolute(0, 0);
         toolbar.findViewById(R.id.close_icon).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
