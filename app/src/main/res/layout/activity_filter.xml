@@ -73,7 +73,7 @@
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/checkbox"
+                android:button="@drawable/favourite_checkbox"
                 android:clickable="false"
                 android:gravity="right" />
         </LinearLayout>
@@ -107,7 +107,7 @@
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/checkbox"
+                android:button="@drawable/favourite_checkbox"
                 android:clickable="false"
                 android:gravity="right" />
         </LinearLayout>
@@ -149,7 +149,7 @@
             android:background="@color/app_theme_blue" />
 
         <android.support.v4.view.ViewPager
-            android:id="@+id/pager"
+            android:id="@+id/filter_activity_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1" />

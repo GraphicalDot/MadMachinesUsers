@@ -1,5 +1,6 @@
 package com.sports.unity.util.network;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -14,8 +15,20 @@ import java.io.UnsupportedEncodingException;
  */
 public class VolleyTagRequest extends Request<String> {
 
-    private String tag;
+    private final String tag;
+    private final String mRequestBody;
+
     private VolleyResponseListener responseListener = null;
+
+    public VolleyTagRequest(String tag, String url, String requestBody, VolleyResponseListener responseListener){
+        super(Method.POST, url, null);
+
+        setTag(tag);
+
+        this.tag = tag;
+        this.mRequestBody = requestBody;
+        this.responseListener = responseListener;
+    }
 
     public VolleyTagRequest(String tag, String url, VolleyResponseListener responseListener){
         super(Method.GET, url, null);
@@ -23,11 +36,28 @@ public class VolleyTagRequest extends Request<String> {
         setTag(tag);
 
         this.tag = tag;
+        this.mRequestBody = null;
         this.responseListener = responseListener;
     }
 
     public String getTag() {
         return tag;
+    }
+
+    @Override
+    public String getBodyContentType() {
+        return "UTF-8";
+    }
+
+    @Override
+    public byte[] getBody() throws AuthFailureError {
+        byte[] body = null;
+        try {
+            body = mRequestBody == null ? null : mRequestBody.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+            ex.printStackTrace();
+        }
+        return body;
     }
 
     @Override

@@ -3,14 +3,23 @@ package com.sports.unity.util;
 import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.sports.unity.BuildConfig;
 import com.sports.unity.Database.DBUtil;
+import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPService;
+import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.messages.controller.model.Contacts;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -28,6 +37,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -68,6 +78,16 @@ public class CommonUtil {
                 .toString();
     }
 
+    public static String getBuildConfig() {
+        return BuildConfig.VERSION_NAME;
+    }
+
+    public static String getDeviceId(Context context) {
+
+        String id = Settings.Secure.getString(context.getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+        return id;
+    }
 
     public static boolean isInternetConnectionAvailable(Context context) {
         ConnectivityManager connMgr = (ConnectivityManager)
@@ -119,18 +139,64 @@ public class CommonUtil {
         return time;
     }
 
-    public static String getTimeDifference(long epochTime) {
-        long currentTime = getCurrentGMTTimeInEpoch();
-        DateTime dateTime = new DateTime(epochTime * 1000);
-        DateTime dateTimenow = new DateTime(currentTime * 1000);
-        int days = Days.daysBetween(dateTime, dateTimenow).getDays();
-        if (days > 0) {
-            return String.valueOf(days);
-        }
-
-        return String.valueOf(0);
+    public static String getDeviceDetails() {
+        String details = "\n" + "\n";
+        details += "\n OS Version: " + System.getProperty("os.version") + "(" + android.os.Build.VERSION.INCREMENTAL + ")";
+        details += "\n OS API Level: " + android.os.Build.VERSION.RELEASE + "(" + android.os.Build.VERSION.SDK_INT + ")";
+        details += "\n Device: " + android.os.Build.DEVICE;
+        details += "\n Model (and Product): " + android.os.Build.MODEL + " (" + android.os.Build.PRODUCT + ")";
+        details += "\n Brand : " + Build.BRAND;
+        return details;
     }
 
+    public static String getTimeDifference(long epochTime) {
+        long currentTime = getCurrentGMTTimeInEpoch();
+        Calendar time = Calendar.getInstance();
+        time.setTimeInMillis((epochTime) * 1000);
+        int day = time.get(Calendar.DAY_OF_MONTH);
+        time.setTimeInMillis((currentTime) * 1000);
+        int currentday = time.get(Calendar.DAY_OF_MONTH);
+//        DateTime dateTime = new DateTime(epochTime * 1000);
+//        DateTime dateTimenow = new DateTime(currentTime * 1000);
+//        int days = Days.daysBetween(dateTime, dateTimenow).getDays();
+//        if (days > 0) {
+//            return String.valueOf(days);
+//        }
+
+        return String.valueOf(currentday - day);
+    }
+
+    public static void openSMSIntent(Contacts contact, Context context) {
+        String inviteText = context.getString(R.string.download_sports_unity);
+//        Intent intent = new Intent(Intent.ACTION_VIEW);
+//        intent.putExtra("address", contact.jid);
+//        intent.putExtra("sms_body", inviteText);
+//        intent.setType("vnd.android-dir/mms-sms");
+//        context.startActivity(intent);
+        Uri uri = Uri.parse("smsto:" + contact.jid);
+        Intent it = new Intent(Intent.ACTION_SENDTO, uri);
+        it.putExtra("sms_body", inviteText);
+        context.startActivity(it);
+    }
+
+    public static int getDrawable(String color, boolean toolbar) {
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        if (currentapiVersion >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            // Lollipop devices
+            if (toolbar) {
+                return R.drawable.image_view_selector;
+            } else {
+                return R.drawable.ripple_mask_drawable;
+            }
+        } else {
+            // Lower than Lollipop
+            if (color.equals(Constants.COLOR_WHITE)) {
+                return R.drawable.layout_white_bg_selector;
+            } else {
+                return R.drawable.layout_blue_bg_selector;
+            }
+        }
+    }
 //    public static int getStack(Context context) {
 //        int numOfActivities = 0;
 //        ActivityManager m = (ActivityManager) context.getSystemService(context.ACTIVITY_SERVICE);
@@ -155,6 +221,11 @@ public class CommonUtil {
             // no camera on this device
             return false;
         }
+    }
+
+    public static void openLinkOnBrowser(Context context, String url){
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+        context.startActivity(browserIntent);
     }
 
     public static String getMD5EncryptedString(byte[] content) {

@@ -5,6 +5,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -206,6 +207,8 @@ public class NewsContentHandler {
                 Log.i("filter", "type" + url);
 
                 stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent, responseListener_ForLoadContent);
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy( Constants.CONNECTION_READ_TIME_OUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
                 queue.add(stringRequest);
 
                 requestInProcess.add(REQUEST_CONTENT_TAG);
@@ -226,6 +229,8 @@ public class NewsContentHandler {
 
             if( url != null ) {
                 stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadMoreContent, responseListener_ForLoadMoreContent);
+                stringRequest.setRetryPolicy(new DefaultRetryPolicy( Constants.CONNECTION_READ_TIME_OUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
                 queue.add(stringRequest);
 
                 requestInProcess.add(REQUEST_MORE_CONTENT_TAG);

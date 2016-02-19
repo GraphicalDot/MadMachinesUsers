@@ -1,19 +1,15 @@
 package com.sports.unity.common.controller;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,27 +19,26 @@ import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
-import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
-import com.sports.unity.util.network.AsyncHttpClient;
-import com.sports.unity.util.network.ResponseListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.net.HttpURLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 public class EnterPhoneActivity extends CustomVolleyCallerActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private View.OnClickListener sendButtonClickListener = new View.OnClickListener() {
+    private View.OnClickListener viewClickListener = new View.OnClickListener() {
+
         @Override
-        public void onClick(View v) {
-            createUser();
+        public void onClick(View view) {
+            int viewId = view.getId();
+            if( viewId == R.id.getOtp ) {
+                createUser();
+            } else if ( viewId == R.id.privacy_policy ) {
+                CommonUtil.openLinkOnBrowser(EnterPhoneActivity.this, getResources().getString(R.string.link_of_privacy_policy));
+            }
         }
+
     };
 
     @Override
@@ -57,15 +52,11 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
     @Override
     protected void onResume() {
         super.onResume();
-
-        onComponentResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-
-        onComponentPause();
     }
 
     private void init() {
@@ -80,17 +71,19 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
 
         TextView privacy_policy = (TextView) findViewById(R.id.privacy_policy);
         privacy_policy.setTypeface(FontTypeface.getInstance(this).getRobotoLight());
+        privacy_policy.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
+        privacy_policy.setOnClickListener(viewClickListener);
 
         final Button continueButton = (Button) findViewById(R.id.getOtp);
         continueButton.setVisibility(View.INVISIBLE);
-        continueButton.setOnClickListener(sendButtonClickListener);
+        continueButton.setOnClickListener(viewClickListener);
 
         final EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
         if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
 
             setUserPhoneNumber(phoneNumberEditText, continueButton);
         } else {
-            if (PermissionUtil.getInstance().requestPermission(EnterPhoneActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.READ_PHONE_STATE)), getResources().getString(R.string.read_phone_permission_message), Constants.REQUEST_CODE_PHONE_STATE_PERMISSION)) {
+            if (PermissionUtil.getInstance().requestPermission(EnterPhoneActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.READ_PHONE_STATE,Manifest.permission.RECEIVE_SMS)), getResources().getString(R.string.read_phone_permission_message), Constants.REQUEST_CODE_PHONE_STATE_PERMISSION)) {
 
                 setUserPhoneNumber(phoneNumberEditText, continueButton);
             }

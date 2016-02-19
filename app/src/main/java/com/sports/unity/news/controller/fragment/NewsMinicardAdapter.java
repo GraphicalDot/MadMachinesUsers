@@ -130,6 +130,7 @@ public class NewsMinicardAdapter extends BaseNewsAdapter {
                         String type = CommonUtil.capitalize(newsJsonCaller.getType());
 
                         Intent intent = new Intent(activity, NewsDetailsActivity.class);
+                        intent.putExtra(Constants.INTENT_KEY_ID, newsJsonCaller.getNewsId());
                         intent.putExtra(Constants.INTENT_KEY_URL, newsLink);
                         intent.putExtra(Constants.INTENT_KEY_TITLE, title);
                         intent.putExtra(Constants.INTENT_KEY_TYPE, type);

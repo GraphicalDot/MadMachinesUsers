@@ -21,8 +21,10 @@
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:paddingRight="@dimen/horizontal_padding_small"
+            android:paddingTop="@dimen/horizontal_padding_small"
+            android:paddingBottom="@dimen/horizontal_padding_small"
             android:scaleType="center"
-            android:src="@drawable/ic_menu_back" />
+            android:src="@drawable/ic_menu_back" /> />
 
         <TextView
             android:id="@+id/toolbar_title"

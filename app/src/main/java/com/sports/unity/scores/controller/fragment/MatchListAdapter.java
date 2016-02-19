@@ -22,6 +22,7 @@ import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
 import com.sports.unity.scores.model.football.FootballMatchJsonCaller;
 import com.sports.unity.scores.model.football.MatchJsonCaller;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import org.json.JSONObject;
@@ -456,6 +457,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             ImageView flag1 = (ImageView) popupOdds.findViewById(R.id.flag1);
             ImageView flag2 = (ImageView) popupOdds.findViewById(R.id.flag2);
             ImageView close = (ImageView) popupOdds.findViewById(R.id.close);
+            close.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
             TextView team1 = (TextView) popupOdds.findViewById(R.id.team1_name);
             TextView team2 = (TextView) popupOdds.findViewById(R.id.team2_name);
             TextView bet1 = (TextView) popupOdds.findViewById(R.id.bet1);

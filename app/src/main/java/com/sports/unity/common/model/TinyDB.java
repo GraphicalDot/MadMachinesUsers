@@ -37,11 +37,13 @@ public class TinyDB {
     public static final String KEY_ADDRESS_STATE = "state";
 
     public static final String KEY_USERNAME = "username";
+    public static final String KEY_USER_JID = "userjid";
     public static final String KEY_PASSWORD = "password";
 
     public static final String KEY_CONTACTS_COPIED_SUCESSFULLY = "contacts_copied";
 
     public static final String KEY_PROFILE_NAME = "name";
+    public static final String KEY_PROFILE_STATUS = "status";
 
     /*Preference key used to manage filters*/
     public static final String FAVOURITE_FILTERS = "favourite_filters";
@@ -49,7 +51,32 @@ public class TinyDB {
     public static final String TEAM_SELECTION = "team_selection";
     public static final String PLAYER_SELECTION = "player_selection";
     public static final String FILTER_COMPLETE = "filter_complete";
+    public static final String VCARD_UPDATED = "vcard_updated";
 
+    /**
+     * Settings Screen Options
+     */
+    public static final String NOTIFICATION_AND_SOUND_OPTIONS = "notification_and_sounds";
+    public static final String NOTIFICATION_PREVIEW = "notification_preview";
+    public static final String CONVERSATION_TONES = "conversation_tones";
+    public static final String VIBRATE = "vibrate";
+    public static final String LIGHT = "light";
+    public static final String NOTIFICATION_SOUND_TITLE = "notification_sound_title";
+    public static final String NOTIFICATION_SOUND_URI = "notification_sound_uri";
+
+    public static final String LOCATION_OPTIONS = "show_my_location";
+    public static final String FRIENDS_ONLY = "friends_only";
+    public static final String SHOW_TO_ALL = "show_to_all";
+
+    public static final String SAVE_INCOMING_MEDIA = "save_incoming_media";
+    public static final String SAVE_IN_APP_MEDIA_CAPTURE = "save_in_app_media_capture";
+    public static final String MEDIA_MOBILE_DATA = "media_mobile_data";
+    public static final String MEDIA_USING_WIFI = "media_using_wifi";
+
+    public static final String PRIVACY_LAST_SEEN = "privacy_last_seen";
+    public static final String PRIVACY_PROFILE_PHOTO = "privacy_profile_photo";
+    public static final String PRIVACY_STATUS = "privacy_status";
+    public static final String READ_RECEIPTS = "read_receipts";
 
     private SharedPreferences preferences;
     private String DEFAULT_APP_IMAGEDATA_DIRECTORY;
@@ -541,5 +568,9 @@ public class TinyDB {
 
         return Environment.MEDIA_MOUNTED.equals(state) ||
                 Environment.MEDIA_MOUNTED_READ_ONLY.equals(state);
+    }
+
+    public boolean contains(String key) {
+        return preferences.contains(key);
     }
 }

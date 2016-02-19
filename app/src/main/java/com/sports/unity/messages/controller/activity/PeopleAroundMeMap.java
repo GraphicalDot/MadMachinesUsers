@@ -55,6 +55,8 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.NearByUserJsonCaller;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
+import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.LocManager;
 
 import org.jivesoftware.smack.SmackException;
@@ -114,7 +116,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
                     if (users.size() > 1) {
                         plotMarkers(users, sportSelection);
                     } else {
-                        map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                        map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                         LayoutInflater inflater = PeopleAroundMeMap.this.getLayoutInflater();
                         View view = inflater.inflate(R.layout.chat_other_profile_layout, null);
 //                        AlertDialog.Builder otherProfileBuilder = new AlertDialog.Builder(PeopleAroundMeMap.this);
@@ -152,7 +154,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
 
         hideSoftKeyboard();
         initToolbar();
-//        openMap();
+       // openMap();
         InitSeekbar();
         setsportSelectionButtons();
         setCustomButtonsForNavigationAndUsers();
@@ -341,6 +343,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         titleCity = (TextView) toolbar.findViewById(R.id.secondary_title);
         titleCity.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         setCurrentAddressOnToolbar(titleAddress, titleCity);
+        //toolbar.setContentInsetsAbsolute(0, 0);
         toolbar.findViewById(R.id.close_icon).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -407,7 +410,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         parameters.put(ScoresContentHandler.PARAM_LATITUDE, String.valueOf(latitude));
         parameters.put(ScoresContentHandler.PARAM_LONGITUDE, String.valueOf(longitude));
         parameters.put(ScoresContentHandler.PARAM_RADIUS, String.valueOf(radius));
-        ScoresContentHandler.getInstance().requestCall( ScoresContentHandler.CALL_NAME_NEAR_BY_USERS, parameters, REQUEST_LISTENER_KEY, REQUEST_TAG);
+        parameters.put(Constants.REQUEST_PARAMETER_KEY_APK_VERSION, CommonUtil.getBuildConfig());
+        parameters.put(Constants.REQUEST_PARAMETER_KEY_UDID, CommonUtil.getDeviceId(this));
+        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_NEAR_BY_USERS, parameters, REQUEST_LISTENER_KEY, REQUEST_TAG);
     }
 
     public boolean createContact(String number, Context context, VCard vCard) {
@@ -693,8 +698,6 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         if (getCurrentFocus() != null) {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
-
-
         }
     }
 
@@ -711,29 +714,6 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         dismissDialog();
         ScoresContentHandler.getInstance().removeResponseListener(REQUEST_LISTENER_KEY);
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_people_around_me_map, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
 
     private class GetVcardForUser extends AsyncTask<String, Void, VCard> {
         private boolean success = false;

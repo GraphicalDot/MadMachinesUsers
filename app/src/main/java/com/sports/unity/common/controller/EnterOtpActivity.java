@@ -1,12 +1,15 @@
 package com.sports.unity.common.controller;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AlertDialog;
+import android.telephony.gsm.SmsMessage;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -14,6 +17,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,6 +31,7 @@ import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.scores.model.ScoresContentHandler;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import org.json.JSONException;
@@ -44,6 +49,11 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
     private static final String RESEND_OTP_REQUEST_TAG = "ResendOtpTag";
 
     private boolean moved = false;
+
+    private AlertDialog otpWaitingDialog;
+    private EditText otpEditText;
+
+    private SMSReceiverBroadcast smsReceiverBroadcast = null;
 
     private View.OnClickListener sendButtonClickListener = new View.OnClickListener() {
         @Override
@@ -64,6 +74,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         super.onCreate(savedInstanceState);
 
         setContentView(com.sports.unity.R.layout.activity_enter_otp);
+
         initViews();
 
         {
@@ -91,11 +102,12 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
             if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
                 copyContacts();
             } else {
-                if (PermissionUtil.getInstance().requestPermission(EnterOtpActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)), getResources().getString(R.string.read_contact_permission_message), Constants.REQUEST_CODE_CONTACT_PERMISSION)) {
+                if (PermissionUtil.getInstance().requestPermission(EnterOtpActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)))) {
                     copyContacts();
                 }
             }
         }
+
     }
 
     @Override
@@ -128,18 +140,60 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         super.onBackPressed();
     }
 
+    private class SMSReceiverBroadcast extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            try {
+                if (bundle != null) {
+                    otpWaitingDialog.cancel();
+
+                    final Object[] pdusObj = (Object[]) bundle.get("pdus");
+                    for (int i = 0; i < pdusObj.length; i++) {
+                        SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
+                        String phoneNumber = currentMessage.getDisplayOriginatingAddress();
+                        String senderNum = phoneNumber;
+                        String message = currentMessage.getDisplayMessageBody();
+
+                        try {
+                            if (senderNum.contains("SPOUNI")) {
+                                String str = message.replaceAll("\\D+", "");
+                                otpEditText.setText(str);
+                                createUser();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
     private void initViews() {
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.gray1), android.graphics.PorterDuff.Mode.MULTIPLY);
 
-        Button editNumberButton = (Button) findViewById(R.id.editnumber);
-        editNumberButton.setOnClickListener(new View.OnClickListener() {
+        LinearLayout editNumberLayout = (LinearLayout) findViewById(R.id.editNumberLayout);
+        editNumberLayout.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
+
         });
-        editNumberButton.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+
+        editNumberLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+
+        TextView editNumberTextView = (TextView) findViewById(R.id.editNumber);
+        editNumberTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
         final Button sendOtpButton = (Button) findViewById(com.sports.unity.R.id.sendOtpButton);
         sendOtpButton.setVisibility(View.INVISIBLE);
@@ -148,12 +202,13 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         Button resendButton = (Button) findViewById(R.id.resend);
         resendButton.setOnClickListener(resendOtpButtonClickListener);
         resendButton.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+        resendButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
 
         TextView otpText = (TextView) findViewById(com.sports.unity.R.id.enterotpText);
         otpText.setText(getString(R.string.otp_message_verification) + getPhoneNumber());
         otpText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
-        EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
+        otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         otpEditText.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -191,6 +246,8 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
     }
 
     private void createUser() {
+        unRegisterSmsBroadcastReceiver();
+
         EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         String otp = otpEditText.getText().toString();
         String phoneNumber = "91" + getPhoneNumber();
@@ -198,15 +255,19 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, phoneNumber);
         parameters.put(Constants.REQUEST_PARAMETER_KEY_AUTH_CODE, otp);
+        parameters.put(Constants.REQUEST_PARAMETER_KEY_APK_VERSION, CommonUtil.getBuildConfig());
+        parameters.put(Constants.REQUEST_PARAMETER_KEY_UDID, CommonUtil.getDeviceId(this));
         requestContent(ScoresContentHandler.CALL_NAME_CREATE_USER, parameters, CREATE_USER_REQUEST_TAG);
     }
 
     private void resendOtp() {
-        Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending, Toast.LENGTH_SHORT).show();
+        Toast.makeText(EnterOtpActivity.this, R.string.otp_message_sending, Toast.LENGTH_SHORT).show();
 
         String phoneNumber = "91" + getPhoneNumber();
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, phoneNumber);
+        parameters.put(Constants.REQUEST_PARAMETER_KEY_APK_VERSION, CommonUtil.getBuildConfig());
+        parameters.put(Constants.REQUEST_PARAMETER_KEY_UDID, CommonUtil.getDeviceId(this));
         requestContent(ScoresContentHandler.CALL_NAME_ASK_OTP, parameters, RESEND_OTP_REQUEST_TAG);
     }
 
@@ -239,6 +300,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
 
         @Override
         protected void showErrorLayout() {
+            super.showErrorLayout();
             Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
         }
 
@@ -249,8 +311,11 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
                 JSONObject response = new JSONObject(content);
                 if (response.getString("status").equals("200")) {
                     String password = response.getString(Constants.REQUEST_PARAMETER_KEY_PASSWORD);
-                    TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
+                    String userJid = response.getString(Constants.REQUEST_PARAMETER_KEY_USER_NAME);
+                    TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_USER_JID, userJid);
 
+                    Log.d("max", "Jid is-" + userJid);
+                    TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
                     UserUtil.setOtpSent(EnterOtpActivity.this, false);
                     UserUtil.setUserRegistered(EnterOtpActivity.this, true);
 
@@ -291,6 +356,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
 
         @Override
         protected void showErrorLayout() {
+            super.showErrorLayout();
             Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
         }
 
@@ -326,11 +392,47 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         public void changeUI() {
             if (resendSuccessful) {
                 Toast.makeText(EnterOtpActivity.this, R.string.otp_message_otp_sent, Toast.LENGTH_SHORT).show();
+                if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+                    displayOtpWaitingDialog();
+                    registerSmsBroadcastReceiver();
+                } else if (PermissionUtil.getInstance().requestPermission(EnterOtpActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.RECEIVE_SMS)))) {
+                    displayOtpWaitingDialog();
+                    registerSmsBroadcastReceiver();
+                }
             } else {
                 Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
             }
         }
 
+    }
+
+    private void registerSmsBroadcastReceiver() {
+        smsReceiverBroadcast = new SMSReceiverBroadcast();
+        registerReceiver(smsReceiverBroadcast, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
+    }
+
+    private void unRegisterSmsBroadcastReceiver() {
+        if (smsReceiverBroadcast != null) {
+            unregisterReceiver(smsReceiverBroadcast);
+            smsReceiverBroadcast = null;
+        }
+    }
+
+    private void displayOtpWaitingDialog() {
+
+        AlertDialog.Builder build = new AlertDialog.Builder(EnterOtpActivity.this);
+        build.setMessage("Waiting to automatically detect an SMS.");
+        build.setNegativeButton("Enter Manually", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int id) {
+
+                unRegisterSmsBroadcastReceiver();
+
+            }
+        });
+
+        otpWaitingDialog = build.create();
+        otpWaitingDialog.show();
     }
 
     @Override

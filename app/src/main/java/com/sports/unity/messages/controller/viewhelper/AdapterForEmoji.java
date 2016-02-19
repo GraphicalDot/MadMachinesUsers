@@ -128,20 +128,7 @@ public class AdapterForEmoji extends PagerAdapter implements AdapterView.OnItemC
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String selectedStickerPath = (String)view.getTag(R.id.emoji);
 
-        sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_STICKER, selectedStickerPath);
-    }
-
-    private boolean sendActionToCorrespondingActivityListener(String key, String mimeType, Object data) {
-        boolean success = false;
-
-        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
-
-        if (actionListener != null) {
-            actionListener.handleMediaContent( 1, mimeType, data, null);
-            success = true;
-        }
-        return success;
+        ActivityActionHandler.getInstance().dispatchSendStickerEvent(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_STICKER, selectedStickerPath);
     }
 
 }

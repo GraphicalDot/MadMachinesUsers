@@ -13,6 +13,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,7 @@ import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.model.Message;
+import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.messages.controller.model.Stickers;
 import com.sports.unity.messages.controller.model.ToolbarActionsForChatScreen;
 import com.sports.unity.messages.controller.viewhelper.AudioRecordingHelper;
@@ -323,7 +325,7 @@ public class ChatScreenAdapter extends BaseAdapter {
             if (mediaMap.containsKey(message.mediaFileName)) {
                 content = mediaMap.get(message.mediaFileName);
             } else {
-                content = message.media;
+//                content = message.media;
             }
 
             ImageView image = (ImageView) holder.mediaContentLayout.findViewById(R.id.image_message);
@@ -340,7 +342,12 @@ public class ChatScreenAdapter extends BaseAdapter {
                 image.setOnClickListener(imageOrVideoClickListener);
                 image.setTag(position);
             } else {
-                image.setImageResource(R.drawable.grey_bg_rectangle);
+                if( message.media != null ) {
+                    image.setImageBitmap(BitmapFactory.decodeByteArray(message.media, 0, message.media.length));
+                } else {
+                    image.setImageResource(R.drawable.grey_bg_rectangle);
+                }
+
                 image.setOnClickListener(null);
                 image.setTag(null);
             }
@@ -381,6 +388,14 @@ public class ChatScreenAdapter extends BaseAdapter {
                 image.setTag(position);
             }
             image.setImageResource(R.drawable.grey_bg_rectangle);
+
+            {
+                if (message.media != null) {
+                    image.setImageBitmap(BitmapFactory.decodeByteArray(message.media, 0, message.media.length));
+                } else {
+                    image.setImageResource(R.drawable.grey_bg_rectangle);
+                }
+            }
 
             ProgressBar progressBar = (ProgressBar) holder.mediaContentLayout.findViewById(R.id.progressBar);
             if (inProgress) {
@@ -496,7 +511,8 @@ public class ChatScreenAdapter extends BaseAdapter {
                 if (chat == null) {
                     chat = chatManager.createChat(ChatScreenActivity.getJABBERID() + "@mm.io");
                 }
-                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, message.mimeType, chat, message.id, nearByChat);
+
+                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, null, message.mimeType, chat, message.id, nearByChat);
 
                 activity.runOnUiThread(new Runnable() {
                     @Override

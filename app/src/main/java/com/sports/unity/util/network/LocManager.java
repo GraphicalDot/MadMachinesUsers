@@ -25,7 +25,7 @@ import java.util.Locale;
  */
 public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private static String base_url = "http://54.169.217.88/set_location?user=";
+    private static String base_url = "http://" + XMPPClient.SERVER_HOST + "/set_location?user=";
     private static LocManager locManager = null;
 
     private Thread uploadLocation = null;
@@ -98,11 +98,11 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         retrieveLocation();
     }
 
-    public void sendLatituteAndLongitude(final Location mLastLocation, boolean peopleAroundMeActivity) {
+    public void sendLatituteAndLongitude(final Location mLastLocation, boolean forceSend) {
         if (uploadLocation != null && uploadLocation.isAlive()) {
             //do nothing
         } else {
-            if (peopleAroundMeActivity || dataSent == false) {
+            if (forceSend || dataSent == false) {
                 uploadLocation = new Thread(new Runnable() {
                     @Override
                     public void run() {

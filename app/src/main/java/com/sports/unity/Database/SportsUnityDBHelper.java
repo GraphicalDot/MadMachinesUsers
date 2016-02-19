@@ -586,7 +586,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     }
 
-
     public ArrayList<Message> getMessages(long chatId) {
         SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<Message> list = new ArrayList<>();
@@ -635,6 +634,79 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         c.close();
         return list;
 
+    }
+
+    public ArrayList<Chats> getChatsBasedOnSearchedMessage(String searchKeyword, boolean nearByChat) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        ArrayList<Chats> list = new ArrayList<>();
+        if( searchKeyword != null && searchKeyword.length() > 0 ) {
+            StringBuilder searchedMessagesSubQuery = new StringBuilder("");
+            {
+                searchedMessagesSubQuery.append("( SELECT ");
+                searchedMessagesSubQuery.append(MessagesEntry.COLUMN_CHAT_ID + " ,");
+                searchedMessagesSubQuery.append(MessagesEntry.COLUMN_DATA_TEXT + " ,");
+                searchedMessagesSubQuery.append(MessagesEntry.COLUMN_DATA_MEDIA + " ,");
+                searchedMessagesSubQuery.append(MessagesEntry.COLUMN_MIME_TYPE + " ,");
+                searchedMessagesSubQuery.append(MessagesEntry.COLUMN_SEND_TIMESTAMP + " ,");
+                searchedMessagesSubQuery.append(MessagesEntry.COLUMN_RECEIVE_TIMESTAMP + " ,");
+
+                searchedMessagesSubQuery.append(" FROM " + MessagesEntry.TABLE_NAME);
+                searchedMessagesSubQuery.append(" WHERE " + MessagesEntry.COLUMN_DATA_TEXT + " LIKE '%" + searchKeyword + "%' ) " );
+            }
+
+            StringBuilder subQuery = new StringBuilder("");
+
+            subQuery.append("( SELECT ");
+            subQuery.append(ChatEntry.COLUMN_UNREAD_COUNT + " ,");
+            subQuery.append(ChatEntry.COLUMN_NAME + " ,");
+            subQuery.append(ChatEntry.COLUMN_CONTACT_ID + " ,");
+            subQuery.append(ChatEntry.COLUMN_LAST_MESSAGE_ID + " ,");
+
+            subQuery.append(" B.* ");
+
+            subQuery.append(" A." + ChatEntry.COLUMN_CHAT_ID + " ,");
+            subQuery.append(ChatEntry.COLUMN_GROUP_SERVER_ID + " ,");
+            subQuery.append(ChatEntry.COLUMN_IMAGE + ",");
+            subQuery.append(ChatEntry.COLUMN_MUTE_CONVERSATION + ",");
+            subQuery.append(ChatEntry.COLUMN_LAST_USED);
+
+            subQuery.append(" FROM " + ChatEntry.TABLE_NAME + " A INNER JOIN " + searchedMessagesSubQuery.toString() + " B ");
+            subQuery.append("ON A." + ChatEntry.COLUMN_CHAT_ID + " = B." + MessagesEntry.COLUMN_CHAT_ID);
+            if (nearByChat) {
+                subQuery.append(" WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " = 1 ");
+            } else {
+                subQuery.append(" WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " = 0 ");
+            }
+            subQuery.append(" ) ");
+
+            StringBuilder selectQuery = new StringBuilder();
+            selectQuery.append(" SELECT B.* , A.");
+            selectQuery.append(ContactsEntry.COLUMN_USER_IMAGE + ",");
+            selectQuery.append(ContactsEntry.COLUMN_BLOCK_USER + " FROM ");
+            selectQuery.append(ContactsEntry.TABLE_NAME);
+            selectQuery.append(" A INNER JOIN ");
+            selectQuery.append(subQuery.toString());
+            selectQuery.append(" B  ON ");
+            selectQuery.append("A." + ContactsEntry.COLUMN_CONTACT_ID + " = B." + ChatEntry.COLUMN_CONTACT_ID);
+            selectQuery.append(" order by " + ChatEntry.COLUMN_LAST_USED + " DESC");
+
+            Cursor cursor = db.rawQuery(selectQuery.toString(), null);
+            if (cursor.moveToFirst()) {
+                do {
+                    boolean value_mute = cursor.getInt(13) == 1;
+                    boolean value_block = cursor.getInt(16) == 1;
+                    list.add(new Chats(cursor.getInt(0), cursor.getString(1), cursor.getInt(2),
+                            cursor.getInt(3), cursor.getString(5), cursor.getBlob(6),
+                            cursor.getString(7), cursor.getString(8), cursor.getString(9),
+                            cursor.getInt(10), cursor.getString(11), cursor.getBlob(12), value_mute, cursor.getBlob(15), value_block));
+                } while (cursor.moveToNext());
+            }
+
+            cursor.close();
+        }
+
+        return list;
     }
 
     public long addMessage(String msg, String mimeType, String number, boolean iamsender, String sentTime, String messageId, String serverTime, String recipientTime,
@@ -699,12 +771,13 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 selectionArgs);
     }
 
-    public void updateMediaMessage_ContentUploaded(long messageId, String stanzaId, String checksum) {
+    public void updateMediaMessage_ContentUploaded(long messageId, String stanzaId, String checksum, String thumbnailImage) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(MessagesEntry.COLUMN_MESSAGE_ID, stanzaId);
         values.put(MessagesEntry.COLUMN_DATA_TEXT, checksum);
+        values.put(MessagesEntry.COLUMN_DATA_MEDIA, thumbnailImage);
 
         String selection = MessagesEntry.COLUMN_ID + " LIKE ? ";
         String[] selectionArgs = {String.valueOf(messageId)};
@@ -784,6 +857,16 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 selection,
                 selectionArgs);
         Log.i(" unreadc :", String.valueOf(count));
+    }
+
+    public int getTotalUnreadCount(int a) {
+        SQLiteDatabase db = getReadableDatabase();
+        String query = "SELECT SUM(" + ChatEntry.COLUMN_UNREAD_COUNT + ") FROM " + ChatEntry.TABLE_NAME + " WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " = " + a;
+        Cursor cur = db.rawQuery(query, null);
+        if (cur.moveToFirst()) {
+            return cur.getInt(0);
+        }
+        return 0;
     }
 
     public int getUnreadCount(long chatId, String groupServerId) {
@@ -986,80 +1069,63 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<Chats> getChatList(boolean nearByChat) {
+        return getChatList( null, nearByChat);
+    }
+
+    public ArrayList<Chats> getChatList(String searchKeyword, boolean nearByChat) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         ArrayList<Chats> list = new ArrayList<>();
-
-//        {
-//            String query = "SELECT " + ChatEntry.COLUMN_CHAT_ID + " , " + ChatEntry.COLUMN_NAME + " , " + ChatEntry.COLUMN_LAST_MESSAGE_ID + " , " + ChatEntry.COLUMN_CONTACT_ID + " , " + ChatEntry.COLUMN_GROUP_SERVER_ID +
-//                    " FROM " + ChatEntry.TABLE_NAME;
-//            Cursor cursor = db.rawQuery(query, null);
-//            if (cursor.moveToFirst()) {
-//                do {
-//                    Log.i("Chat entry", "Item " + cursor.getInt(0) + " : " + cursor.getString(1) + " : " + cursor.getInt(2) + " : " + cursor.getInt(3) + " : " + cursor.getString(4));
-//                } while (cursor.moveToNext());
-//            }
-//
-//        }
-//        {
-//            String query = "SELECT " + MessagesEntry.COLUMN_ID + " , " + MessagesEntry.COLUMN_PHONENUMBER + " , " + MessagesEntry.COLUMN_DATA_TEXT + " , " + MessagesEntry.COLUMN_CHAT_ID +
-//                    " FROM " + MessagesEntry.TABLE_NAME;
-//            Cursor cursor = db.rawQuery(query, null);
-//            if (cursor.moveToFirst()) {
-//                do {
-//                    Log.i("Message entry", "Item " + cursor.getInt(0) + " : " + cursor.getString(1) + " : " + cursor.getString(2) + " : " + cursor.getInt(3));
-//                } while (cursor.moveToNext());
-//            }
-//
-//        }
-//        {
-//            String query = "SELECT " + ContactsEntry.COLUMN_CONTACT_ID + " , " + ContactsEntry.COLUMN_PHONENUMBER + " , " + ContactsEntry.COLUMN_NAME +
-//                    " FROM " + ContactsEntry.TABLE_NAME;
-//            Cursor cursor = db.rawQuery(query, null);
-//            if (cursor.moveToFirst()) {
-//                do {
-//                    Log.i("Contact entry", "Item " + cursor.getInt(0) + " : " + cursor.getString(1) + " : " + cursor.getString(2));
-//                } while (cursor.moveToNext());
-//            }
-//
-//        }
-//        {
-//            String query = "SELECT " + GroupUserEntry.COLUMN_CONTACT_ID + " , " + GroupUserEntry.COLUMN_CHAT_ID +
-//                    " FROM " + GroupUserEntry.TABLE_NAME;
-//            Cursor cursor = db.rawQuery(query, null);
-//            if (cursor.moveToFirst()) {
-//                do {
-//                    Log.i("Group user entry", "Item " + cursor.getInt(0) + " : " + cursor.getInt(1));
-//                } while (cursor.moveToNext());
-//            }
-//
-//        }
         {
-            String subQuery = "";
+
+            StringBuilder subQuery = new StringBuilder("");
+
+            subQuery.append("( SELECT ");
+            subQuery.append(ChatEntry.COLUMN_UNREAD_COUNT + " ,");
+            subQuery.append(ChatEntry.COLUMN_NAME + " ,");
+            subQuery.append(ChatEntry.COLUMN_CONTACT_ID + " ,");
+            subQuery.append(ChatEntry.COLUMN_LAST_MESSAGE_ID + " ,");
+
+            subQuery.append(MessagesEntry.COLUMN_DATA_TEXT + " ,");
+            subQuery.append(MessagesEntry.COLUMN_DATA_MEDIA + " ,");
+            subQuery.append(MessagesEntry.COLUMN_MIME_TYPE + " ,");
+            subQuery.append(MessagesEntry.COLUMN_SEND_TIMESTAMP + " ,");
+            subQuery.append(MessagesEntry.COLUMN_RECEIVE_TIMESTAMP + " ,");
+
+            subQuery.append(" A." + ChatEntry.COLUMN_CHAT_ID + " ,");
+            subQuery.append(ChatEntry.COLUMN_GROUP_SERVER_ID + " ,");
+            subQuery.append(ChatEntry.COLUMN_IMAGE + ",");
+            subQuery.append(ChatEntry.COLUMN_MUTE_CONVERSATION + ",");
+            subQuery.append(ChatEntry.COLUMN_LAST_USED);
+
+            subQuery.append(" FROM " + ChatEntry.TABLE_NAME + " A INNER JOIN " + MessagesEntry.TABLE_NAME + " B ");
+            subQuery.append("ON " + ChatEntry.COLUMN_LAST_MESSAGE_ID + " = " + MessagesEntry.COLUMN_ID);
             if (nearByChat) {
-                subQuery = "( SELECT " + ChatEntry.COLUMN_UNREAD_COUNT + " ," + ChatEntry.COLUMN_NAME + " ," + ChatEntry.COLUMN_CONTACT_ID + " ," +
-                        ChatEntry.COLUMN_LAST_MESSAGE_ID + " ," + MessagesEntry.COLUMN_DATA_TEXT + " ," + MessagesEntry.COLUMN_DATA_MEDIA + " ," +
-                        MessagesEntry.COLUMN_MIME_TYPE + " ," + MessagesEntry.COLUMN_SEND_TIMESTAMP + " ," + MessagesEntry.COLUMN_RECEIVE_TIMESTAMP + " , A." +
-                        ChatEntry.COLUMN_CHAT_ID + " ," + ChatEntry.COLUMN_GROUP_SERVER_ID + " ," + ChatEntry.COLUMN_IMAGE + "," + ChatEntry.COLUMN_MUTE_CONVERSATION +
-                        "," + ChatEntry.COLUMN_LAST_USED +
-                        " FROM " + ChatEntry.TABLE_NAME + " A INNER JOIN " + MessagesEntry.TABLE_NAME + " B ON " + ChatEntry.COLUMN_LAST_MESSAGE_ID + " = " + MessagesEntry.COLUMN_ID +
-                        " WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " = 1 " + " ) ";
+                subQuery.append(" WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " = 1 ");
             } else {
-                subQuery = "( SELECT " + ChatEntry.COLUMN_UNREAD_COUNT + " ," + ChatEntry.COLUMN_NAME + " ," + ChatEntry.COLUMN_CONTACT_ID + " ," +
-                        ChatEntry.COLUMN_LAST_MESSAGE_ID + " ," + MessagesEntry.COLUMN_DATA_TEXT + " ," + MessagesEntry.COLUMN_DATA_MEDIA + " ," +
-                        MessagesEntry.COLUMN_MIME_TYPE + " ," + MessagesEntry.COLUMN_SEND_TIMESTAMP + " ," + MessagesEntry.COLUMN_RECEIVE_TIMESTAMP + " , A." +
-                        ChatEntry.COLUMN_CHAT_ID + " ," + ChatEntry.COLUMN_GROUP_SERVER_ID + " ," + ChatEntry.COLUMN_IMAGE + "," + ChatEntry.COLUMN_MUTE_CONVERSATION +
-                        "," + ChatEntry.COLUMN_LAST_USED +
-                        " FROM " + ChatEntry.TABLE_NAME + " A INNER JOIN " + MessagesEntry.TABLE_NAME + " B ON " + ChatEntry.COLUMN_LAST_MESSAGE_ID + " = " + MessagesEntry.COLUMN_ID +
-                        " WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " = 0 " + " ) ";
+                subQuery.append(" WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " = 0 ");
             }
 
+            if( searchKeyword != null && searchKeyword.length() > 0 ){
+                subQuery.append(" and " + ChatEntry.COLUMN_NAME + " LIKE '%" + searchKeyword + "%'");
+            }
 
-            String selectQuery = " SELECT B.* , A." + ContactsEntry.COLUMN_USER_IMAGE + "," + ContactsEntry.COLUMN_BLOCK_USER + " FROM " +
-                    ContactsEntry.TABLE_NAME + " A INNER JOIN " + subQuery + " B  ON A." + ContactsEntry.COLUMN_CONTACT_ID + " = B." + ChatEntry.COLUMN_CONTACT_ID
-                    + " order by " + ChatEntry.COLUMN_LAST_USED + " DESC";
+            subQuery.append(" ) ");
 
-            Cursor cursor = db.rawQuery(selectQuery, null);
+            StringBuilder selectQuery = new StringBuilder();
+            selectQuery.append(" SELECT B.* , A.");
+            selectQuery.append(ContactsEntry.COLUMN_USER_IMAGE + ",");
+            selectQuery.append(ContactsEntry.COLUMN_BLOCK_USER + " FROM ");
+            selectQuery.append(ContactsEntry.TABLE_NAME);
+            selectQuery.append(" A INNER JOIN ");
+            selectQuery.append(subQuery.toString());
+            selectQuery.append(" B  ON ");
+            selectQuery.append("A." + ContactsEntry.COLUMN_CONTACT_ID + " = B." + ChatEntry.COLUMN_CONTACT_ID);
+            selectQuery.append(" order by " + ChatEntry.COLUMN_LAST_USED + " DESC");
+
+            Log.d("Chat Fragment", selectQuery.toString());
+
+            Cursor cursor = db.rawQuery(selectQuery.toString(), null);
             if (cursor.moveToFirst()) {
                 do {
                     boolean value_mute = cursor.getInt(12) == 1;

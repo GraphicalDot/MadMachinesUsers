@@ -2,6 +2,7 @@ package com.sports.unity.common.controller;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,46 +10,66 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.sports.unity.R;
+import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FontTypeface;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * Created by Mad on 12/22/2015.
  */
 public class NavListAdapter extends BaseExpandableListAdapter {
     ArrayList<String> groupItems = new ArrayList<String>();
-    private ArrayList<Object> childItems = new ArrayList<Object>();
+    private ArrayList<FavouriteItem> childItems = new ArrayList<FavouriteItem>();
     LayoutInflater inflater;
-    View editTeam;
+    View editView;
     ImageView indiIm;
     Activity act;
+    boolean isEditable;
 
-    public NavListAdapter(Activity context, ArrayList<String> groupList, ArrayList<Object> childItems, ImageView indiIm) {
+    public NavListAdapter(Activity context, ArrayList<String> groupList, ArrayList<FavouriteItem> childItems, ImageView indiIm, boolean isEditable, TextView tv) {
         this.groupItems = groupList;
         this.childItems = childItems;
         this.inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-       // this.editTeam = tv;
+        this.editView = tv;
         act = context;
         this.indiIm = indiIm;
+        this.isEditable = isEditable;
     }
 
     @Override
     public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
-        ArrayList<String> child = (ArrayList<String>) childItems.get(groupPosition);
-
         TextView textView = null;
-
+        ImageView iv = null;
         if (convertView == null) {
             convertView = inflater.inflate(R.layout.nav_list_item, null);
         }
 
         textView = (TextView) convertView.findViewById(R.id.itemtext);
-        textView.setText(child.get(childPosition));
-        //textView.setTypeface(FontTypeface.getInstance(act).getRobotoCondensedRegular());
+        iv = (ImageView) convertView.findViewById(R.id.flag);
+        if (childItems.size() > 0) {
+            textView.setText(childItems.get(childPosition).getName());
+            String uri = null;
+            try {
+                uri = childItems.get(childPosition).getFlagImageUrl();
+            } catch (NullPointerException e) {
+            }
+            if (uri != null) {
+
+                Glide.with(act).load(Uri.parse(uri)).into(iv);
+            } else {
+                iv.setVisibility(View.GONE);
+            }
+        } else {
+            textView.setText("No favourites added");
+            textView.setTextColor(act.getResources().getColor(R.color.gray1));
+            iv.setVisibility(View.GONE);
+        }
+        textView.setTypeface(FontTypeface.getInstance(act).getRobotoMedium());
+
         return convertView;
     }
 
@@ -62,29 +83,44 @@ public class NavListAdapter extends BaseExpandableListAdapter {
         }
 
         textView = (TextView) convertView.findViewById(R.id.itemheader);
-        if(isExpanded){
-            textView.setTextColor(act.getResources().getColor(R.color.gray1));
-        }else{
+        if (isExpanded) {
             textView.setTextColor(act.getResources().getColor(R.color.app_theme_blue));
+        } else {
+            textView.setTextColor(act.getResources().getColor(R.color.gray1));
         }
-        textView.setTypeface(FontTypeface.getInstance(act).getRobotoCondensedBold());
+        textView.setTypeface(FontTypeface.getInstance(act).getRobotoMedium());
+//        textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
         textView.setText(groupItems.get(groupPosition));
         return convertView;
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return ((ArrayList<String>) childItems.get(groupPosition)).get(childPosition);
+        if (childItems.size() > 0) {
+            return childItems.get(childPosition);
+        } else {
+            return new String("No favourites added");
+        }
     }
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
-        return childPosition;
+        if (childItems.size() > 0) {
+
+            return childPosition;
+        } else {
+            return 0;
+        }
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return ((ArrayList<String>) childItems.get(groupPosition)).size();
+        if (childItems.size() > 0) {
+            return childItems.size();
+        } else {
+
+            return 1;
+        }
     }
 
     @Override
@@ -101,14 +137,16 @@ public class NavListAdapter extends BaseExpandableListAdapter {
     public void onGroupCollapsed(int groupPosition) {
         super.onGroupCollapsed(groupPosition);
         indiIm.setImageResource(R.drawable.ic_side_nav_expand);
-        //editTeam.setVisibility(View.INVISIBLE);
+        if (isEditable)
+            editView.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onGroupExpanded(int groupPosition) {
         super.onGroupExpanded(groupPosition);
         indiIm.setImageResource(R.drawable.ic_side_nav_collapse);
-//        editTeam.setVisibility(View.VISIBLE);
+        if (isEditable)
+            editView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -126,8 +164,9 @@ public class NavListAdapter extends BaseExpandableListAdapter {
         return true;
     }
 
-    public void updateChildList(ArrayList<Object> childItem){
-        this.childItems=childItem;
+    public void updateItem(ArrayList<FavouriteItem> childItems) {
+        this.childItems = childItems;
         this.notifyDataSetChanged();
     }
+
 }

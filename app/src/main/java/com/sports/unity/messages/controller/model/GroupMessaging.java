@@ -5,6 +5,7 @@ import android.content.Context;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.util.ActivityActionHandler;
+import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.Constants;
 
 import org.jivesoftware.smack.SmackException;
@@ -267,7 +268,7 @@ public class GroupMessaging {
 //        intent.setAction("com.madmachine.SINGLE_MESSAGE_RECEIVED");
 //        applicationContext.sendBroadcast(intent);
 
-        PersonalMessaging.sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, null);
+        ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, null);
     }
 
 }

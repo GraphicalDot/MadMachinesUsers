@@ -11,8 +11,6 @@ public abstract class ThreadTask extends Thread {
         this.object = object;
     }
 
-
-
     abstract public Object process();
     abstract public void postAction(Object object);
 
@@ -20,8 +18,8 @@ public abstract class ThreadTask extends Thread {
     public void run() {
         super.run();
 
-        Object returnredObject = process();
-        postAction(returnredObject);
+        Object returnedObject = process();
+        postAction(returnedObject);
     }
 
 }

@@ -15,17 +15,21 @@ import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 
 import java.util.ArrayList;
 
-public class FilterActivity extends AppCompatActivity  {
+public class FilterActivity extends AppCompatActivity {
 
     private int[] sportsCategoryLayoutID = new int[]{R.id.cricket, R.id.football};
     private boolean[] checkedFlag = new boolean[]{false, false};
     private LinearLayout teamFilter, leagueFilter, playerFilter;
     private ArrayList<String> sportsSelected;
+    private ViewPagerAdapterForFilter adapter;
+    private ViewPager pager;
+    private ArrayList<OnResultReceivedListener> resultReceivedListeners;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +41,7 @@ public class FilterActivity extends AppCompatActivity  {
         initCheckedFlagList();
         initViews();
         setTab();
+        resultReceivedListeners = new ArrayList<OnResultReceivedListener>();
     }
 
     private void initCheckedFlagList() {
@@ -65,7 +70,7 @@ public class FilterActivity extends AppCompatActivity  {
     private void setToolBar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
-
+        toolbar.findViewById(R.id.cancel).setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         toolbar.findViewById(R.id.cancel).setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -73,9 +78,12 @@ public class FilterActivity extends AppCompatActivity  {
                 moveOn(false);
             }
         });
-
+        TextView titleFilter = (TextView) toolbar.findViewById(R.id.toolbar_filter);
+        titleFilter.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
+        titleFilter.setTypeface(FontTypeface.getInstance(this).getRobotoSlabRegular());
         TextView title = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        title.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+        title.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
+        title.setTypeface(FontTypeface.getInstance(this).getRobotoSlabRegular());
 
         title.setOnClickListener(new View.OnClickListener() {
 
@@ -90,24 +98,24 @@ public class FilterActivity extends AppCompatActivity  {
 
     private void initViews() {
         TextView editSports = (TextView) findViewById(R.id.edit);
-        editSports.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+        editSports.setTypeface(FontTypeface.getInstance(this).getRobotoSlabRegular());
 
         TextView filterBySports = (TextView) findViewById(R.id.filter);
-        filterBySports.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+        filterBySports.setTypeface(FontTypeface.getInstance(this).getRobotoSlabRegular());
 
         TextView advanceFilter = (TextView) findViewById(R.id.filter3);
-        advanceFilter.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+        advanceFilter.setTypeface(FontTypeface.getInstance(this).getRobotoSlabRegular());
 
         for (int loop = 0; loop < sportsCategoryLayoutID.length; loop++) {
             initCheckBox(sportsCategoryLayoutID[loop], checkedFlag[loop], loop);
         }
-
+        editSports.setVisibility(View.INVISIBLE);
         editSports.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(FilterActivity.this, SelectSportsActivity.class);
-                intent.putExtra(Constants.IS_FROM_NAV, true);
-                startActivity(intent);
+                intent.putExtra(Constants.RESULT_REQUIRED, true);
+                startActivityForResult(intent, Constants.REQUEST_CODE_EDIT_SPORT);
             }
         });
 
@@ -122,19 +130,19 @@ public class FilterActivity extends AppCompatActivity  {
 
     }
 
-    private  void setTab() {
+    private void setTab() {
 
         String titles[] = {"Teams", "Leagues", "Players"};
 
         int numberOfTabs = titles.length;
 
         // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        ViewPagerAdapterForFilter adapter = new ViewPagerAdapterForFilter(getSupportFragmentManager(), titles, numberOfTabs);
+        adapter = new ViewPagerAdapterForFilter(getSupportFragmentManager());
 
         // Assigning ViewPager View and setting the adapter
-        ViewPager pager = (ViewPager) findViewById(com.sports.unity.R.id.pager);
+        pager = (ViewPager) findViewById(R.id.filter_activity_pager);
         pager.setAdapter(adapter);
-
+        pager.setOffscreenPageLimit(2);
         // Assiging the Sliding Tab Layout View
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
         tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
@@ -214,28 +222,36 @@ public class FilterActivity extends AppCompatActivity  {
         onClickCheckBox(view.getId());
     }
 
-//    @Override
-//    public void onClick(View view) {
-//        switch (view.getId()) {
-//            case R.id.adv1:
-//                Intent advancedFilterTeam = new Intent(this, AdvancedFilterActivity.class);
-//                advancedFilterTeam.putExtra(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_TEAM);
-//                startActivity(advancedFilterTeam);
-//                break;
-//            case R.id.adv2:
-//                if(sportsSelected.contains(Constants.GAME_KEY_FOOTBALL)) {
-//                    Intent advancedFilterLeague = new Intent(this, AdvancedFilterActivity.class);
-//                    advancedFilterLeague.putExtra(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_LEAGUE);
-//                    startActivity(advancedFilterLeague);
-//                }else{
-//                    Toast.makeText(this,"Please follow football to view leagues.",Toast.LENGTH_SHORT).show();
-//                }
-//                break;
-//            case R.id.adv3:
-//                Intent advancedFilterPlayer = new Intent(this, AdvancedFilterActivity.class);
-//                advancedFilterPlayer.putExtra(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_PLAYER);
-//                startActivity(advancedFilterPlayer);
-//                break;
-//        }
-//    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK && requestCode == Constants.REQUEST_CODE_ADD_SPORT) {
+            for (int i = 0; i < resultReceivedListeners.size(); i++) {
+                resultReceivedListeners.get(i).updateData();
+            }
+        } else if (resultCode == RESULT_OK && requestCode == Constants.REQUEST_CODE_EDIT_SPORT) {
+            setResult(resultCode);
+            finish();
+
+        }
+    }
+
+    public void addListener(OnResultReceivedListener listener) {
+        resultReceivedListeners.add(listener);
+    }
+
+    public void removeListener(OnResultReceivedListener listener) {
+        resultReceivedListeners.remove(listener);
+    }
+
+    /**
+     * Interface definition for the callback to be
+     * invoked in onActivityResult of FilterActivity class
+     * which is caused by the ADD Sport action of FilterFragment class.
+     * After receiving result the data in the FilterFragment class must be updated
+     * so FilterFragment class will implement this interface.
+     */
+    public interface OnResultReceivedListener {
+        public void updateData();
+    }
 }

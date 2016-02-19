@@ -5,6 +5,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +18,7 @@ import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.messages.controller.fragment.ContactsFragment;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
@@ -28,15 +30,18 @@ public class ForwardSelectedItems extends CustomAppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forward_selected_items);
-        initToolber();
+        initToolbar();
         Intent intent = getIntent();
 
         ArrayList<Integer> selectedIdsITemList = intent.getIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS);
         addContactFragment(selectedIdsITemList);
     }
 
-    private void initToolber() {
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        toolbar.setContentInsetsAbsolute(0, 0);
         ImageView backArrow = (ImageView) findViewById(R.id.backarrow);
+        backArrow.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE,false));
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,25 +63,4 @@ public class ForwardSelectedItems extends CustomAppCompatActivity {
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_forward_selected_items, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }

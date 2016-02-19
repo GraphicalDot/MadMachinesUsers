@@ -3,12 +3,17 @@ package com.sports.unity.common.controller.fragment;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ExpandableListActivity;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,12 +29,19 @@ import android.widget.Toast;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.common.controller.About;
 import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.NavListAdapter;
+import com.sports.unity.common.controller.SelectSportsActivity;
+import com.sports.unity.common.controller.SettingsActivity;
+import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.common.model.FavouriteItemWrapper;
+import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
@@ -46,25 +58,46 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class NavigationFragment extends Fragment implements ExpandableListView.OnChildClickListener, View.OnClickListener {
 
     public boolean isMannual;
-    ArrayList<String> teamGroupItems = new ArrayList<String>();
-    private ArrayList<Object> teamChildItems = new ArrayList<Object>();
+    private ArrayList<String> teamGroupItems = new ArrayList<String>();
+    private ArrayList<FavouriteItem> teamChildItems = new ArrayList<FavouriteItem>();
 
-    ArrayList<String> competeGroupItems = new ArrayList<String>();
-    private ArrayList<Object> competeChildItems = new ArrayList<Object>();
+    private ArrayList<String> competeGroupItems = new ArrayList<String>();
+    private ArrayList<FavouriteItem> competeChildItems = new ArrayList<FavouriteItem>();
+    private ArrayList<String> sportsGroupItem = new ArrayList<String>();
+    private ArrayList<FavouriteItem> sportsChildItem = new ArrayList<FavouriteItem>();
 
-    ExpandableListView teamList, competeList;
+    private ExpandableListView teamList, competeList, sportsList;
 
-    NavListAdapter teamAdapter, compAdapter;
+    private NavListAdapter teamAdapter, compAdapter, sportsAdapter;
 
-    TextView editTeam, editComp;
+    TextView editTeam, editComp, editSports;
 
-    ImageView teamIndi, compIndi;
+    ImageView teamIndi, compIndi, sportsIndi;
     boolean isTeam, isComp;
+    FavouriteItemWrapper favouriteItemWrapper;
+    private boolean isResult = false;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        favouriteItemWrapper = FavouriteItemWrapper.getInstance(getActivity());
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         initItemList();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        teamGroupItems = new ArrayList<>();
+        competeGroupItems = new ArrayList<>();
+        sportsGroupItem = new ArrayList<>();
+        teamChildItems = new ArrayList<>();
+        competeChildItems = new ArrayList<>();
+        sportsChildItem = new ArrayList<>();
     }
 
     @Nullable
@@ -78,22 +111,106 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         setUpExpandableLists(view);
+        initTextViews(view);
+    }
+
+    TextView.OnClickListener textViewClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (v.getId() == R.id.settings) {
+                ((MainActivity) getActivity()).closeDrawer();
+                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(intent);
+            } else if (v.getId() == R.id.feedback) {
+                ((MainActivity) getActivity()).closeDrawer();
+                getEmailIntent();
+            } else if (v.getId() == R.id.rate) {
+                ((MainActivity) getActivity()).closeDrawer();
+                openPlayStoreListing();
+            } else if (v.getId() == R.id.about) {
+                ((MainActivity) getActivity()).closeDrawer();
+                openAboutPage();
+            }
+        }
+    };
+
+    private void openAboutPage() {
+        Intent about = new Intent(getActivity(), About.class);
+        startActivity(about);
+    }
+
+    private void openPlayStoreListing() {
+        final String appPackageName = getActivity().getPackageName();
+        Log.i("packagename", appPackageName);
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException activityNotFoundException) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
+    }
+
+    private void getEmailIntent() {
+        Resources resources = getActivity().getApplicationContext().getResources();
+        String body = CommonUtil.getDeviceDetails();
+        Intent gmailIntent = new Intent();
+        gmailIntent.setClassName("com.google.android.gm", "com.google.android.gm.ComposeActivityGmail");
+        gmailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, resources.getStringArray(R.array.receipients));
+        gmailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, String.format(getString(R.string.email_subject)));
+        gmailIntent.putExtra(android.content.Intent.EXTRA_TEXT, body);
+        try {
+
+            getActivity().startActivity(gmailIntent);
+        } catch (ActivityNotFoundException ex) {
+            // handle error
+        }
+    }
+
+    private void initTextViews(View view) {
+        TextView settings = (TextView) view.findViewById(R.id.settings);
+        TextView shareFeedback = (TextView) view.findViewById(R.id.feedback);
+        TextView rateUs = (TextView) view.findViewById(R.id.rate);
+        TextView about = (TextView) view.findViewById(R.id.about);
+
+        settings.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+        shareFeedback.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+        rateUs.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+        about.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+
+        settings.setTypeface(FontTypeface.getInstance(getActivity().getApplicationContext()).getRobotoRegular());
+        shareFeedback.setTypeface(FontTypeface.getInstance(getActivity().getApplicationContext()).getRobotoRegular());
+        rateUs.setTypeface(FontTypeface.getInstance(getActivity().getApplicationContext()).getRobotoRegular());
+        about.setTypeface(FontTypeface.getInstance(getActivity().getApplicationContext()).getRobotoRegular());
+
+        settings.setOnClickListener(textViewClickListener);
+        shareFeedback.setOnClickListener(textViewClickListener);
+        rateUs.setOnClickListener(textViewClickListener);
+        about.setOnClickListener(textViewClickListener);
     }
 
     private void setUpExpandableLists(View view) {
         teamIndi = (ImageView) view.findViewById(R.id.favindi);
         compIndi = (ImageView) view.findViewById(R.id.compindi);
+        sportsIndi = (ImageView) view.findViewById(R.id.sportsindi);
         teamIndi.setOnClickListener(this);
         compIndi.setOnClickListener(this);
-       // editTeam = (TextView) view.findViewById(R.id.edit_team);
+        sportsIndi.setOnClickListener(this);
+        // editTeam = (TextView) view.findViewById(R.id.edit_team);
         //editComp = (TextView) view.findViewById(R.id.edit_comp);
         //editTeam.setOnClickListener(this);
         //editComp.setOnClickListener(this);
+        editSports = (TextView) view.findViewById(R.id.edit_sports);
+        editSports.setOnClickListener(this);
         teamList = (ExpandableListView) view.findViewById(R.id.fav_team);
         competeList = (ExpandableListView) view.findViewById(R.id.complist);
+        sportsList = (ExpandableListView) view.findViewById(R.id.fav_sports);
 
-        teamAdapter = new NavListAdapter(getActivity(), teamGroupItems, teamChildItems, teamIndi);
-        compAdapter = new NavListAdapter(getActivity(), competeGroupItems, competeChildItems, compIndi);
+        teamList.setSelector(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+        competeList.setSelector(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+        sportsList.setSelector(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+
+        teamAdapter = new NavListAdapter(getActivity(), teamGroupItems, teamChildItems, teamIndi, false, null);
+        compAdapter = new NavListAdapter(getActivity(), competeGroupItems, competeChildItems, compIndi, false, null);
+        sportsAdapter = new NavListAdapter(getActivity(), sportsGroupItem, sportsChildItem, sportsIndi, true, editSports);
 
         teamList.setAdapter(teamAdapter);
         teamList.setGroupIndicator(null);
@@ -106,6 +223,12 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
         competeList.setDividerHeight(2);
         competeList.setGroupIndicator(null);
         competeList.setOnChildClickListener(this);
+
+        sportsList.setAdapter(sportsAdapter);
+        sportsList.setClickable(true);
+        sportsList.setDividerHeight(2);
+        sportsList.setGroupIndicator(null);
+        sportsList.setOnChildClickListener(this);
         setUpClickListeners();
     }
 
@@ -114,7 +237,8 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 competeList.collapseGroup(0);
-             setListViewHeight(parent,groupPosition);
+                sportsList.collapseGroup(0);
+                setListViewHeight(parent, groupPosition);
                 return false;
             }
         });
@@ -122,7 +246,17 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
                 teamList.collapseGroup(0);
-              setListViewHeight(parent, groupPosition);
+                sportsList.collapseGroup(0);
+                setListViewHeight(parent, groupPosition);
+                return false;
+            }
+        });
+        sportsList.setOnGroupClickListener(new ExpandableListView.OnGroupClickListener() {
+            @Override
+            public boolean onGroupClick(ExpandableListView parent, View v, int groupPosition, long id) {
+                teamList.collapseGroup(0);
+                competeList.collapseGroup(0);
+                setListViewHeight(parent, groupPosition);
                 return false;
             }
         });
@@ -140,6 +274,14 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
                 competeList.setLayoutParams(params);
                 competeList.requestLayout();
+            }
+        });
+        sportsList.setOnGroupCollapseListener(new ExpandableListView.OnGroupCollapseListener() {
+            @Override
+            public void onGroupCollapse(int i) {
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                sportsList.setLayoutParams(params);
+                sportsList.requestLayout();
             }
         });
     }
@@ -185,10 +327,14 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
         switch (parent.getId()) {
             case R.id.fav_team:
-                Toast.makeText(getActivity(), ((ArrayList<String>) teamChildItems.get(groupPosition)).get(childPosition), Toast.LENGTH_SHORT).show();
+                if (teamChildItems.size() > 0) {
+                    Toast.makeText(getActivity(), teamChildItems.get(childPosition).getName(), Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.complist:
-                Toast.makeText(getActivity(), ((ArrayList<String>) competeChildItems.get(groupPosition)).get(childPosition), Toast.LENGTH_SHORT).show();
+                if (competeChildItems.size() > 0) {
+                    Toast.makeText(getActivity(), competeChildItems.get(childPosition).getName(), Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
 
@@ -197,77 +343,73 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     }
 
     private void initItemList() {
-        ArrayList<String> savedList = UserUtil.getFavouriteFilters();
-        teamGroupItems.add("Favourite Team");
-        competeGroupItems.add("Competitions");
-        List<String> teamChild = new ArrayList<>();
-        List<String> compChild = new ArrayList<String>();
-        for (String name : savedList) {
-            if (name.contains(Constants.NAV_COMP)) {
-                name = name.replace(Constants.NAV_COMP, "");
-                compChild.add(name);
-            } else if (name.contains(Constants.NAV_TEAM)) {
-                name = name.replace(Constants.NAV_TEAM, "");
-                teamChild.add(name);
-            }
+        teamGroupItems.add("Favourite Teams");
+        competeGroupItems.add("Favourite Leagues");
+        sportsGroupItem.add("Favourite Sports");
+        teamChildItems.addAll(favouriteItemWrapper.getAllTeams());
+        competeChildItems.addAll(favouriteItemWrapper.getAllLeagues());
+        sportsChildItem.addAll(favouriteItemWrapper.getAllSports());
+        if (teamAdapter != null) {
+            teamAdapter.updateItem(teamChildItems);
         }
-        Collections.sort(teamChild);
-        Collections.sort(compChild);
-        teamChildItems.add(teamChild);
-        competeChildItems.add(compChild);
-    }
+        if (compAdapter != null) {
+            compAdapter.updateItem(competeChildItems);
+        }
+        if (sportsAdapter != null) {
+            sportsAdapter.updateItem(sportsChildItem);
+        }
+        if (isResult) {
+            isResult = false;
+            sportsList.collapseGroup(0);
+            setListViewHeight(sportsList, 0);
+            sportsList.expandGroup(0);
+            ((MainActivity) getActivity()).closeDrawer();
 
-    private void updateTeamChild() {
-        ArrayList<String> savedList = UserUtil.getFavouriteFilters();
-        List<String> teamChild = new ArrayList<>();
-        for (String name : savedList) {
-            if (name.contains(Constants.NAV_TEAM)) {
-                name = name.replace(Constants.NAV_TEAM, "");
-                teamChild.add(name);
-            }
         }
-        Collections.sort(teamChild);
-        teamChildItems = new ArrayList<Object>();
-        teamChildItems.add(teamChild);
-    }
-
-    private void updateCompChild() {
-        ArrayList<String> savedList = UserUtil.getFavouriteFilters();
-        List<String> teamChild = new ArrayList<>();
-        List<String> compChild = new ArrayList<String>();
-        for (String name : savedList) {
-            if (name.contains(Constants.NAV_COMP)) {
-                name = name.replace(Constants.NAV_COMP, "");
-                compChild.add(name);
-            }
-        }
-        Collections.sort(compChild);
-        competeChildItems = new ArrayList<Object>();
-        competeChildItems.add(compChild);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.favindi:
-                isMannual=true;
+            case R.id.sportsindi:
+                isMannual = true;
                 competeList.collapseGroup(0);
-                if (teamList.isGroupExpanded(0)) {
-                    teamList.collapseGroup(0);
+                teamList.collapseGroup(0);
+                if (sportsList.isGroupExpanded(0)) {
+                    sportsList.collapseGroup(0);
                 } else {
-                    setListViewHeight(teamList,0);
-                    teamList.expandGroup(0);
+                    setListViewHeight(sportsList, 0);
+                    sportsList.expandGroup(0);
                 }
                 break;
             case R.id.compindi:
-                isMannual=true;
+                isMannual = true;
                 teamList.collapseGroup(0);
+                sportsList.collapseGroup(0);
                 if (competeList.isGroupExpanded(0)) {
                     competeList.collapseGroup(0);
                 } else {
-                    setListViewHeight(competeList,0);
+                    setListViewHeight(competeList, 0);
                     competeList.expandGroup(0);
                 }
+                break;
+            case R.id.favindi:
+                isMannual = true;
+                competeList.collapseGroup(0);
+                sportsList.collapseGroup(0);
+                if (teamList.isGroupExpanded(0)) {
+                    teamList.collapseGroup(0);
+                } else {
+                    setListViewHeight(teamList, 0);
+                    teamList.expandGroup(0);
+                }
+                break;
+            case R.id.edit_sports:
+
+                Intent selectSports = new Intent(getActivity(), SelectSportsActivity.class);
+                selectSports.putExtra(Constants.RESULT_REQUIRED, true);
+                startActivityForResult(selectSports, Constants.REQUEST_CODE_EDIT_SPORT);
+                isResult = true;
                 break;
 //            case R.id.edit_team:
 //                isTeam = true;
@@ -286,27 +428,4 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
 //                getActivity().startActivityForResult(advancedFilterLeague, Constants.REQUEST_CODE_NAV);
         }
     }
-
-   // @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        super.onActivityResult(requestCode, resultCode, data);
-//        Log.d("max","REQU-"+requestCode);
-//        if (resultCode == Activity.RESULT_OK && requestCode == Constants.REQUEST_CODE_NAV) {
-//            if (isComp) {
-//                updateCompChild();
-//                isComp = false;
-//                compAdapter.updateChildList(competeChildItems);
-//                competeList.collapseGroup(0);
-//                setListViewHeight(competeList, 0);
-//                competeList.expandGroup(0);
-//            } else if (isTeam) {
-//                updateTeamChild();
-//                isTeam = false;
-//                teamAdapter.updateChildList(teamChildItems);
-//                teamList.collapseGroup(0);
-//                setListViewHeight(teamList,0);
-//                teamList.expandGroup(0);
-//            }
-//        }
-//    }
 }

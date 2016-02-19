@@ -11,6 +11,8 @@
     <color name="horizontal_line_grey">#e5e5e5</color>'
 
     <color name="app_theme_blue">#004d99</color>
+    <color name="app_theme_blue_translucent">#20004d99</color>
+    <color name="white_translucent">#20FFFFFF</color>
     <color name="progress_light">#bbbbbb</color>
 
     <color name="custom_black_distace">#4d4d4d</color>
@@ -30,6 +32,7 @@
     <color name="gray2">#4c4c4c</color>
     <color name="gray3">#f2f2f2</color>
     <color name="gray4">#b2b2b2</color>
+    <color name="grayBorder">#cbcbcb</color>
 
     <color name="divider_color">#e5e5e5</color>
     <color name="tour_news_color">#f8b54f</color>
@@ -44,6 +47,7 @@
 
 
     <!-- camera related -->
+    <color name="semi_transparent_white">#BF000000</color>
     <color name="semi_transparent">#44000000</color>
     <color name="red_semi_transparent">#55ff0000</color>
     <color name="brick_red">#e86369</color>
@@ -61,6 +65,11 @@
     <color name="around_me_seekbar_progress_color">#cccccc</color>
 
     <color name="dot_color_grey">#999999</color>
+
+    <!-- floating action menu-->
+    <color name="people_around_me">#c51162</color>
+    <color name="create_group">#9c27b0</color>
+
     <color name="Very_dark_gray">#1a1a1a</color>
     <color name="dark_blue">#004d99</color>
 

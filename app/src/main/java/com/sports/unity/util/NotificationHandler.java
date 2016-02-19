@@ -12,11 +12,18 @@ import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.media.RingtoneManager;
+import android.net.Uri;
+import android.os.Vibrator;
+import android.provider.Settings;
 import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.common.controller.SettingsActivity;
+import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,8 +59,8 @@ public class NotificationHandler {
 
     }
 
-    synchronized public void addNotificationMessage(long chatId, String from, String message, String mimeType,byte[] image) {
-        NotificationMessage notificationMessage = new NotificationMessage(chatId, from, message, mimeType,image);
+    synchronized public void addNotificationMessage(long chatId, String from, String message, String mimeType, byte[] image) {
+        NotificationMessage notificationMessage = new NotificationMessage(chatId, from, message, mimeType, image);
         notificationMessageList.add(notificationMessage);
 
         chatIdSet.add(chatId);
@@ -99,18 +106,25 @@ public class NotificationHandler {
         builder.setSmallIcon(R.drawable.ic_stat_notification);
         builder.setColor(context.getResources().getColor(R.color.app_theme_blue));
 
-        if(messageArrived.getProfileImage() != null) {
+        if (messageArrived.getProfileImage() != null) {
             builder.setLargeIcon(getCroppedBitmap(messageArrived.getProfileImage()));
         } else {
             //nothing
         }
 
-        builder.setContentText(messageArrived.getTitleMessage());
+        if ( UserUtil.isNotificationPreviews() ) {
+            builder.setContentText(messageArrived.getTitleMessage());
+        } else {
+            builder.setContentText("Message from " + messageArrived.from);
+        }
+
         builder.setContentTitle(messageArrived.from);
 
         builder.setContentIntent(pendingIntent);
         builder.setPriority(Notification.PRIORITY_HIGH);
-        builder.setDefaults(Notification.DEFAULT_ALL);
+        int defaults = 0;
+        defaults = getDefaults(context, defaults, builder);
+        builder.setDefaults(defaults);
         builder.setAutoCancel(true);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -119,7 +133,7 @@ public class NotificationHandler {
 
     public Bitmap getCroppedBitmap(Bitmap bitmap) {
 
-        bitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, false);
+        bitmap = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
 
         final int width = bitmap.getWidth();
         final int height = bitmap.getHeight();
@@ -129,7 +143,7 @@ public class NotificationHandler {
         path.addCircle(
                 (float) (width / 2)
                 , (float) (height / 2)
-                , (float) Math.min( height/2, width/2)
+                , (float) Math.min(height / 2, width / 2)
                 , Path.Direction.CCW);
 
         final Canvas canvas = new Canvas(outputBitmap);
@@ -141,19 +155,119 @@ public class NotificationHandler {
     private void comboMessageNotification(Context context, PendingIntent pendingIntent, NotificationMessage messageArrived, int chatCount, int messageCount) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
-        builder.setContentText(messageArrived.getTitleMessage());
-        builder.setContentTitle(messageArrived.from);
+        if ( UserUtil.isNotificationPreviews() ) {
+            builder.setSmallIcon(R.drawable.ic_stat_notification);
+            if (chatCount == 1) {
+                if (messageArrived.getProfileImage() != null) {
+                    builder.setLargeIcon(getCroppedBitmap(messageArrived.getProfileImage()));
+                } else {
+                    //nothing
+                }
+                builder.setContentTitle(messageArrived.from);
+                if (messageCount == 1) {
+                    builder.setContentText(messageArrived.getTitleMessage());
+                } else {
+                    builder.setContentText(String.valueOf(messageCount) + " new Messages ");
+                }
+            } else {
+                builder.setContentTitle("Sports Unity");
+                builder.setColor(context.getResources().getColor(R.color.app_theme_blue));
+                builder.setContentText(String.valueOf(messageCount) + " Messages from " + String.valueOf(chatCount) + " chats");
+            }
+            setStyle(builder, chatCount, messageArrived, context, messageCount);
+        } else {
+            if (chatCount == 1) {
+                builder.setContentTitle(messageArrived.from);
+                if (messageArrived.getProfileImage() != null) {
+                    builder.setLargeIcon(getCroppedBitmap(messageArrived.getProfileImage()));
+                } else {
+                    //nothing
+                }
+                builder.setSmallIcon(R.drawable.ic_stat_notification);
+                builder.setColor(context.getResources().getColor(R.color.app_theme_blue));
+                if (messageCount == 1) {
+                    builder.setContentText("Message from " + messageArrived.from);
+                } else {
+                    builder.setContentText(String.valueOf(messageCount) + " Messages from " + messageArrived.from);
+                }
+            } else {
+                builder.setSmallIcon(R.drawable.ic_stat_notification);
+                builder.setContentTitle("Sports Unity");
+                builder.setColor(context.getResources().getColor(R.color.app_theme_blue));
 
+                builder.setContentText(String.valueOf(messageCount) + " Messages from " + String.valueOf(chatCount) + " chats");
+            }
+        }
+
+        builder.setContentIntent(pendingIntent);
+        builder.setPriority(Notification.PRIORITY_HIGH);
+        int defaults = 0;
+        defaults = getDefaults(context, defaults, builder);
+        builder.setDefaults(defaults);
+        builder.setAutoCancel(true);
+
+        Uri uri= Settings.System.getUriFor(UserUtil.getNotificationSoundURI());
+        builder.setSound(uri);
+
+        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(NotificationHandler.NOTIFICATION_ID, builder.build());
+    }
+
+    private int getDefaults(Context context, int defaults, NotificationCompat.Builder builder) {
+        if (vibrationEnabled(context)) {
+            defaults = defaults | Notification.DEFAULT_VIBRATE;
+        } else {
+            builder.setVibrate(new long[]{0l});
+        }
+        if (soundEnabled(context)) {
+            defaults = defaults | Notification.DEFAULT_SOUND;
+        } else {
+            builder.setSound(null);
+        }
+        if (lightEnabled(context)) {
+            builder.setLights(0xFF0000FF, 100, 3000);
+        } else {
+//            defaults = defaults | Notification.DEFAULT_LIGHTS;
+            //nothing
+        }
+        return defaults;
+    }
+
+    private boolean vibrationEnabled(Context context) {
+        if ( UserUtil.isConversationVibrate() ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean soundEnabled(Context context) {
+        //TODO handle sound value and how to pick default tone.
+        if ( UserUtil.getNotificationSoundURI() != null ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private boolean lightEnabled(Context context) {
+        if ( UserUtil.isNotificationLight() ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void setStyle(NotificationCompat.Builder builder, int chatCount, NotificationMessage messageArrived, Context context, int messageCount) {
         NotificationCompat.InboxStyle style = new NotificationCompat.InboxStyle();
         if (chatCount == 1) {
             style.setBigContentTitle(messageArrived.from);
 
-            if(messageArrived.getProfileImage() != null) {
+            if (messageArrived.getProfileImage() != null) {
                 builder.setLargeIcon(getCroppedBitmap(messageArrived.getProfileImage()));
             } else {
                 //nothing
             }
-
             builder.setSmallIcon(R.drawable.ic_stat_notification);
             builder.setColor(context.getResources().getColor(R.color.app_theme_blue));
 
@@ -182,15 +296,8 @@ public class NotificationHandler {
             style.setSummaryText(messageCount + " messages from " + chatCount + " chats");
         }
         builder.setStyle(style);
-
-        builder.setContentIntent(pendingIntent);
-        builder.setPriority(Notification.PRIORITY_HIGH);
-        builder.setDefaults(Notification.DEFAULT_ALL);
-        builder.setAutoCancel(true);
-
-        NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(NotificationHandler.NOTIFICATION_ID, builder.build());
     }
+
 
     private class NotificationMessage {
         private long chatId;
@@ -199,7 +306,7 @@ public class NotificationHandler {
         private String mimeType;
         private byte[] image;
 
-        NotificationMessage(long chatId, String from, String message, String mimeType,byte[] image) {
+        NotificationMessage(long chatId, String from, String message, String mimeType, byte[] image) {
             this.chatId = chatId;
             this.from = from;
             this.message = message;
@@ -209,8 +316,8 @@ public class NotificationHandler {
 
         private Bitmap getProfileImage() {
             Bitmap profileImage = null;
-            if(image != null) {
-               profileImage = BitmapFactory.decodeByteArray(image, 0, image.length);
+            if (image != null) {
+                profileImage = BitmapFactory.decodeByteArray(image, 0, image.length);
             }
             return profileImage;
         }

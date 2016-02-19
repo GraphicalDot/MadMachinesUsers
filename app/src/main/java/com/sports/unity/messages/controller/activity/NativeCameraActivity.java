@@ -36,7 +36,6 @@ import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.util.Log;
 import android.view.Display;
@@ -45,7 +44,6 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
@@ -59,20 +57,15 @@ import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
+import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
 import com.sports.unity.util.ThreadTask;
 
-import org.w3c.dom.Text;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -663,6 +656,8 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
     private void handleSendMedia() {
         new ThreadTask(content) {
 
+            private String thumbnailImage = null;
+
             @Override
             public Object process() {
                 String fileName = null;
@@ -674,13 +669,16 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
                 } else if (contentMimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
                     fileName = videoContentOutputFilename;
                 }
+
+                thumbnailImage = PersonalMessaging.createThumbnailImageAsBase64(NativeCameraActivity.this, contentMimeType, fileName);
+
                 return fileName;
             }
 
             @Override
             public void postAction(Object object) {
                 String fileName = (String) object;
-                addActionToCorrespondingActivity(ActivityActionHandler.CHAT_SCREEN_KEY, contentMimeType, fileName, this.object);
+                ActivityActionHandler.getInstance().pendingDispatchSendMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, contentMimeType, fileName, thumbnailImage, this.object);
 
                 NativeCameraActivity.this.runOnUiThread(new Runnable() {
 
@@ -694,14 +692,6 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
         }.start();
 
-    }
-
-    private boolean addActionToCorrespondingActivity(String key, String mimeType, String fileName, Object bytes) {
-        boolean success = false;
-
-        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        activityActionHandler.addActionOnHold(ActivityActionHandler.CHAT_SCREEN_KEY, new ActivityActionHandler.ActionItem(1, mimeType, fileName, bytes));
-        return success;
     }
 
     private void startTimer() {

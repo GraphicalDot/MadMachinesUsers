@@ -89,7 +89,7 @@ public class NewsAdapter extends BaseNewsAdapter {
 
         try {
             if (news.size() <= 0) {
-                Toast.makeText(activity, "Some error occured Please try later", Toast.LENGTH_LONG).show();
+                Toast.makeText(activity, "Some error occured, Please try later", Toast.LENGTH_LONG).show();
             } else {
                 String text = newsJsonCaller.getSummary();
 
@@ -147,6 +147,7 @@ public class NewsAdapter extends BaseNewsAdapter {
                         String type = CommonUtil.capitalize(newsJsonCaller.getType());
 
                         Intent intent = new Intent(activity, NewsDetailsActivity.class);
+                        intent.putExtra(Constants.INTENT_KEY_ID, newsJsonCaller.getNewsId());
                         intent.putExtra(Constants.INTENT_KEY_URL, newsLink);
                         intent.putExtra(Constants.INTENT_KEY_TITLE, title);
                         intent.putExtra(Constants.INTENT_KEY_TYPE, type);

@@ -210,6 +210,11 @@
             android:id="@+id/tabs"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            />
+        <include layout="@layout/error_layout"
+            android:id="@+id/error"
             android:background="@color/app_theme_blue"
             android:elevation="@dimen/toolbar_elevation" />
 

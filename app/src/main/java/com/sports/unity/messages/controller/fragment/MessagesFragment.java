@@ -5,12 +5,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -18,29 +20,35 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
+import com.sports.unity.messages.controller.activity.CreateGroup;
 import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
+import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.Constants;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
  * Created by Agupta on 8/13/2015.
  */
-public class MessagesFragment extends Fragment implements View.OnClickListener,MainActivity.PermissionResultHandler{
+public class MessagesFragment extends Fragment implements View.OnClickListener, MainActivity.PermissionResultHandler {
 
     private OnSearchViewQueryListener mListener = null;
-
-    private static final String CURRENT_FRAGMENT = "current_fragment";
 
     FrameLayout frame;
     Button contacts;
@@ -48,12 +56,32 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
     Button others;
     LinearLayout buttonContainerLayout;
     Activity activity;
+    Fragment currentFragment;
+    LinearLayout childStripLayout;
+
+    TextView friendsUnreadCount;
+    TextView othersUnreadCount;
+
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
+    }
 
+    private void getAndSetUnreadCount() {
+        int friendsChatUnreadCount = SportsUnityDBHelper.getInstance(getContext()).getTotalUnreadCount(0);
+        int otherChatUnreadCount = SportsUnityDBHelper.getInstance(getContext()).getTotalUnreadCount(1);
+        if (friendsChatUnreadCount == 0) {
+            friendsUnreadCount.setVisibility(View.GONE);
+        } else {
+            friendsUnreadCount.setText(String.valueOf(friendsChatUnreadCount));
+        }
+        if (otherChatUnreadCount == 0) {
+            othersUnreadCount.setVisibility(View.GONE);
+        } else {
+            othersUnreadCount.setText(String.valueOf(otherChatUnreadCount));
+        }
     }
 
     @Override
@@ -71,10 +99,17 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
         others.setOnClickListener(this);
         others.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
         buttonContainerLayout = (LinearLayout) v.findViewById(com.sports.unity.R.id.fragmentChangeButtonLayout);
+        childStripLayout = (LinearLayout) v.findViewById(R.id.fragmentChangeButtonContainer);
+
+        friendsUnreadCount = (TextView) v.findViewById(R.id.friends_unread_count);
+        othersUnreadCount = (TextView) v.findViewById(R.id.others_unread_count);
+
+        getAndSetUnreadCount();
 
 
-        FloatingActionButton peopleAroundMeFab = (FloatingActionButton) v.findViewById(R.id.floatingbutton);
-        peopleAroundMeFab.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.app_theme_blue)));
+        FloatingActionMenu fabMenu = (FloatingActionMenu) v.findViewById(R.id.fab_menu);
+
+        FloatingActionButton peopleAroundMeFab = (FloatingActionButton) v.findViewById(R.id.people_around_me);
         peopleAroundMeFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,33 +123,27 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
             }
         });
 
-//        ImageButton createGroup = (ImageButton) v.findViewById(R.id.create_group);
-//        createGroup.setOnClickListener(this);
-//        ImageButton joinGroup = (ImageButton) v.findViewById(R.id.join_group);
-//        joinGroup.setOnClickListener(this);
-//        ImageButton peopleAroundMe = (ImageButton) v.findViewById(R.id.people_around_me);
-//        peopleAroundMe.setOnClickListener(this);
-//
-//        TextView createGrp = (TextView) v.findViewById(R.id.create_group_txt);
-//        createGrp.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
-//        createGrp.setOnClickListener(this);
-//
-//        TextView joinGrp = (TextView) v.findViewById(R.id.join_group_txt);
-//        joinGrp.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
-//
-//        TextView pplAroundMe = (TextView) v.findViewById(R.id.ppl_around_me_txt);
-//        pplAroundMe.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedRegular());
+        FloatingActionButton createGroupFab = (FloatingActionButton) v.findViewById(R.id.create_group);
+        createGroupFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Intent intent = new Intent(getActivity(), CreateGroup.class);
+//                startActivity(intent);
+            }
+        });
 
         ChatFragment fragment = new ChatFragment();
         mListener = fragment;
         getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
         return v;
     }
-    private void startPeopleAroundMeActivity(){
+
+    private void startPeopleAroundMeActivity() {
 
         Intent intent = new Intent(getActivity(), PeopleAroundMeMap.class);
         startActivity(intent);
     }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -128,12 +157,17 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
         switch (v.getId()) {
             case R.id.btn_chat: {
                 ChatFragment fragment = new ChatFragment();
+                currentFragment = fragment;
                 mListener = fragment;
                 getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
                 buttonContainerLayout.setBackgroundResource(R.drawable.btn_chat_focused);
                 chats.setTextColor(getResources().getColor(R.color.ColorPrimary));
                 contacts.setTextColor(getResources().getColor(R.color.app_theme_blue));
                 others.setTextColor(getResources().getColor(R.color.app_theme_blue));
+                othersUnreadCount.setBackgroundResource(R.drawable.ic_msg_notification);
+                othersUnreadCount.setTextColor(getResources().getColor(android.R.color.white));
+                friendsUnreadCount.setBackgroundResource(R.drawable.ic_msg_notification_white);
+                friendsUnreadCount.setTextColor(getResources().getColor(android.R.color.black));
                 break;
             }
             case R.id.btn_contacts: {
@@ -142,6 +176,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
 
                 ContactsFragment fragment = new ContactsFragment();
                 mListener = fragment;
+                currentFragment = fragment;
                 fragment.setArguments(bundle);
 
                 getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
@@ -149,32 +184,27 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
                 contacts.setTextColor(getResources().getColor(R.color.ColorPrimary));
                 chats.setTextColor(getResources().getColor(R.color.app_theme_blue));
                 others.setTextColor(getResources().getColor(R.color.app_theme_blue));
+                othersUnreadCount.setBackgroundResource(R.drawable.ic_msg_notification);
+                othersUnreadCount.setTextColor(getResources().getColor(android.R.color.white));
+                friendsUnreadCount.setBackgroundResource(R.drawable.ic_msg_notification);
+                friendsUnreadCount.setTextColor(getResources().getColor(android.R.color.white));
                 break;
             }
             case R.id.btn_others: {
                 OthersFragment fragment = new OthersFragment();
                 mListener = fragment;
-
+                currentFragment = fragment;
                 getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
                 buttonContainerLayout.setBackgroundResource(R.drawable.btn_others_focused);
                 others.setTextColor(getResources().getColor(R.color.ColorPrimary));
                 contacts.setTextColor(getResources().getColor(R.color.app_theme_blue));
                 chats.setTextColor(getResources().getColor(R.color.app_theme_blue));
+                othersUnreadCount.setBackgroundResource(R.drawable.ic_msg_notification_white);
+                othersUnreadCount.setTextColor(getResources().getColor(android.R.color.black));
+                friendsUnreadCount.setBackgroundResource(R.drawable.ic_msg_notification);
+                friendsUnreadCount.setTextColor(getResources().getColor(android.R.color.white));
                 break;
             }
-//            case R.id.create_group:
-//                Intent intent = new Intent(getActivity(), CreateGroup.class);
-//                startActivity(intent);
-//                Log.i("createGroupActivity : ", "shown");
-//                break;
-//            case R.id.join_group:
-//                //TODO
-//                Toast.makeText(getActivity(), "Not implemented yet", Toast.LENGTH_SHORT).show();
-//                break;
-//            case R.id.people_around_me:
-//                //TODO
-//                Toast.makeText(getActivity(), "Not implemented yet", Toast.LENGTH_SHORT).show();
-//                break;
         }
     }
 
@@ -185,11 +215,12 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
         inflater.inflate(R.menu.fragment_messages_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        ((MainActivity) getActivity()).setSearchView(searchView);
+        ((MainActivity) getActivity()).setSearchView(searchView, menu.findItem(R.id.action_search));
         int searchImgId = android.support.v7.appcompat.R.id.search_button;
         ImageView v = (ImageView) searchView.findViewById(searchImgId);
         v.setImageResource(R.drawable.ic_menu_search);
         searchView.setQueryHint("Search...");
+        updateSearchViewUI();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -215,6 +246,38 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
         });
     }
 
+    private void updateSearchViewUI() {
+        try {
+            Field searchCloseButton = SearchView.class.getDeclaredField("mCloseButton");
+            searchCloseButton.setAccessible(true);
+            ImageView closeBtn = (ImageView) searchCloseButton.get(searchView);
+            closeBtn.setImageResource(R.drawable.ic_close_blk);
+            Field searchEditField = SearchView.class.getDeclaredField("mSearchSrcTextView");
+            searchEditField.setAccessible(true);
+            EditText editText = (EditText) searchEditField.get(searchView);
+            editText.setTextColor(getResources().getColor(R.color.gray1));
+            editText.setBackgroundColor(getResources().getColor(R.color.textColorPrimary));
+            editText.setHintTextColor(getResources().getColor(R.color.textColorPrimary));
+            this.searchView.setOnSearchClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    childStripLayout.setVisibility(View.GONE);
+                    ((MainActivity) getActivity()).enableSearch();
+                }
+            });
+            this.searchView.setOnCloseListener(new SearchView.OnCloseListener() {
+                @Override
+                public boolean onClose() {
+                    childStripLayout.setVisibility(View.VISIBLE);
+                    ((MainActivity) getActivity()).disableSearch();
+                    return false;
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -225,6 +288,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener,M
     @Override
     public void onResume() {
         super.onResume();
+        mListener = (OnSearchViewQueryListener) currentFragment;
         if (PermissionUtil.getInstance().isRuntimePermissionRequired()) {
             ((MainActivity) getActivity()).addLocationResultListener(this);
         }
