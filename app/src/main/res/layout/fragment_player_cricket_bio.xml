@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/ColorPrimary"
+        android:padding="@dimen/horizontal_padding_small"
         android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
@@ -21,9 +22,10 @@
                android:layout_height="wrap_content">
                <TableRow
                    android:layout_marginLeft="@dimen/activity_vertical_margin_small"
-                   android:paddingTop="@dimen/horizontal_padding_very_small">
+                   android:paddingTop="@dimen/horizontal_padding_small"
+                   android:weightSum="2">
                    <TextView
-                       android:layout_width="wrap_content"
+                       android:layout_width="0dp"
                        android:layout_height="wrap_content"
                        android:textSize="@dimen/font_size_small_large"
                        android:layout_weight="1"
@@ -37,10 +39,10 @@
                        android:text="Chandigarh, India"/>
                </TableRow>
                <TableRow
-                   android:paddingTop="@dimen/horizontal_padding_very_small"
+                   android:paddingTop="@dimen/horizontal_padding_small"
                    android:layout_marginLeft="@dimen/activity_vertical_margin_small">
                    <TextView
-                       android:layout_width="wrap_content"
+                       android:layout_width="0dp"
                        android:layout_height="wrap_content"
                        android:textSize="@dimen/font_size_small_large"
                        android:layout_weight="1"
@@ -54,11 +56,11 @@
                        android:text="12 December 1981 (age34)"/>
                </TableRow>
                <TableRow
-                   android:paddingTop="@dimen/horizontal_padding_very_small"
+                   android:paddingTop="@dimen/horizontal_padding_small"
                    android:layout_marginLeft="@dimen/activity_vertical_margin_small">
                    <TextView
-                       android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
+                       android:layout_width="0dp"
                        android:textSize="@dimen/font_size_small_large"
                        android:layout_weight="1"
                        android:text="@string/bating_style"/>
@@ -71,10 +73,10 @@
                        android:text="Left Hand"/>
                </TableRow>
                <TableRow
-                   android:paddingTop="@dimen/horizontal_padding_very_small"
+                   android:paddingTop="@dimen/horizontal_padding_small"
                    android:layout_marginLeft="@dimen/activity_vertical_margin_small">
                    <TextView
-                       android:layout_width="wrap_content"
+                       android:layout_width="0dp"
                        android:layout_height="wrap_content"
                        android:textSize="@dimen/font_size_small_large"
                        android:layout_weight="1"
@@ -88,10 +90,10 @@
                        android:text="Slow Left-arm orthodox"/>
                </TableRow>
                <TableRow
-                   android:paddingTop="@dimen/horizontal_padding_very_small"
+                   android:paddingTop="@dimen/horizontal_padding_small"
                    android:layout_marginLeft="@dimen/activity_vertical_margin_small">
                    <TextView
-                       android:layout_width="wrap_content"
+                       android:layout_width="0dp"
                        android:layout_height="wrap_content"
                        android:textSize="@dimen/font_size_small_large"
                        android:layout_weight="1"

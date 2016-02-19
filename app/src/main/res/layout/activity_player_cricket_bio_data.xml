@@ -27,12 +27,14 @@
                 android:id="@+id/profile_info"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/com_facebook_button_background_color"
+                android:background="@color/app_theme_blue"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/activity_horizontal_margin">
                 <FrameLayout
                     android:layout_width="wrap_content"
+                    android:paddingTop="@dimen/horizontal_padding_small"
                     android:layout_height="wrap_content"
+
                     android:layout_gravity="center_horizontal">
 
                     <de.hdodenhof.circleimageview.CircleImageView
@@ -61,19 +63,6 @@
                     android:text="India"
                     android:textColor="@color/ColorPrimary"
                     android:textSize="@dimen/font_size_medium" />
-
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/flag_size_large"
-                    android:layout_gravity="center">
-
-                    <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:layout_marginEnd="@dimen/activity_vertical_margin"
-                        android:layout_marginStart="@dimen/activity_vertical_margin"
-                        android:background="@drawable/white_stroke_round_edge_button"/>
-                </FrameLayout>
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
