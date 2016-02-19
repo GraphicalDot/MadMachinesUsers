@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.sports.unity.common.controller.SettingsActivity;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**

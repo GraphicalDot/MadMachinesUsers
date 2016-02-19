@@ -13,6 +13,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.sports.unity.Database.NewsDBHelper;
+import com.sports.unity.R;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -72,7 +73,7 @@ public class NewsContentHandler {
 
     public interface ContentListener {
 
-        public void handleContent(int responseCode);
+        void handleContent(int responseCode);
 
     }
 
@@ -155,15 +156,17 @@ public class NewsContentHandler {
 
     public void selectedSportsChanged() {
         selectedSports = UserUtil.getSportsSelected();
+         if(selectedSports != null) {
+             StringBuilder stringBuilder = new StringBuilder();
+             for (int i = 0; i < selectedSports.size(); i++) {
+                 stringBuilder.append("&type_1=");
+                 stringBuilder.append(selectedSports.get(i));
+             }
 
-        StringBuilder stringBuilder = new StringBuilder();
-        for (int i = 0; i < selectedSports.size(); i++) {
-            stringBuilder.append( "&type_1=");
-            stringBuilder.append( selectedSports.get(i));
-        }
-
-        subUrl_HavingSelectedSports = stringBuilder.toString();
-
+             subUrl_HavingSelectedSports = stringBuilder.toString();
+         } else {
+             Toast.makeText(context, R.string.select_atleast_one_sport_message,Toast.LENGTH_SHORT).show();
+         }
         Log.i("News Content Handler", "Selected Sports Changed");
     }
 
@@ -209,12 +212,8 @@ public class NewsContentHandler {
                 queue.add(stringRequest);
 
                 requestInProcess.add(REQUEST_CONTENT_TAG);
-            } else {
-                //nothing
             }
 
-        } else {
-            //nothing
         }
     }
 
@@ -235,12 +234,8 @@ public class NewsContentHandler {
                 queue.add(stringRequest);
 
                 requestInProcess.add(REQUEST_MORE_CONTENT_TAG);
-            } else {
-                //nothing
             }
 
-        } else {
-            //nothing
         }
     }
 
@@ -269,8 +264,6 @@ public class NewsContentHandler {
             if ( summary == null) {
                 list.remove(index);
                 index--;
-            } else {
-                //nothing
             }
         }
 
@@ -305,22 +298,14 @@ public class NewsContentHandler {
             }catch (Exception ex){
                 ex.printStackTrace();
             }
-        } else {
-            //nothing
         }
 
-        if(searchOn) {
-            //nothing
-        } else {
+        if(!searchOn) {
             insertIntoDb();
         }
-
         if(contentListener != null) {
             contentListener.handleContent(1);
-        } else {
-           //nothing
         }
-
     }
 
     private void handleErrorResponse(VolleyError volleyError) {
@@ -328,8 +313,6 @@ public class NewsContentHandler {
 
         if(contentListener != null) {
             contentListener.handleContent(0);
-        } else {
-            //nothing
         }
     }
 
@@ -341,8 +324,6 @@ public class NewsContentHandler {
             for(int i = 0; i < DB_CONTENT_LIMIT; i++) {
                 if( ! filteredNewsArticle.isEmpty() ) {
                     newsListForInsert.add(filteredNewsArticle.get(i));
-                } else {
-                    //nothing
                 }
 
             }
@@ -368,14 +349,10 @@ public class NewsContentHandler {
             }catch (Exception ex){
                 ex.printStackTrace();
             }
-        } else {
-            //nothing
         }
 
         if(contentListener != null) {
             contentListener.handleContent(1);
-        } else {
-            //nothing
         }
     }
 
@@ -417,14 +394,10 @@ public class NewsContentHandler {
                     e.printStackTrace();
                 }
 
-            } else {
-                //nothing
             }
         } else  {
             if (timestampLast != null) {
                 url = BASE_URL + screen_type + subUrl_HavingSelectedSports + BASE_SUBSET_URL_DOWN + timestampLast;
-            } else {
-                //nothing
             }
         }
 

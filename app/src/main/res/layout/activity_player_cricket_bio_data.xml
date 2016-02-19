@@ -1,0 +1,102 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ColorPrimary"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/tool_bar_player_profile"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:minHeight="?android:attr/actionBarSize" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tool_bar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gray3"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/profile_info"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/app_theme_blue"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/activity_horizontal_margin">
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:paddingTop="@dimen/horizontal_padding_small"
+                    android:layout_height="wrap_content"
+
+                    android:layout_gravity="center_horizontal">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/iv_cricket_player_profile_image"
+                        android:layout_width="@dimen/profile_thumb_image_xlarge"
+                        android:layout_height="@dimen/profile_thumb_image_xlarge"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/vertical_padding_very_very_small"
+                        android:src="@drawable/ic_user" />
+                </FrameLayout>
+                <com.sports.unity.common.view.CustomRobotoRegularTextView
+                    android:id="@+id/tv_player_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="Yuvraj Singh"
+                    android:textStyle="bold"
+                    android:textColor="@color/ColorPrimary"
+                    android:textSize="@dimen/font_size_large" />
+
+                <TextView
+                    android:id="@+id/tv_player_nation_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="India"
+                    android:textColor="@color/ColorPrimary"
+                    android:textSize="@dimen/font_size_small_large" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/tab_seperator" />
+
+                <com.sports.unity.common.view.SlidingTabLayout
+                    android:id="@+id/tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/cardview_light_background"
+                    android:elevation="@dimen/toolbar_elevation" />
+                <View
+                    android:layout_width="fill_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/ColorPrimary" />
+
+                <com.sports.unity.common.view.CustomViewPager
+                    android:id="@+id/cricket_player_pager"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                </com.sports.unity.common.view.CustomViewPager>
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</RelativeLayout>

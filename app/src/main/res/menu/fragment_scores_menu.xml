@@ -6,14 +6,12 @@
         android:id="@+id/action_filter"
         android:icon="@drawable/ic_menu_filter"
         android:orderInCategory="100"
-        android:title="Search"
+        android:title="@string/search_title"
         app:showAsAction="ifRoom"></item>
     <item
         android:id="@+id/action_search"
         android:icon="@drawable/ic_menu_search"
         android:orderInCategory="200"
-        android:title="Search"
+        android:title="@string/search_title"
         app:showAsAction="ifRoom"></item>
-
-
 </menu>

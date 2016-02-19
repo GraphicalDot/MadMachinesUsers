@@ -10,11 +10,7 @@ android {
         }
     }
     compileSdkVersion 23
-<<<<<<< HEAD
     buildToolsVersion '23.0.2'
-=======
-    buildToolsVersion "23.0.0"
->>>>>>> e69b749279b7be07db0f06aeb818e9bf5249f989
     defaultConfig {
         applicationId 'com.sports.unity'
         minSdkVersion 16
@@ -42,36 +38,33 @@ repositories {
     maven {
         url 'https://oss.sonatype.org/content/repositories/snapshots'
     }
+    maven {
+        url 'http://dl.bintray.com/amulyakhare/maven'
+    }
     mavenCentral()
 }
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     compile 'de.hdodenhof:circleimageview:2.0.0'
-    compile 'com.facebook.android:facebook-android-sdk:4.4.0'
+    compile 'com.facebook.android:facebook-android-sdk:4.9.0'
     compile 'org.igniterealtime.smack:smack-android-extensions:4.1.4'
     compile 'org.igniterealtime.smack:smack-tcp:4.1.4'
-    compile 'com.google.android.gms:play-services-location:7.5.0'
-    compile 'joda-time:joda-time:2.7'
+    compile 'com.google.android.gms:play-services-location:8.4.0'
+    compile 'joda-time:joda-time:2.9.2'
     compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
-    compile 'com.mcxiaoke.volley:library-aar:1.0.0'
+    compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.crittercism:crittercism-android-agent:+'
     compile 'commons-net:commons-net:3.3'
-    compile 'com.github.bumptech.glide:glide:3.6.1'
-<<<<<<< HEAD
+    compile 'com.github.bumptech.glide:glide:3.7.0'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:support-v4:23.1.1'
     compile 'com.android.support:cardview-v7:23.1.1'
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
-=======
-    compile 'com.android.support:appcompat-v7:23.0.1'
-    compile 'com.android.support:support-v4:23.0.1'
-    compile 'com.android.support:cardview-v7:23.0.1'
-    compile 'com.android.support:recyclerview-v7:23.0.1'
-    compile 'com.android.support:design:23.0.1'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.github.clans:fab:1.6.2'
     compile project(':library')
->>>>>>> e69b749279b7be07db0f06aeb818e9bf5249f989
+    compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
+    compile 'com.google.code.gson:gson:1.7.2'
 }

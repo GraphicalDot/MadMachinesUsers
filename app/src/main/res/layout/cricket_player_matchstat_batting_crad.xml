@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/horizontal_padding_small"
+    android:layout_margin="@dimen/activity_vertical_margin"
+    card:cardCornerRadius="@dimen/card_edge_curve_radius">
+    <LinearLayout
+        android:id="@+id/rootLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:padding="@dimen/horizontal_padding_small"
+        android:weightSum="7"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/tv_head"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textSize="@dimen/font_size_small_medium"
+            android:text="league"/>
+        <TextView
+            android:id="@+id/tv_tests"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:textSize="@dimen/font_size_small_medium"
+            android:text="tem"/>
+        <TextView
+            android:id="@+id/tv_odis"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textSize="@dimen/font_size_small_medium"
+            android:text="1"/>
+        <TextView
+            android:id="@+id/tv_t20s"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:textSize="@dimen/font_size_small_medium"
+            android:text="3"/>
+
+    </LinearLayout>
+</android.support.v7.widget.CardView>
+

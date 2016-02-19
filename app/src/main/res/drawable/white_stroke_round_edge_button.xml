@@ -10,6 +10,6 @@
         />
     <solid
         android:color="@color/app_theme_blue"
-        ></solid>
+        />
 
 </shape>

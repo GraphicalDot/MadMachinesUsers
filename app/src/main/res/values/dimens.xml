@@ -109,5 +109,15 @@
     <!--Setting Related -->
     <dimen name="settings_item_height">80dp</dimen>
     <!-- ends -->
+    <!--  score cadrd view-->
+    <dimen name="app_bar_height">180dp</dimen>
+    <dimen name="text_margin">16dp</dimen>
+    <!--  player profile view-->
+    <dimen name="marginTop_user_profile_tag">-40dp</dimen>
+    <dimen name="marginTop_user_info_card">-16dp</dimen>
+    <dimen name="marginLeft_user_profile_tag">300dp</dimen>
+    <dimen name="layout_height_card_divider">1dp</dimen>
+    <!--  player current match summery-->
+    <dimen name="margin_divider">80dp</dimen>
 
 </resources>

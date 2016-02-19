@@ -12,6 +12,27 @@ buildscript {
     }
 }
 
+/*productFlavors {
+    uat {
+        buildConfigField "String", "BASE_URL", "\"http://uat002.bookmypacket.com:8080/bmp/api/\""
+
+
+    }
+    staging {
+        buildConfigField "String", "BASE_URL", "\"http://preprod001.bookmypacket.com:8080/bmp/api/\""
+
+
+    }
+    production {
+        buildConfigField "String", "BASE_URL", "\"http://preprod001.bookmypacket.com:8080/bmp/api/\""
+
+    }
+}*/
+
+
+
+
+
 allprojects {
     repositories {
         jcenter()

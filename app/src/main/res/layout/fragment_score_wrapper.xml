@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/gray1"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        card:cardCornerRadius="5dp"
+        card:layoutManager="com.sports.unity.common.view.CustomLinearLayoutManager">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/gray4"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/id_day_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/text_margin"
+                    android:layout_gravity="center"
+                    android:text="@string/app_name"
+                    android:textAppearance="?attr/textAppearanceListItem"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/ic_league"
+                    android:layout_width="@dimen/flag_size_small"
+                    android:layout_height="@dimen/flag_size_small"
+                    />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/t1score"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerInParent="true"
+                        android:paddingRight="@dimen/vertical_padding_very_small"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/font_size_small_large"
+                        android:text=""
+                        />
+
+                    <TextView
+                        android:id="@+id/league_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_toLeftOf="@id/t1score"
+                        android:layout_centerInParent="true"
+                        android:paddingLeft="@dimen/vertical_padding_very_small"
+                        android:singleLine="true"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/font_size_small_large"
+                        android:text="USA"
+                        />
+
+                </RelativeLayout>
+
+
+            </LinearLayout>
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/child_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:listitem="@layout/fragment_score_card"
+                card:layoutManager="com.sports.unity.common.view.CustomLinearLayoutManager"/>
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>

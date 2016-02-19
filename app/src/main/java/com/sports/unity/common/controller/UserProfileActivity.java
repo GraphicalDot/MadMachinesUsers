@@ -711,7 +711,6 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
             CircleImageView circleImageView = (CircleImageView) findViewById(R.id.user_picture);
-
             byteArray = ImageUtil.handleImageAndSetToView(data, circleImageView, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
         } else if (requestCode == Constants.REQUEST_CODE_PROFILE && resultCode == Activity.RESULT_OK) {
             setFavouriteProfile(FavouriteItemWrapper.getInstance(this).getFavList());
