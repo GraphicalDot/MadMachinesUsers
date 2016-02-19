@@ -8,22 +8,21 @@ import com.sports.unity.common.model.FontTypeface;
 /**
  * Created by manish on 19/02/16.
  */
-public class CustomRobotoLightTextView extends CustomTextView {
-
-    public CustomRobotoLightTextView(Context context) {
+public class CustomRobotoSlabRegularTextView extends CustomTextView {
+    public CustomRobotoSlabRegularTextView(Context context) {
         super(context);
     }
 
-    public CustomRobotoLightTextView(Context context, AttributeSet attrs) {
+    public CustomRobotoSlabRegularTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public CustomRobotoLightTextView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public CustomRobotoSlabRegularTextView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @Override
     public void setFontTypeface(Context ctx) {
-        setTypeface(FontTypeface.getInstance(ctx).getRobotoLight());
+        setTypeface(FontTypeface.getInstance(ctx).getRobotoSlabRegular());
     }
 }
