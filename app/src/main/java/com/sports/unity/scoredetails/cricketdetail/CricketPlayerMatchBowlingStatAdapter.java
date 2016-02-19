@@ -30,15 +30,13 @@ public class CricketPlayerMatchBowlingStatAdapter extends RecyclerView.Adapter<C
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.dto = mValues.get(position);
-        holder.innings.setText(holder.dto.getInnings());
-        holder.runs.setText(holder.dto.getRuns());
-        holder.format.setText(holder.dto.getFormat());
-        holder.matches.setText(holder.dto.getMatches());
-        holder.average.setText(holder.dto.getAverage());
-        holder.strikeRate.setText(holder.dto.getStrikeRate());
-        holder.highest.setText(holder.dto.getHighest());
-        holder.hundreds.setText(holder.dto.getHundreds());
-        holder.notOut.setText(holder.dto.getNotOut());
+        holder.tvHeads.setText(holder.dto.getTitles());
+        holder.tvTests.setText(holder.dto.getTestsMatch());
+        holder.tvOdis.setText(holder.dto.getOdis());
+        holder.tvT20s.setText(holder.dto.getT20s());
+
+
+
     }
 
     @Override
@@ -50,30 +48,21 @@ public class CricketPlayerMatchBowlingStatAdapter extends RecyclerView.Adapter<C
     public class ViewHolder extends RecyclerView.ViewHolder
     {
         public final View mView;
-        private TextView innings;
-        private TextView runs;
-        private TextView format;
-        private TextView matches;
-        private TextView average;
-        private TextView strikeRate;
-        private TextView highest;
-        private TextView hundreds;
-        private TextView notOut;
+        private TextView tvHeads;
+        private TextView tvTests;
+        private TextView tvOdis;
+        private TextView tvT20s;
+
 
         public CricketPlayerMatchStatDTO dto;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            innings = (TextView) view.findViewById(R.id.tv_innings);
-            runs = (TextView) view.findViewById(R.id.tv_runs);
-            format = (TextView) view.findViewById(R.id.tv_format);
-            matches = (TextView) view.findViewById(R.id.tv_matches);
-            average = (TextView) view.findViewById(R.id.tv_average);
-            strikeRate = (TextView) view.findViewById(R.id.tv_strikeRate);
-            highest = (TextView) view.findViewById(R.id.tv_highest);
-            hundreds = (TextView) view.findViewById(R.id.tv_hundreds);
-            notOut = (TextView) view.findViewById(R.id.tv_notOut);
-        }
+            tvHeads = (TextView) view.findViewById(R.id.tv_head);
+            tvTests = (TextView) view.findViewById(R.id.tv_tests);
+            tvOdis = (TextView) view.findViewById(R.id.tv_odis);
+            tvT20s = (TextView) view.findViewById(R.id.tv_t20s);
+      }
     }
 }

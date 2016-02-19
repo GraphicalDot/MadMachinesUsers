@@ -4,86 +4,40 @@ package com.sports.unity.scoredetails.cricketdetail;
  * Created by madmachines on 18/2/16.
  */
 public class CricketPlayerMatchStatDTO {
-    private String innings;
-    private String runs;
-    private String format;
-    private String matches;
-    private String average;
-    private String strikeRate;
-    private String highest;
-    private String hundreds;
-    private String notOut;
+    private String titles;
+    private String testsMatch;
+    private String odis;
+    private String t20s;
 
-
-    public String getInnings() {
-        return innings;
+    public String getTitles() {
+        return titles;
     }
 
-    public void setInnings(String innings) {
-        this.innings = innings;
+    public void setTitles(String titles) {
+        this.titles = titles;
     }
 
-    public String getRuns() {
-        return runs;
+    public String getTestsMatch() {
+        return testsMatch;
     }
 
-    public void setRuns(String runs) {
-        this.runs = runs;
+    public void setTestsMatch(String testsMatch) {
+        this.testsMatch = testsMatch;
     }
 
-    public String getFormat() {
-        return format;
+    public String getOdis() {
+        return odis;
     }
 
-    public void setFormat(String format) {
-        this.format = format;
+    public void setOdis(String odis) {
+        this.odis = odis;
     }
 
-    public String getMatches() {
-        return matches;
+    public String getT20s() {
+        return t20s;
     }
 
-    public void setMatches(String matches) {
-        this.matches = matches;
-    }
-
-    public String getAverage() {
-        return average;
-    }
-
-    public void setAverage(String average) {
-        this.average = average;
-    }
-
-    public String getStrikeRate() {
-        return strikeRate;
-    }
-
-    public void setStrikeRate(String strikeRate) {
-        this.strikeRate = strikeRate;
-    }
-
-    public String getHighest() {
-        return highest;
-    }
-
-    public void setHighest(String highest) {
-        this.highest = highest;
-    }
-
-    public String getHundreds() {
-        return hundreds;
-    }
-
-    public void setHundreds(String hundreds) {
-        this.hundreds = hundreds;
-    }
-
-    public String getNotOut() {
-        return notOut;
-    }
-
-    public void setNotOut(String notOut) {
-        this.notOut = notOut;
+    public void setT20s(String t20s) {
+        this.t20s = t20s;
     }
 }
