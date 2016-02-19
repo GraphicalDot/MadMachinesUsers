@@ -1,14 +1,6 @@
 apply plugin: 'com.android.application'
 
 android {
-    signingConfigs {
-        config {
-            keyAlias 'sportsunityalias'
-            keyPassword 'info12345'
-            storeFile file('/home/madmachines/SportsUnityProjects/Sports_Unity_New_Dev_Branch/sportsunitykeystore.jks')
-            storePassword 'info12345'
-        }
-    }
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
     defaultConfig {
@@ -17,13 +9,11 @@ android {
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
-        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.config
         }
     }
     productFlavors {
@@ -45,7 +35,7 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile fileTree(dir: 'libs', include: ['*.jar'])
     compile 'de.hdodenhof:circleimageview:2.0.0'
     compile 'com.facebook.android:facebook-android-sdk:4.9.0'
     compile 'org.igniterealtime.smack:smack-android-extensions:4.1.4'
@@ -64,7 +54,7 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile 'se.emilsjolander:stickylistheaders:2.7.0'
     compile 'com.github.clans:fab:1.6.2'
-    compile project(':library')
     compile 'com.amulyakhare:com.amulyakhare.textdrawable:1.0.1'
     compile 'com.google.code.gson:gson:1.7.2'
+    compile project(':library')
 }

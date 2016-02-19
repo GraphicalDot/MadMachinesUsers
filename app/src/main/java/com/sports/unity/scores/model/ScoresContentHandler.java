@@ -175,10 +175,10 @@ public class ScoresContentHandler {
         } else if (callName.equals(CALL_NAME_MATCH_COMMENTARIES)) {
             String matchId = parameters.get(PARAM_ID);
 //<<<<<<< HEAD
-//            String sportsType = parameters.get(PARAM_SPORTS_TYPE);
+            String sportsType = parameters.get(PARAM_SPORTS_TYPE);
 //            requestCommentaryOnMatch(sportsType, matchId, requestListenerKey, requestTag);
 //=======
-            String sportsType = parameters.get(Constants.SPORTS_TYPE);
+//            String sportsType = parameters.get(Constants.SPORTS_TYPE);
             requestCommentaryOnMatch( sportsType, matchId, requestListenerKey, requestTag);
         } else if(callName.equals(CALL_NAME_PLAYER_PROFILE)){
             String playerName = parameters.get(Constants.PLAYER_NAME);
