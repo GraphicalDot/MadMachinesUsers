@@ -23,7 +23,7 @@ public class CricketPlayerMatchBowlingStatAdapter extends RecyclerView.Adapter<C
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cricket_player_match_stat_batting_crad,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cricket_player_matchstat_bowling_crad,parent,false);
         return new ViewHolder(view);
     }
 
