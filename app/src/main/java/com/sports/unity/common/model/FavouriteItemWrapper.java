@@ -324,4 +324,14 @@ public class FavouriteItemWrapper {
         Collections.sort(savedFootballPlayers);
         return new ArrayList<FavouriteItem>(savedFootballPlayers);
     }
+
+    /**
+     * This method retrieves the saved favourites string from shared preference.
+     * @param context Context of origin activity.
+     * @return Saved favourites as {@link JSONObject} String.
+     */
+    public String getSavedFavouritesAsJsonString(Context context){
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        return tinyDB.getString(TinyDB.FAVOURITE_FILTERS);
+    }
 }

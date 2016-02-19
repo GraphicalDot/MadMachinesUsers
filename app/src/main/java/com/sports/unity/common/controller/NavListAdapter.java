@@ -50,19 +50,26 @@ public class NavListAdapter extends BaseExpandableListAdapter {
 
         textView = (TextView) convertView.findViewById(R.id.itemtext);
         iv = (ImageView) convertView.findViewById(R.id.flag);
-        textView.setText(childItems.get(childPosition).getName());
-        textView.setTypeface(FontTypeface.getInstance(act).getRobotoMedium());
-        String uri = null;
-        try {
-            uri = childItems.get(childPosition).getFlagImageUrl();
-        } catch (NullPointerException e) {
-        }
-        if (uri != null) {
+        if (childItems.size() > 0) {
+            textView.setText(childItems.get(childPosition).getName());
+            String uri = null;
+            try {
+                uri = childItems.get(childPosition).getFlagImageUrl();
+            } catch (NullPointerException e) {
+            }
+            if (uri != null) {
 
-            Glide.with(act).load(Uri.parse(uri)).into(iv);
+                Glide.with(act).load(Uri.parse(uri)).into(iv);
+            } else {
+                iv.setVisibility(View.GONE);
+            }
         } else {
+            textView.setText("No favourites added");
+            textView.setTextColor(act.getResources().getColor(R.color.gray1));
             iv.setVisibility(View.GONE);
         }
+        textView.setTypeface(FontTypeface.getInstance(act).getRobotoMedium());
+
         return convertView;
     }
 
@@ -89,17 +96,31 @@ public class NavListAdapter extends BaseExpandableListAdapter {
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
-        return childItems.get(childPosition);
+        if (childItems.size() > 0) {
+            return childItems.get(childPosition);
+        } else {
+            return new String("No favourites added");
+        }
     }
 
     @Override
     public long getChildId(int groupPosition, int childPosition) {
-        return childPosition;
+        if (childItems.size() > 0) {
+
+            return childPosition;
+        } else {
+            return 0;
+        }
     }
 
     @Override
     public int getChildrenCount(int groupPosition) {
-        return childItems.size();
+        if (childItems.size() > 0) {
+            return childItems.size();
+        } else {
+
+            return 1;
+        }
     }
 
     @Override

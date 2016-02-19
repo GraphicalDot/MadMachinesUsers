@@ -1,5 +1,6 @@
 package com.sports.unity.messages.controller.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
@@ -150,10 +151,11 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
 
     }
 
+    @SuppressLint("NewApi")
     public char getHeader(int position) {
         char c = inUseContactListForAdapter.get(position).name.subSequence(0, 1).charAt(0);
-        boolean isAlphababet = Character.isAlphabetic(c);
-        if (isAlphababet) {
+        boolean isAlphabetic = Character.isLetter(c);
+        if (isAlphabetic) {
             c = Character.toUpperCase(c);
         } else {
             //do nothing

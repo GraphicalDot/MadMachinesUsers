@@ -48,7 +48,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private ArrayList<String> sportsSelected;
     private TextView titleText;
     private ImageView back;
-    private ArrayList<OnEditFilterListener> editFilterListener;
+    private ArrayList<onSearchListener> editFilterListener;
     public ImageView search, searchClose;
     private LinearLayout titleLayout, searchLayout;
     private EditText searchText;
@@ -64,7 +64,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.advanced_filter_activity);
-        editFilterListener = new ArrayList<OnEditFilterListener>();
+        editFilterListener = new ArrayList<onSearchListener>();
         favList = FavouriteItemWrapper.getInstance(this).getFavList();
         sportsSelected = UserUtil.getSportsSelected();
         bundle = getIntent().getExtras();
@@ -230,14 +230,14 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         });
     }
 
-    public void addEditClickListener(OnEditFilterListener listener) {
+    public void addEditClickListener(onSearchListener listener) {
         if (editFilterListener == null) {
             editFilterListener = new ArrayList<>();
         }
         editFilterListener.add(listener);
     }
 
-    public void removeEditClickListener(OnEditFilterListener listener) {
+    public void removeEditClickListener(onSearchListener listener) {
         editFilterListener.remove(listener);
     }
 
@@ -284,14 +284,14 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.filter_container, advancedFilterFragment, bundle.getString(Constants.SPORTS_TYPE)).commit();
     }
 
-    public interface OnEditFilterListener {
-        public void onEdit(boolean b, String searhString);
+    public interface onSearchListener {
+        public void onSearch(boolean isSearchInitiated, String searchString);
     }
 
     private void performEdit() {
         if (editFilterListener.size() > 0) {
-            for (OnEditFilterListener e : editFilterListener) {
-                e.onEdit(isSearchEdit, searchString);
+            for (onSearchListener e : editFilterListener) {
+                e.onSearch(isSearchEdit, searchString);
             }
         } else {
             //nothing

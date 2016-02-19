@@ -313,6 +313,8 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
                     String password = response.getString(Constants.REQUEST_PARAMETER_KEY_PASSWORD);
                     String userJid = response.getString(Constants.REQUEST_PARAMETER_KEY_USER_NAME);
                     TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_USER_JID, userJid);
+
+                    Log.d("max", "Jid is-" + userJid);
                     TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
                     UserUtil.setOtpSent(EnterOtpActivity.this, false);
                     UserUtil.setUserRegistered(EnterOtpActivity.this, true);
@@ -404,13 +406,13 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
 
     }
 
-    private void registerSmsBroadcastReceiver(){
+    private void registerSmsBroadcastReceiver() {
         smsReceiverBroadcast = new SMSReceiverBroadcast();
         registerReceiver(smsReceiverBroadcast, new IntentFilter("android.provider.Telephony.SMS_RECEIVED"));
     }
 
-    private void unRegisterSmsBroadcastReceiver(){
-        if( smsReceiverBroadcast != null ){
+    private void unRegisterSmsBroadcastReceiver() {
+        if (smsReceiverBroadcast != null) {
             unregisterReceiver(smsReceiverBroadcast);
             smsReceiverBroadcast = null;
         }

@@ -327,10 +327,14 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
         switch (parent.getId()) {
             case R.id.fav_team:
-                Toast.makeText(getActivity(), teamChildItems.get(childPosition).getName(), Toast.LENGTH_SHORT).show();
+                if (teamChildItems.size() > 0) {
+                    Toast.makeText(getActivity(), teamChildItems.get(childPosition).getName(), Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.complist:
-                Toast.makeText(getActivity(), competeChildItems.get(childPosition).getName(), Toast.LENGTH_SHORT).show();
+                if (competeChildItems.size() > 0) {
+                    Toast.makeText(getActivity(), competeChildItems.get(childPosition).getName(), Toast.LENGTH_SHORT).show();
+                }
                 break;
         }
 
@@ -381,11 +385,23 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
             case R.id.compindi:
                 isMannual = true;
                 teamList.collapseGroup(0);
+                sportsList.collapseGroup(0);
                 if (competeList.isGroupExpanded(0)) {
                     competeList.collapseGroup(0);
                 } else {
                     setListViewHeight(competeList, 0);
                     competeList.expandGroup(0);
+                }
+                break;
+            case R.id.favindi:
+                isMannual = true;
+                competeList.collapseGroup(0);
+                sportsList.collapseGroup(0);
+                if (teamList.isGroupExpanded(0)) {
+                    teamList.collapseGroup(0);
+                } else {
+                    setListViewHeight(teamList, 0);
+                    teamList.expandGroup(0);
                 }
                 break;
             case R.id.edit_sports:
