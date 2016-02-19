@@ -3,17 +3,24 @@ package com.sports.unity.messages.controller.fragment;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -100,6 +107,10 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+//            EditText searchContacts = (EditText) view.findViewById(R.id.search_contacts_edittext);
+//            searchContacts.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
+
             CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
             Boolean flag = (Boolean) checkBox.getTag();
 
@@ -215,8 +226,6 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ViewGroup searchLayout = (ViewGroup) view.findViewById(R.id.search_layout);
-        searchLayout.setVisibility(View.GONE);
     }
 
     private void handleContacts() {
@@ -244,17 +253,40 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
         int resource = 0;
         ArrayList<Contacts> contactList = null;
         AdapterView.OnItemClickListener itemListener = null;
+        final SearchView searchView = (SearchView) v.findViewById(R.id.searchView);
         if (usageIn == USAGE_FOR_MEMBERS) {
             resource = R.layout.list_item_members;
             itemListener = memberItemListener;
 
+
+            int searchSrcTextId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+            EditText editText = (EditText) searchView.findViewById(searchSrcTextId);
+            editText.setTextColor(Color.BLACK);
+            editText.setHint("Type contact name...");
+//            editText.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
+
             contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true);
+//            searchView.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
+            searchView.onActionViewExpanded();
+//            searchContacts.addTextChangedListener(new TextWatcher() {
+//                @Override
+//                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//                }
+//
+//                @Override
+//                public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                    filterResults(searchContacts.getText().toString());
+//                }
+//
+//                @Override
+//                public void afterTextChanged(Editable s) {
+//
+//                }
+//            });
 
             titleLayout = (ViewGroup) v.findViewById(R.id.title_layout_for_members_list);
             titleLayout.setVisibility(View.VISIBLE);
-
-            ViewGroup searchLayout = (ViewGroup) v.findViewById(R.id.search_layout);
-            searchLayout.setVisibility(View.VISIBLE);
 
             multipleSelection = true;
         } else if (usageIn == USAGE_FOR_CONTACTS) {
@@ -291,19 +323,15 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
                 contactList.addAll(frequentContacts);
                 contactList.addAll(allContacts);
             }
-
-            ViewGroup searchLayout = (ViewGroup) v.findViewById(R.id.search_layout);
-            searchLayout.setVisibility(View.GONE);
+            searchView.setVisibility(View.GONE);
         } else if (usageIn == USAGE_FOR_FORWARD) {
             resource = R.layout.list_item_members;
             itemListener = forwardToContactMemberListener;
 
             contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true);
 
-            ViewGroup searchLayout = (ViewGroup) v.findViewById(R.id.search_layout);
-            searchLayout.setVisibility(View.GONE);
-
             multipleSelection = false;
+            searchView.setVisibility(View.GONE);
         }
 
         ContactListAdapter adapter = new ContactListAdapter(getActivity(), resource, contactList, multipleSelection, frequentContactCount);

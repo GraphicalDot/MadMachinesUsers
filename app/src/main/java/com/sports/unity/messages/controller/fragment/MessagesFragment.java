@@ -127,8 +127,8 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         createGroupFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), CreateGroup.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), CreateGroup.class);
+//                startActivity(intent);
             }
         });
 

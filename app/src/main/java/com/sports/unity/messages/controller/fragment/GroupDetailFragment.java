@@ -3,6 +3,7 @@ package com.sports.unity.messages.controller.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -49,7 +50,7 @@ public class GroupDetailFragment extends Fragment {
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.tool_bar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
-        ((ImageView) toolbar.findViewById(R.id.backarrow)).setImageResource(R.drawable.ic_close_blk);
+        ((ImageView) toolbar.findViewById(R.id.backarrow)).setImageResource(R.drawable.ic_menu_back);
         toolbar.findViewById(R.id.backarrow).setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -111,6 +112,7 @@ public class GroupDetailFragment extends Fragment {
 
     private void moveOn(View view) {
         EditText groupNameEditText = (EditText) getView().findViewById(R.id.groupName);
+        groupNameEditText.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
 
         String groupName = groupNameEditText.getText().toString().trim();
 

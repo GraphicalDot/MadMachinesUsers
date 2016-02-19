@@ -2,7 +2,7 @@
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
-    android:background="@android:color/white"
+    android:background="@color/app_theme_blue"
     android:elevation="@dimen/toolbar_elevation"
     android:minHeight="?android:attr/actionBarSize"
     android:popupTheme="@style/PopupMenuListView"
@@ -19,11 +19,11 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
+            android:paddingBottom="@dimen/horizontal_padding_small"
             android:paddingRight="@dimen/horizontal_padding_small"
             android:paddingTop="@dimen/horizontal_padding_small"
-            android:paddingBottom="@dimen/horizontal_padding_small"
             android:scaleType="center"
-            android:src="@drawable/ic_close_blk" />
+            android:src="@drawable/ic_menu_back" />
 
         <TextView
             android:id="@+id/title"
@@ -32,6 +32,7 @@
             android:layout_toRightOf="@+id/backarrow"
             android:gravity="center"
             android:text="Create Group"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/font_size_large" />
 
         <TextView
@@ -40,10 +41,10 @@
             android:layout_height="fill_parent"
             android:layout_alignParentRight="true"
             android:gravity="center"
-            android:paddingLeft="@dimen/horizontal_padding_medium"
-            android:paddingRight="@dimen/horizontal_padding_medium"
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_small"
             android:text="Next"
-            android:textColor="@color/app_theme_blue"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/font_size_small_large"
             android:textStyle="bold" />
 
