@@ -89,6 +89,7 @@
     <dimen name="toolbar_elevation">2dp</dimen>
 
     <!-- profile thumb size -->
+    <dimen name="profile_thumb_image_xxlarge">125dp</dimen>
     <dimen name="profile_thumb_image_xlarge">100dp</dimen>
     <dimen name="profile_thumb_image_large">70dp</dimen>
     <dimen name="profile_thumb_image_small">50dp</dimen>
@@ -97,6 +98,16 @@
     <!-- Navigation Drawer related -->
     <dimen name="drawer_header_height">50dp</dimen>
     <dimen name="drawer_item_height">40dp</dimen>
+    <dimen name="drawer_flag_height">25dp</dimen>
+    <dimen name="list_icon_height">25dp</dimen>
     <dimen name="group_indicator_margin_top">4dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
+    <dimen name="nav_flag_margin">10dp</dimen>
+    <dimen name="filter_header_margin">5dp</dimen>
+
+
+    <!--Setting Related -->
+    <dimen name="settings_item_height">80dp</dimen>
+    <!-- ends -->
 
 </resources>

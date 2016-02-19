@@ -1,5 +1,6 @@
 package com.sports.unity.util;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
@@ -8,10 +9,15 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import com.sports.unity.Database.DBUtil;
+import com.sports.unity.R;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -69,6 +75,34 @@ public class ImageUtil {
         return compressedContent;
     }
 
+    public static String getBaseEncoded_ThumbnailImage(Context context, String fileName){
+        byte[] content = null;
+        String encodedImage = null;
+        try {
+            Bitmap scaledBitmap = getScaledBitmap(fileName, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), 0);
+            Bitmap croppedBitmap = getCroppedBitmap( scaledBitmap, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height));
+            content = getCompressedBytes(croppedBitmap, 1);
+            encodedImage = Base64.encodeToString(content, Base64.DEFAULT);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return encodedImage;
+    }
+
+    public static String getBaseEncoded_ThumbnailImage(Context context, Bitmap bitmap){
+        byte[] content = null;
+        String encodedImage = null;
+        try {
+            Bitmap scaledBitmap = getScaledBitmap(bitmap, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), 0);
+            Bitmap croppedBitmap = getCroppedBitmap( scaledBitmap, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height));
+            content = getCompressedBytes(croppedBitmap, 1);
+            encodedImage = Base64.encodeToString(content, Base64.DEFAULT);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return encodedImage;
+    }
+
     public static Bitmap rotateImageIfRequired(Bitmap img, File selectedImage) throws IOException {
 
         ExifInterface ei = new ExifInterface(selectedImage.getPath());
@@ -104,7 +138,65 @@ public class ImageUtil {
     public static byte[] getCompressedBytes(String filePath, int requiredWidth, int requiredHeight) throws Exception {
         Bitmap bitmap = getDecodedSampleBitmap(filePath, requiredWidth, requiredHeight);
         byte[] content = ImageUtil.getCompressedBytes(bitmap);
+
+//        Log.i("File on ", "Allocation Byte Count " + bitmap.getAllocationByteCount());
+        Log.i("Image Util", "Bytes length " + content.length);
+
         return content;
+    }
+
+    public static Bitmap getScaledBitmap(String filePath, int requiredWidth, int requiredHeight) throws Exception {
+        File file = new File(filePath);
+        Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+        return getScaledBitmap(bitmap, requiredWidth, requiredHeight);
+    }
+
+    public static Bitmap getScaledBitmap(Bitmap bitmap, int requiredWidth, int requiredHeight) throws Exception {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+
+        float scaleByHeight = requiredHeight > 0 ? (float)requiredHeight/height : 1;
+        float scaleByWidth = requiredWidth > 0 ? (float)requiredWidth/width : 1;
+        float scaleFactor = scaleByWidth < scaleByHeight ? scaleByWidth : scaleByHeight;
+
+        Matrix matrix = new Matrix();
+        matrix.postScale(scaleFactor, scaleFactor);
+
+        Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
+//        bitmap.recycle();
+
+        return scaledBitmap;
+    }
+
+    public static Bitmap getCroppedBitmap(String filePath, int requiredWidth, int requiredHeight) throws Exception {
+        File file = new File(filePath);
+        Bitmap bitmap = BitmapFactory.decodeStream(new FileInputStream(file));
+        return getCroppedBitmap(bitmap, requiredWidth, requiredHeight);
+    }
+
+    public static Bitmap getCroppedBitmap(Bitmap bitmap, int requiredWidth, int requiredHeight) throws Exception {
+        int width = bitmap.getWidth();
+        if( requiredWidth > width ){
+            requiredWidth = width;
+        }
+
+        int height = bitmap.getHeight();
+        if( requiredHeight > height ){
+            requiredHeight = height;
+        }
+
+        int topOffset = 0;
+        if( requiredHeight > 0 ){
+            topOffset = (height-requiredHeight)/2;
+        }
+
+        int leftOffset = 0;
+        if( requiredWidth > 0 ){
+            leftOffset = (width-requiredWidth)/2;
+        }
+
+        Bitmap croppedBmp = Bitmap.createBitmap(bitmap, leftOffset, topOffset, requiredWidth, requiredHeight);
+        return croppedBmp;
     }
 
     private static byte[] getAndSetCompressedImageToView(String filePath, ImageView imageView, int requiredWidth, int requiredHeight) throws Exception {
@@ -116,7 +208,7 @@ public class ImageUtil {
         return content;
     }
 
-    private static Bitmap getDecodedSampleBitmap(String filePath, int requiredWidth, int requiredHeight) throws Exception {
+    public static Bitmap getDecodedSampleBitmap(String filePath, int requiredWidth, int requiredHeight) throws Exception {
         File file = new File(filePath);
         Bitmap bitmap = ImageUtil.decodeSampleImage(file, requiredWidth, requiredHeight);
         bitmap = ImageUtil.rotateImageIfRequired(bitmap, file);
@@ -165,18 +257,37 @@ public class ImageUtil {
     private static int calculateInSampleSize( BitmapFactory.Options options, int reqWidth, int reqHeight) {
         int sampleScaleSize = 1;
 
-//        while (options.outWidth / sampleScaleSize / 2 >= reqWidth && options.outHeight / sampleScaleSize / 2 >= reqHeight) {
-//            sampleScaleSize *= 2;
+        int maxLimit = 800;
+        if( reqWidth > maxLimit || reqHeight > maxLimit ) {
+            if ( reqWidth > reqHeight ) {
+                float ratio = reqWidth/reqHeight;
+                reqWidth = maxLimit;
+                reqHeight = (int)(maxLimit / ratio);
+            } else {
+                float ratio = reqHeight/reqWidth;
+                reqHeight = maxLimit;
+                reqWidth = (int)(maxLimit / ratio);
+            }
+        }
+
+//        float scaleDownFactor = reqWidth > reqHeight ? (float)reqWidth/480 : (float)reqHeight/600;
+//        if( scaleDownFactor > 1 ) {
+//            reqWidth = (int) (reqWidth / scaleDownFactor);
+//            reqHeight = (int) (reqHeight / scaleDownFactor);
 //        }
 
-        int sampleScaleSize_WithWidth = options.outWidth / reqWidth;
-        int sampleScaleSize_WithHeight = options.outHeight / reqHeight;
-
-        if( sampleScaleSize_WithHeight < sampleScaleSize_WithWidth ){
-            sampleScaleSize = sampleScaleSize_WithHeight;
-        } else {
-            sampleScaleSize = sampleScaleSize_WithWidth;
+        while (options.outWidth / sampleScaleSize >= reqWidth || options.outHeight / sampleScaleSize >= reqHeight) {
+            sampleScaleSize++;
         }
+
+//        int sampleScaleSize_WithWidth = reqWidth > 0 ? options.outWidth / reqWidth : 1;
+//        int sampleScaleSize_WithHeight = reqHeight > 0 ? options.outHeight / reqHeight : 1;
+//
+//        if( sampleScaleSize_WithHeight > sampleScaleSize_WithWidth ){
+//            sampleScaleSize = sampleScaleSize_WithHeight;
+//        } else {
+//            sampleScaleSize = sampleScaleSize_WithWidth;
+//        }
 
         return sampleScaleSize;
     }
@@ -213,11 +324,15 @@ public class ImageUtil {
     }
 
     public static byte[] getCompressedBytes(Bitmap bitmap){
+        return getCompressedBytes(bitmap, 100);
+    }
+
+    public static byte[] getCompressedBytes(Bitmap bitmap, int quality){
         byte[] bytes = null;
         ByteArrayOutputStream byteArrayOutputStream = null;
         try {
             byteArrayOutputStream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
 
             bytes = byteArrayOutputStream.toByteArray();
         }catch (Exception ex){
@@ -232,12 +347,18 @@ public class ImageUtil {
     }
 
     public static Bitmap getCompressedBitmap(Bitmap bitmap){
+        return getCompressedBitmap(bitmap, 100);
+    }
+
+    public static Bitmap getCompressedBitmap(Bitmap bitmap, int quality){
         Bitmap compressedBitmap = null;
-        byte[] content = getCompressedBytes(bitmap);
+        byte[] content = getCompressedBytes(bitmap, quality);
         if( content != null ) {
             compressedBitmap = BitmapFactory.decodeByteArray(content, 0, content.length);
         }
         return compressedBitmap;
     }
+
+
 
 }

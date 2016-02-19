@@ -50,6 +50,7 @@
         android:layout_gravity="center"
         android:layout_marginRight="@dimen/horizontal_padding_small"
         android:background="@drawable/round_edge_box_blue"
+        android:clickable="false"
         android:focusable="false"
         android:minHeight="@dimen/invite_button_height"
         android:stateListAnimator="@null"

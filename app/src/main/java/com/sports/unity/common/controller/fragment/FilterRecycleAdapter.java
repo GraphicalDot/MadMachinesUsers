@@ -16,6 +16,7 @@ import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.news.controller.activity.NewsSearchActivity;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
@@ -28,14 +29,9 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
     private ArrayList<FavouriteItem> itemDataSet;
     private List<String> favDataSet;
     public Activity activity;
-    private boolean isEditMode;
-    public FilterRecycleAdapter(Activity activity, ArrayList<FavouriteItem> itemDataSet,boolean isEdit) {
-        isEditMode=isEdit;
+
+    public FilterRecycleAdapter(Activity activity, ArrayList<FavouriteItem> itemDataSet) {
         this.itemDataSet = itemDataSet;
-        this.activity = activity;
-    }
-    public FilterRecycleAdapter(Activity activity, List<String> favDataSet) {
-        this.favDataSet = favDataSet;
         this.activity = activity;
     }
 
@@ -47,104 +43,67 @@ public class FilterRecycleAdapter extends RecyclerView.Adapter<FilterRecycleAdap
     }
 
     @Override
-    public void onBindViewHolder(FilterItemView holder,int position) {
-        initView(holder,position);
+    public void onBindViewHolder(FilterItemView holder, int position) {
+        initView(holder, position);
     }
 
 
     @Override
     public int getItemCount() {
-        if(!UserUtil.isFilterCompleted()||isEditMode) {
-            return itemDataSet.size();
-        }else{
-            return favDataSet.size();
-        }
+        return itemDataSet.size();
     }
 
 
     private void initView(final FilterItemView holder, final int position) {
-
-        if(!UserUtil.isFilterCompleted()||isEditMode) {
-            final FavouriteItem favouriteItem=itemDataSet.get(position);
-            String s=favouriteItem.getName();
-            s=s.replace(Constants.NAV_COMP,"");
-            s=s.replace(Constants.NAV_TEAM,"");
-            holder.tv.setText(s);
-            if (favouriteItem.isChecked()) {
-                if (!((AdvancedFilterActivity) activity).favList.contains(favouriteItem.getName())) {
-                    ((AdvancedFilterActivity) activity).favList.add(favouriteItem.getName());
-                }
-                holder.cb.setChecked(favouriteItem.isChecked());
-                holder.tv.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
-            } else {
-                holder.cb.setChecked(favouriteItem.isChecked());
-                holder.tv.setTextColor(activity.getResources().getColor(R.color.gray1));
-                if (((AdvancedFilterActivity) activity).favList.contains(favouriteItem.getName())) {
-                    ((AdvancedFilterActivity) activity).favList.remove(favouriteItem.getName());
-                }
+        final FavouriteItem favouriteItem = itemDataSet.get(position);
+        String s = favouriteItem.getName();
+        holder.tv.setText(s);
+        if (favouriteItem.isChecked()) {
+            if (!((AdvancedFilterActivity) activity).favList.contains(favouriteItem)) {
+                ((AdvancedFilterActivity) activity).favList.add(favouriteItem);
             }
-            holder.v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    itemDataSet.remove(position);
-                    favouriteItem.setChecked(!favouriteItem.isChecked());
-                    itemDataSet.add(position, favouriteItem);
-                    notifyDataSetChanged();
-                }
-            });
-        }else{
-           String s=favDataSet.get(position);
-            s=s.replaceAll(Constants.NAV_COMP,"");
-            s=s.replace(Constants.NAV_TEAM, "");
-            final String searchString=s.replace(Constants.NAV_TEAM,"");
-            holder.cb.setVisibility(View.INVISIBLE);
-            holder.tv.setText(s);
-            holder.v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    searchNews(searchString);
-                }
-            });
+            holder.cb.setChecked(favouriteItem.isChecked());
+            holder.tv.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
+        } else {
+            holder.cb.setChecked(favouriteItem.isChecked());
+            holder.tv.setTextColor(activity.getResources().getColor(R.color.gray1));
+            if (((AdvancedFilterActivity) activity).favList.contains(favouriteItem)) {
+                ((AdvancedFilterActivity) activity).favList.remove(favouriteItem);
+            }
         }
-    }
-
-    private void searchNews(String s) {
-
-        Intent newsSearch=new Intent(activity,NewsSearchActivity.class);
-        newsSearch.putExtra(Constants.FILTER_SEARCH_EXTRA,s);
-        activity.startActivity(newsSearch);
+        holder.v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                itemDataSet.remove(position);
+                favouriteItem.setChecked(!favouriteItem.isChecked());
+                itemDataSet.add(position, favouriteItem);
+                notifyDataSetChanged();
+            }
+        });
     }
 
     public class FilterItemView extends RecyclerView.ViewHolder {
         public TextView tv;
         public CheckBox cb;
         public View v;
+
         public FilterItemView(View itemView) {
             super(itemView);
-            v=itemView;
+            v = itemView;
+            v.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
             tv = (TextView) itemView.findViewById(R.id.tv);
             tv.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
             cb = (CheckBox) itemView.findViewById(R.id.cb);
         }
     }
-    public ArrayList<FavouriteItem> getItemDataSet(){
-        ArrayList<FavouriteItem> search = new ArrayList<>();
-        for(FavouriteItem item : itemDataSet){
-            search.add(new FavouriteItem(item));
-        }
 
-        return search;
+    public ArrayList<FavouriteItem> getItemDataSet() {
+        return itemDataSet;
     }
-    public void setItemDataSet(ArrayList<FavouriteItem> itemDataSet,boolean isEditMode){
-        this.itemDataSet=itemDataSet;
-        this.isEditMode=isEditMode;
-        this.notifyDataSetChanged();
-    }
-    public void setFavDataSet(List<String> itemDataSet,boolean isEditMode){
-        this.favDataSet=itemDataSet;
-        this.isEditMode=isEditMode;
-        this.notifyDataSetChanged();
 
+    public void setItemDataSet(ArrayList<FavouriteItem> itemDataSet) {
+        this.itemDataSet = itemDataSet;
+        this.notifyDataSetChanged();
     }
 
 }

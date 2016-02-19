@@ -94,6 +94,10 @@ public class NewsJsonCaller extends JsonObjectCaller{
         jsonObject.put( "favicon", imageLink);
     }
 
+    public String getNews() throws JSONException {
+        return jsonObject.getString( "news");
+    }
+
 //    @Override
 //    public int compareTo(NewsJsonCaller news) {
 //        /* For Ascending order*/

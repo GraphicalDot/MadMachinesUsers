@@ -50,6 +50,7 @@ public class NewsSearchActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_search);
         EditText search = (EditText) toolbar.findViewById(R.id.search_view);
         ImageView clear_search = (ImageView) toolbar.findViewById(R.id.search_clear);
+        clear_search.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
         checkForFilteredSearch(search, clear_search);
     }
 
@@ -57,6 +58,7 @@ public class NewsSearchActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_search);
         final EditText search = (EditText) toolbar.findViewById(R.id.search_view);
         ImageView back = (ImageView) toolbar.findViewById(R.id.img_back);
+        back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
         final ImageView clear_search = (ImageView) toolbar.findViewById(R.id.search_clear);
         FrameLayout fragment_container = (FrameLayout) findViewById(R.id.fragment_container);
 

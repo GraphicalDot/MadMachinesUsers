@@ -1,5 +1,6 @@
 package com.sports.unity.news.controller.fragment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -36,6 +38,9 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
+import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
+
 public class NewsFragment extends Fragment implements NewsContentHandler.ContentListener {
 
     private NewsContentHandler newsContentHandler;
@@ -52,6 +57,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
     private int sportsSelectedNum = 0;
     private ArrayList<String> sportSelected;
+    private final String Showcase_News_Id = "news_showcase_id";
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -80,34 +86,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
             mSwipeRefreshLayout.setRefreshing(false);
         }
 
-
-        boolean isSportsChanged = false;
-        if (sportsSelectedNum != UserUtil.getSportsSelected().size()) {
-            isSportsChanged = true;
-        } else {
-            for (int i = 0; i < sportSelected.size(); i++) {
-                if (!sportSelected.get(0).equals(UserUtil.getSportsSelected().get(i))) {
-                    isSportsChanged = true;
-                }
-            }
-        }
-        if (isSportsChanged) {
-            newsContentHandler.clearContent();
-            mAdapter.notifyDataSetChanged();
-            newsContentHandler.selectedSportsChanged();
-            sportSelected = UserUtil.getSportsSelected();
-            sportsSelectedNum = UserUtil.getSportsSelected().size();
-            boolean success = newsContentHandler.refreshNews(true);
-            if (success == false) {
-                showErrorLayout(getView());
-                hideProgress(getView());
-
-                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
-            } else {
-                hideErrorLayout(getView());
-                showProgress(getView());
-            }
-        }
+        handleIfSportsChanged();
     }
 
     @Override
@@ -147,7 +126,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
         if (id == com.sports.unity.R.id.action_filter) {
             Intent i = new Intent(getActivity(), FilterActivity.class);
-            startActivityForResult(i, 999);
+            startActivityForResult(i, Constants.REQUEST_CODE_NEWS);
             return true;
         }
 
@@ -297,6 +276,36 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
             }
         });
 
+    }
+
+    private void handleIfSportsChanged() {
+        boolean isSportsChanged = false;
+        if (sportsSelectedNum != UserUtil.getSportsSelected().size()) {
+            isSportsChanged = true;
+        } else {
+            for (int i = 0; i < sportSelected.size(); i++) {
+                if (!UserUtil.getSportsSelected().contains(sportSelected.get(i))) {
+                    isSportsChanged = true;
+                }
+            }
+        }
+        if (isSportsChanged) {
+            newsContentHandler.clearContent();
+            mAdapter.notifyDataSetChanged();
+            newsContentHandler.selectedSportsChanged();
+            sportSelected = UserUtil.getSportsSelected();
+            sportsSelectedNum = UserUtil.getSportsSelected().size();
+            boolean success = newsContentHandler.refreshNews(true);
+            if (success == false) {
+                showErrorLayout(getView());
+                hideProgress(getView());
+
+                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
+            } else {
+                hideErrorLayout(getView());
+                showProgress(getView());
+            }
+        }
     }
 
     private void initErrorLayout(View view) {
@@ -450,5 +459,44 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
             });
 
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        ShowcaseConfig config = new ShowcaseConfig();
+        config.setDelay(500); // half second between each showcase view
+        final MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity(), Showcase_News_Id);
+        final ViewTreeObserver viewTreeObserver = getActivity().getWindow().getDecorView().getViewTreeObserver();
+        viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                View menuButton = getActivity().findViewById(R.id.action_filter);
+                View menuButton1 = getActivity().findViewById(R.id.action_search);
+                View menuButton2 = getActivity().findViewById(R.id.mini_cards);
+                if (menuButton != null) {
+                    sequence.addSequenceItem(menuButton, getActivity().getResources().getString(R.string.showcase_filter_heading), getActivity().getResources().getString(R.string.showcase_filter_message), getActivity().getResources().getString(R.string.got_it));
+                    if (viewTreeObserver.isAlive())
+                        viewTreeObserver.removeOnGlobalLayoutListener(this);
+                }
+                if (menuButton1 != null) {
+                    sequence.addSequenceItem(menuButton1, getActivity().getResources().getString(R.string.showcase_search_heading), getActivity().getResources().getString(R.string.showcase_search_message), getActivity().getResources().getString(R.string.got_it));
+                    if (viewTreeObserver.isAlive())
+                        viewTreeObserver.removeOnGlobalLayoutListener(this);
+                }
+                if (menuButton2 != null) {
+                    sequence.addSequenceItem(menuButton2, getActivity().getResources().getString(R.string.showcase_mini_card_heading), getActivity().getResources().getString(R.string.showcase_mini_card_message), getActivity().getResources().getString(R.string.got_it));
+                    sequence.start();
+                    if (viewTreeObserver.isAlive())
+                        viewTreeObserver.removeOnGlobalLayoutListener(this);
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d("max", "IN_NEWS-request>>>" + requestCode+"--result-->>>"+resultCode);
     }
 }

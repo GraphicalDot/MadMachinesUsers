@@ -1,24 +1,37 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'sportsunityalias'
+            keyPassword 'info12345'
+            storeFile file('/home/madmachines/SportsUnityProjects/Sports_Unity_New_Dev_Branch/sportsunitykeystore.jks')
+            storePassword 'info12345'
+        }
+    }
     compileSdkVersion 23
+<<<<<<< HEAD
     buildToolsVersion '23.0.2'
+=======
+    buildToolsVersion "23.0.0"
+>>>>>>> e69b749279b7be07db0f06aeb818e9bf5249f989
     defaultConfig {
         applicationId 'com.sports.unity'
         minSdkVersion 16
         targetSdkVersion 23
         versionCode 1
         versionName "1.0"
+        signingConfig signingConfigs.config
     }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     productFlavors {
     }
-
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE.txt'
@@ -29,7 +42,6 @@ repositories {
     maven {
         url 'https://oss.sonatype.org/content/repositories/snapshots'
     }
-
     mavenCentral()
 }
 
@@ -46,9 +58,20 @@ dependencies {
     compile 'com.crittercism:crittercism-android-agent:+'
     compile 'commons-net:commons-net:3.3'
     compile 'com.github.bumptech.glide:glide:3.6.1'
+<<<<<<< HEAD
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:support-v4:23.1.1'
     compile 'com.android.support:cardview-v7:23.1.1'
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
+=======
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:support-v4:23.0.1'
+    compile 'com.android.support:cardview-v7:23.0.1'
+    compile 'com.android.support:recyclerview-v7:23.0.1'
+    compile 'com.android.support:design:23.0.1'
+    compile 'se.emilsjolander:stickylistheaders:2.7.0'
+    compile 'com.github.clans:fab:1.6.2'
+    compile project(':library')
+>>>>>>> e69b749279b7be07db0f06aeb818e9bf5249f989
 }

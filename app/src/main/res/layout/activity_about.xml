@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/app_theme_blue"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    tools:context="com.sports.unity.common.controller.About">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_about"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:minHeight="?android:attr/actionBarSize" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="5">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:src="@drawable/about_us_su_logo" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/sportsunity_club"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/horizontal_padding_very_small"
+                android:text="@string/sportsunity.club"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_small_medium" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:background="@android:color/transparent"
+                >
+
+                <TextView
+                    android:id="@+id/terms"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/horizontal_padding_very_small"
+                    android:text="@string/terms_of_use"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_size_small_large"
+                    android:clickable="true"
+                    />
+                <TextView
+                    android:id="@+id/privacy_policy"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/horizontal_padding_very_small"
+                    android:text="@string/privacy_policy"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_size_small_large"
+                    android:clickable="true"
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/copyright"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/copyright_sportsunity"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_very_very_small" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+                android:paddingRight="@dimen/horizontal_padding_very_very_small"
+                android:src="@drawable/ic_dot_s" />
+
+            <TextView
+                android:id="@+id/version"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" Version "
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_very_very_small" />
+
+            <TextView
+                android:id="@+id/version_int"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" 1.0"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/font_size_very_very_small" />
+
+        </LinearLayout>
+    </LinearLayout>
+
+
+</LinearLayout>

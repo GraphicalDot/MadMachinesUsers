@@ -10,6 +10,8 @@
         <item name="android:actionMenuTextColor">@android:color/black</item>
         <item name="android:dropDownListViewStyle">@style/PopupMenuListView</item>
         <item name="dropDownListViewStyle">@style/PopupMenuListView</item>
+        <item name="android:colorControlActivated">@color/app_theme_blue</item>
+        <item name="colorAccent">@color/app_theme_blue</item>
 
     </style>
 
@@ -29,9 +31,11 @@
         <item name="android:actionMenuTextColor">@android:color/black</item>
         <item name="android:dropDownListViewStyle">@style/PopupMenuListView</item>
         <item name="dropDownListViewStyle">@style/PopupMenuListView</item>
+        <item name="colorControlHighlight">@android:color/darker_gray</item>
+        <item name="colorAccent">@color/app_theme_blue</item>
     </style>
 
-    <style name="PopupMenuListView" parent="ThemeOverlay.AppCompat.Light">
+    <style name="PopupMenuListView" parent="android:style/Widget.Holo.ListView.DropDown">
         <item name="android:background">#FFF</item>
     </style>
 
@@ -46,5 +50,9 @@
 
     <!-- Backward-compatible version of ?android:attr/buttonBarButtonStyle -->
     <style name="ButtonBarButton" />
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

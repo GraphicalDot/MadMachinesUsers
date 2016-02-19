@@ -7,6 +7,7 @@ tools:context="com.example.ashwinarora.sports.WebView">
         android:icon="@drawable/abc_ic_menu_share_mtrl_alpha"
         android:orderInCategory="200"
         android:title="Share"
+        android:visible="false"
         app:showAsAction="ifRoom"/>
 
 </menu>

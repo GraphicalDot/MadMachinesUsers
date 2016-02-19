@@ -1,19 +1,21 @@
 package com.sports.unity.messages.controller.model;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.media.ThumbnailUtils;
+import android.provider.MediaStore;
 import android.util.Log;
 
+import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
-import com.sports.unity.XMPPManager.ReadReceipt;
 import com.sports.unity.XMPPManager.XMPPClient;
-import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.ImageUtil;
 
 import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smackx.chatstates.ChatState;
@@ -43,23 +45,6 @@ public class PersonalMessaging {
             pmessaging = new PersonalMessaging(context);
         }
         return pmessaging;
-    }
-
-    public static boolean sendActionToCorrespondingActivityListener(String key, int id, Object data) {
-        boolean success = false;
-
-        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
-
-        if (actionListener != null) {
-            if (data == null) {
-                actionListener.handleAction(id);
-            } else {
-                actionListener.handleAction(id, data);
-            }
-            success = true;
-        }
-        return success;
     }
 
     private final Map<Chat, ChatState> chatStates = new WeakHashMap<Chat, ChatState>();
@@ -94,14 +79,43 @@ public class PersonalMessaging {
         sportsUnityDBHelper.updateChatEntry(messageId, chatId, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
     }
 
-    public void sendMediaMessage(String checksum, Chat chat, long messageId, String mimeType, boolean nearByChat) {
+    public void sendMediaMessage(String contentChecksum, String thumbnailImageAsBase64, Chat chat, long messageId, String mimeType, boolean nearByChat) {
+        String messageBody = null;
+        if( thumbnailImageAsBase64 != null ){
+            messageBody = contentChecksum + ":" + thumbnailImageAsBase64;
+        } else {
+            messageBody = contentChecksum;
+        }
+
         Message message = new Message();
-        message.setBody(checksum);
+        message.setBody(messageBody);
 
         long time = CommonUtil.getCurrentGMTTimeInEpoch();
         String stanzaId = sendMessage(message, chat, String.valueOf(time), mimeType, nearByChat);
 
-        sportsUnityDBHelper.updateMediaMessage_ContentUploaded(messageId, stanzaId, checksum);
+        sportsUnityDBHelper.updateMediaMessage_ContentUploaded(messageId, stanzaId, contentChecksum, thumbnailImageAsBase64);
+    }
+
+    public static String getChecksumOutOfMessageBody(String messageBody){
+        int separatorIndex = messageBody.indexOf(':');
+        String checksum = null;
+        if( separatorIndex == -1 ){
+            checksum = messageBody;
+        } else {
+            checksum = messageBody.substring(0, separatorIndex);
+        }
+        return checksum;
+    }
+
+    public static String getEncodedImageOutOfImage(String messageBody){
+        int separatorIndex = messageBody.indexOf(':');
+        String encodedImage = null;
+        if( separatorIndex == -1 ){
+            encodedImage = null;
+        } else {
+            encodedImage = messageBody.substring(separatorIndex+1);
+        }
+        return encodedImage;
     }
 
     private String sendMessage(Message message, Chat chat, String currentTime, String mimeType, boolean otherChat) {
@@ -203,6 +217,36 @@ public class PersonalMessaging {
         return success;
     }
 
+    public String createMediaMessageBody(Context context, String checksum, String mimeType, String fileName){
+        String messageBody = checksum;
+        String thumbnailImage = createThumbnailImageAsBase64(context, mimeType, fileName);
+
+        if( thumbnailImage != null ) {
+            messageBody = checksum + ":" + thumbnailImage;
+        }
+
+        return messageBody;
+    }
+
+    public static String createThumbnailImageAsBase64(Context context, String mimeType, String fileName){
+        String thumbnailImage = null;
+        if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) || mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ){
+            try {
+                if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ) {
+                    Bitmap videoThumbnail = ThumbnailUtils.createVideoThumbnail( DBUtil.getFilePath(context, fileName), MediaStore.Images.Thumbnails.MINI_KIND);
+                    thumbnailImage = ImageUtil.getBaseEncoded_ThumbnailImage(context, videoThumbnail);
+                } else {
+                    thumbnailImage = ImageUtil.getBaseEncoded_ThumbnailImage(context, DBUtil.getFilePath(context, fileName));
+                }
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+        } else {
+            //nothing
+        }
+        return thumbnailImage;
+    }
+
     private List<PrivacyItem> getPrivacyList() {
         List<PrivacyItem> privacyItems = new ArrayList<>();
 
@@ -297,7 +341,7 @@ public class PersonalMessaging {
          * get read receipts in database and then update the double ticks in the corresponding chats
          */
 
-        sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, 0, null);
+        ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, null);
     }
 
 }

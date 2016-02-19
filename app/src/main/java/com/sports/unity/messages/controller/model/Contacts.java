@@ -5,18 +5,18 @@ package com.sports.unity.messages.controller.model;
  */
 public class Contacts {
 
+    public long id;
     public String name;
     public String jid;
     public boolean registered;
     public byte[] image;
     public String status;
-    public long id;
 
-    public Contacts(String name, String phoneNumber, Boolean registered, byte[] userimage, long cId, String status) {
+    public Contacts(String name, String phoneNumber, Boolean registered, byte[] userImage, long cId, String status) {
         this.name = name;
         this.jid = phoneNumber;
         this.registered = registered;
-        this.image = userimage;
+        this.image = userImage;
         this.status = status;
         this.id = cId;
     }

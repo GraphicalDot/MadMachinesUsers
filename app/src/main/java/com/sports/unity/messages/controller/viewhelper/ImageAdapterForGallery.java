@@ -11,6 +11,7 @@ import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,6 +26,7 @@ import com.bumptech.glide.Glide;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.util.*;
 import com.sports.unity.util.ImageUtil;
 
@@ -33,6 +35,8 @@ import org.apache.commons.io.FileUtils;
 import java.io.ByteArrayOutputStream;
 
 import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -110,7 +114,23 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
         holder.imageView.setTag(R.layout.layout_gallery, position);
         holder.imageView.setOnClickListener(this);
 
-        if(filePath.get(position).contains(".jpg") || filePath.get(position).contains(".png") || filePath.get(position).contains(".jpeg")) {
+        String hasVideoContent = null;
+        String durationAsString = null;
+
+        FileInputStream fileInputStream = null;
+        try {
+            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+            Log.d("Image Adapter", "" + filePath.get(position));
+            fileInputStream = new FileInputStream(filePath.get(position));
+
+            retriever.setDataSource(fileInputStream.getFD());
+            hasVideoContent = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO);
+            durationAsString = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        if( hasVideoContent == null ) {
 
             holder.textView.setVisibility(View.GONE);
 
@@ -124,11 +144,8 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
 
             holder.textView.setVisibility(View.VISIBLE);
 
-            MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-            retriever.setDataSource(filePath.get(position));
 
-            String time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-            long timeInmillisec = Long.parseLong(time);
+            long timeInmillisec = Long.parseLong(durationAsString);
             long duration = timeInmillisec / 1000;
             long hours = duration / 3600;
             long minutes = (duration - hours * 3600) / 60;
@@ -149,6 +166,9 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
                     .crossFade()
                     .into(holder.imageView);
         }
+
+//        retriever.release();
+
     }
 
     @Override
@@ -209,21 +229,38 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
         try{
             new ThreadTask(null) {
 
+                private String thumbnailImage = null;
+                private String hasVideoContent = null;
+
                 @Override
                 public Object process() {
 
+                    FileInputStream fileInputStream = null;
+                    try {
+                        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+                        Log.d("Image Adapter", "" + filePath.get(position));
+                        fileInputStream = new FileInputStream(filePath.get(position));
+
+                        retriever.setDataSource(fileInputStream.getFD());
+                        hasVideoContent = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO);
+                     }catch (Exception ex){
+                        ex.printStackTrace();
+                    }
+
                     String fileName = null;
                     try {
-                        if (filePath.get(position).contains(".jpg") || filePath.get(position).contains(".png") || filePath.get(position).contains(".jpeg")) {
+                        if ( hasVideoContent == null ) {
                             fileName = DBUtil.getUniqueFileName(activity.getBaseContext(), SportsUnityDBHelper.MIME_TYPE_IMAGE);
                             this.object = ImageUtil.getCompressedBytes(file, screenHeight, screenWidth);
 
                             DBUtil.writeContentToExternalFileStorage(activity.getBaseContext(), fileName, (byte[])this.object);
+                            thumbnailImage = PersonalMessaging.createThumbnailImageAsBase64(activity, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName);
                         } else {
                             fileName = DBUtil.getUniqueFileName(activity.getBaseContext(), SportsUnityDBHelper.MIME_TYPE_VIDEO);
                             this.object = fileName;
 
                             DBUtil.writeContentToExternalFileStorage(activity.getBaseContext(), file, fileName);
+                            thumbnailImage = PersonalMessaging.createThumbnailImageAsBase64(activity, SportsUnityDBHelper.MIME_TYPE_VIDEO, fileName);
                         }
                     }catch (Exception ex){
                         ex.printStackTrace();
@@ -236,10 +273,10 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
                     String fileName = (String) object;
                     Object mediaContent = this.object;
 
-                    if(filePath.get(position).contains(".jpg") || filePath.get(position).contains(".png") || filePath.get(position).contains(".jpeg")) {
-                        sendActionToCorrespondingActivityListener(1, ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName, mediaContent);
+                    if( hasVideoContent == null ) {
+                        ActivityActionHandler.getInstance().dispatchSendMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName, thumbnailImage, mediaContent);
                     } else {
-                        sendActionToCorrespondingActivityListener(1, ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_VIDEO, fileName, mediaContent);
+                        ActivityActionHandler.getInstance().dispatchSendMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_VIDEO, fileName, thumbnailImage, mediaContent);
                     }
                 }
 
@@ -249,19 +286,6 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
 
             Toast.makeText(activity, "Something went wrong.", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private boolean sendActionToCorrespondingActivityListener(int id, String key, String mimeType, Object messageContent, Object mediaContent) {
-        boolean success = false;
-
-        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
-
-        if (actionListener != null) {
-            actionListener.handleMediaContent( id, mimeType, messageContent, mediaContent);
-            success = true;
-        }
-        return success;
     }
 
 }

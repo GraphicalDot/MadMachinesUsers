@@ -1,8 +1,5 @@
 package com.sports.unity.common.view;
 
-import android.app.Activity;
-import android.content.Context;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +10,6 @@ import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.scores.model.ScoresContentHandler;
-import com.sports.unity.util.network.VolleyRequestHandler;
 
 import java.net.HttpURLConnection;
 import java.util.ArrayList;
@@ -24,6 +20,10 @@ import java.util.Iterator;
  * Created by amandeep on 21/1/16.
  */
 public class CustomVolleyCallerActivity extends CustomAppCompatActivity {
+
+    public static int REQUEST_STATUS_NONE = 0;
+    public static int REQUEST_STATUS_FAILED = 1;
+    public static int REQUEST_STATUS_SUCCESS = 2;
 
     private String requestListenerKey = "CustomComponentListener";
     private CustomContentListener contentListener = new CustomContentListener();
@@ -70,7 +70,13 @@ public class CustomVolleyCallerActivity extends CustomAppCompatActivity {
                 customComponentListener.hideErrorLayout();
                 customComponentListener.showProgress();
             } else {
-                //nothing
+                if( customComponentListener.requestStatus == REQUEST_STATUS_NONE ) {
+                    //nothing
+                } else if( customComponentListener.requestStatus == REQUEST_STATUS_SUCCESS ) {
+                   //nothing
+                } else if( customComponentListener.requestStatus == REQUEST_STATUS_FAILED ) {
+                    customComponentListener.showErrorLayout();
+                }
             }
         }
         addCustomContentListener();
@@ -160,16 +166,19 @@ public class CustomVolleyCallerActivity extends CustomAppCompatActivity {
             if( responseCode == HttpURLConnection.HTTP_OK ) {
                 boolean success = customComponentListener.handleContent(requestTag, content);
                 if( success ){
+                    customComponentListener.requestStatus = REQUEST_STATUS_SUCCESS;
                     if( ! customComponentListener.isComponentPaused() ){
                         customComponentListener.changeUI();
                     }
                 } else {
+                    customComponentListener.requestStatus = REQUEST_STATUS_FAILED;
                     if( ! customComponentListener.isComponentPaused() ) {
                         customComponentListener.showErrorLayout();
                     }
                 }
             } else {
                 customComponentListener.handleErrorContent(requestTag);
+                customComponentListener.requestStatus = REQUEST_STATUS_FAILED;
 
                 if( ! customComponentListener.isComponentPaused() ) {
                     customComponentListener.showErrorLayout();
@@ -190,6 +199,8 @@ public class CustomVolleyCallerActivity extends CustomAppCompatActivity {
 
         private String requestTag = null;
         private boolean componentPaused = false;
+
+        private int requestStatus = REQUEST_STATUS_NONE;
 
         public CustomComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
             this.progressBar = progressBar;
@@ -230,6 +241,7 @@ public class CustomVolleyCallerActivity extends CustomAppCompatActivity {
         }
 
         protected void showErrorLayout(){
+            requestStatus = REQUEST_STATUS_FAILED;
             if( errorLayout != null  ) {
                 errorLayout.setVisibility(View.VISIBLE);
             }

@@ -79,25 +79,11 @@ public class EmojiAdapter extends BaseAdapter {
             public void onClick(View view) {
                 String selectedStickerPath = (String)view.getTag(R.id.emoji);
 
-                sendActionToCorrespondingActivityListener(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_STICKER, selectedStickerPath);
+                ActivityActionHandler.getInstance().dispatchSendStickerEvent(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_STICKER, selectedStickerPath);
             }
 
         });
         return imageView;
     }
-
-    private boolean sendActionToCorrespondingActivityListener(String key, String mimeType, Object data) {
-        boolean success = false;
-
-        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
-
-        if (actionListener != null) {
-            actionListener.handleMediaContent( 1, mimeType, data, null);
-            success = true;
-        }
-        return success;
-    }
-
 
 }

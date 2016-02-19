@@ -2,7 +2,6 @@ package com.sports.unity.messages.controller.fragment;
 
 import android.app.Activity;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -59,10 +58,10 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
             }
 
         } else {
-            if (chatArrayList.get(position).groupImage == null) {
+            if (chatArrayList.get(position).chatImage == null) {
                 userPic.setImageResource(R.drawable.ic_group);
             } else {
-                userPic.setImageBitmap(BitmapFactory.decodeByteArray(chatArrayList.get(position).groupImage, 0, chatArrayList.get(position).groupImage.length));
+                userPic.setImageBitmap(BitmapFactory.decodeByteArray(chatArrayList.get(position).chatImage, 0, chatArrayList.get(position).chatImage.length));
             }
         }
 
@@ -75,7 +74,6 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
             mute_icon.setVisibility(View.GONE);
         }
 
-
         TextView lastMsg = (TextView) rowView.findViewById(R.id.last_msg);
 
         TextView lastMsgTime = (TextView) rowView.findViewById(R.id.lastmsg_time);
@@ -84,31 +82,34 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
         TextView unread = (TextView) rowView.findViewById(R.id.unread_count);
         unread.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoMedium());
 
-
-        if (chatArrayList.get(position).sent != null && !chatArrayList.get(position).sent.equals("")) {
-            int days = Integer.parseInt(CommonUtil.getTimeDifference(Long.parseLong(chatArrayList.get(position).sent)));
-            if (days > 0) {
-                if (days == 1) {
-                    lastMsgTime.setText("YESTERDAY");
-                } else {
-                    lastMsgTime.setText(days + "ago");
-                }
-            } else {
-
-                lastMsgTime.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(chatArrayList.get(position).sent)));
-            }
-
+        if (chatArrayList.get(position).data.equals("")) {
+            lastMsgTime.setText("");
         } else {
-            int days = Integer.parseInt(CommonUtil.getTimeDifference(Long.parseLong(chatArrayList.get(position).recieved)));
-            if (days > 0) {
-                if (days == 1) {
-                    lastMsgTime.setText("YESTERDAY");
+            if (chatArrayList.get(position).sent != null && !chatArrayList.get(position).sent.equals("")) {
+                int days = Integer.parseInt(CommonUtil.getTimeDifference(Long.parseLong(chatArrayList.get(position).sent)));
+                if (days > 0) {
+                    if (days == 1) {
+                        lastMsgTime.setText("YESTERDAY");
+                    } else {
+                        lastMsgTime.setText(days + " days ago");
+                    }
                 } else {
-                    lastMsgTime.setText(days + "ago");
-                }
-            } else {
 
-                lastMsgTime.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(chatArrayList.get(position).recieved)));
+                    lastMsgTime.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(chatArrayList.get(position).sent)));
+                }
+
+            } else {
+                int days = Integer.parseInt(CommonUtil.getTimeDifference(Long.parseLong(chatArrayList.get(position).received)));
+                if (days > 0) {
+                    if (days == 1) {
+                        lastMsgTime.setText("YESTERDAY");
+                    } else {
+                        lastMsgTime.setText(days + " days ago");
+                    }
+                } else {
+
+                    lastMsgTime.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(chatArrayList.get(position).received)));
+                }
             }
         }
 
@@ -117,7 +118,7 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
         } else {
             unread.setVisibility(View.VISIBLE);
             unread.setText(String.valueOf(chatArrayList.get(position).unreadCount));
-            lastMsgTime.setTextColor( unread.getResources().getColor(R.color.app_theme_blue));
+            lastMsgTime.setTextColor(unread.getResources().getColor(R.color.app_theme_blue));
         }
 
 
