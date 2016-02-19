@@ -23,7 +23,7 @@ public class CricketPlayerMatchBowlingStatAdapter extends RecyclerView.Adapter<C
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.player_profile_card,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cricket_player_matchstat_batting_crad,parent,false);
         return new ViewHolder(view);
     }
 
@@ -65,13 +65,15 @@ public class CricketPlayerMatchBowlingStatAdapter extends RecyclerView.Adapter<C
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            /*leagueName = (TextView) view.findViewById(R.id.league_name);
-            teamName = (TextView) view.findViewById(R.id.team_name);
-            gameCount = (TextView) view.findViewById(R.id.game_count);
-            goalsCount = (TextView) view.findViewById(R.id.goals_count);
-            assist = (TextView) view.findViewById(R.id.assist);
-            yc = (TextView) view.findViewById(R.id.yc);
-            rc = (TextView) view.findViewById(R.id.rc);*/
+            innings = (TextView) view.findViewById(R.id.tv_innings);
+            runs = (TextView) view.findViewById(R.id.tv_runs);
+            format = (TextView) view.findViewById(R.id.tv_format);
+            matches = (TextView) view.findViewById(R.id.tv_matches);
+            average = (TextView) view.findViewById(R.id.tv_average);
+            strikeRate = (TextView) view.findViewById(R.id.tv_strikeRate);
+            highest = (TextView) view.findViewById(R.id.tv_highest);
+            hundreds = (TextView) view.findViewById(R.id.tv_hundreds);
+            notOut = (TextView) view.findViewById(R.id.tv_notOut);
         }
     }
 }

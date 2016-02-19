@@ -81,7 +81,6 @@
                     android:layout_height="wrap_content"
                     android:background="@color/cardview_light_background"
                     android:elevation="@dimen/toolbar_elevation" />
-
                 <View
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
