@@ -34,12 +34,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rc_batting_performance_summary"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:numColumns="auto_fit"
-            android:verticalSpacing="8dp"
-            android:horizontalSpacing="4dp"
-            android:columnCount="4">
+            android:layout_height="wrap_content">
 
         </android.support.v7.widget.RecyclerView>
     </LinearLayout>
@@ -71,12 +66,8 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rc_bowling_performance_summary"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:numColumns="auto_fit"
-            android:verticalSpacing="8dp"
-            android:horizontalSpacing="4dp">
-        </android.support.v7.widget.RecyclerView>
+            android:layout_height="wrap_content">
+      </android.support.v7.widget.RecyclerView>
 
     </LinearLayout>
     <include layout="@layout/error_layout"

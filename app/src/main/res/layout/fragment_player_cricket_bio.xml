@@ -25,85 +25,87 @@
                    android:paddingTop="@dimen/horizontal_padding_small"
                    android:weightSum="2">
                    <TextView
-                       android:layout_width="0dp"
+                       android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:textSize="@dimen/font_size_small_large"
-                       android:layout_weight="1"
+                       android:layout_weight="1.7"
                        android:text="@string/player_of_birth"/>
                    <TextView
                        android:id="@+id/tv_player_birth_of_place"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:textSize="@dimen/font_size_small_large"
-                       android:layout_weight="1"
                        android:text="Chandigarh, India"/>
                </TableRow>
                <TableRow
                    android:paddingTop="@dimen/horizontal_padding_small"
+                   android:weightSum="2"
                    android:layout_marginLeft="@dimen/activity_vertical_margin_small">
                    <TextView
-                       android:layout_width="0dp"
+                       android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:textSize="@dimen/font_size_small_large"
-                       android:layout_weight="1"
+                       android:layout_weight="1.7"
                        android:text="@string/date_of_birth"/>
                    <TextView
                        android:id="@+id/tv_player_date_of_birth"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:textSize="@dimen/font_size_small_large"
-                       android:layout_weight="1"
+
                        android:text="12 December 1981 (age34)"/>
                </TableRow>
                <TableRow
                    android:paddingTop="@dimen/horizontal_padding_small"
+                   android:weightSum="2"
                    android:layout_marginLeft="@dimen/activity_vertical_margin_small">
                    <TextView
                        android:layout_height="wrap_content"
-                       android:layout_width="0dp"
+                       android:layout_width="wrap_content"
                        android:textSize="@dimen/font_size_small_large"
-                       android:layout_weight="1"
+                       android:layout_weight="1.7"
                        android:text="@string/bating_style"/>
                    <TextView
                        android:id="@+id/tv_player_batting_style"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:textSize="@dimen/font_size_small_large"
-                       android:layout_weight="1"
                        android:text="Left Hand"/>
                </TableRow>
                <TableRow
                    android:paddingTop="@dimen/horizontal_padding_small"
+                   android:weightSum="2"
                    android:layout_marginLeft="@dimen/activity_vertical_margin_small">
                    <TextView
-                       android:layout_width="0dp"
+                       android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:textSize="@dimen/font_size_small_large"
-                       android:layout_weight="1"
+                       android:layout_weight="1.7"
                        android:text="@string/bowling_style"/>
                    <TextView
                        android:id="@+id/tv_player_bowing_style"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:textSize="@dimen/font_size_small_large"
-                       android:layout_weight="1"
+                       android:layout_weight=".6"
                        android:text="Slow Left-arm orthodox"/>
                </TableRow>
                <TableRow
                    android:paddingTop="@dimen/horizontal_padding_small"
+                   android:weightSum="2"
                    android:layout_marginLeft="@dimen/activity_vertical_margin_small">
                    <TextView
-                       android:layout_width="0dp"
+                       android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:textSize="@dimen/font_size_small_large"
-                       android:layout_weight="1"
+                       android:layout_weight="1.7"
                        android:text="@string/major_team"/>
                    <TextView
                        android:id="@+id/tv_player_major_team"
                        android:layout_width="wrap_content"
                        android:layout_height="wrap_content"
                        android:textSize="@dimen/font_size_small_large"
-                       android:layout_weight="1"
+
                        android:text="India"/>
                </TableRow>
            </TableLayout>

@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.common.view.CustomLinearLayoutManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,10 +67,12 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
     }
     private void initView(View view) {
         rcBattingPerformanceSummery = (RecyclerView) view.findViewById(R.id.rc_batting_performance_summary);
+        rcBattingPerformanceSummery.setLayoutManager(new CustomLinearLayoutManager(getContext()));
         rcBowlingPerformanceSummary = (RecyclerView) view.findViewById(R.id.rc_bowling_performance_summary);
+        rcBowlingPerformanceSummary.setLayoutManager(new CustomLinearLayoutManager(getContext()) );
         battingImageView = (ImageView) view.findViewById(R.id.iv_down);
         bowlingImageView = (ImageView) view.findViewById(R.id.iv_down_second);
-        battingImageView.setOnClickListener(new View.OnClickListener() {
+        /*battingImageView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if(rcBattingPerformanceSummery.getVisibility()== View.GONE){
                     rcBattingPerformanceSummery.setVisibility(View.VISIBLE);
@@ -86,12 +89,12 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
                     rcBowlingPerformanceSummary.setVisibility(View.GONE);
                 }
             }
-        });
+        });*/
 
         cricketPlayerMatchBattingStatAdapter = new CricketPlayerMatchBattingStatAdapter(playerMatchBattingStatDTOList);
         rcBattingPerformanceSummery.setAdapter(cricketPlayerMatchBattingStatAdapter);
         cricketPlayerMatchBowlingStatAdapter = new CricketPlayerMatchBowlingStatAdapter(playerMatchBowlingStatDTOList);
-       rcBowlingPerformanceSummary.setAdapter(cricketPlayerMatchBowlingStatAdapter);
+        rcBowlingPerformanceSummary.setAdapter(cricketPlayerMatchBowlingStatAdapter);
         initErrorLayout(view);
 
     }
@@ -135,7 +138,6 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
         rcBattingPerformanceSummery.setVisibility(View.VISIBLE);
         rcBowlingPerformanceSummary.setVisibility(View.VISIBLE);
         final JSONObject data = (JSONObject) jsonObject.get("data");
-       // final JSONObject playerInfo = (JSONObject) data.get("info");
         final JSONArray playerStatsArray = (JSONArray) data.get("stats");
         PlayerCricketBioDataActivity activity = (PlayerCricketBioDataActivity) getActivity();
         if (activity != null) {
@@ -145,7 +147,7 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
                 public void run() {
                     try {
                         for (int i = 0; i < playerStatsArray.length(); i++) {
-                           JSONObject battingJsonObject= (JSONObject) playerStatsArray.get(i);
+                            JSONObject battingJsonObject= (JSONObject) playerStatsArray.get(i);
                             JSONArray battingArray = battingJsonObject.getJSONArray("batting") ;
                             JSONArray bowlingArray = battingJsonObject.getJSONArray("bowling") ;
                             if(battingArray != null) battingStatProcess(i, battingArray);
@@ -164,7 +166,7 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
 
     private void battingStatProcess(int i, JSONArray battingArray) throws JSONException {
         for(int j = 0; j < battingArray.length(); j++){
-            JSONObject batting = (JSONObject) battingArray.get(i);
+            JSONObject batting = (JSONObject) battingArray.get(j);
 
             if(batting != null) {
                 if(batting.getString("format").equalsIgnoreCase("TESTS")){
@@ -178,7 +180,7 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
                     battingTestsmatchMap.put("100s", batting.getString("100s"));
                     battingTestsmatchMap.put("not_out", batting.getString("not_out"));
                 }
-                if(batting.getString("format").equalsIgnoreCase("ODI")){
+                else if(batting.getString("format").equalsIgnoreCase("ODI")){
                     battingOdisMap.put("format",batting.getString("format"));
                     battingOdisMap.put("innings",batting.getString("innings"));
                     battingOdisMap.put("runs",batting.getString("runs"));
@@ -188,7 +190,8 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
                     battingOdisMap.put("highest",batting.getString("matches"));
                     battingOdisMap.put("100s",batting.getString("100s"));
                     battingOdisMap.put("not_out",batting.getString("not_out"));
-                }if(batting.getString("format").equalsIgnoreCase("Twenty20")){
+                }
+                else  if(batting.getString("format").equalsIgnoreCase("Twenty20")){
                     battingT20sMap.put("format",batting.getString("format"));
                     battingT20sMap.put("innings",batting.getString("innings"));
                     battingT20sMap.put("runs",batting.getString("runs"));
@@ -200,7 +203,7 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
                     battingT20sMap.put("not_out",batting.getString("not_out"));
                 }
 
-                if(batting.getString("format").equalsIgnoreCase("IPL")){
+                else if(batting.getString("format").equalsIgnoreCase("IPL")){
                     battingIPLMap.put("format",batting.getString("format"));
                     battingIPLMap.put("innings",batting.getString("innings"));
                     battingIPLMap.put("runs",batting.getString("runs"));
@@ -219,11 +222,11 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
         CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
         Set<String> keySet = battingTestsmatchMap.keySet();
         for (String key:keySet) {
-             cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
-             cricketPlayerMatchStatDTO.setTitles(key);
-             cricketPlayerMatchStatDTO.setTestsMatch(battingTestsmatchMap.get(key));
-            cricketPlayerMatchStatDTO.setTestsMatch(battingOdisMap.get(key));
-            cricketPlayerMatchStatDTO.setTestsMatch(battingT20sMap.get(key));
+            cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
+            cricketPlayerMatchStatDTO.setTitles(key);
+            cricketPlayerMatchStatDTO.setTestsMatch(battingTestsmatchMap.get(key));
+            cricketPlayerMatchStatDTO.setOdis(battingOdisMap.get(key));
+            cricketPlayerMatchStatDTO.setT20s(battingT20sMap.get(key));
             playerMatchBattingStatDTOList.add(cricketPlayerMatchStatDTO);
 
 
@@ -233,7 +236,7 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
 
     private void bowlingStatProcess(int i, JSONArray bowlingArray) throws JSONException {
         for(int j = 0; j < bowlingArray.length(); j++){
-            JSONObject bowling = (JSONObject) bowlingArray.get(i);
+            JSONObject bowling = (JSONObject) bowlingArray.get(j);
 
             if(bowling != null) {
                 if(bowling.getString("format").equalsIgnoreCase("TESTS")){
@@ -246,7 +249,7 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
                     bowlingTestsmatchMap.put("wickets", bowling.getString("wickets"));
                     bowlingTestsmatchMap.put("economy", bowling.getString("economy"));
                 }
-                if(bowling.getString("format").equalsIgnoreCase("ODI")){
+                else if(bowling.getString("format").equalsIgnoreCase("ODI")){
                     bowlingOdisMap.put("format", bowling.getString("format"));
                     bowlingOdisMap.put("runs", bowling.getString("runs"));
                     bowlingOdisMap.put("matches", bowling.getString("matches"));
@@ -256,7 +259,7 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
                     bowlingOdisMap.put("wickets", bowling.getString("wickets"));
                     bowlingOdisMap.put("economy", bowling.getString("economy"));
 
-                }if(bowling.getString("format").equalsIgnoreCase("Twenty20")){
+                }else if(bowling.getString("format").equalsIgnoreCase("Twenty20")){
                     bowlingT20sMap.put("format", bowling.getString("format"));
                     bowlingT20sMap.put("runs", bowling.getString("runs"));
                     bowlingT20sMap.put("matches", bowling.getString("matches"));
@@ -266,7 +269,7 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
                     bowlingT20sMap.put("wickets", bowling.getString("wickets"));
                     bowlingT20sMap.put("economy", bowling.getString("economy"));
                 }
-                if(bowling.getString("format").equalsIgnoreCase("IPL")){
+                else if(bowling.getString("format").equalsIgnoreCase("IPL")){
                     bowlingIPLMap.put("format", bowling.getString("format"));
                     bowlingIPLMap.put("runs", bowling.getString("runs"));
                     bowlingIPLMap.put("matches", bowling.getString("matches"));
@@ -286,8 +289,8 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
             cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
             cricketPlayerMatchStatDTO.setTitles(key);
             cricketPlayerMatchStatDTO.setTestsMatch(bowlingTestsmatchMap.get(key));
-            cricketPlayerMatchStatDTO.setTestsMatch(bowlingOdisMap.get(key));
-            cricketPlayerMatchStatDTO.setTestsMatch(bowlingT20sMap.get(key));
+            cricketPlayerMatchStatDTO.setOdis(bowlingOdisMap.get(key));
+            cricketPlayerMatchStatDTO.setT20s(bowlingT20sMap.get(key));
             playerMatchBowlingStatDTOList.add(cricketPlayerMatchStatDTO);
 
 
