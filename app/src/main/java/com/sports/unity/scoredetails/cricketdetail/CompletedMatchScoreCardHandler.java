@@ -12,21 +12,21 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.sports.unity.scoredetails.model.CricketScoreCard;
 
+import org.json.JSONObject;
+
 import java.util.HashSet;
 
 /**
  * Created by madmachines on 16/2/16.
  */
-public class CompletedMatchScoreCardHandler {
-    private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
+public class CompletedMatchScoreCardHandler {private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
     private Context context;
-    private String matchId = null;
     private String url = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
 
-    private ContentListener contentListener = null;
+    private CompletedMatchContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
-    public static CompletedMatchScoreCardHandler getInstance() {
+    public static CompletedMatchScoreCardHandler getInstance(Context context) {
         CompletedMatchScoreCardHandler completedMatchScoreCardHandler = null;
         completedMatchScoreCardHandler = new CompletedMatchScoreCardHandler();
         return completedMatchScoreCardHandler;
@@ -34,9 +34,9 @@ public class CompletedMatchScoreCardHandler {
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
-    public interface ContentListener {
+    public interface CompletedMatchContentListener {
 
-        void handleContent(int responseCode);
+        void handleContent(JSONObject object);
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -54,7 +54,7 @@ public class CompletedMatchScoreCardHandler {
         }
     };
 
-    public void requestScoreCardDetail() {
+    public void requestCompletdMatchScoreCard(String matchId) {
         Log.i("Score Detail", "Request Score Details");
 
         url = url+matchId;
@@ -66,16 +66,12 @@ public class CompletedMatchScoreCardHandler {
         requestInProcess.add(REQUEST_TAG);
     }
     private void handleResponse(String response) {
-        Gson gson = new Gson();
-        try{
-            CricketScoreCard scoreCardModel = gson.fromJson(response,CricketScoreCard.class);
+                try{
+                    JSONObject jsonObject = new JSONObject(response);
             Log.i("Score Card", "handleResponse: ");
-            if(scoreCardModel.isSuccess()){
-                Log.i("Score Card",scoreCardModel.toString());
+            if(jsonObject.getBoolean("success")){
+                mContentListener.handleContent(jsonObject);
             }
-
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,9 +81,10 @@ public class CompletedMatchScoreCardHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
-     if(contentListener != null) {
-            contentListener.handleContent(0);
-        }
+    }
+
+    public void addListener(CompletedMatchContentListener contentListener) {
+        mContentListener = contentListener;
     }
 
 

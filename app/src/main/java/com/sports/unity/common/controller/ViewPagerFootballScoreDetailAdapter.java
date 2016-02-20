@@ -27,15 +27,17 @@ public class ViewPagerFootballScoreDetailAdapter extends FragmentStatePagerAdapt
     private String Titles[];
     private int numberOfTabs;
     private ArrayList<CommentriesModel> commentries;
+    private String matchStatus;
 
 
 
-    public ViewPagerFootballScoreDetailAdapter(FragmentManager fm, String mTitles[], int numberOfTabs, ArrayList<CommentriesModel> commentries) {
+    public ViewPagerFootballScoreDetailAdapter(FragmentManager fm, String mTitles[], int numberOfTabs, ArrayList<CommentriesModel> commentries,String matchStatus) {
         super(fm);
 
         this.Titles = mTitles;
         this.numberOfTabs = numberOfTabs;
         this.commentries = commentries;
+        this.matchStatus = matchStatus;
 
     }
 

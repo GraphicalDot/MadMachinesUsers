@@ -16,7 +16,7 @@ import java.util.HashSet;
  * Created by madmachines on 16/2/16.
  */
 public class CricketUpcomingMatchSummaryHandler {
-    private static final String REQUEST_TAG = "CRICKET_PLAYER_BIO_TAG";
+    private static final String REQUEST_TAG = "CRICKET_MATCH_LIVE";
     private Context context;
     private String matchId;
     private String url = " http://52.76.74.188:5400/get_player_stats?player_id=";

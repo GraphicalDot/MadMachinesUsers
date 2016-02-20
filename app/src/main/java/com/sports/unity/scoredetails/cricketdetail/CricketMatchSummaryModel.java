@@ -8,4 +8,5 @@ import android.os.Parcelable;
  */
 public class CricketMatchSummaryModel  {
 
+
 }

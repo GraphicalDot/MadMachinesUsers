@@ -349,4 +349,5 @@ Carrier SMS charges may apply.</string>
     <string name="yellow_card">Yellow Card</string>
     <string name="red_card">Red Card</string>
     <string name="venue_name">VENUE NAME</string>
+    <string name="match_not_exist">This Match Does Not Exists</string>
 </resources>
