@@ -34,9 +34,6 @@ public class CricketPlayerMatchBattingStatAdapter extends RecyclerView.Adapter<C
         holder.tvTests.setText(holder.dto.getTestsMatch());
         holder.tvOdis.setText(holder.dto.getOdis());
         holder.tvT20s.setText(holder.dto.getT20s());
-
-
-
     }
 
     @Override

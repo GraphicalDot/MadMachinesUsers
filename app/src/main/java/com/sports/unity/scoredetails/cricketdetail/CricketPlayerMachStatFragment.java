@@ -7,34 +7,43 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
-import com.sports.unity.player.view.PlayerScoreCardDTO;
-import com.sports.unity.player.view.PlayerScorecardAdapter;
+import com.sports.unity.common.view.CustomLinearLayoutManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by madmachines on 15/2/16.
  */
 public class CricketPlayerMachStatFragment extends Fragment  implements CricketPlayerMatchStatHandler.CricketPlayerMatchStatContentListener{
-    private GridLayout glBattingPerformanceSummery;
-    private GridLayout glBowlingPerformanceSummary;
+    private RecyclerView rcBattingPerformanceSummery;
+    private RecyclerView rcBowlingPerformanceSummary;
     private ImageView battingImageView;
     private ImageView bowlingImageView;
     private CricketPlayerMatchBattingStatAdapter cricketPlayerMatchBattingStatAdapter;
-    private List<CricketPlayerMatchStatDTO> playerMatchStatDTOList = new ArrayList<>();
-    private RecyclerView mRecyclerView;
+    private CricketPlayerMatchBowlingStatAdapter cricketPlayerMatchBowlingStatAdapter;
+    private List<CricketPlayerMatchStatDTO> playerMatchBattingStatDTOList = new ArrayList<>();
+    private List<CricketPlayerMatchStatDTO> playerMatchBowlingStatDTOList = new ArrayList<>();
+    Map<String, String> battingTestsmatchMap = new HashMap<String, String>();
+    Map<String, String> battingOdisMap = new HashMap<String, String>();
+    Map<String, String> battingT20sMap = new HashMap<String, String>();
+    Map<String, String> battingIPLMap = new HashMap<String, String>();
+    Map<String, String> bowlingTestsmatchMap = new HashMap<String, String>();
+    Map<String, String> bowlingOdisMap = new HashMap<String, String>();
+    Map<String, String> bowlingT20sMap = new HashMap<String, String>();
+    Map<String, String> bowlingIPLMap = new HashMap<String, String>();
     public CricketPlayerMachStatFragment() {
         super();
     }
@@ -57,31 +66,39 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
         return view;
     }
     private void initView(View view) {
-        glBattingPerformanceSummery = (GridLayout) view.findViewById(R.id.gl_batting_performance_summary);
-        glBowlingPerformanceSummary = (GridLayout) view.findViewById(R.id.gl_bowling_performance_summary);
+        rcBattingPerformanceSummery = (RecyclerView) view.findViewById(R.id.rc_batting_performance_summary);
+        rcBattingPerformanceSummery.setLayoutManager(new CustomLinearLayoutManager(getContext()));
+        rcBowlingPerformanceSummary = (RecyclerView) view.findViewById(R.id.rc_bowling_performance_summary);
+        rcBowlingPerformanceSummary.setLayoutManager(new CustomLinearLayoutManager(getContext()) );
         battingImageView = (ImageView) view.findViewById(R.id.iv_down);
         bowlingImageView = (ImageView) view.findViewById(R.id.iv_down_second);
         battingImageView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if(glBattingPerformanceSummery.getVisibility()== View.GONE){
-                    glBattingPerformanceSummery.setVisibility(View.VISIBLE);
+                if(rcBattingPerformanceSummery.getVisibility()== View.GONE){
+                    rcBattingPerformanceSummery.setVisibility(View.VISIBLE);
+                    battingImageView.setImageResource(R.drawable.ic_droable);
                 } else {
-                    glBattingPerformanceSummery.setVisibility(View.GONE);
+                    rcBattingPerformanceSummery.setVisibility(View.GONE);
+                    battingImageView.setImageResource(R.drawable.ic_droable);
                 }
             }
         });
         bowlingImageView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if(glBowlingPerformanceSummary.getVisibility()== View.GONE){
-                    glBowlingPerformanceSummary.setVisibility(View.VISIBLE);
+                if(rcBowlingPerformanceSummary.getVisibility()== View.GONE){
+                    rcBowlingPerformanceSummary.setVisibility(View.VISIBLE);
+                    battingImageView.setImageResource(R.drawable.ic_droable);
                 } else {
-                    glBowlingPerformanceSummary.setVisibility(View.GONE);
+                    rcBowlingPerformanceSummary.setVisibility(View.GONE);
+                    battingImageView.setImageResource(R.drawable.ic_droable);
                 }
             }
         });
 
-        cricketPlayerMatchBattingStatAdapter = new CricketPlayerMatchBattingStatAdapter(playerMatchStatDTOList);
-        mRecyclerView.setAdapter(cricketPlayerMatchBattingStatAdapter);
+        cricketPlayerMatchBattingStatAdapter = new CricketPlayerMatchBattingStatAdapter(playerMatchBattingStatDTOList);
+        rcBattingPerformanceSummery.setAdapter(cricketPlayerMatchBattingStatAdapter);
+        cricketPlayerMatchBowlingStatAdapter = new CricketPlayerMatchBowlingStatAdapter(playerMatchBowlingStatDTOList);
+        rcBowlingPerformanceSummary.setAdapter(cricketPlayerMatchBowlingStatAdapter);
         initErrorLayout(view);
 
     }
@@ -122,10 +139,9 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
     }
 
     private void renderDisplay(JSONObject jsonObject) throws JSONException {
-        glBattingPerformanceSummery.setVisibility(View.VISIBLE);
-        glBowlingPerformanceSummary.setVisibility(View.VISIBLE);
+        rcBattingPerformanceSummery.setVisibility(View.VISIBLE);
+        rcBowlingPerformanceSummary.setVisibility(View.VISIBLE);
         final JSONObject data = (JSONObject) jsonObject.get("data");
-       // final JSONObject playerInfo = (JSONObject) data.get("info");
         final JSONArray playerStatsArray = (JSONArray) data.get("stats");
         PlayerCricketBioDataActivity activity = (PlayerCricketBioDataActivity) getActivity();
         if (activity != null) {
@@ -135,26 +151,12 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
                 public void run() {
                     try {
                         for (int i = 0; i < playerStatsArray.length(); i++) {
-
                             JSONObject battingJsonObject= (JSONObject) playerStatsArray.get(i);
                             JSONArray battingArray = battingJsonObject.getJSONArray("batting") ;
-                            if(battingArray != null){
-                                CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
-                               for(int j = 0; j < battingArray.length(); j++){
-                                   JSONObject batting = (JSONObject) battingArray.get(i);
-                                   cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
-                                   if(batting != null) {
-                                       cricketPlayerMatchStatDTO.setTitles(batting.getString("matches"));
-                                       cricketPlayerMatchStatDTO.setTestsMatch(batting.getString("runs"));
-                                       cricketPlayerMatchStatDTO.setOdis(batting.getString("matches"));
-                                       cricketPlayerMatchStatDTO.setT20s(batting.getString("runs"));
-
-                                   }
-
-                                   playerMatchStatDTOList.add(cricketPlayerMatchStatDTO);
-                               }
-                            }
-                            }
+                            JSONArray bowlingArray = battingJsonObject.getJSONArray("bowling") ;
+                            if(battingArray != null) battingStatProcess(i, battingArray);
+                            if(bowlingArray != null) bowlingStatProcess(i, bowlingArray);
+                        }
 
                     } catch (Exception ex) {
                         ex.printStackTrace();
@@ -164,5 +166,145 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
             });
         }
 
+    }
+
+    private void battingStatProcess(int i, JSONArray battingArray) throws JSONException {
+        for(int j = 0; j < battingArray.length(); j++){
+            JSONObject batting = (JSONObject) battingArray.get(j);
+
+            if(batting != null) {
+                if(batting.getString("format").equalsIgnoreCase("TESTS")){
+                    battingTestsmatchMap.put("format", batting.getString("format"));
+                    battingTestsmatchMap.put("innings", batting.getString("innings"));
+                    battingTestsmatchMap.put("runs", batting.getString("runs"));
+                    battingTestsmatchMap.put("matches", batting.getString("matches"));
+                    battingTestsmatchMap.put("average", batting.getString("innings"));
+                    battingTestsmatchMap.put("strike_rate", batting.getString("runs"));
+                    battingTestsmatchMap.put("highest", batting.getString("matches"));
+                    battingTestsmatchMap.put("100s", batting.getString("100s"));
+                    battingTestsmatchMap.put("not_out", batting.getString("not_out"));
+                }
+                else if(batting.getString("format").equalsIgnoreCase("ODI")){
+                    battingOdisMap.put("format",batting.getString("format"));
+                    battingOdisMap.put("innings",batting.getString("innings"));
+                    battingOdisMap.put("runs",batting.getString("runs"));
+                    battingOdisMap.put("matches",batting.getString("matches"));
+                    battingOdisMap.put("average",batting.getString("innings"));
+                    battingOdisMap.put("strike_rate",batting.getString("runs"));
+                    battingOdisMap.put("highest",batting.getString("matches"));
+                    battingOdisMap.put("100s",batting.getString("100s"));
+                    battingOdisMap.put("not_out",batting.getString("not_out"));
+                }
+                else  if(batting.getString("format").equalsIgnoreCase("Twenty20")){
+                    battingT20sMap.put("format",batting.getString("format"));
+                    battingT20sMap.put("innings",batting.getString("innings"));
+                    battingT20sMap.put("runs",batting.getString("runs"));
+                    battingT20sMap.put("matches",batting.getString("matches"));
+                    battingT20sMap.put("average",batting.getString("innings"));
+                    battingT20sMap.put("strike_rate",batting.getString("runs"));
+                    battingT20sMap.put("highest",batting.getString("matches"));
+                    battingT20sMap.put("100s",batting.getString("100s"));
+                    battingT20sMap.put("not_out",batting.getString("not_out"));
+                }
+
+                else if(batting.getString("format").equalsIgnoreCase("IPL")){
+                    battingIPLMap.put("format",batting.getString("format"));
+                    battingIPLMap.put("innings",batting.getString("innings"));
+                    battingIPLMap.put("runs",batting.getString("runs"));
+                    battingIPLMap.put("matches",batting.getString("matches"));
+                    battingIPLMap.put("average",batting.getString("innings"));
+                    battingIPLMap.put("strike_rate",batting.getString("runs"));
+                    battingIPLMap.put("highest",batting.getString("matches"));
+                    battingIPLMap.put("100s",batting.getString("100s"));
+                    battingIPLMap.put("not_out",batting.getString("not_out"));
+                }
+
+            }
+
+
+        }
+        CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
+        Set<String> keySet = battingTestsmatchMap.keySet();
+        for (String key:keySet) {
+            String title = null;
+            title = key.toUpperCase();
+            title = title.replaceAll("_"," ");
+            cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
+            cricketPlayerMatchStatDTO.setTitles(title);
+            cricketPlayerMatchStatDTO.setTestsMatch(battingTestsmatchMap.get(key));
+            cricketPlayerMatchStatDTO.setOdis(battingOdisMap.get(key));
+            cricketPlayerMatchStatDTO.setT20s(battingT20sMap.get(key));
+            playerMatchBattingStatDTOList.add(cricketPlayerMatchStatDTO);
+
+
+        }
+        cricketPlayerMatchBattingStatAdapter.notifyDataSetChanged();
+    }
+
+    private void bowlingStatProcess(int i, JSONArray bowlingArray) throws JSONException {
+        for(int j = 0; j < bowlingArray.length(); j++){
+            JSONObject bowling = (JSONObject) bowlingArray.get(j);
+
+            if(bowling != null) {
+                if(bowling.getString("format").equalsIgnoreCase("TESTS")){
+                    bowlingTestsmatchMap.put("format", bowling.getString("format"));
+                    bowlingTestsmatchMap.put("runs", bowling.getString("runs"));
+                    bowlingTestsmatchMap.put("matches", bowling.getString("matches"));
+                    bowlingTestsmatchMap.put("average", bowling.getString("average"));
+                    bowlingTestsmatchMap.put("balls", bowling.getString("balls"));
+                    bowlingTestsmatchMap.put("best", bowling.getString("best"));
+                    bowlingTestsmatchMap.put("wickets", bowling.getString("wickets"));
+                    bowlingTestsmatchMap.put("economy", bowling.getString("economy"));
+                }
+                else if(bowling.getString("format").equalsIgnoreCase("ODI")){
+                    bowlingOdisMap.put("format", bowling.getString("format"));
+                    bowlingOdisMap.put("runs", bowling.getString("runs"));
+                    bowlingOdisMap.put("matches", bowling.getString("matches"));
+                    bowlingOdisMap.put("average", bowling.getString("average"));
+                    bowlingOdisMap.put("balls", bowling.getString("balls"));
+                    bowlingOdisMap.put("best", bowling.getString("best"));
+                    bowlingOdisMap.put("wickets", bowling.getString("wickets"));
+                    bowlingOdisMap.put("economy", bowling.getString("economy"));
+
+                }else if(bowling.getString("format").equalsIgnoreCase("Twenty20")){
+                    bowlingT20sMap.put("format", bowling.getString("format"));
+                    bowlingT20sMap.put("runs", bowling.getString("runs"));
+                    bowlingT20sMap.put("matches", bowling.getString("matches"));
+                    bowlingT20sMap.put("average", bowling.getString("average"));
+                    bowlingT20sMap.put("balls", bowling.getString("balls"));
+                    bowlingT20sMap.put("best", bowling.getString("best"));
+                    bowlingT20sMap.put("wickets", bowling.getString("wickets"));
+                    bowlingT20sMap.put("economy", bowling.getString("economy"));
+                }
+                else if(bowling.getString("format").equalsIgnoreCase("IPL")){
+                    bowlingIPLMap.put("format", bowling.getString("format"));
+                    bowlingIPLMap.put("runs", bowling.getString("runs"));
+                    bowlingIPLMap.put("matches", bowling.getString("matches"));
+                    bowlingIPLMap.put("average", bowling.getString("average"));
+                    bowlingIPLMap.put("balls", bowling.getString("balls"));
+                    bowlingIPLMap.put("best", bowling.getString("best"));
+                    bowlingIPLMap.put("wickets", bowling.getString("wickets"));
+                    bowlingIPLMap.put("economy", bowling.getString("economy"));
+                }
+            }
+
+
+        }
+        CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
+        Set<String> keySet = bowlingTestsmatchMap.keySet();
+        for (String key:keySet) {
+            String title = null;
+            title = key.toUpperCase();
+            title = title.replaceAll("_"," ");
+            cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
+            cricketPlayerMatchStatDTO.setTitles(title);
+            cricketPlayerMatchStatDTO.setTestsMatch(bowlingTestsmatchMap.get(key));
+            cricketPlayerMatchStatDTO.setOdis(bowlingOdisMap.get(key));
+            cricketPlayerMatchStatDTO.setT20s(bowlingT20sMap.get(key));
+            playerMatchBowlingStatDTOList.add(cricketPlayerMatchStatDTO);
+
+
+        }
+        cricketPlayerMatchBowlingStatAdapter.notifyDataSetChanged();
     }
 }
