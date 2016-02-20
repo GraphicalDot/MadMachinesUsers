@@ -73,7 +73,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             ContactListAdapter contactListAdapter = (ContactListAdapter) contacts.getAdapter();
-            Contacts c = contactListAdapter.getItem(position);
+            Contacts c = contactListAdapter.getUsedContact().get(position);
 
             if (c.registered) {
                 String number = c.jid;

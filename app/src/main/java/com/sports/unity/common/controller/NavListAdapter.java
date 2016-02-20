@@ -3,6 +3,7 @@ package com.sports.unity.common.controller;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,13 +53,13 @@ public class NavListAdapter extends BaseExpandableListAdapter {
         iv = (ImageView) convertView.findViewById(R.id.flag);
         if (childItems.size() > 0) {
             textView.setText(childItems.get(childPosition).getName());
+            textView.setTextColor(act.getResources().getColor(R.color.text_color));
             String uri = null;
             try {
                 uri = childItems.get(childPosition).getFlagImageUrl();
             } catch (NullPointerException e) {
             }
             if (uri != null) {
-
                 Glide.with(act).load(Uri.parse(uri)).into(iv);
             } else {
                 iv.setVisibility(View.GONE);

@@ -2,21 +2,17 @@ package com.sports.unity.messages.controller.fragment;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.Telephony;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
@@ -29,7 +25,7 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
 /**
  * Created by madmachines on 2/9/15.
  */
-public class ContactListAdapter extends ArrayAdapter<Contacts> implements StickyListHeadersAdapter {
+public class ContactListAdapter extends ArrayAdapter<Contacts> implements StickyListHeadersAdapter, Filterable {
 
     private final Activity context;
     private LayoutInflater inflater;
@@ -42,6 +38,10 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
     private int itemLayoutId = 0;
     private boolean multipleSelection = false;
 
+    private ItemFilter contactFilter;
+    ArrayList<Contacts> finalContact;
+    ArrayList<Contacts> usedContact;
+
     public ContactListAdapter(Activity context, int resource, ArrayList<Contacts> list, boolean multipleSelection, int frequentContactCount) {
         super(context, resource, list);
         this.context = context;
@@ -50,45 +50,53 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
         this.multipleSelection = multipleSelection;
         inflater = context.getLayoutInflater();
         this.frequentContactCount = frequentContactCount;
+        contactFilter = new ItemFilter();
+        usedContact = finalContact = list;
+
     }
 
     public View getView(final int position, View view, ViewGroup parent) {
-        Contacts contacts = getItem(position);
+        Log.d("max", "position is-+" + position);
+        Contacts contacts = null;
+        try {
+            contacts = usedContact.get(position);
+            LayoutInflater inflater = context.getLayoutInflater();
+            View rowView = inflater.inflate(itemLayoutId, null, true);
 
-        LayoutInflater inflater = context.getLayoutInflater();
-        View rowView = inflater.inflate(itemLayoutId, null, true);
+            ImageView userIcon = (ImageView) rowView.findViewById(R.id.user_icon);
 
-        ImageView userIcon = (ImageView) rowView.findViewById(R.id.user_icon);
+            TextView txtTitle = (TextView) rowView.findViewById(R.id.contact_name);
+            txtTitle.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
 
-        TextView txtTitle = (TextView) rowView.findViewById(R.id.contact_name);
-        txtTitle.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
+            TextView status = (TextView) rowView.findViewById(R.id.status);
+            status.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoLight());
 
-        TextView status = (TextView) rowView.findViewById(R.id.status);
-        status.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoLight());
+            if (itemLayoutId == R.layout.list_contact_msgs) {
+                invite = (Button) rowView.findViewById(R.id.btn_invite);
+                invite.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
 
-        if (itemLayoutId == R.layout.list_contact_msgs) {
-            invite = (Button) rowView.findViewById(R.id.btn_invite);
-            invite.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
-
-            if (contacts.registered) {
-                invite.setVisibility(View.INVISIBLE);
+                if (contacts.registered) {
+                    invite.setVisibility(View.INVISIBLE);
+                }
+            } else if (itemLayoutId == R.layout.list_item_members) {
+                if (multipleSelection) {
+                    rowView.findViewById(R.id.checkbox).setVisibility(View.VISIBLE);
+                } else {
+                    rowView.findViewById(R.id.checkbox).setVisibility(View.GONE);
+                }
             }
-        } else if (itemLayoutId == R.layout.list_item_members) {
-            if (multipleSelection) {
-                rowView.findViewById(R.id.checkbox).setVisibility(View.VISIBLE);
-            } else {
-                rowView.findViewById(R.id.checkbox).setVisibility(View.GONE);
+
+            txtTitle.setText(contacts.name);
+            status.setText(contacts.status);
+
+            if (contacts.image != null) {
+                userIcon.setImageBitmap(BitmapFactory.decodeByteArray(contacts.image, 0, contacts.image.length));
             }
+            return rowView;
+
+        } catch (Exception e) {
+            return null;
         }
-
-        txtTitle.setText(contacts.name);
-        status.setText(contacts.status);
-
-        if (contacts.image != null) {
-            userIcon.setImageBitmap(BitmapFactory.decodeByteArray(contacts.image, 0, contacts.image.length));
-        }
-        return rowView;
-
     }
 
     //    public void filter(String filterText) {
@@ -116,6 +124,10 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
 
     public ArrayList<Contacts> getInUseContactListForAdapter() {
         return inUseContactListForAdapter;
+    }
+
+    public ArrayList<Contacts> getUsedContact() {
+        return usedContact;
     }
 
     @Override
@@ -153,7 +165,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
 
     @SuppressLint("NewApi")
     public char getHeader(int position) {
-        char c = inUseContactListForAdapter.get(position).name.subSequence(0, 1).charAt(0);
+        char c = usedContact.get(position).name.subSequence(0, 1).charAt(0);
         boolean isAlphabetic = Character.isLetter(c);
         if (isAlphabetic) {
             c = Character.toUpperCase(c);
@@ -166,7 +178,57 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
     class HeaderViewHolder {
         TextView text;
     }
+
+    @Override
+    public Filter getFilter() {
+        return contactFilter;
+    }
+
+    @Override
+    public int getCount() {
+        return usedContact.size();
+    }
+
+    @Override
+    public Contacts getItem(int position) {
+        return usedContact.get(position);
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
+
+    private class ItemFilter extends Filter {
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+
+            String filterString = constraint.toString().toLowerCase();
+
+            FilterResults results = new FilterResults();
+            final ArrayList<Contacts> nlist = new ArrayList<Contacts>();
+
+            for (Contacts c : finalContact) {
+                if (c.name.toLowerCase().contains(filterString)) {
+
+                    Log.d("max", "Name is-" + c.name + "<<isRegs_)" + c.registered);
+                    nlist.add(c);
+                }
+            }
+
+            results.values = nlist;
+            results.count = nlist.size();
+            Log.d("max", "count is-+" + nlist.size());
+            return results;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            usedContact = (ArrayList<Contacts>) results.values;
+            ContactListAdapter.this.notifyDataSetChanged();
+        }
+
+    }
 }
-
-
 
