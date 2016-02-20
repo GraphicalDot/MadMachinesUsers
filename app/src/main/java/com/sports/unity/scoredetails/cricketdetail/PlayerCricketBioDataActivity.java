@@ -11,7 +11,6 @@ import com.sports.unity.R;
 import com.sports.unity.common.controller.CricketPlayerProfileAdapter;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.view.SlidingTabLayout;
-import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
 
 import org.json.JSONObject;
@@ -126,7 +125,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
                             playerName.setText(playerInfo.getString("Full Name"));
                         }
                         if (!playerInfo.isNull("Place of birth")) {
-                            playerNationName.setText(playerInfo.getString("Place of birth"));
+                            playerNationName.setText(playerInfo.getString("Place of birth").toUpperCase());
                         }
 
                     }
