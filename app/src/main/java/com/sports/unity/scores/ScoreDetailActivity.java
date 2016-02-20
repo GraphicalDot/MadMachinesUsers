@@ -63,6 +63,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
     private String sportsType = null;
     private String matchId = null;
+    private String matchStatus;
 
     private Timer timerToRefreshContent = null;
 
@@ -76,6 +77,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         setContentView(R.layout.activity_score_detail);
         sportsType = getIntent().getStringExtra(Constants.INTENT_KEY_TYPE);
         matchId = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        matchStatus= getIntent().getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
         initView();
         setToolbar();
 
@@ -151,10 +153,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 //=======
             // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
             if (sportsType.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
-                cricketScoreDetailAdapter = new ViewPagerCricketScoreDetailAdapter(getSupportFragmentManager(), cricketMatchtitles, numberOfCricketTabs, commentaries);
+                cricketScoreDetailAdapter = new ViewPagerCricketScoreDetailAdapter(getSupportFragmentManager(), cricketMatchtitles, numberOfCricketTabs, commentaries, matchStatus);
                 mViewPager.setAdapter(cricketScoreDetailAdapter);
             } else {
-                footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitles, numberOfFootballTabs, commentaries);
+                footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitles, numberOfFootballTabs, commentaries,matchStatus);
                 mViewPager.setAdapter(footballScoreDetailAdapter);
 //>>>>>>> team2_dev_branch
 

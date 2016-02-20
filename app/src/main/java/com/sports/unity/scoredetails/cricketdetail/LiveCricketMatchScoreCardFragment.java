@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,33 +13,35 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.scoredetails.model.CricketScoreCard;
+import com.sports.unity.scoredetails.model.Scorecard;
 import com.sports.unity.scores.ScoreDetailActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class CompletedMatchScoreCardFragment extends Fragment implements CompletedMatchScoreCardHandler.CompletedMatchContentListener{
+public class LiveCricketMatchScoreCardFragment extends Fragment implements LivedMatchScoreCardHandler.LiveMatchContentListener{
 
 
-    public CompletedMatchScoreCardFragment() {
-        // Required empty public constructor
+    public LiveCricketMatchScoreCardFragment() {
+        super();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         String matchId =  getActivity().getIntent().getStringExtra("matchId");
-        matchId = "rsaeng_2015_t20_01";
-        CompletedMatchScoreCardHandler completedMatchScoreCardHandler = CompletedMatchScoreCardHandler.getInstance(context);
-        completedMatchScoreCardHandler.addListener(this);
-        completedMatchScoreCardHandler.requestCompletdMatchScoreCard(matchId);
+        matchId = "nzaus_2016_test_02";
+        LivedMatchScoreCardHandler cricketPlayerbioHandler = LivedMatchScoreCardHandler.getInstance(context);
+        cricketPlayerbioHandler.addListener(this);
+        cricketPlayerbioHandler.requestMatchScoreCard(matchId);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_completed_match_score_card, container, false);
+        View view = inflater.inflate(R.layout.fragment_cricket_live_match_summery, container, false);
         initView(view);
         return view;
     }
@@ -51,15 +52,14 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
     }
 
     @Override
-    public void handleContent(JSONObject object) {
+    public void handleContent(CricketScoreCard scorecard) {
         {
             try {
-               boolean success = object.getBoolean("success");
-                boolean error = object.getBoolean("error");
+                boolean success = scorecard.isSuccess();
 
                 if( success ) {
 
-                    renderDisplay(object);
+                    renderDisplay(scorecard);
 
                 } else {
                     Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();
@@ -84,7 +84,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
     }
 
-    private void renderDisplay(final JSONObject scoreCard) throws JSONException {
+    private void renderDisplay(CricketScoreCard scoreCard) throws JSONException {
 
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (activity != null) {
@@ -92,7 +92,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                 @Override
                 public void run() {
                     try {
-                        Log.i("run: ",scoreCard.toString());
+
 
 
 

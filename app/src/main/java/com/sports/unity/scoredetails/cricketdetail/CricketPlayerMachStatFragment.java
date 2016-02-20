@@ -79,7 +79,7 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
                     battingImageView.setImageResource(R.drawable.ic_droable);
                 } else {
                     rcBattingPerformanceSummery.setVisibility(View.GONE);
-                    battingImageView.setImageResource(R.drawable.ic_droable);
+                    battingImageView.setImageResource(R.drawable.ic_down_arrow);
                 }
             }
         });
@@ -90,7 +90,7 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
                     battingImageView.setImageResource(R.drawable.ic_droable);
                 } else {
                     rcBowlingPerformanceSummary.setVisibility(View.GONE);
-                    battingImageView.setImageResource(R.drawable.ic_droable);
+                    battingImageView.setImageResource(R.drawable.ic_down_arrow);
                 }
             }
         });
