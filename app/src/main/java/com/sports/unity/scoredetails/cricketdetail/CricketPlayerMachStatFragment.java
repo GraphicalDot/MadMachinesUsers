@@ -72,12 +72,14 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
         rcBowlingPerformanceSummary.setLayoutManager(new CustomLinearLayoutManager(getContext()) );
         battingImageView = (ImageView) view.findViewById(R.id.iv_down);
         bowlingImageView = (ImageView) view.findViewById(R.id.iv_down_second);
-        /*battingImageView.setOnClickListener(new View.OnClickListener() {
+        battingImageView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if(rcBattingPerformanceSummery.getVisibility()== View.GONE){
                     rcBattingPerformanceSummery.setVisibility(View.VISIBLE);
+                    battingImageView.setImageResource(R.drawable.ic_droable);
                 } else {
                     rcBattingPerformanceSummery.setVisibility(View.GONE);
+                    battingImageView.setImageResource(R.drawable.ic_droable);
                 }
             }
         });
@@ -85,11 +87,13 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
             public void onClick(View v) {
                 if(rcBowlingPerformanceSummary.getVisibility()== View.GONE){
                     rcBowlingPerformanceSummary.setVisibility(View.VISIBLE);
+                    battingImageView.setImageResource(R.drawable.ic_droable);
                 } else {
                     rcBowlingPerformanceSummary.setVisibility(View.GONE);
+                    battingImageView.setImageResource(R.drawable.ic_droable);
                 }
             }
-        });*/
+        });
 
         cricketPlayerMatchBattingStatAdapter = new CricketPlayerMatchBattingStatAdapter(playerMatchBattingStatDTOList);
         rcBattingPerformanceSummery.setAdapter(cricketPlayerMatchBattingStatAdapter);
@@ -222,8 +226,11 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
         CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
         Set<String> keySet = battingTestsmatchMap.keySet();
         for (String key:keySet) {
+            String title = null;
+            title = key.toUpperCase();
+            title = title.replaceAll("_"," ");
             cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
-            cricketPlayerMatchStatDTO.setTitles(key);
+            cricketPlayerMatchStatDTO.setTitles(title);
             cricketPlayerMatchStatDTO.setTestsMatch(battingTestsmatchMap.get(key));
             cricketPlayerMatchStatDTO.setOdis(battingOdisMap.get(key));
             cricketPlayerMatchStatDTO.setT20s(battingT20sMap.get(key));
@@ -286,8 +293,11 @@ public class CricketPlayerMachStatFragment extends Fragment  implements CricketP
         CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
         Set<String> keySet = bowlingTestsmatchMap.keySet();
         for (String key:keySet) {
+            String title = null;
+            title = key.toUpperCase();
+            title = title.replaceAll("_"," ");
             cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
-            cricketPlayerMatchStatDTO.setTitles(key);
+            cricketPlayerMatchStatDTO.setTitles(title);
             cricketPlayerMatchStatDTO.setTestsMatch(bowlingTestsmatchMap.get(key));
             cricketPlayerMatchStatDTO.setOdis(bowlingOdisMap.get(key));
             cricketPlayerMatchStatDTO.setT20s(bowlingT20sMap.get(key));
