@@ -1,47 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/rootLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
+    android:id="@+id/rootLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
     android:orientation="horizontal"
-        android:padding="@dimen/horizontal_padding_small"
-    android:paddingRight="@dimen/horizontal_padding_small">
+    android:paddingLeft="@dimen/horizontal_padding_small"
+    android:paddingTop="@dimen/horizontal_padding_small"
+    android:paddingBottom="@dimen/horizontal_padding_small"
+    android:paddingRight="@dimen/horizontal_padding_medium">
 
     <com.sports.unity.common.view.CustomRobotoRegularTextView
-            android:id="@+id/tv_head"
-            android:layout_height="wrap_content"
+        android:id="@+id/tv_head"
+        android:layout_height="wrap_content"
         android:gravity="left"
         android:text="league"
-            android:textSize="@dimen/font_size_small_medium"
+        android:textSize="@dimen/font_size_small_medium"
         app:layout_widthPercent="25%" />
 
     <com.sports.unity.common.view.CustomRobotoRegularTextView
-            android:id="@+id/tv_tests"
-            android:layout_height="wrap_content"
+        android:id="@+id/tv_tests"
+        android:layout_height="wrap_content"
         android:layout_toRightOf="@id/tv_head"
         android:gravity="right"
         android:text="tem"
-            android:textSize="@dimen/font_size_small_medium"
-        app:layout_widthPercent="25%" />
+        android:textSize="@dimen/font_size_small_medium"
+        app:layout_widthPercent="22%" />
 
     <com.sports.unity.common.view.CustomRobotoRegularTextView
-            android:id="@+id/tv_odis"
-            android:layout_height="wrap_content"
+        android:id="@+id/tv_odis"
+        android:layout_height="wrap_content"
         android:layout_toRightOf="@id/tv_tests"
         android:gravity="right"
         android:text="1"
-            android:textSize="@dimen/font_size_small_medium"
-        app:layout_widthPercent="25%" />
+        android:textSize="@dimen/font_size_small_medium"
+        app:layout_widthPercent="22%" />
 
     <com.sports.unity.common.view.CustomRobotoRegularTextView
-            android:id="@+id/tv_t20s"
-            android:layout_height="wrap_content"
+        android:id="@+id/tv_t20s"
+        android:layout_height="wrap_content"
         android:layout_toRightOf="@id/tv_odis"
         android:gravity="right"
         android:text="3"
-            android:textSize="@dimen/font_size_small_medium"
-        app:layout_widthPercent="25%" />
+        android:textSize="@dimen/font_size_small_medium"
+        app:layout_widthPercent="22%" />
 </android.support.percent.PercentRelativeLayout>
 
