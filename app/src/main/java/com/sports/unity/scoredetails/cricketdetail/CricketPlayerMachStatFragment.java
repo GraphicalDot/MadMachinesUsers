@@ -25,6 +25,8 @@ import java.util.Map;
 import java.util.Set;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 /**
  * Created by madmachines on 15/2/16.
@@ -77,25 +79,31 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         rcBowlingPerformanceSummary.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         battingImageView = (ImageView) view.findViewById(R.id.iv_down);
         bowlingImageView = (ImageView) view.findViewById(R.id.iv_down_second);
+        final View battingRow = view.findViewById(R.id.prl_batting);
+        final View bowlingRow = view.findViewById(R.id.prl_bowling);
         battingImageView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (rcBattingPerformanceSummery.getVisibility() == View.GONE) {
-                    rcBattingPerformanceSummery.setVisibility(View.VISIBLE);
+                if (rcBattingPerformanceSummery.getVisibility() == GONE) {
+                    rcBattingPerformanceSummery.setVisibility(VISIBLE);
+                    battingRow.setVisibility(VISIBLE);
                     battingImageView.setImageResource(R.drawable.ic_droable);
                 } else {
-                    rcBattingPerformanceSummery.setVisibility(View.GONE);
+                    rcBattingPerformanceSummery.setVisibility(GONE);
+                    battingRow.setVisibility(GONE);
                     battingImageView.setImageResource(R.drawable.ic_down_arrow);
                 }
             }
         });
         bowlingImageView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                if (rcBowlingPerformanceSummary.getVisibility() == View.GONE) {
-                    rcBowlingPerformanceSummary.setVisibility(View.VISIBLE);
-                    battingImageView.setImageResource(R.drawable.ic_droable);
+                if (rcBowlingPerformanceSummary.getVisibility() == GONE) {
+                    rcBowlingPerformanceSummary.setVisibility(VISIBLE);
+                    bowlingRow.setVisibility(VISIBLE);
+                    bowlingImageView.setImageResource(R.drawable.ic_droable);
                 } else {
-                    rcBowlingPerformanceSummary.setVisibility(View.GONE);
-                    battingImageView.setImageResource(R.drawable.ic_down_arrow);
+                    rcBowlingPerformanceSummary.setVisibility(GONE);
+                    bowlingRow.setVisibility(GONE);
+                    bowlingImageView.setImageResource(R.drawable.ic_down_arrow);
                 }
             }
         });
@@ -133,20 +141,20 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
 
     private void initErrorLayout(View view) {
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.GONE);
+        errorLayout.setVisibility(GONE);
 
     }
 
     private void showErrorLayout(View view) {
 
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.VISIBLE);
+        errorLayout.setVisibility(VISIBLE);
 
     }
 
     private void renderDisplay(JSONObject jsonObject) throws JSONException {
-        rcBattingPerformanceSummery.setVisibility(View.VISIBLE);
-        rcBowlingPerformanceSummary.setVisibility(View.VISIBLE);
+        rcBattingPerformanceSummery.setVisibility(VISIBLE);
+        rcBowlingPerformanceSummary.setVisibility(VISIBLE);
         final JSONObject data = (JSONObject) jsonObject.get("data");
         final JSONArray playerStatsArray = (JSONArray) data.get("stats");
         PlayerCricketBioDataActivity activity = (PlayerCricketBioDataActivity) getActivity();

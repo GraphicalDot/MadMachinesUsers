@@ -15,13 +15,13 @@
         android:orientation="vertical">
 
         <RelativeLayout
-            android:paddingTop="@dimen/horizontal_padding_small"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gray3"
             android:paddingBottom="@dimen/horizontal_padding_small"
             android:paddingLeft="@dimen/horizontal_padding_small"
             android:paddingRight="@dimen/horizontal_padding_medium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/gray3">
+            android:paddingTop="@dimen/horizontal_padding_small">
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -44,13 +44,14 @@
 
         </View>
         <android.support.percent.PercentRelativeLayout
+            android:id="@+id/prl_batting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
-            android:paddingLeft="@dimen/horizontal_padding_small"
-            android:paddingTop="@dimen/horizontal_padding_small"
             android:paddingBottom="@dimen/horizontal_padding_small"
-            android:paddingRight="@dimen/horizontal_padding_medium">
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_medium"
+            android:paddingTop="@dimen/horizontal_padding_small">
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/title_empty_first"
@@ -111,11 +112,11 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="@dimen/horizontal_padding_small"
+            android:background="@color/gray3"
             android:paddingBottom="@dimen/horizontal_padding_small"
             android:paddingLeft="@dimen/horizontal_padding_small"
             android:paddingRight="@dimen/horizontal_padding_medium"
-            android:background="@color/gray3">
+            android:paddingTop="@dimen/horizontal_padding_small">
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:layout_width="wrap_content"
@@ -139,13 +140,14 @@
 
         </View>
         <android.support.percent.PercentRelativeLayout
+            android:id="@+id/prl_bowling"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/white"
-            android:paddingLeft="@dimen/horizontal_padding_small"
-            android:paddingTop="@dimen/horizontal_padding_small"
             android:paddingBottom="@dimen/horizontal_padding_small"
-            android:paddingRight="@dimen/horizontal_padding_medium">
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_medium"
+            android:paddingTop="@dimen/horizontal_padding_small">
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/title_empty"
