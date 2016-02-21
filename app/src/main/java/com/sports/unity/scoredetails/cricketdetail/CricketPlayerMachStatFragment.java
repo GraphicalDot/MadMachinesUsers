@@ -81,6 +81,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         bowlingImageView = (ImageView) view.findViewById(R.id.iv_down_second);
         final View battingRow = view.findViewById(R.id.prl_batting);
         final View bowlingRow = view.findViewById(R.id.prl_bowling);
+        //TODO: downarrow should be the dark right now it's white
         battingImageView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (rcBattingPerformanceSummery.getVisibility() == GONE) {
