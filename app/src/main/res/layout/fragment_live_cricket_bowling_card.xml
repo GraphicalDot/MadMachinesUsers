@@ -7,44 +7,44 @@
         android:id="@+id/layout_batting"
         android:layout_width="match_parent"
         android:background="@color/ColorPrimary"
+        android:padding="@dimen/horizontal_padding_small"
         android:layout_height="wrap_content">
-        <TextView
+        <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/tv_bowler_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/vertical_padding_small"
             android:textSize="@dimen/font_size_small_large"
             android:layout_weight=".5"
             android:text="Martin Guptile"/>
-        <TextView
+        <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/tv_over"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/font_size_small_large"
             android:layout_weight=".1"
             android:text="35"/>
-        <TextView
+        <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/tv_midden_over"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/font_size_small_large"
             android:layout_weight=".1"
             android:text="42"/>
-        <TextView
+        <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/tv_runs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/font_size_small_large"
             android:layout_weight=".1"
             android:text="5"/>
-        <TextView
+        <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/tv_wicket"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/font_size_small_large"
             android:layout_weight=".1"
             android:text="0"/>
-        <TextView
+        <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/tv_extra"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
