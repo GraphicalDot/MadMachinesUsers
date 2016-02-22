@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
@@ -11,28 +12,29 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                card:cardCornerRadius="@dimen/card_edge_curve_radius">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/horizontal_padding_small"
-                android:layout_marginLeft="@dimen/horizontal_padding_small"
-                android:layout_marginRight="@dimen/horizontal_padding_small"
-                android:layout_marginTop="@dimen/horizontal_padding_very_small"
                 android:background="@color/ColorPrimary"
                 android:orientation="vertical">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/horizontal_padding_small">
 
-                    <TextView
-                        android:id="@+id/tv_last_six_ball"
+                    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                        android:id="@+id/tv_recent"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_vertical_margin_small"
-                        android:layout_marginTop="@dimen/vertical_padding_very_very_small"
                         android:text="@string/recent"
-                        android:textColor="@color/dark_blue"
+                        android:textColor="@color/gray1"
                         android:textSize="@dimen/font_size_small_large"
                         />
                 </LinearLayout>
@@ -44,39 +46,40 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:padding="@dimen/horizontal_padding_small"
                     android:weightSum="6">
                     <ImageView
-                        android:id="@+id/tv_first_ball"
+                        android:id="@+id/iv_first_ball"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:src="@drawable/ic_distance_slider_01"/>
                     <ImageView
-                        android:id="@+id/tv_second_ball"
+                        android:id="@+id/iv_second_ball"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:src="@drawable/ic_distance_slider_01"/>
                     <ImageView
-                        android:id="@+id/tv_third_ball"
+                        android:id="@+id/iv_third_ball"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:src="@drawable/ic_distance_slider_01"/>
                     <ImageView
-                        android:id="@+id/tv_fourth_ball"
+                        android:id="@+id/iv_fourth_ball"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:src="@drawable/ic_distance_slider_01"/>
                     <ImageView
-                        android:id="@+id/tv_fifth_ball"
+                        android:id="@+id/iv_fifth_ball"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:src="@drawable/ic_distance_slider_01"/>
                     <ImageView
-                        android:id="@+id/tv_six_ball"
+                        android:id="@+id/iv_sixth_ball"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -84,29 +87,33 @@
                 </LinearLayout>
 
             </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                card:cardCornerRadius="@dimen/card_edge_curve_radius">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/horizontal_padding_small"
-                android:layout_marginLeft="@dimen/horizontal_padding_small"
-                android:layout_marginRight="@dimen/horizontal_padding_small"
-                android:layout_marginTop="@dimen/horizontal_padding_very_small"
                 android:background="@color/ColorPrimary"
                 android:orientation="vertical">
                 <LinearLayout
                     android:id="@+id/lo_batting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="@dimen/horizontal_padding_small">
 
-                    <TextView
+                    <com.sports.unity.common.view.CustomRobotoRegularTextView
                         android:id="@+id/tv_batting"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/activity_vertical_margin_small"
                         android:layout_marginTop="@dimen/vertical_padding_very_very_small"
                         android:text="@string/batting"
-                        android:textColor="@color/dark_blue"
+                        android:textColor="@color/gray1"
                         android:textSize="@dimen/font_size_small_large"
                         />
                 </LinearLayout>
@@ -123,14 +130,14 @@
                         android:id="@+id/lo_match_summery"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/vertical_padding_very_very_small"
-                        android:orientation="vertical">
+
+                        android:orientation="vertical"
+                        android:padding="@dimen/horizontal_padding_small">
                         <ImageView
                             android:id="@+id/iv_player_first"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentLeft="true"
-                            android:layout_marginLeft="@dimen/activity_vertical_margin_small"
                             android:src="@drawable/ic_user"/>
                         <View
                             android:id="@+id/v_divider"
@@ -151,7 +158,8 @@
                             android:layout_toRightOf="@+id/iv_player_first"
                             android:orientation="vertical"
                             android:paddingLeft="@dimen/activity_vertical_margin_small">
-                            <TextView
+
+                            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                 android:id="@+id/tv_first_player_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -159,7 +167,8 @@
                                 android:text="M.Marsh"
                                 android:textSize="@dimen/font_size_small_large"
                                 />
-                            <TextView
+
+                            <com.sports.unity.common.view.CustomRobotoRegularTextView
                                 android:id="@+id/tv_first_player_run_rate"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -176,7 +185,8 @@
                             android:layout_marginRight="@dimen/activity_vertical_margin_small"
                             android:layout_toLeftOf="@+id/iv_player_second"
                             android:orientation="vertical">
-                            <TextView
+
+                            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                 android:id="@+id/tv_second_player_name"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -184,7 +194,8 @@
                                 android:text="M.Wade"
                                 android:textSize="@dimen/font_size_small_large"
                                 />
-                            <TextView
+
+                            <com.sports.unity.common.view.CustomRobotoRegularTextView
                                 android:id="@+id/tv_second_player_run_rate"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -201,7 +212,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
-                            android:layout_marginRight="@dimen/activity_vertical_margin_small"
                             android:src="@drawable/ic_user"/>
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -212,7 +222,7 @@
                             android:layout_toRightOf="@+id/iv_player_first">
 
 
-                            <TextView
+                            <com.sports.unity.common.view.CustomRobotoRegularTextView
                                 android:id="@+id/tv_first_player_run_on_ball"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -222,7 +232,8 @@
                                 android:text="6(7)"
                                 android:textSize="@dimen/font_size_very_small"
                                 />
-                            <TextView
+
+                            <com.sports.unity.common.view.CustomRobotoRegularTextView
                                 android:id="@+id/tv_partnership_record"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -231,7 +242,8 @@
                                 android:text="10(12)RRS"
                                 android:textSize="@dimen/font_size_very_small"
                                 />
-                            <TextView
+
+                            <com.sports.unity.common.view.CustomRobotoRegularTextView
                                 android:id="@+id/tv_second_player_run_on_ball"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -247,14 +259,16 @@
                 </LinearLayout>
 
             </LinearLayout>
+            </android.support.v7.widget.CardView>
 
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                card:cardCornerRadius="@dimen/card_edge_curve_radius">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/horizontal_padding_small"
-                android:layout_marginLeft="@dimen/horizontal_padding_small"
-                android:layout_marginRight="@dimen/horizontal_padding_small"
-                android:layout_marginTop="@dimen/horizontal_padding_very_small"
                 android:background="@color/ColorPrimary"
                 android:orientation="vertical">
                 <LinearLayout
@@ -263,14 +277,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <com.sports.unity.common.view.CustomRobotoRegularTextView
                         android:id="@+id/tv_upcoming"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_vertical_margin_small"
-                        android:layout_marginTop="@dimen/vertical_padding_very_very_small"
+                        android:padding="@dimen/horizontal_padding_small"
                         android:text="@string/upcoming"
-                        android:textColor="@color/dark_blue"
+                        android:textColor="@color/gray1"
                         android:textSize="@dimen/font_size_small_large"
                         />
                 </LinearLayout>
@@ -282,7 +295,8 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/vertical_padding_very_very_small">
-                    <TableRow>
+
+                    <TableRow android:padding="@dimen/horizontal_padding_small">
                         <ImageView
                             android:id="@+id/iv_upp_coming_player_first"
                             android:layout_width="wrap_content"
@@ -302,17 +316,21 @@
                             android:layout_marginRight="@dimen/activity_vertical_margin_small"
                             android:src="@drawable/ic_user"/>
                     </TableRow>
-                    <TableRow>
-                        <TextView
+
+                    <TableRow
+                        android:paddingLeft="@dimen/horizontal_padding_small"
+                        android:paddingRight="@dimen/horizontal_padding_small">
+
+                        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                             android:id="@+id/tv_first_up_coming_player_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/activity_vertical_margin_small"
                             android:gravity="center"
-
                             android:text="J.Faulkner"
                             android:textSize="@dimen/font_size_small_large" />
-                        <TextView
+
+                        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                             android:id="@+id/tv_second_up_coming_player_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -320,7 +338,8 @@
                             android:gravity="center"
                             android:text="P.Hasting"
                             android:textSize="@dimen/font_size_small_large" />
-                        <TextView
+
+                        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                             android:id="@+id/tv_third_up_coming_player_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -329,8 +348,12 @@
                             android:text="K.Richardson"
                             android:textSize="@dimen/font_size_small_large" />
                     </TableRow>
-                    <TableRow>
-                        <TextView
+
+                    <TableRow
+                        android:paddingLeft="@dimen/horizontal_padding_small"
+                        android:paddingRight="@dimen/horizontal_padding_small">
+
+                        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                             android:id="@+id/tv_first_up_coming_player_run_rate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -340,7 +363,8 @@
                             android:textColor="@color/score_light_grey"
 
                             android:textSize="@dimen/font_size_very_small" />
-                        <TextView
+
+                        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                             android:id="@+id/tv_second_up_coming_player_run_rate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -349,7 +373,8 @@
                             android:text="SR 88.89"
                             android:textColor="@color/score_light_grey"
                             android:textSize="@dimen/font_size_very_small" />
-                        <TextView
+
+                        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                             android:id="@+id/tv_third_up_coming_player_run_rate"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -362,13 +387,16 @@
 
                 </TableLayout>
             </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/activity_vertical_margin"
+                card:cardCornerRadius="@dimen/card_edge_curve_radius">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/horizontal_padding_small"
-                android:layout_marginLeft="@dimen/horizontal_padding_small"
-                android:layout_marginRight="@dimen/horizontal_padding_small"
-                android:layout_marginTop="@dimen/horizontal_padding_very_small"
                 android:background="@color/ColorPrimary"
                 android:orientation="vertical">
                 <LinearLayout
@@ -377,14 +405,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
+                    <com.sports.unity.common.view.CustomRobotoRegularTextView
                         android:id="@+id/tv_bowling"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/activity_vertical_margin_small"
-                        android:layout_marginTop="@dimen/vertical_padding_very_very_small"
+                        android:padding="@dimen/horizontal_padding_small"
                         android:text="@string/blowing"
-                        android:textColor="@color/dark_blue"
+                        android:textColor="@color/gray1"
                         android:textSize="@dimen/font_size_small_large"
                         />
                     <View
@@ -395,9 +422,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@color/ColorPrimary"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:padding="@dimen/horizontal_padding_small">
                         <ImageView
-                            android:id="@+id/iv_upp_coming_bowler"
+                            android:id="@+id/iv_bowler_profile"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/activity_vertical_margin_small"
@@ -408,7 +436,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/activity_vertical_margin_small">
                             <TableRow>
-                                <TextView
+
+                                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                     android:id="@+id/tv_bowler_name"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -416,7 +445,8 @@
                                     android:gravity="center"
                                     android:text="C.Anderson"
                                     android:textSize="@dimen/font_size_small_large" />
-                                <TextView
+
+                                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                     android:id="@+id/tv_bowler_over"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -424,7 +454,8 @@
                                     android:gravity="center"
                                     android:text="1.0"
                                     android:textSize="@dimen/font_size_small_large" />
-                                <TextView
+
+                                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                     android:id="@+id/tv_bowler_W_Run"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -434,7 +465,8 @@
                                     android:textSize="@dimen/font_size_small_large" />
                             </TableRow>
                             <TableRow>
-                                <TextView
+
+                                <com.sports.unity.common.view.CustomRobotoRegularTextView
                                     android:id="@+id/tv_bowler_econ"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -443,8 +475,9 @@
                                     android:text="ECON 4.0"
                                     android:textColor="@color/score_light_grey"
                                     android:textSize="@dimen/font_size_very_small" />
-                                <TextView
-                                    android:id="@+id/tv_bowler_overs"
+
+                                <com.sports.unity.common.view.CustomRobotoRegularTextView
+                                    android:id="@+id/tv_bowler_over_label"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_weight="1"
@@ -452,7 +485,8 @@
                                     android:text="OVER"
                                     android:textColor="@color/score_light_grey"
                                     android:textSize="@dimen/font_size_very_small" />
-                                <TextView
+
+                                <com.sports.unity.common.view.CustomRobotoRegularTextView
                                     android:id="@+id/tv_bowler_wr"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
@@ -467,11 +501,13 @@
 
                 </LinearLayout>
             </LinearLayout>
+            </android.support.v7.widget.CardView>
         </LinearLayout>
     </ScrollView>
 
-    <include layout="@layout/error_layout"
+    <include
         android:id="@+id/error"
+        layout="@layout/error_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"/>

@@ -1,14 +1,15 @@
 package com.sports.unity.scoredetails.cricketdetail;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
@@ -19,7 +20,16 @@ import org.json.JSONObject;
 
 public class CricketCompletedMatchSummeryFragment extends Fragment implements CricketCompletedMatchSummaryHandler.CricketCompletedMatchSummaryContentListener {
 
-
+    private ImageView ivPlayerProfileView;
+    private ImageView ivCountryImage;
+    private TextView tvPlayerRun;
+    private TextView tvPlayerPlayedBall;
+    private TextView tvPlayerStrike_Rate;
+    private TextView tvSeriesName;
+    private TextView tvMatchDate;
+    private TextView tvTossWinTeam;
+    private TextView tvUmpiresName;
+    private TextView tvMatchReferee;
     public CricketCompletedMatchSummeryFragment() {
         // Required empty public constructor
     }
@@ -70,6 +80,17 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
     private void initErrorLayout(View view) {
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.GONE);
+
+        ivPlayerProfileView = (ImageView) view.findViewById(R.id.iv_player_profile_image);
+        ivCountryImage = (ImageView) view.findViewById(R.id.iv_country_image);
+        tvPlayerRun = (TextView) view.findViewById(R.id.tv_player_run);
+        tvPlayerPlayedBall = (TextView) view.findViewById(R.id.tv_player_played_ball);
+        tvPlayerStrike_Rate = (TextView) view.findViewById(R.id.tv_player_strike_rate);
+        tvSeriesName = (TextView) view.findViewById(R.id.tv_series_name);
+        tvMatchDate = (TextView) view.findViewById(R.id.tv_match_date);
+        tvTossWinTeam = (TextView) view.findViewById(R.id.tv_toss_win_team);
+        tvUmpiresName = (TextView) view.findViewById(R.id.tv_umpires_name);
+        tvMatchReferee = (TextView) view.findViewById(R.id.tv_match_referee);
 
     }
 
