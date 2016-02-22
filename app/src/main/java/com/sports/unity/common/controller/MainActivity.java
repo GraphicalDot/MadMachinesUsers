@@ -1,5 +1,6 @@
 package com.sports.unity.common.controller;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -39,6 +40,7 @@ import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.fragment.NavigationFragment;
+import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
@@ -50,6 +52,9 @@ import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.LocManager;
 
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -107,13 +112,9 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         final TextView name = (TextView) navHeader.findViewById(R.id.name);
         name.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
-        String userDetails = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
-        final String userName = TinyDB.getInstance(this).getString(TinyDB.KEY_PROFILE_NAME);
+        String userJid = TinyDB.getInstance(this).getString(TinyDB.KEY_USER_JID);
 
-
-        final Contacts contact = sportsUnityDBHelper.getContact(userDetails);
-
-
+        final Contacts contact = sportsUnityDBHelper.getContactByJid(userJid);
         if (contact.image != null) {
             Bitmap bmp = BitmapFactory.decodeByteArray(contact.image, 0, contact.image.length);
             profilePhoto.setImageBitmap(bmp);
@@ -121,14 +122,14 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             profilePhoto.setImageResource(R.drawable.ic_user);
         }
 
-        name.setText(userName);
+        name.setText(contact.name);
 
         viewMyProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
                 intent.putExtra(Constants.IS_OWN_PROFILE, true);
-                intent.putExtra("name", userName);
+                intent.putExtra("name", contact.name);
                 intent.putExtra("profilePicture", contact.image);
                 intent.putExtra("status", contact.status);
                 startActivity(intent);

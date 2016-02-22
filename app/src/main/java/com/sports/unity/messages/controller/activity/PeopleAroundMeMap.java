@@ -415,10 +415,10 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_NEAR_BY_USERS, parameters, REQUEST_LISTENER_KEY, REQUEST_TAG);
     }
 
-    public boolean createContact(String number, Context context, VCard vCard) {
+    private boolean createContact(String jid, Context context, VCard vCard) {
         boolean success = false;
-        SportsUnityDBHelper.getInstance(context).addToContacts(vCard.getNickName(), number, true, ContactsHandler.getInstance().defaultStatus, false);
-        SportsUnityDBHelper.getInstance(context).updateContacts(number, vCard.getAvatar(), vCard.getMiddleName());
+        SportsUnityDBHelper.getInstance(context).addToContacts(vCard.getNickName(), null, jid, ContactsHandler.getInstance().defaultStatus, null, false);
+        SportsUnityDBHelper.getInstance(context).updateContacts(jid, vCard.getAvatar(), vCard.getMiddleName());
         return success;
     }
 
@@ -456,7 +456,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
 
     }
 
-    private void populateProfilePopup(final VCard vCard, View popupProfile, final String number, int distance, String info) {
+    private void populateProfilePopup(final VCard vCard, View popupProfile, final String jid, int distance, String info) {
 
         CircleImageView imageview = (CircleImageView) aDialog.findViewById(R.id.user_pic);
 
@@ -521,10 +521,10 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
             sayHello.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Contacts contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContact(number);
+                    Contacts contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContactByJid(jid);
                     if (contact == null) {
-                        createContact(number, getApplicationContext(), vCard);
-                        contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContact(number);
+                        createContact(jid, getApplicationContext(), vCard);
+                        contact = SportsUnityDBHelper.getInstance(getApplicationContext()).getContactByJid(jid);
                         moveToChatActivity(contact, false);
                     } else {
                         moveToChatActivity(contact, true);
@@ -717,7 +717,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
 
     private class GetVcardForUser extends AsyncTask<String, Void, VCard> {
         private boolean success = false;
-        private String number = null;
+        private String jid = null;
 
         private View view = null;
         private int distance = 0;
@@ -732,9 +732,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
             XMPPTCPConnection connection = XMPPClient.getInstance().getConnection();
             VCard card = new VCard();
             try {
-                number = param[0];
+                jid = param[0];
                 if (connection.isAuthenticated()) {
-                    card.load(connection, number + "@mm.io");
+                    card.load(connection, jid + "@mm.io");
                     success = true;
                 } else {
                     success = false;
@@ -750,7 +750,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         @Override
         protected void onPostExecute(VCard vCard) {
             if (success) {
-                onSuccessfulVcardRetrieval(view, vCard, number, distance);
+                onSuccessfulVcardRetrieval(view, vCard, jid, distance);
             } else {
                 onUnSuccessfulVcardRetrieval(view);
             }
@@ -764,8 +764,8 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         //TODO
     }
 
-    private void onSuccessfulVcardRetrieval(View view, VCard vCard, String number, int distance) {
-        populateProfilePopup(vCard, view, number, distance, null);
+    private void onSuccessfulVcardRetrieval(View view, VCard vCard, String jid, int distance) {
+        populateProfilePopup(vCard, view, jid, distance, null);
     }
 
 }

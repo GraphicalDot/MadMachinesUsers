@@ -954,7 +954,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                                 //nothing
                             }
                         } else {
-                            FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload(message.textData, message.mimeType, message.id);
+//                            FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload(message.textData, message.mimeType, message.id);
                         }
                     } else {
                         //TODO

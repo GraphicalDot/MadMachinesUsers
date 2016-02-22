@@ -149,6 +149,10 @@ public class CommonUtil {
         return details;
     }
 
+    public static String getDefaultCountyCode(){
+        return "91"; //TODO
+    }
+
     public static String getTimeDifference(long epochTime) {
         long currentTime = getCurrentGMTTimeInEpoch();
         Calendar time = Calendar.getInstance();
@@ -173,7 +177,7 @@ public class CommonUtil {
 //        intent.putExtra("sms_body", inviteText);
 //        intent.setType("vnd.android-dir/mms-sms");
 //        context.startActivity(intent);
-        Uri uri = Uri.parse("smsto:" + contact.jid);
+        Uri uri = Uri.parse("smsto:" + contact.phoneNumber);
         Intent it = new Intent(Intent.ACTION_SENDTO, uri);
         it.putExtra("sms_body", inviteText);
         context.startActivity(it);

@@ -21,6 +21,7 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.messages.controller.model.Contacts;
@@ -84,20 +85,20 @@ public class UserProfileHandler {
         contentListenerHashMap.remove(key);
     }
 
-    public int connectToXmppServer(final Context context, String listenerKey) {
+    public int connectToXmppServer(Context context, String listenerKey) {
         int requestStatus = REQUEST_STATUS_FAILED;
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(CONNECT_XMPP_SERVER_TAG)) {
 
             requestInProcess_RequestTagAndListenerKey.put(CONNECT_XMPP_SERVER_TAG, listenerKey);
             requestStatus = REQUEST_STATUS_QUEUED;
 
-            UserThreadTask userThreadTask = new UserThreadTask(CONNECT_XMPP_SERVER_TAG, null) {
+            UserThreadTask userThreadTask = new UserThreadTask(context, CONNECT_XMPP_SERVER_TAG, null) {
 
                 @Override
                 public Object process() {
                     Boolean success = XMPPClient.getInstance().reconnectConnection();
                     if (success) {
-                        success = XMPPClient.getInstance().authenticateConnection(context);
+                        success = XMPPClient.getInstance().authenticateConnection(this.context);
                     } else {
                         //nothing
                     }
@@ -114,12 +115,12 @@ public class UserProfileHandler {
         return requestStatus;
     }
 
-    public int loadMyProfile(String listenerKey) {
-        String jid = null; //TODO
-        return loadProfile(jid, listenerKey);
+    public int loadMyProfile(Context context, String listenerKey) {
+        String jid = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
+        return loadProfile(context, jid, listenerKey);
     }
 
-    public int loadProfile(String jid, String listenerKey) {
+    public int loadProfile(Context context, String jid, String listenerKey) {
         Log.d("max", "loading profile" + jid);
         int requestStatus = REQUEST_STATUS_FAILED;
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(LOAD_PROFILE_REQUEST_TAG)) {
@@ -128,38 +129,44 @@ public class UserProfileHandler {
                 requestInProcess_RequestTagAndListenerKey.put(LOAD_PROFILE_REQUEST_TAG, listenerKey);
                 requestStatus = REQUEST_STATUS_QUEUED;
 
-                Log.d("max", "initiatingtask---" + requestStatus);
-                UserThreadTask userThreadTask = new UserThreadTask(LOAD_PROFILE_REQUEST_TAG, jid) {
+                UserThreadTask userThreadTask = new UserThreadTask(context, LOAD_PROFILE_REQUEST_TAG, jid) {
 
                     @Override
                     public Object process() {
-                        VCard card = new VCard();
-                        try {
-                            card.load(XMPPClient.getConnection(), (String) object);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            card = null;
-                        }
-                        Log.d("max", "returning vcard");
-                        return card;
+                        return loadVCardAndUpdateDB( this.context, (String)object);
                     }
 
                 };
-                Log.d("max", "startingtask---" + requestStatus);
                 userThreadTask.start();
             } else {
                 //nothing
             }
         } else {
             requestStatus = REQUEST_STATUS_ALREADY_EXIST;
-
-            Log.d("max", "requesttag---" + requestStatus);
         }
 
         return requestStatus;
     }
 
-    public int submitUserProfile(Contacts contacts, String listenerKey) {
+    VCard loadVCardAndUpdateDB(Context context, String jid){
+        VCard card = new VCard();
+        try {
+            card.load(XMPPClient.getConnection(), jid);
+
+            String status = card.getMiddleName();
+            byte[] image = card.getAvatar();
+            String nickname = card.getNickName();
+
+            SportsUnityDBHelper.getInstance(context).updateContacts( jid, image, status);
+        } catch (Exception e) {
+            e.printStackTrace();
+            card = null;
+        }
+
+        return card;
+    }
+
+    public int submitUserProfile(Context context, final Contacts contacts, String listenerKey) {
         int requestStatus = REQUEST_STATUS_FAILED;
         Log.d("max", "initiating---");
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(SUBMIT_PROFILE_REQUEST_TAG)) {
@@ -169,8 +176,7 @@ public class UserProfileHandler {
                 requestInProcess_RequestTagAndListenerKey.put(SUBMIT_PROFILE_REQUEST_TAG, listenerKey);
                 requestStatus = REQUEST_STATUS_QUEUED;
 
-                Log.d("max", "authenticated---");
-                UserThreadTask userThreadTask = new UserThreadTask(SUBMIT_PROFILE_REQUEST_TAG, contacts) {
+                UserThreadTask userThreadTask = new UserThreadTask(context, SUBMIT_PROFILE_REQUEST_TAG, contacts) {
 
                     @Override
                     public Object process() {
@@ -187,7 +193,7 @@ public class UserProfileHandler {
                             manager.saveVCard(vCard);
 
                             success = true;
-                            Log.d("max", "submitsuccess---");
+                            saveLoginUserDetail(this.context, contacts);
                         } catch (SmackException.NoResponseException e) {
                             e.printStackTrace();
                         } catch (XMPPException.XMPPErrorException e) {
@@ -195,8 +201,6 @@ public class UserProfileHandler {
                         } catch (SmackException.NotConnectedException e) {
                             e.printStackTrace();
                         }
-                        Log.d("max", "resultsuccess---");
-                        Log.d("max", "returning inside---" + success);
                         return success;
                     }
 
@@ -211,8 +215,20 @@ public class UserProfileHandler {
         return requestStatus;
     }
 
+    public Contacts getLoginUserDetail(Context context){
+        String jid = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
+        return SportsUnityDBHelper.getInstance(context).getContactByJid(jid);
+    }
+
+    private void saveLoginUserDetail(Context context, Contacts loginUserDetail){
+        int count = SportsUnityDBHelper.getInstance(context).updateContacts( loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.image, loginUserDetail.status, false);
+        if( count == 0 ) {
+            SportsUnityDBHelper.getInstance(context).addToContacts(loginUserDetail.name, loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.status, loginUserDetail.image, false);
+        }
+    }
+
     private void fetchMyProfileFromDB(String listenerKey) {
-        UserThreadTask userThreadTask = new UserThreadTask(listenerKey, null) {
+        UserThreadTask userThreadTask = new UserThreadTask(null, listenerKey, null) {
 
             @Override
             public Object process() {
@@ -225,7 +241,7 @@ public class UserProfileHandler {
     }
 
     private void saveMyProfileInDB(String listenerKey, Contacts contacts) {
-        UserThreadTask userThreadTask = new UserThreadTask(listenerKey, contacts) {
+        UserThreadTask userThreadTask = new UserThreadTask(null, listenerKey, contacts) {
 
             @Override
             public Object process() {
@@ -325,7 +341,7 @@ public class UserProfileHandler {
             requestInProcess_RequestTagAndListenerKey.put(requestTag, listenerKey);
             requestStatus = REQUEST_STATUS_QUEUED;
 
-            UserThreadTask userThreadTask = new UserThreadTask(requestTag, profileDetail) {
+            UserThreadTask userThreadTask = new UserThreadTask(null, requestTag, profileDetail) {
 
                 @Override
                 public Object process() {
@@ -386,10 +402,12 @@ public class UserProfileHandler {
 
     private abstract class UserThreadTask extends ThreadTask {
 
+        public Context context = null;
         private String requestTag = null;
 
-        public UserThreadTask(String requestTag, Object helperObject) {
+        public UserThreadTask(Context context, String requestTag, Object helperObject) {
             super(helperObject);
+            this.context = context;
             this.requestTag = requestTag;
         }
 

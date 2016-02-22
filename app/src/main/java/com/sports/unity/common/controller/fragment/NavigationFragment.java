@@ -348,7 +348,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
         sportsGroupItem.add("Favourite Sports");
         teamChildItems.addAll(favouriteItemWrapper.getAllTeams());
         competeChildItems.addAll(favouriteItemWrapper.getAllLeagues());
-        sportsChildItem.addAll(favouriteItemWrapper.getAllSports());
+        sportsChildItem.addAll(favouriteItemWrapper.getAllSports(getActivity()));
         if (teamAdapter != null) {
             teamAdapter.updateItem(teamChildItems);
         }

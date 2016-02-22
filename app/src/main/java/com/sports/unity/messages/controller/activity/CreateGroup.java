@@ -29,7 +29,7 @@ public class CreateGroup extends CustomAppCompatActivity {
     private String groupName = null;
     private String groupDescription = null;
 
-    private String currentUserPhoneNumber = null;
+    private String currentUserJID = null;
     private byte[] groupImageArray;
 
     @Override
@@ -37,7 +37,7 @@ public class CreateGroup extends CustomAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_detail);
 
-        currentUserPhoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
+        currentUserJID = TinyDB.getInstance(this).getString(TinyDB.KEY_USER_JID);
 
         addGroupDetailFragment();
     }
@@ -109,15 +109,15 @@ public class CreateGroup extends CustomAppCompatActivity {
 
     private void createGroup(ArrayList<Contacts> selectedMembers) {
         GroupMessaging groupMessaging = GroupMessaging.getInstance(this);
-        String roomName = currentUserPhoneNumber + "" + System.currentTimeMillis();
+        String roomName = currentUserJID + "" + System.currentTimeMillis();
         roomName = roomName + "%" + groupName + "%%";
         String subject = groupName;
 
-        boolean success = groupMessaging.createGroup(roomName, currentUserPhoneNumber, subject);
-        Contacts owner = SportsUnityDBHelper.getInstance(this).getContact(currentUserPhoneNumber);
+        boolean success = groupMessaging.createGroup(roomName, currentUserJID, subject);
+        Contacts owner = SportsUnityDBHelper.getInstance(this).getContactByJid(currentUserJID);
         if (success) {
             groupMessaging.setGroupConfigDetail(roomName, groupName, groupDescription);
-            groupMessaging.joinGroup(roomName, currentUserPhoneNumber);
+            groupMessaging.joinGroup(roomName, currentUserJID);
 
             /*long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry(subject, owner.id, null, roomName);
             SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, roomName);

@@ -123,7 +123,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
     }
 
     private void copyContacts() {
-        ContactsHandler.getInstance().copyAllContacts_OnThread(getApplicationContext(), null);
+        ContactsHandler.getInstance().addCallToSyncContacts(getApplicationContext());
     }
 
     @Override

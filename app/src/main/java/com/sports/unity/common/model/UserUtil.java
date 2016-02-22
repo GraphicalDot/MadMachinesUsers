@@ -5,6 +5,7 @@ import android.provider.Settings;
 import android.util.Log;
 
 import com.sports.unity.common.controller.SettingsActivity;
+import com.sports.unity.util.CommonUtil;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ public class UserUtil {
     private static boolean USER_REGISTERED = false;
     private static boolean OTP_SENT = false;
     private static boolean PROFILE_CREATED = false;
+    private static String COUNTRY_CODE = "";
 
     private static ArrayList<String> SPORTS_SELECTED = null;
     private static boolean leagueSelected;
@@ -392,10 +394,26 @@ public class UserUtil {
         tinyDB.putBoolean(TinyDB.READ_RECEIPTS, readReceipts);
     }
 
+    public static String getCountryCode() {
+        return COUNTRY_CODE;
+    }
+
+    public static void setCountryCode(Context context, String countryCode) {
+        COUNTRY_CODE = countryCode;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putString(TinyDB.KEY_COUNTRY_CODE, countryCode);
+    }
+
     private static void loadBasicPreferences(TinyDB tinyDB){
         USER_REGISTERED = tinyDB.getBoolean(TinyDB.KEY_REGISTERED, false);
         PROFILE_CREATED = tinyDB.getBoolean(TinyDB.KEY_PROFILE_CREATED, false);
         OTP_SENT = tinyDB.getBoolean(TinyDB.KEY_OTP_SENT, false);
+        COUNTRY_CODE = tinyDB.getString(TinyDB.KEY_COUNTRY_CODE);
+
+        if( COUNTRY_CODE.isEmpty() ){
+            COUNTRY_CODE = CommonUtil.getDefaultCountyCode();
+        }
     }
 
     private static void loadFavoritePreferences(TinyDB tinyDB){

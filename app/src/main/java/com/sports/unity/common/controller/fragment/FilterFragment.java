@@ -87,13 +87,13 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
         TextView messageText = (TextView) layout.findViewById(R.id.something_wrong);
         TextView addText = (TextView) layout.findViewById(R.id.addteam);
         if (filter.equals(Constants.FILTER_TYPE_TEAM)) {
-            headingText.setText("No Teams Selected :(");
+            headingText.setText("No Teams Selected");
             messageText.setText("Add your favourite teams \n to see more details");
         } else if (filter.equals(Constants.FILTER_TYPE_LEAGUE)) {
-            headingText.setText("No Leagues Selected :(");
+            headingText.setText("No Leagues Selected");
             messageText.setText("Add your favourite leagues \n to see more details");
         } else if (filter.equals(Constants.FILTER_TYPE_PLAYER)) {
-            headingText.setText("No Players Selected :(");
+            headingText.setText("No Players Selected");
             messageText.setText("Add your favourite players \n to see more details");
         }
         addText.setText("ADD SPORTS");

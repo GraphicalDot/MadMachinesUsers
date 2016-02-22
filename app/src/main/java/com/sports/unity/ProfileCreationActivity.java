@@ -280,9 +280,10 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
             if( success == true ) {
                 String phoneNumber = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USERNAME);
                 String name = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_PROFILE_NAME);
+                String jid = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USER_JID);
 
-                Contacts contacts = new Contacts(name, phoneNumber, true, byteArray, -1, getResources().getString(R.string.default_status));
-                UserProfileHandler.getInstance().submitUserProfile(contacts, LISTENER_KEY);
+                Contacts contacts = new Contacts(name, jid, phoneNumber, byteArray, -1, getResources().getString(R.string.default_status));
+                UserProfileHandler.getInstance().submitUserProfile( ProfileCreationActivity.this, contacts, LISTENER_KEY);
             } else {
                 ProfileCreationActivity.this.runOnUiThread(new Runnable() {
                     @Override
