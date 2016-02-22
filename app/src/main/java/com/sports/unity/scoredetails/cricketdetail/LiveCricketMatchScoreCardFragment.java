@@ -49,7 +49,6 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     public void onAttach(Context context) {
         super.onAttach(context);
         String matchId =  getActivity().getIntent().getStringExtra("matchId");
-        matchId = "nzaus_2016_test_02";
         LivedMatchScoreCardHandler cricketPlayerbioHandler = LivedMatchScoreCardHandler.getInstance(context);
         cricketPlayerbioHandler.addListener(this);
         cricketPlayerbioHandler.requestMatchScoreCard(matchId);
@@ -73,15 +72,15 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         tvTotalRunFirstTeam = (TextView) view.findViewById(R.id.tv_total_run_first_team);
         tvRunRateFirstTeam = (TextView) view.findViewById(R.id.tv_run_rate_first_team);
         tvFirstTeamScore = (TextView) view.findViewById(R.id.tv_first_team_score);
-        tvFirstTeamOvers = (TextView) view.findViewById(R.id.first_team_overs);
+       // tvFirstTeamOvers = (TextView) view.findViewById(R.id.first_team_overs);
         ivDwnSecond = (ImageView) view.findViewById(R.id.iv_down_second);
         tvTeamSecondNameAndScore = (TextView) view.findViewById(R.id.tv_team_second_name);
-        tvSecondTeamOver = (TextView) view.findViewById(R.id.second_team_overs);
+       // tvSecondTeamOver = (TextView) view.findViewById(R.id.second_team_overs);
         tvExtraRunTeamSecond = (TextView) view.findViewById(R.id.tv_extra_run_team_second);
         tvTotalRunSecondTeam = (TextView) view.findViewById(R.id.tv_total_run_second_team);
         tvRunRateSecondTeam = (TextView) view.findViewById(R.id.tv_run_rate_second_team);
         tvSecondTeamScore = (TextView) view.findViewById(R.id.tv_second_team_score);
-        tvSecondTeamOvers = (TextView) view.findViewById(R.id.second_team_overs);
+      //  tvSecondTeamOvers = (TextView) view.findViewById(R.id.second_team_overs);
         initErrorLayout(view);
 
     }
@@ -127,11 +126,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                 @Override
                 public void run() {
                     try {
-
-
-
-
-                    } catch (Exception ex) {
+                   } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());
                     }

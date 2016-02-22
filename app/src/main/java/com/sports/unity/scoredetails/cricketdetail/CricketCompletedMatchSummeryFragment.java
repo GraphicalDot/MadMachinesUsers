@@ -28,7 +28,6 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
     public void onAttach(Context context) {
         super.onAttach(context);
         String matchId =  getActivity().getIntent().getStringExtra("matchId");
-        matchId = "rsaeng_2015_t20_01";
         CricketCompletedMatchSummaryHandler cricketCompletedMatchSummaryHandler = CricketCompletedMatchSummaryHandler.getInstance(context);
         cricketCompletedMatchSummaryHandler.addListener(this);
         cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(matchId);

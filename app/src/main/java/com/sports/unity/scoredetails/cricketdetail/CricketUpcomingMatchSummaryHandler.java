@@ -10,6 +10,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
+import org.json.JSONObject;
+
 import java.util.HashSet;
 
 /**
@@ -17,25 +19,26 @@ import java.util.HashSet;
  */
 public class CricketUpcomingMatchSummaryHandler {
     private static final String REQUEST_TAG = "UPCOMMING_MATCH_SUMMARY";
-    private Context context;
+    private static Context mContext;
     private String matchId;
-    private String url = " http://52.76.74.188:5400/get_player_stats?player_id=";
+    private String url = " http://52.76.74.188:5400/get_match_summary?player_id=";
 
 
-    private ContentListener contentListener = null;
+    private CricketUpcomingMatchSummaryContentListener mcontentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
-    public static CricketPlayerMatchStatHandler getInstance(Context context) {
-        CricketPlayerMatchStatHandler handler = new CricketPlayerMatchStatHandler();
+    public static CricketUpcomingMatchSummaryHandler getInstance(Context context) {
+        CricketUpcomingMatchSummaryHandler handler = new CricketUpcomingMatchSummaryHandler();
+        mContext = context;
         return handler;
     }
 
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
-    public interface ContentListener {
+    public interface CricketUpcomingMatchSummaryContentListener {
 
-        void handleContent(int responseCode, String content);
+        void handleContent(JSONObject object);
 
 
     }
@@ -53,12 +56,12 @@ public class CricketUpcomingMatchSummaryHandler {
             CricketUpcomingMatchSummaryHandler.this.handleErrorResponse(volleyError);
         }
     };
-    public void requestCricketMatchSummary() {
+    public void requestCricketUpcommingMatchSummary() {
         Log.i("Score Detail", "Request Score Details");
 
         url = url+matchId;
         StringRequest stringRequest = null;
-        RequestQueue queue = Volley.newRequestQueue(context);
+        RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
         queue.add(stringRequest);
 
@@ -66,8 +69,8 @@ public class CricketUpcomingMatchSummaryHandler {
     }
     private void handleResponse(String response) {
         try{
-            Log.i("Score Card", "handleResponse: "+response.toString());
-
+            JSONObject object = new JSONObject(response);
+            mcontentListener.handleContent(object);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -77,8 +80,11 @@ public class CricketUpcomingMatchSummaryHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
-        if(contentListener != null) {
+        if(mcontentListener != null) {
             Log.i("handleErrorResponse: ",volleyError.getMessage() );
         }
+    }
+    public void addListener(CricketUpcomingMatchSummaryContentListener contentListener) {
+        mcontentListener = contentListener;
     }
 }

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
@@ -18,7 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CricketUpcomingMatchScoreCardFragment extends Fragment implements CricketUpcomingMatchScoreCardHandler.UpcommingCricketMatchContentListener{
-
+  private TextView textView;
     public CricketUpcomingMatchScoreCardFragment() {
         // Required empty public constructor
     }
@@ -36,12 +37,13 @@ public class CricketUpcomingMatchScoreCardFragment extends Fragment implements C
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.score_card, container, false);
+        View view = inflater.inflate(R.layout.fragment_empty_view, container, false);
         initView(view);
         return view;
     }
     private void initView(View view) {
-
+        textView = (TextView) view.findViewById(R.id.tv_empty_view);
+        textView.setText(R.string.scorecard_not_exist);
         initErrorLayout(view);
 
     }
