@@ -263,36 +263,6 @@
                         android:text="@string/fall_of_wicket"
                         android:textSize="@dimen/font_size_small_large" />
                 </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/layout_fall_wicket"
-                    android:background="@color/ColorPrimary"
-                    android:padding="@dimen/horizontal_padding_small"
-                    android:weightSum="1">
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/tv_first_team_score"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".5"
-                        android:gravity="left"
-                        android:text="1-51"/>
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".25"
-                        android:gravity="center"
-                        android:text="PLAS GAMES"
-                        android:textSize="@dimen/font_size_small_large" />
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/tv_first_team_overs"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".25"
-                        android:gravity="center"
-                        android:text="9.5ovs"
-                        android:textSize="@dimen/font_size_small_large" />
-                </LinearLayout>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_team_first_fall_wickets"
                     android:layout_width="match_parent"
@@ -542,37 +512,6 @@
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text="@string/fall_of_wicket"
-                        android:textSize="@dimen/font_size_small_large" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/layout_fall_wicket_second"
-                    android:background="@color/ColorPrimary"
-                    android:padding="@dimen/horizontal_padding_small"
-                    android:weightSum="1">
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/tv_second_team_score"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".5"
-                        android:gravity="left"
-                        android:text="1-51"
-                        android:textSize="@dimen/font_size_small_large" />
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".25"
-                        android:gravity="center"
-                        android:text="PLAS GAMES"
-                        android:textSize="@dimen/font_size_small_large" />
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/tv_second_team_overs"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".25"
-                        android:gravity="center"
-                        android:text="9.5ovs"
                         android:textSize="@dimen/font_size_small_large" />
                 </LinearLayout>
                 <android.support.v7.widget.RecyclerView
