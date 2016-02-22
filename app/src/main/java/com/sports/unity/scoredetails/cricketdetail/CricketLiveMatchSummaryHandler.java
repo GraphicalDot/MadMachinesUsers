@@ -20,8 +20,8 @@ import java.util.HashSet;
 public class CricketLiveMatchSummaryHandler {
 
     private static final String REQUEST_TAG = "LIVE_SUMMARY_TAG";
-    private Context context;
-    private String url = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
+    private static Context mContext;
+    private String url = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
 
     private LiveCricketMatchSummaryContentListener mcontentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -29,6 +29,7 @@ public class CricketLiveMatchSummaryHandler {
     public static CricketLiveMatchSummaryHandler getInstance(Context context) {
         CricketLiveMatchSummaryHandler completedMatchScoreCardHandler = null;
         completedMatchScoreCardHandler = new CricketLiveMatchSummaryHandler();
+        mContext = context;
         return completedMatchScoreCardHandler;
     }
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
@@ -59,7 +60,7 @@ public class CricketLiveMatchSummaryHandler {
 
         url = url+matchId;
         StringRequest stringRequest = null;
-        RequestQueue queue = Volley.newRequestQueue(context);
+        RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
         queue.add(stringRequest);
 

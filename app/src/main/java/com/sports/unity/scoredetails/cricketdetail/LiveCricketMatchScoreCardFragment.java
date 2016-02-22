@@ -24,6 +24,7 @@ import org.json.JSONObject;
 public class LiveCricketMatchScoreCardFragment extends Fragment implements LivedMatchScoreCardHandler.LiveMatchContentListener{
 
 
+
     public LiveCricketMatchScoreCardFragment() {
         super();
     }
@@ -41,7 +42,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_cricket_live_match_summery, container, false);
+        View view = inflater.inflate(R.layout.fragment_completed_match_score_card, container, false);
         initView(view);
         return view;
     }

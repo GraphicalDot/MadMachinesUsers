@@ -46,7 +46,7 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
             if(matchStatus.equalsIgnoreCase("notstarted")){
                 fragment = new CricketUpcomingMatchSummaryFragment();
             }else if(matchStatus.equalsIgnoreCase("started")){
-                fragment = new LiveCricketMatchScoreCardFragment();}
+                fragment = new CricketLiveMatchSummaryFragment();}
             else {
                 fragment = new CompletedMatchScoreCardFragment();
             }

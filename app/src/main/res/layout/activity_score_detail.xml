@@ -212,8 +212,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:background="@color/app_theme_blue"
-            android:visibility="gone"
-
             />
 
         <include

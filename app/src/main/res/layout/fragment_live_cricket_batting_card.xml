@@ -59,12 +59,13 @@
 
         </LinearLayout>
         <LinearLayout
-            android:id="@+id/tv_sr_rate_of_player"
+
             android:layout_width="match_parent"
             android:background="@color/ColorPrimary"
             android:layout_below="@+id/layout_batting"
             android:layout_height="wrap_content">
             <com.sports.unity.common.view.CustomRobotoRegularTextView
+                android:id="@+id/tv_sr_rate_of_player"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/vertical_padding_small"
