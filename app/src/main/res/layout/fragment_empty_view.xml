@@ -11,6 +11,6 @@
         android:layout_height="wrap_content"
         android:textColor="@color/gray1"
         android:textSize="@dimen/font_size_large"
-        android:text="Scorecard not available for this match yet."
+        android:text="Scorecard not available for this match yet"
         />
 </RelativeLayout>

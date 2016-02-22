@@ -46,8 +46,7 @@ public class CricketUpcomingMatchScoreCardHandler {
             requestInProcess.remove(REQUEST_TAG);
             CricketUpcomingMatchScoreCardHandler.this.handleResponse(s);
         }
-
-        @Override
+       @Override
         public void onErrorResponse(VolleyError volleyError) {
             requestInProcess.remove(REQUEST_TAG);
             CricketUpcomingMatchScoreCardHandler.this.handleErrorResponse(volleyError);

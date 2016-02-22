@@ -1,6 +1,7 @@
 package com.sports.unity.scoredetails.cricketdetail;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,9 +14,12 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.scoredetails.model.CricketScoreCard;
+import com.sports.unity.scoredetails.model.Scorecard;
 import com.sports.unity.scores.ScoreDetailActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 
 public class LiveCricketMatchScoreCardFragment extends Fragment implements LivedMatchScoreCardHandler.LiveMatchContentListener{
@@ -27,6 +31,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     private TextView tvExtraRunTeamFirst;
     private TextView tvTotalRunFirstTeam;
     private TextView tvRunRateFirstTeam;
+
     private ImageView ivDwnSecond;
     private TextView tvTeamSecondNameAndScore;
     private TextView tvSecondTeamOver;
@@ -42,7 +47,6 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     public void onAttach(Context context) {
         super.onAttach(context);
         String matchId =  getActivity().getIntent().getStringExtra("matchId");
-        matchId = "nzaus_2016_test_02";
         LivedMatchScoreCardHandler cricketPlayerbioHandler = LivedMatchScoreCardHandler.getInstance(context);
         cricketPlayerbioHandler.addListener(this);
         cricketPlayerbioHandler.requestMatchScoreCard(matchId);
@@ -71,6 +75,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         tvExtraRunTeamSecond = (TextView) view.findViewById(R.id.tv_extra_run_team_second);
         tvTotalRunSecondTeam = (TextView) view.findViewById(R.id.tv_total_run_second_team);
         tvRunRateSecondTeam = (TextView) view.findViewById(R.id.tv_run_rate_second_team);
+
         initErrorLayout(view);
 
     }

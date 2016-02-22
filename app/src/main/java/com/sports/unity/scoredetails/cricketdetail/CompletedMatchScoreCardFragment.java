@@ -33,6 +33,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
     private TextView tvExtraRunTeamSecond;
     private TextView tvTotalRunSecondTeam;
     private TextView tvRunRateSecondTeam;
+
     public CompletedMatchScoreCardFragment() {
         // Required empty public constructor
     }
@@ -61,6 +62,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         tvExtraRunTeamFirst = (TextView) view.findViewById(R.id.tv_extra_run_team_first);
         tvTotalRunFirstTeam = (TextView) view.findViewById(R.id.tv_total_run_first_team);
         tvRunRateFirstTeam = (TextView) view.findViewById(R.id.tv_run_rate_first_team);
+
         ivDwnSecond = (ImageView) view.findViewById(R.id.iv_down_second);
         tvTeamSecondNameAndScore = (TextView) view.findViewById(R.id.tv_team_second_name);
         tvSecondTeamOver = (TextView) view.findViewById(R.id.tv_match_over_second_team);
