@@ -1,53 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card="http://schemas.android.com/apk/res-auto"
+
+<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="@dimen/horizontal_padding_small"
-    android:layout_margin="@dimen/activity_vertical_margin"
-    card:cardCornerRadius="@dimen/card_edge_curve_radius">
-    <LinearLayout
-        android:id="@+id/rootLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/white"
-        android:padding="@dimen/horizontal_padding_small"
-        android:weightSum="7"
-        android:orientation="horizontal">
-        <TextView
-            android:id="@+id/tv_head"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_weight="1"
-            android:textSize="@dimen/font_size_small_medium"
-            android:text="league"/>
-        <TextView
-            android:id="@+id/tv_tests"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textSize="@dimen/font_size_small_medium"
-            android:text="tem"/>
-        <TextView
-            android:id="@+id/tv_odis"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_weight="1"
-            android:textSize="@dimen/font_size_small_medium"
-            android:text="1"/>
-        <TextView
-            android:id="@+id/tv_t20s"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_weight="1"
-            android:textSize="@dimen/font_size_small_medium"
-            android:text="3"/>
+    android:background="@android:color/white"
+    android:paddingLeft="@dimen/horizontal_padding_small"
+    android:paddingTop="@dimen/horizontal_padding_small"
+    android:paddingBottom="@dimen/horizontal_padding_small"
+    android:paddingRight="@dimen/horizontal_padding_medium">
 
-    </LinearLayout>
-</android.support.v7.widget.CardView>
+    <com.sports.unity.common.view.CustomRobotoRegularTextView
+        android:id="@+id/tv_head"
+        android:layout_height="wrap_content"
+        android:gravity="left"
+        android:text="league"
+        android:textSize="@dimen/font_size_small_medium"
+        app:layout_widthPercent="25%" />
+
+    <com.sports.unity.common.view.CustomRobotoRegularTextView
+        android:id="@+id/tv_tests"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_head"
+        android:gravity="right"
+        android:text="tem"
+        android:textSize="@dimen/font_size_small_medium"
+        app:layout_widthPercent="22%" />
+
+    <com.sports.unity.common.view.CustomRobotoRegularTextView
+        android:id="@+id/tv_odis"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_tests"
+        android:gravity="right"
+        android:text="1"
+        android:textSize="@dimen/font_size_small_medium"
+        app:layout_widthPercent="22%" />
+
+    <com.sports.unity.common.view.CustomRobotoRegularTextView
+        android:id="@+id/tv_t20s"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/tv_odis"
+        android:gravity="right"
+        android:text="3"
+        android:textSize="@dimen/font_size_small_medium"
+        app:layout_widthPercent="22%" />
+</android.support.percent.PercentRelativeLayout>
+
 

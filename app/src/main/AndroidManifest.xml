@@ -67,10 +67,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".common.controller.MainActivity"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".common.controller.EnterOtpActivity"
             android:screenOrientation="portrait" />

@@ -1,10 +1,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="@color/ColorPrimary"
     android:focusableInTouchMode="true"
+    android:orientation="vertical"
     tools:context="com.sports.unity.scoredetails.cricketdetail.PlayerCricketBioDataActivity">
 
     <LinearLayout
@@ -12,78 +13,195 @@
         android:layout_height="wrap_content"
         android:background="@color/ColorPrimary"
         android:orientation="vertical">
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/activity_vertical_margin_small"
+            android:layout_height="wrap_content"
             android:background="@color/gray3"
-            android:layout_height="wrap_content">
-            <TextView
+            android:paddingBottom="@dimen/horizontal_padding_small"
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_medium"
+            android:paddingTop="@dimen/horizontal_padding_small">
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/vertical_padding_small"
-                android:textSize="@dimen/font_size_small_large"
+                android:layout_centerVertical="true"
                 android:layout_gravity="left"
-                android:text="@string/batting_performance_analisis"/>
+                android:text="@string/batting_performance_analisis"
+                android:textSize="@dimen/font_size_small_large" />
+
             <ImageView
                 android:id="@+id/iv_down"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="@dimen/activity_vertical_margin"
-                android:src="@drawable/ic_droable"/>
+                android:src="@drawable/ic_droable" />
         </RelativeLayout>
-        <GridLayout
-            android:id="@+id/gl_batting_performance_summary"
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray2">
+
+        </View>
+        <android.support.percent.PercentRelativeLayout
+            android:id="@+id/prl_batting"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:numColumns="auto_fit"
-            android:verticalSpacing="8dp"
-            android:horizontalSpacing="4dp"
-            android:columnCount="4">
+            android:background="@android:color/white"
+            android:paddingBottom="@dimen/horizontal_padding_small"
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_medium"
+            android:paddingTop="@dimen/horizontal_padding_small">
 
-        </GridLayout>
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:id="@+id/title_empty_first"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textSize="@dimen/font_size_small_medium"
+                app:layout_widthPercent="25%"/>
+
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:id="@+id/title_column2_first"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/title_empty_first"
+                android:gravity="right"
+                android:text="@string/test_s"
+                android:textSize="@dimen/font_size_small_medium"
+                app:layout_widthPercent="22%" />
+
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:id="@+id/title_column3_first"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/title_column2_first"
+                android:gravity="right"
+                android:text="@string/odi_s"
+                android:textSize="@dimen/font_size_small_medium"
+                app:layout_widthPercent="22%" />
+
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:id="@+id/title_column4_first"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/title_column3_first"
+                android:gravity="right"
+                android:text="@string/T20_s"
+                android:textSize="@dimen/font_size_small_medium"
+                app:layout_widthPercent="22%" />
+
+        </android.support.percent.PercentRelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray3">
+
+        </View>
+
+         <android.support.v7.widget.RecyclerView
+             android:id="@+id/rc_batting_performance_summary"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content">
+         </android.support.v7.widget.RecyclerView>
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/ColorPrimary"
         android:orientation="vertical">
+
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/activity_vertical_margin_small"
+            android:layout_height="wrap_content"
             android:background="@color/gray3"
-            android:layout_height="wrap_content">
-            <TextView
+            android:paddingBottom="@dimen/horizontal_padding_small"
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_medium"
+            android:paddingTop="@dimen/horizontal_padding_small">
+
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/vertical_padding_small"
-                android:textSize="@dimen/font_size_small_large"
+                android:layout_centerVertical="true"
                 android:layout_gravity="left"
-                android:text="@string/blowing_performance_analisis"/>
+                android:text="@string/blowing_performance_analisis"
+                android:textSize="@dimen/font_size_small_large" />
+
             <ImageView
                 android:id="@+id/iv_down_second"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_marginRight="@dimen/activity_vertical_margin"
-                android:src="@drawable/ic_droable"/>
+                android:src="@drawable/ic_droable" />
         </RelativeLayout>
-        <GridLayout
-            android:id="@+id/gl_bowling_performance_summary"
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray2">
+
+        </View>
+        <android.support.percent.PercentRelativeLayout
+            android:id="@+id/prl_bowling"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:numColumns="auto_fit"
-            android:verticalSpacing="8dp"
-            android:horizontalSpacing="4dp">
-        </GridLayout>
+            android:background="@android:color/white"
+            android:paddingBottom="@dimen/horizontal_padding_small"
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_medium"
+            android:paddingTop="@dimen/horizontal_padding_small">
 
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:id="@+id/title_empty"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:textSize="@dimen/font_size_small_medium"
+                app:layout_widthPercent="25%" />
+
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:id="@+id/title_column2"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/title_empty"
+                android:gravity="right"
+                android:text="@string/test_s"
+                android:textSize="@dimen/font_size_small_medium"
+                app:layout_widthPercent="22%" />
+
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:id="@+id/title_column3"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/title_column2"
+                android:gravity="right"
+                android:text="@string/odi_s"
+                android:textSize="@dimen/font_size_small_medium"
+                app:layout_widthPercent="22%" />
+
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:id="@+id/title_column4"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/title_column3"
+                android:gravity="right"
+                android:text="@string/T20_s"
+                android:textSize="@dimen/font_size_small_medium"
+                app:layout_widthPercent="22%" />
+
+        </android.support.percent.PercentRelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray3">
+
+        </View>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rc_bowling_performance_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
     </LinearLayout>
-    <include layout="@layout/error_layout"
+
+    <include
         android:id="@+id/error"
+        layout="@layout/error_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        />
+        android:visibility="gone" />
 </LinearLayout>

@@ -1,9 +1,9 @@
 package com.sports.unity.scoredetails.cricketdetail;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +13,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.scoredetails.model.CricketScoreCard;
+import com.sports.unity.scoredetails.model.Scorecard;
 import com.sports.unity.scores.ScoreDetailActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
-public class CompletedMatchScoreCardFragment extends Fragment implements CompletedMatchScoreCardHandler.CompletedMatchContentListener{
+public class LiveCricketMatchScoreCardFragment extends Fragment implements LivedMatchScoreCardHandler.LiveMatchContentListener{
+
 
     private ImageView ivDwn;
     private TextView tvTeamFirstNameAndScore;
@@ -27,6 +31,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
     private TextView tvExtraRunTeamFirst;
     private TextView tvTotalRunFirstTeam;
     private TextView tvRunRateFirstTeam;
+
     private ImageView ivDwnSecond;
     private TextView tvTeamSecondNameAndScore;
     private TextView tvSecondTeamOver;
@@ -34,18 +39,17 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
     private TextView tvTotalRunSecondTeam;
     private TextView tvRunRateSecondTeam;
 
-    public CompletedMatchScoreCardFragment() {
-        // Required empty public constructor
+    public LiveCricketMatchScoreCardFragment() {
+        super();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         String matchId =  getActivity().getIntent().getStringExtra("matchId");
-        matchId = "rsaeng_2015_t20_01";
-        CompletedMatchScoreCardHandler completedMatchScoreCardHandler = CompletedMatchScoreCardHandler.getInstance(context);
-        completedMatchScoreCardHandler.addListener(this);
-        completedMatchScoreCardHandler.requestCompletdMatchScoreCard(matchId);
+        LivedMatchScoreCardHandler cricketPlayerbioHandler = LivedMatchScoreCardHandler.getInstance(context);
+        cricketPlayerbioHandler.addListener(this);
+        cricketPlayerbioHandler.requestMatchScoreCard(matchId);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,34 +59,36 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         initView(view);
         return view;
     }
+
+    /* Tis method use to initialization view element of  fragment_completed_match_score_card*/
     private void initView(View view) {
+
         ivDwn = (ImageView) view.findViewById(R.id.iv_down);
         tvTeamFirstNameAndScore = (TextView) view.findViewById(R.id.tv_team_first_name);
         tvFirstTeamOver = (TextView) view.findViewById(R.id.tv_match_over);
         tvExtraRunTeamFirst = (TextView) view.findViewById(R.id.tv_extra_run_team_first);
         tvTotalRunFirstTeam = (TextView) view.findViewById(R.id.tv_total_run_first_team);
         tvRunRateFirstTeam = (TextView) view.findViewById(R.id.tv_run_rate_first_team);
-
         ivDwnSecond = (ImageView) view.findViewById(R.id.iv_down_second);
         tvTeamSecondNameAndScore = (TextView) view.findViewById(R.id.tv_team_second_name);
         tvSecondTeamOver = (TextView) view.findViewById(R.id.tv_match_over_second_team);
         tvExtraRunTeamSecond = (TextView) view.findViewById(R.id.tv_extra_run_team_second);
         tvTotalRunSecondTeam = (TextView) view.findViewById(R.id.tv_total_run_second_team);
         tvRunRateSecondTeam = (TextView) view.findViewById(R.id.tv_run_rate_second_team);
+
         initErrorLayout(view);
 
     }
 
     @Override
-    public void handleContent(JSONObject object) {
+    public void handleContent(CricketScoreCard scorecard) {
         {
             try {
-               boolean success = object.getBoolean("success");
-                boolean error = object.getBoolean("error");
+                boolean success = scorecard.isSuccess();
 
                 if( success ) {
 
-                    renderDisplay(object);
+                    renderDisplay(scorecard);
 
                 } else {
                     Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();
@@ -107,7 +113,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
     }
 
-    private void renderDisplay(final JSONObject scoreCard) throws JSONException {
+    private void renderDisplay(CricketScoreCard scoreCard) throws JSONException {
 
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (activity != null) {
@@ -115,7 +121,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                 @Override
                 public void run() {
                     try {
-                        Log.i("run: ",scoreCard.toString());
+
 
 
 
@@ -128,5 +134,6 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         }
 
     }
+
 
 }

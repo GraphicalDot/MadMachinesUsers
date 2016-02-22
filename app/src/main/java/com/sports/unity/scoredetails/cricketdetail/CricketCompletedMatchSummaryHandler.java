@@ -17,28 +17,29 @@ import org.json.JSONObject;
 import java.util.HashSet;
 
 /**
- * Created by madmachines on 16/2/16.
+ * Created by madmachines on 22/2/16.
  */
-public class CompletedMatchScoreCardHandler {
-    private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
+public class CricketCompletedMatchSummaryHandler {
+
+    private static final String REQUEST_TAG = "COMPLETED_SUMMARY_TAG";
     private static Context mContext;
     private String url = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
 
-    private CompletedMatchContentListener mContentListener;
+    private CricketCompletedMatchSummaryContentListener mcontentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
-    public static CompletedMatchScoreCardHandler getInstance(Context context) {
+    public static CricketCompletedMatchSummaryHandler getInstance(Context context) {
+        CricketCompletedMatchSummaryHandler cricketCompletedMatchSummaryHandler = null;
+        cricketCompletedMatchSummaryHandler = new CricketCompletedMatchSummaryHandler();
         mContext = context;
-        CompletedMatchScoreCardHandler completedMatchScoreCardHandler = null;
-        completedMatchScoreCardHandler = new CompletedMatchScoreCardHandler();
-        return completedMatchScoreCardHandler;
+        return cricketCompletedMatchSummaryHandler;
     }
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
-    public interface CompletedMatchContentListener {
+    public interface CricketCompletedMatchSummaryContentListener {
 
-        void handleContent(JSONObject object);
+        void handleContent(JSONObject jsonObject);
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -46,17 +47,17 @@ public class CompletedMatchScoreCardHandler {
         @Override
         public void onResponse(String s) {
             requestInProcess.remove(REQUEST_TAG);
-            CompletedMatchScoreCardHandler.this.handleResponse(s);
+            CricketCompletedMatchSummaryHandler.this.handleResponse(s);
         }
 
         @Override
         public void onErrorResponse(VolleyError volleyError) {
             requestInProcess.remove(REQUEST_TAG);
-            CompletedMatchScoreCardHandler.this.handleErrorResponse(volleyError);
+            CricketCompletedMatchSummaryHandler.this.handleErrorResponse(volleyError);
         }
     };
 
-    public void requestCompletdMatchScoreCard(String matchId) {
+    public void requestCompletedMatchSummary(String matchId) {
         Log.i("Score Detail", "Request Score Details");
 
         url = url+matchId;
@@ -68,26 +69,23 @@ public class CompletedMatchScoreCardHandler {
         requestInProcess.add(REQUEST_TAG);
     }
     private void handleResponse(String response) {
-                try{
-                    JSONObject jsonObject = new JSONObject(response);
+        try{
+            JSONObject jsonObject = new JSONObject(response);
             Log.i("Score Card", "handleResponse: ");
             if(jsonObject.getBoolean("success")){
-                mContentListener.handleContent(jsonObject);
+                mcontentListener.handleContent(jsonObject);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
-
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
+
     }
-
-    public void addListener(CompletedMatchContentListener contentListener) {
-        mContentListener = contentListener;
+    public void addListener(CricketCompletedMatchSummaryContentListener contentListener) {
+        mcontentListener = contentListener;
     }
-
-
 }

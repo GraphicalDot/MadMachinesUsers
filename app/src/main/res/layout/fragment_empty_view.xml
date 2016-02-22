@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+        android:layout_centerInParent="true"
+        android:id="@+id/tv_empty_view"
+       android:padding="@dimen/horizontal_padding_large"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/gray1"
+        android:textSize="@dimen/font_size_large"
+        android:text="Scorecard not available for this match yet"
+        />
+</RelativeLayout>

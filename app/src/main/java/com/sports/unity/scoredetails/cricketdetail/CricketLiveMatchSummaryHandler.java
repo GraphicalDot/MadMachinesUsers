@@ -19,25 +19,25 @@ import java.util.HashSet;
  */
 public class CricketLiveMatchSummaryHandler {
 
-    private static final String REQUEST_TAG = "SUMMARY_TAG";
-    private Context context;
-    private String matchId = null;
-    private String url = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
+    private static final String REQUEST_TAG = "LIVE_SUMMARY_TAG";
+    private static Context mContext;
+    private String url = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
 
-    private ContentListener contentListener = null;
+    private LiveCricketMatchSummaryContentListener mcontentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
     public static CricketLiveMatchSummaryHandler getInstance(Context context) {
         CricketLiveMatchSummaryHandler completedMatchScoreCardHandler = null;
         completedMatchScoreCardHandler = new CricketLiveMatchSummaryHandler();
+        mContext = context;
         return completedMatchScoreCardHandler;
     }
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
-    public interface ContentListener {
+    public interface LiveCricketMatchSummaryContentListener {
 
-        void handleContent(int responseCode);
+        void handleContent(String content);
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -55,12 +55,12 @@ public class CricketLiveMatchSummaryHandler {
         }
     };
 
-    public void requestScoreCardDetail() {
+    public void requestLiveMatchSummary(String matchId) {
         Log.i("Score Detail", "Request Score Details");
 
         url = url+matchId;
         StringRequest stringRequest = null;
-        RequestQueue queue = Volley.newRequestQueue(context);
+        RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
         queue.add(stringRequest);
 
@@ -83,9 +83,10 @@ public class CricketLiveMatchSummaryHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
-        if(contentListener != null) {
-            contentListener.handleContent(0);
-        }
+
+    }
+    public void addListener(LiveCricketMatchSummaryContentListener contentListener) {
+        mcontentListener = contentListener;
     }
 
 }

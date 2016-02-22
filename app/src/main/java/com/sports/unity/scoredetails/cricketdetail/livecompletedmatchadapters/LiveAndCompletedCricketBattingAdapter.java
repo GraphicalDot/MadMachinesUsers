@@ -1,4 +1,4 @@
-package com.sports.unity.scoredetails.cricketdetail;
+package com.sports.unity.scoredetails.cricketdetail.livecompletedmatchadapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -7,23 +7,24 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sports.unity.R;
+import com.sports.unity.scoredetails.cricketdetail.CricketPlayerMatchStatDTO;
 
 import java.util.List;
 
 /**
- * Created by madmachines on 18/2/16.
+ * Created by madmachines on 20/2/16.
  */
-public class CricketPlayerMatchBowlingStatAdapter extends RecyclerView.Adapter<CricketPlayerMatchBowlingStatAdapter.ViewHolder> {
+public class LiveAndCompletedCricketBattingAdapter extends RecyclerView.Adapter<LiveAndCompletedCricketBattingAdapter.ViewHolder> {
 
     private final List<CricketPlayerMatchStatDTO> mValues;
 
-    CricketPlayerMatchBowlingStatAdapter(List<CricketPlayerMatchStatDTO> mValues) {
+    LiveAndCompletedCricketBattingAdapter(List<CricketPlayerMatchStatDTO> mValues) {
         this.mValues = mValues;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.cricket_player_matchstat_bowling_crad,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_live_cricket_batting_card,parent,false);
         return new ViewHolder(view);
     }
 
@@ -34,9 +35,6 @@ public class CricketPlayerMatchBowlingStatAdapter extends RecyclerView.Adapter<C
         holder.tvTests.setText(holder.dto.getTestsMatch());
         holder.tvOdis.setText(holder.dto.getOdis());
         holder.tvT20s.setText(holder.dto.getT20s());
-
-
-
     }
 
     @Override
@@ -63,6 +61,6 @@ public class CricketPlayerMatchBowlingStatAdapter extends RecyclerView.Adapter<C
             tvTests = (TextView) view.findViewById(R.id.tv_tests);
             tvOdis = (TextView) view.findViewById(R.id.tv_odis);
             tvT20s = (TextView) view.findViewById(R.id.tv_t20s);
-      }
+        }
     }
 }

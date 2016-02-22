@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
@@ -17,11 +18,9 @@ import com.sports.unity.scores.ScoreDetailActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CricketUpcomingMatchSummaryFragment extends Fragment implements CricketUpcomingMatchSummaryHandler.CricketUpcomingMatchSummaryContentListener{
-    // TODO: Rename parameter arguments, choose names that match
-
-
-    public CricketUpcomingMatchSummaryFragment() {
+public class CricketUpcomingMatchScoreCardFragment extends Fragment implements CricketUpcomingMatchScoreCardHandler.UpcommingCricketMatchContentListener{
+  private TextView textView;
+    public CricketUpcomingMatchScoreCardFragment() {
         // Required empty public constructor
     }
 
@@ -29,20 +28,22 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
     public void onAttach(Context context) {
         super.onAttach(context);
         String matchId =  getActivity().getIntent().getStringExtra("matchId");
-        CricketUpcomingMatchSummaryHandler cricketUpcomingMatchSummaryHandler = CricketUpcomingMatchSummaryHandler.getInstance(context);
-        cricketUpcomingMatchSummaryHandler.addListener(this);
-        cricketUpcomingMatchSummaryHandler.requestCricketUpcommingMatchSummary();
+        matchId = "rsaeng_2015_t20_01";
+        CricketUpcomingMatchScoreCardHandler cricketUpcomingMatchScoreCardHandler = CricketUpcomingMatchScoreCardHandler.getInstance(context);
+        cricketUpcomingMatchScoreCardHandler.addListener(this);
+        cricketUpcomingMatchScoreCardHandler.requestCompletdMatchScoreCard(matchId);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_cricket_completed_match_summery, container, false);
+        View view = inflater.inflate(R.layout.fragment_empty_view, container, false);
         initView(view);
         return view;
     }
     private void initView(View view) {
-
+        textView = (TextView) view.findViewById(R.id.tv_empty_view);
+        textView.setText(R.string.scorecard_not_exist);
         initErrorLayout(view);
 
     }
@@ -56,7 +57,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
 
                 if( success ) {
 
-                    renderDisplay(object);
+
 
                 } else {
                     Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();
@@ -81,25 +82,6 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
 
     }
 
-    private void renderDisplay(final JSONObject scoreCard) throws JSONException {
-
-        ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-        if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Log.i("run: ", scoreCard.toString());
 
 
-
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        showErrorLayout(getView());
-                    }
-                }
-            });
-        }
-
-    }
 }
