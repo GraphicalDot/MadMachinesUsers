@@ -173,10 +173,16 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                         JSONObject scoreCard= dataObject.getJSONObject("scorecard");
                         JSONObject teamAScoreCard = scoreCard.getJSONObject(dataObject.getString("team_a"));
                         JSONObject teamAFirstInning = teamAScoreCard.getJSONObject("a_1");
-                        JSONObject teamASecondInning = teamAScoreCard.getJSONObject("a_2");
+                        JSONObject teamASecondInning= null;
+                        if(!teamAScoreCard.isNull("a_1")) {
+                             teamASecondInning = teamAScoreCard.getJSONObject("a_1");
+                        }
                         JSONObject teamBScoreCard = scoreCard.getJSONObject(dataObject.getString("team_b"));
                         JSONObject teamBFirstInning = teamBScoreCard.getJSONObject("b_1");
-                        JSONObject teamBSecondInning = teamBScoreCard.getJSONObject("b_2");
+                        JSONObject teamBSecondInning =null;
+                        if(!teamAScoreCard.isNull("b_2")) {
+                            teamBSecondInning = teamBScoreCard.getJSONObject("b_2");
+                        }
 
                         JSONArray teamABattingArray = teamAFirstInning.getJSONArray("batting");
                         JSONArray teamABowlingArray = teamAFirstInning.getJSONArray("bowling");
@@ -212,8 +218,8 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                         /*for (int k= 0 ; k<teamAFallWicketArray.length();k++){
 
                         }*/
-                        for (int i= 0 ; i<teamBBattingArray.length();i++){
-                            JSONObject battingObject = teamABattingArray.getJSONObject(i);
+                       for (int i= 0 ; i<teamBBattingArray.length();i++){
+                            JSONObject battingObject = teamBBattingArray.getJSONObject(i);
                             LiveAndCompletedCricketBattingCardDTO liveAndCompletedCricketBattingCardDTO= new LiveAndCompletedCricketBattingCardDTO();
                             liveAndCompletedCricketBattingCardDTO.setTvPlayerName(battingObject.getString("player"));
                             liveAndCompletedCricketBattingCardDTO.setTvBallPlayByPlayer(battingObject.getString("B"));
@@ -224,7 +230,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                             teamBBattingCardList.add(liveAndCompletedCricketBattingCardDTO);
                         }
                         for (int j= 0 ; j<teamBBowlingArray.length();j++){
-                            JSONObject bowlingArray = teamABattingArray.getJSONObject(j);
+                            JSONObject bowlingArray = teamBBowlingArray.getJSONObject(j);
                             LiveAndCompletedCricketBowlingCardDTO bowling= new LiveAndCompletedCricketBowlingCardDTO();
                             bowling.setTvRuns(bowlingArray.getString("runs"));
                             bowling.setTvBowlerName(bowlingArray.getString("player"));
