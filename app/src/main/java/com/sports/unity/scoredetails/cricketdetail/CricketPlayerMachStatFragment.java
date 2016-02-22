@@ -189,7 +189,6 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
 
             if (batting != null) {
                 if (batting.getString("format").equalsIgnoreCase("TESTS")) {
-                    battingTestsmatchMap.put("format", batting.getString("format"));
                     battingTestsmatchMap.put("innings", batting.getString("innings"));
                     battingTestsmatchMap.put("runs", batting.getString("runs"));
                     battingTestsmatchMap.put("matches", batting.getString("matches"));
@@ -199,7 +198,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     battingTestsmatchMap.put("100s", batting.getString("100s"));
                     battingTestsmatchMap.put("not_out", batting.getString("not_out"));
                 } else if (batting.getString("format").equalsIgnoreCase("ODI")) {
-                    battingOdisMap.put("format", batting.getString("format"));
+
                     battingOdisMap.put("innings", batting.getString("innings"));
                     battingOdisMap.put("runs", batting.getString("runs"));
                     battingOdisMap.put("matches", batting.getString("matches"));
@@ -209,7 +208,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     battingOdisMap.put("100s", batting.getString("100s"));
                     battingOdisMap.put("not_out", batting.getString("not_out"));
                 } else if (batting.getString("format").equalsIgnoreCase("Twenty20")) {
-                    battingT20sMap.put("format", batting.getString("format"));
+
                     battingT20sMap.put("innings", batting.getString("innings"));
                     battingT20sMap.put("runs", batting.getString("runs"));
                     battingT20sMap.put("matches", batting.getString("matches"));
@@ -219,7 +218,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     battingT20sMap.put("100s", batting.getString("100s"));
                     battingT20sMap.put("not_out", batting.getString("not_out"));
                 } else if (batting.getString("format").equalsIgnoreCase("IPL")) {
-                    battingIPLMap.put("format", batting.getString("format"));
+
                     battingIPLMap.put("innings", batting.getString("innings"));
                     battingIPLMap.put("runs", batting.getString("runs"));
                     battingIPLMap.put("matches", batting.getString("matches"));
@@ -258,7 +257,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
 
             if (bowling != null) {
                 if (bowling.getString("format").equalsIgnoreCase("TESTS")) {
-                    bowlingTestsmatchMap.put("format", bowling.getString("format"));
+
                     bowlingTestsmatchMap.put("runs", bowling.getString("runs"));
                     bowlingTestsmatchMap.put("matches", bowling.getString("matches"));
                     bowlingTestsmatchMap.put("average", bowling.getString("average"));
@@ -267,7 +266,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     bowlingTestsmatchMap.put("wickets", bowling.getString("wickets"));
                     bowlingTestsmatchMap.put("economy", bowling.getString("economy"));
                 } else if (bowling.getString("format").equalsIgnoreCase("ODI")) {
-                    bowlingOdisMap.put("format", bowling.getString("format"));
+
                     bowlingOdisMap.put("runs", bowling.getString("runs"));
                     bowlingOdisMap.put("matches", bowling.getString("matches"));
                     bowlingOdisMap.put("average", bowling.getString("average"));
@@ -277,7 +276,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     bowlingOdisMap.put("economy", bowling.getString("economy"));
 
                 } else if (bowling.getString("format").equalsIgnoreCase("Twenty20")) {
-                    bowlingT20sMap.put("format", bowling.getString("format"));
+
                     bowlingT20sMap.put("runs", bowling.getString("runs"));
                     bowlingT20sMap.put("matches", bowling.getString("matches"));
                     bowlingT20sMap.put("average", bowling.getString("average"));
@@ -286,7 +285,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     bowlingT20sMap.put("wickets", bowling.getString("wickets"));
                     bowlingT20sMap.put("economy", bowling.getString("economy"));
                 } else if (bowling.getString("format").equalsIgnoreCase("IPL")) {
-                    bowlingIPLMap.put("format", bowling.getString("format"));
+
                     bowlingIPLMap.put("runs", bowling.getString("runs"));
                     bowlingIPLMap.put("matches", bowling.getString("matches"));
                     bowlingIPLMap.put("average", bowling.getString("average"));
@@ -296,9 +295,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     bowlingIPLMap.put("economy", bowling.getString("economy"));
                 }
             }
-
-
-        }
+       }
         CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
         Set<String> keySet = bowlingTestsmatchMap.keySet();
         for (String key : keySet) {
