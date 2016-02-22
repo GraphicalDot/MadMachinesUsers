@@ -14,6 +14,8 @@ import com.google.gson.Gson;
 import com.sports.unity.scoredetails.model.CricketScoreCard;
 import com.sports.unity.scoredetails.model.Scorecard;
 
+import org.json.JSONObject;
+
 import java.util.HashSet;
 
 /**
@@ -38,7 +40,7 @@ public class LivedMatchScoreCardHandler {
     }
     public interface LiveMatchContentListener {
 
-        void handleContent(CricketScoreCard scoreCard);
+        void handleContent(JSONObject jsonObject);
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -70,10 +72,10 @@ public class LivedMatchScoreCardHandler {
     private void handleResponse(String response) {
         Gson gson = new Gson();
         try{
-            CricketScoreCard scoreCardModel = gson.fromJson(response,CricketScoreCard.class);
+            JSONObject jsonObject = new JSONObject(response);
             Log.i("Score Card", "handleResponse: ");
-            if(scoreCardModel.isSuccess()){
-                mContentListener.handleContent(scoreCardModel);
+            if(jsonObject.getBoolean("success")){
+                mContentListener.handleContent(jsonObject);
             }
         } catch (Exception e) {
             e.printStackTrace();

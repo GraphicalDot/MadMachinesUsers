@@ -261,14 +261,16 @@
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text="@string/fall_of_wicket"
-                        android:textSize="@dimen/font_size_small_large" />
+                        android:textSize="@dimen/font_size_small_large"
+                        android:visibility="gone"/>
                 </LinearLayout>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_team_first_fall_wickets"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     card:layoutManager="com.sports.unity.common.view.CustomLinearLayoutManager"
-                    tools:listitem="@layout/fragment_live_cricket_fall_of_wickets_card" />
+                    tools:listitem="@layout/fragment_live_cricket_fall_of_wickets_card"
+                    />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="match_parent"
@@ -512,7 +514,8 @@
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text="@string/fall_of_wicket"
-                        android:textSize="@dimen/font_size_small_large" />
+                        android:textSize="@dimen/font_size_small_large"
+                        android:visibility="gone"/>
                 </LinearLayout>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_second_team_fall_wicket"

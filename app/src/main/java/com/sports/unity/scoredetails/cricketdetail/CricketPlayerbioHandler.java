@@ -19,7 +19,7 @@ public class CricketPlayerbioHandler {
 
     private static final String REQUEST_TAG = "CRICKET_PLAYER_BIO_TAG";
     private static Context mContext;
-    private String url = " http://52.76.74.188:5400/get_player_stats?player_id=";
+    private String url = "http://52.76.74.188:5400/get_player_stats?player_id=";
 
 
     private CricketPlayerbioContentListener mContentListener = null;

@@ -18,7 +18,7 @@ public class LiveAndCompletedCricketBattingCardAdapter extends RecyclerView.Adap
 
     private final List<LiveAndCompletedCricketBattingCardDTO> mValues;
 
-    LiveAndCompletedCricketBattingCardAdapter(List<LiveAndCompletedCricketBattingCardDTO> mValues) {
+    public LiveAndCompletedCricketBattingCardAdapter(List<LiveAndCompletedCricketBattingCardDTO> mValues) {
         this.mValues = mValues;
     }
 

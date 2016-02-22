@@ -18,7 +18,7 @@ public class LiveAndCompletedCricketFallOfWicketAdapter extends RecyclerView.Ada
 
     private final List<LiveAndCompletedCricketFallOfWicketCardDTO> mValues;
 
-    LiveAndCompletedCricketFallOfWicketAdapter(List<LiveAndCompletedCricketFallOfWicketCardDTO> mValues) {
+    public LiveAndCompletedCricketFallOfWicketAdapter(List<LiveAndCompletedCricketFallOfWicketCardDTO> mValues) {
         this.mValues = mValues;
     }
 
