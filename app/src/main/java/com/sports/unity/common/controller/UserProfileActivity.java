@@ -224,8 +224,13 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
             TinyDB.getInstance(UserProfileActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nickname);
             TinyDB.getInstance(UserProfileActivity.this).putString(TinyDB.KEY_PROFILE_STATUS, status);
-            Contacts contacts = new Contacts(nickname, phoneNumber, true, byteArray, 1, status);
-            UserProfileHandler.getInstance().submitUserProfile(contacts, LISTENER_KEY);
+
+            String jid = TinyDB.getInstance(UserProfileActivity.this).getString(TinyDB.KEY_USER_JID);
+
+            //TODO some shit going down here ...
+
+            Contacts contacts = new Contacts(nickname, jid, phoneNumber, byteArray, -1, status);
+            UserProfileHandler.getInstance().submitUserProfile(UserProfileActivity.this, contacts, LISTENER_KEY);
         } else {
             if (TextUtils.isEmpty(name.getText().toString())) {
                 Toast.makeText(this, "Please enter your name", Toast.LENGTH_SHORT).show();
@@ -407,7 +412,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             }
         }
         String phoneNumber = getIntent().getStringExtra("number");
-        UserProfileHandler.getInstance().loadProfile(phoneNumber, LISTENER_KEY);
+        UserProfileHandler.getInstance().loadProfile(getApplicationContext(), phoneNumber, LISTENER_KEY);
         //new FetchVcardTask(getIntent().getStringExtra("number")).execute();
     }
 

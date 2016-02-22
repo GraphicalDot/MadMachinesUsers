@@ -76,11 +76,11 @@ public class PubSubMessaging {
                     for (Subscription owner :
                             owners) {
                         subject = groupServerId.substring(groupServerId.indexOf("%") + 1, groupServerId.indexOf("%%"));
-                        String ownerPhoneNumber = owner.getJid().substring(0, owner.getJid().indexOf("@"));
-                        Contacts ownerContact = sportsUnityDBHelper.getContact(ownerPhoneNumber);
+                        String ownerJID = owner.getJid().substring(0, owner.getJid().indexOf("@"));
+                        Contacts ownerContact = sportsUnityDBHelper.getContactByJid(ownerJID);
                         if (owner == null) {
-                            XMPPService.createContact(ownerPhoneNumber, context, true);
-                            ownerContact = sportsUnityDBHelper.getContact(ownerPhoneNumber);
+                            XMPPService.createContact(ownerJID, context, true);
+                            ownerContact = sportsUnityDBHelper.getContactByJid(ownerJID);
                         }
                         long chatId = sportsUnityDBHelper.createGroupChatEntry(subject, ownerContact.id, null, groupServerId);
                         sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupServerId);

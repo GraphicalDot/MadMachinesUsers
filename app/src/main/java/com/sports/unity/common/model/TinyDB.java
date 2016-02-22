@@ -28,6 +28,7 @@ public class TinyDB {
     public static final String KEY_PROFILE_CREATED = "profile_created";
     public static final String KEY_SPORTS_SELECTED = "sports_selected";
     public static final String KEY_OTP_SENT = "otp_sent";
+    public static final String KEY_COUNTRY_CODE = "country_code";
     public static final String KEY_GET_JOINED_GROUPS_ON_REGISTRATION = "get_groups";
 
     public static final String KEY_CURRENT_LATITUDE = "lat";
@@ -40,7 +41,8 @@ public class TinyDB {
     public static final String KEY_USER_JID = "userjid";
     public static final String KEY_PASSWORD = "password";
 
-    public static final String KEY_CONTACTS_COPIED_SUCESSFULLY = "contacts_copied";
+    public static final String KEY_ALL_CONTACTS_SYNC_STATUS = "all_contacts_sync_status";
+    public static final String KEY_ALL_CONTACTS_LAST_PROCESSED_TIMESTAMP = "all_contacts_last_processed_timestamp";
 
     public static final String KEY_PROFILE_NAME = "name";
     public static final String KEY_PROFILE_STATUS = "status";

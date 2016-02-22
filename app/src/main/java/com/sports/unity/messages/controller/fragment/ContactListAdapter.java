@@ -75,7 +75,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
                 invite = (Button) rowView.findViewById(R.id.btn_invite);
                 invite.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
 
-                if (contacts.registered) {
+                if (contacts.isRegistered()) {
                     invite.setVisibility(View.INVISIBLE);
                 }
             } else if (itemLayoutId == R.layout.list_item_members) {
@@ -210,15 +210,12 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
 
             for (Contacts c : finalContact) {
                 if (c.name.toLowerCase().contains(filterString)) {
-
-                    Log.d("max", "Name is-" + c.name + "<<isRegs_)" + c.registered);
                     nlist.add(c);
                 }
             }
 
             results.values = nlist;
             results.count = nlist.size();
-            Log.d("max", "count is-+" + nlist.size());
             return results;
         }
 

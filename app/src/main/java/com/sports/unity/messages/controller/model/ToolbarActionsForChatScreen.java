@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -15,7 +14,6 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,7 +72,7 @@ public class ToolbarActionsForChatScreen {
         String clipText = "";
         for (int i = 0; i < selectedItemsList.size(); i++) {
             String time = "[" + CommonUtil.getTime(Long.parseLong(messageList.get(selectedItemsList.get(i)).sendTime)) + "]";
-            String name = sportsUnityDBHelper.getName(messageList.get(selectedItemsList.get(i)).number);
+            String name = sportsUnityDBHelper.getUserNameByPhoneNumber(messageList.get(selectedItemsList.get(i)).number);
             String text = messageList.get(selectedItemsList.get(i)).textData;
             if (i == selectedItemsList.size() - 1) {
                 clipText += time + " " + name + ": " + text;

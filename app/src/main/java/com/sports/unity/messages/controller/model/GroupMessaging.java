@@ -47,7 +47,7 @@ public class GroupMessaging {
         sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
     }
 
-    public boolean createGroup(String roomName, String owner, String subject) {
+    public boolean createGroup(String roomName, String ownerJID, String subject) {
         boolean success = false;
 
         MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(XMPPClient.getConnection());
@@ -55,7 +55,7 @@ public class GroupMessaging {
 
 
         try {
-            multiUserChat.create(owner);
+            multiUserChat.create(ownerJID);
             multiUserChat.changeSubject(subject);
 
             success = true;
@@ -132,14 +132,14 @@ public class GroupMessaging {
         return success;
     }
 
-    public boolean joinGroup(String roomName, String phoneNumber) {
+    public boolean joinGroup(String roomName, String jid) {
         boolean success = false;
 
         MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(XMPPClient.getConnection());
         MultiUserChat multiUserChat = manager.getMultiUserChat(roomName + "@conference.mm.io");
 
         try {
-            multiUserChat.join(phoneNumber);
+            multiUserChat.join(jid);
 
             success = true;
         } catch (XMPPException.XMPPErrorException e) {
