@@ -8,9 +8,11 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.sports.unity.scoredetails.CommentaryFragment;
 import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scoredetails.cricketdetail.CompletedMatchScoreCardFragment;
+import com.sports.unity.scoredetails.cricketdetail.CricketCompletedMatchSummeryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketLiveMatchSummaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketMatchSummaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketUpcomingMatchSummaryFragment;
+import com.sports.unity.scoredetails.cricketdetail.LiveCricketMatchScoreCardFragment;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
 
@@ -41,7 +43,13 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
 
         Fragment fragment = null;
         if (position == 0) {
-            fragment = new CricketMatchSummaryFragment();
+            if(matchStatus.equalsIgnoreCase("notstarted")){
+                fragment = new CricketUpcomingMatchSummaryFragment();
+            }else if(matchStatus.equalsIgnoreCase("started")){
+                fragment = new LiveCricketMatchScoreCardFragment();}
+            else {
+                fragment = new CompletedMatchScoreCardFragment();
+            }
         } else if (position == 1) {
             fragment = new CommentaryFragment();
             Bundle cmBundel = new Bundle();
@@ -54,7 +62,7 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
             }else if(matchStatus.equalsIgnoreCase("started")){
                 fragment = new CricketLiveMatchSummaryFragment();}
             else {
-                fragment = new CompletedMatchScoreCardFragment();
+                fragment = new CricketCompletedMatchSummeryFragment();
             }
         }
         return fragment;

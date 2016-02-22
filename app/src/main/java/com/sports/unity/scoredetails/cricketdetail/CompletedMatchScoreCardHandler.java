@@ -19,14 +19,16 @@ import java.util.HashSet;
 /**
  * Created by madmachines on 16/2/16.
  */
-public class CompletedMatchScoreCardHandler {private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
-    private Context context;
+public class CompletedMatchScoreCardHandler {
+    private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
+    private static Context mContext;
     private String url = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
 
     private CompletedMatchContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
     public static CompletedMatchScoreCardHandler getInstance(Context context) {
+        mContext = context;
         CompletedMatchScoreCardHandler completedMatchScoreCardHandler = null;
         completedMatchScoreCardHandler = new CompletedMatchScoreCardHandler();
         return completedMatchScoreCardHandler;
@@ -59,7 +61,7 @@ public class CompletedMatchScoreCardHandler {private static final String REQUEST
 
         url = url+matchId;
         StringRequest stringRequest = null;
-        RequestQueue queue = Volley.newRequestQueue(context);
+        RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
         queue.add(stringRequest);
 

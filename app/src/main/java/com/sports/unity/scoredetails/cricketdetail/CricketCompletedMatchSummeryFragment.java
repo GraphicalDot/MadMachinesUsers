@@ -4,84 +4,103 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.scores.ScoreDetailActivity;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link CricketCompletedMatchSummeryFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link CricketCompletedMatchSummeryFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class CricketCompletedMatchSummeryFragment extends Fragment {
+import org.json.JSONException;
+import org.json.JSONObject;
 
+public class CricketCompletedMatchSummeryFragment extends Fragment implements CricketCompletedMatchSummaryHandler.CricketCompletedMatchSummaryContentListener {
 
-    private OnFragmentInteractionListener mListener;
 
     public CricketCompletedMatchSummeryFragment() {
         // Required empty public constructor
     }
 
-
-    public static CricketCompletedMatchSummeryFragment newInstance(String param1, String param2) {
-        CricketCompletedMatchSummeryFragment fragment = new CricketCompletedMatchSummeryFragment();
-         return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_cricket_completed_match_summery, container, false);
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnFragmentInteractionListener) {
-            mListener = (OnFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+        String matchId =  getActivity().getIntent().getStringExtra("matchId");
+        matchId = "rsaeng_2015_t20_01";
+        CricketCompletedMatchSummaryHandler cricketCompletedMatchSummaryHandler = CricketCompletedMatchSummaryHandler.getInstance(context);
+        cricketCompletedMatchSummaryHandler.addListener(this);
+        cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(matchId);
+    }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.fragment_cricket_completed_match_summery, container, false);
+        initView(view);
+        return view;
+    }
+    private void initView(View view) {
+
+        initErrorLayout(view);
+
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public void handleContent(JSONObject object) {
+        {
+            try {
+                boolean success = object.getBoolean("success");
+                boolean error = object.getBoolean("error");
+
+                if( success ) {
+
+                    renderDisplay(object);
+
+                } else {
+                    Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();
+                    showErrorLayout(getView());
+                }
+            }catch (Exception ex){
+                ex.printStackTrace();
+                Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    private void initErrorLayout(View view) {
+        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        errorLayout.setVisibility(View.GONE);
+
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+    private void showErrorLayout(View view) {
+
+        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        errorLayout.setVisibility(View.VISIBLE);
+
     }
+
+    private void renderDisplay(final JSONObject scoreCard) throws JSONException {
+
+        ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
+        if (activity != null) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Log.i("run: ", scoreCard.toString());
+
+
+
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        showErrorLayout(getView());
+                    }
+                }
+            });
+        }
+
+    }
+
 }

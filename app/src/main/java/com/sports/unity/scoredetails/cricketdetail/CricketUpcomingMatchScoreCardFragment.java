@@ -12,20 +12,14 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.sports.unity.R;
-import com.sports.unity.scoredetails.FragementInterface;
-import com.sports.unity.scoredetails.model.CricketScoreCard;
 import com.sports.unity.scores.ScoreDetailActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.List;
+public class CricketUpcomingMatchScoreCardFragment extends Fragment implements CricketUpcomingMatchScoreCardHandler.UpcommingCricketMatchContentListener{
 
-
-public class CricketLiveMatchSummaryFragment extends Fragment implements  CricketLiveMatchSummaryHandler.LiveCricketMatchSummaryContentListener {
-
-
-    public CricketLiveMatchSummaryFragment() {
+    public CricketUpcomingMatchScoreCardFragment() {
         // Required empty public constructor
     }
 
@@ -34,15 +28,15 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
         super.onAttach(context);
         String matchId =  getActivity().getIntent().getStringExtra("matchId");
         matchId = "rsaeng_2015_t20_01";
-        CricketLiveMatchSummaryHandler cricketLiveMatchSummaryHandler = CricketLiveMatchSummaryHandler.getInstance(context);
-        cricketLiveMatchSummaryHandler.addListener(this);
-        cricketLiveMatchSummaryHandler.requestLiveMatchSummary(matchId);
+        CricketUpcomingMatchScoreCardHandler cricketUpcomingMatchScoreCardHandler = CricketUpcomingMatchScoreCardHandler.getInstance(context);
+        cricketUpcomingMatchScoreCardHandler.addListener(this);
+        cricketUpcomingMatchScoreCardHandler.requestCompletdMatchScoreCard(matchId);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_cricket_live_match_summery, container, false);
+        View view = inflater.inflate(R.layout.score_card, container, false);
         initView(view);
         return view;
     }
@@ -51,17 +45,17 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
         initErrorLayout(view);
 
     }
-   @Override
-    public void handleContent(String content) {
 
+    @Override
+    public void handleContent(JSONObject object) {
+        {
             try {
-                JSONObject object = new JSONObject(content);
                 boolean success = object.getBoolean("success");
                 boolean error = object.getBoolean("error");
 
                 if( success ) {
 
-                    renderDisplay(object);
+
 
                 } else {
                     Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();
@@ -71,7 +65,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                 ex.printStackTrace();
                 Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             }
-
+        }
     }
     private void initErrorLayout(View view) {
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
@@ -86,24 +80,6 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
     }
 
-    private void renderDisplay(final JSONObject scoreCard) throws JSONException {
 
-        ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-        if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Log.i("run: ", scoreCard.toString());
-
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        showErrorLayout(getView());
-                    }
-                }
-            });
-        }
-
-    }
 
 }
