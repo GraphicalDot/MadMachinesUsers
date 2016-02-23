@@ -3,6 +3,7 @@ package com.sports.unity.scoredetails.cricketdetail;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,12 +13,11 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.solovyev.android.views.llm.LinearLayoutManager;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -56,8 +56,8 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        String playerId = getActivity().getIntent().getStringExtra("playerId");
-        playerId = "6f65e8cd45ae14c916cf2c1c69b6102c";
+        String playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+
         CricketPlayerMatchStatHandler cricketPlayerMatchStatHandler = CricketPlayerMatchStatHandler.getInstance(context);
         cricketPlayerMatchStatHandler.addListener(this);
         cricketPlayerMatchStatHandler.requestData(playerId);
@@ -81,7 +81,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         bowlingImageView = (ImageView) view.findViewById(R.id.iv_down_second);
         final View battingRow = view.findViewById(R.id.prl_batting);
         final View bowlingRow = view.findViewById(R.id.prl_bowling);
-        //TODO: downarrow should be the dark right now it's white
+
         battingImageView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (rcBattingPerformanceSummery.getVisibility() == GONE) {
@@ -91,7 +91,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                 } else {
                     rcBattingPerformanceSummery.setVisibility(GONE);
                     battingRow.setVisibility(GONE);
-                    battingImageView.setImageResource(R.drawable.ic_down_arrow);
+                    battingImageView.setImageResource(R.drawable.ic_dropdown);
                 }
             }
         });
@@ -104,7 +104,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                 } else {
                     rcBowlingPerformanceSummary.setVisibility(GONE);
                     bowlingRow.setVisibility(GONE);
-                    bowlingImageView.setImageResource(R.drawable.ic_down_arrow);
+                    bowlingImageView.setImageResource(R.drawable.ic_dropdown);
                 }
             }
         });
@@ -137,6 +137,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         } catch (Exception ex) {
             ex.printStackTrace();
             Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+            showErrorLayout(getView());
         }
     }
 

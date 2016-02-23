@@ -196,8 +196,8 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
 
 
     private void getIntentExtras() {
-        //playerNameKey = getIntent().getStringExtra("name");
-        playerNameKey="Cristiano Ronaldo";
+        playerNameKey = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        //playerNameKey="Cristiano Ronaldo";
 
     }
 

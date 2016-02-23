@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,8 +42,8 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-       String playerId =  getActivity().getIntent().getStringExtra("playerId");
-        playerId = "6f65e8cd45ae14c916cf2c1c69b6102c";
+        String playerId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+       /* playerId = "6f65e8cd45ae14c916cf2c1c69b6102c";*/
         CricketPlayerbioHandler cricketPlayerbioHandler = CricketPlayerbioHandler.getInstance(context);
         cricketPlayerbioHandler.addListener(this);
         cricketPlayerbioHandler.requestData(playerId);
@@ -85,6 +86,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
         }catch (Exception ex){
             ex.printStackTrace();
             Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+            showErrorLayout(getView());
         }
     }
     private void initErrorLayout(View view) {
@@ -97,6 +99,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
 
             LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
             errorLayout.setVisibility(View.VISIBLE);
+
 
     }
 
