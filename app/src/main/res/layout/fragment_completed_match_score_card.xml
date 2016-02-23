@@ -43,6 +43,7 @@
                 </RelativeLayout>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/ll_first_view_visibility"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/gray3"
@@ -177,6 +178,7 @@
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/ll_second_view_visibility"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/gray3"
@@ -262,7 +264,7 @@
                         android:gravity="left"
                         android:text="@string/fall_of_wicket"
                         android:textSize="@dimen/font_size_small_large"
-                        android:visibility="gone"/>
+                        />
                 </LinearLayout>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_team_first_fall_wickets"
@@ -515,7 +517,7 @@
                         android:gravity="left"
                         android:text="@string/fall_of_wicket"
                         android:textSize="@dimen/font_size_small_large"
-                        android:visibility="gone"/>
+                        />
                 </LinearLayout>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_second_team_fall_wicket"
@@ -525,13 +527,15 @@
                     tools:listitem="@layout/fragment_live_cricket_fall_of_wickets_card"
                     />
             </LinearLayout>
+            <include
+                android:id="@+id/error"
+                layout="@layout/error_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"/>
         </LinearLayout>
+
     </ScrollView>
 
-    <include
-        android:id="@+id/error"
-        layout="@layout/error_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
+
 </LinearLayout>

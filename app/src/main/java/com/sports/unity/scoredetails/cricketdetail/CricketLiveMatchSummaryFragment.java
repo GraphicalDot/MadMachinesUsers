@@ -62,7 +62,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     public void onAttach(Context context) {
         super.onAttach(context);
         String matchId =  getActivity().getIntent().getStringExtra("matchId");
-        matchId = "rsaeng_2015_t20_01";
+
         CricketLiveMatchSummaryHandler cricketLiveMatchSummaryHandler = CricketLiveMatchSummaryHandler.getInstance(context);
         cricketLiveMatchSummaryHandler.addListener(this);
         cricketLiveMatchSummaryHandler.requestLiveMatchSummary(matchId);

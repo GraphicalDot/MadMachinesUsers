@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
@@ -19,6 +20,9 @@ import org.json.JSONObject;
 
 public class CricketUpcomingMatchSummaryFragment extends Fragment implements CricketUpcomingMatchSummaryHandler.CricketUpcomingMatchSummaryContentListener{
 
+    private TextView tvMatchName;
+    private TextView tvMatchDate;
+    private TextView tvMatchToss;
     public CricketUpcomingMatchSummaryFragment() {
         // Required empty public constructor
     }
@@ -29,7 +33,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
         String matchId =  getActivity().getIntent().getStringExtra("matchId");
         CricketUpcomingMatchSummaryHandler cricketUpcomingMatchSummaryHandler = CricketUpcomingMatchSummaryHandler.getInstance(context);
         cricketUpcomingMatchSummaryHandler.addListener(this);
-        cricketUpcomingMatchSummaryHandler.requestCricketUpcommingMatchSummary();
+        cricketUpcomingMatchSummaryHandler.requestCricketUpcommingMatchSummary(matchId);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -40,7 +44,9 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
         return view;
     }
     private void initView(View view) {
-
+        tvMatchName = (TextView) view.findViewById(R.id.tv_match_name);
+        tvMatchDate = (TextView) view.findViewById(R.id.tv_match_date);
+        tvMatchToss = (TextView) view.findViewById(R.id.tv_match_toss);
         initErrorLayout(view);
 
     }
@@ -49,6 +55,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
     public void handleContent(JSONObject object) {
         {
             try {
+
                 boolean success = object.getBoolean("success");
                 boolean error = object.getBoolean("error");
 
@@ -81,7 +88,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
 
     }
 
-    private void renderDisplay(final JSONObject scoreCard) throws JSONException {
+    private void renderDisplay(final JSONObject jsonObject) throws JSONException {
 
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (activity != null) {
@@ -89,8 +96,11 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
                 @Override
                 public void run() {
                     try {
-                        Log.i("run: ", scoreCard.toString());
-
+                        JSONObject data = jsonObject.getJSONObject("data");
+                        Log.i("run: ", jsonObject.toString());
+                        tvMatchName.setText(data.getString(""));
+                        tvMatchDate.setText(data.getString(""));
+                        tvMatchToss.setText(data.getString(""));
 
 
                     } catch (Exception ex) {

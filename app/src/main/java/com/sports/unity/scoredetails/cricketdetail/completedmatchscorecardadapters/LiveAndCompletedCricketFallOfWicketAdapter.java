@@ -32,11 +32,9 @@ public class LiveAndCompletedCricketFallOfWicketAdapter extends RecyclerView.Ada
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.dto = mValues.get(position);
         holder.tvBowlerName.setText(holder.dto.getTvBowlerName());
-        holder.tvOver.setText(holder.dto.getTvOver());
-        holder.tvMiddenOver.setText(holder.dto.getTvMiddenOver());
-        holder.tvRuns.setText(holder.dto.getTvRuns());
         holder.tvWicket.setText(holder.dto.getTvWicket());
-        holder.tvExtra.setText(holder.dto.getTvExtra());
+        holder.tvOverNumber.setText(holder.dto.getTvOverNumber());
+
     }
 
     @Override
@@ -48,24 +46,20 @@ public class LiveAndCompletedCricketFallOfWicketAdapter extends RecyclerView.Ada
     public class ViewHolder extends RecyclerView.ViewHolder
     {
         public final View mView;
-        private TextView tvBowlerName;
-        private TextView tvOver;
-        private TextView tvMiddenOver;
-        private TextView tvRuns;
         private TextView tvWicket;
-        private TextView tvExtra;
+        private TextView tvBowlerName;
+        private TextView tvOverNumber;
+
 
         public LiveAndCompletedCricketFallOfWicketCardDTO dto;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            tvBowlerName = (TextView) view.findViewById(R.id.tv_bowler_name);
-            tvOver = (TextView) view.findViewById(R.id.tv_over);
-            tvMiddenOver = (TextView) view.findViewById(R.id.tv_midden_over);
-            tvRuns = (TextView) view.findViewById(R.id.tv_runs);
             tvWicket = (TextView) view.findViewById(R.id.tv_wicket);
-            tvExtra = (TextView) view.findViewById(R.id.tv_extra);
+            tvBowlerName = (TextView) view.findViewById(R.id.tv_bowler_name);
+            tvOverNumber = (TextView) view.findViewById(R.id.tv_over_number);
+
         }
     }
 }

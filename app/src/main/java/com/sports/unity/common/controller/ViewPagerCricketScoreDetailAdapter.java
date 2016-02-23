@@ -50,7 +50,7 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
             }else if(matchStatus.equalsIgnoreCase("started")){
                 fragment = new CricketLiveMatchSummaryFragment();}
             else {
-                fragment = new CompletedMatchScoreCardFragment();
+                fragment = new CricketCompletedMatchSummeryFragment();
             }
         } else if (position == 1) {
             if(matchStatus.equalsIgnoreCase("notstarted")){
@@ -62,7 +62,6 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
                 cmBundel.putParcelableArrayList("commentries", commentries);
                 fragment.setArguments(cmBundel);
             }
-
         } else {
             if(matchStatus.equalsIgnoreCase("notstarted")){
                 fragment = new CricketUpcomingMatchScoreCardFragment();

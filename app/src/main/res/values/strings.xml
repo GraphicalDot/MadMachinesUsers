@@ -355,5 +355,8 @@ Carrier SMS charges may apply.</string>
     <string name="match_not_exist">This Match Does Not Exists</string>
     <string name="commentary_not_exist">Commentary Not Available For This Match Yet</string>
     <string name="scorecard_not_exist">ScoreCard Not Exist Yet</string>
+    <string name="table">TABLE</string>
+    <string name="form">FORM</string>
+    <string name="squad">SQUAD</string>
 
 </resources>

@@ -137,6 +137,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             int numberOfCricketTabs = cricketMatchtitles.length;
             String footballMatchtitles[] = {getString(R.string.commentary), getString(R.string.matchstats), getString(R.string.timeline), getString(R.string.lineup)};
             int numberOfFootballTabs = footballMatchtitles.length;
+            String footballMatchtitlesupcomming[] = {getString(R.string.table), getString(R.string.form), getString(R.string.squad)};
+            int numberOfFootballTabsUpcomming = footballMatchtitlesupcomming.length;
 
 //
 //<<<<<<< HEAD
@@ -152,6 +154,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 cricketScoreDetailAdapter = new ViewPagerCricketScoreDetailAdapter(getSupportFragmentManager(), cricketMatchtitles, numberOfCricketTabs, commentaries, matchStatus);
                 mViewPager.setAdapter(cricketScoreDetailAdapter);
             } else {
+                   if(matchStatus.equals(""))
                 footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitles, numberOfFootballTabs, commentaries,matchStatus);
                 mViewPager.setAdapter(footballScoreDetailAdapter);
 //>>>>>>> team2_dev_branch
@@ -457,28 +460,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         }
         return success;
     }
-    private boolean handleSummary(String content){
-        Log.i("Score Detail", "Handle Content");
-        boolean success = false;
-
-        ArrayList<CommentriesModel> list = ScoresJsonParser.parseListOfMatchCommentaries(content);
-        if( list.size() > 0 ){
-            commentaries.clear();
-            commentaries.addAll(list);
-            success = true;
-            Fragment fragment= null;
-            if(sportsType.equals(ScoresJsonParser.CRICKET)) {
-                fragment= cricketScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
-            } else {
-                fragment = footballScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
-            }
-            if(fragment instanceof DataServiceContract) {
-                DataServiceContract listner = (DataServiceContract)fragment;
-                listner.dataChanged();
-            }
-        }
-        return success;
-    }
 
     private void requestMatchScoreDetails() {
         Log.i("Score Detail", "Request Score Details");
@@ -499,31 +480,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     }
 
 
-    private void requestFootballTimeLine() {
-        Log.i("Score Detail", "Request Score Details");
 
-        HashMap<String, String> parameters = new HashMap<>();
-        parameters.put(ScoresContentHandler.PARAM_ID, matchId);
-        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_TIMELINE, parameters, REQUEST_LISTENER_KEY, SCORE_DETAIL_REQUEST_TAG);
-    }
-
-
-    private void requestFootballMatchStat() {
-        Log.i("Score Detail", "Request Score Details");
-
-        HashMap<String, String> parameters = new HashMap<>();
-        parameters.put(ScoresContentHandler.PARAM_ID, matchId);
-        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_STAT, parameters, REQUEST_LISTENER_KEY, SCORE_DETAIL_REQUEST_TAG);
-    }
-
-
-    private void requestFootballMatchLineup() {
-        Log.i("Score Detail", "Request Score Details");
-
-        HashMap<String, String> parameters = new HashMap<>();
-        parameters.put(ScoresContentHandler.PARAM_ID, matchId);
-        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_LINEUP, parameters, REQUEST_LISTENER_KEY, SCORE_DETAIL_REQUEST_TAG);
-    }
 
 
     private void showProgress(boolean force){

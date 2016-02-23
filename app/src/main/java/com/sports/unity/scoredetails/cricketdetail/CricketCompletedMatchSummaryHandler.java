@@ -9,8 +9,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.sports.unity.scoredetails.model.CricketScoreCard;
 
 import org.json.JSONObject;
 
@@ -23,7 +21,7 @@ public class CricketCompletedMatchSummaryHandler {
 
     private static final String REQUEST_TAG = "COMPLETED_SUMMARY_TAG";
     private static Context mContext;
-    private String url = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
+    private String url = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
 
     private CricketCompletedMatchSummaryContentListener mcontentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
