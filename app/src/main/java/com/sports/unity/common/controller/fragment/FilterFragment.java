@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 
-public class FilterFragment extends Fragment implements FilterActivity.OnResultReceivedListener {
+public class FilterFragment extends Fragment implements FilterActivity.OnResultReceivedListener{
 
     private StickyListHeadersListView mlistView;
     private Bundle bundle;
@@ -134,5 +134,6 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
         } catch (Exception e) {
         }
     }
+
 
 }
