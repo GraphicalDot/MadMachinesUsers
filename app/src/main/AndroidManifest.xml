@@ -145,9 +145,6 @@
             android:theme="@style/AppTheme" >
 
         </activity>
-        <activity
-            android:name=".scoredetails.footballdetail.FootballDetailsActivity"
-            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>
