@@ -50,7 +50,7 @@
                 android:layout_weight=".1"
                 android:text="0"/>
             <com.sports.unity.common.view.CustomRobotoRegularTextView
-                android:id="@+id/tv_player_run_rate"
+                android:id="@+id/tv_sr_rate_of_player"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="@dimen/font_size_small_large"
@@ -65,7 +65,7 @@
             android:layout_below="@+id/layout_batting"
             android:layout_height="wrap_content">
             <com.sports.unity.common.view.CustomRobotoRegularTextView
-                android:id="@+id/tv_sr_rate_of_player"
+                android:id="@+id/tv_wicket_by"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/vertical_padding_small"

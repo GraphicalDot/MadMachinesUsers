@@ -18,8 +18,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CricketUpcomingMatchSummaryFragment extends Fragment implements CricketUpcomingMatchSummaryHandler.CricketUpcomingMatchSummaryContentListener{
-    // TODO: Rename parameter arguments, choose names that match
-
 
     public CricketUpcomingMatchSummaryFragment() {
         // Required empty public constructor
@@ -37,7 +35,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_cricket_completed_match_summery, container, false);
+        View view = inflater.inflate(R.layout.fragment_cricket_upcoming_match_summery, container, false);
         initView(view);
         return view;
     }
@@ -65,13 +63,15 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
             }catch (Exception ex){
                 ex.printStackTrace();
                 Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+                showErrorLayout(getView());
             }
         }
     }
     private void initErrorLayout(View view) {
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.GONE);
-
+        try {
+            LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+            errorLayout.setVisibility(View.GONE);
+        }catch (Exception e){e.printStackTrace();}
     }
 
     private void showErrorLayout(View view) {

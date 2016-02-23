@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sports.unity.R;
+import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.util.CommonUtil;
@@ -28,12 +29,16 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
     private ArrayList<FavouriteItem> mData = new ArrayList<FavouriteItem>();
     private Context context;
     private LayoutInflater mInflater;
+    private FilterActivity.SportsTypesSelection sportsTypesSelection;
 
     public FilterAdapter(Context context, ArrayList<FavouriteItem> item) {
         mInflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mData = item;
         this.context = context;
+        if(context instanceof FilterActivity.SportsTypesSelection){
+            sportsTypesSelection = (FilterActivity.SportsTypesSelection) context;
+        }
     }
 
     @Override
@@ -61,9 +66,18 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.textView.setText(mData.get(position).getName());
+        final String playerName = mData.get(position).getName();
+        holder.textView.setText(playerName);
         holder.textView.setTypeface(FontTypeface.getInstance(context).getRobotoRegular());
         holder.textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+        holder.textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(sportsTypesSelection != null){
+                    sportsTypesSelection.getSportsType(playerName);
+                }
+            }
+        });
         return convertView;
     }
 

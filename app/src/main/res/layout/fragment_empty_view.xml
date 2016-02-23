@@ -13,4 +13,4 @@
         android:textSize="@dimen/font_size_large"
         android:text="Scorecard not available for this match yet"
         />
-</RelativeLayout>
+    </RelativeLayout>

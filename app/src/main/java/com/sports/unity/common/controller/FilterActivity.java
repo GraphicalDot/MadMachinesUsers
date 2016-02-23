@@ -254,4 +254,8 @@ public class FilterActivity extends AppCompatActivity {
     public interface OnResultReceivedListener {
         public void updateData();
     }
+  public interface SportsTypesSelection{
+      void getSportsType(String name);
+  }
+
 }

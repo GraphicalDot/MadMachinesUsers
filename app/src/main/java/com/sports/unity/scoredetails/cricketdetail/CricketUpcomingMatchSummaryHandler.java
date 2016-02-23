@@ -79,10 +79,11 @@ public class CricketUpcomingMatchSummaryHandler {
 
     }
     private void handleErrorResponse(VolleyError volleyError) {
+        try{
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
         if(mcontentListener != null) {
             Log.i("handleErrorResponse: ",volleyError.getMessage() );
-        }
+        }}catch (Exception e){e.printStackTrace();}
     }
     public void addListener(CricketUpcomingMatchSummaryContentListener contentListener) {
         mcontentListener = contentListener;

@@ -36,7 +36,7 @@ public class LiveAndCompletedCricketBattingCardAdapter extends RecyclerView.Adap
         holder.tvBallPlayByPlayer.setText(holder.dto.getTvBallPlayByPlayer());
         holder.tvFourGainByPlayer.setText(holder.dto.getTvFourGainByPlayer());
         holder.tvSixGainByPlayer.setText(holder.dto.getTvSixGainByPlayer());
-        holder.tvPlayerRunRate.setText(holder.dto.getTvPlayerRunRate());
+        holder.tvWicketBy.setText(holder.dto.getTvWicketBy());
         holder.tvSrRateOfPlayer.setText(holder.dto.getTvSrRateOfPlayer());
     }
 
@@ -54,7 +54,7 @@ public class LiveAndCompletedCricketBattingCardAdapter extends RecyclerView.Adap
         private TextView tvBallPlayByPlayer;
         private TextView tvFourGainByPlayer;
         private TextView tvSixGainByPlayer;
-        private TextView tvPlayerRunRate;
+        private TextView tvWicketBy;
         private TextView tvSrRateOfPlayer;
 
         public LiveAndCompletedCricketBattingCardDTO dto;
@@ -67,8 +67,9 @@ public class LiveAndCompletedCricketBattingCardAdapter extends RecyclerView.Adap
             tvBallPlayByPlayer = (TextView) view.findViewById(R.id.tv_ball_play_by_player);
             tvFourGainByPlayer = (TextView) view.findViewById(R.id.tv_four_gain_by_player);
             tvSixGainByPlayer = (TextView) view.findViewById(R.id.tv_six_gain_by_player);
-            tvPlayerRunRate = (TextView) view.findViewById(R.id.tv_player_run_rate);
+            tvWicketBy = (TextView) view.findViewById(R.id.tv_wicket_by);
             tvSrRateOfPlayer = (TextView) view.findViewById(R.id.tv_sr_rate_of_player);
+
         }
     }
 }
