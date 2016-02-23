@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,9 +25,12 @@ import com.sports.unity.util.Constants;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 
 public class CompletedMatchScoreCardFragment extends Fragment implements CompletedMatchScoreCardHandler.CompletedMatchContentListener{
@@ -102,11 +104,17 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         tvTotalRunSecondTeam = (TextView) view.findViewById(R.id.tv_total_run_second_team);
         tvRunRateSecondTeam = (TextView) view.findViewById(R.id.tv_run_rate_second_team);
         teamABattingRecycler = (RecyclerView) view.findViewById(R.id.rv_team_first_batting);
+        teamABattingRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamABowlingRecycler = (RecyclerView) view.findViewById(R.id.rv_team_first_bowling);
+        teamABowlingRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamAFallOfWicketRecycler = (RecyclerView) view.findViewById(R.id.rv_team_first_fall_wickets);
+        teamAFallOfWicketRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamBBattingRecycler = (RecyclerView) view.findViewById(R.id.rv_team_second_batting);
+        teamBBattingRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamBBowlingRecycler = (RecyclerView) view.findViewById(R.id.rv_team_second_bowling);
+        teamBBowlingRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamBFallOfWicketRecycler = (RecyclerView) view.findViewById(R.id.rv_second_team_fall_wicket);
+        teamBFallOfWicketRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamABattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamABattingCardList);
         teamABattingRecycler.setAdapter(teamABattingAdapter);
         teamBBattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamBBattingCardList);
