@@ -4,67 +4,84 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/ColorPrimary"
-    android:paddingBottom="@dimen/horizontal_padding_small"
-    android:paddingLeft="@dimen/horizontal_padding_small"
-    android:paddingRight="@dimen/horizontal_padding_medium"
-    android:paddingTop="@dimen/horizontal_padding_small">
+    android:orientation="vertical">
 
-    <android.support.percent.PercentRelativeLayout
-        android:id="@+id/layout_batting"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <com.sports.unity.common.view.CustomRobotoRegularTextView
-            android:id="@+id/tv_bowler_name"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:text="Martin Guptile"
-            android:textSize="@dimen/font_size_small_large"
-            app:layout_widthPercent="40%" />
-        <com.sports.unity.common.view.CustomRobotoRegularTextView
-            android:id="@+id/tv_over"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/tv_bowler_name"
-            android:gravity="right"
-            android:text="35"
-            android:textSize="@dimen/font_size_small_large"
-            app:layout_widthPercent="12%" />
-        <com.sports.unity.common.view.CustomRobotoRegularTextView
-            android:id="@+id/tv_midden_over"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/tv_over"
-            android:gravity="right"
-            android:text="42"
-            android:textSize="@dimen/font_size_small_large"
-            app:layout_widthPercent="12%" />
-        <com.sports.unity.common.view.CustomRobotoRegularTextView
-            android:id="@+id/tv_runs"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/tv_midden_over"
-            android:gravity="right"
-            android:text="5"
-            android:textSize="@dimen/font_size_small_large"
-            app:layout_widthPercent="12%" />
-        <com.sports.unity.common.view.CustomRobotoRegularTextView
-            android:id="@+id/tv_wicket"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/tv_runs"
-            android:gravity="right"
-            android:text="0"
-            android:textSize="@dimen/font_size_small_large"
-            app:layout_widthPercent="12%" />
-        <com.sports.unity.common.view.CustomRobotoRegularTextView
-            android:id="@+id/tv_extra"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/tv_wicket"
-            android:gravity="right"
-            android:text="3"
-            android:textSize="@dimen/font_size_small_large"
-            app:layout_widthPercent="12%" />
-    </android.support.percent.PercentRelativeLayout>
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/horizontal_padding_small"
+        android:paddingLeft="@dimen/horizontal_padding_small"
+        android:paddingRight="@dimen/horizontal_padding_medium"
+        android:paddingTop="@dimen/horizontal_padding_small">
+
+        <android.support.percent.PercentRelativeLayout
+            android:id="@+id/layout_batting"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                android:id="@+id/tv_bowler_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:text="Martin Guptile"
+                android:textSize="@dimen/font_size_small_large"
+                app:layout_widthPercent="40%" />
+
+            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                android:id="@+id/tv_over"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tv_bowler_name"
+                android:gravity="right"
+                android:text="35"
+                android:textSize="@dimen/font_size_small_large"
+                app:layout_widthPercent="12%" />
+
+            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                android:id="@+id/tv_midden_over"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tv_over"
+                android:gravity="right"
+                android:text="42"
+                android:textSize="@dimen/font_size_small_large"
+                app:layout_widthPercent="12%" />
+
+            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                android:id="@+id/tv_runs"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tv_midden_over"
+                android:gravity="right"
+                android:text="5"
+                android:textSize="@dimen/font_size_small_large"
+                app:layout_widthPercent="12%" />
+
+            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                android:id="@+id/tv_wicket"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tv_runs"
+                android:gravity="right"
+                android:text="0"
+                android:textSize="@dimen/font_size_small_large"
+                app:layout_widthPercent="12%" />
+
+            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                android:id="@+id/tv_extra"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/tv_wicket"
+                android:gravity="right"
+                android:text="3"
+                android:textSize="@dimen/font_size_small_large"
+                app:layout_widthPercent="12%" />
+        </android.support.percent.PercentRelativeLayout>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray3"></View>
 </LinearLayout>

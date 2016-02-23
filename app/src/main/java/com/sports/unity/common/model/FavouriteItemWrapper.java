@@ -27,26 +27,13 @@ public class FavouriteItemWrapper {
     public static final String name = "obj_name";
     public static final String id = "obj_id";
     public static final String flag = "obj_flag";
-
+    public static FavouriteItemWrapper favouriteItemWrapper;
     private List<FavouriteItem> savedFootballLeagues;
     private List<FavouriteItem> savedFootballTeams;
     private List<FavouriteItem> savedFootballPlayers;
     private List<FavouriteItem> savedCricketTeams;
     private List<FavouriteItem> savedCricketPlayers;
     private List<FavouriteItem> savedFavlist;
-    public static FavouriteItemWrapper favouriteItemWrapper;
-
-    /**
-     * Static constructor to instantiate {@link #FavouriteItemWrapper} class.
-     *
-     * @return single instance of {@link #FavouriteItemWrapper}.
-     */
-    public static FavouriteItemWrapper getInstance(Context context) {
-        if (favouriteItemWrapper == null) {
-            favouriteItemWrapper = new FavouriteItemWrapper(context);
-        }
-        return favouriteItemWrapper;
-    }
 
     /**
      * Private constructor so that no one can instantiate this class.
@@ -75,6 +62,10 @@ public class FavouriteItemWrapper {
 
                 try {
                     item.setFlagImageUrl(object.getString(this.flag));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
                     item.setId(object.getString(this.id));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -106,6 +97,17 @@ public class FavouriteItemWrapper {
         savedFavlist.addAll(favouriteItems);
     }
 
+    /**
+     * Static constructor to instantiate {@link #FavouriteItemWrapper} class.
+     *
+     * @return single instance of {@link #FavouriteItemWrapper}.
+     */
+    public static FavouriteItemWrapper getInstance(Context context) {
+        if (favouriteItemWrapper == null) {
+            favouriteItemWrapper = new FavouriteItemWrapper(context);
+        }
+        return favouriteItemWrapper;
+    }
 
     /**
      * This method converts the {@link ArrayList} of
