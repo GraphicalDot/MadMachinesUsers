@@ -172,13 +172,29 @@
                                 android:id="@+id/tv_first_player_run_rate"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_alignTop="@+id/v_divider"
+                                android:layout_alignTop="@id/v_divider"
                                 android:gravity="left"
                                 android:text="SR 85.71"
                                 android:textColor="@color/score_light_grey"
                                 android:textSize="@dimen/font_size_very_small"
                                 />
                         </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/iv_player_first_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignStart="@id/v_divider"
+                            android:paddingTop="33dp"
+                            android:src="@drawable/ic_active_player" />
+
+                        <ImageView
+                            android:id="@+id/iv_player_second_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignEnd="@id/v_divider"
+                            android:paddingTop="33dp"
+                            android:src="@drawable/ic_active_player" />
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -199,7 +215,7 @@
                                 android:id="@+id/tv_second_player_run_rate"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_alignTop="@+id/v_divider"
+                                android:layout_alignTop="@id/v_divider"
                                 android:layout_gravity="right"
                                 android:text="SR 60.00"
                                 android:textColor="@color/score_light_grey"
@@ -217,7 +233,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignBottom="@+id/iv_player_first"
-                            android:layout_marginBottom="@dimen/activity_vertical_margin_small"
                             android:layout_toLeftOf="@+id/iv_player_second"
                             android:layout_toRightOf="@+id/iv_player_first">
 
@@ -240,6 +255,7 @@
                                 android:layout_weight="1"
                                 android:gravity="center"
                                 android:text="10(12)RRS"
+                                android:textColor="@color/dark_blue"
                                 android:textSize="@dimen/font_size_very_small"
                                 />
 
@@ -296,7 +312,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/vertical_padding_very_very_small">
 
-                    <TableRow android:padding="@dimen/horizontal_padding_small">
+                    <TableRow>
                         <ImageView
                             android:id="@+id/iv_upp_coming_player_first"
                             android:layout_width="wrap_content"
