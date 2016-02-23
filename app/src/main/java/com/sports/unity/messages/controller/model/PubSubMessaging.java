@@ -27,6 +27,8 @@ import org.jivesoftware.smackx.pubsub.Subscription;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -59,44 +61,44 @@ public class PubSubMessaging {
 
     public void getJoinedGroups(Context context) {
 
-        String subject = "";
-        boolean isProcessedBefore = tinyDB.getBoolean(TinyDB.KEY_GET_JOINED_GROUPS_ON_REGISTRATION, true);
-        if (!isProcessedBefore) {
-            try {
-                List<Subscription> subscriptions = pubSubManager.getSubscriptions();
-                for (Subscription s :
-                        subscriptions) {
-                    Log.i("node", s.getNode());
-                    String groupServerId = s.getNode();
-                    LeafNode node = pubSubManager.getNode(groupServerId);
-                    List<Affiliation> affiliations = node.getAffiliations();
-                    Log.i("affiliations", affiliations.toString());
-                    List<Subscription> owners = node.getSubscriptionsAsOwner();
-                    Log.i("owners", owners.toString());
-                    for (Subscription owner :
-                            owners) {
-                        subject = groupServerId.substring(groupServerId.indexOf("%") + 1, groupServerId.indexOf("%%"));
-                        String ownerJID = owner.getJid().substring(0, owner.getJid().indexOf("@"));
-                        Contacts ownerContact = sportsUnityDBHelper.getContactByJid(ownerJID);
-                        if (owner == null) {
-                            XMPPService.createContact(ownerJID, context, true);
-                            ownerContact = sportsUnityDBHelper.getContactByJid(ownerJID);
-                        }
-                        long chatId = sportsUnityDBHelper.createGroupChatEntry(subject, ownerContact.id, null, groupServerId);
-                        sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupServerId);
-                    }
-                }
-                tinyDB.putBoolean(TinyDB.KEY_GET_JOINED_GROUPS_ON_REGISTRATION, true);
-            } catch (SmackException.NoResponseException e) {
-                e.printStackTrace();
-            } catch (XMPPException.XMPPErrorException e) {
-                e.printStackTrace();
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            }
-        } else {
-            //do nothing
-        }
+//        String subject = "";
+//        boolean isProcessedBefore = tinyDB.getBoolean(TinyDB.KEY_GET_JOINED_GROUPS_ON_REGISTRATION, true);
+//        if (!isProcessedBefore) {
+//            try {
+//                List<Subscription> subscriptions = pubSubManager.getSubscriptions();
+//                for (Subscription s :
+//                        subscriptions) {
+//                    Log.i("node", s.getNode());
+//                    String groupServerId = s.getNode();
+//                    LeafNode node = pubSubManager.getNode(groupServerId);
+//                    List<Affiliation> affiliations = node.getAffiliations();
+//                    Log.i("affiliations", affiliations.toString());
+//                    List<Subscription> owners = node.getSubscriptionsAsOwner();
+//                    Log.i("owners", owners.toString());
+//                    for (Subscription owner :
+//                            owners) {
+//                        subject = groupServerId.substring(groupServerId.indexOf("%") + 1, groupServerId.indexOf("%%"));
+//                        String ownerPhoneNumber = owner.getJid().substring(0, owner.getJid().indexOf("@"));
+//                        Contacts ownerContact = sportsUnityDBHelper.getContact(ownerPhoneNumber);
+//                        if (owner == null) {
+//                            XMPPService.createContact(ownerPhoneNumber, context, true);
+//                            ownerContact = sportsUnityDBHelper.getContact(ownerPhoneNumber);
+//                        }
+//                        long chatId = sportsUnityDBHelper.createGroupChatEntry(subject, ownerContact.id, null, groupServerId);
+//                        sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupServerId);
+//                    }
+//                }
+//                tinyDB.putBoolean(TinyDB.KEY_GET_JOINED_GROUPS_ON_REGISTRATION, true);
+//            } catch (SmackException.NoResponseException e) {
+//                e.printStackTrace();
+//            } catch (XMPPException.XMPPErrorException e) {
+//                e.printStackTrace();
+//            } catch (SmackException.NotConnectedException e) {
+//                e.printStackTrace();
+//            }
+//        } else {
+//            //do nothing
+//        }
 
     }
 
@@ -122,7 +124,7 @@ public class PubSubMessaging {
 
         try {
             LeafNode leaf = (LeafNode) pubSubManager.createNode(roomName, form);
-            leaf.subscribe(TinyDB.getInstance(context).getString(TinyDB.KEY_USERNAME) + "@mm.io");
+            leaf.subscribe(TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID) + "@mm.io");
             Log.i("discoverinfo", "true");
 
             ServiceDiscoveryManager serviceDiscoveryManager = ServiceDiscoveryManager.getInstanceFor(XMPPClient.getConnection());
@@ -152,14 +154,15 @@ public class PubSubMessaging {
 
     public boolean publishMessage(String message, long chatID, String groupServerId, Context context) {
 
-        String from = tinyDB.getString(TinyDB.KEY_USERNAME);
-        message = "$" + message + "$$";
+        String from = tinyDB.getString(TinyDB.KEY_USER_JID);
+//        message = "$" + message + "$$";
         String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
         boolean success = false;
         try {
             LeafNode node = pubSubManager.getNode(groupServerId);
+            String payLoad = createPayLoad(message, from, groupServerId, time);
             SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message",
-                    "<message xmlns='pubsub:text:message'>" + message + "*" + time + "**" + "!" + from + "!!</message>");
+                    "<message xmlns='pubsub:text:message'>" + "!@#$" + payLoad + "!@#$");
             PayloadItem item = new PayloadItem(from, simplePayload);
             node.publish(item);
             success = true;
@@ -180,5 +183,20 @@ public class PubSubMessaging {
         sportsUnityDBHelper.updateChatEntry(messageId, chatID, groupServerId);
 
         return success;
+    }
+
+    private String createPayLoad(String message, String from, String groupServerId, String time) {
+        JSONObject payload = new JSONObject();
+        try {
+            payload.put("mimetype", SportsUnityDBHelper.MIME_TYPE_TEXT);
+            payload.put("data", message);
+            payload.put("time", time);
+            payload.put("from", from);
+            payload.put("nodeid", groupServerId);
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return payload.toString();
     }
 }

@@ -53,6 +53,8 @@ import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -469,16 +471,35 @@ public class XMPPService extends Service {
 
         Log.i("pubsubmessagerecv", "true");
         String messageXML = message.toString();
-        String from = messageXML.substring(messageXML.indexOf("!") + 1, messageXML.indexOf("!!"));
+        String from = "";
+        JSONObject payLoad = null;
+        try {
+            payLoad = new JSONObject(messageXML.substring(messageXML.indexOf("!@#$") + 4, messageXML.indexOf("!@#$")));
+            from = payLoad.getString("from");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+//        String from = messageXML.substring(messageXML.indexOf("!") + 1, messageXML.indexOf("!!"));
         if (from.equals(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME))) {
             //Do nothing
 
         } else {
             String groupServerId = null;
             long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
-            String time = messageXML.substring(messageXML.indexOf("*") + 1, messageXML.indexOf("**"));
-            String text = messageXML.substring(messageXML.indexOf("$") + 1, messageXML.indexOf("$$"));
-            String nodeid = messageXML.substring(messageXML.indexOf("node='") + 6, messageXML.indexOf("'><item id='"));
+//            String time = messageXML.substring(messageXML.indexOf("*") + 1, messageXML.indexOf("**"));
+//            String text = messageXML.substring(messageXML.indexOf("$") + 1, messageXML.indexOf("$$"));
+//            String nodeid = messageXML.substring(messageXML.indexOf("node='") + 6, messageXML.indexOf("'><item id='"));
+            String time = null;
+            String text = null;
+            String nodeid = null;
+            try {
+                time = payLoad.getString("time");
+                text = payLoad.getString("message");
+                nodeid = payLoad.getString("nodeid");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             groupServerId = nodeid;
             chatId = getChatIdOrCreateIfNotExist(true, from, groupServerId, false);
             long messageId = sportsUnityDBHelper.addMessage(text, SportsUnityDBHelper.MIME_TYPE_TEXT, from, false, time, null, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);

@@ -119,6 +119,15 @@
 
         </FrameLayout>
 
+        <View
+            android:id="@+id/background_dimmer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#80FFFFFF"
+            android:clickable="true"
+            android:focusable="true"
+            android:visibility="gone" />
+
         <com.github.clans.fab.FloatingActionMenu
             android:id="@+id/fab_menu"
             android:layout_width="wrap_content"

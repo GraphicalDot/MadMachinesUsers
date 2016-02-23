@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -61,6 +63,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
 
     TextView friendsUnreadCount;
     TextView othersUnreadCount;
+    View backgroundDimmer;
 
 
     @Override
@@ -103,16 +106,29 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
 
         friendsUnreadCount = (TextView) v.findViewById(R.id.friends_unread_count);
         othersUnreadCount = (TextView) v.findViewById(R.id.others_unread_count);
-
+        backgroundDimmer = v.findViewById(R.id.background_dimmer);
         getAndSetUnreadCount();
 
 
-        FloatingActionMenu fabMenu = (FloatingActionMenu) v.findViewById(R.id.fab_menu);
+        final FloatingActionMenu fabMenu = (FloatingActionMenu) v.findViewById(R.id.fab_menu);
+        fabMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (fabMenu.isOpened()) {
+                    backgroundDimmer.setVisibility(View.GONE);
+                } else {
+                    backgroundDimmer.setVisibility(View.VISIBLE);
+                }
+                fabMenu.toggle(true);
+            }
+        });
 
         FloatingActionButton peopleAroundMeFab = (FloatingActionButton) v.findViewById(R.id.people_around_me);
         peopleAroundMeFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                fabMenu.toggle(true);
+                backgroundDimmer.setVisibility(View.GONE);
                 if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
                     startPeopleAroundMeActivity();
                 } else {
@@ -127,8 +143,10 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         createGroupFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(getActivity(), CreateGroup.class);
-//                startActivity(intent);
+                fabMenu.toggle(true);
+                backgroundDimmer.setVisibility(View.GONE);
+                Intent intent = new Intent(getActivity(), CreateGroup.class);
+                startActivity(intent);
             }
         });
 
@@ -270,6 +288,9 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
                 public boolean onClose() {
                     childStripLayout.setVisibility(View.VISIBLE);
                     ((MainActivity) getActivity()).disableSearch();
+                    if (mListener != null) {
+                        mListener.onSearchQuery("");
+                    }
                     return false;
                 }
             });

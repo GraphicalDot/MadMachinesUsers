@@ -1,6 +1,7 @@
 package com.sports.unity.messages.controller.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
@@ -12,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -83,6 +85,12 @@ public class GroupDetailFragment extends Fragment {
         groupAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                View view = getActivity().getCurrentFocus();
+                if (view != null) {
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
+
                 Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 galleryIntent.setType("image/*");
 
@@ -106,7 +114,7 @@ public class GroupDetailFragment extends Fragment {
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
             groupImageArray = ImageUtil.handleImageAndSetToView(data, groupAvatar, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
         } else {
-            //callbackManager.onActivityResult(requestCode, resultCode, data);
+            //nothing
         }
     }
 

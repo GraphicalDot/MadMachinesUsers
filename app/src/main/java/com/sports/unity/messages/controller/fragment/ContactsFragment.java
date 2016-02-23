@@ -116,7 +116,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             Boolean flag = (Boolean) checkBox.getTag();
 
             ContactListAdapter contactListAdapter = (ContactListAdapter) contacts.getAdapter();
-            Contacts contacts = contactListAdapter.getInUseContactListForAdapter().get(position);
+            Contacts contacts = contactListAdapter.getUsedContact().get(position);
 
             if (flag == null || flag == false) {
                 checkBox.setTag(true);
@@ -132,6 +132,8 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
             TextView textView = (TextView) titleLayout.findViewById(R.id.members_count);
             textView.setText(selectedMembersList.size() + "/100");
+
+            contactListAdapter.refreshSelectedMembers(selectedMembersList);
         }
 
     };
@@ -269,6 +271,22 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true);
 //            searchView.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
             searchView.onActionViewExpanded();
+
+            searchView.clearFocus();
+
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    filterResults(newText);
+                    return true;
+                }
+            });
+
 //            searchContacts.addTextChangedListener(new TextWatcher() {
 //                @Override
 //                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -335,7 +353,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             searchView.setVisibility(View.GONE);
         }
 
-        ContactListAdapter adapter = new ContactListAdapter(getActivity(), resource, contactList, multipleSelection, frequentContactCount);
+        ContactListAdapter adapter = new ContactListAdapter(getActivity(), resource, contactList, multipleSelection, frequentContactCount, selectedMembersList);
         contacts.setAdapter(adapter);
         contacts.setOnItemClickListener(itemListener);
     }
@@ -360,7 +378,11 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
     @Override
     public void onSearchQuery(String filterText) {
-        filterResults(filterText);
+        if (filterText.length() > 0) {
+            filterResults(filterText);
+        } else {
+            ((ContactListAdapter) contacts.getAdapter()).refreshContacts();
+        }
     }
 
     @Override
