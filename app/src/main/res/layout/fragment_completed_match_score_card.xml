@@ -28,8 +28,7 @@
                         android:id="@+id/tv_first_team_inning"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="left"
-                        android:paddingLeft="@dimen/vertical_padding_very_small"
+                        android:gravity="left"
                         android:text="INDIA INNINGS "
                         android:textSize="@dimen/font_size_small_xlarge" />
                     <ImageView
@@ -358,15 +357,15 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
-                        android:paddingLeft="@dimen/vertical_padding_very_small"
                         android:text="NZ INNINGS"
                         android:textSize="@dimen/font_size_small_xlarge" />
                     <ImageView
                         android:id="@+id/iv_down_second"
                         android:layout_width="wrap_content"
-   android:layout_weight="1"                     android:layout_height="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="@dimen/activity_vertical_margin"
+                        android:layout_weight="1"
                         android:src="@drawable/ic_droable"/>
                 </RelativeLayout>
             </LinearLayout>
