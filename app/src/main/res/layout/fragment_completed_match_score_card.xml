@@ -623,7 +623,7 @@
                         android:gravity="left"
                         android:text="@string/fall_of_wicket"
                         android:textSize="@dimen/font_size_small_large"
-                        android:visibility="gone"/>
+                        />
                 </LinearLayout>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_second_team_fall_wicket"

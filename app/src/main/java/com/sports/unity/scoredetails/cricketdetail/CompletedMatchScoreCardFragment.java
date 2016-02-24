@@ -226,8 +226,9 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                         tvExtraRunTeamFirst.setText(teamAFirstInning.getString("inning_extras"));
                         tvExtraRunTeamSecond.setText(teamBFirstInning.getString("inning_extras"));
                         tvTotalRunFirstTeam.setText(teamAFirstInning.getString("team_runs"));
-                        tvTotalRunFirstTeam.setText(teamBFirstInning.getString("team_runs"));
+                        tvTotalRunSecondTeam.setText(teamBFirstInning.getString("team_runs"));
                         tvRunRateFirstTeam.setText(teamAFirstInning.getString("team_run_rate"));
+                        tvRunRateSecondTeam.setText(teamBFirstInning.getString("team_run_rate"));
                         tvTeamFirstNameAndScore.setText(dataObject.getString("team_a")+" "+teamAFirstInning.getString("team_runs")+"/"+teamAFirstInning.getString("team_wickets"));
                         tvTeamSecondNameAndScore.setText(dataObject.getString("team_b")+" "+teamBFirstInning.getString("team_runs")+"/"+teamBFirstInning.getString("team_wickets"));
                         for (int i= 0 ; i<teamABattingArray.length();i++){
