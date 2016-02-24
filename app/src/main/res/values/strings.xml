@@ -358,5 +358,6 @@ Carrier SMS charges may apply.</string>
     <string name="table">TABLE</string>
     <string name="form">FORM</string>
     <string name="squad">SQUAD</string>
+    <string name="foot_match_stat_not_exists">Match Stats Not Availlable</string>
 
 </resources>

@@ -344,11 +344,18 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
             String type = matchJsonCaller.getType();
             String matchId = null;
-            String matchStatus= null;
+            String matchStatus= "";
+            String toss = "";
+            String matchName="";
+            String date = "";
+
             if( type.equalsIgnoreCase(ScoresJsonParser.CRICKET) ){
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
                 matchId = cricketMatchJsonCaller.getMatchId();
                 matchStatus = cricketMatchJsonCaller.getStatus();
+                toss = cricketMatchJsonCaller.getToss();
+                matchName = cricketMatchJsonCaller.getMatchNumber()+", " +cricketMatchJsonCaller.getTeam1()+" v "+cricketMatchJsonCaller.getTeam2();
+                date = cricketMatchJsonCaller.getMatchDate();
             } else if( type.equalsIgnoreCase(ScoresJsonParser.FOOTBALL) ){
                 footballMatchJsonCaller.setJsonObject(matchJsonObject);
                 matchId = String.valueOf(footballMatchJsonCaller.getMatchId());
@@ -359,6 +366,12 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             intent.putExtra(Constants.INTENT_KEY_TYPE, type);
             intent.putExtra(Constants.INTENT_KEY_ID, matchId);
             intent.putExtra(Constants.INTENT_KEY_MATCH_STATUS,matchStatus);
+            intent.putExtra(Constants.INTENT_KEY_TOSS,toss);
+            intent.putExtra(Constants.INTENT_KEY_MATCH_NAME, matchName);
+            intent.putExtra(Constants.INTENT_KEY_DATE,date);
+
+
+
             activity.startActivity(intent);
 
         }catch (Exception ex){

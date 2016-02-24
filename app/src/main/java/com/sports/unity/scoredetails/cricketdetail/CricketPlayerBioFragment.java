@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     private TextView tvPlayerbattingStyle;
     private TextView tvPlayerBowingStyle;
     private TextView tvPlayerMajorTeam;
+    private ProgressBar progressBar;
     public CricketPlayerBioFragment() {
         super();
     }
@@ -47,6 +49,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
         CricketPlayerbioHandler cricketPlayerbioHandler = CricketPlayerbioHandler.getInstance(context);
         cricketPlayerbioHandler.addListener(this);
         cricketPlayerbioHandler.requestData(playerId);
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,6 +65,8 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
         tvPlayerBowingStyle = (TextView) view.findViewById(R.id.tv_player_bowing_style);
         tvPlayerMajorTeam = (TextView) view.findViewById(R.id.tv_player_major_team);
         tvPlayerbirthOfPlace = (TextView) view.findViewById(R.id.tv_player_birth_of_place);
+        initProgress(view);
+        showProgress();
         initErrorLayout(view);
 
     }
@@ -102,8 +107,22 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
 
 
     }
+    private void initProgress(View view) {
+         progressBar = (ProgressBar) view.findViewById(R.id.progress);
+         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+    }
+    public void showProgress() {
+    progressBar.setVisibility(View.VISIBLE);
 
+    }
+    public void hideProgress() {
+
+
+        progressBar.setVisibility(View.GONE);
+
+    }
     private void renderDisplay(JSONObject jsonObject) throws JSONException {
+        hideProgress();
         final JSONObject data = (JSONObject) jsonObject.get("data");
         final JSONObject playerInfo = (JSONObject) data.get("info");
         PlayerCricketBioDataActivity activity = (PlayerCricketBioDataActivity) getActivity();

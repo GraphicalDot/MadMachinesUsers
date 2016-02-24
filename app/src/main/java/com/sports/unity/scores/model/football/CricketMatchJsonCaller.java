@@ -41,6 +41,9 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
     }
 
     public String getMatchNumber() throws JSONException {
+        if(jsonObject.isNull("match_number")){
+            return  "";
+        }
         return jsonObject.getString("match_number");
     }
 
@@ -69,6 +72,13 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
     }
     public String getMatchResult() throws JSONException {
         return jsonObject.getString("match_result");
+    }
+    public String getToss() throws JSONException {
+        if(jsonObject.isNull("toss"))
+        {
+            return "";
+        }
+        return jsonObject.getString("toss");
     }
 
 }

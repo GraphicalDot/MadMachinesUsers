@@ -21,9 +21,9 @@ public class CompletedFootballMatchStatHandler {
 
     private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
     private static Context mContext;
-    private String url = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
+    private String url = "http://52.74.75.79:8080/get_match_substitutions?match_id=";
 
-    private CompletedMatchContentListener mContentListener;
+    private CompletedFootballMatchContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
     public static CompletedFootballMatchStatHandler getInstance(Context context) {
@@ -34,9 +34,9 @@ public class CompletedFootballMatchStatHandler {
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
-    public interface CompletedMatchContentListener {
+    public interface CompletedFootballMatchContentListener {
 
-        void handleContent(JSONObject object);
+        void handleContent(String content);
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -54,7 +54,7 @@ public class CompletedFootballMatchStatHandler {
         }
     };
 
-    public void requestCompletdMatchScoreCard(String matchId) {
+    public void requestCompledFootabllMAtchStat(String matchId) {
         Log.i("Score Detail", "Request Score Details");
 
         url = url+matchId;
@@ -67,11 +67,11 @@ public class CompletedFootballMatchStatHandler {
     }
     private void handleResponse(String response) {
         try{
-            JSONObject jsonObject = new JSONObject(response);
+
             Log.i("Score Card", "handleResponse: ");
-            if(jsonObject.getBoolean("success")){
-                mContentListener.handleContent(jsonObject);
-            }
+
+                mContentListener.handleContent(response);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,7 +83,7 @@ public class CompletedFootballMatchStatHandler {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
     }
 
-    public void addListener(CompletedMatchContentListener contentListener) {
+    public void addListener(CompletedFootballMatchContentListener contentListener) {
         mContentListener = contentListener;
     }
 

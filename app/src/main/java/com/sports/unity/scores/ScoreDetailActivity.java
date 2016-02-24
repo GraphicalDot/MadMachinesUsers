@@ -278,6 +278,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 ((TextView)findViewById(R.id.venue)).setText(cricketMatchJsonCaller.getVenue());
                 ((TextView)findViewById(R.id.date)).setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
                 tvNeededRun.setText(cricketMatchJsonCaller.getTeam1() + " vs " + cricketMatchJsonCaller.getTeam2() + ", " + cricketMatchJsonCaller.getMatchNumber());
+
                 if ( cricketMatchJsonCaller.getStatus().equals("notstarted") ) {
                     tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
                     showNoCommentaries();

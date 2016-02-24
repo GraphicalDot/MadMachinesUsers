@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,6 +70,9 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
     private RecyclerView teamBFallOfWicketRecycler;
     private LinearLayout firstLinearLayout;
     private LinearLayout seconLinearLayout;
+    private ProgressBar progressBar;
+   private  CompletedMatchScoreCardHandler completedMatchScoreCardHandler;
+    private String matchId;
     public CompletedMatchScoreCardFragment() {
         // Required empty public constructor
     }
@@ -76,11 +80,12 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        String matchId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+         matchId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
 
-        CompletedMatchScoreCardHandler completedMatchScoreCardHandler = CompletedMatchScoreCardHandler.getInstance(context);
+        completedMatchScoreCardHandler = CompletedMatchScoreCardHandler.getInstance(context);
         completedMatchScoreCardHandler.addListener(this);
         completedMatchScoreCardHandler.requestCompletdMatchScoreCard(matchId);
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -88,8 +93,11 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
         View view = inflater.inflate(R.layout.fragment_completed_match_score_card, container, false);
         initView(view);
+        initProgress(view);
+        showProgress();
         return view;
     }
+
     private void initView(View view) {
         tvFirstTeamInning = (TextView) view.findViewById(R.id.tv_first_team_inning);
         tvSecondTeamInning = (TextView) view.findViewById(R.id.tv_Second_team_inning);
@@ -152,10 +160,22 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         });
 
     }
+    private void initProgress(View view) {
+        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+    }
+    public void showProgress() {
+        progressBar.setVisibility(View.VISIBLE);
 
+    }
+    public void hideProgress() {
+        progressBar.setVisibility(View.GONE);
+
+    }
     @Override
     public void handleContent(JSONObject object) {
         {
+            hideProgress();
             try {
                boolean success = object.getBoolean("success");
                 boolean error = object.getBoolean("error");
@@ -315,4 +335,25 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(completedMatchScoreCardHandler != null){
+            completedMatchScoreCardHandler.addListener(null);
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showProgress();
+        if(completedMatchScoreCardHandler != null){
+            completedMatchScoreCardHandler.addListener(this);
+
+        }else {
+            completedMatchScoreCardHandler= CompletedMatchScoreCardHandler.getInstance(getContext());
+        }
+        completedMatchScoreCardHandler.requestCompletdMatchScoreCard(matchId);
+    }
 }
