@@ -414,135 +414,167 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
+                    <android.support.percent.PercentRelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/horizontal_padding_small">
+
+                        <ImageView
+                            android:id="@+id/iv_league"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:src="@drawable/ic_league"
+                            app:layout_widthPercent="15%" />
+
+                        <ImageView
+                            android:id="@+id/iv_teams"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_toRightOf="@id/iv_league"
+                            android:src="@drawable/ic_teams"
+                            app:layout_widthPercent="15%" />
+
+                        <ImageView
+                            android:id="@+id/iv_match_played"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_toRightOf="@id/iv_teams"
+                            android:layout_weight="1"
+                            android:src="@drawable/ic_match_played"
+                            app:layout_widthPercent="14%" />
+
+                        <ImageView
+                            android:id="@+id/iv_goals_scored"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_toRightOf="@id/iv_match_played"
+                            android:layout_weight="1"
+                            android:src="@drawable/ic_goals_scored"
+                            app:layout_widthPercent="14%" />
+
+                        <ImageView
+                            android:id="@+id/iv_ic_assist"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/iv_goals_scored"
+                            android:layout_weight="1"
+                            android:src="@drawable/ic_assist"
+                            app:layout_widthPercent="14%" />
+
+                        <ImageView
+                            android:id="@+id/iv_yellow_card"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_toRightOf="@id/iv_ic_assist"
+                            android:src="@drawable/ic_yellow_card"
+                            app:layout_widthPercent="14%" />
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_toRightOf="@id/iv_yellow_card"
+                            android:src="@drawable/ic_red_card"
+                            app:layout_widthPercent="14%" />
+                    </android.support.percent.PercentRelativeLayout>
+
+                    <android.support.percent.PercentRelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/horizontal_padding_small">
+
+                        <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:id="@+id/league_label_current_season"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:text="@string/league"
+                            android:textColor="@color/dot_color_grey"
+                            android:textSize="@dimen/font_size_small_medium"
+                            app:layout_widthPercent="15%" />
+
+                        <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:id="@+id/team_label"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/league_label_current_season"
+                            android:gravity="center"
+                            android:text="@string/team"
+                            android:textColor="@color/dot_color_grey"
+                            android:textSize="@dimen/font_size_small_medium"
+                            app:layout_widthPercent="15%" />
+
+                        <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:id="@+id/geam_label"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/team_label"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="@string/games"
+                            android:textColor="@color/dot_color_grey"
+                            android:textSize="@dimen/font_size_small_medium"
+                            app:layout_widthPercent="14%" />
+
+                        <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:id="@+id/league_label"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/geam_label"
+                            android:gravity="center"
+                            android:text="@string/goals"
+                            android:textColor="@color/dot_color_grey"
+                            android:textSize="@dimen/font_size_small_medium"
+                            app:layout_widthPercent="14%" />
+
+                        <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:id="@+id/goals_label"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/league_label"
+                            android:gravity="center"
+                            android:text="@string/assists"
+                            android:textColor="@color/dot_color_grey"
+                            android:textSize="@dimen/font_size_small_medium"
+                            app:layout_widthPercent="14%" />
+
+                        <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:id="@+id/yellow_label_season"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/goals_label"
+                            android:gravity="center"
+                            android:text="@string/yc"
+                            android:textColor="@color/dot_color_grey"
+                            android:textSize="@dimen/font_size_small_medium"
+                            app:layout_widthPercent="14%" />
+
+                        <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:id="@+id/red_label_season"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/yellow_label_season"
+                            android:gravity="center"
+                            android:text="@string/rc"
+                            android:textColor="@color/dot_color_grey"
+                            android:textSize="@dimen/font_size_small_medium"
+                            app:layout_widthPercent="14%" />
+                    </android.support.percent.PercentRelativeLayout>
+
                     <TableLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/horizontal_padding_small"
                         android:weightSum="7">
-
                         <TableRow android:padding="@dimen/horizontal_padding_small">
 
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_weight="1"
-                                android:src="@drawable/ic_league" />
 
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_weight="1"
-                                android:src="@drawable/ic_teams" />
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_weight="1"
-                                android:src="@drawable/ic_match_played" />
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_weight="1"
-                                android:src="@drawable/ic_goals_scored" />
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:src="@drawable/ic_assist" />
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_weight="1"
-                                android:src="@drawable/ic_yellow_card" />
-
-                            <ImageView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:layout_weight="1"
-                                android:src="@drawable/ic_red_card" />
-
-                        </TableRow>
-
-                        <TableRow android:padding="@dimen/horizontal_padding_small">
-
-                            <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                android:id="@+id/league_label_current_season"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="@string/league"
-                                android:textColor="@color/dot_color_grey"
-                                android:textSize="@dimen/font_size_small_medium" />
-
-                            <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                android:id="@+id/team_label"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="@string/team"
-                                android:textColor="@color/dot_color_grey"
-                                android:textSize="@dimen/font_size_small_medium" />
-
-                            <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                android:id="@+id/geam_label"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="@string/games"
-                                android:textColor="@color/dot_color_grey"
-                                android:textSize="@dimen/font_size_small_medium"  />
-
-                            <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                android:id="@+id/league_label"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="@string/goals"
-                                android:textColor="@color/dot_color_grey"
-                                android:textSize="@dimen/font_size_small_medium" />
-
-                            <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                android:id="@+id/goals_label"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="@string/assists"
-                                android:textColor="@color/dot_color_grey"
-                                android:textSize="@dimen/font_size_small_medium"  />
-
-                            <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                android:id="@+id/yellow_label_season"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="@string/yc"
-                                android:textColor="@color/dot_color_grey"
-                                android:textSize="@dimen/font_size_small_medium" />
-
-                            <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                android:id="@+id/red_label_season"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="1"
-                                android:gravity="center"
-                                android:text="@string/rc"
-                                android:textColor="@color/dot_color_grey"
-                                android:textSize="@dimen/font_size_small_medium"  />
                         </TableRow>
                     </TableLayout>
                     <android.support.v7.widget.RecyclerView
