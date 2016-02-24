@@ -38,7 +38,7 @@ public class ActivityActionHandler {
 
         if (actionItemOnHoldMap.containsKey(key)) {
             ActionItem actionItem = actionItemOnHoldMap.get(key);
-            listener.handleMediaContent(actionItem.id, actionItem.getMimeType(), actionItem.getMessageContent(), actionItem.getMediaContent());
+            listener.handleMediaContent(actionItem.id, actionItem.getMimeType(), actionItem.getMessageContent(), actionItem.getThumbnailImage(), actionItem.getMediaContent());
             actionItemOnHoldMap.remove(key);
         }
     }

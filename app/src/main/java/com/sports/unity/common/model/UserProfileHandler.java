@@ -151,7 +151,7 @@ public class UserProfileHandler {
     VCard loadVCardAndUpdateDB(Context context, String jid){
         VCard card = new VCard();
         try {
-            card.load(XMPPClient.getConnection(), jid);
+            card.load(XMPPClient.getConnection(), jid + "@" + XMPPClient.SERVICE_NAME);
 
             String status = card.getMiddleName();
             byte[] image = card.getAvatar();

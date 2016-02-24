@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.ContactsContract;
+import android.util.Base64;
 import android.util.Log;
 
 import com.sports.unity.ChatScreenApplication;
@@ -668,8 +669,13 @@ public class XMPPService extends Service {
             String checksum = PersonalMessaging.getChecksumOutOfMessageBody(message.getBody());
             String thumbnail = PersonalMessaging.getEncodedImageOutOfImage(message.getBody());
 
+            byte[] bytesOfThumbnail = null;
+            if( thumbnail != null ) {
+                bytesOfThumbnail = Base64.decode(thumbnail, Base64.DEFAULT);
+            }
+
             long messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
-                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, thumbnail != null ? thumbnail.getBytes() : null);
+                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, bytesOfThumbnail);
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
 
             ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
@@ -689,10 +695,15 @@ public class XMPPService extends Service {
             String checksum = PersonalMessaging.getChecksumOutOfMessageBody(message.getBody());
             String thumbnail = PersonalMessaging.getEncodedImageOutOfImage(message.getBody());
 
+            byte[] bytesOfThumbnail = null;
+            if( thumbnail != null ) {
+                bytesOfThumbnail = Base64.decode(thumbnail, Base64.DEFAULT);
+            }
+
 //            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
 //                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
             long messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
-                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, thumbnail != null ? thumbnail.getBytes() : null);
+                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, bytesOfThumbnail);
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
 
             ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));

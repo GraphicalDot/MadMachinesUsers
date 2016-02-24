@@ -215,8 +215,8 @@ public class FileOnCloudHandler {
 
         String checksum = uploadContent((String) request.getFileName());
         if (checksum != null) {
-            String thumbnailImage = PersonalMessaging.getInstance(context).createThumbnailImageAsBase64(context, request.mimeType, request.fileName);
-            PersonalMessaging.getInstance(context).sendMediaMessage(checksum, thumbnailImage, (Chat) request.extra, request.messageId, request.mimeType, nearByChat);
+//            String thumbnailImage = PersonalMessaging.getInstance(context).createThumbnailImageAsBase64(context, request.mimeType, request.fileName);
+            PersonalMessaging.getInstance(context).sendMediaMessage(checksum, request.thumbnailImage, (Chat) request.extra, request.messageId, request.mimeType, nearByChat);
 
             ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY);
 

@@ -344,6 +344,7 @@ public class ChatScreenAdapter extends BaseAdapter {
             } else {
                 if( message.media != null ) {
                     image.setImageBitmap(BitmapFactory.decodeByteArray(message.media, 0, message.media.length));
+//                    image.setColorFilter(Color.parseColor("#22000000"), PorterDuff.Mode.DARKEN);
                 } else {
                     image.setImageResource(R.drawable.grey_bg_rectangle);
                 }

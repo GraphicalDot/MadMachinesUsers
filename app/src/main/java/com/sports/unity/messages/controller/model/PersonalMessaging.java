@@ -93,7 +93,7 @@ public class PersonalMessaging {
         long time = CommonUtil.getCurrentGMTTimeInEpoch();
         String stanzaId = sendMessage(message, chat, String.valueOf(time), mimeType, nearByChat);
 
-        sportsUnityDBHelper.updateMediaMessage_ContentUploaded(messageId, stanzaId, contentChecksum, thumbnailImageAsBase64);
+        sportsUnityDBHelper.updateMediaMessage_ContentUploaded(messageId, stanzaId, contentChecksum);
     }
 
     public static String getChecksumOutOfMessageBody(String messageBody){

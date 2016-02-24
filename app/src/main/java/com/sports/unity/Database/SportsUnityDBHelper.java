@@ -863,13 +863,12 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 selectionArgs);
     }
 
-    public void updateMediaMessage_ContentUploaded(long messageId, String stanzaId, String checksum, String thumbnailImage) {
+    public void updateMediaMessage_ContentUploaded(long messageId, String stanzaId, String checksum) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(MessagesEntry.COLUMN_MESSAGE_ID, stanzaId);
         values.put(MessagesEntry.COLUMN_DATA_TEXT, checksum);
-        values.put(MessagesEntry.COLUMN_DATA_MEDIA, thumbnailImage);
 
         String selection = MessagesEntry.COLUMN_ID + " LIKE ? ";
         String[] selectionArgs = {String.valueOf(messageId)};

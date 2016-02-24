@@ -468,9 +468,6 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
     @Override
     public void handleContent(String requestTag, final Object content) {
-
-        Log.d("max", "getting content--->" + requestTag + "<<Contect>>" + content);
-
         if (requestTag.equals(UserProfileHandler.FB_REQUEST_TAG) && content != null) {
             final UserProfileHandler.ProfileDetail profileDetail = (UserProfileHandler.ProfileDetail) content;
 
@@ -486,18 +483,12 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             }
         } else if (requestTag.equals(UserProfileHandler.LOAD_PROFILE_REQUEST_TAG) && content != null) {
 
-            final boolean success = (boolean) content;
-            Log.d("max", "getting content---" + success);
-
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (success) {
-                        String favorite = null;
-                        VCard card = new VCard();
-                        card = (VCard) content;
-                        favorite = card.getField("fav_list");
-                        successfulVCardLoad(favorite);
+                    VCard card = (VCard)content;
+                    if ( card != null ) {
+                        successfulVCardLoad(card);
                     } else {
                         onUnSuccessfulVCardLoad();
                     }
@@ -532,24 +523,17 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         }
     }
 
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    private void updateUserDetail(VCard card){
+        //TODO
 
-        protected Bitmap doInBackground(String... urls) {
-            String urlDisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urlDisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                e.printStackTrace();
+        {
+            String favorite = card.getField("fav_list");
+            ArrayList<FavouriteItem> savedList = null;
+            if (favorite != null) {
+                savedList = FavouriteItemWrapper.getInstance(this).getFavListOfOthers(favorite);
+                setFavouriteProfile(savedList);
             }
-            return mIcon11;
         }
-
-        protected void onPostExecute(Bitmap image) {
-            setProfileImage(image);
-        }
-
     }
 
     private void setProfileImage(Bitmap image) {
@@ -558,98 +542,12 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         byteArray = ImageUtil.getCompressedBytes(image);
     }
 
-    private class FetchVcardTask extends AsyncTask<Void, Void, String> {
-
-        private boolean success = false;
-
-        String number = null;
-
-        public FetchVcardTask(String number) {
-            this.number = number;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            String favorite = null;
-            try {
-                VCard card = new VCard();
-                card.load(XMPPClient.getConnection(), number + "@mm.io");
-                favorite = card.getField("fav_list");
-                success = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return favorite;
-        }
-
-        @Override
-        protected void onPostExecute(String favorite) {
-            progressBar.setVisibility(View.GONE);
-            if (success) {
-                successfulVCardLoad(favorite);
-            } else {
-                onUnSuccessfulVCardLoad();
-            }
-        }
-    }
-
-    private void successfulVCardLoad(String favorite) {
-        ArrayList<FavouriteItem> savedList = null;
-        if (favorite != null) {
-            savedList = FavouriteItemWrapper.getInstance(this).getFavListOfOthers(favorite);
-            setFavouriteProfile(savedList);
-        }
+    private void successfulVCardLoad(VCard vCard) {
+        updateUserDetail(vCard);
     }
 
     private void onUnSuccessfulVCardLoad() {
         Toast.makeText(UserProfileActivity.this, R.string.message_submit_vcard_failed, Toast.LENGTH_SHORT).show();
-    }
-
-    private class SubmitVCardAsyncTask extends AsyncTask<Void, Void, Void> {
-        private boolean success = false;
-        String nickname = name.getText().toString();
-        String status = currentStatus.getText().toString();
-
-        @Override
-        protected void onPreExecute() {
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                TinyDB.getInstance(UserProfileActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nickname);
-                TinyDB.getInstance(UserProfileActivity.this).putString(TinyDB.KEY_PROFILE_STATUS, status);
-                VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
-                VCard vCard = new VCard();
-                vCard.setNickName(nickname);
-                vCard.setAvatar(byteArray);
-                vCard.setMiddleName(status);
-                vCard.setJabberId(XMPPClient.getConnection().getUser());
-                manager.saveVCard(vCard);
-                success = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void o) {
-            progressBar.setVisibility(View.GONE);
-            if (success) {
-                successfulVCardSubmit();
-            } else {
-                onUnSuccessfulVCardSubmit();
-            }
-        }
     }
 
     private void onUnSuccessfulVCardSubmit() {
@@ -866,4 +764,5 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
         setInitDataOwn();
     }
+
 }
