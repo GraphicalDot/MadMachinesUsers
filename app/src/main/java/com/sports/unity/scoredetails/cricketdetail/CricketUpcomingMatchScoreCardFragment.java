@@ -19,7 +19,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class CricketUpcomingMatchScoreCardFragment extends Fragment {
-  private TextView textView;
+    private TextView textView;
     public CricketUpcomingMatchScoreCardFragment() {
         // Required empty public constructor
     }
@@ -27,9 +27,7 @@ public class CricketUpcomingMatchScoreCardFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        String matchId =  getActivity().getIntent().getStringExtra("matchId");
-
-    }
+            }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

@@ -13,9 +13,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.scoredetails.BallDetail;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.Constants;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -85,7 +87,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
         tvFirstPlayerRunRate = (TextView) view.findViewById(R.id.tv_first_player_run_rate);
         tvFirstPlayerRunOnBall = (TextView) view.findViewById(R.id.tv_first_player_run_on_ball);
         tvPartnershipRecord = (TextView) view.findViewById(R.id.tv_partnership_record);
-        tvSecondPlayerName = (TextView) view.findViewById(R.id.tv_first_player_name);
+        tvSecondPlayerName = (TextView) view.findViewById(R.id.tv_second_player_name);
         tvSecondPlayerRunRate = (TextView) view.findViewById(R.id.tv_first_player_run_rate);
         tvSecondPlayerRunOnBall = (TextView) view.findViewById(R.id.tv_second_player_run_on_ball);
         ivPlayerSecond = (ImageView) view.findViewById(R.id.iv_player_first);
@@ -145,16 +147,42 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
     }
 
-    private void renderDisplay(final JSONObject scoreCard) throws JSONException {
+    private void renderDisplay(final JSONObject jsonObject) throws JSONException {
 
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-        if (activity != null) {
+        JSONArray dataArray= jsonObject.getJSONArray("data");
+        JSONObject matchObject = dataArray.getJSONObject(0);
+        JSONArray recentOverArray = matchObject.getJSONArray("recent_overs");
+        final JSONObject currentPartnershipDetails = matchObject.getJSONObject("current_partnership_details");
+        BallDetail defb = new BallDetail();
+        BallDetail []balls = new BallDetail[]{defb,defb,defb,defb,defb,defb,defb};
+        int ballIndex = 6;
+        for(int i =0; i<= recentOverArray.length();i++){
+              JSONArray ballsArray = recentOverArray.getJSONArray(i);
+               JSONArray over = ballsArray.getJSONArray(1);
+                for (int j=over.length()-1; j>=0; j--){
+                    if(ballIndex<0)
+                    {
+                        break;
+                    }
+                            balls[ballIndex] = getResolveBall(over.getString(j));
+                            ballIndex--;
+              }
+        }
+
+
+         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        Log.i("run: ", scoreCard.toString());
-
+                        tvFirstPlayerName.setText(currentPartnershipDetails.getString("player_a"));
+                        tvSecondPlayerName.setText(currentPartnershipDetails.getString("player_b"));
+                        tvFirstPlayerRunRate.setText(currentPartnershipDetails.getString("player_a_strikerate"));
+                        tvSecondPlayerRunRate.setText(currentPartnershipDetails.getString("player_b_strikerate"));
+                        tvFirstPlayerRunOnBall.setText(currentPartnershipDetails.getString("player_a_runs")+"("+currentPartnershipDetails.getString("player_a_balls")+")");
+                        tvSecondPlayerRunOnBall.setText(currentPartnershipDetails.getString("player_b_runs")+"("+currentPartnershipDetails.getString("player_b_balls")+")");
+                        tvPartnershipRecord.setText(currentPartnershipDetails.getString("partnership_runs")+"("+currentPartnershipDetails.getString("partnership_balls")+")");
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());
@@ -165,4 +193,28 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
     }
 
+    private BallDetail getResolveBall(String value){
+        BallDetail ballDetail = new BallDetail();
+        switch (value){
+            case "r1":
+                ballDetail.setValue("1");
+                break;
+            case "r2":
+                ballDetail.setValue("2");
+                break;
+            case "r3":
+                ballDetail.setValue("3");
+                break;
+            case "r4":
+                ballDetail.setValue("4");
+                break;
+            case "r5":
+                ballDetail.setValue("5");
+                break;
+            case "r6":
+                ballDetail.setValue("6");
+                break;
+        }
+      return    ballDetail;
+    }
 }

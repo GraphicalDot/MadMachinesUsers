@@ -80,4 +80,7 @@ public class Constants {
     public static final int REQUEST_CODE_RECORD_AUDIO_PERMISSION = 106;
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 107;
     public static final String PLAYER_NAME ="player_name" ;
+    public static final String INTENT_KEY_TOSS = "toss";
+    public static final String INTENT_KEY_MATCH_NAME = "match_name";
+    public static final String INTENT_KEY_DATE = "date";
 }

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -73,6 +74,9 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     private RecyclerView teamBFallOfWicketRecycler;
     private LinearLayout firstLinearLayout;
     private LinearLayout seconLinearLayout;
+    private ProgressBar progressBar;
+    private LivedMatchScoreCardHandler livedMatchScoreCardHandler;
+    private String matchId;
 
     public LiveCricketMatchScoreCardFragment() {
         super();
@@ -81,10 +85,10 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        String matchId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-        LivedMatchScoreCardHandler cricketPlayerbioHandler = LivedMatchScoreCardHandler.getInstance(context);
-        cricketPlayerbioHandler.addListener(this);
-        cricketPlayerbioHandler.requestMatchScoreCard(matchId);
+        matchId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        livedMatchScoreCardHandler = LivedMatchScoreCardHandler.getInstance(context);
+        livedMatchScoreCardHandler.addListener(this);
+        livedMatchScoreCardHandler.requestMatchScoreCard(matchId);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -128,6 +132,8 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         teamAFallOfWicketRecycler.setAdapter(teamAFallOfWicketAdapter);
         teamBFallOfWicketAdapter = new LiveAndCompletedCricketFallOfWicketAdapter(teamBFallOfWicketCardList);
         teamBFallOfWicketRecycler.setAdapter(teamBFallOfWicketAdapter);
+        progressBar  = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         initErrorLayout(view);
 
     }
@@ -166,7 +172,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-
+        hideProgress();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
@@ -287,6 +293,34 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         }
 
     }
+    private void showProgress() {
+        progressBar.setVisibility(View.VISIBLE);
 
+    }
+    private void hideProgress() {
+        progressBar.setVisibility(View.GONE);
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(livedMatchScoreCardHandler != null){
+            livedMatchScoreCardHandler.addListener(null);
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showProgress();
+        if(livedMatchScoreCardHandler != null){
+            livedMatchScoreCardHandler.addListener(this);
+
+        }else {
+            livedMatchScoreCardHandler= LivedMatchScoreCardHandler.getInstance(getContext());
+        }
+        livedMatchScoreCardHandler.requestMatchScoreCard(matchId);
+    }
 }

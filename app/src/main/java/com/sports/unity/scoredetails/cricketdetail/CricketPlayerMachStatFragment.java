@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.sports.unity.R;
@@ -49,7 +50,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     private CricketPlayerMatchBowlingStatAdapter cricketPlayerMatchBowlingStatAdapter;
     private List<CricketPlayerMatchStatDTO> playerMatchBattingStatDTOList = new ArrayList<>();
     private List<CricketPlayerMatchStatDTO> playerMatchBowlingStatDTOList = new ArrayList<>();
-
+    private CricketPlayerMatchStatHandler cricketPlayerMatchStatHandler;
     public CricketPlayerMachStatFragment() {
         super();
     }
@@ -59,9 +60,10 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         super.onAttach(context);
         String playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
 
-        CricketPlayerMatchStatHandler cricketPlayerMatchStatHandler = CricketPlayerMatchStatHandler.getInstance(context);
+        cricketPlayerMatchStatHandler = CricketPlayerMatchStatHandler.getInstance(context);
         cricketPlayerMatchStatHandler.addListener(this);
         cricketPlayerMatchStatHandler.requestData(playerId);
+        showProgress(getView());
     }
 
     @Override
@@ -70,9 +72,19 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
 
         View view = inflater.inflate(R.layout.fragment_players_cricket_stat_batting, container, false);
         initView(view);
+        initProgress(view);
         return view;
     }
+    private void initProgress(View view) {
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+    }
+    public void showProgress(View view) {
 
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar.setVisibility(View.VISIBLE);
+
+    }
     private void initView(View view) {
         rcBattingPerformanceSummery = (RecyclerView) view.findViewById(R.id.rc_batting_performance_summary);
         rcBattingPerformanceSummery.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
@@ -315,4 +327,6 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         }
         cricketPlayerMatchBowlingStatAdapter.notifyDataSetChanged();
     }
+
+
 }
