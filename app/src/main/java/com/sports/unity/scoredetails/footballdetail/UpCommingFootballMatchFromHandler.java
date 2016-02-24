@@ -23,7 +23,7 @@ public class UpCommingFootballMatchFromHandler {
     private static Context mContext;
     private String url = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
 
-    private CompletedMatchContentListener mContentListener;
+    private UpCommingMatchFromContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
     public static UpCommingFootballMatchFromHandler getInstance(Context context) {
@@ -34,9 +34,9 @@ public class UpCommingFootballMatchFromHandler {
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
-    public interface CompletedMatchContentListener {
+    public interface UpCommingMatchFromContentListener {
 
-        void handleContent(JSONObject object);
+        void handleContent(String object);
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -54,7 +54,7 @@ public class UpCommingFootballMatchFromHandler {
         }
     };
 
-    public void requestCompletdMatchScoreCard(String matchId) {
+    public void requestUpcommingMatchFrom(String matchId) {
         Log.i("Score Detail", "Request Score Details");
 
         url = url+matchId;
@@ -70,7 +70,7 @@ public class UpCommingFootballMatchFromHandler {
             JSONObject jsonObject = new JSONObject(response);
             Log.i("Score Card", "handleResponse: ");
             if(jsonObject.getBoolean("success")){
-                mContentListener.handleContent(jsonObject);
+                mContentListener.handleContent(response);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,7 +83,7 @@ public class UpCommingFootballMatchFromHandler {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
     }
 
-    public void addListener(CompletedMatchContentListener contentListener) {
+    public void addListener(UpCommingMatchFromContentListener contentListener) {
         mContentListener = contentListener;
     }
 

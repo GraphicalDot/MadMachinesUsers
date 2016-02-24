@@ -23,7 +23,7 @@ public class LiveFootballMatchTimeLineHandler {
     private static Context mContext;
     private String url = "http://52.74.75.79:8080/get_football_match_timeline?match_id=";
 
-    private CompletedMatchContentListener mContentListener;
+    private LiveMatchContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
     public static LiveFootballMatchTimeLineHandler getInstance(Context context) {
@@ -34,9 +34,9 @@ public class LiveFootballMatchTimeLineHandler {
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
-    public interface CompletedMatchContentListener {
+    public interface LiveMatchContentListener {
 
-        void handleContent(JSONObject object);
+        void handleContent(String object);
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -70,7 +70,7 @@ public class LiveFootballMatchTimeLineHandler {
             JSONObject jsonObject = new JSONObject(response);
             Log.i("Score Card", "handleResponse: ");
             if(jsonObject.getBoolean("success")){
-                mContentListener.handleContent(jsonObject);
+                mContentListener.handleContent(response);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -83,7 +83,7 @@ public class LiveFootballMatchTimeLineHandler {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
     }
 
-    public void addListener(CompletedMatchContentListener contentListener) {
+    public void addListener(LiveMatchContentListener contentListener) {
         mContentListener = contentListener;
     }
 

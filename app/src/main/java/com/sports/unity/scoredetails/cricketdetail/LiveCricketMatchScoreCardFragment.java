@@ -182,17 +182,25 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
 
                         JSONArray jsonArray = jsonObject.getJSONArray("data");
                         JSONObject dataObject = jsonArray.getJSONObject(0);
-                        tvFirstTeamInning.setText(dataObject.getString("team_a") +" Innings");
-                        tvSecondTeamInning.setText(dataObject.getString("team_b")+ " Innings");
-                        JSONObject scoreCard= dataObject.getJSONObject("scorecard");
+                        tvFirstTeamInning.setText(dataObject.getString("team_a") + " Innings");
+                        tvSecondTeamInning.setText(dataObject.getString("team_b") + " Innings");
+                        JSONObject scoreCard = dataObject.getJSONObject("scorecard");
                         JSONObject teamAScoreCard = scoreCard.getJSONObject(dataObject.getString("team_a"));
                         JSONObject teamAFirstInning = teamAScoreCard.getJSONObject("a_1");
-                        JSONObject teamASecondInning = teamAScoreCard.getJSONObject("a_2");
+                        if (!teamAScoreCard.isNull("a_2")){
+                            JSONObject teamASecondInning = teamAScoreCard.getJSONObject("a_2");
+                         }
                         JSONObject teamBScoreCard = scoreCard.getJSONObject(dataObject.getString("team_b"));
                         JSONObject teamBFirstInning = teamBScoreCard.getJSONObject("b_1");
-                        JSONObject teamBSecondInning = teamBScoreCard.getJSONObject("b_2");
+                        JSONObject teamBSecondInning = null;
+                        if (!teamAScoreCard.isNull("b_2")){
+                            teamBSecondInning = teamBScoreCard.getJSONObject("b_2");
+                        }
+                        JSONArray teamABattingArray = null;
+                        if(teamAFirstInning.isNull("batting")){
+                            teamABattingArray = teamAFirstInning.getJSONArray("batting");
+                        }
 
-                        JSONArray teamABattingArray = teamAFirstInning.getJSONArray("batting");
                         JSONArray teamABowlingArray = teamAFirstInning.getJSONArray("bowling");
                         JSONArray teamAFallWicketArray = teamAFirstInning.getJSONArray("fall_of_wickets");
                         JSONArray teamBBattingArray = teamBFirstInning.getJSONArray("batting");
@@ -276,7 +284,6 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                             teamBFallOfWicketCardList.add(fallOfWickets);
 
                         }
-
                         teamABattingAdapter.notifyDataSetChanged();
                         teamABowlingAdapter.notifyDataSetChanged();
                         teamAFallOfWicketAdapter.notifyDataSetChanged();
