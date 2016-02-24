@@ -100,7 +100,7 @@
     <dimen name="group_indicator_margin_top">4dp</dimen>
     <!--  player profile view-->
     <dimen name="marginTop_user_profile_tag">-40dp</dimen>
-    <dimen name="marginTop_user_info_card">-16dp</dimen>
+    <dimen name="marginTop_user_info_card">-40dp</dimen>
     <dimen name="marginLeft_user_profile_tag">300dp</dimen>
     <dimen name="layout_height_card_divider">1dp</dimen>
 
