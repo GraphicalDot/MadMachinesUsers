@@ -1,6 +1,7 @@
 package com.sports.unity.scoredetails.footballdetail;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -21,69 +22,88 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
+import static com.sports.unity.util.Constants.INTENT_KEY_ID;
+import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
+import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
+
 /**
  * Created by madmachines on 23/2/16.
  */
 public class CompletedFootballMatchStatFragment extends Fragment implements CompletedFootballMatchStatHandler.CompletedFootballMatchContentListener{
 
+
     private ProgressBar progressBar;
-    private CompletedFootballMatchStatHandler completedFootballMatchStatHandler;
-    private String matchId;
+    String toss = "";
+    String matchName="";
+    String date = "";
     public CompletedFootballMatchStatFragment() {
-        super();
+        // Required empty public constructor
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        matchId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-        completedFootballMatchStatHandler = CompletedFootballMatchStatHandler.getInstance(context);
-        completedFootballMatchStatHandler.addListener(this);
-        completedFootballMatchStatHandler.requestCompledFootabllMAtchStat(matchId);
+        Intent i = getActivity().getIntent();
+        String matchId =  i.getStringExtra(INTENT_KEY_ID);
+        matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
+        toss = i.getStringExtra(INTENT_KEY_TOSS);
+        date = i.getStringExtra(INTENT_KEY_DATE);
+        CompletedFootballMatchStatHandler cricketUpcomingMatchSummaryHandler = CompletedFootballMatchStatHandler.getInstance(context);
+        cricketUpcomingMatchSummaryHandler.addListener(this);
+        cricketUpcomingMatchSummaryHandler.requestCompledFootabllMatchStat(matchId);
 
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_completed_football_match_stats, container, false);
+        View view = inflater.inflate(R.layout.fragment_cricket_upcoming_match_summery, container, false);
         initView(view);
+        showProgressBar();
         return view;
     }
     private void initView(View view) {
-
-        initProgress(view);
-        showProgress();
+        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         initErrorLayout(view);
 
     }
-
+    private void  showProgressBar(){
+        progressBar.setVisibility(View.VISIBLE);
+    }
+    private void  hideProgressBar(){
+        progressBar.setVisibility(View.GONE);
+    }
     @Override
-    public void handleContent(String content) {
-        try {
+    public void handleContent(String object) {
+        {
+            hideProgressBar();
 
-            JSONObject jsonObject = new JSONObject(content);
+            try {
+                JSONObject jsonObject = new JSONObject(object);
+                JSONObject data = jsonObject.getJSONObject("data");
+                boolean success = data.getBoolean("success");
+                boolean error = data.getBoolean("error");
 
-            boolean success = jsonObject.getBoolean("success");
-            boolean error = jsonObject.getBoolean("error");
+                if( success ) {
 
-            if( success ) {
+                    renderDisplay(jsonObject);
 
-                renderDisplay(jsonObject);
-
-            } else {
+                } else {
+                    showErrorLayout(getView());
+                }
+            }catch (Exception ex){
+                ex.printStackTrace();
+                Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
                 showErrorLayout(getView());
             }
-        }catch (Exception ex){
-            ex.printStackTrace();
-            Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-            showErrorLayout(getView());
         }
     }
     private void initErrorLayout(View view) {
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.GONE);
-
+        try {
+            LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+            errorLayout.setVisibility(View.GONE);
+        }catch (Exception e){e.printStackTrace();}
     }
 
     private void showErrorLayout(View view) {
@@ -91,34 +111,16 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.VISIBLE);
 
-
     }
-    private void initProgress(View view) {
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
-    }
-    public void showProgress() {
-        progressBar.setVisibility(View.VISIBLE);
 
-    }
-    public void hideProgress() {
-
-
-        progressBar.setVisibility(View.GONE);
-
-    }
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-        hideProgress();
-        final JSONObject data = (JSONObject) jsonObject.get("data");
-
+        hideProgressBar();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-
-
 
                     } catch (Exception ex) {
                         ex.printStackTrace();
@@ -129,14 +131,5 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
         }
 
     }
-    @Override
-    public void onPause() {
-        super.onPause();
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
 }

@@ -36,7 +36,7 @@ public class CompletedFootballMatchLineUpHandler {
     }
     public interface CompletedMatchContentListener {
 
-        void handleContent(JSONObject object);
+        void handleContent(String object);
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -54,7 +54,7 @@ public class CompletedFootballMatchLineUpHandler {
         }
     };
 
-    public void requestCompletdMatchScoreCard(String matchId) {
+    public void requestCompletdMatchLineUps(String matchId) {
         Log.i("Score Detail", "Request Score Details");
 
         url = url+matchId;
@@ -67,11 +67,11 @@ public class CompletedFootballMatchLineUpHandler {
     }
     private void handleResponse(String response) {
         try{
-            JSONObject jsonObject = new JSONObject(response);
+
             Log.i("Score Card", "handleResponse: ");
-            if(jsonObject.getBoolean("success")){
-                mContentListener.handleContent(jsonObject);
-            }
+
+                mContentListener.handleContent(response);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

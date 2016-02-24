@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
 import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
@@ -47,6 +48,7 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
     String date = "";
     CricketCompletedMatchSummaryHandler cricketCompletedMatchSummaryHandler;
     private String matchId;
+    private CricketMatchJsonCaller cricketMatchJsonCaller;
 
     public CricketCompletedMatchSummeryFragment() {
         // Required empty public constructor
@@ -55,11 +57,13 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        Intent i = getActivity().getIntent();
+        ScoreDetailActivity scoreDetail = (ScoreDetailActivity) getActivity();
+        Intent i = scoreDetail.getIntent();
         matchId =  i.getStringExtra(INTENT_KEY_ID);
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
         toss = i.getStringExtra(INTENT_KEY_TOSS);
         date = i.getStringExtra(INTENT_KEY_DATE);
+
         cricketCompletedMatchSummaryHandler = CricketCompletedMatchSummaryHandler.getInstance(context);
         cricketCompletedMatchSummaryHandler.addListener(this);
         cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(matchId);

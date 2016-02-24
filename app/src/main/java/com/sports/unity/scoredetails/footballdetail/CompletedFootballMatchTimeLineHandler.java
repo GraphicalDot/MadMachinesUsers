@@ -36,7 +36,7 @@ public class CompletedFootballMatchTimeLineHandler {
     }
     public interface CompletedMatchContentListener {
 
-        void handleContent(JSONObject object);
+        void handleContent(String object);
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -70,7 +70,7 @@ public class CompletedFootballMatchTimeLineHandler {
             JSONObject jsonObject = new JSONObject(response);
             Log.i("Score Card", "handleResponse: ");
             if(jsonObject.getBoolean("success")){
-                mContentListener.handleContent(jsonObject);
+                mContentListener.handleContent(response);
             }
         } catch (Exception e) {
             e.printStackTrace();

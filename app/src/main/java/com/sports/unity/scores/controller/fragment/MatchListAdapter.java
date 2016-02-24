@@ -348,7 +348,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             String toss = "";
             String matchName="";
             String date = "";
-
+            String matchTime = "";
+            Intent intent = new Intent( activity, ScoreDetailActivity.class);
             if( type.equalsIgnoreCase(ScoresJsonParser.CRICKET) ){
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
                 matchId = cricketMatchJsonCaller.getMatchId();
@@ -360,9 +361,11 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 footballMatchJsonCaller.setJsonObject(matchJsonObject);
                 matchId = String.valueOf(footballMatchJsonCaller.getMatchId());
                 matchStatus = footballMatchJsonCaller.getMatchStatus();
+                matchTime = footballMatchJsonCaller.getMatchTime();
+                intent.putExtra(Constants.INTENT_KEY_MATCH_TIME, matchTime);
+                intent.putExtra(Constants.INTENT_KEY_MATCH_LIVE,footballMatchJsonCaller.isLive());
             }
 
-            Intent intent = new Intent( activity, ScoreDetailActivity.class);
             intent.putExtra(Constants.INTENT_KEY_TYPE, type);
             intent.putExtra(Constants.INTENT_KEY_ID, matchId);
             intent.putExtra(Constants.INTENT_KEY_MATCH_STATUS,matchStatus);

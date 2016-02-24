@@ -54,7 +54,7 @@ public class CompletedFootballMatchStatHandler {
         }
     };
 
-    public void requestCompledFootabllMAtchStat(String matchId) {
+    public void requestCompledFootabllMatchStat(String matchId) {
         Log.i("Score Detail", "Request Score Details");
 
         url = url+matchId;

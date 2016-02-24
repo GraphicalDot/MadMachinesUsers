@@ -1,5 +1,6 @@
 package com.sports.unity.scores;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -39,6 +40,8 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.sports.unity.util.Constants.INTENT_KEY_TYPE;
+
 public class ScoreDetailActivity extends CustomVolleyCallerActivity implements DataServiceContract {
 
     private static final String REQUEST_LISTENER_KEY = "score_detail_listener";
@@ -60,6 +63,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private String sportsType = null;
     private String matchId = null;
     private String matchStatus;
+    private  String matchTime;
+    private Boolean isLive;
 
     private Timer timerToRefreshContent = null;
 
@@ -71,9 +76,13 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_score_detail);
-        sportsType = getIntent().getStringExtra(Constants.INTENT_KEY_TYPE);
-        matchId = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-        matchStatus= getIntent().getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
+        Intent i = getIntent();
+        sportsType = i.getStringExtra(INTENT_KEY_TYPE);
+        matchId = i.getStringExtra(Constants.INTENT_KEY_ID);
+        matchStatus= i.getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
+        matchTime = i.getStringExtra(Constants.INTENT_KEY_MATCH_TIME);
+        isLive = Boolean.getBoolean(i.getStringExtra(Constants.INTENT_KEY_MATCH_LIVE));
+
         initView();
         setToolbar();
 
@@ -137,8 +146,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             int numberOfCricketTabs = cricketMatchtitles.length;
             String footballMatchtitles[] = {getString(R.string.commentary), getString(R.string.matchstats), getString(R.string.timeline), getString(R.string.lineup)};
             int numberOfFootballTabs = footballMatchtitles.length;
-            String footballMatchtitlesupcomming[] = {getString(R.string.table), getString(R.string.form), getString(R.string.squad)};
-            int numberOfFootballTabsUpcomming = footballMatchtitlesupcomming.length;
+            String footballMatchtitlesupcommingTitles[] = {getString(R.string.table), getString(R.string.form), getString(R.string.squad)};
+
 
 //
 //<<<<<<< HEAD
@@ -154,10 +163,15 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 cricketScoreDetailAdapter = new ViewPagerCricketScoreDetailAdapter(getSupportFragmentManager(), cricketMatchtitles, numberOfCricketTabs, commentaries, matchStatus);
                 mViewPager.setAdapter(cricketScoreDetailAdapter);
             } else {
-                   /*if(matchStatus.equals(""))*/
-                footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitles, numberOfFootballTabs, commentaries,matchStatus);
-                mViewPager.setAdapter(footballScoreDetailAdapter);
-//>>>>>>> team2_dev_branch
+                if(matchStatus.equals(matchTime) && !isLive){
+                    footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitlesupcommingTitles, footballMatchtitlesupcommingTitles.length, commentaries,matchStatus,matchTime,isLive);
+                    mViewPager.setAdapter(footballScoreDetailAdapter);
+                } else {
+                    footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitles, numberOfFootballTabs, commentaries,matchStatus,matchTime,isLive);
+                    mViewPager.setAdapter(footballScoreDetailAdapter);
+
+                }
+  //>>>>>>> team2_dev_branch
 
             }
             // Assiging the Sliding Tab Layout View
