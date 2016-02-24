@@ -93,6 +93,7 @@
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/tv_player_run"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/ll_score"
                             android:gravity="right"
@@ -102,6 +103,7 @@
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/tv_ball_play_by_player"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/tv_player_run"
                             android:gravity="right"
@@ -111,6 +113,7 @@
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/tv_four_gain_by_player"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/tv_ball_play_by_player"
                             android:gravity="right"
@@ -120,6 +123,7 @@
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/tv_six_gain_by_player"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/tv_four_gain_by_player"
                             android:gravity="right"
@@ -128,6 +132,7 @@
                             app:layout_widthPercent="12%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/tv_six_gain_by_player"
                             android:gravity="right"
@@ -293,7 +298,6 @@
                     android:id="@+id/rv_team_first_bowling"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    
                     tools:listitem="@layout/fragment_live_cricket_bowling_card" />
             </LinearLayout>
             <LinearLayout
@@ -318,6 +322,11 @@
                         android:text="@string/fall_of_wicket"
                         android:textSize="@dimen/font_size_small_large" />
                 </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray4"></View>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_team_first_fall_wickets"
                     android:layout_width="match_parent"
@@ -326,6 +335,7 @@
                     tools:listitem="@layout/fragment_live_cricket_fall_of_wickets_card"
                     />
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -516,33 +526,36 @@
                         android:textSize="@dimen/font_size_very_small" />
                 </LinearLayout>
             </LinearLayout>
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/gray3"
+                android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray4"></View>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/horizontal_padding_small"
                 android:paddingLeft="@dimen/horizontal_padding_small"
                 android:paddingRight="@dimen/horizontal_padding_medium"
                 android:paddingTop="@dimen/horizontal_padding_small">
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray4">
-                </View>
-
+               
                 <android.support.percent.PercentRelativeLayout
                     android:id="@+id/layout_bowling_second"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_vertical_margin_small"
-                    android:layout_marginTop="@dimen/activity_horizontal_margin">
+                    android:layout_height="wrap_content">
 
                     <com.sports.unity.common.view.CustomRobotoRegularTextView
                         android:id="@+id/ll_bowling_second"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        
+                        android:gravity="left"
                         android:text="@string/bowlaing"
                         android:textSize="@dimen/font_size_small_large"
                         app:layout_widthPercent="40%" />
@@ -552,6 +565,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@id/ll_bowling_second"
+                        android:gravity="right"
                         android:text="@string/o"
                         android:textSize="@dimen/font_size_small_large"
                         app:layout_widthPercent="12%" />
@@ -595,6 +609,7 @@
                         android:textSize="@dimen/font_size_small_large"
                         app:layout_widthPercent="12%" />
                 </android.support.percent.PercentRelativeLayout>
+            </LinearLayout>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_team_second_bowling"
                     android:layout_width="match_parent"
@@ -622,9 +637,13 @@
                         android:layout_height="wrap_content"
                         android:gravity="left"
                         android:text="@string/fall_of_wicket"
-                        android:textSize="@dimen/font_size_small_large"
-                        />
+                        android:textSize="@dimen/font_size_small_large" />
                 </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray4"></View>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_second_team_fall_wicket"
                     android:layout_width="match_parent"
