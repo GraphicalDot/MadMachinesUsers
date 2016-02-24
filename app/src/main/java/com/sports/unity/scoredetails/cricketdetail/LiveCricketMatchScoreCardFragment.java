@@ -28,9 +28,12 @@ import com.sports.unity.util.Constants;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 
 public class LiveCricketMatchScoreCardFragment extends Fragment implements LivedMatchScoreCardHandler.LiveMatchContentListener{
@@ -125,30 +128,8 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         teamAFallOfWicketRecycler.setAdapter(teamAFallOfWicketAdapter);
         teamBFallOfWicketAdapter = new LiveAndCompletedCricketFallOfWicketAdapter(teamBFallOfWicketCardList);
         teamBFallOfWicketRecycler.setAdapter(teamBFallOfWicketAdapter);
-        firstLinearLayout = (LinearLayout) view.findViewById(R.id.ll_first_view_visibility);
-        seconLinearLayout = (LinearLayout) view.findViewById(R.id.ll_second_view_visibility);
         initErrorLayout(view);
 
-        ivDwn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(firstLinearLayout.getVisibility() == View.GONE){
-                    firstLinearLayout.setVisibility(View.VISIBLE);
-                } else {
-                    firstLinearLayout.setVisibility(View.GONE);
-                }
-            }
-        });
-        ivDwnSecond.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(seconLinearLayout.getVisibility() == View.GONE){
-                    seconLinearLayout.setVisibility(View.VISIBLE);
-                } else {
-                    seconLinearLayout.setVisibility(View.GONE);
-                }
-            }
-        });
     }
 
     @Override
