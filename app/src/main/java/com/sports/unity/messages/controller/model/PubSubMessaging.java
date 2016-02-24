@@ -123,22 +123,23 @@ public class PubSubMessaging {
 
 
         try {
+            Log.i("creating node", "true");
             LeafNode leaf = (LeafNode) pubSubManager.createNode(roomName, form);
+            Log.i("subscribing node", "true");
             leaf.subscribe(TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID) + "@mm.io");
-            Log.i("discoverinfo", "true");
-
-            ServiceDiscoveryManager serviceDiscoveryManager = ServiceDiscoveryManager.getInstanceFor(XMPPClient.getConnection());
-            DiscoverInfo info = leaf.discoverInfo();
-            info.addIdentity(new DiscoverInfo.Identity("account", "test", "admin"));
-
-            List<Subscription> subscriptions = leaf.getSubscriptions();
-            for (Subscription s :
-                    subscriptions) {
-                Log.i("subscriber", s.getNamespace());
-                Log.i("subscriber", s.getElementName());
-                Log.i("subscriber", s.getJid());
-            }
             success = true;
+
+//            ServiceDiscoveryManager serviceDiscoveryManager = ServiceDiscoveryManager.getInstanceFor(XMPPClient.getConnection());
+//            DiscoverInfo info = leaf.discoverInfo();
+//            info.addIdentity(new DiscoverInfo.Identity("account", "test", "admin"));
+
+//            List<Subscription> subscriptions = leaf.getSubscriptions();
+//            for (Subscription s :
+//                    subscriptions) {
+//                Log.i("subscriber", s.getNamespace());
+//                Log.i("subscriber", s.getElementName());
+//                Log.i("subscriber", s.getJid());
+//            }
         } catch (SmackException.NoResponseException e) {
             e.printStackTrace();
         } catch (XMPPException.XMPPErrorException e) {
@@ -147,7 +148,7 @@ public class PubSubMessaging {
             e.printStackTrace();
         }
 
-        ServiceDiscoveryManager serviceDiscoveryManager = ServiceDiscoveryManager.getInstanceFor(XMPPClient.getConnection());
+//        ServiceDiscoveryManager serviceDiscoveryManager = ServiceDiscoveryManager.getInstanceFor(XMPPClient.getConnection());
 
         return success;
     }
@@ -178,7 +179,6 @@ public class PubSubMessaging {
          * Add message to database
          */
 
-        message = message.replaceAll(Pattern.quote("$"), "");
         long messageId = sportsUnityDBHelper.addMessage(message, SportsUnityDBHelper.MIME_TYPE_TEXT, from, true, time, null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS);
         sportsUnityDBHelper.updateChatEntry(messageId, chatID, groupServerId);
 

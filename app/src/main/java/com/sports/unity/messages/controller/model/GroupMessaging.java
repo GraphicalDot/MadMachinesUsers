@@ -53,9 +53,8 @@ public class GroupMessaging {
         MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(XMPPClient.getConnection());
         MultiUserChat multiUserChat = manager.getMultiUserChat(roomName + "@conference.mm.io");
 
-
         try {
-            multiUserChat.create(ownerJID);
+            multiUserChat.create(ownerJID + "@mm.io");
             multiUserChat.changeSubject(subject);
 
             success = true;

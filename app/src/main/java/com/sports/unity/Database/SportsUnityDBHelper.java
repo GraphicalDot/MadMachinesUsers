@@ -15,6 +15,8 @@ import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 
+import de.measite.minidns.record.A;
+
 import static com.sports.unity.Database.SportsUnityContract.ContactsEntry;
 import static com.sports.unity.Database.SportsUnityContract.MessagesEntry;
 import static com.sports.unity.Database.SportsUnityContract.ChatEntry;
@@ -51,8 +53,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             ContactsEntry.COLUMN_PHONE_NUMBER + " VARCHAR UNIQUE " + COMMA_SEP +
             ContactsEntry.COLUMN_USER_IMAGE + " BLOB " + COMMA_SEP +
             ContactsEntry.COLUMN_STATUS + " VARCHAR " + COMMA_SEP +
-            ContactsEntry.COLUMN_AVAILABLE + " boolean DEFAULT true " + COMMA_SEP +
-            ContactsEntry.COLUMN_BLOCK_USER + " boolean DEFAULT false " +
+            ContactsEntry.COLUMN_AVAILABLE + " boolean DEFAULT 1 " + COMMA_SEP +
+            ContactsEntry.COLUMN_BLOCK_USER + " boolean DEFAULT 0 " +
             ");";
 
     private static final String CREATE_MESSAGES_TABLE = "CREATE TABLE IF NOT EXISTS " +
@@ -81,10 +83,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             ChatEntry.COLUMN_GROUP_SERVER_ID + " " + " VARCHAR " + COMMA_SEP +
             ChatEntry.COLUMN_LAST_MESSAGE_ID + " INTEGER " + COMMA_SEP +
             ChatEntry.COLUMN_CONTACT_ID + " INTEGER " + COMMA_SEP +
-            ChatEntry.COLUMN_MUTE_CONVERSATION + " boolean DEFAULT false " + COMMA_SEP +
+            ChatEntry.COLUMN_MUTE_CONVERSATION + " boolean DEFAULT 0 " + COMMA_SEP +
             ChatEntry.COLUMN_UNREAD_COUNT + " boolean " + COMMA_SEP +
             ChatEntry.COLUMN_LAST_USED + " DATETIME DEFAULT CURRENT_TIMESTAMP " + COMMA_SEP +
-            ChatEntry.COLUMN_PEOPLE_AROUND_ME + " boolean " +
+            ChatEntry.COLUMN_PEOPLE_AROUND_ME + " boolean DEFAULT 0 " +
             ");";
 
 //    private static final String CREATE_GROUP_TABLE = "CREATE TABLE IF NOT EXISTS " +
@@ -150,21 +152,21 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     public long addToContacts(String name, String number, String jid, String defaultStatus, byte[] image, boolean available) {
         long rowId = -1;
-         try {
-             SQLiteDatabase db = this.getWritableDatabase();
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
 
-             ContentValues contentValues = new ContentValues();
-             contentValues.put(ContactsEntry.COLUMN_NAME, name);
-             contentValues.put(ContactsEntry.COLUMN_PHONE_NUMBER, number);
-             contentValues.put(ContactsEntry.COLUMN_JID, jid);
-             contentValues.put(ContactsEntry.COLUMN_STATUS, defaultStatus);
-             contentValues.put(ContactsEntry.COLUMN_USER_IMAGE, image);
-             contentValues.put(ContactsEntry.COLUMN_AVAILABLE, available);
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(ContactsEntry.COLUMN_NAME, name);
+            contentValues.put(ContactsEntry.COLUMN_PHONE_NUMBER, number);
+            contentValues.put(ContactsEntry.COLUMN_JID, jid);
+            contentValues.put(ContactsEntry.COLUMN_STATUS, defaultStatus);
+            contentValues.put(ContactsEntry.COLUMN_USER_IMAGE, image);
+            contentValues.put(ContactsEntry.COLUMN_AVAILABLE, available);
 
-             rowId = db.insert(ContactsEntry.TABLE_NAME, null, contentValues);
-         }catch (Exception e) {
-             e.printStackTrace();
-         }
+            rowId = db.insert(ContactsEntry.TABLE_NAME, null, contentValues);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return rowId;
     }
 
@@ -177,7 +179,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         };
 
         String registerCondition = null;
-        if( registered ){
+        if (registered) {
             registerCondition = " is not NULL ";
         } else {
             registerCondition = " is NULL ";
@@ -494,7 +496,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         };
 
         String registerCondition = null;
-        if( registeredOnly ){
+        if (registeredOnly) {
             registerCondition = " is not NULL ";
         } else {
             registerCondition = " is NULLL ";
@@ -732,7 +734,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         ArrayList<Chats> list = new ArrayList<>();
-        if( searchKeyword != null && searchKeyword.length() > 0 ) {
+        if (searchKeyword != null && searchKeyword.length() > 0) {
             StringBuilder searchedMessagesSubQuery = new StringBuilder("");
             {
                 searchedMessagesSubQuery.append("( SELECT ");
@@ -744,7 +746,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 searchedMessagesSubQuery.append(MessagesEntry.COLUMN_RECEIVE_TIMESTAMP + " ,");
 
                 searchedMessagesSubQuery.append(" FROM " + MessagesEntry.TABLE_NAME);
-                searchedMessagesSubQuery.append(" WHERE " + MessagesEntry.COLUMN_DATA_TEXT + " LIKE '%" + searchKeyword + "%' ) " );
+                searchedMessagesSubQuery.append(" WHERE " + MessagesEntry.COLUMN_DATA_TEXT + " LIKE '%" + searchKeyword + "%' ) ");
             }
 
             StringBuilder subQuery = new StringBuilder("");
@@ -951,13 +953,18 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     }
 
     public int getTotalUnreadCount(int a) {
+        int count = 0;
         SQLiteDatabase db = getReadableDatabase();
-        String query = "SELECT SUM(" + ChatEntry.COLUMN_UNREAD_COUNT + ") FROM " + ChatEntry.TABLE_NAME + " WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " = " + a;
+        String query = "SELECT " + ChatEntry.COLUMN_UNREAD_COUNT + " FROM " + ChatEntry.TABLE_NAME + " WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " = " + a;
         Cursor cur = db.rawQuery(query, null);
         if (cur.moveToFirst()) {
-            return cur.getInt(0);
+            do {
+                if (cur.getInt(0) > 0) {
+                    count++;
+                }
+            } while (cur.moveToNext());
         }
-        return 0;
+        return count;
     }
 
     public int getUnreadCount(long chatId, String groupServerId) {
@@ -1157,7 +1164,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     }
 
     public ArrayList<Chats> getChatList(boolean nearByChat) {
-        return getChatList( null, nearByChat);
+        return getChatList(null, nearByChat);
     }
 
     public ArrayList<Chats> getChatList(String searchKeyword, boolean nearByChat) {
@@ -1188,13 +1195,17 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
             subQuery.append(" FROM " + ChatEntry.TABLE_NAME + " A INNER JOIN " + MessagesEntry.TABLE_NAME + " B ");
             subQuery.append("ON " + ChatEntry.COLUMN_LAST_MESSAGE_ID + " = " + MessagesEntry.COLUMN_ID);
+
+            String[] selectionArg = null;
             if (nearByChat) {
-                subQuery.append(" WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " = 1 ");
+                selectionArg = new String[]{"1"};
+                subQuery.append(" WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " LIKE ? ");
             } else {
-                subQuery.append(" WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " = 0 ");
+                selectionArg = new String[]{"0"};
+                subQuery.append(" WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " LIKE ? ");
             }
 
-            if( searchKeyword != null && searchKeyword.length() > 0 ){
+            if (searchKeyword != null && searchKeyword.length() > 0) {
                 subQuery.append(" and " + ChatEntry.COLUMN_NAME + " LIKE '%" + searchKeyword + "%'");
             }
 
@@ -1213,7 +1224,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
             Log.d("Chat Fragment", selectQuery.toString());
 
-            Cursor cursor = db.rawQuery(selectQuery.toString(), null);
+            Cursor cursor = db.rawQuery(selectQuery.toString(), selectionArg);
             if (cursor.moveToFirst()) {
                 do {
                     boolean value_mute = cursor.getInt(12) == 1;
@@ -1228,8 +1239,63 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             cursor.close();
         }
 
+//        {
+//            String query = "SELECT unread_count ,chat_name ,contact_id ,last_message ,text_data ,media_data ,data_mime_type ,send_timestamp ,recieve_timestamp , A.chat_id ,group_server_id ,chat_image,mute_conversation,last_used FROM chatEntryTable A INNER JOIN messagesTable B ON last_message = incremental_messages_id WHERE people_around_me LIKE 'false' ";
+////            String query = "SELECT B.* , A.user_image,block_user FROM contactsTable A INNER JOIN " +
+////                    "( SELECT unread_count ,chat_name ,contact_id ,last_message ,text_data ,media_data ,data_mime_type ,send_timestamp ,recieve_timestamp , A.chat_id ,group_server_id ,chat_image,mute_conversation,last_used FROM chatEntryTable A INNER JOIN messagesTable B ON last_message = incremental_messages_id WHERE people_around_me = 0  )  B " +
+////                    " ON A.contact_id = B.contact_id order by last_used DESC";
+//
+//            Cursor cursor = db.rawQuery(query.toString(), null);
+//            if (cursor.moveToFirst()) {
+//                Log.i("entry", "" + cursor.getString(1));
+//            }
+//
+//        }
+//
+//        printChatEntryTable();
+//        printContactsTable();
+//        printMessagesTable();
         return list;
 
+    }
+
+    private void printChatEntryTable() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT " + ChatEntry.COLUMN_CHAT_ID + " , " + ChatEntry.COLUMN_NAME + " , " + ChatEntry.COLUMN_LAST_MESSAGE_ID + " , " + ChatEntry.COLUMN_CONTACT_ID + " , " + ChatEntry.COLUMN_GROUP_SERVER_ID + " , " + ChatEntry.COLUMN_PEOPLE_AROUND_ME +
+                " FROM " + ChatEntry.TABLE_NAME;
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Log.i("Chat entry", "Item " + cursor.getInt(0) + " : " + cursor.getString(1) + " : " + cursor.getInt(2) + " : " + cursor.getInt(3) + " : " + cursor.getString(4) + " : " + cursor.getString(5));
+            } while (cursor.moveToNext());
+        }
+    }
+
+    private void printContactsTable() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT " + ContactsEntry.COLUMN_CONTACT_ID + " , " + ContactsEntry.COLUMN_PHONE_NUMBER + " , " + ContactsEntry.COLUMN_NAME +
+                " FROM " + ContactsEntry.TABLE_NAME;
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Log.i("Contact entry", "Item " + cursor.getInt(0) + " : " + cursor.getString(1) + " : " + cursor.getString(2));
+            } while (cursor.moveToNext());
+        }
+    }
+
+    private void printMessagesTable() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String query = "SELECT " + MessagesEntry.COLUMN_ID + " , " + MessagesEntry.COLUMN_PHONENUMBER + " , " + MessagesEntry.COLUMN_DATA_TEXT + " , " + MessagesEntry.COLUMN_CHAT_ID +
+                " FROM " + MessagesEntry.TABLE_NAME;
+        Cursor cursor = db.rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            do {
+                Log.i("Message entry", "Item " + cursor.getInt(0) + " : " + cursor.getString(1) + " : " + cursor.getString(2) + " : " + cursor.getInt(3));
+            } while (cursor.moveToNext());
+        }
     }
 
     public ArrayList<String> getUserBlockedList() {
@@ -1610,5 +1676,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         onCreate(db);
     }
+
 
 }

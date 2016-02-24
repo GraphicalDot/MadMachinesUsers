@@ -38,6 +38,7 @@ import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.messages.controller.activity.CreateGroup;
 import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
+import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.Constants;
 
@@ -78,11 +79,13 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         if (friendsChatUnreadCount == 0) {
             friendsUnreadCount.setVisibility(View.GONE);
         } else {
+            friendsUnreadCount.setVisibility(View.VISIBLE);
             friendsUnreadCount.setText(String.valueOf(friendsChatUnreadCount));
         }
         if (otherChatUnreadCount == 0) {
             othersUnreadCount.setVisibility(View.GONE);
         } else {
+            othersUnreadCount.setVisibility(View.VISIBLE);
             othersUnreadCount.setText(String.valueOf(otherChatUnreadCount));
         }
     }
@@ -107,7 +110,6 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         friendsUnreadCount = (TextView) v.findViewById(R.id.friends_unread_count);
         othersUnreadCount = (TextView) v.findViewById(R.id.others_unread_count);
         backgroundDimmer = v.findViewById(R.id.background_dimmer);
-        getAndSetUnreadCount();
 
 
         final FloatingActionMenu fabMenu = (FloatingActionMenu) v.findViewById(R.id.fab_menu);
@@ -299,20 +301,47 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
+    ActivityActionListener activityActionListener = new ActivityActionListener() {
+        @Override
+        public void handleAction(int id, Object object) {
+        }
 
-        mListener = null;
-    }
+        @Override
+        public void handleAction(int id) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getAndSetUnreadCount();
+                }
+            });
+        }
+
+        @Override
+        public void handleMediaContent(int id, String mimeType, Object messageContent, Object mediaContent) {
+
+        }
+
+        @Override
+        public void handleMediaContent(int id, String mimeType, Object messageContent, String thumbnailImage, Object mediaContent) {
+
+        }
+    };
 
     @Override
     public void onResume() {
         super.onResume();
+        ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.UNREAD_COUNT_KEY, activityActionListener);
+        getAndSetUnreadCount();
         mListener = (OnSearchViewQueryListener) currentFragment;
         if (PermissionUtil.getInstance().isRuntimePermissionRequired()) {
             ((MainActivity) getActivity()).addLocationResultListener(this);
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.UNREAD_COUNT_KEY);
     }
 
     @Override

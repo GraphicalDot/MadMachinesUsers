@@ -223,9 +223,9 @@ public class XMPPService extends Service {
                     try {
                         LeafNode node = pubSubManager.getNode(groupServerId);
                         Log.i("Subscribing", "true");
-                        node.subscribe(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME) + "@mm.io");
-                        Log.i("fetchingaffiliations", "true");
-                        node.getAffiliations();
+                        node.subscribe(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USER_JID) + "@mm.io");
+//                        Log.i("fetchingaffiliations", "true");
+//                        node.getAffiliations();
                     } catch (SmackException.NoResponseException e) {
                         e.printStackTrace();
                     } catch (XMPPException.XMPPErrorException e) {
@@ -816,6 +816,7 @@ public class XMPPService extends Service {
             }
 
             notificationHandler.showNotification(getApplicationContext(), pendingIntent, chatId);
+            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.UNREAD_COUNT_KEY);
         }
     }
 

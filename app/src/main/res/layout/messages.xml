@@ -47,7 +47,8 @@
                     android:background="@drawable/ic_msg_notification_white"
                     android:gravity="center"
                     android:text="99+"
-                    android:textColor="@android:color/black" />
+                    android:textColor="@android:color/black"
+                    android:textSize="@dimen/font_size_small_medium" />
 
             </LinearLayout>
 
@@ -91,7 +92,8 @@
                     android:background="@drawable/ic_msg_notification"
                     android:gravity="center"
                     android:text="99+"
-                    android:textColor="@android:color/white" />
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_size_small_medium" />
             </LinearLayout>
 
 
@@ -123,7 +125,7 @@
             android:id="@+id/background_dimmer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#80FFFFFF"
+            android:background="#EEFFFFFF"
             android:clickable="true"
             android:focusable="true"
             android:visibility="gone" />
