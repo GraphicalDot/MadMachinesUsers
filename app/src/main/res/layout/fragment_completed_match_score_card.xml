@@ -521,6 +521,12 @@
                 </LinearLayout>
             </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/gray3"
+                android:orientation="vertical">
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -528,25 +534,21 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/gray3"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/horizontal_padding_small"
                 android:paddingLeft="@dimen/horizontal_padding_small"
                 android:paddingRight="@dimen/horizontal_padding_medium"
                 android:paddingTop="@dimen/horizontal_padding_small">
-
-
                 <android.support.percent.PercentRelativeLayout
                     android:id="@+id/layout_bowling_second"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="@dimen/activity_vertical_margin_small"
-                    android:layout_marginTop="@dimen/activity_horizontal_margin">
+                    android:layout_height="wrap_content">
 
                     <com.sports.unity.common.view.CustomRobotoRegularTextView
                         android:id="@+id/ll_bowling_second"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:gravity="left"
                         android:text="@string/bowlaing"
                         android:textSize="@dimen/font_size_small_large"
                         app:layout_widthPercent="40%" />
@@ -556,6 +558,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@id/ll_bowling_second"
+                        android:gravity="right"
                         android:text="@string/o"
                         android:textSize="@dimen/font_size_small_large"
                         app:layout_widthPercent="12%" />
@@ -599,6 +602,7 @@
                         android:textSize="@dimen/font_size_small_large"
                         app:layout_widthPercent="12%" />
                 </android.support.percent.PercentRelativeLayout>
+            </LinearLayout>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_team_second_bowling"
                     android:layout_width="match_parent"
