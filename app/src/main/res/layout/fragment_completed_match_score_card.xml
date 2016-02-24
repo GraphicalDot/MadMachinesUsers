@@ -148,66 +148,76 @@
                     android:layout_height="wrap_content"
                     
                     tools:listitem="@layout/fragment_live_cricket_batting_card" />
-                <LinearLayout
+
+                <android.support.percent.PercentRelativeLayout
                     android:id="@+id/layout_team_first_score"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/layout_batting"
                     android:background="@color/ColorPrimary"
+                    android:paddingBottom="@dimen/horizontal_padding_small"
                     android:paddingLeft="@dimen/horizontal_padding_small"
-                    android:paddingRight="@dimen/horizontal_padding_small"
-                    android:paddingTop="@dimen/horizontal_padding_small"
-                    android:weightSum="2">
+                    android:paddingRight="@dimen/horizontal_padding_medium"
+                    android:paddingTop="@dimen/horizontal_padding_small">
                     <com.sports.unity.common.view.CustomRobotoRegularTextView
                         android:id="@+id/tv_extra_run_team_first"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+           
                         android:gravity="left"
                         android:text="1-51"
                         android:textColor="@color/score_light_grey"
                         android:textSize="@dimen/font_size_very_small" />
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight=".8"
-                        android:gravity="right"
-                        android:text="@string/total"
-                        android:textSize="@dimen/font_size_small_medium" />
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/tv_total_run_first_team"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="right"
-                        android:text="9.5ovs"
-                        android:textColor="@color/score_light_grey"
-                        android:textSize="@dimen/font_size_very_small" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/layout_team_first_score"
-                    android:background="@color/ColorPrimary"
-                    android:paddingBottom="@dimen/horizontal_padding_small"
-                    android:paddingLeft="@dimen/horizontal_padding_small"
-                    android:paddingRight="@dimen/horizontal_padding_small"
-                    android:weightSum="1">
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".87"
-                        android:gravity="right"
-                        android:text="@string/run_rate"
-                        android:textSize="@dimen/font_size_small_medium" />
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/tv_run_rate_first_team"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="right"
-                        android:text="5.5"
-                        android:textColor="@color/score_light_grey"
-                        android:textSize="@dimen/font_size_very_small" />
-                </LinearLayout>
+                        android:layout_alignParentRight="true"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:text="@string/total"
+                                android:textSize="@dimen/font_size_small_medium" />
+
+                            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                                android:id="@+id/tv_total_run_first_team"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:text="9.5ovs"
+                                android:textColor="@color/score_light_grey"
+                                android:textSize="@dimen/font_size_very_small" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:text="@string/run_rate"
+                                android:textSize="@dimen/font_size_small_medium" />
+
+                            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                                android:id="@+id/tv_run_rate_first_team"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:text="5.5"
+                                android:textColor="@color/score_light_grey"
+                                android:textSize="@dimen/font_size_very_small" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </android.support.percent.PercentRelativeLayout>
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/ll_second_view_visibility"
@@ -230,6 +240,7 @@
                     android:paddingTop="@dimen/horizontal_padding_small">
 
                     <android.support.percent.PercentRelativeLayout
+                        android:id="@+id/ll_layout_bowling"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -354,7 +365,7 @@
                     <ImageView
                         android:id="@+id/iv_down_second"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+   android:layout_weight="1"                     android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="@dimen/activity_vertical_margin"
                         android:src="@drawable/ic_droable"/>
@@ -464,66 +475,77 @@
                     android:layout_height="wrap_content"
                    
                     tools:listitem="@layout/fragment_live_cricket_batting_card" />
-                <LinearLayout
+
+                <android.support.percent.PercentRelativeLayout
                     android:id="@+id/layout_team_second_score"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/layout_batting_second"
                     android:background="@color/ColorPrimary"
+                    android:paddingBottom="@dimen/horizontal_padding_small"
                     android:paddingLeft="@dimen/horizontal_padding_small"
-                    android:paddingRight="@dimen/horizontal_padding_small"
-                    android:paddingTop="@dimen/horizontal_padding_small"
-                    android:weightSum="2">
+                    android:paddingRight="@dimen/horizontal_padding_medium"
+                    android:paddingTop="@dimen/horizontal_padding_small">
                     <com.sports.unity.common.view.CustomRobotoRegularTextView
                         android:id="@+id/tv_extra_run_team_second"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        
                         android:gravity="left"
                         android:text="1-51"
                         android:textColor="@color/score_light_grey"
                         android:textSize="@dimen/font_size_very_small" />
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight=".8"
-                        android:gravity="right"
-                        android:text="@string/total"
-                        android:textSize="@dimen/font_size_small_medium" />
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/tv_total_run_second_team"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="right"
-                        android:text="9.5ovs"
-                        android:textColor="@color/score_light_grey"
-                        android:textSize="@dimen/font_size_very_small" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/layout_team_second_score"
-                    android:background="@color/ColorPrimary"
-                    android:paddingBottom="@dimen/horizontal_padding_small"
-                    android:paddingLeft="@dimen/horizontal_padding_small"
-                    android:paddingRight="@dimen/horizontal_padding_small"
-                    android:weightSum="1">
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight=".87"
-                        android:gravity="right"
-                        android:text="@string/run_rate"
-                        android:textSize="@dimen/font_size_small_medium" />
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/tv_run_rate_second_team"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="right"
-                        android:text="5.5"
-                        android:textColor="@color/score_light_grey"
-                        android:textSize="@dimen/font_size_very_small" />
-                </LinearLayout>
+                        android:layout_alignParentRight="true"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:text="@string/total"
+                                android:textSize="@dimen/font_size_small_medium" />
+
+                            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                                android:id="@+id/tv_total_run_second_team"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:text="9.5ovs"
+                                android:textColor="@color/score_light_grey"
+                                android:textSize="@dimen/font_size_very_small" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content">
+
+                            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:text="@string/run_rate"
+                                android:textSize="@dimen/font_size_small_medium" />
+
+                            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                                android:id="@+id/tv_run_rate_second_team"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="right"
+                                android:text="5.5"
+                                android:textColor="@color/score_light_grey"
+                                android:textSize="@dimen/font_size_very_small" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                </android.support.percent.PercentRelativeLayout>
             </LinearLayout>
 
             <LinearLayout
@@ -532,83 +554,84 @@
                 android:background="@color/gray3"
                 android:orientation="vertical">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/gray4"></View>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/horizontal_padding_small"
-                android:paddingLeft="@dimen/horizontal_padding_small"
-                android:paddingRight="@dimen/horizontal_padding_medium"
-                android:paddingTop="@dimen/horizontal_padding_small">
-               
-                <android.support.percent.PercentRelativeLayout
-                    android:id="@+id/layout_bowling_second"
+                <View
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="1dp"
+                    android:background="@color/gray4"></View>
 
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/ll_bowling_second"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:gravity="left"
-                        android:text="@string/bowlaing"
-                        android:textSize="@dimen/font_size_small_large"
-                        app:layout_widthPercent="40%" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="@dimen/horizontal_padding_small"
+                    android:paddingLeft="@dimen/horizontal_padding_small"
+                    android:paddingRight="@dimen/horizontal_padding_medium"
+                    android:paddingTop="@dimen/horizontal_padding_small">
 
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/ll_over_second"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/ll_bowling_second"
-                        android:gravity="right"
-                        android:text="@string/o"
-                        android:textSize="@dimen/font_size_small_large"
-                        app:layout_widthPercent="12%" />
+                    <android.support.percent.PercentRelativeLayout
+                        android:id="@+id/layout_bowling_second"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
 
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/ll_m_second"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/ll_over_second"
-                        android:gravity="right"
-                        android:text="@string/m"
-                        android:textSize="@dimen/font_size_small_large"
-                        app:layout_widthPercent="12%" />
+                        <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:id="@+id/ll_bowling_second"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:gravity="left"
+                            android:text="@string/bowlaing"
+                            android:textSize="@dimen/font_size_small_large"
+                            app:layout_widthPercent="40%" />
 
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/ll_r_second"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/ll_m_second"
-                        android:gravity="right"
-                        android:text="@string/r"
-                        android:textSize="@dimen/font_size_small_large"
-                        app:layout_widthPercent="12%" />
+                        <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:id="@+id/ll_over_second"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/ll_bowling_second"
+                            android:gravity="right"
+                            android:text="@string/o"
+                            android:textSize="@dimen/font_size_small_large"
+                            app:layout_widthPercent="12%" />
 
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/ll_w_second"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/ll_r_second"
-                        android:gravity="right"
-                        android:text="@string/w"
-                        android:textSize="@dimen/font_size_small_large"
-                        app:layout_widthPercent="12%" />
+                        <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:id="@+id/ll_m_second"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/ll_over_second"
+                            android:gravity="right"
+                            android:text="@string/m"
+                            android:textSize="@dimen/font_size_small_large"
+                            app:layout_widthPercent="12%" />
 
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_toRightOf="@id/ll_w_second"
-                        android:gravity="right"
-                        android:text="@string/ext"
-                        android:textSize="@dimen/font_size_small_large"
-                        app:layout_widthPercent="12%" />
-                </android.support.percent.PercentRelativeLayout>
-            </LinearLayout>
+                        <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:id="@+id/ll_r_second"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/ll_m_second"
+                            android:gravity="right"
+                            android:text="@string/r"
+                            android:textSize="@dimen/font_size_small_large"
+                            app:layout_widthPercent="12%" />
+
+                        <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:id="@+id/ll_w_second"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/ll_r_second"
+                            android:gravity="right"
+                            android:text="@string/w"
+                            android:textSize="@dimen/font_size_small_large"
+                            app:layout_widthPercent="12%" />
+
+                        <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/ll_w_second"
+                            android:gravity="right"
+                            android:text="@string/ext"
+                            android:textSize="@dimen/font_size_small_large"
+                            app:layout_widthPercent="12%" />
+                    </android.support.percent.PercentRelativeLayout>
+                </LinearLayout>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_team_second_bowling"
                     android:layout_width="match_parent"
@@ -662,4 +685,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
 </LinearLayout>
