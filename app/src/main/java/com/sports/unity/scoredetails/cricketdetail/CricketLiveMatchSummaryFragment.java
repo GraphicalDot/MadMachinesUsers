@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,18 +53,15 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     private TextView tvBowlerEcon;
     private TextView tvBowlerOver;
     private TextView tvBowlerWr;
-
-
-    public CricketLiveMatchSummaryFragment() {
+   public CricketLiveMatchSummaryFragment() {
         // Required empty public constructor
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        String matchId =  getActivity().getIntent().getStringExtra("matchId");
-
-        CricketLiveMatchSummaryHandler cricketLiveMatchSummaryHandler = CricketLiveMatchSummaryHandler.getInstance(context);
+        String matchId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+       CricketLiveMatchSummaryHandler cricketLiveMatchSummaryHandler = CricketLiveMatchSummaryHandler.getInstance(context);
         cricketLiveMatchSummaryHandler.addListener(this);
         cricketLiveMatchSummaryHandler.requestLiveMatchSummary(matchId);
     }

@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +38,7 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        String matchId =  getActivity().getIntent().getStringExtra("matchId");
+        String matchId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
         CricketCompletedMatchSummaryHandler cricketCompletedMatchSummaryHandler = CricketCompletedMatchSummaryHandler.getInstance(context);
         cricketCompletedMatchSummaryHandler.addListener(this);
         cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(matchId);
@@ -55,7 +56,6 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
         initErrorLayout(view);
 
     }
-
     @Override
     public void handleContent(JSONObject object) {
         {
@@ -78,9 +78,6 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
         }
     }
     private void initErrorLayout(View view) {
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.GONE);
-
         ivPlayerProfileView = (ImageView) view.findViewById(R.id.iv_player_profile_image);
         ivCountryImage = (ImageView) view.findViewById(R.id.iv_country_image);
         tvPlayerRun = (TextView) view.findViewById(R.id.tv_player_run);
@@ -91,8 +88,9 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
         tvTossWinTeam = (TextView) view.findViewById(R.id.tv_toss_win_team);
         tvUmpiresName = (TextView) view.findViewById(R.id.tv_umpires_name);
         tvMatchReferee = (TextView) view.findViewById(R.id.tv_match_referee);
-
-    }
+        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        errorLayout.setVisibility(View.GONE);
+   }
 
     private void showErrorLayout(View view) {
 
@@ -101,7 +99,7 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
 
     }
 
-    private void renderDisplay(final JSONObject scoreCard) throws JSONException {
+    private void renderDisplay(final JSONObject jsonObject) throws JSONException {
 
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (activity != null) {
@@ -109,7 +107,7 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
                 @Override
                 public void run() {
                     try {
-                        Log.i("run: ", scoreCard.toString());
+                        Log.i("run: ", jsonObject.toString());
 
 
 

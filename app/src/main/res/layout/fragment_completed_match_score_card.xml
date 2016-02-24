@@ -230,7 +230,6 @@
                     android:paddingTop="@dimen/horizontal_padding_small">
 
                     <android.support.percent.PercentRelativeLayout
-                        android:id="@+id/layout_bowling"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
