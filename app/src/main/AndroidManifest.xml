@@ -121,6 +121,9 @@
             android:name=".messages.controller.activity.ImageOrVideoViewActivity"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".messages.controller.activity.GroupInfoActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".messages.controller.activity.ForwardSelectedItems"
             android:screenOrientation="portrait" />
         <activity

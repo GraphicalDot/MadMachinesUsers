@@ -88,16 +88,33 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     private ToolbarActionsForChatScreen toolbarActionsForChatScreen = null;
 //    private ArrayList<Integer> positions = new ArrayList<>();
 
-    public static void viewProfile(Activity activity, byte[] profilePicture, String name, String groupServerId, String phoneNumber) {
+    public static void viewProfile(Activity activity, byte[] profilePicture, String name, String groupServerId, String phoneNumber, boolean otherChat) {
+        if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+            Intent intent = new Intent(activity, UserProfileActivity.class);
 
-        Intent intent = new Intent(activity, UserProfileActivity.class);
+            intent.putExtra("name", name);
+            intent.putExtra("profilePicture", profilePicture);
+            intent.putExtra("groupServerId", groupServerId);
+            intent.putExtra("number", phoneNumber);
+            intent.putExtra("status", "available");
+            intent.putExtra("otherChat", otherChat);
+            activity.startActivity(intent);
+        } else {
+            Intent intent = new Intent(activity, GroupInfoActivity.class);
+            intent.putExtra("name", name);
+            intent.putExtra("profilePicture", profilePicture);
+            intent.putExtra("groupServerId", groupServerId);
+            intent.putExtra("chatID", chatID);
+            /*intent.putExtra("number", phoneNumber);
+            intent.putExtra("status", "available");
+            intent.putExtra("otherChat", otherChat);*/
+            activity.startActivity(intent);
+        }
+    }
 
-        intent.putExtra("name", name);
-        intent.putExtra("profilePicture", profilePicture);
-        intent.putExtra("groupServerId", groupServerId);
-        intent.putExtra("number", phoneNumber);
-        intent.putExtra("status", "available");
-        activity.startActivity(intent);
+    private void viewGroupProfile() {
+        Intent intent = new Intent(this, GroupInfoActivity.class);
+        startActivity(intent);
     }
 
     private static long chatID = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
@@ -339,7 +356,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
          */
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_chat);
         setSupportActionBar(toolbar);
-       // toolbar.setContentInsetsAbsolute(0, 0);
+        // toolbar.setContentInsetsAbsolute(0, 0);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         final Handler mHandler = new Handler();
 
@@ -357,7 +374,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             @Override
             public void onClick(View v) {
 
-                viewProfile(ChatScreenActivity.this, userImageBytes, JABBERNAME, groupServerId, JABBERID);
+                viewProfile(ChatScreenActivity.this, userImageBytes, JABBERNAME, groupServerId, JABBERID, otherChat);
             }
         });
         Button mSend = (Button) findViewById(R.id.send);
@@ -717,7 +734,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             mediaMap.put(mediaFileName, (byte[]) mediaContent);
 
             byte[] bytesOfThumbnail = null;
-            if( thumbnailImage != null ) {
+            if (thumbnailImage != null) {
                 bytesOfThumbnail = Base64.decode(thumbnailImage, Base64.DEFAULT);
             }
 
@@ -730,7 +747,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             String mediaFileName = (String) messageContent;
 
             byte[] bytesOfThumbnail = null;
-            if( thumbnailImage != null ) {
+            if (thumbnailImage != null) {
                 bytesOfThumbnail = Base64.decode(thumbnailImage, Base64.DEFAULT);
             }
 
@@ -872,7 +889,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_view_contact) {
-            viewProfile(ChatScreenActivity.this, userImageBytes, JABBERNAME, groupServerId, JABBERID);
+            viewProfile(ChatScreenActivity.this, userImageBytes, JABBERNAME, groupServerId, JABBERID, otherChat);
             return true;
         } else if (id == R.id.action_block_user) {
             blockUnblockUserHelper.onMenuItemSelected(this, contactID, JABBERID, menu);

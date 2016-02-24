@@ -610,6 +610,8 @@ public class FavouriteContentHandler {
                                 FavouriteItem item = new FavouriteItem();
                                 String s = obj.getString("player_name");
                                 item.setName(s);
+                                s=obj.getString("player_id");
+                                item.setId(s);
                                 item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                 item.setFilterType(Constants.FILTER_TYPE_PLAYER);
                                 if (savedFavList.contains(item)) {
@@ -627,6 +629,8 @@ public class FavouriteContentHandler {
                                 FavouriteItem item = new FavouriteItem();
                                 String s = obj.getString("team");
                                 item.setName(s);
+                                s=obj.getString("team_id");
+                                item.setId(s);
                                 s = obj.getString("flag_image");
                                 item.setFlagImageUrl(s);
                                 item.setSportsType(Constants.SPORTS_TYPE_CRICKET);

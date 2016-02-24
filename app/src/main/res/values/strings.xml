@@ -5,6 +5,8 @@
     <string name="link_of_terms_of_use">http://www.google.com</string>
     <string name="link_of_privacy_policy">http://www.youtube.com</string>
 
+    <string name="link_of_sportsunity_club">http://www.sportsunity.club</string>
+
     <string name="action_settings">Settings</string>
     <string name="common_message_internet_not_available">Internet Unavailable</string>
 
@@ -48,8 +50,11 @@
     <string name="default_status">Available</string>
 
     <string name="message_login_failed">Login failed, try again.</string>
+
+    <string name="message_load_vcard_failed">Unable to load your info, try again.</string>
     <string name="message_submit_vcard_failed">Unable to save your info, try again.</string>
     <string name="message_submit_vcard_sucess">Your info is saved.</string>
+
     <string name="title_activity_demo">demo</string>
     <string name="title_activity_news_details">NewsDetailsActivity</string>
     <string name="title_activity_filter">FilterActivity</string>
@@ -355,5 +360,12 @@ Carrier SMS charges may apply.</string>
     <string name="match_not_exist">This Match Does Not Exists</string>
     <string name="commentary_not_exist">Commentary Not Available For This Match Yet</string>
     <string name="scorecard_not_exist">ScoreCard Not Exist Yet</string>
+
+
+    <!-- group related strings-->
+    <string name="exit_group">DELETE AND EXIT GROUP</string>
+    <string name="add_friends">Add Friends</string>
+    <string name="add_msg">People you add will not see previous conversations</string>
+    <string name="participant_count">%1$d OF 50</string>
 
 </resources>

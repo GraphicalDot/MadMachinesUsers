@@ -120,4 +120,21 @@
     <!--  player current match summery-->
     <dimen name="margin_divider">80dp</dimen>
 
+
+    <!--Group info related -->
+    <dimen name="group_image_top_margin">16dp</dimen>
+
+    <dimen name="group_name_margin_top">5dp</dimen>
+    <dimen name="group_name_margin_horizontal">15dp</dimen>
+    <dimen name="group_delete_margin_horizontal">25dp</dimen>
+    <dimen name="group_name_padding">10dp</dimen>
+    <dimen name="group_delete_padding">14dp</dimen>
+    <dimen name="group_delete_margin_bottom">14dp</dimen>
+    <dimen name="group_part_margin_horizontal">10dp</dimen>
+    <dimen name="group_part_margin_top">15dp</dimen>
+    <dimen name="group_info_padding">4dp</dimen>
+    <dimen name="user_image_border">1dp</dimen>
+    <dimen name="group_image_border">1dp</dimen>
+
+
 </resources>

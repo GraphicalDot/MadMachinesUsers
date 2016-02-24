@@ -97,7 +97,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         locManager = LocManager.getInstance(getApplicationContext());
         locManager.buildApiClient();
 
-        {
+       /* {
             //TODO temporary snippet, will remove it.
             if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
                 ContactsHandler.getInstance().addCallToSyncContacts(this);
@@ -106,7 +106,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                     ContactsHandler.getInstance().addCallToSyncContacts(this);
                 }
             }
-        }
+        }*/
     }
 
     public void setNavigationProfile() {

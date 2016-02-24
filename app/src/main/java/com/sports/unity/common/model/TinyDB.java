@@ -44,9 +44,6 @@ public class TinyDB {
     public static final String KEY_ALL_CONTACTS_SYNC_STATUS = "all_contacts_sync_status";
     public static final String KEY_ALL_CONTACTS_LAST_PROCESSED_TIMESTAMP = "all_contacts_last_processed_timestamp";
 
-    public static final String KEY_PROFILE_NAME = "name";
-    public static final String KEY_PROFILE_STATUS = "status";
-
     /*Preference key used to manage filters*/
     public static final String FAVOURITE_FILTERS = "favourite_filters";
     public static final String LEAGUE_SELECTION = "league_selection";

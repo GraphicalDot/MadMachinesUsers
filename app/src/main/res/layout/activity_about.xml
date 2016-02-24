@@ -48,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/horizontal_padding_very_small"
                 android:text="@string/sportsunity.club"
+                android:clickable="true"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/font_size_small_medium" />
 

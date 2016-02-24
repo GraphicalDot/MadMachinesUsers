@@ -149,7 +149,7 @@ public class CreateGroup extends CustomAppCompatActivity {
                 groupMessaging.inviteMembers(roomName, selectedMembers, "");
                 finish();
             } else {
-                Toast.makeText(this, R.string.pubsub_message_try_again, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             }
 
         } else {
