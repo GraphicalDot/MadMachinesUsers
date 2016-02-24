@@ -230,7 +230,7 @@
                         android:id="@+id/tv_series_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/horizontal_padding_small"
+                        android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
                         android:text="Ist ODI , New Zeland Vs India"
                         android:textColor="@color/score_light_grey"
                         android:textSize="@dimen/font_size_very_small" />
@@ -253,7 +253,7 @@
                     <com.sports.unity.common.view.CustomRobotoRegularTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/horizontal_padding_small"
+                        android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
                         android:text="3rd Feb"
                         android:textColor="@color/score_light_grey"
                         android:textSize="@dimen/font_size_very_small" />
@@ -275,7 +275,7 @@
                         android:id="@+id/tv_toss_win_team"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/horizontal_padding_small"
+                        android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
                         android:text="India won the toss"
                         android:textColor="@color/score_light_grey"
                         android:textSize="@dimen/font_size_very_small" />
@@ -298,7 +298,7 @@
                         android:id="@+id/tv_umpires_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/horizontal_padding_small"
+                        android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
                         android:text="Rahul"
                         android:textColor="@color/score_light_grey"
                         android:textSize="@dimen/font_size_very_small" />
@@ -321,7 +321,7 @@
                         android:id="@+id/tv_match_referee"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/horizontal_padding_small"
+                        android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
                         android:text="Board , BCC"
                         android:textColor="@color/score_light_grey"
                         android:textSize="@dimen/font_size_very_small" />
