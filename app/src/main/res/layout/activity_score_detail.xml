@@ -214,11 +214,6 @@
             android:background="@color/cardview_light_background"
             />
 
-        <include
-            android:id="@+id/error"
-            layout="@layout/error_layout"
-            android:background="@color/app_theme_blue"
-            android:elevation="@dimen/toolbar_elevation" />
 
         <View
             android:layout_width="fill_parent"
@@ -235,6 +230,11 @@
    </LinearLayout>
 
 
+    <include
+        android:id="@+id/error"
+        layout="@layout/error_layout"
+        android:background="@color/app_theme_blue"
+        android:elevation="@dimen/toolbar_elevation" />
 
 
 </LinearLayout>

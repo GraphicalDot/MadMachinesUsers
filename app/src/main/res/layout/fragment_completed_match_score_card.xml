@@ -145,6 +145,7 @@
                     android:id="@+id/rv_team_first_batting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    
                     tools:listitem="@layout/fragment_live_cricket_batting_card" />
 
                 <android.support.percent.PercentRelativeLayout
@@ -161,6 +162,7 @@
                         android:id="@+id/tv_extra_run_team_first"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+           
                         android:gravity="left"
                         android:text="1-51"
                         android:textColor="@color/score_light_grey"
@@ -235,10 +237,12 @@
                     android:paddingLeft="@dimen/horizontal_padding_small"
                     android:paddingRight="@dimen/horizontal_padding_medium"
                     android:paddingTop="@dimen/horizontal_padding_small">
+
                     <android.support.percent.PercentRelativeLayout
                         android:id="@+id/ll_layout_bowling"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
+
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/ll_bowling"
                             android:layout_width="0dp"
@@ -327,11 +331,16 @@
                         android:text="@string/fall_of_wicket"
                         android:textSize="@dimen/font_size_small_large" />
                 </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray4"></View>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_team_first_fall_wickets"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
+                   
                     tools:listitem="@layout/fragment_live_cricket_fall_of_wickets_card"
                     />
             </LinearLayout>
@@ -355,7 +364,7 @@
                     <ImageView
                         android:id="@+id/iv_down_second"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+   android:layout_weight="1"                     android:layout_height="wrap_content"
                         android:layout_alignParentRight="true"
                         android:layout_marginRight="@dimen/activity_vertical_margin"
                         android:src="@drawable/ic_droable"/>
@@ -463,7 +472,7 @@
                     android:id="@+id/rv_team_second_batting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
+                   
                     tools:listitem="@layout/fragment_live_cricket_batting_card" />
 
                 <android.support.percent.PercentRelativeLayout
@@ -480,6 +489,7 @@
                         android:id="@+id/tv_extra_run_team_second"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        
                         android:gravity="left"
                         android:text="1-51"
                         android:textColor="@color/score_light_grey"
@@ -625,7 +635,7 @@
                     android:id="@+id/rv_team_second_bowling"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
+                   
                     tools:listitem="@layout/fragment_live_cricket_bowling_card" />
             </LinearLayout>
             <LinearLayout
@@ -650,15 +660,20 @@
                         android:text="@string/fall_of_wicket"
                         android:textSize="@dimen/font_size_small_large" />
                 </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray4"></View>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_second_team_fall_wicket"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
+                    
                     tools:listitem="@layout/fragment_live_cricket_fall_of_wickets_card"
                     />
             </LinearLayout>
-
+            
         </LinearLayout>
 
     </ScrollView>

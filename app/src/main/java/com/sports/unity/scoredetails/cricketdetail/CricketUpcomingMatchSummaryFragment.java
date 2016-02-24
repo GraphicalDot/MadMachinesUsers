@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,7 +31,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        String matchId =  getActivity().getIntent().getStringExtra("matchId");
+        String matchId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
         CricketUpcomingMatchSummaryHandler cricketUpcomingMatchSummaryHandler = CricketUpcomingMatchSummaryHandler.getInstance(context);
         cricketUpcomingMatchSummaryHandler.addListener(this);
         cricketUpcomingMatchSummaryHandler.requestCricketUpcommingMatchSummary(matchId);

@@ -154,7 +154,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 cricketScoreDetailAdapter = new ViewPagerCricketScoreDetailAdapter(getSupportFragmentManager(), cricketMatchtitles, numberOfCricketTabs, commentaries, matchStatus);
                 mViewPager.setAdapter(cricketScoreDetailAdapter);
             } else {
-                   if(matchStatus.equals(""))
+                   /*if(matchStatus.equals(""))*/
                 footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitles, numberOfFootballTabs, commentaries,matchStatus);
                 mViewPager.setAdapter(footballScoreDetailAdapter);
 //>>>>>>> team2_dev_branch
