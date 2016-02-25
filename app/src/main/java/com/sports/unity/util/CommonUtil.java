@@ -53,23 +53,23 @@ import java.util.TimeZone;
  */
 public class CommonUtil {
 
-    public static String getUserSimNumber(Context context) {
-        String phoneNumber = null;
-
-        TelephonyManager telephonyManager;
-        telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        if (telephonyManager.getSimState() == TelephonyManager.SIM_STATE_ABSENT) {
-            Log.i("Common", "Phone number not found through sim api");
-        } else {
-            phoneNumber = telephonyManager.getLine1Number();
-            if (phoneNumber != null && phoneNumber.length() > 10) {
-                phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
-            } else {
-                //nothing
-            }
-        }
-        return phoneNumber;
-    }
+//    public static String getUserSimNumber(Context context) {
+//        String phoneNumber = null;
+//
+//        TelephonyManager telephonyManager;
+//        telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+//        if (telephonyManager.getSimState() == TelephonyManager.SIM_STATE_ABSENT) {
+//            Log.i("Common", "Phone number not found through sim api");
+//        } else {
+//            phoneNumber = telephonyManager.getLine1Number();
+//            if (phoneNumber != null && phoneNumber.length() > 10) {
+//                phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
+//            } else {
+//                //nothing
+//            }
+//        }
+//        return phoneNumber;
+//    }
 
     public static String capitalize(String str) {
         int strLen;

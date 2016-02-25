@@ -102,12 +102,10 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
 
         final EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
         if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-
             setUserPhoneNumber(phoneNumberEditText, continueButton);
         } else {
-            if (PermissionUtil.getInstance().requestPermission(EnterPhoneActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.READ_PHONE_STATE,Manifest.permission.RECEIVE_SMS)), getResources().getString(R.string.read_phone_permission_message), Constants.REQUEST_CODE_PHONE_STATE_PERMISSION)) {
-
-                setUserPhoneNumber(phoneNumberEditText, continueButton);
+            if (PermissionUtil.getInstance().requestPermission(EnterPhoneActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.RECEIVE_SMS)), getResources().getString(R.string.read_sms_permission_message), Constants.REQUEST_CODE_PHONE_STATE_PERMISSION)) {
+//                setUserPhoneNumber(phoneNumberEditText, continueButton);
             }
         }
 
@@ -158,13 +156,13 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
         if (phone_Number != null) {
             phoneNumberEditText.setText(phone_Number);
         } else {
-            String phoneNumber = CommonUtil.getUserSimNumber(this);
-
-            if (phoneNumber == null) {
-                Toast.makeText(getApplicationContext(), R.string.sim_not_found, Toast.LENGTH_SHORT).show();
-            } else {
-                phoneNumberEditText.setText(phoneNumber);
-            }
+//            String phoneNumber = CommonUtil.getUserSimNumber(this);
+//
+//            if (phoneNumber == null) {
+//                Toast.makeText(getApplicationContext(), R.string.sim_not_found, Toast.LENGTH_SHORT).show();
+//            } else {
+//                phoneNumberEditText.setText(phoneNumber);
+//            }
         }
 
     }

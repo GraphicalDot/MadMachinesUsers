@@ -747,7 +747,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 searchedMessagesSubQuery.append(MessagesEntry.COLUMN_RECEIVE_TIMESTAMP );
 
                 searchedMessagesSubQuery.append(" FROM " + MessagesEntry.TABLE_NAME);
-                searchedMessagesSubQuery.append(" WHERE " + MessagesEntry.COLUMN_DATA_TEXT + " LIKE '%" + searchKeyword + "%' ) ");
+                searchedMessagesSubQuery.append(" WHERE " + MessagesEntry.COLUMN_MIME_TYPE + " = '" + MIME_TYPE_TEXT +  "' AND " + MessagesEntry.COLUMN_DATA_TEXT + " LIKE '%" + searchKeyword + "%' ) ");
             }
 
             StringBuilder subQuery = new StringBuilder("");
