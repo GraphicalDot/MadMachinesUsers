@@ -1,103 +1,113 @@
-<android.support.v4.widget.SwipeRefreshLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/sv_swipe_football_match_table">
+    android:id="@+id/sv_swipe_football_match_table"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="vertical"
-            android:layout_height="wrap_content">
-        <LinearLayout
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <android.support.percent.PercentRelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/gray3"
-            android:layout_marginTop="@dimen/horizontal_padding_very_very_small"
-            android:paddingRight="@dimen/vertical_padding_very_very_small"
-            android:weightSum="8">
-            <TextView
+                android:paddingBottom="@dimen/horizontal_padding_small"
+                android:paddingLeft="@dimen/horizontal_padding_small"
+                android:paddingRight="@dimen/horizontal_padding_medium"
+                android:paddingTop="@dimen/horizontal_padding_small">
+
+                <LinearLayout
+                    android:id="@+id/ll_team_summery"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layout_widthPercent="40%">
+
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_fteam_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="@dimen/font_size_small_large"
-                android:layout_weight="1.5"
-                android:layout_marginTop="@dimen/horizontal_padding_small"
-                android:gravity="right"
                 android:text="@string/teams"
+                        android:textSize="@dimen/font_size_small_large"
                 />
-            <TextView
+
+                    <com.sports.unity.common.view.CustomRobotoRegularTextView
                 android:id="@+id/tv_match_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="left"
-                android:layout_marginTop="@dimen/horizontal_padding_small"
-                android:textSize="@dimen/font_size_small_large"
-                android:layout_weight="1.5"
                 android:text="@string/match_date"
+                        android:textSize="@dimen/font_size_small_large"
                 />
-            <TextView
+                </LinearLayout>
+
+                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_p"
-                android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginTop="@dimen/horizontal_padding_small"
+                    android:layout_toRightOf="@id/ll_team_summery"
+                    android:gravity="right"
+                    android:text="@string/p"
                 android:textSize="@dimen/font_size_small_large"
-                android:layout_weight="1"
-                android:text="@string/p"
+                    app:layout_widthPercent="10%"
                 />
-            <TextView
+
+                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_w"
-                android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginTop="@dimen/horizontal_padding_small"
+                    android:layout_toRightOf="@id/tv_p"
+                    android:gravity="right"
+                    android:text="@string/w"
                 android:textSize="@dimen/font_size_small_large"
-                android:layout_weight="1"
-                android:text="@string/w"
+                    app:layout_widthPercent="10%"
                 />
-            <TextView
+
+                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_d"
-                android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginTop="@dimen/horizontal_padding_small"
+                    android:layout_toRightOf="@id/tv_w"
+                    android:gravity="right"
+                    android:text="@string/d"
                 android:textSize="@dimen/font_size_small_large"
-                android:layout_weight="1"
-                android:text="@string/d"
+                    app:layout_widthPercent="10%"
                 />
-            <TextView
+
+                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_l"
-                android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginTop="@dimen/horizontal_padding_small"
+                    android:layout_toRightOf="@id/tv_d"
+                    android:gravity="right"
+                    android:text="@string/l"
                 android:textSize="@dimen/font_size_small_large"
-                android:layout_weight="1"
-                android:text="@string/l"
+                    app:layout_widthPercent="10%"
                 />
-            <TextView
+
+                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_pts"
-                android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:layout_marginTop="@dimen/horizontal_padding_small"
+                    android:layout_toRightOf="@id/tv_l"
+                    android:gravity="right"
+                    android:text="@string/pts"
                 android:textSize="@dimen/font_size_small_large"
-                android:layout_weight="1"
-                android:text="@string/pts"
+                    app:layout_widthPercent="12%"
                 />
-        </LinearLayout>
+            </android.support.percent.PercentRelativeLayout>
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_football_match_table"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scrollbars="vertical"
                 android:background="@color/gray3"
-                tools:listitem="@layout/upcoming_football_match_table_card"
+                android:scrollbars="vertical"
                 app:layoutManager="com.sports.unity.common.view.CustomLinearLayoutManager"
+                tools:listitem="@layout/upcoming_football_match_table_card"
                 />
         <ProgressBar
             android:id="@+id/progress"
@@ -105,19 +115,21 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             />
-        <include layout="@layout/error_layout"
-            android:id="@+id/error"
+
+            <include
+                android:id="@+id/error"
+                layout="@layout/error_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
             android:visibility="gone"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
             />
         <TextView
             android:id="@+id/no_comments"
-            android:text="No Comments"
-            android:textSize="@dimen/font_size_large"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:text="No Comments"
+            android:textSize="@dimen/font_size_large"
             android:visibility="gone"
             />
         </LinearLayout>
