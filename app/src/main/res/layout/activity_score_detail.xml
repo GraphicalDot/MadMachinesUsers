@@ -206,7 +206,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="56 Needed of 21 Ball/Trail by 231 Run"
+            android:text=""
             android:textSize="@dimen/font_size_small_large"/>
 
         <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
@@ -214,7 +214,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="Run Rate 5.00 / Required Run Rate 7.00"
+            android:text=""
             android:textColor="@color/gray1"
             android:textSize="@dimen/font_size_small_medium"/>
     </LinearLayout>
