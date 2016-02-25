@@ -83,7 +83,7 @@
                             android:id="@+id/ll_score"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            app:layout_widthPercent="40%">
+                            app:layout_widthPercent="35%">
 
                             <com.sports.unity.common.view.CustomRobotoRegularTextView
                                 android:id="@+id/tv_team_first_name"
@@ -99,6 +99,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="left"
                                 android:text="(50)"
+                                android:textColor="@color/gray1"
                                 android:textSize="@dimen/font_size_small_large" />
                         </LinearLayout>
 
@@ -149,7 +150,7 @@
                             android:gravity="right"
                             android:text="@string/sr"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="17%" />
 
                     </android.support.percent.PercentRelativeLayout>
                 </FrameLayout>
@@ -428,6 +429,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="left"
                                 android:text="(50)"
+                                android:textColor="@color/gray1"
                                 android:textSize="@dimen/font_size_small_large" />
                         </LinearLayout>
 

@@ -97,7 +97,7 @@
                     android:gravity="right"
                     android:text="@string/pts"
                 android:textSize="@dimen/font_size_small_large"
-                    app:layout_widthPercent="12%"
+                    app:layout_widthPercent="10%"
                 />
             </android.support.percent.PercentRelativeLayout>
             <android.support.v7.widget.RecyclerView
