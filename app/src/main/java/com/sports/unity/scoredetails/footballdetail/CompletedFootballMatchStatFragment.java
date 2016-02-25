@@ -57,9 +57,9 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_cricket_upcoming_match_summery, container, false);
+        View view = inflater.inflate(R.layout.fragment_completed_football_match_stats, container, false);
         initView(view);
-        showProgressBar();
+
         return view;
     }
     private void initView(View view) {
@@ -77,7 +77,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
     @Override
     public void handleContent(String object) {
         {
-            hideProgressBar();
+            showProgressBar();
 
             try {
                 JSONObject jsonObject = new JSONObject(object);
@@ -114,8 +114,9 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-        hideProgressBar();
+
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
+        hideProgressBar();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override

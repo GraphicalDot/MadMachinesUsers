@@ -243,7 +243,7 @@
                     android:padding="@dimen/horizontal_padding_small">
 
                     <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                        android:id="@+id/tv_match_date"
+
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
@@ -251,6 +251,7 @@
                         android:textSize="@dimen/font_size_small_medium" />
 
                     <com.sports.unity.common.view.CustomRobotoRegularTextView
+                        android:id="@+id/tv_match_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"

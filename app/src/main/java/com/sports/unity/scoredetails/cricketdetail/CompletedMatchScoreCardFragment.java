@@ -156,10 +156,12 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                     firstBattingLinearLayout.setVisibility(View.VISIBLE);
                     firstBowlingLinearLayout.setVisibility(View.VISIBLE);
                     firstFallofWicketsLinearLayout.setVisibility(View.VISIBLE);
+                     ivDwn.setImageResource(R.drawable.ic_droable);
                 } else {
                     firstBattingLinearLayout.setVisibility(View.GONE);
                     firstBowlingLinearLayout.setVisibility(View.GONE);
                     firstFallofWicketsLinearLayout.setVisibility(View.GONE);
+                    ivDwn.setImageResource(R.drawable.ic_dropdown);
                 }
             }
         });
@@ -170,10 +172,12 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                     secondBattingLinearLayout.setVisibility(View.VISIBLE);
                     secondBowlingLinearLayout.setVisibility(View.VISIBLE);
                     secondFallofWicketsLinearLayout.setVisibility(View.VISIBLE);
+                    ivDwnSecond.setImageResource(R.drawable.ic_droable);
                 } else {
                     secondBattingLinearLayout.setVisibility(View.GONE);
                     secondBowlingLinearLayout.setVisibility(View.GONE);
                     secondFallofWicketsLinearLayout.setVisibility(View.GONE);
+                    ivDwnSecond.setImageResource(R.drawable.ic_dropdown);
                 }
             }
         });
@@ -269,8 +273,8 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                         tvTotalRunSecondTeam.setText(teamBFirstInning.getString("team_runs"));
                         tvRunRateFirstTeam.setText(teamAFirstInning.getString("team_run_rate"));
                         tvRunRateSecondTeam.setText(teamBFirstInning.getString("team_run_rate"));
-                        tvTeamFirstNameAndScore.setText(dataObject.getString("team_a")+" "+teamAFirstInning.getString("team_runs")+"/"+teamAFirstInning.getString("team_wickets"));
-                        tvTeamSecondNameAndScore.setText(dataObject.getString("team_b")+" "+teamBFirstInning.getString("team_runs")+"/"+teamBFirstInning.getString("team_wickets"));
+                        tvTeamFirstNameAndScore.setText(dataObject.getString("team_a").substring(0,2).toUpperCase()+" "+teamAFirstInning.getString("team_runs")+"/"+teamAFirstInning.getString("team_wickets"));
+                        tvTeamSecondNameAndScore.setText(dataObject.getString("team_b").substring(0,2).toUpperCase()+" "+teamBFirstInning.getString("team_runs")+"/"+teamBFirstInning.getString("team_wickets"));
                         for (int i= 0 ; i<teamABattingArray.length();i++){
                             JSONObject battingObject = teamABattingArray.getJSONObject(i);
                             LiveAndCompletedCricketBattingCardDTO liveAndCompletedCricketBattingCardDTO= new LiveAndCompletedCricketBattingCardDTO();

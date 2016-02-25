@@ -163,7 +163,7 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
                            Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivPlayerProfileView);
                            Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivCountryImage);
                        }
-                         playerName.setText(matchObject.getString("man_of_match"));
+                        playerName.setText(matchObject.getString("man_of_match"));
                         if(!battingObject.isNull("runs"))
                         tvPlayerRun.setText(battingObject.getString("runs"));
                         if(!battingObject.isNull("balls"))
@@ -173,6 +173,8 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
                         tvMatchDate.setText(date);
                         tvTossWinTeam.setText(toss);
                         tvSeriesName.setText(matchName);
+                        tvUmpiresName.setText("N/A");
+                        tvUmpiresName.setText("N/A");
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());

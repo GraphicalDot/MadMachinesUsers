@@ -18,6 +18,7 @@ import com.sports.unity.R;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.Constants;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -57,7 +58,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_cricket_upcoming_match_summery, container, false);
         initView(view);
-        showProgressBar();
+
         return view;
     }
     private void initView(View view) {
@@ -69,7 +70,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
         initErrorLayout(view);
 
     }
-private void  showProgressBar(){
+    private void  showProgressBar(){
     progressBar.setVisibility(View.VISIBLE);
 }
     private void  hideProgressBar(){
@@ -78,7 +79,7 @@ private void  showProgressBar(){
     @Override
     public void handleContent(JSONObject object) {
         {
-            hideProgressBar();
+            showProgressBar();
             try {
 
                 boolean success = object.getBoolean("success");
@@ -113,19 +114,33 @@ private void  showProgressBar(){
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-         hideProgressBar();
+
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
+        hideProgressBar();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        JSONObject data = jsonObject.getJSONObject("data");
+                        JSONArray dataArray = jsonObject.getJSONArray("data");
                         Log.i("run: ", jsonObject.toString());
-                        tvMatchName.setText(data.getString(matchName));
-                        tvMatchDate.setText(data.getString(date));
-                        tvMatchToss.setText(data.getString(toss));
-                    } catch (Exception ex) {
+                        if(matchName != null && !matchName.equalsIgnoreCase("")){
+                            tvMatchName.setText(matchName);
+                        } else {
+                            tvMatchName.setText("Information is not Available");
+                        }
+                        if(date != null&& !date.equalsIgnoreCase("")){
+                            tvMatchDate.setText(date);
+                        }
+                        else {
+                            tvMatchName.setText("Information is not Available");
+                        }
+                        if(toss != null && !toss.equalsIgnoreCase("")){
+                            tvMatchToss.setText(toss);
+                        }else {
+                            tvMatchToss.setText("Information is not Available");
+                        }
+                   } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());
                     }

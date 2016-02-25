@@ -154,18 +154,23 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 //        back_arrow.setOnClickListener(new View.OnClickListener() {
 //=======
             // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
+            int tab_index = 0;
             if (sportsType.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
                 cricketScoreDetailAdapter = new ViewPagerCricketScoreDetailAdapter(getSupportFragmentManager(), cricketMatchtitles, numberOfCricketTabs, commentaries, matchStatus);
                 mViewPager.setAdapter(cricketScoreDetailAdapter);
+                tab_index = getIntent().getIntExtra("tab_index", 1);
             } else {
                 if(matchStatus.equals(matchTime) && !isLive){
                     footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitlesupcommingTitles, footballMatchtitlesupcommingTitles.length, commentaries,matchStatus,matchTime,isLive);
                     mViewPager.setAdapter(footballScoreDetailAdapter);
+                    tab_index = getIntent().getIntExtra("tab_index", 0);
                 } else {
                     footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitles, numberOfFootballTabs, commentaries,matchStatus,matchTime,isLive);
                     mViewPager.setAdapter(footballScoreDetailAdapter);
+                    tab_index = getIntent().getIntExtra("tab_index", 1);
 
                 }
+
   //>>>>>>> team2_dev_branch
 
             }
@@ -184,7 +189,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             tabs.setViewPager(mViewPager);
 
             //set news pager as default
-            int tab_index = getIntent().getIntExtra("tab_index", 1);
+
             mViewPager.setCurrentItem(tab_index);
             ImageView img = (ImageView) findViewById(R.id.back_img);
             img.setOnClickListener(new View.OnClickListener() {
