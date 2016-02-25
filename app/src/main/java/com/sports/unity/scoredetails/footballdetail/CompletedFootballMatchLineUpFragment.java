@@ -80,9 +80,8 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
 
             try {
                 JSONObject jsonObject = new JSONObject(object);
-                JSONObject data = jsonObject.getJSONObject("data");
-                boolean success = data.getBoolean("success");
-                boolean error = data.getBoolean("error");
+                boolean success = jsonObject.getBoolean("success");
+                boolean error = jsonObject.getBoolean("error");
 
                 if( success ) {
 
@@ -121,7 +120,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                 @Override
                 public void run() {
                     try {
-
+                        Log.i("run: ",jsonObject.toString());
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());

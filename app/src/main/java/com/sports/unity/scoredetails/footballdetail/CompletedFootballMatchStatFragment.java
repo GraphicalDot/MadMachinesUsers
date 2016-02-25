@@ -47,7 +47,6 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
         Intent i = getActivity().getIntent();
         String matchId =  i.getStringExtra(INTENT_KEY_ID);
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
-        toss = i.getStringExtra(INTENT_KEY_TOSS);
         date = i.getStringExtra(INTENT_KEY_DATE);
         CompletedFootballMatchStatHandler cricketUpcomingMatchSummaryHandler = CompletedFootballMatchStatHandler.getInstance(context);
         cricketUpcomingMatchSummaryHandler.addListener(this);
@@ -81,9 +80,8 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
 
             try {
                 JSONObject jsonObject = new JSONObject(object);
-                JSONObject data = jsonObject.getJSONObject("data");
-                boolean success = data.getBoolean("success");
-                boolean error = data.getBoolean("error");
+                boolean success = jsonObject.getBoolean("success");
+                boolean error = jsonObject.getBoolean("error");
 
                 if( success ) {
 
