@@ -39,8 +39,8 @@ public class FileOnCloudHandler {
     public static final int STATUS_UPLOAD_FAILED = 7;
 
 
-    private static final String CONTENT_CLOUD_URL = "http://" + XMPPClient.SERVER_HOST + "/media?";
-    private static final String CONTENT_PRESENT_URL = "http://" + XMPPClient.SERVER_HOST + "/media_present?";
+    private static final String CONTENT_CLOUD_URL = "http://54.169.217.88/media?";
+    private static final String CONTENT_PRESENT_URL = "http://54.169.217.88/media_present?";
 
     private static FileOnCloudHandler FILE_ON_CLOUD_HANDLER = null;
 
@@ -215,8 +215,8 @@ public class FileOnCloudHandler {
 
         String checksum = uploadContent((String) request.getFileName());
         if (checksum != null) {
-            String thumbnailImage = PersonalMessaging.getInstance(context).createThumbnailImageAsBase64(context, request.mimeType, request.fileName);
-            PersonalMessaging.getInstance(context).sendMediaMessage(checksum, thumbnailImage, (Chat) request.extra, request.messageId, request.mimeType, nearByChat);
+//            String thumbnailImage = PersonalMessaging.getInstance(context).createThumbnailImageAsBase64(context, request.mimeType, request.fileName);
+            PersonalMessaging.getInstance(context).sendMediaMessage(checksum, request.thumbnailImage, (Chat) request.extra, request.messageId, request.mimeType, nearByChat);
 
             ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY);
 

@@ -1,7 +1,10 @@
 package com.sports.unity.common.model;
 
 import android.content.Context;
+import android.net.Uri;
+import android.util.Log;
 
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
@@ -262,12 +265,21 @@ public class FavouriteItemWrapper {
      *
      * @return ArrayList of Favourite leagues.
      */
-    public ArrayList<FavouriteItem> getAllSports() {
+    public ArrayList<FavouriteItem> getAllSports(Context context) {
         ArrayList<String> sportsSelected = UserUtil.getSportsSelected();
         ArrayList<FavouriteItem> savedSports = new ArrayList<FavouriteItem>();
         for (String s : sportsSelected) {
             FavouriteItem f = new FavouriteItem();
-            f.setName(s.substring(0, 1).toUpperCase() + s.substring(1));
+            String sportsName= CommonUtil.capitalize(s);
+            f.setName(sportsName);
+            Log.d("max","sports--"+sportsName);
+           /* if(sportsName.toLowerCase().contains(Constants.GAME_KEY_CRICKET.toLowerCase())){
+                Uri uri = Uri.parse("android.resource://"+context.getPackageName()+"/drawable/ic_cricket");
+                f.setFlagImageUrl(uri.toString());
+            }else if(sportsName.toLowerCase().contains(Constants.GAME_KEY_FOOTBALL.toLowerCase())){
+                Uri uri = Uri.parse("android.resource://"+context.getPackageName()+"/drawable/ic_football");
+                f.setFlagImageUrl(uri.toString());
+            }*/
             savedSports.add(f);
         }
         Collections.sort(savedSports);

@@ -32,8 +32,7 @@ public class ContactsObserver extends ContentObserver {
         return CONTACTS_OBSERVER;
     }
 
-    private Context context;
-    private boolean contactSyncInProgress = false;
+    private Context context = null;
 
     private ContactsObserver(Handler handler, Context context) {
         super(handler);
@@ -42,56 +41,14 @@ public class ContactsObserver extends ContentObserver {
 
     @Override
     public void onChange(boolean selfChange) {
-
         super.onChange(selfChange);
-        if (contactSyncInProgress == false) {
-            contactSyncInProgress = true;
-            if(!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-                SyncContactThread syncContactThread = new SyncContactThread();
-                syncContactThread.start();
-            }else if(PermissionUtil.getInstance().isPermissionGranted(context, Manifest.permission.READ_CONTACTS)) {
-                SyncContactThread syncContactThread = new SyncContactThread();
-                syncContactThread.start();
-            }else{
-                contactSyncInProgress=false;
-                //nothing
+
+        if( context != null ) {
+            if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+                ContactsHandler.getInstance().addCallToSyncLatestContacts(context, true);
+            } else if (PermissionUtil.getInstance().isPermissionGranted(context, Manifest.permission.READ_CONTACTS)) {
+                ContactsHandler.getInstance().addCallToSyncLatestContacts(context, true);
             }
-        }
-    }
-
-    class SyncContactThread extends Thread {
-
-        @Override
-        public void run() {
-            Log.i("Contact Sync:", "Started");
-
-            ContactsHandler contactsHandler = ContactsHandler.getInstance();
-//            contactsHandler.addContactsToApplicationDB(ContactsObserver.this.context);
-
-//            ArrayList<String> spuContacts = SportsUnityDBHelper.getInstance(context).getAllContactsNumbersOnly();
-            HashMap<String, String> androidContacts = contactsHandler.readLatestUpdatedContactsFromSystem(ContactsObserver.this.context);
-
-            contactsHandler.matchAndUpdate(androidContacts, context);
-
-            try {
-                ArrayList<String> contactNumberList = new ArrayList<>();
-                Iterator<String> iterator = androidContacts.keySet().iterator();
-
-                String phoneNumber = null;
-                while (iterator.hasNext()) {
-                    phoneNumber = iterator.next();
-                    contactNumberList.add(phoneNumber);
-                }
-
-                contactsHandler.syncContacts(context, contactNumberList);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-            SportsUnityDBHelper.getInstance(context).getContactList_AvailableOnly(true);
-
-            contactSyncInProgress = false;
-            Log.i("Contact Sync:", "Ended");
         }
 
     }

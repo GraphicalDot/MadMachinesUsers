@@ -48,6 +48,7 @@
                 android:layout_height="wrap_content"
                 android:padding="@dimen/horizontal_padding_very_small"
                 android:text="@string/sportsunity.club"
+                android:clickable="true"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/font_size_small_medium" />
 
@@ -59,7 +60,7 @@
                 android:background="@android:color/transparent"
                 >
 
-                <TextView
+                <com.sports.unity.common.view.CustomRobotoSlabBold
                     android:id="@+id/terms"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

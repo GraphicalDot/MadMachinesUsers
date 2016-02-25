@@ -35,7 +35,6 @@ public class ScoresContentHandler {
     public static final String CALL_NAME_MATCH_DETAIL = "MATCH_DETAILS";
     public static final String CALL_NAME_MATCH_COMMENTARIES = "MATCH_COMMENTARIES";
     public static final String CALL_NAME_NEAR_BY_USERS = "NEAR_BY_USERS";
-    public static final String CALL_NAME_GET_CONTACT_JIDS = "GET_CONTACT_JIDS";
     public static final String CALL_NAME_PLAYER_PROFILE = "PLAYER_PROFILE";
     public static final String CALL_NAME_MATCH_TIMELINE = "MATCH_TIMELINE";
     public static final String CALL_NAME_MATCH_LINEUP = "MATCH_LINEUP";
@@ -55,16 +54,10 @@ public class ScoresContentHandler {
     public static final String URL_REGISTER = "http://" + XMPPClient.SERVER_HOST + "/register?";
     private static final String URL_REQUEST_OTP = "http://" + XMPPClient.SERVER_HOST + "/create?";
     private static final String URL_NEAR_BY = "http://" + XMPPClient.SERVER_HOST + "/retrieve_nearby_users?";
-    private static final String URL_REQUEST_CONTACT_JIDS = "http://" + XMPPClient.SERVER_HOST + "/get_contact_jids";
 
     public static final String URL_NEWS = "http://52.76.74.188:8000/mixed?";
     private static final String URL_PARAMS_NEWS_IMAGE_DPI = "image_size";
     private static final String URL_PARAMS_NEWS_ID = "news_id";
-//    private static final String URL_CREATE = "http://54.169.217.88/create?";
-//    public static final String URL_REGISTER = "http://54.169.217.88/register?";
-//    /*   private static final String URL_REQUEST_OTP = "http://54.169.217.88/create?";*/
-//    private static final String URL_NEAR_BY = "http://54.169.217.88/retrieve_nearby_users?";
-//>>>>>>> team2_dev_branch
 
     private static final String SCORES_BASE_URL = "http://52.74.75.79:8080/";
     private static final String URL_PARAMS_FOR_LIST_OF_MATCHES = "get_all_matches_list";
@@ -199,16 +192,7 @@ public class ScoresContentHandler {
     }
 
     public void requestCall(String callName, Object requestContent, String requestListenerKey, String requestTag, Context context) {
-        if (callName.equals(CALL_NAME_GET_CONTACT_JIDS)) {
-            String username = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
-            String password = TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD);
-            String apk_version = CommonUtil.getBuildConfig();
-            String udid = CommonUtil.getDeviceId(context);
 
-            requestContactJIDs( username, password, apk_version, udid, (ArrayList) requestContent, requestListenerKey, requestTag);
-        } else {
-            //nothing
-        }
     }
 
     public boolean isRequestInProcess(String requestTag) {
@@ -341,17 +325,6 @@ public class ScoresContentHandler {
     }
 //<<<<<<< HEAD
 
-    private void requestContactJIDs( String username, String password, String apkVersion, String udid, ArrayList<String> contacts, String listenerKey, String requestTag ){
-        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
-            String url = URL_REQUEST_CONTACT_JIDS;
-            String requestContent = getRequestJsonContentForGetContactList(username, password, apkVersion, udid, contacts);
-
-            requestContent(requestTag, listenerKey, url, requestContent);
-        } else {
-            //nothin
-        }
-    }
-
     private void requestContent(String requestTag, String listenerKey, String url) {
         if (url != null) {
             Log.i("Request Content", url);
@@ -401,24 +374,6 @@ public class ScoresContentHandler {
             String url = generateURL(URL_PARAMS_FOR_STAT + matchId);
             requestContent(requestTag, listenerKey, url);
         }
-    }
-
-    private String getRequestJsonContentForGetContactList(String username, String password, String apkVersion, String udid, ArrayList<String> contacts){
-        JSONObject jsonObject = new JSONObject();
-
-        try{
-            JSONArray jsonArray = new JSONArray();
-
-            jsonObject.put("username", username);
-            jsonObject.put("password", password);
-            jsonObject.put("apk_version", apkVersion);
-            jsonObject.put("udid", udid);
-            jsonObject.put("contacts", jsonArray);
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
-
-        return jsonObject.toString();
     }
 
     private String generateURL(String parameters) {

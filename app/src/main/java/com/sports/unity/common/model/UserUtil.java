@@ -1,10 +1,12 @@
 package com.sports.unity.common.model;
 
 import android.content.Context;
+import android.media.RingtoneManager;
 import android.provider.Settings;
 import android.util.Log;
 
 import com.sports.unity.common.controller.SettingsActivity;
+import com.sports.unity.util.CommonUtil;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ public class UserUtil {
     private static boolean USER_REGISTERED = false;
     private static boolean OTP_SENT = false;
     private static boolean PROFILE_CREATED = false;
+    private static String COUNTRY_CODE = "";
 
     private static ArrayList<String> SPORTS_SELECTED = null;
     private static boolean leagueSelected;
@@ -45,8 +48,8 @@ public class UserUtil {
     private static boolean CONVERSATION_VIBRATE = true;
     private static boolean NOTIFICATION_LIGHT = true;
 
-    private static String NOTIFICATION_SOUND_TITLE = "Default";
-    private static String NOTIFICATION_SOUND_URI = Settings.System.NOTIFICATION_SOUND;
+    private static String NOTIFICATION_SOUND_TITLE = null;
+    private static String NOTIFICATION_SOUND_URI = null;
 
     private static boolean SHOW_MY_LOCATION = true;
     private static boolean SHOW_TO_FRIENDS_LOCATION = true;
@@ -65,7 +68,7 @@ public class UserUtil {
     public static void init(Context context) {
         TinyDB tinyDB = TinyDB.getInstance(context);
 
-        loadBasicPreferences(tinyDB);
+        loadBasicPreferences(tinyDB, context);
         loadFavoritePreferences(tinyDB);
         loadSettingPreferences(tinyDB);
     }
@@ -392,10 +395,26 @@ public class UserUtil {
         tinyDB.putBoolean(TinyDB.READ_RECEIPTS, readReceipts);
     }
 
-    private static void loadBasicPreferences(TinyDB tinyDB){
+    public static String getCountryCode() {
+        return COUNTRY_CODE;
+    }
+
+    public static void setCountryCode(Context context, String countryCode) {
+        COUNTRY_CODE = countryCode;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putString(TinyDB.KEY_COUNTRY_CODE, countryCode);
+    }
+
+    private static void loadBasicPreferences(TinyDB tinyDB, Context context){
         USER_REGISTERED = tinyDB.getBoolean(TinyDB.KEY_REGISTERED, false);
         PROFILE_CREATED = tinyDB.getBoolean(TinyDB.KEY_PROFILE_CREATED, false);
         OTP_SENT = tinyDB.getBoolean(TinyDB.KEY_OTP_SENT, false);
+        COUNTRY_CODE = tinyDB.getString(TinyDB.KEY_COUNTRY_CODE);
+
+        if( COUNTRY_CODE.isEmpty() ){
+            COUNTRY_CODE = CommonUtil.getDefaultCountyCode(context);
+        }
     }
 
     private static void loadFavoritePreferences(TinyDB tinyDB){
@@ -419,6 +438,10 @@ public class UserUtil {
 
         NOTIFICATION_SOUND_TITLE = tinyDB.getString(TinyDB.NOTIFICATION_SOUND_TITLE);
         NOTIFICATION_SOUND_URI = tinyDB.getString(TinyDB.NOTIFICATION_SOUND_URI);
+        if(NOTIFICATION_SOUND_URI.isEmpty()){
+            NOTIFICATION_SOUND_URI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString();
+            NOTIFICATION_SOUND_TITLE = "Default";
+        }
 
         SHOW_MY_LOCATION = tinyDB.getBoolean(TinyDB.LOCATION_OPTIONS, SHOW_MY_LOCATION);
         SHOW_TO_FRIENDS_LOCATION = tinyDB.getBoolean(TinyDB.FRIENDS_ONLY, SHOW_TO_FRIENDS_LOCATION);

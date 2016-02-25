@@ -125,12 +125,12 @@ public class ChatScreenAdapter extends BaseAdapter {
         } else {
 
             for (int position = 0; position < messageList.size(); position++) {
-                if (messageList.get(position).textData.toLowerCase().contains(searchString)) {
+                Message message = messageList.get(position);
+                if (message.textData.toLowerCase().contains(searchString) && message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
                     positions.add(position);
                 }
             }
         }
-
         notifyDataSetChanged();
     }
 
@@ -303,13 +303,10 @@ public class ChatScreenAdapter extends BaseAdapter {
                 while (m.find()) {
                     int start = m.start();
                     int end = m.end();
-//                    String hashtag = textData.substring(start, end);
                     BackgroundColorSpan span = new BackgroundColorSpan(Color.YELLOW);
                     linkifiedText.setSpan(span, start, end, 0);
-//                    Spannable spanText = Spannable.Factory.getInstance().newSpannable(message.textData);
-//                    spanText.setSpan(new BackgroundColorSpan(Color.YELLOW), startPos, endPos, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    holder.message.setText(linkifiedText, TextView.BufferType.SPANNABLE);
                 }
-                holder.message.setText(linkifiedText, TextView.BufferType.SPANNABLE);
             } else {
                 holder.message.setText(message.textData);
             }
@@ -342,8 +339,9 @@ public class ChatScreenAdapter extends BaseAdapter {
                 image.setOnClickListener(imageOrVideoClickListener);
                 image.setTag(position);
             } else {
-                if( message.media != null ) {
+                if (message.media != null) {
                     image.setImageBitmap(BitmapFactory.decodeByteArray(message.media, 0, message.media.length));
+//                    image.setColorFilter(Color.parseColor("#22000000"), PorterDuff.Mode.DARKEN);
                 } else {
                     image.setImageResource(R.drawable.grey_bg_rectangle);
                 }

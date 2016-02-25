@@ -15,7 +15,6 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.util.CommonUtil;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -122,7 +121,7 @@ public class GroupChatScreenAdapter extends BaseAdapter {
 
         }
         if (holder.sender != null) {
-            String name = SportsUnityDBHelper.getInstance(activity).getName(messageList.get(position).number);
+            String name = SportsUnityDBHelper.getInstance(activity).getUserNameByPhoneNumber(messageList.get(position).number);
             if (name == null) {
                 holder.sender.setText(messageList.get(position).number);
             } else {

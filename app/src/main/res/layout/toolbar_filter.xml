@@ -76,6 +76,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="@dimen/vertical_padding_very_small"
-            android:src="@drawable/ic_close" />
+            android:src="@drawable/ic_cancel" />
     </LinearLayout>
 </android.support.v7.widget.Toolbar>

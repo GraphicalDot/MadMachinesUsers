@@ -40,6 +40,7 @@ import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.messages.controller.activity.GroupInfoActivity;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -348,7 +349,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
         sportsGroupItem.add("Favourite Sports");
         teamChildItems.addAll(favouriteItemWrapper.getAllTeams());
         competeChildItems.addAll(favouriteItemWrapper.getAllLeagues());
-        sportsChildItem.addAll(favouriteItemWrapper.getAllSports());
+        sportsChildItem.addAll(favouriteItemWrapper.getAllSports(getActivity()));
         if (teamAdapter != null) {
             teamAdapter.updateItem(teamChildItems);
         }

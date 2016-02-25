@@ -7,12 +7,6 @@
     android:orientation="vertical"
     android:visibility="gone">
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:src="@drawable/img_something_went_wrong" />
-
     <TextView
         android:id="@+id/oops"
         android:layout_width="wrap_content"
@@ -20,7 +14,7 @@
         android:layout_gravity="center"
         android:text="No Teams selected :("
         android:textColor="@color/text_color"
-        android:textSize="@dimen/font_size_xlarge"
+        android:textSize="@dimen/font_size_large"
         android:textStyle="bold"/>
 
     <TextView
@@ -32,7 +26,7 @@
         android:layout_marginBottom="@dimen/vertical_padding_very_small"
         android:text="Add your favourite teams \n to see more details"
         android:textColor="@color/gray2"
-        android:textSize="@dimen/font_size_small_large" />
+        android:textSize="@dimen/font_size_small_medium" />
     <TextView
         android:id="@+id/addteam"
         android:layout_width="wrap_content"
@@ -41,7 +35,7 @@
         android:gravity="center"
         android:paddingLeft="@dimen/horizontal_padding_small"
         android:paddingRight="@dimen/horizontal_padding_small"
-        android:layout_marginTop="@dimen/nav_item_margin_v"
+        android:layout_marginTop="@dimen/nav_flag_margin"
         android:background="@drawable/round_edge_box_blue"
         android:text="ADD TEAM"
         android:textColor="@color/ColorPrimary"

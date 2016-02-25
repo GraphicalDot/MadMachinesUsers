@@ -1,41 +1,31 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin">
+    android:paddingTop="@dimen/activity_horizontal_margin">
 
-    <LinearLayout
-        android:id="@+id/centerContent"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <EditText
-            android:id="@+id/groupName"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/vertical_padding_small"
-            android:gravity="center"
-            android:hint="@string/group_hint_group_name"
-            android:inputType="text"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/font_size_small_large" />
-
-    </LinearLayout>
-
-    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/group_image"
         android:layout_width="@dimen/profile_image_circle_radius"
         android:layout_height="@dimen/profile_image_circle_radius"
-        android:layout_above="@id/centerContent"
-        android:layout_centerHorizontal="true"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
         android:src="@drawable/ic_add_photo_grey" />
 
-</RelativeLayout>
+    <EditText
+        android:id="@+id/groupName"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/vertical_padding_small"
+        android:gravity="center"
+        android:hint="@string/group_hint_group_name"
+        android:inputType="text"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/font_size_small_large" />
+
+</LinearLayout>

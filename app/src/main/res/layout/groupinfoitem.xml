@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="@dimen/group_name_padding">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_image"
+        android:layout_width="@dimen/profile_thumb_image_small"
+        android:layout_height="@dimen/profile_thumb_image_small"
+        android:layout_gravity="center"
+        android:src="@drawable/ic_user"
+        app:civ_border_color="@color/gray4"
+        app:civ_border_width="@dimen/user_image_border" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/group_delete_margin_bottom"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Alex Lane"
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/font_size_small_large" />
+
+        <TextView
+            android:id="@+id/user_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/group_name_margin_top"
+            android:text="What he said was nothing"
+            android:textColor="@color/gray4"
+            android:textSize="@dimen/font_size_very_small" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/admin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginRight="@dimen/group_name_margin_horizontal"
+        android:gravity="right|center_vertical"
+        android:text="ADMIN"
+        android:textColor="@color/brick_red"
+        android:textSize="@dimen/font_size_very_small" />
+</LinearLayout>

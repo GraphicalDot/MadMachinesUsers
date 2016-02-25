@@ -186,8 +186,12 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         if (ownProfile) {
             toolbarActionButton.setText(INFO_EDIT);
         } else {
-            toolbarActionButton.setText(ADD_FRIEND);
-            toolbarActionButton.setBackground(getResources().getDrawable(R.drawable.round_edge_blue_box));
+            if (getIntent().getBooleanExtra("otherChat", false)) {
+                toolbarActionButton.setText(ADD_FRIEND);
+                toolbarActionButton.setBackground(getResources().getDrawable(R.drawable.round_edge_blue_box));
+            } else {
+                toolbarActionButton.setVisibility(View.GONE);
+            }
         }
 
         ImageView backButton = (ImageView) toolbar.findViewById(R.id.backarrow);
@@ -224,10 +228,13 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             String nickname = name.getText().toString();
             String status = currentStatus.getText().toString();
             String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
-            TinyDB.getInstance(UserProfileActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nickname);
-            TinyDB.getInstance(UserProfileActivity.this).putString(TinyDB.KEY_PROFILE_STATUS, status);
-            Contacts contacts = new Contacts(nickname, phoneNumber, true, byteArray, 1, status);
-            UserProfileHandler.getInstance().submitUserProfile(contacts, LISTENER_KEY);
+
+            String jid = TinyDB.getInstance(UserProfileActivity.this).getString(TinyDB.KEY_USER_JID);
+
+            //TODO some shit going down here ...
+
+            Contacts contacts = new Contacts(nickname, jid, phoneNumber, byteArray, -1, status);
+            UserProfileHandler.getInstance().submitUserProfile(UserProfileActivity.this, contacts, LISTENER_KEY);
         } else {
             if (TextUtils.isEmpty(name.getText().toString())) {
                 Toast.makeText(this, "Please enter your name", Toast.LENGTH_SHORT).show();
@@ -366,9 +373,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
         profileImage = (CircleImageView) findViewById(R.id.user_picture);
 
-        byte[] imageArray = getIntent().getByteArrayExtra("profilePicture");
-        if (imageArray != null) {
-            profileImage.setImageBitmap(BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length));
+        byteArray = getIntent().getByteArrayExtra("profilePicture");
+        if (byteArray != null) {
+            profileImage.setImageBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length));
         } else {
             profileImage.setImageResource(R.drawable.ic_user);
         }
@@ -408,9 +415,8 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 //TODO
             }
         }
-        String phoneNumber = getIntent().getStringExtra("number");
-        UserProfileHandler.getInstance().loadProfile(phoneNumber, LISTENER_KEY);
-        //new FetchVcardTask(getIntent().getStringExtra("number")).execute();
+        String jid = getIntent().getStringExtra("number");
+        UserProfileHandler.getInstance().loadProfile(getApplicationContext(), jid, LISTENER_KEY);
     }
 
     private void addFacebookCallback() {
@@ -418,56 +424,10 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button_facebook);
         callbackManager = CallbackManager.Factory.create();
         UserProfileHandler.getInstance().setFacebookDetails(this, loginButton, LISTENER_KEY, callbackManager);
-       /* LoginButton loginButton = (LoginButton) findViewById(R.id.login_button_facebook);
-        loginButton.setReadPermissions(Arrays.asList("public_profile, email"));
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                Toast.makeText(getApplicationContext(), loginResult.getAccessToken().getUserId().toString(), Toast.LENGTH_LONG).show();
-                GraphRequest request = GraphRequest.newMeRequest(
-                        loginResult.getAccessToken(),
-                        new GraphRequest.GraphJSONObjectCallback() {
-                            @Override
-                            public void onCompleted(
-                                    JSONObject object,
-                                    GraphResponse response) {
-                                try {
-                                    name.setText(object.getString("name"));
-                                    TinyDB.getInstance(UserProfileActivity.this).putString(TinyDB.KEY_PROFILE_NAME, name.getText().toString());
-                                    JSONObject data = response.getJSONObject();
-                                    if (data.has("picture")) {
-                                        profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
-                                        new DownloadImageTask().execute(profilePicUrl);
-                                        Log.i("PICURL : ", profilePicUrl);
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id,name,link,picture.type(large)");
-                request.setParameters(parameters);
-                request.executeAsync();
-            }
-
-            @Override
-            public void onCancel() {
-                Toast.makeText(getApplicationContext(), R.string.profile_facebook_login_cancelled, Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onError(FacebookException e) {
-                Toast.makeText(getApplicationContext(), R.string.profile_facebook_login_failed, Toast.LENGTH_LONG).show();
-            }
-        });*/
     }
 
     @Override
     public void handleContent(String requestTag, final Object content) {
-
-        Log.d("max", "getting content--->" + requestTag + "<<Contect>>" + content);
-
         if (requestTag.equals(UserProfileHandler.FB_REQUEST_TAG) && content != null) {
             final UserProfileHandler.ProfileDetail profileDetail = (UserProfileHandler.ProfileDetail) content;
 
@@ -482,19 +442,12 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 });
             }
         } else if (requestTag.equals(UserProfileHandler.LOAD_PROFILE_REQUEST_TAG) && content != null) {
-
-            final boolean success = (boolean) content;
-            Log.d("max", "getting content---" + success);
-
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (success) {
-                        String favorite = null;
-                        VCard card = new VCard();
-                        card = (VCard) content;
-                        favorite = card.getField("fav_list");
-                        successfulVCardLoad(favorite);
+                    VCard card = (VCard) content;
+                    if (card != null) {
+                        successfulVCardLoad(card);
                     } else {
                         onUnSuccessfulVCardLoad();
                     }
@@ -529,22 +482,31 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         }
     }
 
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    private void updateUserDetail(VCard card) {
+        //TODO
 
-        protected Bitmap doInBackground(String... urls) {
-            String urlDisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urlDisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                e.printStackTrace();
+        try {
+            String userStatus = card.getMiddleName();
+            byte[] imageArray = card.getAvatar();
+            String nickname = card.getNickName();
+
+            if( imageArray != null ) {
+                profileImage.setImageBitmap(BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length));
             }
-            return mIcon11;
-        }
 
-        protected void onPostExecute(Bitmap image) {
-            setProfileImage(image);
+            name.setText(nickname);
+            status.setText(userStatus);
+            {
+                String favorite = card.getField("fav_list");
+                ArrayList<FavouriteItem> savedList = null;
+                if (favorite != null) {
+                    savedList = FavouriteItemWrapper.getInstance(this).getFavListOfOthers(favorite);
+                    setFavouriteProfile(savedList);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            onUnSuccessfulVCardLoad();
         }
 
     }
@@ -555,98 +517,12 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         byteArray = ImageUtil.getCompressedBytes(image);
     }
 
-    private class FetchVcardTask extends AsyncTask<Void, Void, String> {
-
-        private boolean success = false;
-
-        String number = null;
-
-        public FetchVcardTask(String number) {
-            this.number = number;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected String doInBackground(Void... params) {
-            String favorite = null;
-            try {
-                VCard card = new VCard();
-                card.load(XMPPClient.getConnection(), number + "@mm.io");
-                favorite = card.getField("fav_list");
-                success = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return favorite;
-        }
-
-        @Override
-        protected void onPostExecute(String favorite) {
-            progressBar.setVisibility(View.GONE);
-            if (success) {
-                successfulVCardLoad(favorite);
-            } else {
-                onUnSuccessfulVCardLoad();
-            }
-        }
-    }
-
-    private void successfulVCardLoad(String favorite) {
-        ArrayList<FavouriteItem> savedList = null;
-        if (favorite != null) {
-            savedList = FavouriteItemWrapper.getInstance(this).getFavListOfOthers(favorite);
-            setFavouriteProfile(savedList);
-        }
+    private void successfulVCardLoad(VCard vCard) {
+        updateUserDetail(vCard);
     }
 
     private void onUnSuccessfulVCardLoad() {
-        Toast.makeText(UserProfileActivity.this, R.string.message_submit_vcard_failed, Toast.LENGTH_SHORT).show();
-    }
-
-    private class SubmitVCardAsyncTask extends AsyncTask<Void, Void, Void> {
-        private boolean success = false;
-        String nickname = name.getText().toString();
-        String status = currentStatus.getText().toString();
-
-        @Override
-        protected void onPreExecute() {
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            try {
-                TinyDB.getInstance(UserProfileActivity.this).putString(TinyDB.KEY_PROFILE_NAME, nickname);
-                TinyDB.getInstance(UserProfileActivity.this).putString(TinyDB.KEY_PROFILE_STATUS, status);
-                VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
-                VCard vCard = new VCard();
-                vCard.setNickName(nickname);
-                vCard.setAvatar(byteArray);
-                vCard.setMiddleName(status);
-                vCard.setJabberId(XMPPClient.getConnection().getUser());
-                manager.saveVCard(vCard);
-                success = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void o) {
-            progressBar.setVisibility(View.GONE);
-            if (success) {
-                successfulVCardSubmit();
-            } else {
-                onUnSuccessfulVCardSubmit();
-            }
-        }
+        Toast.makeText(UserProfileActivity.this, R.string.message_load_vcard_failed, Toast.LENGTH_SHORT).show();
     }
 
     private void onUnSuccessfulVCardSubmit() {
@@ -751,7 +627,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
         //TextView textView = (TextView) getLayoutInflater().inflate(R.layout.textview_user_profile_activity, null);
 
-        if( leagues.size() > 0) {
+        if (leagues.size() > 0) {
             for (int i = 0; i < leagues.size(); i++) {
                 LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
                 TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
@@ -764,13 +640,16 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
-            textView.setText("Add favourite league");
+            if (ownProfile) {
+                textView.setText("Add favourite leagues");
+            } else {
+                textView.setText("No favourite leagues");
+            }
             textView.setTextColor(getResources().getColor(R.color.gray1));
-            //textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
             leagueList.addView(linearLayout);
         }
 
-        if( teams.size() > 0) {
+        if (teams.size() > 0) {
             for (int i = 0; i < teams.size(); i++) {
                 LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
                 TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
@@ -783,12 +662,16 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
-            textView.setText("Add favourite team");
+            if (ownProfile) {
+                textView.setText("Add favourite teams");
+            } else {
+                textView.setText("No favourite teams");
+            }
             textView.setTextColor(getResources().getColor(R.color.gray1));
             teamList.addView(linearLayout);
         }
 
-        if( players.size() > 0) {
+        if (players.size() > 0) {
             for (int i = 0; i < players.size(); i++) {
                 LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
                 TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
@@ -810,7 +693,11 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
-            textView.setText("Add favourite player");
+            if (ownProfile) {
+                textView.setText("Add favourite players");
+            } else {
+                textView.setText("No favourite players");
+            }
             textView.setTextColor(getResources().getColor(R.color.gray1));
             playerList.addView(linearLayout);
 
@@ -823,7 +710,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     }
 
     private void onBack() {
-        if (toolbarActionButton.getText().equals(INFO_SAVE) && progressBar.getVisibility() == View.INVISIBLE) {
+        if (toolbarActionButton.getText().equals(INFO_SAVE) && progressBar.getVisibility() == View.GONE) {
             AlertDialog.Builder build = new AlertDialog.Builder(UserProfileActivity.this);
             build.setTitle("Discard Edits ? ");
             build.setMessage("If you cancel now, your edits will be discarded.");
@@ -870,7 +757,12 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
         profileImage.setEnabled(false);
         profileImage.setBackground(new ColorDrawable(Color.TRANSPARENT));
-
+        byteArray = getIntent().getByteArrayExtra("profilePicture");
+        if (byteArray != null) {
+            profileImage.setImageBitmap(BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length));
+        } else {
+            profileImage.setImageResource(R.drawable.ic_user);
+        }
         setInitDataOwn();
     }
     private  void playerProfile(String playerName, String playerId, String sportsType) {
@@ -885,7 +777,6 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             startActivity(intent);
         }
     }
-
 
 
 }

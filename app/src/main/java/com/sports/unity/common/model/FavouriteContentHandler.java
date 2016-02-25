@@ -23,18 +23,6 @@ import java.util.List;
 public class FavouriteContentHandler {
     public static FavouriteContentHandler favouriteContentHandler;
 
-    private static List<String> FOOTBALL_FILTER_LEAGUE = null;
-    private static List<String> FOOTBALL_FILTER_PLAYER = null;
-    private static List<String> FOOTBALL_FILTER_TEAM = null;
-    private static List<String> CRICKET_FILTER_PLAYER = null;
-    private static List<String> CRICKET_FILTER_TEAM = null;
-
-    private static List<String> SEARCH_FOOTBALL_LEAGUE = null;
-    private static List<String> SEARCH_CRICKET_TEAM = null;
-    private static List<String> SEARCH_CRICKET_PLAYER = null;
-    private static List<String> SEARCH_FOOTBALL_TEAM = null;
-    private static List<String> SEARCH_FOOTBALL_PLAYER = null;
-
 
     private List<FavouriteItem> favFootballLeagues;
     private List<FavouriteItem> favFootballTeams;
@@ -103,16 +91,6 @@ public class FavouriteContentHandler {
      * constructor
      */
     private FavouriteContentHandler() {
-        FOOTBALL_FILTER_LEAGUE = new ArrayList<String>();
-        FOOTBALL_FILTER_PLAYER = new ArrayList<String>();
-        FOOTBALL_FILTER_TEAM = new ArrayList<String>();
-        CRICKET_FILTER_PLAYER = new ArrayList<String>();
-        CRICKET_FILTER_TEAM = new ArrayList<String>();
-        SEARCH_FOOTBALL_LEAGUE = new ArrayList<String>();
-        SEARCH_FOOTBALL_PLAYER = new ArrayList<String>();
-        SEARCH_FOOTBALL_TEAM = new ArrayList<String>();
-        SEARCH_CRICKET_PLAYER = new ArrayList<String>();
-        SEARCH_CRICKET_TEAM = new ArrayList<String>();
 
         matches = new ArrayList<JSONObject>();
         listPreparedListener = new ArrayList<ListPreparedListener>();
@@ -302,11 +280,6 @@ public class FavouriteContentHandler {
      * resets all the ArrayLists related to search.
      */
     private void clearSearchList() {
-        SEARCH_FOOTBALL_LEAGUE = new ArrayList<String>();
-        SEARCH_FOOTBALL_PLAYER = new ArrayList<String>();
-        SEARCH_FOOTBALL_TEAM = new ArrayList<String>();
-        SEARCH_CRICKET_PLAYER = new ArrayList<String>();
-        SEARCH_CRICKET_TEAM = new ArrayList<String>();
         favSearchFootballLeague = new ArrayList<FavouriteItem>();
         favSearchCricketPlayer = new ArrayList<FavouriteItem>();
         favSearchCricketTeam = new ArrayList<FavouriteItem>();
@@ -365,26 +338,11 @@ public class FavouriteContentHandler {
     }
 
     /**
-     * @return List of search results related to football league.
-     */
-    public List<String> getSearchedFootballLeagueStringList() {
-
-        return SEARCH_FOOTBALL_LEAGUE;
-    }
-
-    /**
      * @return ArrayList of search results related to cricket player.
      */
     public ArrayList<FavouriteItem> getSearchedCricketPlayer() {
         Collections.sort(favSearchCricketPlayer);
         return new ArrayList<>(favSearchCricketPlayer);
-    }
-
-    /**
-     * @return List of search results related to cricket player.
-     */
-    public List<String> getSearchedCricketPlayerStringList() {
-        return SEARCH_CRICKET_PLAYER;
     }
 
     /**
@@ -396,25 +354,11 @@ public class FavouriteContentHandler {
     }
 
     /**
-     * @return List of search results related to cricket team.
-     */
-    public List<String> getSearchedCricketTeamStringList() {
-        return SEARCH_CRICKET_TEAM;
-    }
-
-    /**
      * @return ArrayList of search results related to football player.
      */
     public ArrayList<FavouriteItem> getSearchedFootballPlayer() {
         Collections.sort(favSearchFootballPlayer);
         return new ArrayList<>(favSearchFootballPlayer);
-    }
-
-    /**
-     * @return List of search results related to football player.
-     */
-    public List<String> getSearchedFootballPlayerStringList() {
-        return SEARCH_FOOTBALL_PLAYER;
     }
 
     /**
@@ -424,13 +368,6 @@ public class FavouriteContentHandler {
     public ArrayList<FavouriteItem> getSearchedFootballTeam() {
         Collections.sort(favSearchFootballTeam);
         return new ArrayList<>(favSearchFootballTeam);
-    }
-
-    /**
-     * @return List of search results related to football team.
-     */
-    public List<String> getSearchedFootballTeamStringList() {
-        return SEARCH_FOOTBALL_TEAM;
     }
 
     /**
@@ -459,7 +396,7 @@ public class FavouriteContentHandler {
      * If after selecting the favourite if user presses back
      * or skip button this method invalidate all the favourites lists.
      *
-     * @param context COntext of origin activity
+     * @param context Context of origin activity
      */
     public void invalidate(Context context) {
         if (UserUtil.isFilterCompleted()) {
@@ -528,11 +465,6 @@ public class FavouriteContentHandler {
         favFootballPlayers = new ArrayList<FavouriteItem>();
         favCricketTeams = new ArrayList<FavouriteItem>();
         favCricketPlayers = new ArrayList<FavouriteItem>();
-        FOOTBALL_FILTER_LEAGUE = new ArrayList<String>();
-        FOOTBALL_FILTER_PLAYER = new ArrayList<String>();
-        FOOTBALL_FILTER_TEAM = new ArrayList<String>();
-        CRICKET_FILTER_PLAYER = new ArrayList<String>();
-        CRICKET_FILTER_TEAM = new ArrayList<String>();
         requestFootballLeagues();
         requestFootballPlayers();
         requestFootballTeams();
@@ -637,7 +569,6 @@ public class FavouriteContentHandler {
                                 FavouriteItem item = new FavouriteItem();
                                 String s = obj.getString("league_name");
                                 s = s.concat(", " + obj.getString("region"));
-                                FOOTBALL_FILTER_LEAGUE.add(s);
                                 item.setName(s);
                                 s = obj.getString("league_id");
                                 item.setId(s);
@@ -658,7 +589,6 @@ public class FavouriteContentHandler {
                                 FavouriteItem item = new FavouriteItem();
                                 String s = obj.getString("team_name");
                                 item.setName(s);
-                                FOOTBALL_FILTER_TEAM.add(s);
                                 s = obj.getString("team_id");
                                 item.setId(s);
                                 s = obj.getString("flag_image");
@@ -680,13 +610,14 @@ public class FavouriteContentHandler {
                                 FavouriteItem item = new FavouriteItem();
                                 String s = obj.getString("player_name");
                                 item.setName(s);
+                                s=obj.getString("player_id");
+                                item.setId(s);
                                 item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                 item.setFilterType(Constants.FILTER_TYPE_PLAYER);
                                 if (savedFavList.contains(item)) {
                                     item.setChecked(true);
                                 }
                                 prepareFootballPlayers(item);
-                                FOOTBALL_FILTER_PLAYER.add(s);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -698,6 +629,8 @@ public class FavouriteContentHandler {
                                 FavouriteItem item = new FavouriteItem();
                                 String s = obj.getString("team");
                                 item.setName(s);
+                                s=obj.getString("team_id");
+                                item.setId(s);
                                 s = obj.getString("flag_image");
                                 item.setFlagImageUrl(s);
                                 item.setSportsType(Constants.SPORTS_TYPE_CRICKET);
@@ -706,7 +639,6 @@ public class FavouriteContentHandler {
                                     item.setChecked(true);
                                 }
                                 prepareCricketTeams(item);
-                                CRICKET_FILTER_TEAM.add(s);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -726,7 +658,6 @@ public class FavouriteContentHandler {
                                     item.setChecked(true);
                                 }
                                 prepareCricketPlayers(item);
-                                CRICKET_FILTER_PLAYER.add(s);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -741,9 +672,6 @@ public class FavouriteContentHandler {
                                     s = obj.getString("league_name");
                                     s = s.concat(", " + obj.getString("region"));
                                     item.setName(s);
-                                    if (!SEARCH_FOOTBALL_LEAGUE.contains(s)) {
-                                        SEARCH_FOOTBALL_LEAGUE.add(s);
-                                    }
                                     s = obj.getString("league_id");
                                     item.setId(s);
                                     item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
@@ -758,9 +686,6 @@ public class FavouriteContentHandler {
                                     FavouriteItem item = new FavouriteItem();
                                     s = obj.getString("name");
                                     item.setName(s);
-                                    if (!SEARCH_CRICKET_PLAYER.contains(s)) {
-                                        SEARCH_CRICKET_PLAYER.add(s);
-                                    }
                                     s = obj.getString("player_id");
                                     item.setId(s);
                                     item.setSportsType(Constants.SPORTS_TYPE_CRICKET);
@@ -775,9 +700,6 @@ public class FavouriteContentHandler {
                                     FavouriteItem item = new FavouriteItem();
                                     s = obj.getString("team_name");
                                     item.setName(s);
-                                    if (!SEARCH_CRICKET_TEAM.contains(s)) {
-                                        SEARCH_CRICKET_TEAM.add(s);
-                                    }
                                     s = obj.getString("team_id");
                                     item.setId(s);
                                     s = obj.getString("flag_image");
@@ -794,9 +716,6 @@ public class FavouriteContentHandler {
                                     FavouriteItem item = new FavouriteItem();
                                     s = obj.getString("name");
                                     item.setName(s);
-                                    if (!SEARCH_FOOTBALL_PLAYER.contains(s)) {
-                                        SEARCH_FOOTBALL_PLAYER.add(s);
-                                    }
                                     s = obj.getString("player_id");
                                     item.setId(s);
                                     item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
@@ -811,9 +730,6 @@ public class FavouriteContentHandler {
                                     FavouriteItem item = new FavouriteItem();
                                     s = obj.getString("team_name");
                                     item.setName(s);
-                                    if (!SEARCH_FOOTBALL_TEAM.contains(s)) {
-                                        SEARCH_FOOTBALL_TEAM.add(s);
-                                    }
                                     s = obj.getString("team_id");
                                     item.setId(s);
                                     s = obj.getString("flag_image");

@@ -198,7 +198,7 @@ public class ChatKeyboardHelper {
             ImageButton imageButton = (ImageButton) view;
 
             if (id == R.id.btn_text) {
-                imageButton.setImageResource(R.drawable.ic_keyboard_selected);
+                imageButton.setImageResource(R.drawable.ic_keyboard_pressed);
             } else if (id == R.id.btn_camera) {
                 imageButton.setImageResource(R.drawable.ic_camera_pressed);
             } else if (id == R.id.btn_gallery) {

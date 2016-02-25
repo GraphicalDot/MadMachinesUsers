@@ -68,7 +68,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     private CallbackManager callbackManager;
     private EditText nameText;
     private byte[] byteArray;
-
+private String userName;
     private View.OnClickListener continueButtonOnClickListener = new View.OnClickListener() {
 
         @Override
@@ -76,8 +76,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
             if (!nameText.getText().toString().isEmpty()) {
                 beforeAsyncCall();
 
-                String name = nameText.getText().toString();
-                TinyDB.getInstance(ProfileCreationActivity.this).putString(TinyDB.KEY_PROFILE_NAME, name);
+                userName = nameText.getText().toString();
 
                 int requestStatus = UserProfileHandler.getInstance().connectToXmppServer(ProfileCreationActivity.this, LISTENER_KEY);
             } else {
@@ -279,10 +278,10 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
 
             if( success == true ) {
                 String phoneNumber = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USERNAME);
-                String name = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_PROFILE_NAME);
+                String jid = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USER_JID);
 
-                Contacts contacts = new Contacts(name, phoneNumber, true, byteArray, -1, getResources().getString(R.string.default_status));
-                UserProfileHandler.getInstance().submitUserProfile(contacts, LISTENER_KEY);
+                Contacts contacts = new Contacts(userName, jid, phoneNumber, byteArray, -1, getResources().getString(R.string.default_status));
+                UserProfileHandler.getInstance().submitUserProfile( ProfileCreationActivity.this, contacts, LISTENER_KEY);
             } else {
                 ProfileCreationActivity.this.runOnUiThread(new Runnable() {
                     @Override

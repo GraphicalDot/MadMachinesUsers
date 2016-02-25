@@ -123,7 +123,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
     }
 
     private void copyContacts() {
-        ContactsHandler.getInstance().copyAllContacts_OnThread(getApplicationContext(), null);
+        ContactsHandler.getInstance().addCallToSyncContacts(getApplicationContext());
     }
 
     @Override
@@ -204,8 +204,11 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
         resendButton.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         resendButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
 
+        ArrayList<String> countryDetails = CommonUtil.getCountryDetailsByCountryCode(EnterOtpActivity.this, UserUtil.getCountryCode());
+        String countryCode = countryDetails.get(0);
+
         TextView otpText = (TextView) findViewById(com.sports.unity.R.id.enterotpText);
-        otpText.setText(getString(R.string.otp_message_verification) + getPhoneNumber());
+        otpText.setText(getString(R.string.otp_message_verification) +"+"+ countryCode +" "+ getPhoneNumber());
         otpText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
         otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
@@ -250,7 +253,9 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
 
         EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         String otp = otpEditText.getText().toString();
-        String phoneNumber = "91" + getPhoneNumber();
+        ArrayList<String> countryDetails = CommonUtil.getCountryDetailsByCountryCode(EnterOtpActivity.this, UserUtil.getCountryCode());
+        String countryCode = countryDetails.get(0);
+        String phoneNumber = countryCode + getPhoneNumber();
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, phoneNumber);
@@ -263,7 +268,9 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
     private void resendOtp() {
         Toast.makeText(EnterOtpActivity.this, R.string.otp_message_sending, Toast.LENGTH_SHORT).show();
 
-        String phoneNumber = "91" + getPhoneNumber();
+        ArrayList<String> countryDetails = CommonUtil.getCountryDetailsByCountryCode(EnterOtpActivity.this, UserUtil.getCountryCode());
+        String countryCode = countryDetails.get(0);
+        String phoneNumber = countryCode + getPhoneNumber();
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, phoneNumber);
         parameters.put(Constants.REQUEST_PARAMETER_KEY_APK_VERSION, CommonUtil.getBuildConfig());

@@ -28,6 +28,8 @@ public class About extends AppCompatActivity {
                 CommonUtil.openLinkOnBrowser(About.this, getResources().getString(R.string.link_of_terms_of_use));
             } else if (v.getId() == R.id.privacy_policy) {
                 CommonUtil.openLinkOnBrowser(About.this, getResources().getString(R.string.link_of_privacy_policy));
+            }else if (v.getId() == R.id.sportsunity_club) {
+                CommonUtil.openLinkOnBrowser(About.this, getResources().getString(R.string.link_of_sportsunity_club));
             }
         }
 
@@ -50,6 +52,7 @@ public class About extends AppCompatActivity {
         TextView version = (TextView) findViewById(R.id.version);
         TextView versionNumber = (TextView) findViewById(R.id.version_int);
 
+
         copyright.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         version.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         versionNumber.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
@@ -70,6 +73,9 @@ public class About extends AppCompatActivity {
 
         privacyPolicy.setOnClickListener(onClickListener);
         privacyPolicy.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
+
+        sportsUnityClub.setOnClickListener(onClickListener);
+        sportsUnityClub.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
     }
 
     private void initToolbar() {

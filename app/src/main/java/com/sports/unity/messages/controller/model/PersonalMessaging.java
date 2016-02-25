@@ -10,7 +10,6 @@ import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.util.ActivityActionHandler;
-import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
@@ -35,6 +34,10 @@ import java.util.WeakHashMap;
  * Created by madmachines on 16/10/15.
  */
 public class PersonalMessaging {
+
+    public static int RECEIPT_KIND_READ = 1;
+    public static int RECEIPT_KIND_SERVER = 2;
+    public static int RECEIPT_KIND_CLIENT = 3;
 
     private static final String PRIVACY_LIST_NAME = "spuBlockedList";
 
@@ -93,7 +96,7 @@ public class PersonalMessaging {
         long time = CommonUtil.getCurrentGMTTimeInEpoch();
         String stanzaId = sendMessage(message, chat, String.valueOf(time), mimeType, nearByChat);
 
-        sportsUnityDBHelper.updateMediaMessage_ContentUploaded(messageId, stanzaId, contentChecksum, thumbnailImageAsBase64);
+        sportsUnityDBHelper.updateMediaMessage_ContentUploaded(messageId, stanzaId, contentChecksum);
     }
 
     public static String getChecksumOutOfMessageBody(String messageBody){
@@ -285,17 +288,18 @@ public class PersonalMessaging {
 
         if (fromJid.substring(0, fromJid.indexOf("@")).equals("dev")) {
             sportsUnityDBHelper.updateServerReceived(receiptId);
+            updateReceipts(RECEIPT_KIND_SERVER);
         } else {
             sportsUnityDBHelper.updateClientReceived(receiptId);
+            updateReceipts(RECEIPT_KIND_CLIENT);
         }
 
-        updateReadreceipts();
     }
 
     public void readReceiptReceived(String fromJid, String toJid, String packetId) {
         sportsUnityDBHelper.updateReadStatus(packetId);
 
-        updateReadreceipts();
+        updateReceipts(RECEIPT_KIND_READ);
     }
 
     public void sendReadStatus(String to, String messageStanzaId) {
@@ -335,13 +339,13 @@ public class PersonalMessaging {
         return false;
     }
 
-    public void updateReadreceipts() {
+    public void updateReceipts(int receiptKind) {
 
         /**
          * get read receipts in database and then update the double ticks in the corresponding chats
          */
 
-        ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, null);
+        ActivityActionHandler.getInstance().dispatchReceiptEvent(ActivityActionHandler.CHAT_SCREEN_KEY, receiptKind);
     }
 
 }
