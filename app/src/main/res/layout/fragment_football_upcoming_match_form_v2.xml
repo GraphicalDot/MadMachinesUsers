@@ -2,8 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/ColorPrimary"
-    tools:context=".scoredetails.cricketdetail.CricketMatchSummaryFragment">
+    android:background="@color/ColorPrimary">
     <ScrollView
         android:layout_below="@+id/tool_bar"
         android:layout_width="match_parent"
@@ -444,5 +443,11 @@
 
 
     </ScrollView>
+    <include
+        android:id="@+id/error"
+        layout="@layout/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
 </LinearLayout>

@@ -53,7 +53,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_upcoming_football_match_table, container, false);
         initView(view);
-        showProgressBar();
+
         return view;
     }
     private void initView(View view) {
@@ -62,16 +62,10 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         initErrorLayout(view);
 
     }
-    private void  showProgressBar(){
-        progressBar.setVisibility(View.VISIBLE);
-    }
-    private void  hideProgressBar(){
-        progressBar.setVisibility(View.GONE);
-    }
     @Override
     public void handleContent(String object) {
         {
-            hideProgressBar();
+
 
             try {
                 JSONObject jsonObject = new JSONObject(object);
@@ -108,7 +102,6 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-        hideProgressBar();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {

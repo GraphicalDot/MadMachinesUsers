@@ -99,12 +99,6 @@
                 tools:listitem="@layout/upcoming_football_match_table_card"
                 app:layoutManager="com.sports.unity.common.view.CustomLinearLayoutManager"
                 />
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            />
         <include layout="@layout/error_layout"
             android:id="@+id/error"
             android:visibility="gone"
@@ -122,4 +116,6 @@
             />
         </LinearLayout>
     </ScrollView>
+
+
    </android.support.v4.widget.SwipeRefreshLayout>

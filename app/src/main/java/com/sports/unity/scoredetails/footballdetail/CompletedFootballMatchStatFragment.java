@@ -57,7 +57,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_cricket_upcoming_match_summery, container, false);
+        View view = inflater.inflate(R.layout.fragment_completed_football_match_stats, container, false);
         initView(view);
         showProgressBar();
         return view;

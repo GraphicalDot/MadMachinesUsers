@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.common.view.CustomLinearLayoutManager;
 import com.sports.unity.scores.ScoreDetailActivity;
 
 import org.json.JSONException;
@@ -28,7 +30,7 @@ import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 public class CompletedFootballMatchTimeLineFragment extends Fragment implements CompletedFootballMatchTimeLineHandler.CompletedMatchContentListener{
 
 
-    private ProgressBar progressBar;
+    private RecyclerView recyclerView;
     String toss = "";
     String matchName="";
     String date = "";
@@ -54,25 +56,20 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_football_match_timeline, container, false);
         initView(view);
-        showProgressBar();
+
         return view;
     }
     private void initView(View view) {
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+        recyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+        recyclerView.setLayoutManager(new CustomLinearLayoutManager(getContext()));
+
         initErrorLayout(view);
 
     }
-    private void  showProgressBar(){
-        progressBar.setVisibility(View.VISIBLE);
-    }
-    private void  hideProgressBar(){
-        progressBar.setVisibility(View.GONE);
-    }
+
     @Override
     public void handleContent(String object) {
         {
-            hideProgressBar();
 
             try {
                 JSONObject jsonObject = new JSONObject(object);
@@ -109,7 +106,6 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-        hideProgressBar();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {

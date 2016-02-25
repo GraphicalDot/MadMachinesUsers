@@ -71,6 +71,9 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         return jsonObject.getString("wickets");
     }
     public String getMatchResult() throws JSONException {
+        if(jsonObject.isNull("match_result")){
+            return "";
+        }
         return jsonObject.getString("match_result");
     }
     public String getToss() throws JSONException {

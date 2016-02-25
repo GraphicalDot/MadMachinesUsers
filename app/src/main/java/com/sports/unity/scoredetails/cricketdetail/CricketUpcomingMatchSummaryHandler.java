@@ -64,8 +64,7 @@ public class CricketUpcomingMatchSummaryHandler {
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
         queue.add(stringRequest);
-
-        requestInProcess.add(REQUEST_TAG);
+      requestInProcess.add(REQUEST_TAG);
     }
     private void handleResponse(String response) {
         try{
