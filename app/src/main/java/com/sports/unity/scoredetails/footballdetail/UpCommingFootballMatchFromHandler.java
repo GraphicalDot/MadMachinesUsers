@@ -21,7 +21,7 @@ public class UpCommingFootballMatchFromHandler {
 
     private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
     private static Context mContext;
-    private String url = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
+    private String url = "http://52.74.75.79:8080/get_league_standings?league_id=";
 
     private UpCommingMatchFromContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -75,9 +75,6 @@ public class UpCommingFootballMatchFromHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());

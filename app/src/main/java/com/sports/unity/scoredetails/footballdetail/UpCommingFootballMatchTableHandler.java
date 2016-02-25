@@ -21,7 +21,8 @@ public class UpCommingFootballMatchTableHandler {
 
     private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
     private static Context mContext;
-    private String url = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
+    private String url = "http://52.74.75.79:8080/get_league_standings?league_id=";
+   
 
     private UpCommingFootballMatchTableContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();

@@ -26,24 +26,12 @@ public class LiveFootballMatchStatFragment extends Fragment{
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-       View view = inflater.inflate(R.layout.fragment_empty_view, container, false);
+        View view = inflater.inflate(R.layout.fragment_empty_view, container, false);
         initView(view);
         return view;
     }
     private void initView(View view) {
         textView = (TextView) view.findViewById(R.id.tv_empty_view);
         textView.setText(R.string.foot_match_stat_not_exists);
-    }
-
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 }
