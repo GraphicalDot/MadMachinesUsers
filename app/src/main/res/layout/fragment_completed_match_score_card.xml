@@ -26,6 +26,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray4"></View>
             <LinearLayout
                 android:id="@+id/layout_inning"
                 android:layout_width="match_parent"
@@ -83,7 +88,7 @@
                             android:id="@+id/ll_score"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            app:layout_widthPercent="35%">
+                            app:layout_widthPercent="37%">
 
                             <com.sports.unity.common.view.CustomRobotoRegularTextView
                                 android:id="@+id/tv_team_first_name"
@@ -111,7 +116,7 @@
                             android:gravity="right"
                             android:text="@string/r"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="10%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/tv_ball_play_by_player"
@@ -121,7 +126,7 @@
                             android:gravity="right"
                             android:text="@string/b"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="13%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/tv_four_gain_by_player"
@@ -131,7 +136,7 @@
                             android:gravity="right"
                             android:text="@string/s"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="11%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/tv_six_gain_by_player"
@@ -141,7 +146,7 @@
                             android:gravity="right"
                             android:text="@string/sixs"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="11%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:layout_width="0dp"
@@ -150,7 +155,7 @@
                             android:gravity="right"
                             android:text="@string/sr"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="17%" />
+                            app:layout_widthPercent="18%" />
 
                     </android.support.percent.PercentRelativeLayout>
                 </FrameLayout>
@@ -158,7 +163,7 @@
                     android:id="@+id/rv_team_first_batting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    
+
                     tools:listitem="@layout/fragment_live_cricket_batting_card" />
 
                 <android.support.percent.PercentRelativeLayout
@@ -175,7 +180,7 @@
                         android:id="@+id/tv_extra_run_team_first"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-           
+
                         android:gravity="left"
                         android:text="1-51"
                         android:textColor="@color/score_light_grey"
@@ -282,8 +287,8 @@
                             android:gravity="right"
                             android:text="@string/m"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
-no_comments
+
+                            app:layout_widthPercent="11%" />
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/ll_rover"
                             android:layout_width="0dp"
@@ -292,7 +297,7 @@ no_comments
                             android:gravity="right"
                             android:text="@string/r"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="14%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/ll_wide"
@@ -302,7 +307,7 @@ no_comments
                             android:gravity="right"
                             android:text="@string/w"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="11%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:layout_width="0dp"
@@ -353,11 +358,15 @@ no_comments
                     android:id="@+id/rv_team_first_fall_wickets"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                   
+
                     tools:listitem="@layout/fragment_live_cricket_fall_of_wickets_card"
                     />
             </LinearLayout>
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray4"></View>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -413,7 +422,7 @@ no_comments
                             android:id="@+id/layout_batting_second"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            app:layout_widthPercent="40%">
+                            app:layout_widthPercent="37%">
 
                             <com.sports.unity.common.view.CustomRobotoRegularTextView
                                 android:id="@+id/tv_team_second_name"
@@ -441,7 +450,7 @@ no_comments
                             android:gravity="right"
                             android:text="@string/r"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="10%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/ll_b"
@@ -451,7 +460,7 @@ no_comments
                             android:gravity="right"
                             android:text="@string/b"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="13%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/ll_s"
@@ -461,7 +470,7 @@ no_comments
                             android:gravity="right"
                             android:text="@string/s"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="11%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/ll_six"
@@ -471,7 +480,7 @@ no_comments
                             android:gravity="right"
                             android:text="@string/sixs"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="11%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:layout_width="0dp"
@@ -480,14 +489,14 @@ no_comments
                             android:gravity="right"
                             android:text="@string/sr"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="18%" />
                     </android.support.percent.PercentRelativeLayout>
                 </FrameLayout>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_team_second_batting"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                   
+
                     tools:listitem="@layout/fragment_live_cricket_batting_card" />
 
                 <android.support.percent.PercentRelativeLayout
@@ -504,7 +513,7 @@ no_comments
                         android:id="@+id/tv_extra_run_team_second"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        
+
                         android:gravity="left"
                         android:text="1-51"
                         android:textColor="@color/score_light_grey"
@@ -616,7 +625,7 @@ no_comments
                             android:gravity="right"
                             android:text="@string/m"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="11%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/ll_r_second"
@@ -626,7 +635,7 @@ no_comments
                             android:gravity="right"
                             android:text="@string/r"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="14%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/ll_w_second"
@@ -636,7 +645,7 @@ no_comments
                             android:gravity="right"
                             android:text="@string/w"
                             android:textSize="@dimen/font_size_small_large"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="11%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:layout_width="0dp"
@@ -685,7 +694,7 @@ no_comments
                     android:id="@+id/rv_second_team_fall_wicket"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    
+
                     tools:listitem="@layout/fragment_live_cricket_fall_of_wickets_card"
                     />
             </LinearLayout>

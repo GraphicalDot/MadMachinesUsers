@@ -184,7 +184,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
                 @Override
                 public int getIndicatorColor(int position) {
-                    return getResources().getColor(R.color.cardview_light_background);
+                    return getResources().getColor(R.color.app_theme_blue);
                 }
             });
             // Setting the ViewPager For the SlidingTabsLayout
