@@ -1,5 +1,6 @@
 package com.sports.unity.messages.controller.fragment;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
@@ -7,31 +8,42 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.model.Chats;
+import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
+import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
+
 /**
  * Created by madmachines on 23/9/15.
  */
-public class ChatListAdapter extends ArrayAdapter<Chats> {
+public class ChatListAdapter extends ArrayAdapter<Chats> implements StickyListHeadersAdapter {
 
     private final Activity context;
     private ArrayList<Chats> chatArrayList;
     private SimpleDateFormat formatter;
+    private LayoutInflater inflater;
+
+    private boolean isSearch;
+    private ArrayList<Chats> contact;
+    private ArrayList<Chats> messages;
 
     public ChatListAdapter(Activity context, int resource, ArrayList<Chats> chatList) {
         super(context, R.layout.list_chats_item, chatList);
         this.context = context;
         this.chatArrayList = chatList;
         formatter = new SimpleDateFormat("k:mm");
+        inflater = LayoutInflater.from(context);
     }
 
     public View getView(int position, View view, ViewGroup parent) {
@@ -147,6 +159,7 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
     }
 
     public void updateList(ArrayList<Chats> chatList) {
+        isSearch=false;
         this.chatArrayList.clear();
         this.chatArrayList.addAll(chatList);
         super.notifyDataSetChanged();
@@ -172,4 +185,64 @@ public class ChatListAdapter extends ArrayAdapter<Chats> {
         return chatArrayList;
     }
 
+    @Override
+    public View getHeaderView(int position, View convertView, ViewGroup parent) {
+        String headerText = "";
+        HeaderViewHolder holder;
+        if (convertView == null) {
+            holder = new HeaderViewHolder();
+            convertView = inflater.inflate(R.layout.chat_search_header, parent, false);
+            holder.text = (TextView) convertView.findViewById(R.id.list_header_title);
+            holder.text.setTypeface(FontTypeface.getInstance(context).getRobotoMedium());
+            holder.linearLayout= (LinearLayout) convertView.findViewById(R.id.linearLayout2);
+            convertView.setTag(holder);
+        } else {
+            holder = (HeaderViewHolder) convertView.getTag();
+        }
+        if (isSearch) {
+            convertView.setVisibility(View.VISIBLE);
+            if (position < contact.size()) {
+                headerText = "Contacts";
+            } else {
+                headerText = "Messages";
+            }
+            holder.text.setText(headerText);
+            holder.linearLayout.setVisibility(View.VISIBLE);
+            holder.text.setVisibility(View.VISIBLE);
+        } else {
+            holder.linearLayout.setVisibility(View.GONE);
+            holder.text.setVisibility(View.GONE);
+        }
+        return convertView;
+    }
+
+    @Override
+    public long getHeaderId(int position) {
+        if (isSearch) {
+            if (position < contact.size()) {
+                return (long) 0.0;
+            } else {
+                return (long) 1.0;
+            }
+        } else {
+            return (long) 0.0;
+        }
+
+    }
+
+
+    class HeaderViewHolder {
+        LinearLayout linearLayout;
+        TextView text;
+    }
+
+    public void updateSearch( ArrayList<Chats> contact, ArrayList<Chats> messages) {
+        this.isSearch = true;
+        this.contact = contact;
+        this.messages = messages;
+        chatArrayList.clear();
+        chatArrayList.addAll(contact);
+        chatArrayList.addAll(messages);
+        super.notifyDataSetChanged();
+    }
 }

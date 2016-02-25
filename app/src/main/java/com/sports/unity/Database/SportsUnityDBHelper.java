@@ -743,7 +743,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 searchedMessagesSubQuery.append(MessagesEntry.COLUMN_DATA_MEDIA + " ,");
                 searchedMessagesSubQuery.append(MessagesEntry.COLUMN_MIME_TYPE + " ,");
                 searchedMessagesSubQuery.append(MessagesEntry.COLUMN_SEND_TIMESTAMP + " ,");
-                searchedMessagesSubQuery.append(MessagesEntry.COLUMN_RECEIVE_TIMESTAMP + " ,");
+                searchedMessagesSubQuery.append(MessagesEntry.COLUMN_RECEIVE_TIMESTAMP );
 
                 searchedMessagesSubQuery.append(" FROM " + MessagesEntry.TABLE_NAME);
                 searchedMessagesSubQuery.append(" WHERE " + MessagesEntry.COLUMN_DATA_TEXT + " LIKE '%" + searchKeyword + "%' ) ");
@@ -757,7 +757,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             subQuery.append(ChatEntry.COLUMN_CONTACT_ID + " ,");
             subQuery.append(ChatEntry.COLUMN_LAST_MESSAGE_ID + " ,");
 
-            subQuery.append(" B.* ");
+            subQuery.append(" B.*, ");
 
             subQuery.append(" A." + ChatEntry.COLUMN_CHAT_ID + " ,");
             subQuery.append(ChatEntry.COLUMN_GROUP_SERVER_ID + " ,");

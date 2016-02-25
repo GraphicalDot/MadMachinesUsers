@@ -154,6 +154,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
 
         ChatFragment fragment = new ChatFragment();
         mListener = fragment;
+        currentFragment = fragment;
         getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
         return v;
     }

@@ -32,16 +32,18 @@ import org.jivesoftware.smackx.pubsub.PubSubManager;
 
 import java.util.ArrayList;
 
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
+
 /**
  * Created by madmachines on 24/8/15.
  */
 public class ChatFragment extends Fragment implements OnSearchViewQueryListener {
 
-    private ListView chatListView;
+    private StickyListHeadersListView chatListView;
     private View view;
 
     private ChatFragmentDialogListAdapter chatFragmentDialogListAdapter;
-
+    private boolean isSearch;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -52,7 +54,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
     }
 
     private void initContent(View view) {
-        chatListView = (ListView) view.findViewById(R.id.chats);
+        chatListView = (StickyListHeadersListView) view.findViewById(R.id.chats);
 
         ChatListAdapter chatListAdapter = new ChatListAdapter(getActivity(), 0, new ArrayList<Chats>());
         chatListView.setAdapter(chatListAdapter);
@@ -106,10 +108,10 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
                     case 0:
                         if (chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
                             ChatScreenActivity.viewProfile(getActivity(), chatObject.userImage, chatObject.name, chatObject.groupServerId,
-                                    SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid,false);
+                                    SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid, false);
                         } else {
                             ChatScreenActivity.viewProfile(getActivity(), chatObject.chatImage, chatObject.name, chatObject.groupServerId,
-                                    SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid,false);
+                                    SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid, false);
                         }
                         alert.dismiss();
                         break;
@@ -267,8 +269,11 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
     @Override
     public void onResume() {
         super.onResume();
-
-        updateContent();
+        if (!isSearch) {
+            updateContent();
+        } else {
+            isSearch = false;
+        }
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_LIST_KEY, activityActionListener);
 
         NotificationHandler.dismissNotification(getActivity());
@@ -297,21 +302,27 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
         Log.d("Chat Fragment", "search query " + filterText);
 
         ArrayList<Chats> chatArrayList = null;
-        if(filterText.length() > 0 ) {
+        ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
+        if (filterText.length() > 0) {
             chatArrayList = SportsUnityDBHelper.getInstance(getActivity()).getChatList(filterText, false);
+
+            ArrayList<Chats> searchedBasedOnMessage = SportsUnityDBHelper.getInstance(getActivity()).getChatsBasedOnSearchedMessage(filterText, false);
+            adapter.updateSearch(chatArrayList,searchedBasedOnMessage);
         } else {
             chatArrayList = SportsUnityDBHelper.getInstance(getActivity()).getChatList(false);
+            adapter.updateList(chatArrayList);
         }
 
-        ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
-        ArrayList<Chats> chatsList = adapter.getChatArrayList();
 
-        if( chatArrayList != null && chatArrayList.size() > 0 ) {
+/*        ArrayList<Chats> chatsList = adapter.getChatArrayList();
+
+       if( chatArrayList.size() > 0 )
+        {
             chatsList.clear();
-            chatArrayList.addAll(chatArrayList);
+            chatsList.addAll(chatArrayList);
             adapter.notifyDataSetChanged();
-        }
-
+        }*/
+        isSearch = true;
 //        filterResults(filterText);
     }
 
