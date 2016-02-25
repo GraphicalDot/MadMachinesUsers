@@ -109,13 +109,6 @@
                 app:layoutManager="com.sports.unity.common.view.CustomLinearLayoutManager"
                 tools:listitem="@layout/upcoming_football_match_table_card"
                 />
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            />
-
             <include
                 android:id="@+id/error"
                 layout="@layout/error_layout"

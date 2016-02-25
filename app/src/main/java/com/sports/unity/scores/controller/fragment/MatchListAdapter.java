@@ -364,6 +364,10 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 matchTime = footballMatchJsonCaller.getMatchTime();
                 intent.putExtra(Constants.INTENT_KEY_MATCH_TIME, matchTime);
                 intent.putExtra(Constants.INTENT_KEY_MATCH_LIVE,footballMatchJsonCaller.isLive());
+                intent.putExtra(Constants.INTENT_KEY_TEAM1_ID,footballMatchJsonCaller.getTeam1Id());
+                intent.putExtra(Constants.INTENT_KEY_TEAM2_ID,footballMatchJsonCaller.getTeam2Id());
+                intent.putExtra(Constants.INTENT_KEY_LEAGUE_ID,footballMatchJsonCaller.getLeagueId());
+
             }
 
             intent.putExtra(Constants.INTENT_KEY_TYPE, type);

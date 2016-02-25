@@ -72,6 +72,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private ViewPager mViewPager;
     private ViewPagerCricketScoreDetailAdapter cricketScoreDetailAdapter ;
     private ViewPagerFootballScoreDetailAdapter footballScoreDetailAdapter;
+    private TextView teamFirstOvers;
+    private TextView teamSecondOvers;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -191,6 +193,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             //set news pager as default
 
             mViewPager.setCurrentItem(tab_index);
+            teamFirstOvers = (TextView) findViewById(R.id.team1_over);
+            teamSecondOvers = (TextView) findViewById(R.id.team2_over);
             ImageView img = (ImageView) findViewById(R.id.back_img);
             img.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
@@ -311,9 +315,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                         stringBuilder.append(cricketMatchJsonCaller.getScore(scoreJsonObject));
                         stringBuilder.append("/");
                         stringBuilder.append(cricketMatchJsonCaller.getWickets(scoreJsonObject));
-                        stringBuilder.append(" (");
-                        stringBuilder.append(cricketMatchJsonCaller.getOvers(scoreJsonObject));
-                        stringBuilder.append(")");
+
+                        teamFirstOvers.setText("("+cricketMatchJsonCaller.getOvers(scoreJsonObject)+")");
 
                         textView = (TextView) findViewById(R.id.team1_score);
                         textView.setText(stringBuilder.toString());
@@ -327,9 +330,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                         stringBuilder.append(cricketMatchJsonCaller.getScore(scoreJsonObject));
                         stringBuilder.append("/");
                         stringBuilder.append(cricketMatchJsonCaller.getWickets(scoreJsonObject));
-                        stringBuilder.append(" (");
-                        stringBuilder.append(cricketMatchJsonCaller.getOvers(scoreJsonObject));
-                        stringBuilder.append(")");
+                        teamSecondOvers.setText("("+cricketMatchJsonCaller.getOvers(scoreJsonObject)+")");
                         textView = (TextView) findViewById(R.id.team2_score);
                         textView.setText(stringBuilder.toString());
                         textView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
