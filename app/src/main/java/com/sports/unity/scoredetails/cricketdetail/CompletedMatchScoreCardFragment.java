@@ -68,8 +68,13 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
     private RecyclerView teamBBowlingRecycler;
     private RecyclerView teamAFallOfWicketRecycler;
     private RecyclerView teamBFallOfWicketRecycler;
-    private LinearLayout firstLinearLayout;
-    private LinearLayout seconLinearLayout;
+    private LinearLayout linearLayout;
+    private LinearLayout firstBattingLinearLayout;
+    private LinearLayout firstBowlingLinearLayout;
+    private LinearLayout firstFallofWicketsLinearLayout;
+    private LinearLayout secondBattingLinearLayout;
+    private LinearLayout secondBowlingLinearLayout;
+    private LinearLayout secondFallofWicketsLinearLayout;
     private ProgressBar progressBar;
    private  CompletedMatchScoreCardHandler completedMatchScoreCardHandler;
     private String matchId;
@@ -85,8 +90,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         completedMatchScoreCardHandler = CompletedMatchScoreCardHandler.getInstance(context);
         completedMatchScoreCardHandler.addListener(this);
         completedMatchScoreCardHandler.requestCompletdMatchScoreCard(matchId);
-
-    }
+      }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -94,11 +98,18 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         View view = inflater.inflate(R.layout.fragment_completed_match_score_card, container, false);
         initView(view);
         initProgress(view);
-        showProgress();
         return view;
     }
 
     private void initView(View view) {
+        firstBattingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_first_view_visibility);
+        firstBowlingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_first_bowling_visibility);
+        firstFallofWicketsLinearLayout = (LinearLayout) view.findViewById(R.id.first_layout_fall_wicket);
+        secondBattingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_batting_second);
+        secondBowlingLinearLayout = (LinearLayout) view.findViewById(R.id.second_bowling_layout);
+        secondFallofWicketsLinearLayout = (LinearLayout) view.findViewById(R.id.layout_fall_wicket_second);
+
+        linearLayout = (LinearLayout) view.findViewById(R.id.scorecard_parent_layout);
         tvFirstTeamInning = (TextView) view.findViewById(R.id.tv_first_team_inning);
         tvSecondTeamInning = (TextView) view.findViewById(R.id.tv_Second_team_inning);
         ivDwn = (ImageView) view.findViewById(R.id.iv_down);
@@ -141,20 +152,28 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         ivDwn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (firstLinearLayout.getVisibility() == View.GONE) {
-                    firstLinearLayout.setVisibility(View.VISIBLE);
+                if (firstBattingLinearLayout.getVisibility() == View.GONE) {
+                    firstBattingLinearLayout.setVisibility(View.VISIBLE);
+                    firstBowlingLinearLayout.setVisibility(View.VISIBLE);
+                    firstFallofWicketsLinearLayout.setVisibility(View.VISIBLE);
                 } else {
-                    firstLinearLayout.setVisibility(View.GONE);
+                    firstBattingLinearLayout.setVisibility(View.GONE);
+                    firstBowlingLinearLayout.setVisibility(View.GONE);
+                    firstFallofWicketsLinearLayout.setVisibility(View.GONE);
                 }
             }
         });
         ivDwnSecond.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (seconLinearLayout.getVisibility() == View.GONE) {
-                    seconLinearLayout.setVisibility(View.VISIBLE);
+                if (secondBattingLinearLayout.getVisibility() == View.GONE) {
+                    secondBattingLinearLayout.setVisibility(View.VISIBLE);
+                    secondBowlingLinearLayout.setVisibility(View.VISIBLE);
+                    secondFallofWicketsLinearLayout.setVisibility(View.VISIBLE);
                 } else {
-                    seconLinearLayout.setVisibility(View.GONE);
+                    secondBattingLinearLayout.setVisibility(View.GONE);
+                    secondBowlingLinearLayout.setVisibility(View.GONE);
+                    secondFallofWicketsLinearLayout.setVisibility(View.GONE);
                 }
             }
         });
@@ -163,6 +182,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
     private void initProgress(View view) {
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+
     }
     public void showProgress() {
         progressBar.setVisibility(View.VISIBLE);
@@ -175,8 +195,8 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
     @Override
     public void handleContent(JSONObject object) {
         {
-            hideProgress();
-            try {
+            showProgress();
+              try {
                boolean success = object.getBoolean("success");
                 boolean error = object.getBoolean("error");
 
@@ -215,7 +235,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                 @Override
                 public void run() {
                     try {
-
+                        hideProgress();
 
                         JSONArray jsonArray = jsonObject.getJSONArray("data");
                         JSONObject dataObject = jsonArray.getJSONObject(0);

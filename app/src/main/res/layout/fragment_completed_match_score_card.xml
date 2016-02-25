@@ -6,10 +6,23 @@
     android:background="@color/ColorPrimary"
     android:focusableInTouchMode="true"
     android:orientation="vertical">
+    <include
+        android:id="@+id/error"
+        layout="@layout/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
+            android:id="@+id/scorecard_parent_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -218,7 +231,7 @@
                 </android.support.percent.PercentRelativeLayout>
             </LinearLayout>
             <LinearLayout
-                android:id="@+id/ll_second_view_visibility"
+                android:id="@+id/ll_first_bowling_visibility"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/gray3"
@@ -229,7 +242,7 @@
                     android:background="@color/gray4">
                 </View>
                 <LinearLayout
-                    android:id="@+id/layout_bowling"
+                    android:id="@+id/first_layout_bowling"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="@dimen/horizontal_padding_small"
@@ -238,7 +251,6 @@
                     android:paddingTop="@dimen/horizontal_padding_small">
 
                     <android.support.percent.PercentRelativeLayout
-                        android:id="@+id/ll_layout_bowling"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -309,6 +321,7 @@
                     tools:listitem="@layout/fragment_live_cricket_bowling_card" />
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/first_layout_fall_wicket"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/gray3"
@@ -319,7 +332,7 @@
                     android:background="@color/gray4">
                 </View>
                 <LinearLayout
-                    android:id="@+id/layout_fall_wicket"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/horizontal_padding_small">
@@ -370,6 +383,7 @@
                 </RelativeLayout>
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/ll_batting_second"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/gray3"
@@ -390,7 +404,7 @@
                     android:paddingTop="@dimen/horizontal_padding_small">
 
                     <android.support.percent.PercentRelativeLayout
-                        android:id="@+id/ll_batting_second"
+
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
 
@@ -547,6 +561,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/second_bowling_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/gray3"
@@ -558,6 +573,7 @@
                     android:background="@color/gray4"></View>
 
                 <LinearLayout
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
@@ -634,10 +650,10 @@
                     android:id="@+id/rv_team_second_bowling"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                   
                     tools:listitem="@layout/fragment_live_cricket_bowling_card" />
             </LinearLayout>
             <LinearLayout
+                android:id="@+id/layout_fall_wicket_second"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/gray3"
@@ -648,7 +664,6 @@
                     android:background="@color/gray4">
                 </View>
                 <LinearLayout
-                    android:id="@+id/layout_fall_wicket_second"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:padding="@dimen/horizontal_padding_small">
@@ -672,21 +687,10 @@
                     tools:listitem="@layout/fragment_live_cricket_fall_of_wickets_card"
                     />
             </LinearLayout>
-            
+
         </LinearLayout>
 
     </ScrollView>
 
-    <include
-        android:id="@+id/error"
-        layout="@layout/error_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
 
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
 </LinearLayout>
