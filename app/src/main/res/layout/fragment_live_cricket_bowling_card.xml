@@ -46,7 +46,7 @@
                 android:gravity="right"
                 android:text="42"
                 android:textSize="@dimen/font_size_small_large"
-                app:layout_widthPercent="12%" />
+                app:layout_widthPercent="11%" />
 
             <com.sports.unity.common.view.CustomRobotoRegularTextView
                 android:id="@+id/tv_runs"
@@ -56,7 +56,7 @@
                 android:gravity="right"
                 android:text="5"
                 android:textSize="@dimen/font_size_small_large"
-                app:layout_widthPercent="12%" />
+                app:layout_widthPercent="14%" />
 
             <com.sports.unity.common.view.CustomRobotoRegularTextView
                 android:id="@+id/tv_wicket"
@@ -66,7 +66,7 @@
                 android:gravity="right"
                 android:text="0"
                 android:textSize="@dimen/font_size_small_large"
-                app:layout_widthPercent="12%" />
+                app:layout_widthPercent="11%" />
 
             <com.sports.unity.common.view.CustomRobotoRegularTextView
                 android:id="@+id/tv_extra"
