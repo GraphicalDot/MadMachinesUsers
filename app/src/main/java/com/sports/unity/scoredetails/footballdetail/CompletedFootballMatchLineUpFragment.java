@@ -59,7 +59,6 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_football_live_match_lineups, container, false);
         initView(view);
-        showProgressBar();
         return view;
     }
     private void initView(View view) {
@@ -77,7 +76,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     @Override
     public void handleContent(String object) {
         {
-            hideProgressBar();
+            showProgressBar();
 
             try {
                 JSONObject jsonObject = new JSONObject(object);
@@ -114,8 +113,9 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-        hideProgressBar();
+
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
+        hideProgressBar();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override

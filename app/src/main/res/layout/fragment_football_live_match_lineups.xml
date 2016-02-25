@@ -89,8 +89,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="1dp"
                     android:background="@color/gray3" />
+
+
             <GridLayout
-                android:id="@+id/gv_lineup"
+                android:id="@+id/rc_lineup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="@dimen/activity_vertical_margin_small"
@@ -127,6 +129,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="1dp"
                     android:background="@color/gray3" />
+
             <GridLayout
                 android:id="@+id/gv_substitutes"
                 android:layout_width="match_parent"
