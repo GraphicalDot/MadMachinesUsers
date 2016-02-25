@@ -27,7 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/tv_wicket"
-            android:gravity="center"
+            android:gravity="right"
             android:text="Dev"
             android:textSize="@dimen/font_size_small_large"
             app:layout_widthPercent="33%" />
