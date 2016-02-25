@@ -52,6 +52,8 @@ import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserProfileHandler;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.player.view.PlayerProfileView;
+import com.sports.unity.scoredetails.cricketdetail.PlayerCricketBioDataActivity;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
@@ -791,9 +793,18 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
                 TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
                 textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
-                textView.setText(players.get(i).getName());
+
+                final FavouriteItem favouriteItem = players.get(i);
+                textView.setText(favouriteItem.getName());
                 textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
                 playerList.addView(linearLayout);
+                 textView.setOnClickListener(new View.OnClickListener() {
+                     @Override
+                     public void onClick(View v) {
+                         playerProfile(favouriteItem.getName(),favouriteItem.getId(),favouriteItem.getSportsType());
+                     }
+                 });
+
             }
         } else {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
@@ -802,6 +813,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             textView.setText("Add favourite player");
             textView.setTextColor(getResources().getColor(R.color.gray1));
             playerList.addView(linearLayout);
+
         }
     }
 
@@ -861,4 +873,19 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
         setInitDataOwn();
     }
+    private  void playerProfile(String playerName, String playerId, String sportsType) {
+
+        if(Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)){
+            Intent intent = new Intent(UserProfileActivity.this, PlayerProfileView.class);
+            intent.putExtra(Constants.INTENT_KEY_ID, playerName);
+            startActivity(intent);
+        }else {
+            Intent intent = new Intent(UserProfileActivity.this, PlayerCricketBioDataActivity.class);
+            intent.putExtra(Constants.INTENT_KEY_ID, playerId);
+            startActivity(intent);
+        }
+    }
+
+
+
 }

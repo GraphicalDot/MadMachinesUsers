@@ -112,9 +112,9 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-
-        ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         hideProgressBar();
+        ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
+
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override

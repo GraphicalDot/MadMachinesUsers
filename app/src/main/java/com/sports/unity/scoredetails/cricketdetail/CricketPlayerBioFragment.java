@@ -84,13 +84,15 @@ showProgress();
                 renderDisplay(jsonObject);
 
             } else {
-                Toast.makeText(getActivity(), R.string.player_details_not_exists, Toast.LENGTH_SHORT).show();
                 showErrorLayout(getView());
+                Toast.makeText(getActivity(), R.string.player_details_not_exists, Toast.LENGTH_SHORT).show();
+
             }
         }catch (Exception ex){
             ex.printStackTrace();
-            Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             showErrorLayout(getView());
+            Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+
         }
     }
     private void initErrorLayout(View view) {
@@ -103,8 +105,6 @@ showProgress();
 
             LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
             errorLayout.setVisibility(View.VISIBLE);
-
-
     }
     private void initProgress(View view) {
          progressBar = (ProgressBar) view.findViewById(R.id.progress);

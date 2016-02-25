@@ -210,9 +210,9 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     battingTestsmatchMap.put("innings", batting.getString("innings"));
                     battingTestsmatchMap.put("runs", batting.getString("runs"));
                     battingTestsmatchMap.put("matches", batting.getString("matches"));
-                    battingTestsmatchMap.put("average", batting.getString("innings"));
-                    battingTestsmatchMap.put("strike_rate", batting.getString("runs"));
-                    battingTestsmatchMap.put("highest", batting.getString("matches"));
+                    battingTestsmatchMap.put("average", batting.getString("average"));
+                    battingTestsmatchMap.put("strike_rate", batting.getString("strike_rate"));
+                    battingTestsmatchMap.put("highest", batting.getString("highest"));
                     battingTestsmatchMap.put("100s", batting.getString("100s"));
                     battingTestsmatchMap.put("not_out", batting.getString("not_out"));
                 } else if (batting.getString("format").equalsIgnoreCase("ODI")) {
@@ -220,9 +220,9 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     battingOdisMap.put("innings", batting.getString("innings"));
                     battingOdisMap.put("runs", batting.getString("runs"));
                     battingOdisMap.put("matches", batting.getString("matches"));
-                    battingOdisMap.put("average", batting.getString("innings"));
-                    battingOdisMap.put("strike_rate", batting.getString("runs"));
-                    battingOdisMap.put("highest", batting.getString("matches"));
+                    battingOdisMap.put("average", batting.getString("average"));
+                    battingOdisMap.put("strike_rate", batting.getString("strike_rate"));
+                    battingOdisMap.put("highest", batting.getString("highest"));
                     battingOdisMap.put("100s", batting.getString("100s"));
                     battingOdisMap.put("not_out", batting.getString("not_out"));
                 } else if (batting.getString("format").equalsIgnoreCase("Twenty20")) {
@@ -230,9 +230,9 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     battingT20sMap.put("innings", batting.getString("innings"));
                     battingT20sMap.put("runs", batting.getString("runs"));
                     battingT20sMap.put("matches", batting.getString("matches"));
-                    battingT20sMap.put("average", batting.getString("innings"));
-                    battingT20sMap.put("strike_rate", batting.getString("runs"));
-                    battingT20sMap.put("highest", batting.getString("matches"));
+                    battingT20sMap.put("average", batting.getString("average"));
+                    battingT20sMap.put("strike_rate", batting.getString("strike_rate"));
+                    battingT20sMap.put("highest", batting.getString("highest"));
                     battingT20sMap.put("100s", batting.getString("100s"));
                     battingT20sMap.put("not_out", batting.getString("not_out"));
                 } else if (batting.getString("format").equalsIgnoreCase("IPL")) {
@@ -240,9 +240,9 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     battingIPLMap.put("innings", batting.getString("innings"));
                     battingIPLMap.put("runs", batting.getString("runs"));
                     battingIPLMap.put("matches", batting.getString("matches"));
-                    battingIPLMap.put("average", batting.getString("innings"));
-                    battingIPLMap.put("strike_rate", batting.getString("runs"));
-                    battingIPLMap.put("highest", batting.getString("matches"));
+                    battingIPLMap.put("average", batting.getString("average"));
+                    battingIPLMap.put("strike_rate", batting.getString("strike_rate"));
+                    battingIPLMap.put("highest", batting.getString("highest"));
                     battingIPLMap.put("100s", batting.getString("100s"));
                     battingIPLMap.put("not_out", batting.getString("not_out"));
                 }
