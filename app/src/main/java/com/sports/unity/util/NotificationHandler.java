@@ -7,6 +7,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.Path;
 import android.net.Uri;
 import android.provider.Settings;
@@ -309,12 +311,13 @@ public class NotificationHandler {
 
         builder.setContentIntent(pendingIntent);
         builder.setPriority(Notification.PRIORITY_HIGH);
+        builder.setAutoCancel(true);
+
         int defaults = 0;
         defaults = getDefaults(context, defaults, builder);
         builder.setDefaults(defaults);
-        builder.setAutoCancel(true);
 
-        Uri uri = Settings.System.getUriFor(UserUtil.getNotificationSoundURI());
+        Uri uri = Uri.parse(UserUtil.getNotificationSoundURI());
         builder.setSound(uri);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -322,48 +325,25 @@ public class NotificationHandler {
     }
 
     private int getDefaults(Context context, int defaults, NotificationCompat.Builder builder) {
-        if (vibrationEnabled(context)) {
+        if ( UserUtil.isConversationVibrate() ) {
             defaults = defaults | Notification.DEFAULT_VIBRATE;
         } else {
-            builder.setVibrate(new long[]{0l});
+            long vibratePattern[] = new long[]{0l};
+            builder.setVibrate(vibratePattern);
         }
-        if (soundEnabled(context)) {
-            defaults = defaults | Notification.DEFAULT_SOUND;
+
+//        if ( soundEnabled(context) ) {
+//            defaults = defaults | Notification.DEFAULT_SOUND;
+//        } else {
+//            builder.setSound(null);
+//        }
+
+        if ( UserUtil.isNotificationLight() ) {
+            builder.setLights(context.getResources().getColor(R.color.app_theme_blue), 100, 3000);
         } else {
-            builder.setSound(null);
-        }
-        if (lightEnabled(context)) {
-            builder.setLights(0xFF0000FF, 100, 3000);
-        } else {
-//            defaults = defaults | Notification.DEFAULT_LIGHTS;
-            //nothing
+
         }
         return defaults;
-    }
-
-    private boolean vibrationEnabled(Context context) {
-        if (UserUtil.isConversationVibrate()) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean soundEnabled(Context context) {
-        //TODO handle sound value and how to pick default tone.
-        if (UserUtil.getNotificationSoundURI() != null) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean lightEnabled(Context context) {
-        if (UserUtil.isNotificationLight()) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     private void setStyle(NotificationCompat.Builder builder, int chatCount, NotificationMessage messageArrived, Context context, int messageCount) {

@@ -219,7 +219,7 @@ public class UserProfileHandler {
     }
 
     private void saveLoginUserDetail(Context context, Contacts loginUserDetail){
-        int count = SportsUnityDBHelper.getInstance(context).updateContacts( loginUserDetail.jid, loginUserDetail.name, loginUserDetail.image, loginUserDetail.status, false);
+        int count = SportsUnityDBHelper.getInstance(context).updateContacts( loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.name, loginUserDetail.image, loginUserDetail.status, false);
         if( count == 0 ) {
             SportsUnityDBHelper.getInstance(context).addToContacts(loginUserDetail.name, loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.status, loginUserDetail.image, false);
         }

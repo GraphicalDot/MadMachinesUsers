@@ -320,9 +320,9 @@ public class XMPPService extends Service {
                         }
                     } else {
                         if ("Online".equals(presence.getStatus())) {
-                            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, Presence.Type.available);
+                            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, Presence.Type.available);
                         } else {
-                            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, Presence.Type.unavailable);
+                            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, Presence.Type.unavailable);
                         }
                     }
                 }
@@ -441,15 +441,15 @@ public class XMPPService extends Service {
                         if (days == 1) {
                             String lastSeen = CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(gmtEpoch));
                             lastSeen = "yesterday at " + lastSeen;
-                            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, lastSeen);
+                            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, lastSeen);
                         } else {
                             String lastSeen = days + " days ago";
-                            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, lastSeen);
+                            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, lastSeen);
                         }
                     } else {
                         String lastSeen = CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(gmtEpoch));
                         lastSeen = "today at " + lastSeen;
-                        ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, lastSeen);
+                        ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, lastSeen);
                     }
 
                 }
@@ -625,14 +625,14 @@ public class XMPPService extends Service {
         Log.i("handle status :", "");
         if (message.hasExtension(ChatState.composing.toString(), ChatStateExtension.NAMESPACE)) {
             Log.i("status :", "composing");
-            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, ChatState.composing.toString());
+            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, ChatState.composing.toString());
         } else if (message.hasExtension(ChatState.active.toString(), ChatStateExtension.NAMESPACE)) {
             Log.i("status :", "active");
         } else if (message.hasExtension(ChatState.gone.toString(), ChatStateExtension.NAMESPACE)) {
             Log.i("status :", "gone");
         } else if (message.hasExtension(ChatState.paused.toString(), ChatStateExtension.NAMESPACE)) {
             Log.i("status :", "paused");
-            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, ChatState.paused.toString());
+            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, ChatState.paused.toString());
         } else if (message.hasExtension(ChatState.inactive.toString(), ChatStateExtension.NAMESPACE)) {
             Log.i("status :", "inactive");
         }

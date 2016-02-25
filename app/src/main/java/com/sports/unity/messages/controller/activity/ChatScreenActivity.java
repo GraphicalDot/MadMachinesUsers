@@ -5,6 +5,9 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
@@ -36,6 +39,7 @@ import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.UserProfileActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.BlockUnblockUserHelper;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.GroupMessaging;
@@ -167,29 +171,54 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     };
 
     private ActivityActionListener activityActionListener = new ActivityActionListener() {
+
         @Override
         public void handleAction(int id, final Object object) {
-            if (isGroupChat) {
-                //TODO
-            } else {
+            if( id == ActivityActionHandler.EVENT_ID_CHAT_STATUS ) {
+                if (isGroupChat) {
+                    //TODO
+                } else {
+
+                    ChatScreenActivity.this.runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            if (object.toString().equals("composing")) {
+                                status.setText("typing...");
+                            } else if (object.toString().equals("paused")) {
+                                status.setText("Online");
+                            } else if (object.toString().equals("available")) {
+                                status.setText("Online");
+                            } else if (object.toString().equals("unavailable")) {
+                                personalMessaging.getLastTime(JABBERID);
+                            } else {
+                                status.setText("last seen " + object.toString());
+                            }
+                        }
+
+                    });
+
+                }
+            } else if( id == ActivityActionHandler.EVENT_ID_RECEIPT ) {
                 ChatScreenActivity.this.runOnUiThread(new Runnable() {
+
                     @Override
                     public void run() {
-                        if (object.toString().equals("composing")) {
-                            status.setText("typing...");
-                        } else if (object.toString().equals("paused")) {
-                            status.setText("Online");
-                        } else if (object.toString().equals("available")) {
-                            status.setText("Online");
-                        } else if (object.toString().equals("unavailable")) {
-                            personalMessaging.getLastTime(JABBERID);
-                        } else {
-                            status.setText("last seen " + object.toString());
+
+                        int receiptKind = (Integer)object;
+                        if( receiptKind == PersonalMessaging.RECEIPT_KIND_CLIENT ){
+
+                        } else if( receiptKind == PersonalMessaging.RECEIPT_KIND_SERVER ){
+                            playConversationTone();
+                        } else if( receiptKind == PersonalMessaging.RECEIPT_KIND_READ ){
+
                         }
+
+                        updateMessageList();
                     }
+
                 });
             }
-
         }
 
         @Override
@@ -197,18 +226,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             //id is 0, for media content uploaded.
 
             ChatScreenActivity.this.runOnUiThread(new Runnable() {
+
                 @Override
                 public void run() {
-                    if (isGroupChat) {
-                        messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
-                        groupChatScreenAdapter.notifydataset(messageList);
-                    } else {
-                        messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
-                        chatScreenAdapter.notifydataset(messageList);
-                    }
+                    updateMessageList();
 
                     sendReadStatus();
                 }
+
             });
         }
 
@@ -230,16 +255,12 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             }
 
             ChatScreenActivity.this.runOnUiThread(new Runnable() {
+
                 @Override
                 public void run() {
-                    if (isGroupChat) {
-                        messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
-                        groupChatScreenAdapter.notifydataset(messageList);
-                    } else {
-                        messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
-                        chatScreenAdapter.notifydataset(messageList);
-                    }
+                    updateMessageList();
                 }
+
             });
         }
 
@@ -251,16 +272,12 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             }
 
             ChatScreenActivity.this.runOnUiThread(new Runnable() {
+
                 @Override
                 public void run() {
-                    if (isGroupChat) {
-                        messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
-                        groupChatScreenAdapter.notifydataset(messageList);
-                    } else {
-                        messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
-                        chatScreenAdapter.notifydataset(messageList);
-                    }
+                    updateMessageList();
                 }
+
             });
         }
 
@@ -604,6 +621,33 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         }
     }
 
+    private void updateMessageList(){
+        Message oldLastMessage = null;
+        if( messageList.size() > 0 ) {
+            oldLastMessage = messageList.get(messageList.size() - 1);
+        }
+
+        if (isGroupChat) {
+            messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
+            groupChatScreenAdapter.notifydataset(messageList);
+        } else {
+            messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
+            chatScreenAdapter.notifydataset(messageList);
+        }
+
+        if( messageList.size() > 0 ) {
+            Message lastMessage = messageList.get(messageList.size()-1);
+            if( ! lastMessage.iAmSender ) {
+                if ( (oldLastMessage == null ? 0 : oldLastMessage.id) != lastMessage.id ) {
+                    playConversationTone();
+                } else {
+                    //nothing
+                }
+            }
+        }
+
+    }
+
     private void initUI(Toolbar toolbar) {
         TextView user = (TextView) toolbar.findViewById(R.id.chat_username);
         user.setText(JABBERNAME);
@@ -771,6 +815,16 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
             FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, null, mimeType, chat, messageId, otherChat);
 
+        }
+    }
+
+    private void playConversationTone(){
+        if(UserUtil.isConversationTones() ){
+            Uri notification = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.conversation_tone);
+            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+            r.play();
+        } else {
+            //nothing
         }
     }
 

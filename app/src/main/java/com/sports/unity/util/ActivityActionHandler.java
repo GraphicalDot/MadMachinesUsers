@@ -17,6 +17,8 @@ public class ActivityActionHandler {
     public static final int EVENT_ID_SEND_MEDIA = 1;
     public static final int EVENT_ID_DOWNLOAD_COMPLETED = 2;
     public static final int EVENT_ID_INCOMING_MEDIA = 3;
+    public static final int EVENT_ID_CHAT_STATUS = 4;
+    public static final int EVENT_ID_RECEIPT = 5;
 
     private static ActivityActionHandler activityActionHandler = null;
 
@@ -81,6 +83,32 @@ public class ActivityActionHandler {
             } else {
                 actionListener.handleAction(EVENT_ID_COMMON, data);
             }
+            success = true;
+        }
+        return success;
+    }
+
+    public boolean dispatchReceiptEvent(String key, Object data) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+
+        if (actionListener != null) {
+            actionListener.handleAction(EVENT_ID_RECEIPT, data);
+            success = true;
+        }
+        return success;
+    }
+
+    public boolean dispatchUserStatusOnChat(String key, Object data) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+
+        if (actionListener != null) {
+            actionListener.handleAction(EVENT_ID_COMMON, data);
             success = true;
         }
         return success;

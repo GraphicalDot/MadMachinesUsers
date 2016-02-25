@@ -3,6 +3,7 @@ package com.sports.unity.common.controller;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -215,14 +216,15 @@ public class SettingsActivity extends AppCompatActivity {
         manager.setType(RingtoneManager.TYPE_NOTIFICATION);
 
         ArrayList<ToneItem> toneItems = new ArrayList<>();
-        toneItems.add(new ToneItem("None", null));
+        toneItems.add(new ToneItem( "None", "/"));
         Cursor cursor = manager.getCursor();
         if (cursor != null) {
             while (cursor.moveToNext()) {
+                String id = cursor.getString(RingtoneManager.ID_COLUMN_INDEX);
                 String title = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX);
                 String uri = cursor.getString(RingtoneManager.URI_COLUMN_INDEX);
 
-                ToneItem toneItem = new ToneItem(title, uri);
+                ToneItem toneItem = new ToneItem( title, uri + "/" + id);
                 toneItems.add(toneItem);
             }
         } else {

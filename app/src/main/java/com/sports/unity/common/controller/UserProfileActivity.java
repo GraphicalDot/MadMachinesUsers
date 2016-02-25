@@ -488,7 +488,10 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             byte[] imageArray = card.getAvatar();
             String nickname = card.getNickName();
 
-            profileImage.setImageBitmap(BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length));
+            if( imageArray != null ) {
+                profileImage.setImageBitmap(BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length));
+            }
+
             name.setText(nickname);
             status.setText(userStatus);
             {
@@ -500,6 +503,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
             onUnSuccessfulVCardLoad();
         }
 

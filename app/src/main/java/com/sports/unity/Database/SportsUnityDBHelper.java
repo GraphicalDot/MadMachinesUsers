@@ -570,18 +570,19 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         Log.i("updated :", String.valueOf(count));
     }
 
-    public int updateContacts(String jid, String name, byte[] userImage, String status, boolean available) {
+    public int updateContacts(String phoneNumber, String jid, String name, byte[] userImage, String status, boolean available) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(ContactsEntry.COLUMN_NAME, name);
+        values.put(ContactsEntry.COLUMN_JID, jid);
         values.put(ContactsEntry.COLUMN_USER_IMAGE, userImage);
         values.put(ContactsEntry.COLUMN_STATUS, status);
         values.put(ContactsEntry.COLUMN_AVAILABLE, available);
 
-        String selection = ContactsEntry.COLUMN_JID + " LIKE ? ";
-        String[] selectionArgs = {jid};
+        String selection = ContactsEntry.COLUMN_PHONE_NUMBER + " LIKE ? ";
+        String[] selectionArgs = {phoneNumber};
 
         int count = db.update(
                 ContactsEntry.TABLE_NAME,

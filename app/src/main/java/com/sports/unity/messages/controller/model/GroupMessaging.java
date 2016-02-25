@@ -5,7 +5,6 @@ import android.content.Context;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.util.ActivityActionHandler;
-import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.Constants;
 
 import org.jivesoftware.smack.SmackException;
@@ -224,11 +223,11 @@ public class GroupMessaging {
 
         if (fromJid.substring(0, fromJid.indexOf("@")).equals("dev")) {
             sportsUnityDBHelper.updateServerReceived(receiptId);
+            updateReceipts(PersonalMessaging.RECEIPT_KIND_SERVER);
         } else {
             sportsUnityDBHelper.updateClientReceived(receiptId);
+            updateReceipts(PersonalMessaging.RECEIPT_KIND_CLIENT);
         }
-
-        updateReadReceipts(applicationContext);
     }
 
     public void setActiveStatus(String phoneNumber, String status) {
@@ -259,7 +258,7 @@ public class GroupMessaging {
         return false;
     }
 
-    private void updateReadReceipts(Context applicationContext) {
+    private void updateReceipts(int receiptKind) {
         /**
          * get read receipts in database and then update the double ticks in the corresponding chats
          */
@@ -267,7 +266,7 @@ public class GroupMessaging {
 //        intent.setAction("com.madmachine.SINGLE_MESSAGE_RECEIVED");
 //        applicationContext.sendBroadcast(intent);
 
-        ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, null);
+        ActivityActionHandler.getInstance().dispatchReceiptEvent(ActivityActionHandler.CHAT_SCREEN_KEY, receiptKind);
     }
 
 }

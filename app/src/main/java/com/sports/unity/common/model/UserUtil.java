@@ -1,6 +1,7 @@
 package com.sports.unity.common.model;
 
 import android.content.Context;
+import android.media.RingtoneManager;
 import android.provider.Settings;
 import android.util.Log;
 
@@ -47,8 +48,8 @@ public class UserUtil {
     private static boolean CONVERSATION_VIBRATE = true;
     private static boolean NOTIFICATION_LIGHT = true;
 
-    private static String NOTIFICATION_SOUND_TITLE = "Default";
-    private static String NOTIFICATION_SOUND_URI = Settings.System.NOTIFICATION_SOUND;
+    private static String NOTIFICATION_SOUND_TITLE = null;
+    private static String NOTIFICATION_SOUND_URI = null;
 
     private static boolean SHOW_MY_LOCATION = true;
     private static boolean SHOW_TO_FRIENDS_LOCATION = true;
@@ -437,6 +438,10 @@ public class UserUtil {
 
         NOTIFICATION_SOUND_TITLE = tinyDB.getString(TinyDB.NOTIFICATION_SOUND_TITLE);
         NOTIFICATION_SOUND_URI = tinyDB.getString(TinyDB.NOTIFICATION_SOUND_URI);
+        if(NOTIFICATION_SOUND_URI.isEmpty()){
+            NOTIFICATION_SOUND_URI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString();
+            NOTIFICATION_SOUND_TITLE = "Default";
+        }
 
         SHOW_MY_LOCATION = tinyDB.getBoolean(TinyDB.LOCATION_OPTIONS, SHOW_MY_LOCATION);
         SHOW_TO_FRIENDS_LOCATION = tinyDB.getBoolean(TinyDB.FRIENDS_ONLY, SHOW_TO_FRIENDS_LOCATION);
