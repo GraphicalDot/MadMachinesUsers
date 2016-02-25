@@ -9,11 +9,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,6 +36,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     private TextView tvPlayerbattingStyle;
     private TextView tvPlayerBowingStyle;
     private TextView tvPlayerMajorTeam;
+    private ProgressBar progressBar;
     public CricketPlayerBioFragment() {
         super();
     }
@@ -41,11 +44,12 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-       String playerId =  getActivity().getIntent().getStringExtra("playerId");
-        playerId = "6f65e8cd45ae14c916cf2c1c69b6102c";
+        String playerId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+       /* playerId = "6f65e8cd45ae14c916cf2c1c69b6102c";*/
         CricketPlayerbioHandler cricketPlayerbioHandler = CricketPlayerbioHandler.getInstance(context);
         cricketPlayerbioHandler.addListener(this);
         cricketPlayerbioHandler.requestData(playerId);
+
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,6 +65,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
         tvPlayerBowingStyle = (TextView) view.findViewById(R.id.tv_player_bowing_style);
         tvPlayerMajorTeam = (TextView) view.findViewById(R.id.tv_player_major_team);
         tvPlayerbirthOfPlace = (TextView) view.findViewById(R.id.tv_player_birth_of_place);
+        initProgress(view);
         initErrorLayout(view);
 
     }
@@ -68,7 +73,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     @Override
     public void handleContent(String content) {
         try {
-
+showProgress();
             JSONObject jsonObject = new JSONObject(content);
 
             boolean success = jsonObject.getBoolean("success");
@@ -79,12 +84,15 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
                 renderDisplay(jsonObject);
 
             } else {
-                Toast.makeText(getActivity(), R.string.player_details_not_exists, Toast.LENGTH_SHORT).show();
                 showErrorLayout(getView());
+                Toast.makeText(getActivity(), R.string.player_details_not_exists, Toast.LENGTH_SHORT).show();
+
             }
         }catch (Exception ex){
             ex.printStackTrace();
+            showErrorLayout(getView());
             Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+
         }
     }
     private void initErrorLayout(View view) {
@@ -97,13 +105,27 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
 
             LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
             errorLayout.setVisibility(View.VISIBLE);
+    }
+    private void initProgress(View view) {
+         progressBar = (ProgressBar) view.findViewById(R.id.progress);
+         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+    }
+    public void showProgress() {
+    progressBar.setVisibility(View.VISIBLE);
 
     }
+    public void hideProgress() {
 
+
+        progressBar.setVisibility(View.GONE);
+
+    }
     private void renderDisplay(JSONObject jsonObject) throws JSONException {
+
         final JSONObject data = (JSONObject) jsonObject.get("data");
         final JSONObject playerInfo = (JSONObject) data.get("info");
         PlayerCricketBioDataActivity activity = (PlayerCricketBioDataActivity) getActivity();
+        hideProgress();
         if (activity != null) {
             activity.setProfileInfo(data);
             activity.runOnUiThread(new Runnable() {

@@ -5,16 +5,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.sports.unity.messages.controller.fragment.MessagesFragment;
-import com.sports.unity.news.controller.fragment.NewsFragment;
 import com.sports.unity.scoredetails.CommentaryFragment;
 import com.sports.unity.scoredetails.CommentriesModel;
-import com.sports.unity.scoredetails.footballdetail.FootballMatchDetailFragment;
-import com.sports.unity.scoredetails.footballdetail.FootballMatchLineupFragment;
-import com.sports.unity.scoredetails.footballdetail.FootballMatchLineupModel;
-import com.sports.unity.scoredetails.footballdetail.FootballMatchStatsFragment;
-import com.sports.unity.scoredetails.footballdetail.FootballMatchTimelineFragment;
-import com.sports.unity.scores.controller.fragment.MatchListFragment;
+import com.sports.unity.scoredetails.footballdetail.CompletedFootballMatchLineUpFragment;
+import com.sports.unity.scoredetails.footballdetail.CompletedFootballMatchStatFragment;
+import com.sports.unity.scoredetails.footballdetail.CompletedFootballMatchTimeLineFragment;
+import com.sports.unity.scoredetails.footballdetail.LiveFootballMatchLineUpFargment;
+import com.sports.unity.scoredetails.footballdetail.LiveFootballMatchStatFragment;
+import com.sports.unity.scoredetails.footballdetail.LiveFootballMatchTimeLineFragment;
+import com.sports.unity.scoredetails.footballdetail.UpCommingFootballMatchFromFragment;
+import com.sports.unity.scoredetails.footballdetail.UpCommingFootballMatchSqadFragment;
+import com.sports.unity.scoredetails.footballdetail.UpCommingFootballMatchTableFargment;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
 
@@ -28,16 +29,20 @@ public class ViewPagerFootballScoreDetailAdapter extends FragmentStatePagerAdapt
     private int numberOfTabs;
     private ArrayList<CommentriesModel> commentries;
     private String matchStatus;
+    private String matchTime;
+    private boolean isLive;
 
 
 
-    public ViewPagerFootballScoreDetailAdapter(FragmentManager fm, String mTitles[], int numberOfTabs, ArrayList<CommentriesModel> commentries,String matchStatus) {
+    public ViewPagerFootballScoreDetailAdapter(FragmentManager fm, String mTitles[], int numberOfTabs, ArrayList<CommentriesModel> commentries,String matchStatus,String matchTime,boolean isLive) {
         super(fm);
 
         this.Titles = mTitles;
         this.numberOfTabs = numberOfTabs;
         this.commentries = commentries;
         this.matchStatus = matchStatus;
+        this.matchTime = matchTime;
+        this.isLive = isLive;
 
     }
 
@@ -45,19 +50,43 @@ public class ViewPagerFootballScoreDetailAdapter extends FragmentStatePagerAdapt
     public Fragment getItem(int position) {
 
         Fragment fragment = null;
-        if (position == 0) {
-            fragment = new CommentaryFragment();
-            Bundle cmBundel = new Bundle();
-            cmBundel.putString(Constants.INTENT_KEY_TYPE, ScoresJsonParser.FOOTBALL);
-            cmBundel.putParcelableArrayList("commentries", commentries);
-            fragment.setArguments(cmBundel);
-        } else if (position == 1) {
-            fragment= new FootballMatchStatsFragment();
-        } else if(position == 2){
-            fragment = new FootballMatchTimelineFragment();
+        if(matchStatus.equals(matchTime) && !isLive){
+            if (position == 0) {
+                fragment = new UpCommingFootballMatchTableFargment();
+            } else if (position == 1) {
+                fragment = new UpCommingFootballMatchFromFragment();
+            } else if(position == 2) {
+                fragment = new UpCommingFootballMatchSqadFragment();
+            }
         } else {
-            fragment = new FootballMatchLineupFragment();
+            if (position == 0) {
+                fragment = new CommentaryFragment();
+                Bundle cmBundel = new Bundle();
+                cmBundel.putString(Constants.INTENT_KEY_TYPE, ScoresJsonParser.FOOTBALL);
+                cmBundel.putParcelableArrayList("commentries", commentries);
+                fragment.setArguments(cmBundel);
+            } else if (position == 1) {
+                if(isLive){
+                    fragment = new LiveFootballMatchStatFragment();
+                }else {
+                    fragment = new CompletedFootballMatchStatFragment();
+                }
+
+            } else if(position == 2){
+                if(isLive){
+                    fragment = new LiveFootballMatchTimeLineFragment();
+                }else {
+                    fragment = new CompletedFootballMatchTimeLineFragment();
+                }
+            } else {
+                if(isLive){
+                    fragment = new LiveFootballMatchLineUpFargment();
+                }else {
+                    fragment = new CompletedFootballMatchLineUpFragment();
+                }
+            }
         }
+
         return fragment;
     }
 

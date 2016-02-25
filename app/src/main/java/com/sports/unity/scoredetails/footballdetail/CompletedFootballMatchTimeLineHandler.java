@@ -1,4 +1,4 @@
-package com.sports.unity.scoredetails.cricketdetail;
+package com.sports.unity.scoredetails.footballdetail;
 
 import android.content.Context;
 import android.util.Log;
@@ -15,28 +15,28 @@ import org.json.JSONObject;
 import java.util.HashSet;
 
 /**
- * Created by madmachines on 16/2/16.
+ * Created by madmachines on 23/2/16.
  */
-public class CricketUpcomingMatchScoreCardHandler {
-    private static final String REQUEST_TAG = "UPCOMING_CRICKET_MATCH_TAG";
-    private static Context mContext;
-    private String url = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
+public class CompletedFootballMatchTimeLineHandler {
 
-    private UpcommingCricketMatchContentListener mContentListener;
+    private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
+    private static Context mContext;
+    private String url = "http://52.74.75.79:8080/get_football_match_timeline?match_id=";
+
+    private CompletedMatchContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
-    public static CricketUpcomingMatchScoreCardHandler getInstance(Context context) {
+    public static CompletedFootballMatchTimeLineHandler getInstance(Context context) {
         mContext = context;
-        CricketUpcomingMatchScoreCardHandler cricketUpcomingMatchScoreCardHandler = null;
-        cricketUpcomingMatchScoreCardHandler = new CricketUpcomingMatchScoreCardHandler();
-        return cricketUpcomingMatchScoreCardHandler;
+        CompletedFootballMatchTimeLineHandler completedMatchScoreCardHandler = new CompletedFootballMatchTimeLineHandler();
+        return completedMatchScoreCardHandler;
     }
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
-    public interface UpcommingCricketMatchContentListener {
+    public interface CompletedMatchContentListener {
 
-        void handleContent(JSONObject object);
+        void handleContent(String object);
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -44,16 +44,17 @@ public class CricketUpcomingMatchScoreCardHandler {
         @Override
         public void onResponse(String s) {
             requestInProcess.remove(REQUEST_TAG);
-            CricketUpcomingMatchScoreCardHandler.this.handleResponse(s);
+            CompletedFootballMatchTimeLineHandler.this.handleResponse(s);
         }
-       @Override
+
+        @Override
         public void onErrorResponse(VolleyError volleyError) {
             requestInProcess.remove(REQUEST_TAG);
-            CricketUpcomingMatchScoreCardHandler.this.handleErrorResponse(volleyError);
+            CompletedFootballMatchTimeLineHandler.this.handleErrorResponse(volleyError);
         }
     };
 
-    public void requestCompletdMatchScoreCard(String matchId) {
+    public void requestCompletedMatchTimeLine(String matchId) {
         Log.i("Score Detail", "Request Score Details");
 
         url = url+matchId;
@@ -69,7 +70,7 @@ public class CricketUpcomingMatchScoreCardHandler {
             JSONObject jsonObject = new JSONObject(response);
             Log.i("Score Card", "handleResponse: ");
             if(jsonObject.getBoolean("success")){
-                mContentListener.handleContent(jsonObject);
+                mContentListener.handleContent(response);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -82,9 +83,8 @@ public class CricketUpcomingMatchScoreCardHandler {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
     }
 
-    public void addListener(UpcommingCricketMatchContentListener contentListener) {
+    public void addListener(CompletedMatchContentListener contentListener) {
         mContentListener = contentListener;
     }
-
 
 }

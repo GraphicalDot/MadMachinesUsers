@@ -27,7 +27,6 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scoredetails.FragementInterface;
-import com.sports.unity.scoredetails.model.CricketScoreCard;
 import com.sports.unity.scores.controller.fragment.MatchListAdapter;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
@@ -43,7 +42,7 @@ import java.util.List;
 /**
  * Created by cfeindia on 3/2/16.
  */
-public class CricketMatchDetailFragment extends Fragment implements FragementInterface<CricketScoreCard>{
+public class CricketMatchDetailFragment extends Fragment {
 
 
 private static final String ARG_COLUMN_COUNT = "column-count";
@@ -113,10 +112,6 @@ private OnListFragmentInteractionListener mListener;
             mListener = null;
         }
 
-    @Override
-    public List<CricketScoreCard> getItems() {
-        return null;
-    }
 
     /**
  * This interface must be implemented by activities that contain this
@@ -130,6 +125,6 @@ private OnListFragmentInteractionListener mListener;
  */
 public interface OnListFragmentInteractionListener
 {
-    void onListFragmentInteraction(CricketScoreCard item);
+    void onListFragmentInteraction(String item);
 }
 }

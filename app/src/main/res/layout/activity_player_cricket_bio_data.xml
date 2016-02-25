@@ -8,7 +8,7 @@
 
     <include
         android:id="@+id/tool_bar"
-        layout="@layout/tool_bar_player_profile"
+        layout="@layout/toolbar_score_details"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:minHeight="?android:attr/actionBarSize" />
@@ -94,8 +94,7 @@
                 <com.sports.unity.common.view.CustomViewPager
                     android:id="@+id/cricket_player_pager"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_height="match_parent">
 
                 </com.sports.unity.common.view.CustomViewPager>
             </LinearLayout>

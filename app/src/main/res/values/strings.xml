@@ -285,7 +285,7 @@ Carrier SMS charges may apply.</string>
     <string name="football_match_timelinefragment">Football Match Timeline Fragment</string>
     <string name="cricket_match_score_fragment">Cricket Match Score Fragment</string>
     <string name="title_activity_player_profile_view">Player Profile</string>
-    <string name="matchstats">MATCHSTATS</string>
+    <string name="matchstats">MATCH STATS</string>
     <string name="timeline">TIMELINE</string>
     <string name="lineup">LINEUP</string>
     <string name="player_details_not_exists">Player Profile Not Exists</string>
@@ -361,6 +361,10 @@ Carrier SMS charges may apply.</string>
     <string name="match_not_exist">This Match Does Not Exists</string>
     <string name="commentary_not_exist">Commentary Not Available For This Match Yet</string>
     <string name="scorecard_not_exist">ScoreCard Not Exist Yet</string>
+    <string name="table">TABLE</string>
+    <string name="form">FORM</string>
+    <string name="squad">SQUAD</string>
+    <string name="foot_match_stat_not_exists">Match Stats Not Availlable</string>
 
 
     <!-- group related strings-->

@@ -11,7 +11,7 @@ public class LiveAndCompletedCricketBattingCardDTO {
     private String tvBallPlayByPlayer;
     private String tvFourGainByPlayer;
     private String tvSixGainByPlayer;
-    private String tvPlayerRunRate;
+    private String tvWicketBy;
     private String tvSrRateOfPlayer;
 
     public String getTvPlayerName() {
@@ -54,12 +54,12 @@ public class LiveAndCompletedCricketBattingCardDTO {
         this.tvSixGainByPlayer = tvSixGainByPlayer;
     }
 
-    public String getTvPlayerRunRate() {
-        return tvPlayerRunRate;
+    public String getTvWicketBy() {
+        return tvWicketBy;
     }
 
-    public void setTvPlayerRunRate(String tvPlayerRunRate) {
-        this.tvPlayerRunRate = tvPlayerRunRate;
+    public void setTvWicketBy(String tvWicketBy) {
+        this.tvWicketBy = tvWicketBy;
     }
 
     public String getTvSrRateOfPlayer() {

@@ -3,13 +3,14 @@ package com.sports.unity.scoredetails.cricketdetail;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import org.solovyev.android.views.llm.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,8 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 
 public class CompletedMatchScoreCardFragment extends Fragment implements CompletedMatchScoreCardHandler.CompletedMatchContentListener{
@@ -65,6 +68,16 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
     private RecyclerView teamBBowlingRecycler;
     private RecyclerView teamAFallOfWicketRecycler;
     private RecyclerView teamBFallOfWicketRecycler;
+    private LinearLayout linearLayout;
+    private LinearLayout firstBattingLinearLayout;
+    private LinearLayout firstBowlingLinearLayout;
+    private LinearLayout firstFallofWicketsLinearLayout;
+    private LinearLayout secondBattingLinearLayout;
+    private LinearLayout secondBowlingLinearLayout;
+    private LinearLayout secondFallofWicketsLinearLayout;
+    private ProgressBar progressBar;
+   private  CompletedMatchScoreCardHandler completedMatchScoreCardHandler;
+    private String matchId;
     public CompletedMatchScoreCardFragment() {
         // Required empty public constructor
     }
@@ -72,21 +85,31 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        String matchId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+         matchId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
 
-        CompletedMatchScoreCardHandler completedMatchScoreCardHandler = CompletedMatchScoreCardHandler.getInstance(context);
+        completedMatchScoreCardHandler = CompletedMatchScoreCardHandler.getInstance(context);
         completedMatchScoreCardHandler.addListener(this);
         completedMatchScoreCardHandler.requestCompletdMatchScoreCard(matchId);
-    }
+      }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_completed_match_score_card, container, false);
         initView(view);
+        initProgress(view);
         return view;
     }
+
     private void initView(View view) {
+        firstBattingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_first_view_visibility);
+        firstBowlingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_first_bowling_visibility);
+        firstFallofWicketsLinearLayout = (LinearLayout) view.findViewById(R.id.first_layout_fall_wicket);
+        secondBattingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_batting_second);
+        secondBowlingLinearLayout = (LinearLayout) view.findViewById(R.id.second_bowling_layout);
+        secondFallofWicketsLinearLayout = (LinearLayout) view.findViewById(R.id.layout_fall_wicket_second);
+
+        linearLayout = (LinearLayout) view.findViewById(R.id.scorecard_parent_layout);
         tvFirstTeamInning = (TextView) view.findViewById(R.id.tv_first_team_inning);
         tvSecondTeamInning = (TextView) view.findViewById(R.id.tv_Second_team_inning);
         ivDwn = (ImageView) view.findViewById(R.id.iv_down);
@@ -102,11 +125,17 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         tvTotalRunSecondTeam = (TextView) view.findViewById(R.id.tv_total_run_second_team);
         tvRunRateSecondTeam = (TextView) view.findViewById(R.id.tv_run_rate_second_team);
         teamABattingRecycler = (RecyclerView) view.findViewById(R.id.rv_team_first_batting);
+        teamABattingRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamABowlingRecycler = (RecyclerView) view.findViewById(R.id.rv_team_first_bowling);
+        teamABowlingRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamAFallOfWicketRecycler = (RecyclerView) view.findViewById(R.id.rv_team_first_fall_wickets);
+        teamAFallOfWicketRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamBBattingRecycler = (RecyclerView) view.findViewById(R.id.rv_team_second_batting);
+        teamBBattingRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamBBowlingRecycler = (RecyclerView) view.findViewById(R.id.rv_team_second_bowling);
+        teamBBowlingRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamBFallOfWicketRecycler = (RecyclerView) view.findViewById(R.id.rv_second_team_fall_wicket);
+        teamBFallOfWicketRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamABattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamABattingCardList);
         teamABattingRecycler.setAdapter(teamABattingAdapter);
         teamBBattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamBBattingCardList);
@@ -120,13 +149,58 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         teamBFallOfWicketAdapter = new LiveAndCompletedCricketFallOfWicketAdapter(teamBFallOfWicketCardList);
         teamBFallOfWicketRecycler.setAdapter(teamBFallOfWicketAdapter);
         initErrorLayout(view);
+        ivDwn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (firstBattingLinearLayout.getVisibility() == View.GONE) {
+                    firstBattingLinearLayout.setVisibility(View.VISIBLE);
+                    firstBowlingLinearLayout.setVisibility(View.VISIBLE);
+                    firstFallofWicketsLinearLayout.setVisibility(View.VISIBLE);
+                     ivDwn.setImageResource(R.drawable.ic_droable);
+                } else {
+                    firstBattingLinearLayout.setVisibility(View.GONE);
+                    firstBowlingLinearLayout.setVisibility(View.GONE);
+                    firstFallofWicketsLinearLayout.setVisibility(View.GONE);
+                    ivDwn.setImageResource(R.drawable.ic_dropdown);
+                }
+            }
+        });
+        ivDwnSecond.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (secondBattingLinearLayout.getVisibility() == View.GONE) {
+                    secondBattingLinearLayout.setVisibility(View.VISIBLE);
+                    secondBowlingLinearLayout.setVisibility(View.VISIBLE);
+                    secondFallofWicketsLinearLayout.setVisibility(View.VISIBLE);
+                    ivDwnSecond.setImageResource(R.drawable.ic_droable);
+                } else {
+                    secondBattingLinearLayout.setVisibility(View.GONE);
+                    secondBowlingLinearLayout.setVisibility(View.GONE);
+                    secondFallofWicketsLinearLayout.setVisibility(View.GONE);
+                    ivDwnSecond.setImageResource(R.drawable.ic_dropdown);
+                }
+            }
+        });
 
     }
+    private void initProgress(View view) {
+        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
 
+    }
+    public void showProgress() {
+        progressBar.setVisibility(View.VISIBLE);
+
+    }
+    public void hideProgress() {
+        progressBar.setVisibility(View.GONE);
+
+    }
     @Override
     public void handleContent(JSONObject object) {
         {
-            try {
+            showProgress();
+              try {
                boolean success = object.getBoolean("success");
                 boolean error = object.getBoolean("error");
 
@@ -165,6 +239,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                 @Override
                 public void run() {
                     try {
+                        hideProgress();
 
                         JSONArray jsonArray = jsonObject.getJSONArray("data");
                         JSONObject dataObject = jsonArray.getJSONObject(0);
@@ -173,19 +248,33 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                         JSONObject scoreCard= dataObject.getJSONObject("scorecard");
                         JSONObject teamAScoreCard = scoreCard.getJSONObject(dataObject.getString("team_a"));
                         JSONObject teamAFirstInning = teamAScoreCard.getJSONObject("a_1");
-                        JSONObject teamASecondInning = teamAScoreCard.getJSONObject("a_2");
+                        JSONObject teamASecondInning= null;
+                        if(!teamAScoreCard.isNull("a_1")) {
+                             teamASecondInning = teamAScoreCard.getJSONObject("a_1");
+                        }
                         JSONObject teamBScoreCard = scoreCard.getJSONObject(dataObject.getString("team_b"));
                         JSONObject teamBFirstInning = teamBScoreCard.getJSONObject("b_1");
-                        JSONObject teamBSecondInning = teamBScoreCard.getJSONObject("b_2");
+                        JSONObject teamBSecondInning =null;
+                        if(!teamAScoreCard.isNull("b_2")) {
+                            teamBSecondInning = teamBScoreCard.getJSONObject("b_2");
+                        }
 
                         JSONArray teamABattingArray = teamAFirstInning.getJSONArray("batting");
                         JSONArray teamABowlingArray = teamAFirstInning.getJSONArray("bowling");
                         JSONArray teamAFallWicketArray = teamAFirstInning.getJSONArray("fall_of_wickets");
                         JSONArray teamBBattingArray = teamBFirstInning.getJSONArray("batting");
                         JSONArray teamBBowlingArray = teamBFirstInning.getJSONArray("bowling");
-                        JSONArray teamBFallWicketArray = teamAFirstInning.getJSONArray("fall_of_wickets");
-                        tvTeamFirstNameAndScore.setText(dataObject.getString("team_a")+" "+teamAFirstInning.getString("team_runs")+"/"+teamAFirstInning.getString("team_wickets")+"("+teamAFirstInning.getString("team_overs")+")");
-                        tvTeamSecondNameAndScore.setText(dataObject.getString("team_b")+" "+teamBFirstInning.getString("team_runs")+"/"+teamBFirstInning.getString("team_wickets")+"("+teamBFirstInning.getString("team_overs")+")");
+                        JSONArray teamBFallWicketArray = teamBFirstInning.getJSONArray("fall_of_wickets");
+                        tvFirstTeamOver.setText("("+teamAFirstInning.getString("team_overs")+")");
+                        tvSecondTeamOver.setText("("+teamBFirstInning.getString("team_overs")+")");
+                        tvExtraRunTeamFirst.setText(teamAFirstInning.getString("inning_extras"));
+                        tvExtraRunTeamSecond.setText(teamBFirstInning.getString("inning_extras"));
+                        tvTotalRunFirstTeam.setText(teamAFirstInning.getString("team_runs"));
+                        tvTotalRunSecondTeam.setText(teamBFirstInning.getString("team_runs"));
+                        tvRunRateFirstTeam.setText(teamAFirstInning.getString("team_run_rate"));
+                        tvRunRateSecondTeam.setText(teamBFirstInning.getString("team_run_rate"));
+                        tvTeamFirstNameAndScore.setText(dataObject.getString("team_a").substring(0,2).toUpperCase()+" "+teamAFirstInning.getString("team_runs")+"/"+teamAFirstInning.getString("team_wickets"));
+                        tvTeamSecondNameAndScore.setText(dataObject.getString("team_b").substring(0,2).toUpperCase()+" "+teamBFirstInning.getString("team_runs")+"/"+teamBFirstInning.getString("team_wickets"));
                         for (int i= 0 ; i<teamABattingArray.length();i++){
                             JSONObject battingObject = teamABattingArray.getJSONObject(i);
                             LiveAndCompletedCricketBattingCardDTO liveAndCompletedCricketBattingCardDTO= new LiveAndCompletedCricketBattingCardDTO();
@@ -195,6 +284,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                             liveAndCompletedCricketBattingCardDTO.setTvFourGainByPlayer(battingObject.getString("4s"));
                             liveAndCompletedCricketBattingCardDTO.setTvSixGainByPlayer(battingObject.getString("6s"));
                             liveAndCompletedCricketBattingCardDTO.setTvPlayerRun(battingObject.getString("R"));
+                            liveAndCompletedCricketBattingCardDTO.setTvWicketBy(battingObject.getString("player_status"));
                             teamABattingCardList.add(liveAndCompletedCricketBattingCardDTO);
                         }
                         for (int j= 0 ; j<teamABowlingArray.length();j++){
@@ -209,11 +299,17 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                             teamABowlingCardList.add(bowling);
                         }
 
-                        /*for (int k= 0 ; k<teamAFallWicketArray.length();k++){
+                        for (int k= 0 ; k<teamAFallWicketArray.length();k++){
+                            JSONObject fallOfWicketObject = teamAFallWicketArray.getJSONObject(k);
+                            LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets= new LiveAndCompletedCricketFallOfWicketCardDTO();
+                            fallOfWickets.setTvBowlerName(fallOfWicketObject.getString("name"));
+                            fallOfWickets.setTvOverNumber(fallOfWicketObject.getString("overs"));
+                            fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs"));
 
-                        }*/
-                        for (int i= 0 ; i<teamBBattingArray.length();i++){
-                            JSONObject battingObject = teamABattingArray.getJSONObject(i);
+                            teamAFallOfWicketCardList.add(fallOfWickets);
+                        }
+                       for (int i= 0 ; i<teamBBattingArray.length();i++){
+                            JSONObject battingObject = teamBBattingArray.getJSONObject(i);
                             LiveAndCompletedCricketBattingCardDTO liveAndCompletedCricketBattingCardDTO= new LiveAndCompletedCricketBattingCardDTO();
                             liveAndCompletedCricketBattingCardDTO.setTvPlayerName(battingObject.getString("player"));
                             liveAndCompletedCricketBattingCardDTO.setTvBallPlayByPlayer(battingObject.getString("B"));
@@ -224,7 +320,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                             teamBBattingCardList.add(liveAndCompletedCricketBattingCardDTO);
                         }
                         for (int j= 0 ; j<teamBBowlingArray.length();j++){
-                            JSONObject bowlingArray = teamABattingArray.getJSONObject(j);
+                            JSONObject bowlingArray = teamBBowlingArray.getJSONObject(j);
                             LiveAndCompletedCricketBowlingCardDTO bowling= new LiveAndCompletedCricketBowlingCardDTO();
                             bowling.setTvRuns(bowlingArray.getString("runs"));
                             bowling.setTvBowlerName(bowlingArray.getString("player"));
@@ -235,9 +331,16 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                             teamBBowlingCardList.add(bowling);
                         }
 
-                        /*for (int k= 0 ; k<teamAFallWicketArray.length();k++){
+                        for (int k= 0 ; k<teamBFallWicketArray.length();k++){
+                            JSONObject fallOfWicketObject = teamBFallWicketArray.getJSONObject(k);
+                            LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets= new LiveAndCompletedCricketFallOfWicketCardDTO();
+                            fallOfWickets.setTvBowlerName(fallOfWicketObject.getString("name"));
+                            fallOfWickets.setTvOverNumber(fallOfWicketObject.getString("overs"));
+                            fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs"));
 
-                        }*/
+                            teamBFallOfWicketCardList.add(fallOfWickets);
+
+                        }
 
                         teamABattingAdapter.notifyDataSetChanged();
                         teamABowlingAdapter.notifyDataSetChanged();
@@ -256,4 +359,25 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(completedMatchScoreCardHandler != null){
+            completedMatchScoreCardHandler.addListener(null);
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showProgress();
+        if(completedMatchScoreCardHandler != null){
+            completedMatchScoreCardHandler.addListener(this);
+
+        }else {
+            completedMatchScoreCardHandler= CompletedMatchScoreCardHandler.getInstance(getContext());
+        }
+        completedMatchScoreCardHandler.requestCompletdMatchScoreCard(matchId);
+    }
 }

@@ -18,8 +18,8 @@ import com.sports.unity.scores.ScoreDetailActivity;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class CricketUpcomingMatchScoreCardFragment extends Fragment implements CricketUpcomingMatchScoreCardHandler.UpcommingCricketMatchContentListener{
-  private TextView textView;
+public class CricketUpcomingMatchScoreCardFragment extends Fragment {
+    private TextView textView;
     public CricketUpcomingMatchScoreCardFragment() {
         // Required empty public constructor
     }
@@ -27,12 +27,7 @@ public class CricketUpcomingMatchScoreCardFragment extends Fragment implements C
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        String matchId =  getActivity().getIntent().getStringExtra("matchId");
-        matchId = "rsaeng_2015_t20_01";
-        CricketUpcomingMatchScoreCardHandler cricketUpcomingMatchScoreCardHandler = CricketUpcomingMatchScoreCardHandler.getInstance(context);
-        cricketUpcomingMatchScoreCardHandler.addListener(this);
-        cricketUpcomingMatchScoreCardHandler.requestCompletdMatchScoreCard(matchId);
-    }
+            }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -44,44 +39,17 @@ public class CricketUpcomingMatchScoreCardFragment extends Fragment implements C
     private void initView(View view) {
         textView = (TextView) view.findViewById(R.id.tv_empty_view);
         textView.setText(R.string.scorecard_not_exist);
-        initErrorLayout(view);
+         }
 
-    }
+
 
     @Override
-    public void handleContent(JSONObject object) {
-        {
-            try {
-                boolean success = object.getBoolean("success");
-                boolean error = object.getBoolean("error");
-
-                if( success ) {
-
-
-
-                } else {
-                    Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();
-                    showErrorLayout(getView());
-                }
-            }catch (Exception ex){
-                ex.printStackTrace();
-                Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-    private void initErrorLayout(View view) {
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.GONE);
+    public void onResume() {
+        super.onResume();
 
     }
-
-    private void showErrorLayout(View view) {
-
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.VISIBLE);
-
+    @Override
+    public void onPause() {
+        super.onPause();
     }
-
-
-
 }

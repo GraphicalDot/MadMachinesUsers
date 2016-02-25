@@ -344,21 +344,41 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
             String type = matchJsonCaller.getType();
             String matchId = null;
-            String matchStatus= null;
+            String matchStatus= "";
+            String toss = "";
+            String matchName="";
+            String date = "";
+            String matchTime = "";
+            Intent intent = new Intent( activity, ScoreDetailActivity.class);
             if( type.equalsIgnoreCase(ScoresJsonParser.CRICKET) ){
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
                 matchId = cricketMatchJsonCaller.getMatchId();
                 matchStatus = cricketMatchJsonCaller.getStatus();
+                toss = cricketMatchJsonCaller.getToss();
+                matchName = cricketMatchJsonCaller.getMatchNumber()+", " +cricketMatchJsonCaller.getTeam1()+" v "+cricketMatchJsonCaller.getTeam2();
+                date = cricketMatchJsonCaller.getMatchDate();
             } else if( type.equalsIgnoreCase(ScoresJsonParser.FOOTBALL) ){
                 footballMatchJsonCaller.setJsonObject(matchJsonObject);
                 matchId = String.valueOf(footballMatchJsonCaller.getMatchId());
                 matchStatus = footballMatchJsonCaller.getMatchStatus();
+                matchTime = footballMatchJsonCaller.getMatchTime();
+                intent.putExtra(Constants.INTENT_KEY_MATCH_TIME, matchTime);
+                intent.putExtra(Constants.INTENT_KEY_MATCH_LIVE,footballMatchJsonCaller.isLive());
+                intent.putExtra(Constants.INTENT_KEY_TEAM1_ID,footballMatchJsonCaller.getTeam1Id());
+                intent.putExtra(Constants.INTENT_KEY_TEAM2_ID,footballMatchJsonCaller.getTeam2Id());
+                intent.putExtra(Constants.INTENT_KEY_LEAGUE_ID,footballMatchJsonCaller.getLeagueId());
+
             }
 
-            Intent intent = new Intent( activity, ScoreDetailActivity.class);
             intent.putExtra(Constants.INTENT_KEY_TYPE, type);
             intent.putExtra(Constants.INTENT_KEY_ID, matchId);
             intent.putExtra(Constants.INTENT_KEY_MATCH_STATUS,matchStatus);
+            intent.putExtra(Constants.INTENT_KEY_TOSS,toss);
+            intent.putExtra(Constants.INTENT_KEY_MATCH_NAME, matchName);
+            intent.putExtra(Constants.INTENT_KEY_DATE,date);
+
+
+
             activity.startActivity(intent);
 
         }catch (Exception ex){

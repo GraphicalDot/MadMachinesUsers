@@ -68,6 +68,8 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
     private String playerNameKey;
     private PlayerScorecardAdapter mplayerScorecardAdapter;
     private List<PlayerScoreCardDTO> playerScoreCardDTOs = new ArrayList<>();
+    private ProgressBar progressBar;
+    private ImageView backImage;
 
     private static final String REQUEST_LISTENER_KEY = "PLAYER_PROFILE_SCREEN_LISTENER";
 
@@ -81,7 +83,6 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
         initView();
         setToolbar();
         {
-            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
             PlayerProfileComponentListener playerProfileComponentListener = new PlayerProfileComponentListener(progressBar);
             ArrayList<CustomComponentListener> listeners = new ArrayList<>();
             listeners.add(playerProfileComponentListener);
@@ -104,6 +105,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
 
     private void initView() {
         try{
+            backImage = (ImageView) findViewById(R.id.img);
             playerProfileImage = (CircleImageView) findViewById(R.id.player_profile_image);
             playerTagImage = (ImageView) findViewById(R.id.player_tag_image);
             playerName = (TextView) findViewById(R.id.player_name);
@@ -127,8 +129,17 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             recyclerView= (RecyclerView) findViewById(R.id.rc_player_details);
             mplayerScorecardAdapter = new PlayerScorecardAdapter(playerScoreCardDTOs);
             recyclerView.setAdapter(mplayerScorecardAdapter);
+            progressBar = (ProgressBar) findViewById(R.id.progress);
+            progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+            backImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    finish();
 
-      }catch (Exception e){
+                }
+            });
+
+        }catch (Exception e){
             e.printStackTrace();
         }
     }
@@ -139,6 +150,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             parameters.put(Constants.PLAYER_NAME, playerNameKey);
             parameters.put(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_FOOTBALL);
             ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_PLAYER_PROFILE, parameters, REQUEST_LISTENER_KEY, PLAYER_PROFILE_REQUEST_TAG);
+            showProgress();
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -196,14 +208,14 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
 
 
     private void getIntentExtras() {
-        //playerNameKey = getIntent().getStringExtra("name");
-        playerNameKey="Cristiano Ronaldo";
+        playerNameKey = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        //playerNameKey="Cristiano Ronaldo";
 
     }
 
     private void populateData(String content){
         try {
-
+            hideProgress();
           JSONObject jsonObject = new JSONObject(content);
 
             boolean success = jsonObject.getBoolean("success");
@@ -261,7 +273,14 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
     }
 
 
+    public void showProgress() {
+        progressBar.setVisibility(View.VISIBLE);
 
+    }
+    public void hideProgress() {
+        progressBar.setVisibility(View.GONE);
+
+    }
 
 
 

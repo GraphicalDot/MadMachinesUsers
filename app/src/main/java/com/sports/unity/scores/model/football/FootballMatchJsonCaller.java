@@ -57,4 +57,11 @@ public class FootballMatchJsonCaller extends MatchJsonCaller {
         return jsonObject.getBoolean("live");
     }
 
+    public String getTeam1Id() throws JSONException {
+        return jsonObject.getString("home_team_id");
+    }
+    public String getTeam2Id() throws JSONException {
+        return jsonObject.getString("away_team_id");
+    }
+
 }

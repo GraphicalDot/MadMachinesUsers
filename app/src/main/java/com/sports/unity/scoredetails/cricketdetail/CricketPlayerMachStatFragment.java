@@ -9,9 +9,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -48,7 +50,8 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     private CricketPlayerMatchBowlingStatAdapter cricketPlayerMatchBowlingStatAdapter;
     private List<CricketPlayerMatchStatDTO> playerMatchBattingStatDTOList = new ArrayList<>();
     private List<CricketPlayerMatchStatDTO> playerMatchBowlingStatDTOList = new ArrayList<>();
-
+    private CricketPlayerMatchStatHandler cricketPlayerMatchStatHandler;
+    private ProgressBar progressBar;
     public CricketPlayerMachStatFragment() {
         super();
     }
@@ -56,11 +59,12 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        String playerId = getActivity().getIntent().getStringExtra("playerId");
-        playerId = "6f65e8cd45ae14c916cf2c1c69b6102c";
-        CricketPlayerMatchStatHandler cricketPlayerMatchStatHandler = CricketPlayerMatchStatHandler.getInstance(context);
+        String playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+
+        cricketPlayerMatchStatHandler = CricketPlayerMatchStatHandler.getInstance(context);
         cricketPlayerMatchStatHandler.addListener(this);
         cricketPlayerMatchStatHandler.requestData(playerId);
+
     }
 
     @Override
@@ -69,19 +73,31 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
 
         View view = inflater.inflate(R.layout.fragment_players_cricket_stat_batting, container, false);
         initView(view);
+        initProgress(view);
         return view;
     }
+    private void initProgress(View view) {
+        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+    }
+    public void showProgress() {
+    progressBar.setVisibility(View.VISIBLE);
 
+    }
+    public void hideProgress() {
+        progressBar.setVisibility(View.GONE);
+
+    }
     private void initView(View view) {
         rcBattingPerformanceSummery = (RecyclerView) view.findViewById(R.id.rc_batting_performance_summary);
-        rcBattingPerformanceSummery.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        rcBattingPerformanceSummery.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
         rcBowlingPerformanceSummary = (RecyclerView) view.findViewById(R.id.rc_bowling_performance_summary);
-        rcBowlingPerformanceSummary.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        rcBowlingPerformanceSummary.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
         battingImageView = (ImageView) view.findViewById(R.id.iv_down);
         bowlingImageView = (ImageView) view.findViewById(R.id.iv_down_second);
         final View battingRow = view.findViewById(R.id.prl_batting);
         final View bowlingRow = view.findViewById(R.id.prl_bowling);
-        //TODO: downarrow should be the dark right now it's white
+
         battingImageView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (rcBattingPerformanceSummery.getVisibility() == GONE) {
@@ -91,7 +107,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                 } else {
                     rcBattingPerformanceSummery.setVisibility(GONE);
                     battingRow.setVisibility(GONE);
-                    battingImageView.setImageResource(R.drawable.ic_down_arrow);
+                    battingImageView.setImageResource(R.drawable.ic_dropdown);
                 }
             }
         });
@@ -104,7 +120,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                 } else {
                     rcBowlingPerformanceSummary.setVisibility(GONE);
                     bowlingRow.setVisibility(GONE);
-                    bowlingImageView.setImageResource(R.drawable.ic_down_arrow);
+                    bowlingImageView.setImageResource(R.drawable.ic_dropdown);
                 }
             }
         });
@@ -120,7 +136,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     @Override
     public void handleContent(String content) {
         try {
-
+            showProgress();
             JSONObject jsonObject = new JSONObject(content);
 
             boolean success = jsonObject.getBoolean("success");
@@ -137,6 +153,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         } catch (Exception ex) {
             ex.printStackTrace();
             Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+            showErrorLayout(getView());
         }
     }
 
@@ -159,6 +176,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         final JSONObject data = (JSONObject) jsonObject.get("data");
         final JSONArray playerStatsArray = (JSONArray) data.get("stats");
         PlayerCricketBioDataActivity activity = (PlayerCricketBioDataActivity) getActivity();
+        hideProgress();
         if (activity != null) {
             activity.setProfileInfo(data);
             activity.runOnUiThread(new Runnable() {
@@ -192,9 +210,9 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     battingTestsmatchMap.put("innings", batting.getString("innings"));
                     battingTestsmatchMap.put("runs", batting.getString("runs"));
                     battingTestsmatchMap.put("matches", batting.getString("matches"));
-                    battingTestsmatchMap.put("average", batting.getString("innings"));
-                    battingTestsmatchMap.put("strike_rate", batting.getString("runs"));
-                    battingTestsmatchMap.put("highest", batting.getString("matches"));
+                    battingTestsmatchMap.put("average", batting.getString("average"));
+                    battingTestsmatchMap.put("strike_rate", batting.getString("strike_rate"));
+                    battingTestsmatchMap.put("highest", batting.getString("highest"));
                     battingTestsmatchMap.put("100s", batting.getString("100s"));
                     battingTestsmatchMap.put("not_out", batting.getString("not_out"));
                 } else if (batting.getString("format").equalsIgnoreCase("ODI")) {
@@ -202,9 +220,9 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     battingOdisMap.put("innings", batting.getString("innings"));
                     battingOdisMap.put("runs", batting.getString("runs"));
                     battingOdisMap.put("matches", batting.getString("matches"));
-                    battingOdisMap.put("average", batting.getString("innings"));
-                    battingOdisMap.put("strike_rate", batting.getString("runs"));
-                    battingOdisMap.put("highest", batting.getString("matches"));
+                    battingOdisMap.put("average", batting.getString("average"));
+                    battingOdisMap.put("strike_rate", batting.getString("strike_rate"));
+                    battingOdisMap.put("highest", batting.getString("highest"));
                     battingOdisMap.put("100s", batting.getString("100s"));
                     battingOdisMap.put("not_out", batting.getString("not_out"));
                 } else if (batting.getString("format").equalsIgnoreCase("Twenty20")) {
@@ -212,9 +230,9 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     battingT20sMap.put("innings", batting.getString("innings"));
                     battingT20sMap.put("runs", batting.getString("runs"));
                     battingT20sMap.put("matches", batting.getString("matches"));
-                    battingT20sMap.put("average", batting.getString("innings"));
-                    battingT20sMap.put("strike_rate", batting.getString("runs"));
-                    battingT20sMap.put("highest", batting.getString("matches"));
+                    battingT20sMap.put("average", batting.getString("average"));
+                    battingT20sMap.put("strike_rate", batting.getString("strike_rate"));
+                    battingT20sMap.put("highest", batting.getString("highest"));
                     battingT20sMap.put("100s", batting.getString("100s"));
                     battingT20sMap.put("not_out", batting.getString("not_out"));
                 } else if (batting.getString("format").equalsIgnoreCase("IPL")) {
@@ -222,9 +240,9 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     battingIPLMap.put("innings", batting.getString("innings"));
                     battingIPLMap.put("runs", batting.getString("runs"));
                     battingIPLMap.put("matches", batting.getString("matches"));
-                    battingIPLMap.put("average", batting.getString("innings"));
-                    battingIPLMap.put("strike_rate", batting.getString("runs"));
-                    battingIPLMap.put("highest", batting.getString("matches"));
+                    battingIPLMap.put("average", batting.getString("average"));
+                    battingIPLMap.put("strike_rate", batting.getString("strike_rate"));
+                    battingIPLMap.put("highest", batting.getString("highest"));
                     battingIPLMap.put("100s", batting.getString("100s"));
                     battingIPLMap.put("not_out", batting.getString("not_out"));
                 }
@@ -313,4 +331,6 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         }
         cricketPlayerMatchBowlingStatAdapter.notifyDataSetChanged();
     }
+
+
 }

@@ -20,8 +20,8 @@ import java.util.HashSet;
 public class CricketUpcomingMatchSummaryHandler {
     private static final String REQUEST_TAG = "UPCOMMING_MATCH_SUMMARY";
     private static Context mContext;
-    private String matchId;
-    private String url = " http://52.76.74.188:5400/get_match_summary?player_id=";
+
+    private String url = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
 
 
     private CricketUpcomingMatchSummaryContentListener mcontentListener;
@@ -56,7 +56,7 @@ public class CricketUpcomingMatchSummaryHandler {
             CricketUpcomingMatchSummaryHandler.this.handleErrorResponse(volleyError);
         }
     };
-    public void requestCricketUpcommingMatchSummary() {
+    public void requestCricketUpcommingMatchSummary(String matchId) {
         Log.i("Score Detail", "Request Score Details");
 
         url = url+matchId;
@@ -64,8 +64,7 @@ public class CricketUpcomingMatchSummaryHandler {
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
         queue.add(stringRequest);
-
-        requestInProcess.add(REQUEST_TAG);
+      requestInProcess.add(REQUEST_TAG);
     }
     private void handleResponse(String response) {
         try{
@@ -79,10 +78,11 @@ public class CricketUpcomingMatchSummaryHandler {
 
     }
     private void handleErrorResponse(VolleyError volleyError) {
+        try{
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
         if(mcontentListener != null) {
             Log.i("handleErrorResponse: ",volleyError.getMessage() );
-        }
+        }}catch (Exception e){e.printStackTrace();}
     }
     public void addListener(CricketUpcomingMatchSummaryContentListener contentListener) {
         mcontentListener = contentListener;

@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -48,8 +50,8 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
     }
 
     private void getIntentExtras() {
-        //playerNameKey = getIntent().getStringExtra("name");
-        playerNameKey = "6f65e8cd45ae14c916cf2c1c69b6102c";
+        playerNameKey = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        //playerNameKey = "6f65e8cd45ae14c916cf2c1c69b6102c";
 
     }
 
@@ -79,13 +81,12 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             tabs.setViewPager(mViewPager);
             int tab_index = getIntent().getIntExtra("tab_index", 0);
             mViewPager.setCurrentItem(tab_index);
-           /* ImageView img = (ImageView) findViewById(R.id.back_img);
+            ImageView img = (ImageView) findViewById(R.id.back_img);
             img.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     finish();
                 }
-            });*/
-
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -94,13 +95,14 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
     private void setToolbar() {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        /*ImageView back = (ImageView) toolbar.findViewById(R.id.backarrow);
+        TextView title_text = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        ImageView back = (ImageView) toolbar.findViewById(R.id.backarrow);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
-        });*/
+        });
     }
 
     private void setInitData() {
@@ -130,9 +132,8 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
                             playerName.setText(playerInfo.getString("Full Name"));
                         }
                         if (!playerInfo.isNull("Place of birth")) {
-                            playerNationName.setText(playerInfo.getString("Place of birth").toUpperCase());
+                            playerNationName.setText(playerInfo.getString("Place of birth").split(",")[2]);
                         }
-
                     }
                 } catch (Exception e) {
                     e.printStackTrace();

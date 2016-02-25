@@ -9,8 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
-import com.sports.unity.scoredetails.model.CricketScoreCard;
+import org.json.JSONObject;
 
 import java.util.HashSet;
 
@@ -67,12 +66,12 @@ public class CricketLiveMatchSummaryHandler {
         requestInProcess.add(REQUEST_TAG);
     }
     private void handleResponse(String response) {
-        Gson gson = new Gson();
+
         try{
-            CricketScoreCard scoreCardModel = gson.fromJson(response,CricketScoreCard.class);
+            JSONObject jsonObject = new JSONObject(response);
             Log.i("Score Card", "handleResponse: ");
-            if(scoreCardModel.isSuccess()){
-                Log.i("Score Card",scoreCardModel.toString());
+            if(jsonObject.getBoolean("success")){
+                Log.i("Score Card",response);
             }
         } catch (Exception e) {
             e.printStackTrace();

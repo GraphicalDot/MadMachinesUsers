@@ -15,13 +15,15 @@ import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.player.view.PlayerProfileView;
+import com.sports.unity.scoredetails.cricketdetail.PlayerCricketBioDataActivity;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 
 import java.util.ArrayList;
 
-public class FilterActivity extends AppCompatActivity {
+public class FilterActivity extends AppCompatActivity implements PlayerProfileDetails {
 
     private int[] sportsCategoryLayoutID = new int[]{R.id.cricket, R.id.football};
     private boolean[] checkedFlag = new boolean[]{false, false};
@@ -244,6 +246,26 @@ public class FilterActivity extends AppCompatActivity {
         resultReceivedListeners.remove(listener);
     }
 
+
+    public void getSportsType(String name) {
+
+    }
+
+    @Override
+    public void playerProfile(String playerName, String playerId, String sportsType) {
+
+            if(Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)){
+                Intent intent = new Intent(FilterActivity.this, PlayerProfileView.class);
+                intent.putExtra(Constants.INTENT_KEY_ID, playerName);
+                startActivity(intent);
+            }else {
+                Intent intent = new Intent(FilterActivity.this, PlayerCricketBioDataActivity.class);
+                intent.putExtra(Constants.INTENT_KEY_ID, playerId);
+                startActivity(intent);
+            }
+        }
+
+
     /**
      * Interface definition for the callback to be
      * invoked in onActivityResult of FilterActivity class
@@ -254,4 +276,5 @@ public class FilterActivity extends AppCompatActivity {
     public interface OnResultReceivedListener {
         public void updateData();
     }
+
 }
