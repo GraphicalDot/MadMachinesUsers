@@ -22,7 +22,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_widthPercent="35%">
+            app:layout_widthPercent="37%">
             <com.sports.unity.common.view.CustomRobotoRegularTextView
                 android:id="@+id/tv_player_name"
                 android:layout_width="wrap_content"
@@ -48,7 +48,7 @@
             android:gravity="right"
             android:text="35"
             android:textSize="@dimen/font_size_small_large"
-            app:layout_widthPercent="12%" />
+            app:layout_widthPercent="10%" />
 
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/tv_ball_play_by_player"
