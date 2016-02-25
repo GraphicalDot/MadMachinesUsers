@@ -151,6 +151,9 @@
         <activity
             android:name=".scoredetails.footballdetail.FootballDetailsActivity"
             android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".common.controller.GetCountryCode"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

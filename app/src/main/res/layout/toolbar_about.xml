@@ -24,7 +24,7 @@
             android:layout_alignParentRight="true"
             android:padding="@dimen/vertical_padding_small"
             android:scaleType="center"
-            android:src="@drawable/ic_close" />
+            android:src="@drawable/ic_cancel" />
     </RelativeLayout>
 
 

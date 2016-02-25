@@ -85,7 +85,8 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@id/editContent"
+            android:layout_above="@id/enterotpText"
+            android:layout_below="@+id/editNumberLayout"
             android:gravity="center"
             android:orientation="horizontal">
 

@@ -1,10 +1,12 @@
 package com.sports.unity.util;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -19,7 +21,7 @@ import com.sports.unity.Database.DBUtil;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.model.FontTypeface;
-import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.model.Contacts;
 
 import org.joda.time.DateTime;
@@ -38,10 +40,12 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -150,8 +154,21 @@ public class CommonUtil {
         return details;
     }
 
-    public static String getDefaultCountyCode() {
-        return "91"; //TODO
+    public static String getDefaultISOCountryCode(Context context){
+        TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        String isoCode = manager.getSimCountryIso().toUpperCase();
+
+        if( isoCode.isEmpty() ) {
+            isoCode = Locale.getDefault().getCountry();
+        }
+
+        return isoCode;
+    }
+
+    public static String getDefaultCountyCode(Context context){
+        String isoCountyCode = getDefaultISOCountryCode(context);
+        String countryCode = getCountryDetailsByIsoCountryCode(context, isoCountyCode).get(0);
+        return countryCode;
     }
 
     public static String getTimeDifference(long epochTime) {
@@ -283,6 +300,42 @@ public class CommonUtil {
         }
 
         return checksum;
+    }
+
+    public static ArrayList<String> getCountryDetailsByIsoCountryCode(Context context, String isoCountryCode) {
+        ArrayList<String> countryDetails = new ArrayList<>();
+
+        String[] countryList = context.getResources().getStringArray(R.array.CountryCodes);
+        for(int i=0;i<countryList.length;i++){
+            String[] code=countryList[i].split(",");
+
+            if (code[1].trim().equals(isoCountryCode.trim())) {
+                countryDetails.add(code[0]);
+                countryDetails.add(code[1]);
+                countryDetails.add(code[2]);
+                break;
+            }
+        }
+
+        return countryDetails;
+    }
+
+    public static ArrayList<String> getCountryDetailsByCountryCode(Context context, String countryCode) {
+        ArrayList<String> countryDetails = new ArrayList<>();
+
+        String[] countryList = context.getResources().getStringArray(R.array.CountryCodes);
+        for(int i=0;i<countryList.length;i++){
+            String[] code=countryList[i].split(",");
+
+            if (code[0].trim().equals(countryCode.trim())) {
+                countryDetails.add(code[0]);
+                countryDetails.add(code[1]);
+                countryDetails.add(code[2]);
+                break;
+            }
+        }
+
+        return countryDetails;
     }
 
 }

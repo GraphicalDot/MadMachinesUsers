@@ -11,7 +11,7 @@
         android:id="@+id/mini_cards"
         android:icon="@drawable/ic_thumb"
         android:orderInCategory="200"
-        android:title="Card_Change"
+        android:title="MiniCard"
         app:showAsAction="ifRoom"></item>
     <item
         android:id="@+id/action_filter"

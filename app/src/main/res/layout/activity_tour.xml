@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/radioButton2"
             android:button="@drawable/tour_icon"
-            android:paddingRight="3dp"
+            android:paddingRight="6dp"
             android:paddingLeft="3dp"/>
 
         <RadioButton

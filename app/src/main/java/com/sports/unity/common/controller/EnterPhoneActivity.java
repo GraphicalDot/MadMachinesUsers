@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,8 +77,28 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
         privacy_policy.setOnClickListener(viewClickListener);
 
         final Button continueButton = (Button) findViewById(R.id.getOtp);
-        continueButton.setVisibility(View.INVISIBLE);
         continueButton.setOnClickListener(viewClickListener);
+
+        FrameLayout getCountryCode = (FrameLayout) findViewById(R.id.getCountryCode);
+
+        EditText countryCode = (EditText) findViewById(R.id.countryCode);
+        TextView countryName = (TextView) findViewById(R.id.countryName);
+
+
+
+        ArrayList<String> countryDetails = CommonUtil.getCountryDetailsByCountryCode(EnterPhoneActivity.this, UserUtil.getCountryCode());
+
+        Log.i("details",""+countryDetails.size());
+
+        countryName.setText(countryDetails.get(2));
+        countryCode.setText("+"+countryDetails.get(0));
+
+        getCountryCode.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getCountryCodeWithCountryName();
+            }
+        });
 
         final EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
         if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
@@ -88,28 +110,6 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
                 setUserPhoneNumber(phoneNumberEditText, continueButton);
             }
         }
-        phoneNumberEditText.addTextChangedListener(new TextWatcher() {
-
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() == 10) {
-                    continueButton.setVisibility(View.VISIBLE);
-                } else {
-                    continueButton.setVisibility(View.INVISIBLE);
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-
-        });
 
         /*
          * to set initial focus to edit text view and open keyboard.
@@ -118,12 +118,45 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
+    private void getCountryCodeWithCountryName() {
+
+
+        EditText countryCode = (EditText) findViewById(R.id.countryCode);
+        TextView countryName = (TextView) findViewById(R.id.countryName);
+
+        Log.i("country", "name" + countryName.getText().toString());
+        Log.i("country","get"+ countryCode.getText().toString());
+        Intent intent = new Intent(EnterPhoneActivity.this, GetCountryCode.class);
+        intent.putExtra("CountryName", countryName.getText().toString());
+        startActivityForResult(intent, 1111);
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1111) {
+            if(resultCode == RESULT_OK){
+                String cName=data.getStringExtra("countryName");
+                String cCode=data.getStringExtra("countryCode");
+
+                EditText countryCode = (EditText) findViewById(R.id.countryCode);
+                TextView countryName = (TextView) findViewById(R.id.countryName);
+
+                countryName.setText(cName);
+                countryCode.setText("+"+cCode);
+
+                UserUtil.setCountryCode( getApplicationContext(), cCode);
+            }
+        }
+    }
+
     private void setUserPhoneNumber(EditText phoneNumberEditText, Button continueButton) {
         String phone_Number = getIntent().getStringExtra(Constants.INTENT_KEY_PHONE_NUMBER);
 
         if (phone_Number != null) {
             phoneNumberEditText.setText(phone_Number);
-            continueButton.setVisibility(View.VISIBLE);
         } else {
             String phoneNumber = CommonUtil.getUserSimNumber(this);
 
@@ -131,7 +164,6 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
                 Toast.makeText(getApplicationContext(), R.string.sim_not_found, Toast.LENGTH_SHORT).show();
             } else {
                 phoneNumberEditText.setText(phoneNumber);
-                continueButton.setVisibility(View.VISIBLE);
             }
         }
 
@@ -142,7 +174,8 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
 
         EditText phoneNumberEditText = (EditText) findViewById(R.id.phoneNumber);
         String phoneNumber = phoneNumberEditText.getText().toString();
-        TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_USERNAME, "91" + phoneNumber);
+        String countryCode = CommonUtil.getCountryDetailsByCountryCode(EnterPhoneActivity.this, UserUtil.getCountryCode()).get(0);
+        TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_USERNAME, countryCode + phoneNumber);
 
         moveToNextActivity();
     }

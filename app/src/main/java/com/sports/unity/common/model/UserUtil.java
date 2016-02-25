@@ -68,7 +68,7 @@ public class UserUtil {
     public static void init(Context context) {
         TinyDB tinyDB = TinyDB.getInstance(context);
 
-        loadBasicPreferences(tinyDB);
+        loadBasicPreferences(tinyDB, context);
         loadFavoritePreferences(tinyDB);
         loadSettingPreferences(tinyDB);
     }
@@ -406,14 +406,14 @@ public class UserUtil {
         tinyDB.putString(TinyDB.KEY_COUNTRY_CODE, countryCode);
     }
 
-    private static void loadBasicPreferences(TinyDB tinyDB){
+    private static void loadBasicPreferences(TinyDB tinyDB, Context context){
         USER_REGISTERED = tinyDB.getBoolean(TinyDB.KEY_REGISTERED, false);
         PROFILE_CREATED = tinyDB.getBoolean(TinyDB.KEY_PROFILE_CREATED, false);
         OTP_SENT = tinyDB.getBoolean(TinyDB.KEY_OTP_SENT, false);
         COUNTRY_CODE = tinyDB.getString(TinyDB.KEY_COUNTRY_CODE);
 
         if( COUNTRY_CODE.isEmpty() ){
-            COUNTRY_CODE = CommonUtil.getDefaultCountyCode();
+            COUNTRY_CODE = CommonUtil.getDefaultCountyCode(context);
         }
     }
 

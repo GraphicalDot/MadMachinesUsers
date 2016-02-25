@@ -86,7 +86,7 @@
     <string name="sim_not_found">Sim not found.</string>
     <string name="please_enter_valid_10_digit_numbers">Please enter a valid 10 digit number</string>
 
-    <string name="otp_message_verification">Enter the verification number we sent to +91&#160;</string>
+    <string name="otp_message_verification">Enter the verification number\nwe sent to\n</string>
     <string name="otp_message_sending">Sending...</string>
     <string name="otp_message_otp_sent">Otp sent.</string>
     <string name="otp_message_resending_failed">Failed in sending otp, please try again.</string>
