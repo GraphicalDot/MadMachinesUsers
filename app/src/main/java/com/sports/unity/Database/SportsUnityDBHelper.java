@@ -952,21 +952,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         Log.i(" unreadc :", String.valueOf(count));
     }
 
-    public int getTotalUnreadCount(int a) {
-        int count = 0;
-        SQLiteDatabase db = getReadableDatabase();
-        String query = "SELECT " + ChatEntry.COLUMN_UNREAD_COUNT + " FROM " + ChatEntry.TABLE_NAME + " WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " = " + a;
-        Cursor cur = db.rawQuery(query, null);
-        if (cur.moveToFirst()) {
-            do {
-                if (cur.getInt(0) > 0) {
-                    count++;
-                }
-            } while (cur.moveToNext());
-        }
-        return count;
-    }
-
     public int getUnreadCount(long chatId, String groupServerId) {
         SQLiteDatabase db = this.getReadableDatabase();
 

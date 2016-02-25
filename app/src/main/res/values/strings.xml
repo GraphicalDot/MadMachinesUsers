@@ -112,7 +112,8 @@
     <string name="singlechat_popup_view_contact">View Contact</string>
 
     <string name="group_message_provide_group_name">Please enter group name</string>
-    <string name="group_message_try_again">Oops!!, please try again</string>
+    <string name="group_message_try_again">Oops!!, muc please try again</string>
+    <string name="pubsub_message_try_again">Oops!!,pubsub please try again</string>
     <string name="group_create_group_title">Name your group</string>
     <string name="group_hint_group_name">What is this group about?</string>
     <string name="group_title_create">Create Group</string>

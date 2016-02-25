@@ -77,6 +77,13 @@ public class TinyDB {
     public static final String PRIVACY_STATUS = "privacy_status";
     public static final String READ_RECEIPTS = "read_receipts";
 
+
+    /**
+     * Unread notification count key
+     */
+
+    public static final String UNREAD_NOTIFICATION_COUNT_KEY = "unread_notification_count";
+
     private SharedPreferences preferences;
     private String DEFAULT_APP_IMAGEDATA_DIRECTORY;
     private String lastImagePath = "";

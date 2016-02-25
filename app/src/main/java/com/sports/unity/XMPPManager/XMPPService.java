@@ -670,7 +670,7 @@ public class XMPPService extends Service {
             String thumbnail = PersonalMessaging.getEncodedImageOutOfImage(message.getBody());
 
             byte[] bytesOfThumbnail = null;
-            if( thumbnail != null ) {
+            if (thumbnail != null) {
                 bytesOfThumbnail = Base64.decode(thumbnail, Base64.DEFAULT);
             }
 
@@ -696,7 +696,7 @@ public class XMPPService extends Service {
             String thumbnail = PersonalMessaging.getEncodedImageOutOfImage(message.getBody());
 
             byte[] bytesOfThumbnail = null;
-            if( thumbnail != null ) {
+            if (thumbnail != null) {
                 bytesOfThumbnail = Base64.decode(thumbnail, Base64.DEFAULT);
             }
 
@@ -803,7 +803,7 @@ public class XMPPService extends Service {
                 //nothing
             }
 
-            NotificationHandler notificationHandler = NotificationHandler.getInstance();
+            NotificationHandler notificationHandler = NotificationHandler.getInstance(getApplicationContext());
             notificationHandler.addNotificationMessage(chatId, name, message, mimeType, image);
 
             int chatCount = notificationHandler.getNotificationChatCount();
@@ -815,7 +815,7 @@ public class XMPPService extends Service {
                 pendingIntent = getPendingIntentForChatActivity(name, from, chatId, contact.id, groupServerId, contact.image);
             }
 
-            notificationHandler.showNotification(getApplicationContext(), pendingIntent, chatId);
+            notificationHandler.showNotification(getApplicationContext(), pendingIntent);
             ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.UNREAD_COUNT_KEY);
         }
     }

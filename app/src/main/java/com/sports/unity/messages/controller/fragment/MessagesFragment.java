@@ -40,7 +40,12 @@ import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.NotificationHandler;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -74,8 +79,10 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     }
 
     private void getAndSetUnreadCount() {
-        int friendsChatUnreadCount = SportsUnityDBHelper.getInstance(getContext()).getTotalUnreadCount(0);
-        int otherChatUnreadCount = SportsUnityDBHelper.getInstance(getContext()).getTotalUnreadCount(1);
+        int friendsChatUnreadCount = NotificationHandler.getInstance(getContext()).getUnreadFriendsChatCount();
+        int otherChatUnreadCount = NotificationHandler.getInstance(getContext()).getUnreadOthersChatCount();
+        int messagesCount = NotificationHandler.getInstance(getContext()).getUnreadMessageCount();
+
         if (friendsChatUnreadCount == 0) {
             friendsUnreadCount.setVisibility(View.GONE);
         } else {
@@ -88,6 +95,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
             othersUnreadCount.setVisibility(View.VISIBLE);
             othersUnreadCount.setText(String.valueOf(otherChatUnreadCount));
         }
+        ((MainActivity) getActivity()).updateUnreadMessages(messagesCount);
     }
 
     @Override
@@ -147,8 +155,8 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
             public void onClick(View v) {
                 fabMenu.toggle(true);
                 backgroundDimmer.setVisibility(View.GONE);
-                Intent intent = new Intent(getActivity(), CreateGroup.class);
-                startActivity(intent);
+//                Intent intent = new Intent(getActivity(), CreateGroup.class);
+//                startActivity(intent);
             }
         });
 
@@ -344,6 +352,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         super.onPause();
         ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.UNREAD_COUNT_KEY);
     }
+
 
     @Override
     public void onPermissionResult(int requestCode, int[] grantResults) {

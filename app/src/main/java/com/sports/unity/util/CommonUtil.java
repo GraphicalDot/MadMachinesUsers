@@ -19,6 +19,7 @@ import com.sports.unity.Database.DBUtil;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.messages.controller.model.Contacts;
 
 import org.joda.time.DateTime;
@@ -149,7 +150,7 @@ public class CommonUtil {
         return details;
     }
 
-    public static String getDefaultCountyCode(){
+    public static String getDefaultCountyCode() {
         return "91"; //TODO
     }
 
@@ -227,7 +228,7 @@ public class CommonUtil {
         }
     }
 
-    public static void openLinkOnBrowser(Context context, String url){
+    public static void openLinkOnBrowser(Context context, String url) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         context.startActivity(browserIntent);
     }

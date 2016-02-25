@@ -7,27 +7,21 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.PorterDuff;
-import android.graphics.PorterDuffXfermode;
-import android.graphics.Rect;
-import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Vibrator;
 import android.provider.Settings;
 import android.support.v7.app.NotificationCompat;
-import android.util.Log;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
-import com.sports.unity.common.controller.SettingsActivity;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 
 /**
@@ -35,14 +29,17 @@ import java.util.Iterator;
  */
 public class NotificationHandler {
 
+    public static final String OTHERS_COUNT = "others_count";
+    public static final String CHAT_MESSAGE_COUNT_SET = "chat_message_count_set";
+
     public static final int NOTIFICATION_ID = 1;
     public static final int MESSAGE_LIMIT = 5;
 
     private static NotificationHandler NOTIFICAION_HANDLER = null;
 
-    public static NotificationHandler getInstance() {
+    public static NotificationHandler getInstance(Context context) {
         if (NOTIFICAION_HANDLER == null) {
-            NOTIFICAION_HANDLER = new NotificationHandler();
+            NOTIFICAION_HANDLER = new NotificationHandler(context);
         }
         return NOTIFICAION_HANDLER;
     }
@@ -52,30 +49,44 @@ public class NotificationHandler {
         notificationManager.cancel(NOTIFICATION_ID);
     }
 
+    private Context context;
     private ArrayList<NotificationMessage> notificationMessageList = new ArrayList<>();
-    private HashSet<Long> chatIdSet = new HashSet<>();
+    private HashMap<String, Integer> chatIdAndMessageCountMap = new HashMap<>();
 
-    private NotificationHandler() {
+    private int unreadMessageCount = 0;
+    private int friendsChatCount = 0;
+    private int othersChatCount = 0;
 
+    public NotificationHandler(Context context) {
+        this.context = context;
+        initUnreadCountData(context);
     }
 
     synchronized public void addNotificationMessage(long chatId, String from, String message, String mimeType, byte[] image) {
         NotificationMessage notificationMessage = new NotificationMessage(chatId, from, message, mimeType, image);
         notificationMessageList.add(notificationMessage);
 
-        chatIdSet.add(chatId);
+        updateUnreadCountBasedOnNewMessageArrived(String.valueOf(chatId));
+//        updateUnreadCount(chatIdSet.size(), 0, notificationMessageList.size());
+
+        if (notificationMessageList.size() > MESSAGE_LIMIT) {
+            while (notificationMessageList.size() > MESSAGE_LIMIT) {
+                notificationMessageList.remove(0);
+            }
+        } else {
+            //nothing
+        }
     }
 
     public int getNotificationChatCount() {
-        return chatIdSet.size();
+        return chatIdAndMessageCountMap.size();
     }
 
     public int getNotificationMessagesCount() {
-        int messageCount = notificationMessageList.size();
-        return messageCount;
+        return unreadMessageCount;
     }
 
-    public void showNotification(Context context, PendingIntent pendingIntent, long chatId) {
+    public void showNotification(Context context, PendingIntent pendingIntent) {
         int chatCount = getNotificationChatCount();
         int messageCount = getNotificationMessagesCount();
 
@@ -88,15 +99,112 @@ public class NotificationHandler {
                 comboMessageNotification(context, pendingIntent, message, chatCount, messageCount);
             }
         }
+
     }
 
-    synchronized public void clearNotificationMessages(long chatId) {
-        chatIdSet.remove(chatId);
+    synchronized public void clearNotificationMessages(String chatId) {
+        int messageCount = 0;
+        if (chatIdAndMessageCountMap.containsKey(chatId)) {
+            messageCount = chatIdAndMessageCountMap.get(chatId);
+        }
+        chatIdAndMessageCountMap.remove(chatId);
+
+        updateUnreadCountBasedOnChatViewed(messageCount);
 
         for (int index = 0; index < notificationMessageList.size(); index++) {
-            if (notificationMessageList.get(index).chatId == chatId) {
+            if (notificationMessageList.get(index).chatId == Long.parseLong(chatId)) {
                 notificationMessageList.remove(index);
                 index--;
+            }
+        }
+    }
+
+    public int getUnreadMessageCount() {
+        return unreadMessageCount;
+    }
+
+    public int getUnreadFriendsChatCount() {
+        return friendsChatCount;
+    }
+
+    public int getUnreadOthersChatCount() {
+        return othersChatCount;
+    }
+
+    private String getUnreadCountData(Context context) {
+        String jsonData = TinyDB.getInstance(context).getString(TinyDB.UNREAD_NOTIFICATION_COUNT_KEY);
+        return jsonData;
+    }
+
+    private void updateUnreadCountBasedOnNewMessageArrived(String chatId) {
+        unreadMessageCount++;
+
+        int messageCount = 0;
+        if (chatIdAndMessageCountMap.containsKey(chatId)) {
+            messageCount = chatIdAndMessageCountMap.get(chatId);
+        }
+        messageCount++;
+
+        chatIdAndMessageCountMap.put(chatId, messageCount);
+        friendsChatCount = chatIdAndMessageCountMap.size();
+
+        String data = createUnreadCountJson();
+        setUnreadCountData(data, context);
+    }
+
+    private void updateUnreadCountBasedOnChatViewed(int messageCount) {
+        unreadMessageCount -= messageCount;
+        friendsChatCount = chatIdAndMessageCountMap.size();
+
+        String data = createUnreadCountJson();
+        setUnreadCountData(data, context);
+    }
+
+    private void setUnreadCountData(String jsonData, Context context) {
+        TinyDB.getInstance(context).putString(TinyDB.UNREAD_NOTIFICATION_COUNT_KEY, jsonData);
+    }
+
+    private String createUnreadCountJson() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put(OTHERS_COUNT, othersChatCount);
+
+            JSONObject chatMessageCount = new JSONObject();
+            Iterator<String> iterator = chatIdAndMessageCountMap.keySet().iterator();
+            while (iterator.hasNext()) {
+                String chatId = iterator.next();
+                Integer messageCount = chatIdAndMessageCountMap.get(chatId);
+                chatMessageCount.put(chatId, messageCount);
+            }
+            jsonObject.put(CHAT_MESSAGE_COUNT_SET, chatMessageCount);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
+    }
+
+    synchronized private void initUnreadCountData(Context context) {
+        String data = getUnreadCountData(context);
+        if (data != null) {
+            try {
+                JSONObject jsonObject = new JSONObject(data);
+                othersChatCount = jsonObject.getInt(OTHERS_COUNT);
+
+                JSONObject chatMessageCount = jsonObject.getJSONObject(CHAT_MESSAGE_COUNT_SET);
+                Iterator<String> keys = chatMessageCount.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+
+                    Integer count = chatMessageCount.getInt(key);
+                    chatIdAndMessageCountMap.put(key, count);
+
+                    unreadMessageCount += count;
+                }
+
+                friendsChatCount = chatIdAndMessageCountMap.size();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -112,7 +220,7 @@ public class NotificationHandler {
             //nothing
         }
 
-        if ( UserUtil.isNotificationPreviews() ) {
+        if (UserUtil.isNotificationPreviews()) {
             builder.setContentText(messageArrived.getTitleMessage());
         } else {
             builder.setContentText("Message from " + messageArrived.from);
@@ -155,7 +263,7 @@ public class NotificationHandler {
     private void comboMessageNotification(Context context, PendingIntent pendingIntent, NotificationMessage messageArrived, int chatCount, int messageCount) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context);
 
-        if ( UserUtil.isNotificationPreviews() ) {
+        if (UserUtil.isNotificationPreviews()) {
             builder.setSmallIcon(R.drawable.ic_stat_notification);
             if (chatCount == 1) {
                 if (messageArrived.getProfileImage() != null) {
@@ -206,7 +314,7 @@ public class NotificationHandler {
         builder.setDefaults(defaults);
         builder.setAutoCancel(true);
 
-        Uri uri= Settings.System.getUriFor(UserUtil.getNotificationSoundURI());
+        Uri uri = Settings.System.getUriFor(UserUtil.getNotificationSoundURI());
         builder.setSound(uri);
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
@@ -234,7 +342,7 @@ public class NotificationHandler {
     }
 
     private boolean vibrationEnabled(Context context) {
-        if ( UserUtil.isConversationVibrate() ) {
+        if (UserUtil.isConversationVibrate()) {
             return true;
         } else {
             return false;
@@ -243,7 +351,7 @@ public class NotificationHandler {
 
     private boolean soundEnabled(Context context) {
         //TODO handle sound value and how to pick default tone.
-        if ( UserUtil.getNotificationSoundURI() != null ) {
+        if (UserUtil.getNotificationSoundURI() != null) {
             return true;
         } else {
             return false;
@@ -251,7 +359,7 @@ public class NotificationHandler {
     }
 
     private boolean lightEnabled(Context context) {
-        if ( UserUtil.isNotificationLight() ) {
+        if (UserUtil.isNotificationLight()) {
             return true;
         } else {
             return false;

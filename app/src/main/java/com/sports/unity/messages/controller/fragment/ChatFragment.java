@@ -212,7 +212,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
         SportsUnityDBHelper.getInstance(getActivity()).clearChat(getActivity(), chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
         SportsUnityDBHelper.getInstance(getActivity()).clearChatEntry(chatObject.chatid);
 
-        NotificationHandler.getInstance().clearNotificationMessages(chatObject.chatid);
+        NotificationHandler.getInstance(getActivity().getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid));
 
         updateContent();
     }

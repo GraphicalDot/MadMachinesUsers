@@ -1,8 +1,6 @@
 package com.sports.unity.common.controller;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
@@ -12,30 +10,23 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.text.GetChars;
-import android.util.Log;
+import android.text.Html;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ActionMenuView;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
-import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
@@ -47,11 +38,16 @@ import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.util.ActivityActionHandler;
+import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.NotificationHandler;
 import com.sports.unity.util.network.LocManager;
 
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,6 +74,9 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     private ViewPagerAdapterInMainActivity adapter;
     ImageView back;
     private MenuItem menuItem;
+
+    private TextView unreadCount;
+    private boolean messagesFragmentInFront = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -201,9 +200,11 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         // Assigning ViewPager View and setting the adapter
         pager = (ViewPager) findViewById(com.sports.unity.R.id.pager);
         pager.setAdapter(adapter);
+        pager.addOnPageChangeListener(onPageChangeListener);
 
         // Assiging the Sliding Tab Layout View
         tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
+        tabs.setCustomTabView(R.layout.sliding_tab_layout, R.id.title_text);
         tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
 
         // Setting Custom Color for the Scroll bar indicator of the Tab View
@@ -215,10 +216,41 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         });
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
+        View v = tabs.getTabStrip().getChildAt(2);
+        unreadCount = (TextView) v.findViewById(R.id.unread_messages);
 
         //set news pager as default
         int tab_index = getIntent().getIntExtra("tab_index", 1);
         pager.setCurrentItem(tab_index);
+        pager.setOffscreenPageLimit(2);
+    }
+
+    ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            if (position == 2) {
+                setUnreadCountToNull();
+                messagesFragmentInFront = true;
+            } else {
+                messagesFragmentInFront = false;
+            }
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
+    };
+
+    private void setUnreadCountToNull() {
+        if (unreadCount != null) {
+            unreadCount.setVisibility(View.GONE);
+        }
     }
 
     private Toolbar initToolBar() {
@@ -242,6 +274,26 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         });
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         return toolbar;
+    }
+
+    public void updateUnreadMessages(int messagesCount) {
+        int uCount = messagesCount;
+        if (messagesFragmentInFront == false) {
+            if (unreadCount != null) {
+                if (uCount > 0) {
+                    if (uCount > 99) {
+                        unreadCount.setText(Html.fromHtml("99<sup>+</sup>"));
+                    } else {
+                        unreadCount.setText("" + uCount);
+                    }
+                    unreadCount.setVisibility(View.VISIBLE);
+                } else {
+                    unreadCount.setVisibility(View.GONE);
+                }
+            }
+        } else {
+            //do nothing
+        }
     }
 
     @Override
