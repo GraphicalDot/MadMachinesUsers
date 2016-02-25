@@ -120,7 +120,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
                 @Override
                 public void run() {
                     try {
-
+                        showErrorLayout(getView());
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());

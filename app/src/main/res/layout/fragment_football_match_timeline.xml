@@ -6,7 +6,7 @@
     tools:context="com.sports.unity.scoredetails.footballdetail.FootballMatchTimelineFragment">
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/commentary_refresh"
+        android:id="@+id/sw_timeline_refresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <android.support.v7.widget.RecyclerView
@@ -16,11 +16,13 @@
             android:scrollbars="vertical"
             android:background="@color/gray3"
             />
-            <include layout="@layout/error_layout"
+        <include
             android:id="@+id/error"
+            layout="@layout/error_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            />
+            android:visibility="gone"/>
+
         <TextView
             android:id="@+id/no_comments"
             android:text="No Comments"

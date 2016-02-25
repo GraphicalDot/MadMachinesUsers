@@ -75,9 +75,8 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
 
             try {
                 JSONObject jsonObject = new JSONObject(object);
-                JSONObject data = jsonObject.getJSONObject("data");
-                boolean success = data.getBoolean("success");
-                boolean error = data.getBoolean("error");
+                boolean success = jsonObject.getBoolean("success");
+                boolean error = jsonObject.getBoolean("error");
 
                 if( success ) {
 
@@ -115,7 +114,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
                 @Override
                 public void run() {
                     try {
-
+                        showErrorLayout(getView());
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());
