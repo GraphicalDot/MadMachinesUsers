@@ -51,7 +51,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_cricket_upcoming_match_summery, container, false);
+        View view = inflater.inflate(R.layout.fragment_upcoming_football_match_squard_wrapper, container, false);
         initView(view);
         showProgressBar();
         return view;

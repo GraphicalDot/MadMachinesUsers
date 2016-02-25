@@ -57,7 +57,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_cricket_upcoming_match_summery, container, false);
+        View view = inflater.inflate(R.layout.fragment_football_live_match_lineups, container, false);
         initView(view);
         showProgressBar();
         return view;

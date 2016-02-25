@@ -75,7 +75,7 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
 
         View view = inflater.inflate(R.layout.fragment_cricket_completed_match_summery, container, false);
         initView(view);
-        showProgress();
+
         return view;
     }
     private void initView(View view) {
@@ -90,6 +90,8 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
         tvTossWinTeam = (TextView) view.findViewById(R.id.tv_toss_win_team);
         tvUmpiresName = (TextView) view.findViewById(R.id.tv_umpires_name);
         tvMatchReferee = (TextView) view.findViewById(R.id.tv_match_referee);
+        tvSeriesName.setText(matchName);
+        tvTossWinTeam.setText(toss);
         initProgress(view);
         initErrorLayout(view);
 
@@ -97,7 +99,9 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
     @Override
     public void handleContent(JSONObject object) {
         {
+
             try {
+                showProgress();
                 boolean success = object.getBoolean("success");
                 boolean error = object.getBoolean("error");
 
@@ -140,7 +144,6 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
 
     }
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-        hideProgress();
         final ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         JSONArray dataArray= jsonObject.getJSONArray("data");
         final JSONObject matchObject = dataArray.getJSONObject(0);
@@ -148,6 +151,7 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
         JSONObject inningObject= manOftheMatch.getJSONObject("innings");
         JSONObject battingData = inningObject.getJSONObject("1");
         final JSONObject battingObject= battingData.getJSONObject("batting");
+        hideProgress();
         if (activity != null) {
 
             activity.runOnUiThread(new Runnable() {
@@ -155,9 +159,11 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
                 public void run() {
                     try {
                         Log.i("run: ", jsonObject.toString());
-                        Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivPlayerProfileView);
-                        Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivCountryImage);
-                        playerName.setText(matchObject.getString("man_of_match"));
+                       if(!manOftheMatch.isNull("image")){
+                           Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivPlayerProfileView);
+                           Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivCountryImage);
+                       }
+                         playerName.setText(matchObject.getString("man_of_match"));
                         if(!battingObject.isNull("runs"))
                         tvPlayerRun.setText(battingObject.getString("runs"));
                         if(!battingObject.isNull("balls"))
