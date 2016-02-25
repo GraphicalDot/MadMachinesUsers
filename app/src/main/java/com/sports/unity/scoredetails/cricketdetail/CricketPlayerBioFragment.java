@@ -66,7 +66,6 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
         tvPlayerMajorTeam = (TextView) view.findViewById(R.id.tv_player_major_team);
         tvPlayerbirthOfPlace = (TextView) view.findViewById(R.id.tv_player_birth_of_place);
         initProgress(view);
-        showProgress();
         initErrorLayout(view);
 
     }
@@ -74,7 +73,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     @Override
     public void handleContent(String content) {
         try {
-
+showProgress();
             JSONObject jsonObject = new JSONObject(content);
 
             boolean success = jsonObject.getBoolean("success");
@@ -122,10 +121,11 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
 
     }
     private void renderDisplay(JSONObject jsonObject) throws JSONException {
-        hideProgress();
+
         final JSONObject data = (JSONObject) jsonObject.get("data");
         final JSONObject playerInfo = (JSONObject) data.get("info");
         PlayerCricketBioDataActivity activity = (PlayerCricketBioDataActivity) getActivity();
+        hideProgress();
         if (activity != null) {
             activity.setProfileInfo(data);
             activity.runOnUiThread(new Runnable() {

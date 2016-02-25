@@ -111,7 +111,7 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
                 @Override
                 public void run() {
                     try {
-
+                        showErrorLayout(getView());
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());

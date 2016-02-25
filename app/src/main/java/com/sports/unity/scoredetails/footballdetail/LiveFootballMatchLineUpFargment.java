@@ -115,7 +115,7 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
                 @Override
                 public void run() {
                     try {
-
+                        showErrorLayout(getView());
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());

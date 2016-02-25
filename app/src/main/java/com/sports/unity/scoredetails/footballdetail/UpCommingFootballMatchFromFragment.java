@@ -115,7 +115,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                 @Override
                 public void run() {
                     try {
-
+                        showErrorLayout(getView());
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());

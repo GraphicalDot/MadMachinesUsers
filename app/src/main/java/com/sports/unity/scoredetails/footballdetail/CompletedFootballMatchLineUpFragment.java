@@ -121,6 +121,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                 public void run() {
                     try {
                         Log.i("run: ",jsonObject.toString());
+                        showErrorLayout(getView());
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());

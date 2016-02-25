@@ -51,6 +51,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     private List<CricketPlayerMatchStatDTO> playerMatchBattingStatDTOList = new ArrayList<>();
     private List<CricketPlayerMatchStatDTO> playerMatchBowlingStatDTOList = new ArrayList<>();
     private CricketPlayerMatchStatHandler cricketPlayerMatchStatHandler;
+    private ProgressBar progressBar;
     public CricketPlayerMachStatFragment() {
         super();
     }
@@ -63,7 +64,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         cricketPlayerMatchStatHandler = CricketPlayerMatchStatHandler.getInstance(context);
         cricketPlayerMatchStatHandler.addListener(this);
         cricketPlayerMatchStatHandler.requestData(playerId);
-        showProgress(getView());
+
     }
 
     @Override
@@ -76,13 +77,15 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         return view;
     }
     private void initProgress(View view) {
-        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
     }
-    public void showProgress(View view) {
+    public void showProgress() {
+    progressBar.setVisibility(View.VISIBLE);
 
-        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        progressBar.setVisibility(View.VISIBLE);
+    }
+    public void hideProgress() {
+        progressBar.setVisibility(View.GONE);
 
     }
     private void initView(View view) {
@@ -133,7 +136,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     @Override
     public void handleContent(String content) {
         try {
-
+            showProgress();
             JSONObject jsonObject = new JSONObject(content);
 
             boolean success = jsonObject.getBoolean("success");
@@ -173,6 +176,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         final JSONObject data = (JSONObject) jsonObject.get("data");
         final JSONArray playerStatsArray = (JSONArray) data.get("stats");
         PlayerCricketBioDataActivity activity = (PlayerCricketBioDataActivity) getActivity();
+        hideProgress();
         if (activity != null) {
             activity.setProfileInfo(data);
             activity.runOnUiThread(new Runnable() {
