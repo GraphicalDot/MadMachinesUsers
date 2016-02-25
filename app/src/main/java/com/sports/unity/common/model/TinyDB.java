@@ -44,9 +44,6 @@ public class TinyDB {
     public static final String KEY_ALL_CONTACTS_SYNC_STATUS = "all_contacts_sync_status";
     public static final String KEY_ALL_CONTACTS_LAST_PROCESSED_TIMESTAMP = "all_contacts_last_processed_timestamp";
 
-    public static final String KEY_PROFILE_NAME = "name";
-    public static final String KEY_PROFILE_STATUS = "status";
-
     /*Preference key used to manage filters*/
     public static final String FAVOURITE_FILTERS = "favourite_filters";
     public static final String LEAGUE_SELECTION = "league_selection";
@@ -79,6 +76,13 @@ public class TinyDB {
     public static final String PRIVACY_PROFILE_PHOTO = "privacy_profile_photo";
     public static final String PRIVACY_STATUS = "privacy_status";
     public static final String READ_RECEIPTS = "read_receipts";
+
+
+    /**
+     * Unread notification count key
+     */
+
+    public static final String UNREAD_NOTIFICATION_COUNT_KEY = "unread_notification_count";
 
     private SharedPreferences preferences;
     private String DEFAULT_APP_IMAGEDATA_DIRECTORY;

@@ -6,8 +6,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
@@ -72,6 +74,13 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
             mlistView.setVisibility(View.INVISIBLE);
             showErrorLayout(view);
         }
+        mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                FavouriteItem f=favList.get(position);
+                Toast.makeText(getActivity(),f.getId(),Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     /* private void searchNews(String s) {

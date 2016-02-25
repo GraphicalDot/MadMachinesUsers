@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:gravity="center"
+    android:orientation="horizontal">
+
+    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Messages"
+        android:textAllCaps="true" />
+
+    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+        android:id="@+id/unread_messages"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/horizontal_padding_very_small"
+        android:background="@drawable/msgs_count_toolbar_white"
+        android:gravity="center"
+        android:text="12"
+        android:textColor="@color/app_theme_blue"
+        android:textSize="@dimen/font_size_small_medium" />
+</LinearLayout>

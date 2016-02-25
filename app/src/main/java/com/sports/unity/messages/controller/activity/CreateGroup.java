@@ -129,34 +129,32 @@ public class CreateGroup extends CustomAppCompatActivity {
             }
             SportsUnityDBHelper.getInstance(getApplicationContext()).createGroupUserEntry(chatId, members);*/
 
-        } else {
-            Toast.makeText(this, R.string.group_message_try_again, Toast.LENGTH_SHORT).show();
-        }
+            PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance(this);
+            boolean nodesuccess = pubSubMessaging.createNode(roomName, this);
+            if (nodesuccess) {
 
-        PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance(this);
-        boolean nodesuccess = pubSubMessaging.createNode(roomName, this);
-        if (nodesuccess) {
+                long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry(subject, owner.id, groupImageArray, roomName);
+                SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, roomName);
 
-            long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry(subject, owner.id, null, roomName);
-            SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, roomName);
-
-            String groupmembersnumbers = "";
-            ArrayList<Long> members = new ArrayList<>();
-            for (Contacts c :
-                    selectedMembers) {
-                members.add(c.id);
-                groupmembersnumbers += c.id + ",";
+                String groupmembersnumbers = "";
+                ArrayList<Long> members = new ArrayList<>();
+                for (Contacts c :
+                        selectedMembers) {
+                    members.add(c.id);
+                    groupmembersnumbers += c.id + ",";
+                }
+                SportsUnityDBHelper.getInstance(getApplicationContext()).createGroupUserEntry(chatId, members);
+                SportsUnityDBHelper.getInstance(getApplicationContext()).updateAdmin(TinyDB.getInstance(getApplicationContext()).KEY_USER_JID, roomName);
+                Log.i("send Invites for group", "true");
+                groupMessaging.inviteMembers(roomName, selectedMembers, "");
+                finish();
+            } else {
+                Toast.makeText(this, R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             }
-            SportsUnityDBHelper.getInstance(getApplicationContext()).createGroupUserEntry(chatId, members);
-            SportsUnityDBHelper.getInstance(getApplicationContext()).updateAdmin(TinyDB.getInstance(getApplicationContext()).KEY_USERNAME, roomName);
-            Log.i("sendinggroupinvitation", "true");
-            groupMessaging.inviteMembers(roomName, selectedMembers, "");
-            finish();
+
         } else {
             Toast.makeText(this, R.string.group_message_try_again, Toast.LENGTH_SHORT).show();
         }
-
-
     }
 
 }

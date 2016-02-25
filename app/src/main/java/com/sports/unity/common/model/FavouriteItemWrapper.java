@@ -2,6 +2,7 @@ package com.sports.unity.common.model;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -269,13 +270,14 @@ public class FavouriteItemWrapper {
             FavouriteItem f = new FavouriteItem();
             String sportsName= CommonUtil.capitalize(s);
             f.setName(sportsName);
-            if(sportsName.toLowerCase().contains(Constants.GAME_KEY_CRICKET.toLowerCase())){
+            Log.d("max","sports--"+sportsName);
+           /* if(sportsName.toLowerCase().contains(Constants.GAME_KEY_CRICKET.toLowerCase())){
                 Uri uri = Uri.parse("android.resource://"+context.getPackageName()+"/drawable/ic_cricket");
                 f.setFlagImageUrl(uri.toString());
             }else if(sportsName.toLowerCase().contains(Constants.GAME_KEY_FOOTBALL.toLowerCase())){
                 Uri uri = Uri.parse("android.resource://"+context.getPackageName()+"/drawable/ic_football");
                 f.setFlagImageUrl(uri.toString());
-            }
+            }*/
             savedSports.add(f);
         }
         Collections.sort(savedSports);

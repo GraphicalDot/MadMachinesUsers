@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,8 +38,14 @@ import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.messages.controller.activity.CreateGroup;
 import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
+import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.NotificationHandler;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -61,6 +69,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
 
     TextView friendsUnreadCount;
     TextView othersUnreadCount;
+    View backgroundDimmer;
 
 
     @Override
@@ -70,18 +79,23 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     }
 
     private void getAndSetUnreadCount() {
-        int friendsChatUnreadCount = SportsUnityDBHelper.getInstance(getContext()).getTotalUnreadCount(0);
-        int otherChatUnreadCount = SportsUnityDBHelper.getInstance(getContext()).getTotalUnreadCount(1);
+        int friendsChatUnreadCount = NotificationHandler.getInstance(getContext()).getUnreadFriendsChatCount();
+        int otherChatUnreadCount = NotificationHandler.getInstance(getContext()).getUnreadOthersChatCount();
+        int messagesCount = NotificationHandler.getInstance(getContext()).getUnreadMessageCount();
+
         if (friendsChatUnreadCount == 0) {
             friendsUnreadCount.setVisibility(View.GONE);
         } else {
+            friendsUnreadCount.setVisibility(View.VISIBLE);
             friendsUnreadCount.setText(String.valueOf(friendsChatUnreadCount));
         }
         if (otherChatUnreadCount == 0) {
             othersUnreadCount.setVisibility(View.GONE);
         } else {
+            othersUnreadCount.setVisibility(View.VISIBLE);
             othersUnreadCount.setText(String.valueOf(otherChatUnreadCount));
         }
+        ((MainActivity) getActivity()).updateUnreadMessages(messagesCount);
     }
 
     @Override
@@ -103,16 +117,28 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
 
         friendsUnreadCount = (TextView) v.findViewById(R.id.friends_unread_count);
         othersUnreadCount = (TextView) v.findViewById(R.id.others_unread_count);
+        backgroundDimmer = v.findViewById(R.id.background_dimmer);
 
-        getAndSetUnreadCount();
 
-
-        FloatingActionMenu fabMenu = (FloatingActionMenu) v.findViewById(R.id.fab_menu);
+        final FloatingActionMenu fabMenu = (FloatingActionMenu) v.findViewById(R.id.fab_menu);
+        fabMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (fabMenu.isOpened()) {
+                    backgroundDimmer.setVisibility(View.GONE);
+                } else {
+                    backgroundDimmer.setVisibility(View.VISIBLE);
+                }
+                fabMenu.toggle(true);
+            }
+        });
 
         FloatingActionButton peopleAroundMeFab = (FloatingActionButton) v.findViewById(R.id.people_around_me);
         peopleAroundMeFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                fabMenu.toggle(true);
+                backgroundDimmer.setVisibility(View.GONE);
                 if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
                     startPeopleAroundMeActivity();
                 } else {
@@ -127,6 +153,8 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         createGroupFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                fabMenu.toggle(true);
+                backgroundDimmer.setVisibility(View.GONE);
 //                Intent intent = new Intent(getActivity(), CreateGroup.class);
 //                startActivity(intent);
             }
@@ -134,6 +162,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
 
         ChatFragment fragment = new ChatFragment();
         mListener = fragment;
+        currentFragment = fragment;
         getChildFragmentManager().beginTransaction().replace(com.sports.unity.R.id.childFragmentContainer, fragment).commit();
         return v;
     }
@@ -270,6 +299,9 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
                 public boolean onClose() {
                     childStripLayout.setVisibility(View.VISIBLE);
                     ((MainActivity) getActivity()).disableSearch();
+                    if (mListener != null) {
+                        mListener.onSearchQuery("");
+                    }
                     return false;
                 }
             });
@@ -278,21 +310,49 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
+    ActivityActionListener activityActionListener = new ActivityActionListener() {
+        @Override
+        public void handleAction(int id, Object object) {
+        }
 
-        mListener = null;
-    }
+        @Override
+        public void handleAction(int id) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getAndSetUnreadCount();
+                }
+            });
+        }
+
+        @Override
+        public void handleMediaContent(int id, String mimeType, Object messageContent, Object mediaContent) {
+
+        }
+
+        @Override
+        public void handleMediaContent(int id, String mimeType, Object messageContent, String thumbnailImage, Object mediaContent) {
+
+        }
+    };
 
     @Override
     public void onResume() {
         super.onResume();
+        ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.UNREAD_COUNT_KEY, activityActionListener);
+        getAndSetUnreadCount();
         mListener = (OnSearchViewQueryListener) currentFragment;
         if (PermissionUtil.getInstance().isRuntimePermissionRequired()) {
             ((MainActivity) getActivity()).addLocationResultListener(this);
         }
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.UNREAD_COUNT_KEY);
+    }
+
 
     @Override
     public void onPermissionResult(int requestCode, int[] grantResults) {

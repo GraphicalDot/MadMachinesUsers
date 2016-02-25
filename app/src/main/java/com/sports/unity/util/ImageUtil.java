@@ -11,6 +11,10 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.ImageView;
@@ -79,9 +83,10 @@ public class ImageUtil {
         byte[] content = null;
         String encodedImage = null;
         try {
-            Bitmap scaledBitmap = getScaledBitmap(fileName, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), 0);
-            Bitmap croppedBitmap = getCroppedBitmap( scaledBitmap, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height));
-            content = getCompressedBytes(croppedBitmap, 1);
+            Bitmap scaledBitmap = getScaledBitmap(fileName, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height));
+            Bitmap blurBitmap = blur(context, scaledBitmap);
+            Bitmap croppedBitmap = getCroppedBitmap( blurBitmap, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height));
+            content = getCompressedBytes(croppedBitmap, 50);
             encodedImage = Base64.encodeToString(content, Base64.DEFAULT);
         }catch (Exception ex){
             ex.printStackTrace();
@@ -93,9 +98,10 @@ public class ImageUtil {
         byte[] content = null;
         String encodedImage = null;
         try {
-            Bitmap scaledBitmap = getScaledBitmap(bitmap, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), 0);
-            Bitmap croppedBitmap = getCroppedBitmap( scaledBitmap, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height));
-            content = getCompressedBytes(croppedBitmap, 1);
+            Bitmap scaledBitmap = getScaledBitmap(bitmap, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height));
+            Bitmap blurBitmap = blur(context, scaledBitmap);
+            Bitmap croppedBitmap = getCroppedBitmap( blurBitmap, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height));
+            content = getCompressedBytes(croppedBitmap, 50);
             encodedImage = Base64.encodeToString(content, Base64.DEFAULT);
         }catch (Exception ex){
             ex.printStackTrace();
@@ -157,12 +163,12 @@ public class ImageUtil {
 
         float scaleByHeight = requiredHeight > 0 ? (float)requiredHeight/height : 1;
         float scaleByWidth = requiredWidth > 0 ? (float)requiredWidth/width : 1;
-        float scaleFactor = scaleByWidth < scaleByHeight ? scaleByWidth : scaleByHeight;
+        float scaleFactor = requiredWidth < requiredHeight ? scaleByWidth : scaleByHeight;
 
         Matrix matrix = new Matrix();
         matrix.postScale(scaleFactor, scaleFactor);
 
-        Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, false);
+        Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
 //        bitmap.recycle();
 
         return scaledBitmap;
@@ -197,6 +203,29 @@ public class ImageUtil {
 
         Bitmap croppedBmp = Bitmap.createBitmap(bitmap, leftOffset, topOffset, requiredWidth, requiredHeight);
         return croppedBmp;
+    }
+
+    private static final float BITMAP_SCALE = 0.4f;
+    private static final float BLUR_RADIUS = 7.5f;
+
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
+    private static Bitmap blur(Context ctx, Bitmap image) {
+        int width = Math.round(image.getWidth() * BITMAP_SCALE);
+        int height = Math.round(image.getHeight() * BITMAP_SCALE);
+
+        Bitmap inputBitmap = Bitmap.createScaledBitmap(image, width, height, false);
+        Bitmap outputBitmap = Bitmap.createBitmap(inputBitmap);
+
+        RenderScript rs = RenderScript.create(ctx);
+        ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+        Allocation tmpIn = Allocation.createFromBitmap(rs, inputBitmap);
+        Allocation tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
+        theIntrinsic.setRadius(BLUR_RADIUS);
+        theIntrinsic.setInput(tmpIn);
+        theIntrinsic.forEach(tmpOut);
+        tmpOut.copyTo(outputBitmap);
+
+        return outputBitmap;
     }
 
     private static byte[] getAndSetCompressedImageToView(String filePath, ImageView imageView, int requiredWidth, int requiredHeight) throws Exception {

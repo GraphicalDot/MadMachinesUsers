@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,7 +31,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
     private final Activity context;
     private LayoutInflater inflater;
 
-    private ArrayList<Contacts> originalContactList;
+    private ArrayList<Contacts> selectedMemberList;
     private ArrayList<Contacts> inUseContactListForAdapter;
     private Button invite;
     int frequentContactCount = 0;
@@ -39,10 +40,10 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
     private boolean multipleSelection = false;
 
     private ItemFilter contactFilter;
-    ArrayList<Contacts> finalContact;
-    ArrayList<Contacts> usedContact;
+    private ArrayList<Contacts> finalContact;
+    private ArrayList<Contacts> usedContact;
 
-    public ContactListAdapter(Activity context, int resource, ArrayList<Contacts> list, boolean multipleSelection, int frequentContactCount) {
+    public ContactListAdapter(Activity context, int resource, ArrayList<Contacts> list, boolean multipleSelection, int frequentContactCount, ArrayList<Contacts> selectedMembersList) {
         super(context, resource, list);
         this.context = context;
         this.inUseContactListForAdapter = list;
@@ -50,6 +51,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
         this.multipleSelection = multipleSelection;
         inflater = context.getLayoutInflater();
         this.frequentContactCount = frequentContactCount;
+        this.selectedMemberList = selectedMembersList;
         contactFilter = new ItemFilter();
         usedContact = finalContact = list;
 
@@ -88,6 +90,14 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
 
             txtTitle.setText(contacts.name);
             status.setText(contacts.status);
+            if (selectedMemberList != null && selectedMemberList.contains(contacts)) {
+                CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.checkbox);
+                checkBox.setChecked(true);
+                checkBox.setTag(true);
+            }
+
+            txtTitle.setText(contacts.name);
+            status.setText(contacts.status);
 
             if (contacts.image != null) {
                 userIcon.setImageBitmap(BitmapFactory.decodeByteArray(contacts.image, 0, contacts.image.length));
@@ -122,6 +132,10 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
 //        super.notifyDataSetChanged();
 //    }
 
+    public void refreshSelectedMembers(ArrayList<Contacts> selectedMembersList) {
+        this.selectedMemberList = selectedMembersList;
+    }
+
     public ArrayList<Contacts> getInUseContactListForAdapter() {
         return inUseContactListForAdapter;
     }
@@ -143,9 +157,12 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
         } else {
             holder = (HeaderViewHolder) convertView.getTag();
         }
-
-        if (position < frequentContactCount) {
-            headerText = "Recents";
+        if (usedContact.size() == finalContact.size()) {
+            if (position < frequentContactCount) {
+                headerText = "Recents";
+            } else {
+                headerText = "" + getHeader(position);
+            }
         } else {
             headerText = "" + getHeader(position);
         }
@@ -155,8 +172,12 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
 
     @Override
     public long getHeaderId(int position) {
-        if (position < frequentContactCount) {
-            return (long) 0.0;
+        if (usedContact.size() == finalContact.size()) {
+            if (position < frequentContactCount) {
+                return (long) 0.0;
+            } else {
+                return getHeader(position);
+            }
         } else {
             return getHeader(position);
         }
@@ -209,8 +230,10 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
             final ArrayList<Contacts> nlist = new ArrayList<Contacts>();
 
             for (Contacts c : finalContact) {
-                if (c.name.toLowerCase().contains(filterString)) {
-                    nlist.add(c);
+                if (!nlist.contains(c)) {
+                    if (c.name.toLowerCase().contains(filterString)) {
+                        nlist.add(c);
+                    }
                 }
             }
 
@@ -226,6 +249,10 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
             ContactListAdapter.this.notifyDataSetChanged();
         }
 
+    }
+    public void refreshContacts(){
+        usedContact=finalContact;
+        this.notifyDataSetChanged();
     }
 }
 

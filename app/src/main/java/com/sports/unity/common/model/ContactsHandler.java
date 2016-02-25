@@ -6,18 +6,13 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.util.Log;
 
-import com.sports.unity.Database.DBUtil;
-import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
-import com.sports.unity.messages.controller.model.Contacts;
-import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smackx.search.ReportedData;
 import org.jivesoftware.smackx.search.UserSearchManager;
@@ -28,15 +23,11 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 
 /**
  * Created by madmachines on 2/9/15.
@@ -81,7 +72,8 @@ public class ContactsHandler {
 
     synchronized public void addCallToSyncContacts(Context context){
         if( ! inProcess ){
-            processContacts(context, true);
+            addActionsToProcess(context, true);
+            process(context);
         } else {
             //nothing
 
@@ -91,7 +83,8 @@ public class ContactsHandler {
 
     synchronized public void addCallToSyncLatestContacts(Context context, boolean wait){
         if( ! inProcess ){
-            processContacts(context, false);
+            addActionsToProcess(context, false);
+            process(context);
         } else {
             if( wait ) {
                 addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_ADD_NEW_CONTACTS);
@@ -103,7 +96,18 @@ public class ContactsHandler {
         }
     }
 
-    public void processContacts(Context context, boolean allContacts){
+    synchronized public void addCallToProcessPendingActions(Context context){
+        Log.d("ContactsHandler", "process pending actions");
+
+        if( ! inProcess ) {
+            process(context);
+        } else {
+            //nothing
+        }
+
+    }
+
+    private void addActionsToProcess(Context context, boolean allContacts){
         Log.d("ContactsHandler", "processing");
 
         if( allContacts ) {
@@ -113,6 +117,9 @@ public class ContactsHandler {
             addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_ADD_NEW_CONTACTS);
         }
 
+    }
+
+    private void process(Context context){
         ContactsThread contactsThread = new ContactsThread(context);
         contactsThread.start();
     }

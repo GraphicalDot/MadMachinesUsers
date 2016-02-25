@@ -30,4 +30,11 @@ public class Contacts {
         return name;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        String s1 = String.valueOf(id);
+        String s2 = String.valueOf(((Contacts) o).id);
+        return s1.equals(s2);
+    }
+
 }

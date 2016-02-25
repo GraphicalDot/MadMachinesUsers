@@ -121,7 +121,6 @@ public class UserProfileHandler {
     }
 
     public int loadProfile(Context context, String jid, String listenerKey) {
-        Log.d("max", "loading profile" + jid);
         int requestStatus = REQUEST_STATUS_FAILED;
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(LOAD_PROFILE_REQUEST_TAG)) {
 
@@ -151,7 +150,7 @@ public class UserProfileHandler {
     VCard loadVCardAndUpdateDB(Context context, String jid){
         VCard card = new VCard();
         try {
-            card.load(XMPPClient.getConnection(), jid);
+            card.load(XMPPClient.getConnection(), jid + "@" + XMPPClient.SERVICE_NAME);
 
             String status = card.getMiddleName();
             byte[] image = card.getAvatar();
@@ -166,9 +165,8 @@ public class UserProfileHandler {
         return card;
     }
 
-    public int submitUserProfile(Context context, final Contacts contacts, String listenerKey) {
+    public int submitUserProfile(Context context, Contacts contacts, String listenerKey) {
         int requestStatus = REQUEST_STATUS_FAILED;
-        Log.d("max", "initiating---");
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(SUBMIT_PROFILE_REQUEST_TAG)) {
 
             if (XMPPClient.getInstance().isConnectionAuthenticated()) {
@@ -193,7 +191,7 @@ public class UserProfileHandler {
                             manager.saveVCard(vCard);
 
                             success = true;
-                            saveLoginUserDetail(this.context, contacts);
+                            saveLoginUserDetail(this.context, userContact);
                         } catch (SmackException.NoResponseException e) {
                             e.printStackTrace();
                         } catch (XMPPException.XMPPErrorException e) {
@@ -221,7 +219,7 @@ public class UserProfileHandler {
     }
 
     private void saveLoginUserDetail(Context context, Contacts loginUserDetail){
-        int count = SportsUnityDBHelper.getInstance(context).updateContacts( loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.image, loginUserDetail.status, false);
+        int count = SportsUnityDBHelper.getInstance(context).updateContacts( loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.name, loginUserDetail.image, loginUserDetail.status, false);
         if( count == 0 ) {
             SportsUnityDBHelper.getInstance(context).addToContacts(loginUserDetail.name, loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.status, loginUserDetail.image, false);
         }
