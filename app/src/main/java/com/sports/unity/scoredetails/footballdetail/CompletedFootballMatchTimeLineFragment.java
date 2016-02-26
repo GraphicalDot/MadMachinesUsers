@@ -4,12 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
@@ -34,6 +36,9 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
     String toss = "";
     String matchName="";
     String date = "";
+    private SwipeRefreshLayout swtimelinerefresh;
+    private TextView nocomments;
+
     public CompletedFootballMatchTimeLineFragment() {
         // Required empty public constructor
     }
@@ -64,6 +69,7 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
         recyclerView.setLayoutManager(new CustomLinearLayoutManager(getContext()));
 
         initErrorLayout(view);
+        nocomments=(TextView)view.findViewById(R.id.no_comments);
 
     }
 

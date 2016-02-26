@@ -7,8 +7,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
@@ -31,6 +33,14 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
     String toss = "";
     String matchName="";
     String date = "";
+    private GridLayout rclineup;
+    private GridLayout gvsubstitutes;
+    private TextView tvcaption;
+    private TextView tvIkerCasillan;
+    private TextView tvCarlesPayol;
+    private TextView tvlineup;
+    private TextView tvsubstitutes;
+
     public LiveFootballMatchLineUpFargment() {
         // Required empty public constructor
     }
@@ -53,13 +63,17 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_football_live_match_lineups, container, false);
         initView(view);
-        showProgressBar();
         return view;
     }
     private void initView(View view) {
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         initErrorLayout(view);
+        tvcaption=(TextView)view.findViewById(R.id.tv_caption);
+        tvIkerCasillan=(TextView)view.findViewById(R.id.tv_Iker_Casillan);
+        tvCarlesPayol=(TextView)view.findViewById(R.id.tv_Carles_Payol);
+        tvlineup=(TextView)view.findViewById(R.id.tv_line_up);
+        tvsubstitutes=(TextView)view.findViewById(R.id.tv_substitutes);
 
     }
     private void  showProgressBar(){

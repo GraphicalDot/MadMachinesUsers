@@ -21,11 +21,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     />
-                <include layout="@layout/error_layout"
-                    android:id="@+id/error"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    />
+
             </android.support.v4.widget.SwipeRefreshLayout>
             <RelativeLayout
 
@@ -147,6 +143,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <TextView
+                        android:id="@+id/tv_first_premiera_division"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="left"
@@ -163,6 +160,7 @@
                     android:weightSum="4"
                     android:layout_height="wrap_content">
                     <TextView
+                        android:id="@+id/tv_first_point"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -170,6 +168,7 @@
                         android:textSize="@dimen/font_size_small_large"
                         android:text="@string/point"/>
                     <TextView
+                        android:id="@+id/tv_first_wins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -177,6 +176,7 @@
                         android:textSize="@dimen/font_size_small_large"
                         android:text="@string/win"/>
                     <TextView
+                        android:id="@+id/tv_first_draws"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -184,6 +184,7 @@
                         android:textSize="@dimen/font_size_small_large"
                         android:text="@string/draws"/>
                     <TextView
+                        android:id="@+id/tv_first_loss"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -348,6 +349,7 @@
                     android:weightSum="4"
                     android:layout_height="wrap_content">
                     <TextView
+                        android:id="@+id/tv_second_point"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -355,6 +357,7 @@
                         android:textSize="@dimen/font_size_small_large"
                         android:text="@string/point"/>
                     <TextView
+                        android:id="@+id/tv_second_wins"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -362,6 +365,7 @@
                         android:textSize="@dimen/font_size_small_large"
                         android:text="@string/win"/>
                     <TextView
+                        android:id="@+id/tv_second_draws"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -369,6 +373,7 @@
                         android:textSize="@dimen/font_size_small_large"
                         android:text="@string/draws"/>
                     <TextView
+                        android:id="@+id/tv_second_loss"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -429,6 +434,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
                     <TextView
+                        android:id="@+id/tv_second_premiera_division"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="left"

@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -37,6 +38,14 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     String toss = "";
     String matchName="";
     String date = "";
+    private TextView tvcaption;
+    private TextView tvIkerCasillan;
+    private TextView tvCarlesPayol;
+    private TextView tvlineup;
+    private GridLayout rclineup;
+    private TextView tvsubstitutes;
+    private GridLayout gvsubstitutes;
+
     public CompletedFootballMatchLineUpFragment() {
         // Required empty public constructor
     }
@@ -65,6 +74,11 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         initErrorLayout(view);
+        tvcaption=(TextView)view.findViewById(R.id.tv_caption);
+        tvIkerCasillan=(TextView)view.findViewById(R.id.tv_Iker_Casillan);
+        tvCarlesPayol=(TextView)view.findViewById(R.id.tv_Carles_Payol);
+        tvlineup=(TextView)view.findViewById(R.id.tv_line_up);
+        tvsubstitutes=(TextView)view.findViewById(R.id.tv_substitutes);
 
     }
     private void  showProgressBar(){
