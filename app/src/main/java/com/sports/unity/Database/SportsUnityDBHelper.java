@@ -744,10 +744,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 searchedMessagesSubQuery.append(MessagesEntry.COLUMN_DATA_MEDIA + " ,");
                 searchedMessagesSubQuery.append(MessagesEntry.COLUMN_MIME_TYPE + " ,");
                 searchedMessagesSubQuery.append(MessagesEntry.COLUMN_SEND_TIMESTAMP + " ,");
-                searchedMessagesSubQuery.append(MessagesEntry.COLUMN_RECEIVE_TIMESTAMP );
+                searchedMessagesSubQuery.append(MessagesEntry.COLUMN_RECEIVE_TIMESTAMP);
 
                 searchedMessagesSubQuery.append(" FROM " + MessagesEntry.TABLE_NAME);
-                searchedMessagesSubQuery.append(" WHERE " + MessagesEntry.COLUMN_MIME_TYPE + " = '" + MIME_TYPE_TEXT +  "' AND " + MessagesEntry.COLUMN_DATA_TEXT + " LIKE '%" + searchKeyword + "%' ) ");
+                searchedMessagesSubQuery.append(" WHERE " + MessagesEntry.COLUMN_MIME_TYPE + " = '" + MIME_TYPE_TEXT + "' AND " + MessagesEntry.COLUMN_DATA_TEXT + " LIKE '%" + searchKeyword + "%' ) ");
             }
 
             StringBuilder subQuery = new StringBuilder("");
@@ -1112,7 +1112,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactsEntry.COLUMN_NAME
         };
 
-        String selection = ContactsEntry.COLUMN_PHONE_NUMBER + " LIKE ? ";
+        String selection = ContactsEntry.COLUMN_JID + " LIKE ? ";
         String[] selectionArgs = {String.valueOf(phoneNumber)};
 
         Cursor c = db.query(

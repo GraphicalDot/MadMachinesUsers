@@ -108,7 +108,7 @@ public class ActivityActionHandler {
         ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
 
         if (actionListener != null) {
-            actionListener.handleAction(EVENT_ID_COMMON, data);
+            actionListener.handleAction(EVENT_ID_CHAT_STATUS, data);
             success = true;
         }
         return success;
