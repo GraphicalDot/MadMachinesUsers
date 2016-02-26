@@ -48,7 +48,7 @@
                    android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/iv_team_profile_image"
                     android:gravity="right"
-                   android:text="India"
+                   android:text="-"
                     android:textSize="@dimen/font_size_small_large"
                     card_view:layout_widthPercent="14%"
                    />

@@ -29,8 +29,8 @@ public class FootballMatchJsonCaller extends MatchJsonCaller {
         return jsonObject.getInt("match_id");
     }
 
-    public Integer getLeagueId() throws JSONException {
-        return jsonObject.getInt("league_id");
+    public String getLeagueId() throws JSONException {
+        return jsonObject.getString("league_id");
     }
 
     public String getAwayTeamFlag() throws JSONException {
@@ -63,5 +63,6 @@ public class FootballMatchJsonCaller extends MatchJsonCaller {
     public String getTeam2Id() throws JSONException {
         return jsonObject.getString("away_team_id");
     }
+
 
 }

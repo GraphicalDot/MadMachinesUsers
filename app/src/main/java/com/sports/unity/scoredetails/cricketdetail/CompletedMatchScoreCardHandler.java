@@ -38,6 +38,7 @@ public class CompletedMatchScoreCardHandler {
     public interface CompletedMatchContentListener {
 
         void handleContent(JSONObject object);
+        public void handleError();
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -82,6 +83,7 @@ public class CompletedMatchScoreCardHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
+        mContentListener.handleError();
     }
 
     public void addListener(CompletedMatchContentListener contentListener) {

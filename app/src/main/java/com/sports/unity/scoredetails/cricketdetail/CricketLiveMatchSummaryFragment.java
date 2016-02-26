@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +56,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     private TextView tvBowlerEcon;
     private TextView tvBowlerOver;
     private TextView tvBowlerWr;
+    private ProgressBar progressBar;
    public CricketLiveMatchSummaryFragment() {
         // Required empty public constructor
     }
@@ -63,7 +65,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     public void onAttach(Context context) {
         super.onAttach(context);
         String matchId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-       CricketLiveMatchSummaryHandler cricketLiveMatchSummaryHandler = CricketLiveMatchSummaryHandler.getInstance(context);
+        CricketLiveMatchSummaryHandler cricketLiveMatchSummaryHandler = CricketLiveMatchSummaryHandler.getInstance(context);
         cricketLiveMatchSummaryHandler.addListener(this);
         cricketLiveMatchSummaryHandler.requestLiveMatchSummary(matchId);
     }
@@ -107,7 +109,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
         tvBowlerEcon = (TextView) view.findViewById(R.id.tv_bowler_econ);
         tvBowlerOver = (TextView) view.findViewById(R.id.tv_bowler_over);
         tvBowlerWr = (TextView) view.findViewById(R.id.tv_bowler_wr);
-
+        initProgress(view);
         initErrorLayout(view);
 
     }
@@ -116,6 +118,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     public void handleContent(String content) {
 
         try {
+            showProgress();
             JSONObject object = new JSONObject(content);
             boolean success = object.getBoolean("success");
             boolean error = object.getBoolean("error");
@@ -146,7 +149,18 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
         errorLayout.setVisibility(View.VISIBLE);
 
     }
+    private void initProgress(View view) {
+        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+    }
+    private void showProgress() {
+        progressBar.setVisibility(View.VISIBLE);
 
+    }
+    private void hideProgress() {
+        progressBar.setVisibility(View.GONE);
+
+    }
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
 
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
@@ -170,7 +184,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
               }
         }
 
-
+        hideProgress();
          if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override

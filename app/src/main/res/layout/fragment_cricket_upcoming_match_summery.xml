@@ -42,8 +42,8 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/match_info"
-                    android:textColor="@color/score_light_grey"
-                    android:textSize="@dimen/font_size_small_large" />
+                    android:textColor="@color/gray1"
+                    android:textSize="@dimen/font_size_small_large"/>
 
             </LinearLayout>
             <View
@@ -59,30 +59,31 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="@dimen/horizontal_padding_small">
+                    android:padding="@dimen/horizontal_padding_very_small">
 
                     <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/match"
-                        android:textSize="@dimen/font_size_small_medium" />
+                        android:textSize="@dimen/font_size_small_medium"/>
 
                     <com.sports.unity.common.view.CustomRobotoRegularTextView
                         android:id="@+id/tv_match_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
-                        android:text="Ist ODI , New Zeland Vs India"
+                        android:text=""
                         android:textColor="@color/score_light_grey"
-                        android:textSize="@dimen/font_size_very_small" />
+                        android:textSize="@dimen/font_size_small_medium" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="@dimen/horizontal_padding_small">
-
+                    android:paddingRight="@dimen/horizontal_padding_very_small"
+                    android:paddingBottom="@dimen/horizontal_padding_very_small"
+                    android:paddingLeft="@dimen/horizontal_padding_very_small">
                     <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -94,31 +95,33 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
-                        android:text="3rd Feb"
+                        android:text=""
                         android:textColor="@color/score_light_grey"
-                        android:textSize="@dimen/font_size_very_small" />
+                        android:textSize="@dimen/font_size_small_medium"/>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="@dimen/horizontal_padding_small">
+                    android:paddingRight="@dimen/horizontal_padding_very_small"
+                    android:paddingBottom="@dimen/horizontal_padding_very_small"
+                    android:paddingLeft="@dimen/horizontal_padding_very_small">
 
                     <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/toss"
-                        android:textSize="@dimen/font_size_small_medium" />
+                        android:textSize="@dimen/font_size_small_medium"  />
 
                     <com.sports.unity.common.view.CustomRobotoRegularTextView
                         android:id="@+id/tv_match_toss"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
-                        android:text="Team will be announced at  the toss."
+                        android:text=""
                         android:textColor="@color/score_light_grey"
-                        android:textSize="@dimen/font_size_very_small" />
+                        android:textSize="@dimen/font_size_small_medium"/>
                 </LinearLayout>
             </LinearLayout>
         </LinearLayout>
