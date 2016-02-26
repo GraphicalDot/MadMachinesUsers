@@ -10,16 +10,16 @@
         android:id="@+id/layout_batting"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/horizontal_padding_small"
         android:paddingLeft="@dimen/horizontal_padding_small"
         android:paddingRight="@dimen/horizontal_padding_medium"
-        android:paddingTop="@dimen/horizontal_padding_small">
+        android:paddingBottom="@dimen/horizontal_padding_very_very_small"
+        android:paddingTop="@dimen/horizontal_padding_very_very_small">
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/tv_wicket"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="left"
-            android:text="1-5"
+            android:text=""
             android:textSize="@dimen/font_size_small_large"
             app:layout_widthPercent="33%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/tv_wicket"
             android:gravity="left"
-            android:text="Dev"
+            android:text=""
             android:textSize="@dimen/font_size_small_large"
             app:layout_widthPercent="33%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
@@ -37,7 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/tv_bowler_name"
             android:gravity="right"
-            android:text="42"
+            android:text=""
             android:textSize="@dimen/font_size_small_large"
             app:layout_widthPercent="34%" />
     </android.support.percent.PercentRelativeLayout>
