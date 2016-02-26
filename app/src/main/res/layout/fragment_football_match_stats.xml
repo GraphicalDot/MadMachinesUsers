@@ -1,8 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     tools:context="com.sports.unity.scoredetails.footballdetail.FootballMatchStatsFragment">
   <android.support.v4.widget.SwipeRefreshLayout
     android:id="@+id/commentary_refresh"
@@ -12,8 +13,8 @@
         android:id="@+id/my_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="vertical"
         android:background="@color/gray3"
+        android:scrollbars="vertical"
         app:layoutManager="LinearLayoutManager"
         />
     <ProgressBar
@@ -22,18 +23,20 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         />
-    <include layout="@layout/error_layout"
-        android:id="@+id/error"
+
+      <include
+          android:id="@+id/error"
+          layout="@layout/error_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         />
     <TextView
         android:id="@+id/no_comments"
-        android:text="No Comments"
-        android:textSize="@dimen/font_size_large"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:text="No Comments"
+        android:textSize="@dimen/font_size_large"
         android:visibility="gone"
         />
 </android.support.v4.widget.SwipeRefreshLayout>
@@ -43,9 +46,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"/>
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
 </LinearLayout>
