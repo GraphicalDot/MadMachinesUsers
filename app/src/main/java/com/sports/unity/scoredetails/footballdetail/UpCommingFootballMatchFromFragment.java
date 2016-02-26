@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -23,6 +24,8 @@ import org.json.JSONObject;
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
+import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_NAME;
+import static com.sports.unity.util.Constants.INTENT_KEY_TEAM2_NAME;
 import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 
 /**
@@ -31,9 +34,11 @@ import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 public class UpCommingFootballMatchFromFragment extends Fragment implements UpCommingFootballMatchFromHandler.UpCommingMatchFromContentListener{
 
     private ProgressBar progressBar;
-    String toss = "";
-    String matchName="";
-    String date = "";
+    private String date = "";
+    private String matchId ="";
+    private String leagueId = "";
+    private String team1;
+    private String team2;
     private SwipeRefreshLayout commentaryrefresh;
     private TextView tvnamefirstteam;
     private TextView tvlastfivematchteamfirst;
@@ -78,10 +83,11 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     public void onAttach(Context context) {
         super.onAttach(context);
         Intent i = getActivity().getIntent();
-        String matchId =  i.getStringExtra(INTENT_KEY_ID);
-        matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
-        toss = i.getStringExtra(INTENT_KEY_TOSS);
+        matchId = i.getStringExtra(INTENT_KEY_ID);
+        leagueId = i.getStringExtra(Constants.INTENT_KEY_LEAGUE_ID);
         date = i.getStringExtra(INTENT_KEY_DATE);
+        team1 = i.getStringExtra(INTENT_KEY_TEAM1_NAME);
+        team2 = i.getStringExtra(INTENT_KEY_TEAM2_NAME);
         UpCommingFootballMatchFromHandler upCommingFootballMatchFromHandler = UpCommingFootballMatchFromHandler.getInstance(context);
         upCommingFootballMatchFromHandler.addListener(this);
         upCommingFootballMatchFromHandler.requestUpcommingMatchFrom(matchId);

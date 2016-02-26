@@ -260,24 +260,38 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                                      for (int i= 0 ; i<teamABattingArray.length();i++){
                                          JSONObject battingObject = teamABattingArray.getJSONObject(i);
                                          LiveAndCompletedCricketBattingCardDTO liveAndCompletedCricketBattingCardDTO= new LiveAndCompletedCricketBattingCardDTO();
+                                         if(!battingObject.isNull("player"))
                                          liveAndCompletedCricketBattingCardDTO.setTvPlayerName(battingObject.getString("player"));
+                                         if(!battingObject.isNull("B"))
                                          liveAndCompletedCricketBattingCardDTO.setTvBallPlayByPlayer(battingObject.getString("B"));
+                                         if(!battingObject.isNull("SR"))
                                          liveAndCompletedCricketBattingCardDTO.setTvSrRateOfPlayer(battingObject.getString("SR"));
+                                         if(!battingObject.isNull("4s"))
                                          liveAndCompletedCricketBattingCardDTO.setTvFourGainByPlayer(battingObject.getString("4s"));
+                                         if(!battingObject.isNull("6s"))
                                          liveAndCompletedCricketBattingCardDTO.setTvSixGainByPlayer(battingObject.getString("6s"));
+                                         if(!battingObject.isNull("R"))
                                          liveAndCompletedCricketBattingCardDTO.setTvPlayerRun(battingObject.getString("R"));
+                                         if(!battingObject.isNull("player_status"))
                                          liveAndCompletedCricketBattingCardDTO.setTvWicketBy(battingObject.getString("player_status"));
+
                                          teamABattingCardList.add(liveAndCompletedCricketBattingCardDTO);
                                      }}
                                  if(teamABowlingArray != null){
                                      for (int j= 0 ; j<teamABowlingArray.length();j++){
                                          JSONObject bowlingArray = teamABowlingArray.getJSONObject(j);
                                          LiveAndCompletedCricketBowlingCardDTO bowling= new LiveAndCompletedCricketBowlingCardDTO();
+                                         if(!bowlingArray.isNull("runs"))
                                          bowling.setTvRuns(bowlingArray.getString("runs"));
+                                         if(!bowlingArray.isNull("player"))
                                          bowling.setTvBowlerName(bowlingArray.getString("player"));
+                                         if(!bowlingArray.isNull("extras"))
                                          bowling.setTvExtra(bowlingArray.getString("extras"));
+                                         if(!bowlingArray.isNull("maiden"))
                                          bowling.setTvMiddenOver(bowlingArray.getString("maiden"));
+                                         if(!bowlingArray.isNull("wickets"))
                                          bowling.setTvWicket(bowlingArray.getString("wickets"));
+                                         if(!bowlingArray.isNull("overs"))
                                          bowling.setTvOver(bowlingArray.getString("overs"));
                                          teamABowlingCardList.add(bowling);
                                      }
@@ -286,9 +300,12 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                                      for (int k = 0; k < teamAFallWicketArray.length(); k++) {
                                          JSONObject fallOfWicketObject = teamAFallWicketArray.getJSONObject(k);
                                          LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets = new LiveAndCompletedCricketFallOfWicketCardDTO();
+                                         if(!fallOfWicketObject.isNull("name"))
                                          fallOfWickets.setTvBowlerName(fallOfWicketObject.getString("name"));
+                                         if(!fallOfWicketObject.isNull("overs"))
                                          fallOfWickets.setTvOverNumber(fallOfWicketObject.getString("overs"));
-                                         fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs").split(" ")[0]+"-"+(k+1));
+                                         if(!fallOfWicketObject.isNull("runs"))
+                                         fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs").split(" ")[0] + "-" + (k + 1));
 
                                          teamAFallOfWicketCardList.add(fallOfWickets);
 
@@ -300,52 +317,72 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                                  JSONObject teamBScoreCard = scoreCard.getJSONObject(dataObject.getString("team_b"));
                                  JSONObject teamBFirstInning = teamBScoreCard.getJSONObject("b_1");
                                  JSONObject teamBSecondInning = null;
-                                 JSONArray teamBBattingArray = teamBFirstInning.getJSONArray("batting");
-                                 JSONArray teamBBowlingArray = teamBFirstInning.getJSONArray("bowling");
-                                 JSONArray teamBFallWicketArray = teamBFirstInning.getJSONArray("fall_of_wickets");
-                                 tvSecondTeamOver.setText("("+teamBFirstInning.getString("team_overs")+")");
+                                 if(!teamBFirstInning.isNull("batting")){
+                                     JSONArray teamBBattingArray = teamBFirstInning.getJSONArray("batting");
+                                     for (int i= 0 ; i<teamBBattingArray.length();i++){
+                                         JSONObject battingObject = teamBBattingArray.getJSONObject(i);
+                                         LiveAndCompletedCricketBattingCardDTO liveAndCompletedCricketBattingCardDTO= new LiveAndCompletedCricketBattingCardDTO();
+                                         liveAndCompletedCricketBattingCardDTO.setTvPlayerName(battingObject.getString("player"));
+                                         liveAndCompletedCricketBattingCardDTO.setTvBallPlayByPlayer(battingObject.getString("B"));
+                                         liveAndCompletedCricketBattingCardDTO.setTvSrRateOfPlayer(battingObject.getString("SR"));
+                                         liveAndCompletedCricketBattingCardDTO.setTvFourGainByPlayer(battingObject.getString("4s"));
+                                         liveAndCompletedCricketBattingCardDTO.setTvSixGainByPlayer(battingObject.getString("6s"));
+                                         liveAndCompletedCricketBattingCardDTO.setTvPlayerRun(battingObject.getString("R"));
+                                         teamBBattingCardList.add(liveAndCompletedCricketBattingCardDTO);
+                                     }
+                                 }
 
-                                 tvExtraRunTeamSecond.setText(teamBFirstInning.getString("inning_extras"));
+                                 if(!teamBFirstInning.isNull("bowling")) {
+                                     JSONArray teamBBowlingArray = teamBFirstInning.getJSONArray("bowling");
+                                     for (int j= 0 ; j<teamBBowlingArray.length();j++){
+                                         JSONObject bowlingArray = teamBBowlingArray.getJSONObject(j);
+                                         LiveAndCompletedCricketBowlingCardDTO bowling= new LiveAndCompletedCricketBowlingCardDTO();
+                                         bowling.setTvRuns(bowlingArray.getString("runs"));
+                                         bowling.setTvBowlerName(bowlingArray.getString("player"));
+                                         bowling.setTvExtra(bowlingArray.getString("extras"));
+                                         bowling.setTvMiddenOver(bowlingArray.getString("maiden"));
+                                         bowling.setTvWicket(bowlingArray.getString("wickets"));
+                                         bowling.setTvOver(bowlingArray.getString("overs"));
+                                         teamBBowlingCardList.add(bowling);
+                                     }
 
-                                 tvTotalRunSecondTeam.setText(teamBFirstInning.getString("team_runs"));
 
-                                 tvRunRateSecondTeam.setText(teamBFirstInning.getString("team_run_rate"));
+                                 }
+                                 if(teamBFirstInning.isNull("fall_of_wickets")){
+                                     JSONArray teamBFallWicketArray = teamBFirstInning.getJSONArray("fall_of_wickets");
+                                     for (int k= 0 ; k<teamBFallWicketArray.length();k++){
+                                         JSONObject fallOfWicketObject = teamBFallWicketArray.getJSONObject(k);
+                                         LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets= new LiveAndCompletedCricketFallOfWicketCardDTO();
+                                         fallOfWickets.setTvBowlerName(fallOfWicketObject.getString("name"));
+                                         fallOfWickets.setTvOverNumber(fallOfWicketObject.getString("overs"));
+                                         fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs").split(" ")[0] + "-" + (k + 1));
 
-                                 tvTeamSecondNameAndScore.setText(teamNamesArray[2]+" "+teamBFirstInning.getString("team_runs")+"/"+teamBFirstInning.getString("team_wickets"));
+                                         teamBFallOfWicketCardList.add(fallOfWickets);
 
-                             for (int i= 0 ; i<teamBBattingArray.length();i++){
-                                 JSONObject battingObject = teamBBattingArray.getJSONObject(i);
-                                 LiveAndCompletedCricketBattingCardDTO liveAndCompletedCricketBattingCardDTO= new LiveAndCompletedCricketBattingCardDTO();
-                                 liveAndCompletedCricketBattingCardDTO.setTvPlayerName(battingObject.getString("player"));
-                                 liveAndCompletedCricketBattingCardDTO.setTvBallPlayByPlayer(battingObject.getString("B"));
-                                 liveAndCompletedCricketBattingCardDTO.setTvSrRateOfPlayer(battingObject.getString("SR"));
-                                 liveAndCompletedCricketBattingCardDTO.setTvFourGainByPlayer(battingObject.getString("4s"));
-                                 liveAndCompletedCricketBattingCardDTO.setTvSixGainByPlayer(battingObject.getString("6s"));
-                                 liveAndCompletedCricketBattingCardDTO.setTvPlayerRun(battingObject.getString("R"));
-                                 teamBBattingCardList.add(liveAndCompletedCricketBattingCardDTO);
-                             }
-                             for (int j= 0 ; j<teamBBowlingArray.length();j++){
-                                 JSONObject bowlingArray = teamBBowlingArray.getJSONObject(j);
-                                 LiveAndCompletedCricketBowlingCardDTO bowling= new LiveAndCompletedCricketBowlingCardDTO();
-                                 bowling.setTvRuns(bowlingArray.getString("runs"));
-                                 bowling.setTvBowlerName(bowlingArray.getString("player"));
-                                 bowling.setTvExtra(bowlingArray.getString("extras"));
-                                 bowling.setTvMiddenOver(bowlingArray.getString("maiden"));
-                                 bowling.setTvWicket(bowlingArray.getString("wickets"));
-                                  bowling.setTvOver(bowlingArray.getString("overs"));
-                                 teamBBowlingCardList.add(bowling);
-                             }
+                                     }
+                                 }
+                                 if(!teamBFirstInning.isNull("team_overs")){
+                                     tvSecondTeamOver.setText("("+teamBFirstInning.getString("team_overs")+")");
+                                 }
 
-                             for (int k= 0 ; k<teamBFallWicketArray.length();k++){
-                                 JSONObject fallOfWicketObject = teamBFallWicketArray.getJSONObject(k);
-                                 LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets= new LiveAndCompletedCricketFallOfWicketCardDTO();
-                                 fallOfWickets.setTvBowlerName(fallOfWicketObject.getString("name"));
-                                 fallOfWickets.setTvOverNumber(fallOfWicketObject.getString("overs"));
-                                 fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs").split(" ")[0]+"-"+(k+1));
 
-                                 teamBFallOfWicketCardList.add(fallOfWickets);
+                                 if(!teamBFirstInning.isNull("inning_extras")){
+                                     tvExtraRunTeamSecond.setText(teamBFirstInning.getString("inning_extras"));
+                                 }
 
-                             }
+                                 if(!teamBFirstInning.isNull("team_runs")){
+                                     tvTotalRunSecondTeam.setText(teamBFirstInning.getString("team_runs"));
+                                     tvTeamSecondNameAndScore.setText(teamNamesArray[2]+" "+teamBFirstInning.getString("team_runs")+"/"+teamBFirstInning.getString("team_wickets"));
+
+                                 }
+
+                                 if(!teamBFirstInning.isNull("team_run_rate")) {
+                                     tvRunRateSecondTeam.setText(teamBFirstInning.getString("team_run_rate"));
+                                 }
+
+
+
+
                              }
                         }
 
