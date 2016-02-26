@@ -65,7 +65,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/match"
-                        android:textAllCaps="true"
                         android:textSize="@dimen/font_size_small_medium"/>
 
                     <com.sports.unity.common.view.CustomRobotoRegularTextView
@@ -89,7 +88,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/date"
-                        android:textAllCaps="true"
                         android:textSize="@dimen/font_size_small_medium" />
 
                     <com.sports.unity.common.view.CustomRobotoRegularTextView
@@ -114,7 +112,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/toss"
-                        android:textAllCaps="true"
                         android:textSize="@dimen/font_size_small_medium"  />
 
                     <com.sports.unity.common.view.CustomRobotoRegularTextView

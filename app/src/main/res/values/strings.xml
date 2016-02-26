@@ -301,9 +301,9 @@ Carrier SMS charges may apply.</string>
     <string name="blowing">BOWLING</string>
     <string name="player_of_the_match">PLAYER OF THE MATCH</string>
     <string name="match_info">MATCH INFO</string>
-    <string name="match">MATCH</string>
-    <string name="date">DATE</string>
-    <string name="toss">TOSS</string>
+    <string name="match">Match</string>
+    <string name="date">Date</string>
+    <string name="toss">Toss</string>
     <string name="batting_performance_analisis">BATTING PERFORMANCE ANALIYSIS</string>
     <string name="blowing_performance_analisis">BOWLING PERFORMANCE ANALISIS</string>
     <string name="title_activity_football_deatils">FootballDeatilsActivity</string>
@@ -372,5 +372,7 @@ Carrier SMS charges may apply.</string>
     <string name="add_friends">Add Friends</string>
     <string name="add_msg">People you add will not see previous conversations</string>
     <string name="participant_count">%1$d OF 50</string>
+    <string name="umpires">Umpires</string>
+    <string name="match_referee">Match Referee</string>
 
 </resources>

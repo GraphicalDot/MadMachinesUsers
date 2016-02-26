@@ -81,7 +81,7 @@
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/gray3"
+            android:background="@color/ColorPrimary"
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingBottom="@dimen/vertical_padding_very_very_small"
@@ -196,7 +196,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray3" />
         <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
             android:id="@+id/tv_needed_run"
             android:layout_width="match_parent"
