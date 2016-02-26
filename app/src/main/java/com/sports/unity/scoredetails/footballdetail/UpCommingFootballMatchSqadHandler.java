@@ -54,10 +54,10 @@ public class UpCommingFootballMatchSqadHandler {
         }
     };
 
-    public void requestUpCommingMatchSquad(String matchId) {
+    public void requestUpCommingMatchSquad(String team1Id,String team2Id) {
         Log.i("Score Detail", "Request Score Details");
 
-        url = url+matchId;
+        url = url+team1Id;
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
