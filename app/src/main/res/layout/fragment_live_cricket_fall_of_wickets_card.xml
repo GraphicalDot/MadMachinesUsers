@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/horizontal_padding_small"
-        android:paddingRight="@dimen/horizontal_padding_medium"
+        android:paddingRight="@dimen/horizontal_padding_small"
         android:paddingBottom="@dimen/horizontal_padding_very_very_small"
         android:paddingTop="@dimen/horizontal_padding_very_very_small">
         <com.sports.unity.common.view.CustomRobotoRegularTextView
@@ -20,8 +20,9 @@
             android:layout_height="wrap_content"
             android:gravity="left"
             android:text=""
-            android:textSize="@dimen/font_size_small_large"
-            app:layout_widthPercent="33%" />
+            android:textColor="@color/news_static"
+            android:textSize="@dimen/font_size_small_medium"
+            app:layout_widthPercent="30%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/tv_bowler_name"
             android:layout_width="wrap_content"
@@ -29,8 +30,9 @@
             android:layout_toRightOf="@id/tv_wicket"
             android:gravity="left"
             android:text=""
-            android:textSize="@dimen/font_size_small_large"
-            app:layout_widthPercent="33%" />
+            android:textColor="@color/news_static"
+            android:textSize="@dimen/font_size_small_medium"
+            app:layout_widthPercent="45%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/tv_over_number"
             android:layout_width="wrap_content"
@@ -38,7 +40,8 @@
             android:layout_toRightOf="@id/tv_bowler_name"
             android:gravity="right"
             android:text=""
-            android:textSize="@dimen/font_size_small_large"
+            android:textColor="@color/news_static"
+            android:textSize="@dimen/font_size_small_medium"
             app:layout_widthPercent="34%" />
     </android.support.percent.PercentRelativeLayout>
 

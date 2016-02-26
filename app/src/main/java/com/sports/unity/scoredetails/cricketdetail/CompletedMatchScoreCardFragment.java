@@ -156,12 +156,12 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                     firstBattingLinearLayout.setVisibility(View.VISIBLE);
                     firstBowlingLinearLayout.setVisibility(View.VISIBLE);
                     firstFallofWicketsLinearLayout.setVisibility(View.VISIBLE);
-                     ivDwn.setImageResource(R.drawable.ic_droable);
+                     ivDwn.setImageResource(R.drawable.ic_down_arrow_gray);
                 } else {
                     firstBattingLinearLayout.setVisibility(View.GONE);
                     firstBowlingLinearLayout.setVisibility(View.GONE);
                     firstFallofWicketsLinearLayout.setVisibility(View.GONE);
-                    ivDwn.setImageResource(R.drawable.ic_droable1);
+                    ivDwn.setImageResource(R.drawable.ic_up_arrow_gray);
                 }
             }
         });
@@ -172,12 +172,12 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                     secondBattingLinearLayout.setVisibility(View.VISIBLE);
                     secondBowlingLinearLayout.setVisibility(View.VISIBLE);
                     secondFallofWicketsLinearLayout.setVisibility(View.VISIBLE);
-                    ivDwnSecond.setImageResource(R.drawable.ic_droable);
+                    ivDwnSecond.setImageResource(R.drawable.ic_down_arrow_gray);
                 } else {
                     secondBattingLinearLayout.setVisibility(View.GONE);
                     secondBowlingLinearLayout.setVisibility(View.GONE);
                     secondFallofWicketsLinearLayout.setVisibility(View.GONE);
-                    ivDwnSecond.setImageResource(R.drawable.ic_droable1);
+                    ivDwnSecond.setImageResource(R.drawable.ic_up_arrow_gray);
                 }
             }
         });

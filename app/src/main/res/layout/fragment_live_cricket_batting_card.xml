@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="@dimen/horizontal_padding_small"
-        android:paddingRight="@dimen/horizontal_padding_medium"
+        android:paddingRight="@dimen/horizontal_padding_small"
         android:paddingBottom="@dimen/horizontal_padding_very_very_small"
         android:paddingTop="@dimen/horizontal_padding_very_very_small">
 
@@ -28,16 +28,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text=""
-                android:textSize="@dimen/font_size_small_large" />
+                android:textColor="@color/news_static"
+                android:textSize="@dimen/font_size_small_medium"/>
             <com.sports.unity.common.view.CustomRobotoRegularTextView
                 android:id="@+id/tv_wicket_by"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:text=""
                 android:textColor="@color/score_light_grey"
-                android:textSize="@dimen/font_size_very_small" />
+                android:textSize="@dimen/font_size_very_very_small" />
         </LinearLayout>
 
         <com.sports.unity.common.view.CustomRobotoRegularTextView
@@ -46,8 +45,8 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/ll_player_score"
             android:gravity="right"
-            android:text=""
-            android:textSize="@dimen/font_size_small_large"
+            android:textColor="@color/news_static"
+            android:textSize="@dimen/font_size_small_medium"
             app:layout_widthPercent="10%" />
 
         <com.sports.unity.common.view.CustomRobotoRegularTextView
@@ -56,8 +55,8 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/tv_player_run"
             android:gravity="right"
-            android:text=""
-            android:textSize="@dimen/font_size_small_large"
+            android:textColor="@color/news_static"
+            android:textSize="@dimen/font_size_small_medium"
             app:layout_widthPercent="13%" />
 
         <com.sports.unity.common.view.CustomRobotoRegularTextView
@@ -66,8 +65,8 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/tv_ball_play_by_player"
             android:gravity="right"
-            android:text=""
-            android:textSize="@dimen/font_size_small_large"
+            android:textColor="@color/news_static"
+            android:textSize="@dimen/font_size_small_medium"
             app:layout_widthPercent="11%" />
 
         <com.sports.unity.common.view.CustomRobotoRegularTextView
@@ -76,8 +75,8 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/tv_four_gain_by_player"
             android:gravity="right"
-            android:text=""
-            android:textSize="@dimen/font_size_small_large"
+            android:textColor="@color/news_static"
+            android:textSize="@dimen/font_size_small_medium"
             app:layout_widthPercent="11%" />
 
         <com.sports.unity.common.view.CustomRobotoRegularTextView
@@ -86,8 +85,8 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/tv_six_gain_by_player"
             android:gravity="right"
-            android:text=""
-            android:textSize="@dimen/font_size_small_large"
+            android:textColor="@color/news_static"
+            android:textSize="@dimen/font_size_small_medium"
             app:layout_widthPercent="18%" />
     </android.support.percent.PercentRelativeLayout>
     </LinearLayout>
