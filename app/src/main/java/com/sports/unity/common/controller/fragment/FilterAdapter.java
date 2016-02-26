@@ -70,17 +70,21 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
         final String playerName = mData.get(position).getName();
         final String playerId = mData.get(position).getId();
         final String sportsType = mData.get(position).getSportsType();
+        final String filterType = mData.get(position).getFilterType();
         holder.textView.setText(playerName);
         holder.textView.setTypeface(FontTypeface.getInstance(context).getRobotoRegular());
         holder.textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
-        holder.textView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(playerProfileDetails != null){
-                    playerProfileDetails.playerProfile(playerName,playerId,sportsType);
+        if(Constants.FILTER_TYPE_PLAYER.equalsIgnoreCase(filterType)){
+            holder.textView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(playerProfileDetails != null){
+                        playerProfileDetails.playerProfile(playerName,playerId,sportsType,filterType);
+                    }
                 }
-            }
-        });
+            });
+        }
+
         return convertView;
     }
 

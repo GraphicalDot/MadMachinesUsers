@@ -329,7 +329,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                                  bowling.setTvExtra(bowlingArray.getString("extras"));
                                  bowling.setTvMiddenOver(bowlingArray.getString("maiden"));
                                  bowling.setTvWicket(bowlingArray.getString("wickets"));
-                                 bowling.setTvOver(bowlingArray.getString("overs"));
+                                  bowling.setTvOver(bowlingArray.getString("overs"));
                                  teamBBowlingCardList.add(bowling);
                              }
 

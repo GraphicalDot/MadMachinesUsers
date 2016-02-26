@@ -81,7 +81,7 @@
                     android:layout_marginLeft="@dimen/activity_vertical_margin_small"
                     android:layout_marginTop="@dimen/activity_vertical_margin_large"
                     android:layout_toRightOf="@id/player_info_layout"
-                    android:text="Martin Guptill"
+                    android:text=""
                     android:textSize="@dimen/font_size_small_large" />
 
                 <View
@@ -111,7 +111,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
                         android:layout_weight="1"
-                        android:text="90"
+                        android:text=""
                         android:textSize="@dimen/font_size_small_large" />
 
                         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
@@ -135,7 +135,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
-                        android:text="76"
+                        android:text=""
                         android:textSize="@dimen/font_size_small_large" />
 
                         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
@@ -159,7 +159,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
-                        android:text="118"
+                        android:text=""
                         android:textSize="@dimen/font_size_small_large" />
 
                         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
