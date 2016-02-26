@@ -181,8 +181,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                 }
             }
         });
-
-    }
+  }
     private void initProgress(View view) {
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);

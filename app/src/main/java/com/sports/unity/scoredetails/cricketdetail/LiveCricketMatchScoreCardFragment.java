@@ -130,11 +130,17 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         tvTotalRunSecondTeam = (TextView) view.findViewById(R.id.tv_total_run_second_team);
         tvRunRateSecondTeam = (TextView) view.findViewById(R.id.tv_run_rate_second_team);
         teamABattingRecycler = (RecyclerView) view.findViewById(R.id.rv_team_first_batting);
+        teamABattingRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamABowlingRecycler = (RecyclerView) view.findViewById(R.id.rv_team_first_bowling);
+        teamABowlingRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamAFallOfWicketRecycler = (RecyclerView) view.findViewById(R.id.rv_team_first_fall_wickets);
+        teamAFallOfWicketRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamBBattingRecycler = (RecyclerView) view.findViewById(R.id.rv_team_second_batting);
+        teamBBattingRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamBBowlingRecycler = (RecyclerView) view.findViewById(R.id.rv_team_second_bowling);
+        teamBBowlingRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamBFallOfWicketRecycler = (RecyclerView) view.findViewById(R.id.rv_second_team_fall_wicket);
+        teamBFallOfWicketRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamABattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamABattingCardList);
         teamABattingRecycler.setAdapter(teamABattingAdapter);
         teamBBattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamBBattingCardList);
@@ -157,10 +163,12 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                     firstBattingLinearLayout.setVisibility(View.VISIBLE);
                     firstBowlingLinearLayout.setVisibility(View.VISIBLE);
                     firstFallofWicketsLinearLayout.setVisibility(View.VISIBLE);
+                    ivDwn.setImageResource(R.drawable.ic_down_arrow_gray);
                 } else {
                     firstBattingLinearLayout.setVisibility(View.GONE);
                     firstBowlingLinearLayout.setVisibility(View.GONE);
                     firstFallofWicketsLinearLayout.setVisibility(View.GONE);
+                    ivDwn.setImageResource(R.drawable.ic_up_arrow_gray);
                 }
             }
         });
@@ -171,10 +179,12 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                     secondBattingLinearLayout.setVisibility(View.VISIBLE);
                     secondBowlingLinearLayout.setVisibility(View.VISIBLE);
                     secondFallofWicketsLinearLayout.setVisibility(View.VISIBLE);
+                    ivDwnSecond.setImageResource(R.drawable.ic_down_arrow_gray);
                 } else {
                     secondBattingLinearLayout.setVisibility(View.GONE);
                     secondBowlingLinearLayout.setVisibility(View.GONE);
                     secondFallofWicketsLinearLayout.setVisibility(View.GONE);
+                    ivDwnSecond.setImageResource(R.drawable.ic_up_arrow_gray);
                 }
             }
         });
@@ -316,7 +326,6 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                              if (!scoreCard.isNull(dataObject.getString("team_b"))){
                                  JSONObject teamBScoreCard = scoreCard.getJSONObject(dataObject.getString("team_b"));
                                  JSONObject teamBFirstInning = teamBScoreCard.getJSONObject("b_1");
-                                 JSONObject teamBSecondInning = null;
                                  if(!teamBFirstInning.isNull("batting")){
                                      JSONArray teamBBattingArray = teamBFirstInning.getJSONArray("batting");
                                      for (int i= 0 ; i<teamBBattingArray.length();i++){
