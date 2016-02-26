@@ -43,8 +43,7 @@
                 android:paddingLeft="@dimen/horizontal_padding_small">
                 <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/activity_vertical_margin_small">
+                    android:layout_height="wrap_content">
                     <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                         android:id="@+id/tv_first_team_inning"
                         android:layout_width="wrap_content"
@@ -369,7 +368,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/gray3"></View>
+                android:background="@color/gray4"></View>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
