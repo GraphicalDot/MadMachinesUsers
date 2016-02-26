@@ -21,9 +21,15 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
 
     private final List<UpCommngFootbalMatchTableDTO> mValues;
     private Context context;
+    private String team1;
+    private String team2;
 
-    public UpCommingFootballMatchTableAdapter(List<UpCommngFootbalMatchTableDTO> mValues,Context context) {
+
+    public UpCommingFootballMatchTableAdapter(List<UpCommngFootbalMatchTableDTO> mValues,Context context,String team1,String team2) {
         this.mValues = mValues;
+        this.context = context;
+        this.team1 =team1;
+        this.team2 = team2;
     }
 
     @Override
@@ -34,6 +40,9 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        try{
+
+
         holder.dto = mValues.get(position);
         holder.tvSerialNumber.setText(holder.dto.getTvSerialNumber());
         Glide.with(context).load(holder.dto.getIvTeamProfileImage()).placeholder(R.drawable.ic_no_img).into(holder.ivTeamProfileImage);
@@ -43,6 +52,7 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
         holder.tvD.setText(holder.dto.getTvD());
         holder.tvL.setText(holder.dto.getTvL());
         holder.tvPts.setText(holder.dto.getTvPts());
+        }catch (Exception e){e.printStackTrace();}
     }
 
     @Override

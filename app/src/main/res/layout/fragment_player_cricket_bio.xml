@@ -24,7 +24,7 @@
                 android:id="@+id/tv_player_birth_of_place"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/row0_col0"
-                android:text="Chandigarh, India"
+                android:text=""
                 android:textSize="@dimen/font_size_small_large"
                 app:layout_widthPercent="50%" />
         </android.support.percent.PercentRelativeLayout>
@@ -79,7 +79,7 @@
                 android:id="@+id/tv_player_bowing_style"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/row3_col0"
-                android:text="Slow Left-arm orthodox"
+                android:text=""
                 android:textSize="@dimen/font_size_small_large"
                 app:layout_widthPercent="50%" />
         </android.support.percent.PercentRelativeLayout>
@@ -97,7 +97,7 @@
                 android:id="@+id/tv_player_major_team"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/row4_col0"
-                android:text="India"
+                android:text=""
                 android:textSize="@dimen/font_size_small_large"
                 app:layout_widthPercent="50%" />
         </android.support.percent.PercentRelativeLayout>
