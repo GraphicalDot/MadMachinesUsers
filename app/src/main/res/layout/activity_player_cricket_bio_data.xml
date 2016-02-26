@@ -55,7 +55,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:text="Yuvraj Singh"
+                    android:text="-"
                     android:textColor="@color/ColorPrimary"
                     android:textSize="@dimen/font_size_large"
                     android:textStyle="bold" />
@@ -65,7 +65,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="India"
+                    android:text=""
                     android:textColor="@color/ColorPrimary"
                     android:textSize="@dimen/font_size_small_large" />
             </LinearLayout>

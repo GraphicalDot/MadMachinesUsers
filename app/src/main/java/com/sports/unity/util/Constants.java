@@ -88,4 +88,6 @@ public class Constants {
     public static final String INTENT_KEY_TEAM1_ID = "team1_id";
     public static final String INTENT_KEY_TEAM2_ID = "team2_id";
     public static final String INTENT_KEY_LEAGUE_ID = "league_id";
+    public static final String INTENT_KEY_TEAM1_NAME = "team1";
+    public static final String INTENT_KEY_TEAM2_NAME = "team2";
 }

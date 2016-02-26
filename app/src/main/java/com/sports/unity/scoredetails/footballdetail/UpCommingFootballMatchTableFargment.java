@@ -30,6 +30,8 @@ import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_LEAGUE_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
+import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_NAME;
+import static com.sports.unity.util.Constants.INTENT_KEY_TEAM2_NAME;
 import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 
 /**
@@ -38,11 +40,13 @@ import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 public class UpCommingFootballMatchTableFargment extends Fragment implements UpCommingFootballMatchTableHandler.UpCommingFootballMatchTableContentListener{
 
 
-    String toss = "";
-    String matchName="";
-    String date = "";
-    String matchId ="";
-    String leagueId = "";
+
+
+    private String date = "";
+    private String matchId ="";
+    private String leagueId = "";
+    private String team1;
+    private String team2;
     private UpCommingFootballMatchTableAdapter adapter;
     private List<UpCommngFootbalMatchTableDTO> list = new ArrayList<>();
     private RecyclerView recyclerView;
@@ -54,8 +58,11 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
     public void onAttach(Context context) {
         super.onAttach(context);
         Intent i = getActivity().getIntent();
-        leagueId = i.getStringExtra(INTENT_KEY_LEAGUE_ID);
+        matchId = i.getStringExtra(INTENT_KEY_ID);
+        leagueId = i.getStringExtra(Constants.INTENT_KEY_LEAGUE_ID);
         date = i.getStringExtra(INTENT_KEY_DATE);
+        team1 = i.getStringExtra(INTENT_KEY_TEAM1_NAME);
+        team2 = i.getStringExtra(INTENT_KEY_TEAM2_NAME);
         UpCommingFootballMatchTableHandler upCommingFootballMatchTableHandler = UpCommingFootballMatchTableHandler.getInstance(context);
         upCommingFootballMatchTableHandler.addListener(this);
         upCommingFootballMatchTableHandler.requestUpcommingMatchTableContent(leagueId);
@@ -72,7 +79,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
     private void initView(View view) {
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_football_match_table);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new UpCommingFootballMatchTableAdapter(list, getContext());
+        adapter = new UpCommingFootballMatchTableAdapter(list, getContext(),team1,team2);
         recyclerView.setAdapter(adapter);
         initErrorLayout(view);
 
@@ -96,7 +103,6 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
-                Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
                 showErrorLayout(getView());
             }
         }
@@ -126,18 +132,25 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
                 @Override
                 public void run() {
                     try {
-                        UpCommngFootbalMatchTableDTO upCommngFootbalMatchTableDTO;
+                        UpCommngFootbalMatchTableDTO upCommngFootbalMatchTableDTO = null;
                         for (int i = 0;i< dataArray.length();i++){
                             upCommngFootbalMatchTableDTO = new UpCommngFootbalMatchTableDTO();
                             JSONObject teamObject = dataArray.getJSONObject(i);
-                            upCommngFootbalMatchTableDTO.setTvSerialNumber(i+1);
+                            upCommngFootbalMatchTableDTO.setTvSerialNumber(String.valueOf(i + 1));
+                            if(!teamObject.isNull("flag_image"))
                             upCommngFootbalMatchTableDTO.setIvTeamProfileImage(teamObject.getString("flag_image"));
+                            if(!teamObject.isNull("team_name"))
                             upCommngFootbalMatchTableDTO.setTvTeamName(teamObject.getString("team_name"));
-                            upCommngFootbalMatchTableDTO.setTvD(teamObject.getString("team_name"));
-                            upCommngFootbalMatchTableDTO.setTvL(teamObject.getString("team_name"));
-                            upCommngFootbalMatchTableDTO.setTvP(teamObject.getString("team_name"));
-                            upCommngFootbalMatchTableDTO.setTvW(teamObject.getString("team_name"));
-                            upCommngFootbalMatchTableDTO.setTvPts(teamObject.getString("team_name"));
+                            if(!teamObject.isNull("games_drawn"))
+                            upCommngFootbalMatchTableDTO.setTvD(teamObject.getString("games_drawn"));
+                            if(!teamObject.isNull("games_lost"))
+                            upCommngFootbalMatchTableDTO.setTvL(teamObject.getString("games_lost"));
+                            if(!teamObject.isNull("team_points"))
+                            upCommngFootbalMatchTableDTO.setTvP(teamObject.getString("team_points"));
+                            if(!teamObject.isNull("games_won"))
+                            upCommngFootbalMatchTableDTO.setTvW(teamObject.getString("games_won"));
+                            if(!teamObject.isNull("team_points"))
+                            upCommngFootbalMatchTableDTO.setTvPts(teamObject.getString("team_points"));
                             list.add(upCommngFootbalMatchTableDTO);
                         }
                         adapter.notifyDataSetChanged();
