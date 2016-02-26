@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-public class EnterOtpActivity extends CustomVolleyCallerActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
     private static final String REQUEST_LISTENER = "ENTER_OTP_SCREEN_LISTENER";
 
@@ -98,16 +98,6 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
             }
         }
 
-        {
-            if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-                copyContacts();
-            } else {
-                if (PermissionUtil.getInstance().requestPermission(EnterOtpActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)))) {
-                    copyContacts();
-                }
-            }
-        }
-
     }
 
     @Override
@@ -120,10 +110,6 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
             onComponentResume();
         }
 
-    }
-
-    private void copyContacts() {
-        ContactsHandler.getInstance().addCallToSyncContacts(getApplicationContext());
     }
 
     @Override
@@ -356,6 +342,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
     private class ResendOtpComponentListener extends CustomComponentListener {
 
         private boolean resendSuccessful;
+        private String toastMessage = "";
 
         public ResendOtpComponentListener(ProgressBar progressBar) {
             super(RESEND_OTP_REQUEST_TAG, progressBar, null);
@@ -377,14 +364,21 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
             boolean success = false;
             try {
                 JSONObject response = new JSONObject(content);
+                int responseCode = response.getInt("status");
                 String info = response.getString("info");
 
-                if (info.equalsIgnoreCase("Success")) {
+                if ( responseCode == 200 ) {
                     UserUtil.setOtpSent(EnterOtpActivity.this, true);
                     this.resendSuccessful = true;
+                    this.toastMessage = getResources().getString(R.string.otp_message_otp_sent);
+                } else if( responseCode == 500 ){
+                    UserUtil.setOtpSent(EnterOtpActivity.this, false);
+                    this.resendSuccessful = false;
+                    this.toastMessage = getResources().getString(R.string.otp_message_invalid_number);
                 } else {
                     UserUtil.setOtpSent(EnterOtpActivity.this, false);
                     this.resendSuccessful = false;
+                    this.toastMessage = getResources().getString(R.string.otp_message_resending_failed);
                 }
                 Log.i("Enter Otp", "resend response info : " + info);
 
@@ -397,8 +391,8 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
 
         @Override
         public void changeUI() {
+            Toast.makeText(EnterOtpActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
             if (resendSuccessful) {
-                Toast.makeText(EnterOtpActivity.this, R.string.otp_message_otp_sent, Toast.LENGTH_SHORT).show();
                 if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
                     displayOtpWaitingDialog();
                     registerSmsBroadcastReceiver();
@@ -407,7 +401,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
                     registerSmsBroadcastReceiver();
                 }
             } else {
-                Toast.makeText(EnterOtpActivity.this, R.string.otp_message_resending_failed, Toast.LENGTH_SHORT).show();
+                //nothing
             }
         }
 
@@ -440,18 +434,6 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity implements Acti
 
         otpWaitingDialog = build.create();
         otpWaitingDialog.show();
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == Constants.REQUEST_CODE_CONTACT_PERMISSION) {
-            if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
-                copyContacts();
-            } else {
-                PermissionUtil.getInstance().showSnackBar(this, getString(R.string.permission_denied));
-            }
-        }
     }
 
 }

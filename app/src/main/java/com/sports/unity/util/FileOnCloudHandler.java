@@ -336,7 +336,8 @@ public class FileOnCloudHandler {
                 File file = new File(DBUtil.getFilePath(context, fileName));
                 fileInputStream = new FileInputStream(file);
 
-                URL url = new URL(CONTENT_CLOUD_URL);
+                URL url = new URL(CONTENT_CLOUD_URL + Constants.REQUEST_PARAMETER_KEY_APK_VERSION + "=" + CommonUtil.getBuildConfig() +
+                        "&" + Constants.REQUEST_PARAMETER_KEY_UDID + "=" + CommonUtil.getDeviceId(context));
                 httpURLConnection = (HttpURLConnection) url.openConnection();
                 httpURLConnection.setConnectTimeout(15000);
                 httpURLConnection.setReadTimeout(60000);
@@ -389,7 +390,8 @@ public class FileOnCloudHandler {
 
         byte[] data = null;
         try {
-            URL url = new URL(CONTENT_CLOUD_URL + "name=" + cloudFileName);
+            URL url = new URL(CONTENT_CLOUD_URL + "name=" + cloudFileName + "&" + Constants.REQUEST_PARAMETER_KEY_APK_VERSION + "=" + CommonUtil.getBuildConfig() +
+                    "&" + Constants.REQUEST_PARAMETER_KEY_UDID + "=" + CommonUtil.getDeviceId(context));
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setConnectTimeout(15000);
             httpURLConnection.setReadTimeout(60000);
@@ -442,7 +444,8 @@ public class FileOnCloudHandler {
             File file = new File(DBUtil.getFilePath(context, fileName));
             fileOutputStream = new FileOutputStream(file);
 
-            URL url = new URL(CONTENT_CLOUD_URL + "name=" + cloudFileName);
+            URL url = new URL(CONTENT_CLOUD_URL + "name=" + cloudFileName + "&" + Constants.REQUEST_PARAMETER_KEY_APK_VERSION + "=" + CommonUtil.getBuildConfig() +
+                    "&" + Constants.REQUEST_PARAMETER_KEY_UDID + "=" + CommonUtil.getDeviceId(context));
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setConnectTimeout(15000);
             httpURLConnection.setReadTimeout(60000);
@@ -493,7 +496,8 @@ public class FileOnCloudHandler {
         ByteArrayOutputStream byteArrayOutputStream = null;
         byte[] data = null;
         try {
-            URL url = new URL(CONTENT_PRESENT_URL + "name=" + checksum);
+            URL url = new URL(CONTENT_PRESENT_URL + "name=" + checksum + "&" + Constants.REQUEST_PARAMETER_KEY_APK_VERSION + "=" + CommonUtil.getBuildConfig() +
+                    "&" + Constants.REQUEST_PARAMETER_KEY_UDID + "=" + CommonUtil.getDeviceId(context));
             httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setConnectTimeout(15000);
             httpURLConnection.setReadTimeout(20000);

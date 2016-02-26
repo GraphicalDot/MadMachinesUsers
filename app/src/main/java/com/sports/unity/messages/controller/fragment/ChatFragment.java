@@ -72,9 +72,16 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
         chatListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                int tag = (Integer) view.getTag();
                 ArrayList<Chats> chatList = ((ChatListAdapter) chatListView.getAdapter()).getChatArrayList();
                 Chats chatObject = chatList.get(position);
+
+                int tag = 0;
+                if (chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+                    tag = 0;
+                } else {
+                    tag = 1;
+                }
+
                 showDialogWindow(position, tag, chatObject);
                 return true;
             }

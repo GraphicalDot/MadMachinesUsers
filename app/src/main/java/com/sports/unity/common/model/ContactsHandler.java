@@ -38,9 +38,6 @@ public class ContactsHandler {
 
     private static final String URL_REQUEST_CONTACT_JIDS = "http://" + XMPPClient.SERVER_HOST + "/get_contact_jids";
 
-    private static final String REQUEST_LISTENER = "GET_CONTACT_JID_LISTENER";
-    private static final String REQUEST_TAG = "GET_CONTACT_JID_REQUEST_TAG";
-
     private static final int CONTACT_PENDING_ACTION_NONE = 1;
     private static final int CONTACT_PENDING_ACTION_COPY_LOCALLY = 3;
     private static final int CONTACT_PENDING_ACTION_FETCH_JID = 5;

@@ -91,6 +91,7 @@
     <string name="otp_message_otp_sent">Otp sent.</string>
     <string name="otp_message_resending_failed">Failed in sending otp, please try again.</string>
     <string name="otp_message_wrong_expired_token">Wrong or Expired token</string>
+    <string name="otp_message_invalid_number">Invalid number or Try again.</string>
     <string name="oops_try_again">oops, please try again.</string>
 
     <string name="profile_facebook_login_failed">Login failed</string>
