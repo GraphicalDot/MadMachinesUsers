@@ -639,7 +639,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             if( commentaries.size() == 0 ) {
                 super.showErrorLayout();
             } else {
-                Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -696,7 +696,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             if( commentaries.size() == 0 ) {
                 super.showErrorLayout();
             } else {
-                Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             }
         }
         @Override

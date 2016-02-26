@@ -358,13 +358,13 @@ Carrier SMS charges may apply.</string>
     <string name="test_s">TESTs</string>
     <string name="odi_s">ODIs</string>
     <string name="T20_s">T20s</string>
-    <string name="match_not_exist">This Match Does Not Exists</string>
-    <string name="commentary_not_exist">Commentary Not Available For This Match Yet</string>
-    <string name="scorecard_not_exist">ScoreCard Not Exist Yet</string>
+    <string name="match_not_exist">This match does not exists</string>
+    <string name="commentary_not_exist">Commentary not available for this match yet</string>
+    <string name="scorecard_not_exist">ScoreCard not exists yet</string>
     <string name="table">TABLE</string>
     <string name="form">FORM</string>
     <string name="squad">SQUAD</string>
-    <string name="foot_match_stat_not_exists">Match Stats Not Availlable</string>
+    <string name="foot_match_stat_not_exists">Match stats not availlable</string>
 
 
     <!-- group related strings-->
