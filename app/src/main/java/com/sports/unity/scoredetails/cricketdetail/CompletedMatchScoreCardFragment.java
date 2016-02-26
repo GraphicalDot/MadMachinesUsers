@@ -272,7 +272,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
 
                                 tvFirstTeamOver.setText("("+teamAFirstInning.getString("team_overs")+")");
-                                tvExtraRunTeamFirst.setText(teamAFirstInning.getString("inning_extras"));
+                                tvExtraRunTeamFirst.setText("Extras "+teamAFirstInning.getString("inning_extras"));
                                 tvTotalRunFirstTeam.setText(teamAFirstInning.getString("team_runs"));
                                 tvRunRateFirstTeam.setText(teamAFirstInning.getString("team_run_rate"));
                                 tvTeamFirstNameAndScore.setText(teamNamesArray[0]+" "+teamAFirstInning.getString("team_runs")+"/"+teamAFirstInning.getString("team_wickets"));
@@ -307,8 +307,8 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                                         JSONObject fallOfWicketObject = teamAFallWicketArray.getJSONObject(k);
                                         LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets = new LiveAndCompletedCricketFallOfWicketCardDTO();
                                         fallOfWickets.setTvBowlerName(fallOfWicketObject.getString("name"));
-                                        fallOfWickets.setTvOverNumber(fallOfWicketObject.getString("overs"));
-                                        fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs"));
+                                        fallOfWickets.setTvOverNumber(fallOfWicketObject.getString("overs")+"ovs");
+                                        fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs")+"-"+(k+1));
 
                                         teamAFallOfWicketCardList.add(fallOfWickets);
 
@@ -324,9 +324,9 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                                 JSONArray teamBFallWicketArray = teamBFirstInning.getJSONArray("fall_of_wickets");
                                 tvSecondTeamOver.setText("("+teamBFirstInning.getString("team_overs")+")");
 
-                                tvExtraRunTeamSecond.setText(teamBFirstInning.getString("inning_extras"));
+                                tvExtraRunTeamSecond.setText("Extras "+teamBFirstInning.getString("inning_extras"));
 
-                                tvTotalRunFirstTeam.setText(teamBFirstInning.getString("team_runs"));
+                                tvTotalRunSecondTeam.setText(teamBFirstInning.getString("team_runs"));
 
                                 tvRunRateSecondTeam.setText(teamBFirstInning.getString("team_run_rate"));
 
@@ -360,7 +360,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                                     LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets= new LiveAndCompletedCricketFallOfWicketCardDTO();
                                     fallOfWickets.setTvBowlerName(fallOfWicketObject.getString("name"));
                                     fallOfWickets.setTvOverNumber(fallOfWicketObject.getString("overs"));
-                                    fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs"));
+                                    fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs")+"-"+(k+1));
 
                                     teamBFallOfWicketCardList.add(fallOfWickets);
 
