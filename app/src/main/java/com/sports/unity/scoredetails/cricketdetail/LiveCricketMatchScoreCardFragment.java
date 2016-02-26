@@ -222,13 +222,13 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                 @Override
                 public void run() {
                     try {
-                         if(jsonObject.isNull("data")){
+                         if(!jsonObject.isNull("data")){
                              JSONArray jsonArray = jsonObject.getJSONArray("data");
                              JSONObject dataObject = jsonArray.getJSONObject(0);
 
 
                              tvFirstTeamInning.setText(dataObject.getString("team_a") + " Innings");
-                             tvSecondTeamInning.setText(dataObject.getString("team_b") + " Innings");
+                             tvSecondTeamInning.setText(dataObject.getString("team_b")+ " Innings");
                              JSONObject scoreCard = dataObject.getJSONObject("scorecard");
 
                              if (!scoreCard.isNull(dataObject.getString("team_a"))){
@@ -237,7 +237,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                                  JSONObject teamAFirstInning = teamAScoreCard.getJSONObject("a_1");
 
                                  JSONArray teamABattingArray = null;
-                                 if(teamAFirstInning.isNull("batting")){
+                                 if(!teamAFirstInning.isNull("batting")){
                                      teamABattingArray = teamAFirstInning.getJSONArray("batting");
                                  }
                                  JSONArray teamABowlingArray = null;
@@ -252,7 +252,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                                  tvExtraRunTeamFirst.setText(teamAFirstInning.getString("inning_extras"));
                                  tvTotalRunFirstTeam.setText(teamAFirstInning.getString("team_runs"));
                                  tvRunRateFirstTeam.setText(teamAFirstInning.getString("team_run_rate"));
-                                 tvTeamFirstNameAndScore.setText(dataObject.getString("team_a")+" "+teamAFirstInning.getString("team_runs")+"/"+teamAFirstInning.getString("team_wickets"));
+                                 tvTeamFirstNameAndScore.setText(dataObject.getString("team_a").substring(0, 2) +" "+teamAFirstInning.getString("team_runs")+"/"+teamAFirstInning.getString("team_wickets"));
                                  if(teamABattingArray != null){
                                      for (int i= 0 ; i<teamABattingArray.length();i++){
                                          JSONObject battingObject = teamABattingArray.getJSONObject(i);
@@ -308,7 +308,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
 
                                  tvRunRateSecondTeam.setText(teamBFirstInning.getString("team_run_rate"));
 
-                                 tvTeamSecondNameAndScore.setText(dataObject.getString("team_b")+" "+teamBFirstInning.getString("team_runs")+"/"+teamBFirstInning.getString("team_wickets"));
+                                 tvTeamSecondNameAndScore.setText(dataObject.getString("team_b").substring(0,2) +" "+teamBFirstInning.getString("team_runs")+"/"+teamBFirstInning.getString("team_wickets"));
 
                              for (int i= 0 ; i<teamBBattingArray.length();i++){
                                  JSONObject battingObject = teamBBattingArray.getJSONObject(i);

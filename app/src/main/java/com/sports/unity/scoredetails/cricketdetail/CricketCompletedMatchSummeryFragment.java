@@ -145,44 +145,53 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
     }
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         final ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-        JSONArray dataArray= jsonObject.getJSONArray("data");
-        final JSONObject matchObject = dataArray.getJSONObject(0);
-        final JSONObject manOftheMatch = matchObject.getJSONObject("man_of_match_details");
-        JSONObject inningObject= manOftheMatch.getJSONObject("innings");
-        JSONObject battingData = inningObject.getJSONObject("1");
-        final JSONObject battingObject= battingData.getJSONObject("batting");
         hideProgress();
-        if (activity != null) {
+        if(!jsonObject.isNull("data")){
+            JSONArray dataArray= jsonObject.getJSONArray("data");
+            final JSONObject matchObject = dataArray.getJSONObject(0);
 
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Log.i("run: ", jsonObject.toString());
-                       if(!manOftheMatch.isNull("image")){
-                           Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivPlayerProfileView);
-                           Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivCountryImage);
-                       }
-                        playerName.setText(matchObject.getString("man_of_match"));
-                        if(!battingObject.isNull("runs"))
-                        tvPlayerRun.setText(battingObject.getString("runs"));
-                        if(!battingObject.isNull("balls"))
-                        tvPlayerPlayedBall.setText(battingObject.getString("balls"));
-                        if(!battingObject.isNull("strike_rate"))
-                        tvPlayerStrike_Rate.setText(battingObject.getString("strike_rate"));
-                        tvMatchDate.setText(date);
-                        tvTossWinTeam.setText(toss);
-                        tvSeriesName.setText(matchName);
-                        tvUmpiresName.setText("N/A");
-                        tvUmpiresName.setText("N/A");
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        showErrorLayout(getView());
+            final JSONObject manOftheMatch = matchObject.getJSONObject("man_of_match_details");
+            JSONObject battingData = null;
+            if(!manOftheMatch.isNull("innings"));
+             JSONObject inningObject= manOftheMatch.getJSONObject("innings");
+              battingData = inningObject.getJSONObject("1");
+              final JSONObject battingObject= battingData.getJSONObject("batting");
+
+            if (activity != null) {
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Log.i("run: ", jsonObject.toString());
+                            if( manOftheMatch != null &&  !manOftheMatch.isNull("image")){
+                                Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivPlayerProfileView);
+                                Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivCountryImage);
+                            }
+                            if( manOftheMatch!= null && manOftheMatch.isNull("man_of_match")){
+                                playerName.setText(manOftheMatch.getString("man_of_match"));
+                            }
+                            if(!battingObject.isNull("runs"))
+                                tvPlayerRun.setText(battingObject.getString("runs"));
+                            if(!battingObject.isNull("balls"))
+                                tvPlayerPlayedBall.setText(battingObject.getString("balls"));
+                            if(!battingObject.isNull("strike_rate"))
+                                tvPlayerStrike_Rate.setText(battingObject.getString("strike_rate"));
+                            tvMatchDate.setText(date);
+                            tvTossWinTeam.setText(toss);
+                            tvSeriesName.setText(matchName);
+                            tvUmpiresName.setText("N/A");
+                            tvUmpiresName.setText("N/A");
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            showErrorLayout(getView());
+                        }
                     }
-                }
-            });
+                });
+            }
+        } else {
+            showErrorLayout(getView());
         }
-
     }
     @Override
     public void onPause() {

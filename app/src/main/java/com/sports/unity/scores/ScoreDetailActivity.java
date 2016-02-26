@@ -237,21 +237,22 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             if (sportsType.equals(ScoresJsonParser.CRICKET)) {
                 cricketMatchJsonCaller.setJsonObject(matchScoreDetails);
 
-                stringBuilder.append(cricketMatchJsonCaller.getTeam1());
-                stringBuilder.append(" v/s ");
-                stringBuilder.append(cricketMatchJsonCaller.getTeam2());
-
+  /*              stringBuilder.append(cricketMatchJsonCaller.getTeam1());
+                stringBuilder.append(" vs ");
+                stringBuilder.append(cricketMatchJsonCaller.getTeam2());*/
+                title_text.setText(cricketMatchJsonCaller.getShortName());
             } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
                 footballMatchJsonCaller.setJsonObject(matchScoreDetails);
 
-                stringBuilder.append(footballMatchJsonCaller.getHomeTeam());
-                stringBuilder.append(" v/s ");
-                stringBuilder.append(footballMatchJsonCaller.getAwayTeam());
+                /*stringBuilder.append(footballMatchJsonCaller.getHomeTeam());
+                stringBuilder.append(" vs ");
+                stringBuilder.append(footballMatchJsonCaller.getAwayTeam());*/
+                title_text.setText("Game Details");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        title_text.setText(stringBuilder.toString());
+
     }
 
     private void renderComments(){

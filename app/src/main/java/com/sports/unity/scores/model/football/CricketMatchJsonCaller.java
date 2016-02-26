@@ -83,5 +83,11 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         }
         return jsonObject.getString("toss");
     }
-
+    public String getShortName() throws JSONException {
+        if(jsonObject.isNull("short_name"))
+        {
+            return "";
+        }
+        return jsonObject.getString("short_name");
+    }
 }
