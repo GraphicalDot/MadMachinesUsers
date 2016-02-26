@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.provider.ContactsContract;
+import android.util.Base64;
 import android.util.Log;
 
 import com.sports.unity.ChatScreenApplication;
@@ -22,7 +23,6 @@ import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.util.ActivityActionHandler;
-import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.GlobalEventHandler;
@@ -53,17 +53,17 @@ import org.jivesoftware.smackx.pubsub.PubSubManager;
 import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
-import org.jivesoftware.smackx.search.UserSearchManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
-import org.jivesoftware.smackx.xdata.Form;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
 public class XMPPService extends Service {
 
-    public static UserSearchManager searchManager;
-    public static Form searchForm = null;
-    public static Form answerForm = null;
+//    public static UserSearchManager searchManager;
+//    public static Form searchForm = null;
+//    public static Form answerForm = null;
 
     private static XMPPService XMPP_SERVICE = null;
 
@@ -149,17 +149,17 @@ public class XMPPService extends Service {
     }
 
     class ItemEventCoordinator implements ItemEventListener {
+
         @Override
         public void handlePublishedItems(ItemPublishEvent items) {
             Log.i("nodeId", items.getNodeId());
 
             List<Item> l = items.getItems();
-            for (Item i :
-                    l) {
+            for (Item i : l) {
                 Log.i("payload ", i.toXML());
             }
-
         }
+
     }
 
     private void attachChatRelatedListeners(final XMPPTCPConnection connection) {
@@ -207,12 +207,12 @@ public class XMPPService extends Service {
                     String currentUserPhoneNumber = TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME);
                     GroupMessaging.getInstance(getApplicationContext()).joinGroup(groupServerId, currentUserPhoneNumber);*/
 
-                    String ownerPhoneNumber = inviter.substring(0, inviter.indexOf("@mm.io"));
+                    String ownerJID = inviter.substring(0, inviter.indexOf("@mm.io"));
 
-                    Contacts owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
+                    Contacts owner = sportsUnityDBHelper.getContactByJid(ownerJID);
                     if (owner == null) {
-                        createContact(ownerPhoneNumber, getApplicationContext(), true);
-                        owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
+                        createContact(ownerJID, getApplicationContext(), true);
+                        owner = sportsUnityDBHelper.getContactByJid(ownerJID);
                     }
 
                     String groupServerId = multiUserChat.getRoom().substring(0, multiUserChat.getRoom().indexOf("@"));
@@ -223,9 +223,9 @@ public class XMPPService extends Service {
                     try {
                         LeafNode node = pubSubManager.getNode(groupServerId);
                         Log.i("Subscribing", "true");
-                        node.subscribe(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME) + "@mm.io");
-                        Log.i("fetchingaffiliations", "true");
-                        node.getAffiliations();
+                        node.subscribe(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USER_JID) + "@mm.io");
+//                        Log.i("fetchingaffiliations", "true");
+//                        node.getAffiliations();
                     } catch (SmackException.NoResponseException e) {
                         e.printStackTrace();
                     } catch (XMPPException.XMPPErrorException e) {
@@ -245,6 +245,7 @@ public class XMPPService extends Service {
             /**
              * Listener for acknowledging received receipts
              */
+            DeliveryReceiptManager.getInstanceFor(connection).setAutoReceiptMode(DeliveryReceiptManager.AutoReceiptMode.always);
             DeliveryReceiptManager.getInstanceFor(connection).addReceiptReceivedListener(new ReceiptReceivedListener() {
                 @Override
                 public void onReceiptReceived(String fromJid, String toJid, String receiptId, Stanza receipt) {
@@ -319,9 +320,9 @@ public class XMPPService extends Service {
                         }
                     } else {
                         if ("Online".equals(presence.getStatus())) {
-                            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, Presence.Type.available);
+                            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, Presence.Type.available);
                         } else {
-                            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, Presence.Type.unavailable);
+                            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, Presence.Type.unavailable);
                         }
                     }
                 }
@@ -334,24 +335,22 @@ public class XMPPService extends Service {
         }
     }
 
-
-    private void getForms(XMPPTCPConnection con) {
-        searchManager = new UserSearchManager(con);
-        try {
-            searchForm = searchManager.getSearchForm("vjud.mm.io");
-        } catch (SmackException.NoResponseException e) {
-            e.printStackTrace();
-        } catch (XMPPException.XMPPErrorException e) {
-            e.printStackTrace();
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
-        }
-        answerForm = searchForm.createAnswerForm();
-        if (answerForm != null) {
-            new UpdateUserDetails().start();
-        }
-
-    }
+//    private void getForms(XMPPTCPConnection con) {
+//        searchManager = new UserSearchManager(con);
+//        try {
+//            searchForm = searchManager.getSearchForm("vjud.mm.io");
+//        } catch (SmackException.NoResponseException e) {
+//            e.printStackTrace();
+//        } catch (XMPPException.XMPPErrorException e) {
+//            e.printStackTrace();
+//        } catch (SmackException.NotConnectedException e) {
+//            e.printStackTrace();
+//        }
+//        answerForm = searchForm.createAnswerForm();
+//        if (answerForm != null) {
+//            new UpdateUserDetails().start();
+//        }
+//    }
 
     private class XmppConnectionListener implements ConnectionListener {
 
@@ -375,7 +374,7 @@ public class XMPPService extends Service {
                 PersonalMessaging.getInstance(XMPPService.this).updateBlockList(XMPPService.this);
 
                 attachChatRelatedListeners((XMPPTCPConnection) connection);
-                getForms((XMPPTCPConnection) connection);
+//                getForms((XMPPTCPConnection) connection);
 
                 GlobalEventHandler.getInstance().xmppServerConnected(true);
 
@@ -442,15 +441,15 @@ public class XMPPService extends Service {
                         if (days == 1) {
                             String lastSeen = CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(gmtEpoch));
                             lastSeen = "yesterday at " + lastSeen;
-                            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, lastSeen);
+                            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, lastSeen);
                         } else {
                             String lastSeen = days + " days ago";
-                            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, lastSeen);
+                            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, lastSeen);
                         }
                     } else {
                         String lastSeen = CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(gmtEpoch));
                         lastSeen = "today at " + lastSeen;
-                        ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, lastSeen);
+                        ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, lastSeen);
                     }
 
                 }
@@ -473,16 +472,35 @@ public class XMPPService extends Service {
 
         Log.i("pubsubmessagerecv", "true");
         String messageXML = message.toString();
-        String from = messageXML.substring(messageXML.indexOf("!") + 1, messageXML.indexOf("!!"));
+        String from = "";
+        JSONObject payLoad = null;
+        try {
+            payLoad = new JSONObject(messageXML.substring(messageXML.indexOf("!@#$") + 4, messageXML.indexOf("!@#$")));
+            from = payLoad.getString("from");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+//        String from = messageXML.substring(messageXML.indexOf("!") + 1, messageXML.indexOf("!!"));
         if (from.equals(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME))) {
             //Do nothing
 
         } else {
             String groupServerId = null;
             long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
-            String time = messageXML.substring(messageXML.indexOf("*") + 1, messageXML.indexOf("**"));
-            String text = messageXML.substring(messageXML.indexOf("$") + 1, messageXML.indexOf("$$"));
-            String nodeid = messageXML.substring(messageXML.indexOf("node='") + 6, messageXML.indexOf("'><item id='"));
+//            String time = messageXML.substring(messageXML.indexOf("*") + 1, messageXML.indexOf("**"));
+//            String text = messageXML.substring(messageXML.indexOf("$") + 1, messageXML.indexOf("$$"));
+//            String nodeid = messageXML.substring(messageXML.indexOf("node='") + 6, messageXML.indexOf("'><item id='"));
+            String time = null;
+            String text = null;
+            String nodeid = null;
+            try {
+                time = payLoad.getString("time");
+                text = payLoad.getString("message");
+                nodeid = payLoad.getString("nodeid");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
             groupServerId = nodeid;
             chatId = getChatIdOrCreateIfNotExist(true, from, groupServerId, false);
             long messageId = sportsUnityDBHelper.addMessage(text, SportsUnityDBHelper.MIME_TYPE_TEXT, from, false, time, null, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
@@ -607,14 +625,14 @@ public class XMPPService extends Service {
         Log.i("handle status :", "");
         if (message.hasExtension(ChatState.composing.toString(), ChatStateExtension.NAMESPACE)) {
             Log.i("status :", "composing");
-            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, ChatState.composing.toString());
+            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, ChatState.composing.toString());
         } else if (message.hasExtension(ChatState.active.toString(), ChatStateExtension.NAMESPACE)) {
             Log.i("status :", "active");
         } else if (message.hasExtension(ChatState.gone.toString(), ChatStateExtension.NAMESPACE)) {
             Log.i("status :", "gone");
         } else if (message.hasExtension(ChatState.paused.toString(), ChatStateExtension.NAMESPACE)) {
             Log.i("status :", "paused");
-            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, ChatState.paused.toString());
+            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, ChatState.paused.toString());
         } else if (message.hasExtension(ChatState.inactive.toString(), ChatStateExtension.NAMESPACE)) {
             Log.i("status :", "inactive");
         }
@@ -624,10 +642,10 @@ public class XMPPService extends Service {
         long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
 
         if (!isGroupChat) {
-            Contacts contact = sportsUnityDBHelper.getContact(from);
+            Contacts contact = sportsUnityDBHelper.getContactByJid(from);
             if (contact == null) {
                 createContact(from, getApplicationContext(), nearByChat);
-                contact = sportsUnityDBHelper.getContact(from);
+                contact = sportsUnityDBHelper.getContactByJid(from);
             }
 
             chatId = sportsUnityDBHelper.getChatEntryID(contact.id, fromGroup);
@@ -651,8 +669,13 @@ public class XMPPService extends Service {
             String checksum = PersonalMessaging.getChecksumOutOfMessageBody(message.getBody());
             String thumbnail = PersonalMessaging.getEncodedImageOutOfImage(message.getBody());
 
+            byte[] bytesOfThumbnail = null;
+            if (thumbnail != null) {
+                bytesOfThumbnail = Base64.decode(thumbnail, Base64.DEFAULT);
+            }
+
             long messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
-                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, thumbnail != null ? thumbnail.getBytes() : null);
+                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, bytesOfThumbnail);
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
 
             ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
@@ -672,10 +695,15 @@ public class XMPPService extends Service {
             String checksum = PersonalMessaging.getChecksumOutOfMessageBody(message.getBody());
             String thumbnail = PersonalMessaging.getEncodedImageOutOfImage(message.getBody());
 
+            byte[] bytesOfThumbnail = null;
+            if (thumbnail != null) {
+                bytesOfThumbnail = Base64.decode(thumbnail, Base64.DEFAULT);
+            }
+
 //            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
 //                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
             long messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
-                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, thumbnail != null ? thumbnail.getBytes() : null);
+                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, bytesOfThumbnail);
             sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
 
             ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, mimeType, checksum, Long.valueOf(messageId));
@@ -687,22 +715,22 @@ public class XMPPService extends Service {
         }
     }
 
-    public static boolean createContact(String number, Context context, boolean nearByChat) {
+    public static boolean createContact(String jid, Context context, boolean nearByChat) {
         boolean success = false;
         try {
             XMPPTCPConnection connection = XMPPClient.getInstance().getConnection();
             VCard card = new VCard();
-            card.load(connection, number + "@mm.io");
+            card.load(connection, jid + "@mm.io");
             String status = card.getMiddleName();
             byte[] image = card.getAvatar();
             String nickname = card.getNickName();
 
             if (nearByChat) {
-                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, number, true, ContactsHandler.getInstance().defaultStatus, false);
+                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, false);
             } else {
-                SportsUnityDBHelper.getInstance(context).addToContacts(number, number, true, ContactsHandler.getInstance().defaultStatus, true);
+                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, true);
             }
-            SportsUnityDBHelper.getInstance(context).updateContacts(number, image, status);
+            SportsUnityDBHelper.getInstance(context).updateContacts(jid, image, status);
 
             success = true;
         } catch (Throwable throwable) {
@@ -719,7 +747,7 @@ public class XMPPService extends Service {
 //        if (sportsUnityDBHelper.isMute(chatId)) {
 //            //nothing
 //        } else {
-//            String name = sportsUnityDBHelper.getJabberName(from);
+//            String name = sportsUnityDBHelper.getUserNameByJid(from);
 //
 //            Contacts contact = sportsUnityDBHelper.getContact(from);
 //
@@ -768,14 +796,14 @@ public class XMPPService extends Service {
         } else {
             UserUtil.init(this);
 
-            String name = sportsUnityDBHelper.getJabberName(from);
+            String name = sportsUnityDBHelper.getUserNameByJid(from);
             if (isGroupChat) {
                 name = name + "@" + sportsUnityDBHelper.getGroupSubject(groupServerId);
             } else {
                 //nothing
             }
 
-            NotificationHandler notificationHandler = NotificationHandler.getInstance();
+            NotificationHandler notificationHandler = NotificationHandler.getInstance(getApplicationContext());
             notificationHandler.addNotificationMessage(chatId, name, message, mimeType, image);
 
             int chatCount = notificationHandler.getNotificationChatCount();
@@ -783,11 +811,12 @@ public class XMPPService extends Service {
             if (chatCount > 1) {
                 pendingIntent = getPendingIntentForMainActivity();
             } else if (chatCount == 1) {
-                Contacts contact = sportsUnityDBHelper.getContact(from);
+                Contacts contact = sportsUnityDBHelper.getContactByJid(from);
                 pendingIntent = getPendingIntentForChatActivity(name, from, chatId, contact.id, groupServerId, contact.image);
             }
 
-            notificationHandler.showNotification(getApplicationContext(), pendingIntent, chatId);
+            notificationHandler.showNotification(getApplicationContext(), pendingIntent);
+            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.UNREAD_COUNT_KEY);
         }
     }
 
@@ -817,19 +846,19 @@ public class XMPPService extends Service {
         return pendingIntent;
     }
 
-    private class UpdateUserDetails extends Thread {
-
-        @Override
-        public void run() {
-            try {
-                Log.i("VCard Update", "Started");
-                ContactsHandler.getInstance().updateRegisteredUsers(XMPPService.this);
-                Log.i("VCard Update", "Ended");
-            } catch (XMPPException e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
+//    private class UpdateUserDetails extends Thread {
+//
+//        @Override
+//        public void run() {
+//            try {
+//                Log.i("VCard Update", "Started");
+//                ContactsHandler.getInstance().updateRegisteredUsers(XMPPService.this);
+//                Log.i("VCard Update", "Ended");
+//            } catch (XMPPException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//    }
 
 }

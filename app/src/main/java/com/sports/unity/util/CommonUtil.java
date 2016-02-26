@@ -1,10 +1,12 @@
 package com.sports.unity.util;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -19,6 +21,7 @@ import com.sports.unity.Database.DBUtil;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.model.Contacts;
 
 import org.joda.time.DateTime;
@@ -37,10 +40,12 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -48,23 +53,23 @@ import java.util.TimeZone;
  */
 public class CommonUtil {
 
-    public static String getUserSimNumber(Context context) {
-        String phoneNumber = null;
-
-        TelephonyManager telephonyManager;
-        telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-        if (telephonyManager.getSimState() == TelephonyManager.SIM_STATE_ABSENT) {
-            Log.i("Common", "Phone number not found through sim api");
-        } else {
-            phoneNumber = telephonyManager.getLine1Number();
-            if (phoneNumber != null && phoneNumber.length() > 10) {
-                phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
-            } else {
-                //nothing
-            }
-        }
-        return phoneNumber;
-    }
+//    public static String getUserSimNumber(Context context) {
+//        String phoneNumber = null;
+//
+//        TelephonyManager telephonyManager;
+//        telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+//        if (telephonyManager.getSimState() == TelephonyManager.SIM_STATE_ABSENT) {
+//            Log.i("Common", "Phone number not found through sim api");
+//        } else {
+//            phoneNumber = telephonyManager.getLine1Number();
+//            if (phoneNumber != null && phoneNumber.length() > 10) {
+//                phoneNumber = phoneNumber.substring(phoneNumber.length() - 10);
+//            } else {
+//                //nothing
+//            }
+//        }
+//        return phoneNumber;
+//    }
 
     public static String capitalize(String str) {
         int strLen;
@@ -149,6 +154,23 @@ public class CommonUtil {
         return details;
     }
 
+    public static String getDefaultISOCountryCode(Context context){
+        TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        String isoCode = manager.getSimCountryIso().toUpperCase();
+
+        if( isoCode.isEmpty() ) {
+            isoCode = Locale.getDefault().getCountry();
+        }
+
+        return isoCode;
+    }
+
+    public static String getDefaultCountyCode(Context context){
+        String isoCountyCode = getDefaultISOCountryCode(context);
+        String countryCode = getCountryDetailsByIsoCountryCode(context, isoCountyCode).get(0);
+        return countryCode;
+    }
+
     public static String getTimeDifference(long epochTime) {
         long currentTime = getCurrentGMTTimeInEpoch();
         Calendar time = Calendar.getInstance();
@@ -173,7 +195,7 @@ public class CommonUtil {
 //        intent.putExtra("sms_body", inviteText);
 //        intent.setType("vnd.android-dir/mms-sms");
 //        context.startActivity(intent);
-        Uri uri = Uri.parse("smsto:" + contact.jid);
+        Uri uri = Uri.parse("smsto:" + contact.phoneNumber);
         Intent it = new Intent(Intent.ACTION_SENDTO, uri);
         it.putExtra("sms_body", inviteText);
         context.startActivity(it);
@@ -223,7 +245,7 @@ public class CommonUtil {
         }
     }
 
-    public static void openLinkOnBrowser(Context context, String url){
+    public static void openLinkOnBrowser(Context context, String url) {
         Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         context.startActivity(browserIntent);
     }
@@ -278,6 +300,42 @@ public class CommonUtil {
         }
 
         return checksum;
+    }
+
+    public static ArrayList<String> getCountryDetailsByIsoCountryCode(Context context, String isoCountryCode) {
+        ArrayList<String> countryDetails = new ArrayList<>();
+
+        String[] countryList = context.getResources().getStringArray(R.array.CountryCodes);
+        for(int i=0;i<countryList.length;i++){
+            String[] code=countryList[i].split(",");
+
+            if (code[1].trim().equals(isoCountryCode.trim())) {
+                countryDetails.add(code[0]);
+                countryDetails.add(code[1]);
+                countryDetails.add(code[2]);
+                break;
+            }
+        }
+
+        return countryDetails;
+    }
+
+    public static ArrayList<String> getCountryDetailsByCountryCode(Context context, String countryCode) {
+        ArrayList<String> countryDetails = new ArrayList<>();
+
+        String[] countryList = context.getResources().getStringArray(R.array.CountryCodes);
+        for(int i=0;i<countryList.length;i++){
+            String[] code=countryList[i].split(",");
+
+            if (code[0].trim().equals(countryCode.trim())) {
+                countryDetails.add(code[0]);
+                countryDetails.add(code[1]);
+                countryDetails.add(code[2]);
+                break;
+            }
+        }
+
+        return countryDetails;
     }
 
 }

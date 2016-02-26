@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/filter_fragment"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/ColorPrimary"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/tool_bar"
+        layout="@layout/tool_bar_filter"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:minHeight="?android:attr/actionBarSize" />
+
+    <EditText
+        android:id="@+id/searchCountry"
+        android:layout_marginEnd="@dimen/horizontal_padding_medium"
+        android:layout_marginStart="@dimen/horizontal_padding_medium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Type country name"
+        android:textSize="@dimen/font_size_small_large"
+        android:textColor="@color/ColorPrimaryDark"
+        android:paddingTop="@dimen/horizontal_padding_very_small"
+        android:paddingBottom="@dimen/horizontal_padding_very_small"
+        android:background="@android:color/transparent"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/app_theme_blue"
+        android:layout_marginEnd="@dimen/horizontal_padding_medium"
+        android:layout_marginStart="@dimen/horizontal_padding_medium"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/country_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/horizontal_padding_medium"
+        android:layout_marginStart="@dimen/horizontal_padding_medium">
+
+    </android.support.v7.widget.RecyclerView>
+    </LinearLayout>

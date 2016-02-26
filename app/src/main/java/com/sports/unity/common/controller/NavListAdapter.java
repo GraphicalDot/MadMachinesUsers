@@ -3,6 +3,7 @@ package com.sports.unity.common.controller;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 
@@ -52,16 +54,24 @@ public class NavListAdapter extends BaseExpandableListAdapter {
         iv = (ImageView) convertView.findViewById(R.id.flag);
         if (childItems.size() > 0) {
             textView.setText(childItems.get(childPosition).getName());
+            textView.setTextColor(act.getResources().getColor(R.color.text_color));
             String uri = null;
             try {
                 uri = childItems.get(childPosition).getFlagImageUrl();
             } catch (NullPointerException e) {
+                e.printStackTrace();
             }
             if (uri != null) {
-
                 Glide.with(act).load(Uri.parse(uri)).into(iv);
             } else {
                 iv.setVisibility(View.GONE);
+            }
+            if (childItems.get(childPosition).getName().toLowerCase().equals(Constants.GAME_KEY_CRICKET.toLowerCase())) {
+                iv.setVisibility(View.VISIBLE);
+                iv.setImageResource(R.drawable.ic_cricket);
+            } else if (childItems.get(childPosition).getName().toLowerCase().equals(Constants.GAME_KEY_FOOTBALL.toLowerCase())) {
+                iv.setVisibility(View.VISIBLE);
+                iv.setImageResource(R.drawable.ic_football);
             }
         } else {
             textView.setText("No favourites added");

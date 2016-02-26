@@ -16,7 +16,7 @@
         android:paddingTop="@dimen/horizontal_padding_small"
         android:paddingBottom="@dimen/horizontal_padding_small"
         android:scaleType="center"
-        android:src="@drawable/ic_close" />
+        android:src="@drawable/ic_cancel" />
 
     <LinearLayout
         android:id="@+id/myaddress"

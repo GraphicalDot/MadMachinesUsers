@@ -1,6 +1,7 @@
 package com.sports.unity.messages.controller.fragment;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -64,8 +65,8 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     private ViewGroup titleLayout = null;
     private View v;
 
-    private boolean copyContactCallInitiated = false;
-    private boolean listeningCopyFinishPostCall = false;
+//    private boolean copyContactCallInitiated = false;
+//    private boolean listeningCopyFinishPostCall = false;
 
     private AdapterView.OnItemClickListener contactItemListener = new AdapterView.OnItemClickListener() {
 
@@ -73,9 +74,9 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             ContactListAdapter contactListAdapter = (ContactListAdapter) contacts.getAdapter();
-            Contacts c = contactListAdapter.getItem(position);
+            Contacts c = contactListAdapter.getUsedContact().get(position);
 
-            if (c.registered) {
+            if ( c.isRegistered() ) {
                 String number = c.jid;
                 String name = c.name;
                 long contactId = c.id;
@@ -115,7 +116,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             Boolean flag = (Boolean) checkBox.getTag();
 
             ContactListAdapter contactListAdapter = (ContactListAdapter) contacts.getAdapter();
-            Contacts contacts = contactListAdapter.getInUseContactListForAdapter().get(position);
+            Contacts contacts = contactListAdapter.getUsedContact().get(position);
 
             if (flag == null || flag == false) {
                 checkBox.setTag(true);
@@ -131,6 +132,8 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
             TextView textView = (TextView) titleLayout.findViewById(R.id.members_count);
             textView.setText(selectedMembersList.size() + "/100");
+
+            contactListAdapter.refreshSelectedMembers(selectedMembersList);
         }
 
     };
@@ -167,7 +170,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     };
 
     private void forward(Contacts contact) {
-        if (contact.registered) {
+        if ( contact.isRegistered() ) {
             ToolbarActionsForChatScreen.getInstance(getActivity().getApplicationContext()).resetVariables();
             String number = contact.jid;
             String name = contact.name;
@@ -229,23 +232,23 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     }
 
     private void handleContacts() {
-        addListenerToHandleContactCopyPostCall();
-        ContactsHandler.getInstance().copyAllContacts_OnThread(getActivity().getApplicationContext(), new Runnable() {
-            @Override
-            public void run() {
-                if (listeningCopyFinishPostCall) {
-                    removeListenerToHandleContactCopyPostCall();
+//        addListenerToHandleContactCopyPostCall();
+//        ContactsHandler.getInstance().copyAllContacts_OnThread(getActivity().getApplicationContext(), new Runnable() {
+//            @Override
+//            public void run() {
+//                if (listeningCopyFinishPostCall) {
+//                    removeListenerToHandleContactCopyPostCall();
 
                     getActivity().runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            copyContactCallInitiated = false;
+//                            copyContactCallInitiated = false;
                             setContactList(v);
                         }
                     });
-                }
-            }
-        });
+//                }
+//            }
+//        });
     }
 
     private void setContactList(View v) {
@@ -268,6 +271,22 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true);
 //            searchView.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
             searchView.onActionViewExpanded();
+
+            searchView.clearFocus();
+
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    filterResults(newText);
+                    return true;
+                }
+            });
+
 //            searchContacts.addTextChangedListener(new TextWatcher() {
 //                @Override
 //                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -334,19 +353,19 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             searchView.setVisibility(View.GONE);
         }
 
-        ContactListAdapter adapter = new ContactListAdapter(getActivity(), resource, contactList, multipleSelection, frequentContactCount);
+        ContactListAdapter adapter = new ContactListAdapter(getActivity(), resource, contactList, multipleSelection, frequentContactCount, selectedMembersList);
         contacts.setAdapter(adapter);
         contacts.setOnItemClickListener(itemListener);
     }
 
-    private void addListenerToHandleContactCopyPostCall() {
-        listeningCopyFinishPostCall = true;
-        copyContactCallInitiated = true;
-    }
-
-    private void removeListenerToHandleContactCopyPostCall() {
-        listeningCopyFinishPostCall = false;
-    }
+//    private void addListenerToHandleContactCopyPostCall() {
+//        listeningCopyFinishPostCall = true;
+//        copyContactCallInitiated = true;
+//    }
+//
+//    private void removeListenerToHandleContactCopyPostCall() {
+//        listeningCopyFinishPostCall = false;
+//    }
 
     public void filterResults(String filter) {
         ((ContactListAdapter) contacts.getAdapter()).getFilter().filter(filter);
@@ -359,23 +378,35 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
     @Override
     public void onSearchQuery(String filterText) {
-        filterResults(filterText);
+        if (filterText.length() > 0) {
+            filterResults(filterText);
+        } else {
+            ((ContactListAdapter) contacts.getAdapter()).refreshContacts();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
         if (PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-            ((MainActivity) getActivity()).addContactResultListener(this);
-            if (copyContactCallInitiated) {
-                if (ContactsHandler.getInstance().isContactCopyInProgress()) {
-                    addListenerToHandleContactCopyPostCall();
-                } else {
-                    setContactList(getView());
-                }
+
+            //TODO need to handle it cleanly.
+
+            Activity activity = getActivity();
+            if( activity instanceof MainActivity ) {
+                ((MainActivity) getActivity()).addContactResultListener(this);
             } else {
-                //nothing
+                //TODO to handle permission on forward activity.
             }
+//            if (copyContactCallInitiated) {
+//                if (ContactsHandler.getInstance().isContactCopyInProgress()) {
+//                    addListenerToHandleContactCopyPostCall();
+//                } else {
+//                    setContactList(getView());
+//                }
+//            } else {
+//                //nothing
+//            }
         } else {
             setContactList(getView());
         }
@@ -384,14 +415,14 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     @Override
     public void onPause() {
         super.onPause();
-        removeListenerToHandleContactCopyPostCall();
+//        removeListenerToHandleContactCopyPostCall();
     }
 
     @Override
     public void onPermissionResult(int requestCode, int[] grantResults) {
         if (requestCode == Constants.REQUEST_CODE_CONTACT_PERMISSION) {
             if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
-                handleContacts();
+                ContactsHandler.getInstance().addCallToSyncContacts(getContext());
             } else {
                 PermissionUtil.getInstance().showSnackBar(getActivity(), getString(R.string.permission_denied));
             }

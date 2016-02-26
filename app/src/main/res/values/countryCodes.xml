@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="CountryCodes" >
+        <item>93,AF,Afghanistan</item>
+        <item>54,AR,Argentina</item>
+        <item>61,AU,Australia</item>
+        <item>43,AT,Austria</item>
+        <item>880,BD,Bangladesh</item>
+        <item>32,BE,Belgium</item>
+        <item>975,BT,Bhutan</item>
+        <item>55,BR,Brazil</item>
+        <item>359,BG,Bulgaria</item>
+        <item>855,KH,Cambodia</item>
+        <item>237,CM,Cameroon</item>
+        <item>1,CA,Canada</item>
+        <item>56,CL,Chile</item>
+        <item>86,CN,China</item>
+        <item>57,CO,Colombia</item>
+        <!--<item>225,Cote d'Ivoire</item>-->
+        <item>385,HR,Croatia</item>
+        <item>420,CZ,Czech-Republic</item>
+        <item>45,DK,Denmark</item>
+        <item>1,DO,Dominican Republic</item>
+        <item>593,EC,Ecuador</item>
+        <item>20,EG,Egypt</item>
+        <item>679,FJ,Fiji</item>
+        <item>385,FI,Finland</item>
+        <item>33,FR,France</item>
+        <item>49,DE,Germany</item>
+        <item>30,GR,Greece</item>
+        <item>852,HK,Hong Kong</item>
+        <item>36,HU,Hungary</item>
+        <item>91,IN,India</item>
+        <item>62,ID,Indonesia</item>
+        <item>98,IR,Iran</item>
+        <item>964,IQ,Iraq</item>
+        <item>353,IE,Ireland</item>
+        <item>39,IT,Italy</item>
+        <item>81,JP,Japan</item>
+        <item>965,KW,Kuwait</item>
+        <!--<item>853,Macau</item>-->
+        <item>60,MY,Malaysia</item>
+        <item>230,MU,Mauritius</item>
+        <item>977,NP,Nepal</item>
+        <item>31,NL,Netherland</item>
+        <item>64,NZ,New Zealand</item>
+        <item>47,NO,Norway</item>
+        <item>968,OM,Oman</item>
+        <item>92,PK,Pakistan</item>
+        <item>595,PY,Paraguay</item>
+        <item>63,PH,Philippines</item>
+        <item>48,PL,Poland</item>
+        <item>351,PT,Portugal</item>
+        <item>974,QA,Qatar</item>
+        <item>40,RO,Romania</item>
+        <item>7,RU,Russia</item>
+        <item>966,SA,Saudi Arabia</item>
+        <item>65,SG,Singapore</item>
+        <item>27,ZA,South Africa</item>
+        <item>34,ES,Spain</item>
+        <item>94,LK,Sri Lanka</item>
+        <item>46,SE,Sweden</item>
+        <item>41,CH,Switzerland</item>
+        <item>66,TH,Thailand</item>
+        <item>1,TT,Trinidad and Tobago</item>
+        <item>90,TR,Turkey</item>
+        <item>971,AE,U.A.E</item>
+        <item>380,UA,Ukraine</item>
+        <item>44,GB,United Kingdom</item>
+        <item>1,US,USA</item>
+        <!--<item>84,Vietnam</item>-->
+        <item>263,ZW,Zimbabwe</item>
+    </string-array>
+
+</resources>

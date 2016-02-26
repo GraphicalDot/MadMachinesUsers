@@ -11,11 +11,14 @@ public class ActivityActionHandler {
     public static final String CHAT_SCREEN_KEY = "chat_screen_key";
     public static final String CHAT_LIST_KEY = "chat_list_key";
     public static final String CHAT_OTHERS_LIST_KEY = "chat_list_others_key";
+    public static final String UNREAD_COUNT_KEY = "unread_count";
 
     public static final int EVENT_ID_COMMON = 0;
     public static final int EVENT_ID_SEND_MEDIA = 1;
     public static final int EVENT_ID_DOWNLOAD_COMPLETED = 2;
     public static final int EVENT_ID_INCOMING_MEDIA = 3;
+    public static final int EVENT_ID_CHAT_STATUS = 4;
+    public static final int EVENT_ID_RECEIPT = 5;
 
     private static ActivityActionHandler activityActionHandler = null;
 
@@ -38,7 +41,7 @@ public class ActivityActionHandler {
 
         if (actionItemOnHoldMap.containsKey(key)) {
             ActionItem actionItem = actionItemOnHoldMap.get(key);
-            listener.handleMediaContent(actionItem.id, actionItem.getMimeType(), actionItem.getMessageContent(), actionItem.getMediaContent());
+            listener.handleMediaContent(actionItem.id, actionItem.getMimeType(), actionItem.getMessageContent(), actionItem.getThumbnailImage(), actionItem.getMediaContent());
             actionItemOnHoldMap.remove(key);
         }
     }
@@ -85,6 +88,32 @@ public class ActivityActionHandler {
         return success;
     }
 
+    public boolean dispatchReceiptEvent(String key, Object data) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+
+        if (actionListener != null) {
+            actionListener.handleAction(EVENT_ID_RECEIPT, data);
+            success = true;
+        }
+        return success;
+    }
+
+    public boolean dispatchUserStatusOnChat(String key, Object data) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+
+        if (actionListener != null) {
+            actionListener.handleAction(EVENT_ID_COMMON, data);
+            success = true;
+        }
+        return success;
+    }
+
     public boolean dispatchSendStickerEvent(String key, String mimeType, String stickerPath) {
         boolean success = false;
 
@@ -92,7 +121,7 @@ public class ActivityActionHandler {
         ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
 
         if (actionListener != null) {
-            actionListener.handleMediaContent( EVENT_ID_SEND_MEDIA, mimeType, stickerPath, null);
+            actionListener.handleMediaContent(EVENT_ID_SEND_MEDIA, mimeType, stickerPath, null);
             success = true;
         }
         return success;
@@ -105,7 +134,7 @@ public class ActivityActionHandler {
         ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
 
         if (actionListener != null) {
-            actionListener.handleMediaContent( EVENT_ID_DOWNLOAD_COMPLETED, mimeType, fileName, mediaContent);
+            actionListener.handleMediaContent(EVENT_ID_DOWNLOAD_COMPLETED, mimeType, fileName, mediaContent);
             success = true;
         }
         return success;
@@ -118,7 +147,7 @@ public class ActivityActionHandler {
         ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
 
         if (actionListener != null) {
-            actionListener.handleMediaContent( EVENT_ID_INCOMING_MEDIA, mimeType, checksum, messageId);
+            actionListener.handleMediaContent(EVENT_ID_INCOMING_MEDIA, mimeType, checksum, messageId);
             success = true;
         }
         return success;
@@ -131,7 +160,7 @@ public class ActivityActionHandler {
         ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
 
         if (actionListener != null) {
-            actionListener.handleMediaContent( EVENT_ID_SEND_MEDIA, mimeType, fileName, mediaContent);
+            actionListener.handleMediaContent(EVENT_ID_SEND_MEDIA, mimeType, fileName, mediaContent);
             success = true;
         }
         return success;
@@ -144,7 +173,7 @@ public class ActivityActionHandler {
         ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
 
         if (actionListener != null) {
-            actionListener.handleMediaContent( EVENT_ID_SEND_MEDIA, mimeType, fileName, thumbnailImageAsBase64, mediaContent);
+            actionListener.handleMediaContent(EVENT_ID_SEND_MEDIA, mimeType, fileName, thumbnailImageAsBase64, mediaContent);
             success = true;
         }
         return success;
@@ -154,7 +183,7 @@ public class ActivityActionHandler {
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        activityActionHandler.addActionOnHold(key, new ActivityActionHandler.ActionItem( EVENT_ID_SEND_MEDIA, mimeType, fileName, thumbnailImageAsBase64, bytes));
+        activityActionHandler.addActionOnHold(key, new ActivityActionHandler.ActionItem(EVENT_ID_SEND_MEDIA, mimeType, fileName, thumbnailImageAsBase64, bytes));
         return success;
     }
 

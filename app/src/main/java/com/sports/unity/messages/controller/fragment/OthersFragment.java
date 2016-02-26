@@ -102,10 +102,10 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
                     case 0:
                         if (chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
                             ChatScreenActivity.viewProfile(getActivity(), chatObject.userImage, chatObject.name,
-                                    chatObject.groupServerId,SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid);
+                                    chatObject.groupServerId, SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid, true);
                         } else {
                             ChatScreenActivity.viewProfile(getActivity(), chatObject.chatImage, chatObject.name, chatObject.groupServerId,
-                                    SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid);
+                                    SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid, true);
                         }
                         alert.dismiss();
                         break;
@@ -152,7 +152,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
         SportsUnityDBHelper.getInstance(getActivity()).clearChat(getActivity(), chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
         SportsUnityDBHelper.getInstance(getActivity()).clearChatEntry(chatObject.chatid);
 
-        NotificationHandler.getInstance().clearNotificationMessages(chatObject.chatid);
+        NotificationHandler.getInstance(getActivity().getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid));
 
         deleteContact(contactId);
 

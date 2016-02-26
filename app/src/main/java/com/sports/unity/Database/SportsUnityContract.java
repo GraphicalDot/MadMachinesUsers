@@ -14,9 +14,9 @@ public final class SportsUnityContract {
         public static final String TABLE_NAME = "contactsTable";
 
         public static final String COLUMN_CONTACT_ID = "contact_id";
+        public static final String COLUMN_JID = "jid";
+        public static final String COLUMN_PHONE_NUMBER = "phone_number";
         public static final String COLUMN_NAME = "display_name";
-        public static final String COLUMN_PHONENUMBER = "jid";
-        public static final String COLUMN_REGISTERED = "is_sportsunity_user";
         public static final String COLUMN_UNIQUE_INDEX = "id";
         public static final String COLUMN_USER_IMAGE = "user_image";
         public static final String COLUMN_STATUS = "status";

@@ -94,6 +94,39 @@
             android:layout_below="@+id/logo"
             android:orientation="vertical">
 
+            <FrameLayout
+                android:id="@+id/getCountryCode"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/horizontal_padding_medium"
+                android:layout_marginStart="@dimen/horizontal_padding_medium"
+                android:layout_gravity="center">
+
+                <TextView
+                    android:id="@+id/countryName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/horizontal_padding_very_small"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_size_medium"
+                    android:text="India"
+                    />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/next_vector_white"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginRight="@dimen/horizontal_padding_very_small"/>
+            </FrameLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/ColorPrimary"
+                android:layout_marginEnd="@dimen/horizontal_padding_medium"
+                android:layout_marginStart="@dimen/horizontal_padding_medium"
+                android:layout_marginBottom="@dimen/horizontal_padding_very_small"/>
             <RelativeLayout
 
                 android:layout_width="fill_parent"
@@ -117,17 +150,24 @@
                     android:textSize="@dimen/font_size_medium"
                     />
 
+                <View
+                    android:id="@+id/seperator"
+                    android:layout_toRightOf="@+id/countryCode"
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/ColorPrimaryDark"/>
+
                 <EditText
                     android:id="@+id/phoneNumber"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_toLeftOf="@+id/getOtp"
-                    android:layout_toRightOf="@+id/countryCode"
+                    android:layout_toRightOf="@+id/seperator"
                     android:background="@android:color/transparent"
                     android:gravity="left"
+                    android:maxLength="17"
                     android:inputType="phone"
-                    android:maxLength="10"
                     android:padding="@dimen/horizontal_padding_very_small"
                     android:textColor="@android:color/white"
                     android:textSize="@dimen/font_size_medium"
