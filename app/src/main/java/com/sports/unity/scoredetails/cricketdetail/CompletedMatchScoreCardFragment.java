@@ -308,7 +308,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                                         LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets = new LiveAndCompletedCricketFallOfWicketCardDTO();
                                         fallOfWickets.setTvBowlerName(fallOfWicketObject.getString("name"));
                                         fallOfWickets.setTvOverNumber(fallOfWicketObject.getString("overs")+"ovs");
-                                        fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs")+"-"+(k+1));
+                                        fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs").split(" ")[0]+"-"+(k+1));
 
                                         teamAFallOfWicketCardList.add(fallOfWickets);
 
@@ -360,7 +360,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                                     LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets= new LiveAndCompletedCricketFallOfWicketCardDTO();
                                     fallOfWickets.setTvBowlerName(fallOfWicketObject.getString("name"));
                                     fallOfWickets.setTvOverNumber(fallOfWicketObject.getString("overs"));
-                                    fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs")+"-"+(k+1));
+                                    fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs").split(" ")[0]+"-"+(k+1));
 
                                     teamBFallOfWicketCardList.add(fallOfWickets);
 
