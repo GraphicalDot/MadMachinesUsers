@@ -225,8 +225,11 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                          if(!jsonObject.isNull("data")){
                              JSONArray jsonArray = jsonObject.getJSONArray("data");
                              JSONObject dataObject = jsonArray.getJSONObject(0);
-
-
+                             String teamsShortName ="";
+                             if(!dataObject.isNull("short_name")){
+                                 teamsShortName = dataObject.getString("short_name");
+                             }
+                             String teamNamesArray[] = teamsShortName.split(" ");
                              tvFirstTeamInning.setText(dataObject.getString("team_a") + " Innings");
                              tvSecondTeamInning.setText(dataObject.getString("team_b")+ " Innings");
                              JSONObject scoreCard = dataObject.getJSONObject("scorecard");
@@ -252,7 +255,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                                  tvExtraRunTeamFirst.setText(teamAFirstInning.getString("inning_extras"));
                                  tvTotalRunFirstTeam.setText(teamAFirstInning.getString("team_runs"));
                                  tvRunRateFirstTeam.setText(teamAFirstInning.getString("team_run_rate"));
-                                 tvTeamFirstNameAndScore.setText(dataObject.getString("team_a").substring(0, 2) +" "+teamAFirstInning.getString("team_runs")+"/"+teamAFirstInning.getString("team_wickets"));
+                                 tvTeamFirstNameAndScore.setText(teamNamesArray[0] +" "+teamAFirstInning.getString("team_runs")+"/"+teamAFirstInning.getString("team_wickets"));
                                  if(teamABattingArray != null){
                                      for (int i= 0 ; i<teamABattingArray.length();i++){
                                          JSONObject battingObject = teamABattingArray.getJSONObject(i);
@@ -285,7 +288,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                                          LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets = new LiveAndCompletedCricketFallOfWicketCardDTO();
                                          fallOfWickets.setTvBowlerName(fallOfWicketObject.getString("name"));
                                          fallOfWickets.setTvOverNumber(fallOfWicketObject.getString("overs"));
-                                         fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs"));
+                                         fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs").split(" ")[0]+"-"+(k+1));
 
                                          teamAFallOfWicketCardList.add(fallOfWickets);
 
@@ -304,11 +307,11 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
 
                                  tvExtraRunTeamSecond.setText(teamBFirstInning.getString("inning_extras"));
 
-                                 tvTotalRunFirstTeam.setText(teamBFirstInning.getString("team_runs"));
+                                 tvTotalRunSecondTeam.setText(teamBFirstInning.getString("team_runs"));
 
                                  tvRunRateSecondTeam.setText(teamBFirstInning.getString("team_run_rate"));
 
-                                 tvTeamSecondNameAndScore.setText(dataObject.getString("team_b").substring(0,2) +" "+teamBFirstInning.getString("team_runs")+"/"+teamBFirstInning.getString("team_wickets"));
+                                 tvTeamSecondNameAndScore.setText(teamNamesArray[2]+" "+teamBFirstInning.getString("team_runs")+"/"+teamBFirstInning.getString("team_wickets"));
 
                              for (int i= 0 ; i<teamBBattingArray.length();i++){
                                  JSONObject battingObject = teamBBattingArray.getJSONObject(i);
@@ -338,7 +341,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                                  LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets= new LiveAndCompletedCricketFallOfWicketCardDTO();
                                  fallOfWickets.setTvBowlerName(fallOfWicketObject.getString("name"));
                                  fallOfWickets.setTvOverNumber(fallOfWicketObject.getString("overs"));
-                                 fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs"));
+                                 fallOfWickets.setTvWicket(fallOfWicketObject.getString("runs").split(" ")[0]+"-"+(k+1));
 
                                  teamBFallOfWicketCardList.add(fallOfWickets);
 
