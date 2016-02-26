@@ -317,8 +317,12 @@ public class NotificationHandler {
         defaults = getDefaults(context, defaults, builder);
         builder.setDefaults(defaults);
 
-        Uri uri = Uri.parse(UserUtil.getNotificationSoundURI());
-        builder.setSound(uri);
+        if( UserUtil.isNotificationAndSound() ) {
+            Uri uri = Uri.parse(UserUtil.getNotificationSoundURI());
+            builder.setSound(uri);
+        } else {
+            //nothing
+        }
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.notify(NotificationHandler.NOTIFICATION_ID, builder.build());

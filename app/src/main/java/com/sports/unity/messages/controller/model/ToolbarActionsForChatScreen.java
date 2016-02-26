@@ -68,16 +68,14 @@ public class ToolbarActionsForChatScreen {
     public void copySelectedMessages(ArrayList<Message> messageList) {
         String label = "spu";
         ClipboardManager clipboard = (ClipboardManager) context.getSystemService(context.CLIPBOARD_SERVICE);
-        ClipData clip = null;
+        ClipData clip;
         String clipText = "";
         for (int i = 0; i < selectedItemsList.size(); i++) {
-            String time = "[" + CommonUtil.getTime(Long.parseLong(messageList.get(selectedItemsList.get(i)).sendTime)) + "]";
-            String name = sportsUnityDBHelper.getUserNameByPhoneNumber(messageList.get(selectedItemsList.get(i)).number);
             String text = messageList.get(selectedItemsList.get(i)).textData;
             if (i == selectedItemsList.size() - 1) {
-                clipText += time + " " + name + ": " + text;
+                clipText += text;
             } else {
-                clipText += time + " " + name + ": " + text + "\n";
+                clipText += text + "\n";
             }
         }
         clip = ClipData.newPlainText(label, clipText);

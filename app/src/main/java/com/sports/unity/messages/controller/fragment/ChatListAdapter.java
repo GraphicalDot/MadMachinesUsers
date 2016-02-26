@@ -52,12 +52,6 @@ public class ChatListAdapter extends ArrayAdapter<Chats> implements StickyListHe
 
         Chats chats = chatArrayList.get(position);
 
-        if (chats.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
-            rowView.setTag(0);
-        } else {
-            rowView.setTag(1);
-        }
-
         ImageView mediaIcon = (ImageView) rowView.findViewById(R.id.sentMediaIcon);
 
         TextView name = (TextView) rowView.findViewById(R.id.contact_name);

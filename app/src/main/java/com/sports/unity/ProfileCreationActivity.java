@@ -34,6 +34,7 @@ import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.SelectSportsActivity;
+import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserProfileHandler;
@@ -68,7 +69,8 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     private CallbackManager callbackManager;
     private EditText nameText;
     private byte[] byteArray;
-private String userName;
+    private String userName;
+
     private View.OnClickListener continueButtonOnClickListener = new View.OnClickListener() {
 
         @Override
@@ -149,6 +151,16 @@ private String userName;
         addListenerToContinueButton();
         addListnerToProfilePicture();
 
+
+        {
+            if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+                ContactsHandler.getInstance().addCallToSyncContacts(getApplicationContext());
+            } else {
+                if (PermissionUtil.getInstance().requestPermission(this, new ArrayList<String>(Arrays.asList(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)), getResources().getString(R.string.read_contact_permission_message), Constants.REQUEST_CODE_CONTACT_PERMISSION)) {
+                    ContactsHandler.getInstance().addCallToSyncContacts(getApplicationContext());
+                }
+            }
+        }
 
         /*
          * to set initial focus to edit text view and open keyboard.
@@ -340,6 +352,12 @@ private String userName;
         if (requestCode == Constants.REQUEST_CODE_CAMERA_EXTERNAL_STORAGE_PERMISSION) {
             if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
                 handleAddPhotoClick();
+            } else {
+                PermissionUtil.getInstance().showSnackBar(this, getString(R.string.permission_denied));
+            }
+        } else if (requestCode == Constants.REQUEST_CODE_CONTACT_PERMISSION) {
+            if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
+                ContactsHandler.getInstance().addCallToSyncContacts(getApplicationContext());
             } else {
                 PermissionUtil.getInstance().showSnackBar(this, getString(R.string.permission_denied));
             }
