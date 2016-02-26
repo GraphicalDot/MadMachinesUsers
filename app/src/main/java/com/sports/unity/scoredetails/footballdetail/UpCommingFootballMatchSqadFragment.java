@@ -7,8 +7,10 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
@@ -31,6 +33,15 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     String toss = "";
     String matchName="";
     String date = "";
+    private TextView tvPlayerAge;
+    private TextView tvP;
+    private TextView tvpl;
+    private ImageView tvgol;
+    private ImageView tvyellowcard;
+    private ImageView tvredcard;
+
+
+
     public UpCommingFootballMatchSqadFragment() {
         // Required empty public constructor
     }
@@ -57,6 +68,14 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
         return view;
     }
     private void initView(View view) {
+        tvPlayerAge = (TextView) view.findViewById(R.id.tv_player_age);
+        tvP=(TextView)view.findViewById(R.id.tv_p);
+        tvpl=(TextView)view.findViewById(R.id.tv_pl);
+        tvgol=(ImageView)view.findViewById(R.id.tv_gol);
+        tvyellowcard=(ImageView)view.findViewById(R.id.tv_yellow_card);
+        tvredcard=(ImageView)view.findViewById(R.id.tv_red_card);
+
+
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         initErrorLayout(view);

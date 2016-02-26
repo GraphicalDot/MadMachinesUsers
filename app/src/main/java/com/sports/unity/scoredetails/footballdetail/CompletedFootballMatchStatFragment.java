@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +38,9 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
     String toss = "";
     String matchName="";
     String date = "";
+    private RecyclerView rvfootballmatchtable;
+    private TextView nocomments;
+
     public CompletedFootballMatchStatFragment() {
         // Required empty public constructor
     }
@@ -65,6 +69,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         initErrorLayout(view);
+        nocomments=(TextView)view.findViewById(R.id.no_comments);
 
     }
     private void  showProgressBar(){
