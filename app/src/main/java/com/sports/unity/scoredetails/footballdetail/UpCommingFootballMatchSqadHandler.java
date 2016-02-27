@@ -21,7 +21,7 @@ public class UpCommingFootballMatchSqadHandler {
 
     private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
     private static Context mContext;
-    private String url = "http://52.74.75.79:8080/get_team_players?team_id=";
+    private String url = " http://52.74.75.79:8080/get_football_squads?team_1=";
 
     private UpCommingFootballMatchSqadContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -57,7 +57,7 @@ public class UpCommingFootballMatchSqadHandler {
     public void requestUpCommingMatchSquad(String team1Id,String team2Id) {
         Log.i("Score Detail", "Request Score Details");
 
-        url = url+team1Id;
+        url = url+team1Id+"&team_2="+team2Id;
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);

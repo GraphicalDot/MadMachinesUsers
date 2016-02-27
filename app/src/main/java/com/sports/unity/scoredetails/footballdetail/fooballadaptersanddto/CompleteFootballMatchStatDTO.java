@@ -10,6 +10,7 @@ public class CompleteFootballMatchStatDTO {
     private String tvLable;
     private String ivLeftStatus;
     private String ivRightStatus;
+    private String ivCenterStatus;
 
     public String getTvLable() {
         return tvLable;
@@ -33,5 +34,13 @@ public class CompleteFootballMatchStatDTO {
 
     public void setIvRightStatus(String ivRightStatus) {
         this.ivRightStatus = ivRightStatus;
+    }
+
+    public String getIvCenterStatus() {
+        return ivCenterStatus;
+    }
+
+    public void setIvCenterStatus(String ivCenterStatus) {
+        this.ivCenterStatus = ivCenterStatus;
     }
 }

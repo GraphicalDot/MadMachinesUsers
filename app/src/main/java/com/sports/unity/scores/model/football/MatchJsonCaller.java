@@ -23,6 +23,9 @@ public class MatchJsonCaller extends JsonObjectCaller {
     }
 
     public String getResult() throws JSONException {
+        if(jsonObject.isNull("result")){
+            return  "";
+        }
         return jsonObject.getString("result");
     }
 
