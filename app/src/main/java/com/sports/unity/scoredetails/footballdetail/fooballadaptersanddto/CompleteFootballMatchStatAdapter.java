@@ -1,6 +1,7 @@
 package com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.amulyakhare.textdrawable.TextDrawable;
+import com.amulyakhare.textdrawable.util.ColorGenerator;
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 
@@ -33,7 +36,7 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = null;
         try{
-             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.completed_football_match_stats_card,parent,false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.completed_football_match_stats_card,parent,false);
 
         }catch (Exception e){e.printStackTrace();}
         return new ViewHolder(view);
@@ -42,11 +45,18 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         try{
+            TextDrawable.IBuilder mDrawableBuilder = TextDrawable.builder()
+                    .roundRect(10);;
+             ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
+            TextDrawable drawable = null;
             holder.dto = mValues.get(position);
             holder.tvLable.setText(holder.dto.getTvLable());
-            Glide.with(context).load(holder.dto.getIvLeftStatus()).placeholder(R.drawable.ic_no_img).into(holder.ivLeftStatus);
-            Glide.with(context).load(holder.dto.getIvRightStatus()).placeholder(R.drawable.ic_no_img).into(holder.ivRightStatus);
-
+            drawable = mDrawableBuilder.build(holder.dto.getIvLeftStatus(), mColorGenerator.getColor(holder.dto.getIvLeftStatus()));
+            holder.ivLeftStatus.setImageDrawable(drawable);
+            holder.ivLeftStatus.setBackgroundColor(Color.TRANSPARENT);
+            drawable = mDrawableBuilder.build(holder.dto.getIvRightStatus(), mColorGenerator.getColor(holder.dto.getIvRightStatus()));
+            holder.ivRightStatus.setImageDrawable(drawable);
+            holder.ivRightStatus.setBackgroundColor(Color.TRANSPARENT);
         }catch (Exception e){e.printStackTrace();}
     }
 
