@@ -7,7 +7,7 @@ android {
         applicationId 'com.sports.unity'
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 1
+        versionCode 3
         versionName "1.0"
     }
     buildTypes {
@@ -42,7 +42,6 @@ dependencies {
     compile 'org.igniterealtime.smack:smack-tcp:4.1.4'
     compile 'com.google.android.gms:play-services-location:8.4.0'
     compile 'joda-time:joda-time:2.9.2'
-    compile 'org.apache.directory.studio:org.apache.commons.io:2.4'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.crittercism:crittercism-android-agent:+'
     compile 'commons-net:commons-net:3.3'

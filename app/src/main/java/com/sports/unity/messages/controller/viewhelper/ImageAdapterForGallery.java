@@ -2,14 +2,7 @@ package com.sports.unity.messages.controller.viewhelper;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.media.MediaMetadataRetriever;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,26 +12,17 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
-import android.widget.ViewAnimator;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
-import com.sports.unity.util.*;
+import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ImageUtil;
+import com.sports.unity.util.ThreadTask;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.ByteArrayOutputStream;
-
-import java.io.File;
-import java.io.FileDescriptor;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 /**
@@ -84,23 +68,6 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
         this.recyclerView = recyclerView;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView imageView;
-        private TextView textView;
-
-        public ViewHolder(View v) {
-            super(v);
-
-            imageView = (ImageView) v.findViewById(com.sports.unity.R.id.img);
-            imageView.setLayoutParams(new FrameLayout.LayoutParams(keyboardHeight, keyboardHeight));
-            imageView.setDrawingCacheEnabled(true);
-
-            textView = (TextView) v.findViewById(R.id.duration);
-            textView.setVisibility(View.VISIBLE);
-
-        }
-    }
-
     @Override
     public ImageAdapterForGallery.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_gallery, parent, false);
@@ -126,11 +93,11 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
             retriever.setDataSource(fileInputStream.getFD());
             hasVideoContent = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_HAS_VIDEO);
             durationAsString = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
-        if( hasVideoContent == null ) {
+        if (hasVideoContent == null) {
 
             holder.textView.setVisibility(View.GONE);
 
@@ -285,6 +252,23 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
             ex.printStackTrace();
 
             Toast.makeText(activity, "Something went wrong.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        private ImageView imageView;
+        private TextView textView;
+
+        public ViewHolder(View v) {
+            super(v);
+
+            imageView = (ImageView) v.findViewById(com.sports.unity.R.id.img);
+            imageView.setLayoutParams(new FrameLayout.LayoutParams(keyboardHeight, keyboardHeight));
+            imageView.setDrawingCacheEnabled(true);
+
+            textView = (TextView) v.findViewById(R.id.duration);
+            textView.setVisibility(View.VISIBLE);
+
         }
     }
 
