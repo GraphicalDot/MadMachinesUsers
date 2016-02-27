@@ -156,6 +156,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom"
+                        android:paddingRight="@dimen/vertical_padding_very_very_small"
                         android:text=""
                         android:textSize="@dimen/font_size_small_large" />
 
