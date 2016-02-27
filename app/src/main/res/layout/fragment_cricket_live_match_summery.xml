@@ -137,7 +137,6 @@
                             android:layout_centerInParent="true"
                             android:id="@+id/vw_divider"
                             android:layout_toRightOf="@id/iv_player_first"
-                            android:layout_toLeftOf="@id/iv_player_second"
                             android:layout_width="match_parent"
                             android:background="@color/gray3"
                             android:layout_height="1dp">
@@ -195,7 +194,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="left"
-                            android:text="M.Marsh"
+                            android:text=""
                             android:textSize="@dimen/font_size_very_very_small"
                             />
 
@@ -223,7 +222,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="right"
-                                android:text="M.Wade"
+                                android:text=""
                                 android:textSize="@dimen/font_size_very_very_small"
                                 />
 
@@ -233,7 +232,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignTop="@id/v_divider"
                                 android:layout_gravity="right"
-                                android:text="SR 60.00"
+                                android:text=""
                                 android:textColor="@color/score_light_grey"
                                 android:textSize="@dimen/font_size_very_very_small"
                                 />
@@ -256,7 +255,7 @@
                                 android:layout_weight="1"
                                 android:gravity="left"
                                 android:paddingLeft="@dimen/activity_vertical_margin_small"
-                                android:text="6(7)"
+                                android:text=""
                                 android:textSize="@dimen/font_size_very_very_small"
                                 />
 
@@ -266,7 +265,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text="10(12)RRS"
+                                android:text=""
                                 android:textColor="@color/dark_blue"
                                 android:textSize="@dimen/font_size_very_very_small"
                                 />
@@ -278,7 +277,7 @@
                                 android:layout_marginRight="@dimen/activity_vertical_margin_small"
                                 android:layout_weight="1"
                                 android:gravity="right"
-                                android:text="3(5)"
+                                android:text=""
                                 android:textSize="@dimen/font_size_very_very_small"
                                 />
                         </LinearLayout>
