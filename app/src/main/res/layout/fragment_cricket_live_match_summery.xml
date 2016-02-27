@@ -172,7 +172,7 @@
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/ic_active_player" />
                         </FrameLayout>
-                       <!-- <LinearLayout
+                       <LinearLayout
                             android:id="@+id/layout_batting"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -201,23 +201,7 @@
                                 android:textSize="@dimen/font_size_very_small"
                                 />
                         </LinearLayout>-->
-
-                       <!-- <ImageView
-                            android:id="@+id/iv_player_first_status"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignStart="@id/v_divider"
-                            android:paddingTop="33dp"
-                            android:src="@drawable/ic_active_player" />-->
-
-                        <!--<ImageView
-                            android:id="@+id/iv_player_second_status"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignEnd="@id/v_divider"
-                            android:paddingTop="33dp"
-                            android:src="@drawable/ic_active_player" />-->
-                      <!--  <LinearLayout
+                       <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="@dimen/activity_vertical_margin_small"
@@ -246,7 +230,7 @@
                         </LinearLayout>-->
 
 
-                        <!--<LinearLayout
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_alignBottom="@+id/iv_player_first"
@@ -286,7 +270,7 @@
                                 android:text="3(5)"
                                 android:textSize="@dimen/font_size_very_small"
                                 />
-                        </LinearLayout>-->
+                        </LinearLayout>
 
                     </RelativeLayout>
 
