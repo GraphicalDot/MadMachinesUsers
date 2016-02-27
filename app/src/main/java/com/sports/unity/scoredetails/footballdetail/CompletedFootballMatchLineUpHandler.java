@@ -21,7 +21,7 @@ public class CompletedFootballMatchLineUpHandler {
 
     private static final String REQUEST_TAG = "COMPLETED_FOOTBALL_LINEUP_MATCH_TAG";
     private static Context mContext;
-    private String url = "http://52.74.75.79:8080/get_match_teams?match_id=";
+    private String url = "http://52.74.75.79:8080/get_match_squads?match_id=";
 
     private CompletedMatchContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();

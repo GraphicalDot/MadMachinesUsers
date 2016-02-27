@@ -78,7 +78,6 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         initErrorLayout(view);
         tvCaptainFirst=(TextView)view.findViewById(R.id.tv_team_first_captain);
         tvCaptainSecond=(TextView)view.findViewById(R.id.tv_team_second_captain);
-        tvCarlesPayol=(TextView)view.findViewById(R.id.tv_Carles_Payol);
         tvlineup=(TextView)view.findViewById(R.id.tv_line_up);
         tvsubstitutes=(TextView)view.findViewById(R.id.tv_substitutes);
         rcLineup = (GridLayout) view.findViewById(R.id.gv_lineup);
@@ -122,8 +121,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
             errorLayout.setVisibility(View.GONE);
         }catch (Exception e){e.printStackTrace();}
     }
-
-    private void showErrorLayout(View view) {
+   private void showErrorLayout(View view) {
 
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.VISIBLE);
@@ -133,17 +131,42 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         hideProgressBar();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-        final JSONArray dataArray = jsonObject.getJSONArray("data");
+        final JSONObject dataObject = jsonObject.getJSONObject("data");
+         final  JSONArray subsArray = dataObject.getJSONArray("subs");
+        final JSONArray teamsObjectArray = dataObject.getJSONArray("teams");
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        for(int i = 0; i<dataArray.length();i++){
-                            JSONObject dataObject = dataArray.getJSONObject(i);
-                            TextView textView = new TextView(getContext());
-                            textView.setText("abcd");
-                            rcLineup.addView(textView);
+                        tvCaptainFirst.setText("NA");
+                        tvCaptainSecond.setText("NA");
+                        LinearLayout linearLayout = null;
+                        TextView tvPlayerName = null;
+                        TextView tvPosition = null;
+                        for(int i = 0; i<subsArray.length();i++){
+                            JSONObject subsObject = subsArray.getJSONObject(i);
+                            linearLayout = new LinearLayout(getContext());
+                            tvPlayerName = new TextView(getContext());
+                            tvPosition = new TextView(getContext());
+                            tvPlayerName.setText(subsObject.getString("player_name"));
+                            tvPosition.setText(subsObject.getString("position"));
+                            linearLayout.addView(tvPosition);
+                            linearLayout.addView(tvPlayerName);
+
+                            gvSubstitutes.addView(linearLayout);
+   }
+
+                        for(int i = 0; i<teamsObjectArray.length();i++){
+                            JSONObject teamsObject = teamsObjectArray.getJSONObject(i);
+                            linearLayout = new LinearLayout(getContext());
+                            tvPlayerName = new TextView(getContext());
+                            tvPosition = new TextView(getContext());
+                            tvPlayerName.setText(teamsObject.getString("name"));
+                            tvPosition.setText(teamsObject.getString("position"));
+                            linearLayout.addView(tvPosition);
+                            linearLayout.addView(tvPlayerName);
+                          rcLineup.addView(linearLayout);
                         }
                         } catch (Exception ex) {
                         ex.printStackTrace();

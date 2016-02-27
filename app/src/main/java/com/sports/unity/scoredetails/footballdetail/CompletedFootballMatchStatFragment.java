@@ -149,7 +149,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
                         CompleteFootballMatchStatDTO completeFootballMatchStatDTO;
                      for (int i = 0;i< dataArray.length();i++){
                          completeFootballMatchStatDTO = new CompleteFootballMatchStatDTO();
-                         //completeFootballMatchStatDTO.setTvLable();
+                         completeFootballMatchStatDTO.setTvLable("");
                          list.add(completeFootballMatchStatDTO);
                      }
                         completeFootballMatchStatAdapter.notifyDataSetChanged();

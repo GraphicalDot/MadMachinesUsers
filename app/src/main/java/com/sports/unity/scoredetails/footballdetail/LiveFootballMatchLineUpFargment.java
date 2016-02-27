@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.sports.unity.R;
 import com.sports.unity.scores.ScoreDetailActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,13 +34,15 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
     String toss = "";
     String matchName="";
     String date = "";
-    private GridLayout rclineup;
-    private GridLayout gvsubstitutes;
-    private TextView tvcaption;
-    private TextView tvIkerCasillan;
+    private String matchId;
+    private TextView tvCaptainFirst;
+    private TextView tvCaptainSecond;
     private TextView tvCarlesPayol;
     private TextView tvlineup;
+    private GridLayout rcLineup;
     private TextView tvsubstitutes;
+    private GridLayout gvSubstitutes;
+
 
     public LiveFootballMatchLineUpFargment() {
         // Required empty public constructor
@@ -69,11 +72,13 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         initErrorLayout(view);
-        tvcaption=(TextView)view.findViewById(R.id.tv_caption);
-        tvIkerCasillan=(TextView)view.findViewById(R.id.tv_Iker_Casillan);
-        tvCarlesPayol=(TextView)view.findViewById(R.id.tv_Carles_Payol);
+        tvCaptainFirst=(TextView)view.findViewById(R.id.tv_team_first_captain);
+        tvCaptainSecond=(TextView)view.findViewById(R.id.tv_team_second_captain);
         tvlineup=(TextView)view.findViewById(R.id.tv_line_up);
         tvsubstitutes=(TextView)view.findViewById(R.id.tv_substitutes);
+        rcLineup = (GridLayout) view.findViewById(R.id.gv_lineup);
+        gvSubstitutes = (GridLayout) view.findViewById(R.id.gv_substitutes);
+
 
     }
     private void  showProgressBar(){
@@ -124,12 +129,43 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         hideProgressBar();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
+        final JSONObject dataObject = jsonObject.getJSONObject("data");
+        final JSONArray subsArray = dataObject.getJSONArray("subs");
+        final JSONArray teamsObjectArray = dataObject.getJSONArray("teams");
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        showErrorLayout(getView());
+                        tvCaptainFirst.setText("NA");
+                        tvCaptainSecond.setText("NA");
+                        LinearLayout linearLayout = null;
+                        TextView tvPlayerName = null;
+                        TextView tvPosition = null;
+                        for(int i = 0; i<subsArray.length();i++){
+                            JSONObject subsObject = subsArray.getJSONObject(i);
+                            linearLayout = new LinearLayout(getContext());
+                            tvPlayerName = new TextView(getContext());
+                            tvPosition = new TextView(getContext());
+                            tvPlayerName.setText(subsObject.getString("player_name"));
+                            tvPosition.setText(subsObject.getString("position"));
+                            linearLayout.addView(tvPosition);
+                            linearLayout.addView(tvPlayerName);
+
+                            gvSubstitutes.addView(linearLayout);
+                        }
+
+                        for(int i = 0; i<teamsObjectArray.length();i++){
+                            JSONObject teamsObject = teamsObjectArray.getJSONObject(i);
+                            linearLayout = new LinearLayout(getContext());
+                            tvPlayerName = new TextView(getContext());
+                            tvPosition = new TextView(getContext());
+                            tvPlayerName.setText(teamsObject.getString("name"));
+                            tvPosition.setText(teamsObject.getString("position"));
+                            linearLayout.addView(tvPosition);
+                            linearLayout.addView(tvPlayerName);
+                            rcLineup.addView(linearLayout);
+                        }
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());
