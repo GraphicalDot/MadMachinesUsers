@@ -121,41 +121,41 @@
                                 android:id="@+id/player_age"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight=".5"
                                 android:gravity="center"
                                 android:text=""
                                 android:textColor="@color/Very_dark_gray"
-                                android:textSize="@dimen/font_size_medium" />
+                                android:textSize="@dimen/font_size_very_small" />
 
                             <TextView
                                 android:id="@+id/position_value"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight="1.5"
                                 android:gravity="center"
                                 android:text=""
                                 android:textColor="@color/Very_dark_gray"
-                                android:textSize="@dimen/font_size_medium" />
+                                android:textSize="@dimen/font_size_very_small" />
 
                             <TextView
                                 android:id="@+id/squad_number"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight=".5"
                                 android:gravity="center"
                                 android:text=""
                                 android:textColor="#1a1a1a"
-                                android:textSize="@dimen/font_size_medium" />
+                                android:textSize="@dimen/font_size_very_small" />
 
                             <TextView
                                 android:id="@+id/nationality_value"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight="1.5"
                                 android:gravity="center"
                                 android:text=""
                                 android:textColor="@color/Very_dark_gray"
-                                android:textSize="@dimen/font_size_medium" />
+                                android:textSize="@dimen/font_size_very_small" />
                         </TableRow>
 
                         <TableRow>
@@ -164,7 +164,7 @@
                                 android:id="@+id/age_label"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight=".5"
                                 android:gravity="center"
                                 android:text="@string/age"
                                 android:textColor="@color/dot_color_grey"
@@ -174,7 +174,7 @@
                                 android:id="@+id/position_label"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight="1.5"
                                 android:gravity="center"
                                 android:text="@string/position"
                                 android:textColor="@color/dot_color_grey"
@@ -184,7 +184,7 @@
                                 android:id="@+id/squad_label"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight=".5"
                                 android:gravity="center"
                                 android:text="@string/scored"
                                 android:textColor="@color/dot_color_grey"
@@ -194,7 +194,7 @@
                                 android:id="@+id/nationality_label"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight="1.5"
                                 android:gravity="center"
                                 android:text="@string/nation"
                                 android:textColor="@color/dot_color_grey"
@@ -204,7 +204,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
+       <!--     <LinearLayout
                 android:id="@+id/id_team_summery"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -381,7 +381,7 @@
                         </TableRow>
                     </TableLayout>
                 </LinearLayout>
-            </LinearLayout>
+            </LinearLayout>-->
 
             <LinearLayout
                 android:id="@+id/current_season"
@@ -422,7 +422,7 @@
                     <android.support.percent.PercentRelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_small">
+                        android:padding="@dimen/horizontal_padding_very_very_small">
 
                         <ImageView
                             android:id="@+id/iv_league"
@@ -572,21 +572,10 @@
                             app:layout_widthPercent="14%" />
                     </android.support.percent.PercentRelativeLayout>
 
-                    <TableLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_small"
-                        android:weightSum="7">
-                        <TableRow android:padding="@dimen/horizontal_padding_small">
-
-
-                        </TableRow>
-                    </TableLayout>
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/rc_player_details"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_small"
                         app:layoutManager="com.sports.unity.common.view.CustomLinearLayoutManager"
                         tools:listitem="@layout/player_profile_card">
                     </android.support.v7.widget.RecyclerView>
