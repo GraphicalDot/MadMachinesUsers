@@ -11,12 +11,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/round_edge_black_box"
-                android:layout_margin="@dimen/activity_vertical_margin">
+                android:layout_margin="@dimen/activity_vertical_margin"
+                android:background="@drawable/round_edge_black_box">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -27,9 +26,9 @@
                     android:orientation="vertical">
                     <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                         android:id="@+id/tv_recent"
-                        android:padding="@dimen/horizontal_padding_very_very_small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:padding="@dimen/horizontal_padding_very_very_small"
                         android:text="@string/recent"
                         android:textColor="@color/gray1"
                         android:textSize="@dimen/font_size_very_small"
@@ -121,58 +120,58 @@
                         android:layout_height="wrap_content"
 
                         android:orientation="vertical"
+                        android:paddingBottom="@dimen/horizontal_padding_medium"
                         android:paddingLeft="@dimen/horizontal_padding_very_very_small"
                         android:paddingRight="@dimen/horizontal_padding_very_very_small"
-                        android:paddingTop="@dimen/horizontal_padding_medium"
-                        android:paddingBottom="@dimen/horizontal_padding_medium">
+                        android:paddingTop="@dimen/horizontal_padding_medium">
                         <ImageView
                             android:id="@+id/iv_player_first"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
                             android:layout_alignParentLeft="true"
+                            android:layout_centerVertical="true"
                             android:src="@drawable/ic_user"/>
 
                         <View
-                            android:layout_centerInParent="true"
                             android:id="@+id/vw_divider"
-                            android:layout_toRightOf="@id/iv_player_first"
                             android:layout_width="match_parent"
-                            android:background="@color/gray3"
-                            android:layout_height="1dp">
+                            android:layout_height="1dp"
+                            android:layout_centerInParent="true"
+                            android:layout_toRightOf="@id/iv_player_first"
+                            android:background="@color/gray3">
                         </View>
                         <ImageView
                             android:id="@+id/iv_player_first_status"
                             android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_centerVertical="true"
                             android:paddingLeft="@dimen/activity_vertical_margin_large"
-                            android:layout_height="wrap_content"
                             android:src="@drawable/ic_active_player" />
                         <ImageView
                             android:id="@+id/iv_player_second"
-                            android:layout_centerVertical="true"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_alignParentRight="true"
+                            android:layout_centerVertical="true"
                             android:src="@drawable/ic_user"/>
 
                         <FrameLayout
                             android:id="@+id/fl_player_first_status"
 
                             android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:layout_alignParentLeft="true"
-                            android:layout_toRightOf="@id/iv_player_first"
-                            android:layout_height="wrap_content">
+                            android:layout_toRightOf="@id/iv_player_first">
 
                         </FrameLayout>
                         <FrameLayout
                             android:id="@+id/fl_player_second_status"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:layout_marginRight="@dimen/activity_vertical_margin_large"
-                            android:layout_width="wrap_content"
-                            android:layout_alignParentRight="true"
-                            android:layout_toLeftOf="@id/iv_player_second"
-                            android:layout_height="wrap_content">
+                            android:layout_toLeftOf="@id/iv_player_second">
                             <ImageView
                                 android:id="@+id/iv_player_second_status"
                                 android:layout_width="wrap_content"

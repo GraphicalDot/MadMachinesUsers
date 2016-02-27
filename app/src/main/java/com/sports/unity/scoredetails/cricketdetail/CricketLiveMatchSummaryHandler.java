@@ -22,7 +22,7 @@ public class CricketLiveMatchSummaryHandler {
     private static Context mContext;
     private String url = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
 
-    private LiveCricketMatchSummaryContentListener mcontentListener;
+    private LiveCricketMatchSummaryContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
     public static CricketLiveMatchSummaryHandler getInstance(Context context) {
@@ -69,9 +69,10 @@ public class CricketLiveMatchSummaryHandler {
 
         try{
             JSONObject jsonObject = new JSONObject(response);
-            Log.i("Score Card", "handleResponse: ");
+            Log.i("Summary", "handleResponse: ");
             if(jsonObject.getBoolean("success")){
                 Log.i("Score Card",response);
+                mContentListener.handleContent(response);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,7 +86,7 @@ public class CricketLiveMatchSummaryHandler {
 
     }
     public void addListener(LiveCricketMatchSummaryContentListener contentListener) {
-        mcontentListener = contentListener;
+        mContentListener = contentListener;
     }
 
 }

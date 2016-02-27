@@ -45,17 +45,30 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         try{
-            TextDrawable.IBuilder mDrawableBuilder = TextDrawable.builder()
-                    .roundRect(10);;
-             ColorGenerator mColorGenerator = ColorGenerator.MATERIAL;
+
             TextDrawable drawable = null;
             holder.dto = mValues.get(position);
             holder.tvLable.setText(holder.dto.getTvLable());
-            drawable = mDrawableBuilder.build(holder.dto.getIvLeftStatus(), mColorGenerator.getColor(holder.dto.getIvLeftStatus()));
-            holder.ivLeftStatus.setImageDrawable(drawable);
+            drawable = TextDrawable.builder()
+                    .beginConfig()
+                    .withBorder(2)
+                    .width(60)
+                    .height(60)
+                    .bold()
+                    .endConfig()
+                    .buildRound( holder.dto.getIvLeftStatus(),(Color.GREEN));
+
+             holder.ivLeftStatus.setImageDrawable(drawable);
             holder.ivLeftStatus.setBackgroundColor(Color.TRANSPARENT);
-            drawable = mDrawableBuilder.build(holder.dto.getIvRightStatus(), mColorGenerator.getColor(holder.dto.getIvRightStatus()));
-            holder.ivRightStatus.setImageDrawable(drawable);
+            drawable = TextDrawable.builder()
+                    .beginConfig()
+                    .withBorder(2)
+                    .width(60)
+                    .height(60)
+                    .bold()
+                    .endConfig()
+                    .buildRound( holder.dto.getIvRightStatus(),(Color.GREEN));
+             holder.ivRightStatus.setImageDrawable(drawable);
             holder.ivRightStatus.setBackgroundColor(Color.TRANSPARENT);
         }catch (Exception e){e.printStackTrace();}
     }
