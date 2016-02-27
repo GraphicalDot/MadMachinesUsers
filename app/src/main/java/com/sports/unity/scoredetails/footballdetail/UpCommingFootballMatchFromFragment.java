@@ -23,6 +23,7 @@ import org.json.JSONObject;
 
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_ID;
+import static com.sports.unity.util.Constants.INTENT_KEY_LEAGUE_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
 import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_NAME;
 import static com.sports.unity.util.Constants.INTENT_KEY_TEAM2_NAME;
@@ -84,13 +85,13 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         super.onAttach(context);
         Intent i = getActivity().getIntent();
         matchId = i.getStringExtra(INTENT_KEY_ID);
-        leagueId = i.getStringExtra(Constants.INTENT_KEY_LEAGUE_ID);
+        leagueId = i.getStringExtra(INTENT_KEY_LEAGUE_ID);
         date = i.getStringExtra(INTENT_KEY_DATE);
         team1 = i.getStringExtra(INTENT_KEY_TEAM1_NAME);
         team2 = i.getStringExtra(INTENT_KEY_TEAM2_NAME);
         UpCommingFootballMatchFromHandler upCommingFootballMatchFromHandler = UpCommingFootballMatchFromHandler.getInstance(context);
         upCommingFootballMatchFromHandler.addListener(this);
-        upCommingFootballMatchFromHandler.requestUpcommingMatchFrom(matchId);
+        upCommingFootballMatchFromHandler.requestUpcommingMatchFrom(leagueId);
 
     }
     @Override
@@ -151,13 +152,13 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     @Override
     public void handleContent(String object) {
         {
-            hideProgressBar();
+            showProgressBar();
 
             try {
                 JSONObject jsonObject = new JSONObject(object);
-                JSONObject data = jsonObject.getJSONObject("data");
-                boolean success = data.getBoolean("success");
-                boolean error = data.getBoolean("error");
+
+                boolean success = jsonObject.getBoolean("success");
+                boolean error = jsonObject.getBoolean("error");
 
                 if( success ) {
 
