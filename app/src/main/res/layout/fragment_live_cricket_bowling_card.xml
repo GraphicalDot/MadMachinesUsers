@@ -19,7 +19,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <com.sports.unity.common.view.CustomRobotoRegularTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_bowler_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -29,7 +29,7 @@
                 android:textSize="@dimen/font_size_small_medium"
                 app:layout_widthPercent="40%" />
 
-            <com.sports.unity.common.view.CustomRobotoRegularTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_over"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -40,7 +40,7 @@
                 android:textSize="@dimen/font_size_small_medium"
                 app:layout_widthPercent="12%" />
 
-            <com.sports.unity.common.view.CustomRobotoRegularTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_midden_over"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                 android:textSize="@dimen/font_size_small_medium"
                 app:layout_widthPercent="11%" />
 
-            <com.sports.unity.common.view.CustomRobotoRegularTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_runs"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
                 android:textSize="@dimen/font_size_small_medium"
                 app:layout_widthPercent="14%" />
 
-            <com.sports.unity.common.view.CustomRobotoRegularTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_wicket"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
                 android:textSize="@dimen/font_size_small_medium"
                 app:layout_widthPercent="11%" />
 
-            <com.sports.unity.common.view.CustomRobotoRegularTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_extra"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
