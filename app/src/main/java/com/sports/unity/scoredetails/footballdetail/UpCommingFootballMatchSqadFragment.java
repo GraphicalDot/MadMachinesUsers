@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
@@ -32,7 +33,9 @@ import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
 import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_ID;
+import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_NAME;
 import static com.sports.unity.util.Constants.INTENT_KEY_TEAM2_ID;
+import static com.sports.unity.util.Constants.INTENT_KEY_TEAM2_NAME;
 import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 
 /**
@@ -44,11 +47,18 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     String toss = "";
     String matchName="";
     String date = "";
+    private String teamFirstName;
+    private String teamSecondName;
     private String teamFirstId;
     private String teamSecondId;
-    private RecyclerView rcRecyclerView;
-    private UpCommingFootballMatchSquadAdapter upCommingFootballMatchSquadAdapter;
-    private List<UpCommingFootballMatchSquadDTO> list = new ArrayList<UpCommingFootballMatchSquadDTO>();
+    private RecyclerView rcRecyclerViewTeamFirst;
+    private RecyclerView rcRecyclerViewTeamSecond;
+    private UpCommingFootballMatchSquadAdapter upCommingFootballMatchSquadAdapterFirst;
+    private List<UpCommingFootballMatchSquadDTO> listTeamFirst = new ArrayList<UpCommingFootballMatchSquadDTO>();
+    private UpCommingFootballMatchSquadAdapter upCommingFootballMatchSquadAdapterSecond;
+    private List<UpCommingFootballMatchSquadDTO> listTeamSecond = new ArrayList<UpCommingFootballMatchSquadDTO>();
+    private TextView tvTeamFirst;
+    private TextView tvTeamSecond;
 
 
 
@@ -66,6 +76,9 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
         date = i.getStringExtra(INTENT_KEY_DATE);
         teamFirstId = i.getStringExtra(INTENT_KEY_TEAM1_ID);
         teamSecondId=i.getStringExtra(INTENT_KEY_TEAM2_ID);
+        teamFirstName = i.getStringExtra(INTENT_KEY_TEAM1_NAME);
+        teamSecondName = i.getStringExtra(INTENT_KEY_TEAM2_NAME);
+
         UpCommingFootballMatchSqadHandler liveFootballMatchTimeLineHandler = UpCommingFootballMatchSqadHandler.getInstance(context);
         liveFootballMatchTimeLineHandler.addListener(this);
         liveFootballMatchTimeLineHandler.requestUpCommingMatchSquad(teamFirstId,teamSecondId);
@@ -80,13 +93,18 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
         return view;
     }
     private void initView(View view) {
-
+        tvTeamFirst = (TextView) view.findViewById(R.id.tv_team_first_name);
+        tvTeamSecond = (TextView) view.findViewById(R.id.tv_team_second_name);
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
-        rcRecyclerView = (RecyclerView) view.findViewById(R.id.child_rv);
-        rcRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
-        upCommingFootballMatchSquadAdapter = new UpCommingFootballMatchSquadAdapter(list,getContext());
-        rcRecyclerView.setAdapter(upCommingFootballMatchSquadAdapter);
+        rcRecyclerViewTeamFirst = (RecyclerView) view.findViewById(R.id.rc_child1_rv);
+        rcRecyclerViewTeamFirst.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        rcRecyclerViewTeamSecond = (RecyclerView) view.findViewById(R.id.rc_child2_rv);
+        rcRecyclerViewTeamSecond.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        upCommingFootballMatchSquadAdapterFirst = new UpCommingFootballMatchSquadAdapter(listTeamFirst,getContext());
+        rcRecyclerViewTeamFirst.setAdapter(upCommingFootballMatchSquadAdapterFirst);
+        upCommingFootballMatchSquadAdapterFirst = new UpCommingFootballMatchSquadAdapter(listTeamFirst,getContext());
+        rcRecyclerViewTeamSecond.setAdapter(upCommingFootballMatchSquadAdapterSecond);
         initErrorLayout(view);
 
     }
@@ -138,41 +156,32 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         hideProgressBar();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-        final JSONArray dataArray = jsonObject.getJSONArray("data");
-
-        if (activity != null) {
+         JSONObject dataObject = jsonObject.getJSONObject("data");
+         final JSONArray teamFirstSquadArray = dataObject.getJSONArray("team_1_squad");
+         final JSONArray teamSecondSquadArray = dataObject.getJSONArray("team_2_squad");
+           if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
+                        tvTeamFirst.setText(teamFirstName);
+                        tvTeamSecond.setText(teamSecondName);
                         UpCommingFootballMatchSquadDTO dto;
-                      for (int i = 0; i< dataArray.length();i++){
-                          JSONObject playerObject = dataArray.getJSONObject(i);
+
+                     for (int i = 0; i< teamFirstSquadArray.length();i++){
+                          JSONObject playerObject = teamFirstSquadArray.getJSONObject(i);
                           dto = new UpCommingFootballMatchSquadDTO();
-                          if(!playerObject.isNull("name")){
-                              dto.setTvPlayerName(playerObject.getString("name"));
-                          }
-                          if(!playerObject.isNull("age")){
-                              dto.setTvPlayerAge(playerObject.getString("age"));
-                          }
-                          if(!playerObject.isNull("position")){
-                              dto.setTvP(playerObject.getString("position"));
-                          }
-                          if(!playerObject.isNull("games_played")){
-                              dto.setTvpl(playerObject.getString("games_played"));
-                          }
-                          if(!playerObject.isNull("goals")){
-                              dto.setTvgol(playerObject.getString("goals"));
-                          }
-                          if(!playerObject.isNull("red_cards")){
-                              dto.setTvredcard(playerObject.getString("red_cards"));
-                          }
-                          if(!playerObject.isNull("yellow_cards")){
-                              dto.setTvyellowcard(playerObject.getString("yellow_cards"));
-                          }
-                          list.add(dto);
+                          getSquadDetails(dto, playerObject);
+                          listTeamFirst.add(dto);
                       }
-                       upCommingFootballMatchSquadAdapter.notifyDataSetChanged();
+                        for (int i = 0; i< teamSecondSquadArray.length();i++){
+                            JSONObject playerObject = teamSecondSquadArray.getJSONObject(i);
+                            dto = new UpCommingFootballMatchSquadDTO();
+                            getSquadDetails(dto, playerObject);
+                            listTeamSecond.add(dto);
+                        }
+                        upCommingFootballMatchSquadAdapterFirst.notifyDataSetChanged();
+                        upCommingFootballMatchSquadAdapterSecond.notifyDataSetChanged();
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());
@@ -181,6 +190,30 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
             });
         }
 
+    }
+
+    private void getSquadDetails(UpCommingFootballMatchSquadDTO dto, JSONObject playerObject) throws JSONException {
+        if(!playerObject.isNull("name")){
+            dto.setTvPlayerName(playerObject.getString("name"));
+        }
+        if(!playerObject.isNull("age")){
+            dto.setTvPlayerAge(playerObject.getString("age"));
+        }
+        if(!playerObject.isNull("position")){
+            dto.setTvP(playerObject.getString("position").substring(0,1));
+        }
+        if(!playerObject.isNull("games_played")){
+            dto.setTvpl(playerObject.getString("games_played"));
+        }
+        if(!playerObject.isNull("goals")){
+            dto.setTvgol(playerObject.getString("goals"));
+        }
+        if(!playerObject.isNull("red_cards")){
+            dto.setTvredcard(playerObject.getString("red_cards"));
+        }
+        if(!playerObject.isNull("yellow_cards")){
+            dto.setTvyellowcard(playerObject.getString("yellow_cards"));
+        }
     }
 
 }

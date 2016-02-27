@@ -2,7 +2,9 @@ package com.sports.unity.scoredetails.footballdetail;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
@@ -11,16 +13,20 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.Constants;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static com.sports.unity.util.Constants.COLOR_BLUE;
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_LEAGUE_ID;
@@ -138,8 +144,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         tvwinmatchofsecondteam=(TextView)view.findViewById(R.id.tv_win_match_of_second_team);
         tvdrawmatchofsecondteam=(TextView)view.findViewById(R.id.tv_draw_match_of_second_team);
         tvlossmatchofsecondteam=(TextView)view.findViewById(R.id.tv_loss_match_of_second_team);
-        secondview=(View)view.findViewById(R.id.second_view);
-        tvsecondpremieradivision=(TextView)view.findViewById(R.id.tv_second_premiera_division);
+
         commentaryrefresh=(SwipeRefreshLayout)view.findViewById(R.id.commentary_refresh);
 
     }
@@ -191,12 +196,70 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         hideProgressBar();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
+        final JSONArray dataArray = jsonObject.getJSONArray("data");
+
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        showErrorLayout(getView());
+                        for(int i = 0; i< dataArray.length();i++){
+                            JSONObject teamFromObject = dataArray.getJSONObject(i);
+                            if(!teamFromObject.isNull("team_name")){
+                                if(team1.equals(teamFromObject.getString("team_name"))){
+                                    tvnamefirstteam.setText(teamFromObject.getString("team_name"));
+                                    if(!teamFromObject.isNull("recent_form")){
+                                        String recentForm = teamFromObject.getString("recent_form");
+                                        ivfirstmatchteamfirst.setImageResource(R.drawable.recent_balls);
+                                        ivfirstmatchteamfirst.setBackgroundColor(getBallColor(recentForm.charAt(0)));
+                                        ivsecondmatchteamfirst.setImageResource(R.drawable.recent_balls);
+                                        ivsecondmatchteamfirst.setBackgroundColor(getBallColor(recentForm.charAt(1)));
+                                        ivthirdmatchteamfirst.setImageResource(R.drawable.recent_balls);
+                                        ivthirdmatchteamfirst.setBackgroundColor(getBallColor(recentForm.charAt(2)));
+                                        ivforthmatchteamfirst.setImageResource(R.drawable.recent_balls);
+                                        ivforthmatchteamfirst.setBackgroundColor(getBallColor(recentForm.charAt(3)));
+                                        ivfifthmatchteamfirst.setImageResource(R.drawable.recent_balls);
+                                        ivfifthmatchteamfirst.setBackgroundColor(getBallColor(recentForm.charAt(4)));}
+                                    if(!teamFromObject.isNull("team_points")){
+                                        tvpointoffirstteam.setText(teamFromObject.getString("team_points"));}
+                                    if(!teamFromObject.isNull("games_won")) {
+                                        tvwinmatchoffirstteam.setText(teamFromObject.getString("games_won"));
+                                    }if(!teamFromObject.isNull("games_drawn")){
+                                        tvdrawmatchoffirstteam.setText(teamFromObject.getString("games_drawn"));}
+                                    if(!teamFromObject.isNull("games_lost")){
+                                        tvlossmatchoffirstteam.setText(teamFromObject.getString("games_lost"));}
+
+                                }else if(team2.equals(teamFromObject.getString("team_name"))){
+                                    tvnamesecondteam.setText(teamFromObject.getString("team_name"));
+                                    if(!teamFromObject.isNull("recent_form")) {
+                                        String recentForm = teamFromObject.getString("recent_form");
+                                        tvfirstmatchteamsecond.setImageResource(R.drawable.recent_balls);
+                                        tvfirstmatchteamsecond.setBackgroundColor(getBallColor(recentForm.charAt(0)));
+                                        tvsecondmatchteamsecond.setImageResource(R.drawable.recent_balls);
+                                        tvsecondmatchteamsecond.setBackgroundColor(getBallColor(recentForm.charAt(1)));
+                                        tvthirdmatchteamsecond.setImageResource(R.drawable.recent_balls);
+                                        tvthirdmatchteamsecond.setBackgroundColor(getBallColor(recentForm.charAt(2)));
+                                        tvforthmatchteamsecond.setImageResource(R.drawable.recent_balls);
+                                        tvforthmatchteamsecond.setBackgroundColor(getBallColor(recentForm.charAt(3)));
+                                        tvfifthmatchteamsecond.setImageResource(R.drawable.recent_balls);
+                                        tvfifthmatchteamsecond.setBackgroundColor(getBallColor(recentForm.charAt(4)));
+                                    } if(!teamFromObject.isNull("team_points")){
+                                        tvpointofsecondteam.setText(teamFromObject.getString("team_points"));}
+                                    if(!teamFromObject.isNull("games_won")){
+                                        tvwinmatchofsecondteam.setText(teamFromObject.getString("games_won"));}
+                                    if(!teamFromObject.isNull("games_drawn")) {
+                                        tvdrawmatchofsecondteam.setText(teamFromObject.getString("games_drawn"));
+                                    }
+                                    if(!teamFromObject.isNull("games_lost")){
+                                        tvlossmatchofsecondteam.setText(teamFromObject.getString("games_lost"));}
+
+                                }
+
+                            }
+
+
+                        }
+
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());
@@ -205,6 +268,24 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
             });
         }
 
+    }
+
+
+    private int getBallColor(char c){
+        int color= 0;
+        switch (c){
+            case 'W':
+                color= Color.GREEN;
+                break;case 'L':
+                color=Color.RED;
+                break;
+            case 'D':
+                color= Color.YELLOW;
+                break;
+            default:color = Color.WHITE;
+        }
+
+        return color ;
     }
 
 }

@@ -146,9 +146,13 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
                 @Override
                 public void run() {
                     try {
+                        CompleteFootballMatchStatDTO completeFootballMatchStatDTO;
                      for (int i = 0;i< dataArray.length();i++){
-
+                         completeFootballMatchStatDTO = new CompleteFootballMatchStatDTO();
+                         //completeFootballMatchStatDTO.setTvLable();
+                         list.add(completeFootballMatchStatDTO);
                      }
+                        completeFootballMatchStatAdapter.notifyDataSetChanged();
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());
