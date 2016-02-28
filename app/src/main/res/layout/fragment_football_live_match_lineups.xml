@@ -141,6 +141,7 @@
                 android:padding="@dimen/horizontal_padding_small"
                 >
             </GridLayout>
+
         </LinearLayout>
     </android.support.v7.widget.CardView>
     <include

@@ -1,5 +1,6 @@
 package com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
@@ -50,26 +52,34 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
             holder.dto = mValues.get(position);
             holder.tvLable.setText(holder.dto.getTvLable());
             drawable = TextDrawable.builder()
-                    .beginConfig()
+                    .beginConfig().textColor(Color.BLACK)
                     .withBorder(2)
-                    .width(60)
-                    .height(60)
+                    .width(75)
+                    .height(75)
                     .bold()
                     .endConfig()
-                    .buildRound( holder.dto.getIvLeftStatus(),(Color.GREEN));
+                    .buildRound(holder.dto.getIvLeftStatus(), Color.WHITE);
 
              holder.ivLeftStatus.setImageDrawable(drawable);
-            holder.ivLeftStatus.setBackgroundColor(Color.TRANSPARENT);
             drawable = TextDrawable.builder()
-                    .beginConfig()
+                    .beginConfig().textColor(Color.BLACK)
                     .withBorder(2)
-                    .width(60)
-                    .height(60)
+                    .width(75)
+                    .height(75)
                     .bold()
                     .endConfig()
-                    .buildRound( holder.dto.getIvRightStatus(),(Color.GREEN));
-             holder.ivRightStatus.setImageDrawable(drawable);
-            holder.ivRightStatus.setBackgroundColor(Color.TRANSPARENT);
+                    .buildRound( holder.dto.getIvRightStatus(),(Color.WHITE));
+               holder.ivRightStatus.setImageDrawable(drawable);
+              holder.ivCenterStatus.setImageResource(R.drawable.ic_football);
+            try{
+                Integer redValue= Integer.parseInt(holder.dto.getIvLeftStatus());
+                Integer blueValue= Integer.parseInt(holder.dto.getIvRightStatus());
+                holder.redView.getLayoutParams().width = (redValue+blueValue)/blueValue*100;
+                holder.blueView.getLayoutParams().width =(redValue+blueValue)/redValue*100;
+
+            }catch (Exception e){e.printStackTrace();}
+
+
         }catch (Exception e){e.printStackTrace();}
     }
 
@@ -85,6 +95,9 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
         private TextView tvLable;
         private ImageView ivLeftStatus;
         private ImageView ivRightStatus;
+        private ImageView ivCenterStatus;
+        private ImageView redView;
+        private ImageView blueView;
         public CompleteFootballMatchStatDTO dto;
 
         public ViewHolder(View view) {
@@ -93,6 +106,9 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
             tvLable = (TextView) view.findViewById(R.id.tv_lable);
             ivLeftStatus = (ImageView) view.findViewById(R.id.iv_left_status);
             ivRightStatus = (ImageView) view.findViewById(R.id.iv_right_status);
+            ivCenterStatus = (ImageView) view.findViewById(R.id.iv_center_status);
+            redView = (ImageView) view.findViewById(R.id.vw_red);
+            blueView = (ImageView) view.findViewById(R.id.vw_blue);
 
 
         }

@@ -170,11 +170,13 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
                         while (keysSetItr.hasNext()) {
                             String key = keysSetItr.next();
                             try {
-                                completeFootballMatchStatDTO = new CompleteFootballMatchStatDTO();
-                                completeFootballMatchStatDTO.setTvLable(key);
-                                completeFootballMatchStatDTO.setIvLeftStatus(teamFirstStatsObject.getString(key));
-                                completeFootballMatchStatDTO.setIvRightStatus(teamSecondStatsObject.getString(key));
-                                list.add(completeFootballMatchStatDTO);
+                                if(!(key.equals("match_id") || key.equals("team"))) {
+                                   completeFootballMatchStatDTO = new CompleteFootballMatchStatDTO();
+                                    completeFootballMatchStatDTO.setTvLable(key);
+                                    completeFootballMatchStatDTO.setIvLeftStatus(teamFirstStatsObject.getString(key));
+                                    completeFootballMatchStatDTO.setIvRightStatus(teamSecondStatsObject.getString(key));
+                                    list.add(completeFootballMatchStatDTO);
+                                }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

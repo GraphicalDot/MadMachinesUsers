@@ -41,16 +41,16 @@
                     android:layout_height="0dp"
                     android:layout_centerInParent="true">
                 </View>
-                <View
+                <ImageView
                     android:id="@+id/vw_red"
                     android:layout_toLeftOf="@+id/v_dummy"
-                    android:layout_width="90dp"
+                    android:layout_width="100dp"
                     android:layout_height="40dp"
                     android:background="@color/brick_red"/>
-                <View
+                <ImageView
                     android:id="@+id/vw_blue"
                     android:layout_toRightOf="@+id/v_dummy"
-                    android:layout_width="90dp"
+                    android:layout_width="100dp"
                     android:layout_height="40dp"
                     android:background="@color/dark_blue"/>
                     <ImageView

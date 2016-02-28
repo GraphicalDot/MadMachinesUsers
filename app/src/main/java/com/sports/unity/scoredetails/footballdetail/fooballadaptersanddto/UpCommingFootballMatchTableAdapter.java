@@ -53,7 +53,7 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
         holder.tvD.setText(holder.dto.getTvD());
         holder.tvL.setText(holder.dto.getTvL());
         holder.tvPts.setText(holder.dto.getTvPts());
-            if(holder.dto.getTvTeamName().equals(team1) || holder.dto.getTvTeamName().equals(team2)){
+            if((holder.dto.getTvTeamName().equals(team1) || holder.dto.getTvTeamName().equals(team2))){
                 holder.tvSerialNumber.setTextColor(Color.BLUE);
                 holder.tvTeamName.setTextColor(Color.BLUE);
                 holder.tvP.setTextColor(Color.BLUE);

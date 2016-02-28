@@ -2,6 +2,7 @@ package com.sports.unity.scoredetails.footballdetail;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -10,11 +11,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.sports.unity.R;
 import com.sports.unity.scoredetails.cricketdetail.CompletedMatchScoreCardHandler;
 import com.sports.unity.scoredetails.cricketdetail.CricketUpcomingMatchSummaryHandler;
@@ -139,18 +142,27 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                 @Override
                 public void run() {
                     try {
+                        TextDrawable drawable = null;
                         tvCaptainFirst.setText("NA");
                         tvCaptainSecond.setText("NA");
                         LinearLayout linearLayout = null;
                         TextView tvPlayerName = null;
-                        TextView tvPosition = null;
+                        ImageView tvPosition = null;
                         for(int i = 0; i<subsArray.length();i++){
                             JSONObject subsObject = subsArray.getJSONObject(i);
                             linearLayout = new LinearLayout(getContext());
                             tvPlayerName = new TextView(getContext());
-                            tvPosition = new TextView(getContext());
+                            tvPosition = new ImageView(getContext());
                             tvPlayerName.setText(subsObject.getString("player_name"));
-                            tvPosition.setText(subsObject.getString("position"));
+                            drawable = TextDrawable.builder()
+                                    .beginConfig().textColor(Color.BLACK)
+                                    .withBorder(2)
+                                    .width(75)
+                                    .height(75)
+                                    .bold()
+                                    .endConfig()
+                                    .buildRound(subsObject.getString("position"), Color.WHITE);
+                            tvPosition.setImageDrawable(drawable);
                             linearLayout.addView(tvPosition);
                             linearLayout.addView(tvPlayerName);
 
@@ -161,9 +173,17 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                             JSONObject teamsObject = teamsObjectArray.getJSONObject(i);
                             linearLayout = new LinearLayout(getContext());
                             tvPlayerName = new TextView(getContext());
-                            tvPosition = new TextView(getContext());
+                            tvPosition = new ImageView(getContext());
                             tvPlayerName.setText(teamsObject.getString("name"));
-                            tvPosition.setText(teamsObject.getString("position"));
+                            drawable = TextDrawable.builder()
+                                    .beginConfig().textColor(Color.BLACK)
+                                    .withBorder(2)
+                                    .width(75)
+                                    .height(75)
+                                    .bold()
+                                    .endConfig()
+                                    .buildRound(teamsObject.getString("position"), Color.WHITE);
+                            tvPosition.setImageDrawable(drawable);
                             linearLayout.addView(tvPosition);
                             linearLayout.addView(tvPlayerName);
                           rcLineup.addView(linearLayout);
@@ -177,5 +197,9 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         }
 
     }
+
+
+
+
 
 }
