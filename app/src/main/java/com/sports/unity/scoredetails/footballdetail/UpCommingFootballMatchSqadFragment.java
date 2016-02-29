@@ -103,7 +103,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
         rcRecyclerViewTeamSecond.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         upCommingFootballMatchSquadAdapterFirst = new UpCommingFootballMatchSquadAdapter(listTeamFirst,getContext());
         rcRecyclerViewTeamFirst.setAdapter(upCommingFootballMatchSquadAdapterFirst);
-        upCommingFootballMatchSquadAdapterFirst = new UpCommingFootballMatchSquadAdapter(listTeamFirst,getContext());
+        upCommingFootballMatchSquadAdapterSecond = new UpCommingFootballMatchSquadAdapter(listTeamFirst,getContext());
         rcRecyclerViewTeamSecond.setAdapter(upCommingFootballMatchSquadAdapterSecond);
         initErrorLayout(view);
 
@@ -197,7 +197,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
             dto.setTvPlayerName(playerObject.getString("name"));
         }
         if(!playerObject.isNull("age")){
-            dto.setTvPlayerAge(playerObject.getString("age"));
+            dto.setTvPlayerAge("("+playerObject.getString("age")+")");
         }
         if(!playerObject.isNull("position")){
             dto.setTvP(playerObject.getString("position").substring(0,1));
