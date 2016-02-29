@@ -141,7 +141,6 @@
                         android:paddingLeft="@dimen/horizontal_padding_very_very_small"
                         android:paddingRight="@dimen/horizontal_padding_very_very_small"
                         android:paddingTop="@dimen/horizontal_padding_medium">
-
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/iv_player_first"
                             android:layout_width="@dimen/profile_thumb_image_small"
@@ -149,16 +148,6 @@
                             android:layout_alignParentLeft="true"
                             android:layout_centerVertical="true"
                             android:src="@drawable/ic_user" />
-
-                        <View
-                            android:id="@+id/vw_divider"
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_centerInParent="true"
-                            android:layout_toLeftOf="@id/iv_player_second_status"
-                            android:layout_toRightOf="@id/iv_player_first_status"
-                            android:background="@color/gray3"></View>
-
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/iv_player_first_status"
                             android:layout_width="@dimen/group_info_padding"
@@ -174,7 +163,6 @@
                             android:layout_alignParentRight="true"
                             android:layout_centerVertical="true"
                             android:src="@drawable/ic_user" />
-
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/iv_player_second_status"
                             android:layout_width="@dimen/group_info_padding"
@@ -182,8 +170,16 @@
                             android:layout_centerVertical="true"
                             android:layout_toLeftOf="@id/iv_player_second"
                             android:src="@drawable/ic_active_player" />
+                        <View
+                            android:id="@+id/vw_divider"
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_centerInParent="true"
+                            android:layout_toLeftOf="@id/iv_player_second_status"
+                            android:layout_toRightOf="@id/iv_player_first_status"
+                            android:background="@color/gray3"></View>
 
-                        <LinearLayout
+                       <LinearLayout
                             android:id="@+id/layout_batting"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
