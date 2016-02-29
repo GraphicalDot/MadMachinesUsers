@@ -303,7 +303,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 Glide.with(this).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(flag1);
                 Glide.with(this).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(flag2);
 
-                //findViewById(R.id.central_score).setVisibility(View.GONE);
+               // findViewById(R.id.central_score).setVisibility(View.GONE);
 
                 ((TextView)findViewById(R.id.venue)).setText(cricketMatchJsonCaller.getVenue());
                 ((TextView)findViewById(R.id.date)).setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
@@ -320,6 +320,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     if ( cricketMatchJsonCaller.getStatus().equals("completed") ) {
                          tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
                     } else {
+
                         enableAutoRefreshContent();
                     }
 
@@ -424,7 +425,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     score.append(" - ");
                     score.append(footballMatchJsonCaller.getAwayTeamScore());
 
-                    //textView = (TextView)findViewById(R.id.c);
+                    textView = (TextView)findViewById(R.id.tv_match_time);
                     textView.setText(score.toString());
 
                     requestCommentaries = true;

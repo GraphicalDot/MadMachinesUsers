@@ -4,9 +4,11 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -74,8 +76,9 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
             try{
                 Integer redValue= Integer.parseInt(holder.dto.getIvLeftStatus());
                 Integer blueValue= Integer.parseInt(holder.dto.getIvRightStatus());
-                holder.redView.getLayoutParams().width = (redValue+blueValue)/blueValue*100;
-                holder.blueView.getLayoutParams().width =(redValue+blueValue)/redValue*100;
+                int radius = context.getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
+                holder.redView.getLayoutParams().width = radius-(redValue+blueValue)/blueValue*100;
+                holder.blueView.getLayoutParams().width =radius-(redValue+blueValue)/redValue*100;
 
             }catch (Exception e){e.printStackTrace();}
 

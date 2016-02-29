@@ -6,7 +6,7 @@ package com.sports.unity.scoredetails;
 public class BallDetail {
    private  String value = ".";
     private int type= 0;
-    private int forntColor;
+    private int fontColor;
     private int backGroundColor;
 
     public String getValue() {
@@ -28,12 +28,12 @@ public class BallDetail {
         this.type = type;
     }
 
-    public int getForntColor() {
-        return forntColor;
+    public int getFontColor() {
+        return fontColor;
     }
 
-    public void setForntColor(int forntColor) {
-        this.forntColor = forntColor;
+    public void setFontColor(int fontColor) {
+        this.fontColor = fontColor;
     }
 
     public int getBackGroundColor() {

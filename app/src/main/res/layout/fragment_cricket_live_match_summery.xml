@@ -58,6 +58,7 @@
                             android:layout_width="@dimen/recent_ball_radius"
                             android:layout_height="@dimen/recent_ball_radius"
                             android:layout_weight="1"
+
                             android:src="@drawable/recent_balls" />
 
                         <de.hdodenhof.circleimageview.CircleImageView
@@ -504,7 +505,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_horizontal"
-                                    android:text=""
+                                    android:text="OVERS"
                                     android:textColor="@color/score_light_grey"
                                     android:textSize="@dimen/font_size_very_small" />
                             </LinearLayout>
@@ -529,7 +530,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="right"
-                                    android:text=""
+                                    android:text="W/R"
                                     android:textColor="@color/score_light_grey"
                                     android:textSize="@dimen/font_size_very_small" />
                             </LinearLayout>

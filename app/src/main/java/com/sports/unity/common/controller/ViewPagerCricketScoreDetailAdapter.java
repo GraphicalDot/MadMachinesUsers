@@ -44,13 +44,14 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
 
         Fragment fragment = null;
         if (position == 0) {
-            if(matchStatus.equalsIgnoreCase("notstarted")){
+            /*if(matchStatus.equalsIgnoreCase("notstarted")){
                 fragment = new CricketUpcomingMatchSummaryFragment();
             }else if(matchStatus.equalsIgnoreCase("started")){
                 fragment = new CricketLiveMatchSummaryFragment();
             } else {
                 fragment = new CricketCompletedMatchSummeryFragment();
-            }
+            }*/
+            fragment = new CricketLiveMatchSummaryFragment();
         } else if (position == 1) {
             if(matchStatus.equalsIgnoreCase("notstarted")){
                 fragment = new UpcommingMatchCommentaryFragment();

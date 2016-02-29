@@ -46,20 +46,22 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
 
             TextDrawable drawable = null;
             holder.dto = mValues.get(position);
-            if(holder.dto.getTeamName().equals(context.getString(R.string.home_team_name))) {
+            if(holder.dto.getTeamName().equalsIgnoreCase(context.getString(R.string.home_team_name))) {
                 holder.tvTeamFirstTime.setText(holder.dto.getTvTeamFirstTime());
                 holder.tvTeamFirstOnPlayer.setText(holder.dto.getTvTeamFirstOnPlayer());
                 holder.tvTeamFirstOffPlayer.setText(holder.dto.getTvTeamFirstOffPlayer());
                 holder.teamSecondView.setVisibility(View.GONE);
 
-            }else if(holder.dto.getTeamName().equals(context.getString(R.string.away_team_name)))
+            }else if(holder.dto.getTeamName().equalsIgnoreCase(context.getString(R.string.away_team_name)))
             {
                 holder.tvTeamSecondTime.setText(holder.dto.getTvTeamSecondTime());
                 holder.tvTeamSecondOnPlayer.setText(holder.dto.getTvTeamSecondOnPlayer());
                 holder.tvTeamSecondOffPlayer.setText(holder.dto.getTvTeamSecondOffPlayer());
                 holder.teamFirstView.setVisibility(View.GONE);
 
-
+            } else {
+                holder.teamFirstView.setVisibility(View.GONE);
+                holder.teamSecondView.setVisibility(View.GONE);
             }
             holder.keyImage.setImageDrawable(holder.dto.getDrwDrawable());
         }catch (Exception e){e.printStackTrace();}

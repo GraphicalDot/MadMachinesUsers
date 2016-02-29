@@ -156,15 +156,14 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
                             completeFootballTimeLineDTO = new CompleteFootballTimeLineDTO();
                             JSONObject dataObject = dataArray.getJSONObject(i);
                             if (!dataObject.isNull("team")) {
+                                completeFootballTimeLineDTO.setTeamName(dataObject.getString("team"));
+                                if (dataObject.getString("team").equalsIgnoreCase(getContext().getString(R.string.home_team_name))) {
 
-                                if (dataObject.getString("team").equals(getContext().getString(R.string.home_team_name))) {
-
-                                    setTeamsTimeDTO(completeFootballTimeLineDTO, dataObject);
+                                    setTeamFirstTimeDTO(completeFootballTimeLineDTO, dataObject);
 
                                 } else {
 
-
-                                    setTeamsTimeDTO(completeFootballTimeLineDTO, dataObject);
+                                    setTeamSecondTimeDTO(completeFootballTimeLineDTO, dataObject);
                                 }
                             }
                             list.add(completeFootballTimeLineDTO);
@@ -180,7 +179,8 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
 
     }
 
-    private void setTeamsTimeDTO(CompleteFootballTimeLineDTO completeFootballTimeLineDTO, JSONObject dataObject) throws JSONException {
+    private void setTeamFirstTimeDTO(CompleteFootballTimeLineDTO completeFootballTimeLineDTO, JSONObject dataObject) throws JSONException {
+
         if(!dataObject.isNull("event_time")){
             completeFootballTimeLineDTO.setTvTeamFirstTime(dataObject.getString("event_time"));
         }else if(!dataObject.isNull("minute")){
@@ -188,17 +188,43 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
         }
 
         if(!dataObject.isNull("player_on")){
-            completeFootballTimeLineDTO.setTvTeamFirstOnPlayer(dataObject.getString("player_on"));
+            completeFootballTimeLineDTO.setTvTeamFirstOnPlayer("ON:" + dataObject.getString("player_on"));
         }
         if(!dataObject.isNull("player_off")){
-            completeFootballTimeLineDTO.setTvTeamFirstOffPlayer(dataObject.getString("player_off"));
+            completeFootballTimeLineDTO.setTvTeamFirstOffPlayer("OFF:" + dataObject.getString("player_off"));
         }
 
         if(!dataObject.isNull("event")){
             completeFootballTimeLineDTO.setDrwDrawable(getDrwableResource(dataObject.getString("event")));
+            completeFootballTimeLineDTO.setTvTeamFirstOnPlayer(dataObject.getString("player_name"));
         }else {
             completeFootballTimeLineDTO.setDrwDrawable(getDrwableResource(""));
         }
+
+
+    }
+    private void setTeamSecondTimeDTO(CompleteFootballTimeLineDTO completeFootballTimeLineDTO, JSONObject dataObject) throws JSONException {
+
+        if(!dataObject.isNull("event_time")){
+            completeFootballTimeLineDTO.setTvTeamSecondTime(dataObject.getString("event_time"));
+        }else if(!dataObject.isNull("minute")){
+            completeFootballTimeLineDTO.setTvTeamSecondTime(dataObject.getString("minute"));
+        }
+
+        if(!dataObject.isNull("player_on")){
+            completeFootballTimeLineDTO.setTvTeamSecondOnPlayer("ON:" + dataObject.getString("player_on"));
+        }
+        if(!dataObject.isNull("player_off")){
+            completeFootballTimeLineDTO.setTvTeamSecondOffPlayer("OFF:" + dataObject.getString("player_off"));
+        }
+
+        if(!dataObject.isNull("event")){
+            completeFootballTimeLineDTO.setDrwDrawable(getDrwableResource(dataObject.getString("event")));
+            completeFootballTimeLineDTO.setTvTeamSecondOnPlayer(dataObject.getString("player_name"));
+        }else {
+            completeFootballTimeLineDTO.setDrwDrawable(getDrwableResource(""));
+        }
+
 
     }
 
