@@ -2,6 +2,7 @@ package com.sports.unity.scoredetails.cricketdetail;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -194,17 +195,17 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                             balls[ballIndex] = getResolveBall(over.getString(j));
                             ballIndex--;
                     }
-            drawable = getTextDrawable(balls[0].getValue(),Color.GREEN);
+            drawable = getTextDrawable(balls[0].getValue() ,balls[0].getForntColor(),balls[0].getBackGroundColor());
             ivFirstBall.setImageDrawable(drawable);
-            drawable = getTextDrawable(balls[1].getValue(),Color.GREEN);
+            drawable = getTextDrawable(balls[1].getValue(),balls[1].getForntColor(),balls[1].getBackGroundColor());
             ivSecondBall.setImageDrawable(drawable);
-            drawable = getTextDrawable(balls[2].getValue(),Color.GREEN);
+            drawable = getTextDrawable(balls[2].getValue(),balls[2].getForntColor(),balls[2].getBackGroundColor());
             ivThirdBall.setImageDrawable(drawable);
-            drawable = getTextDrawable(balls[3].getValue(),Color.GREEN);
+            drawable = getTextDrawable(balls[3].getValue(),balls[3].getForntColor(),balls[3].getBackGroundColor());
             ivFourthBall.setImageDrawable(drawable);
-            drawable = getTextDrawable(balls[4].getValue(),Color.GREEN);
+            drawable = getTextDrawable(balls[4].getValue(),balls[4].getForntColor(),balls[4].getBackGroundColor());
             ivFifthBall.setImageDrawable(drawable);
-            drawable = getTextDrawable(balls[5].getValue(),Color.GREEN);
+            drawable = getTextDrawable(balls[5].getValue(),balls[5].getForntColor(),balls[5].getBackGroundColor());
             ivSixthBall.setImageDrawable(drawable);
             }
 
@@ -219,13 +220,13 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
                         if(!currentPartnershipDetails.isNull("player_a")){
                             tvFirstPlayerName.setText(currentPartnershipDetails.getString("player_a"));
-                            playerNameDraw = getTextDrawable(currentPartnershipDetails.getString("player_a").substring(0,1),Color.RED);
+                            playerNameDraw = getTextDrawable(currentPartnershipDetails.getString("player_a").substring(0,1),Color.WHITE,Color.RED);
                             ivFirstPlayer.setImageDrawable(playerNameDraw);
                         }
 
                         if(!currentPartnershipDetails.isNull("player_b")){
                             tvSecondPlayerName.setText(currentPartnershipDetails.getString("player_b"));
-                            playerNameDraw = getTextDrawable(currentPartnershipDetails.getString("player_b").substring(0,1),Color.RED);
+                            playerNameDraw = getTextDrawable(currentPartnershipDetails.getString("player_b").substring(0,1),Color.WHITE,Color.RED);
                             ivPlayerSecond.setImageDrawable(playerNameDraw);
                         }
 
@@ -242,25 +243,25 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
                         if(yetToBatting.length()>3){
                             tvFirstUpComingPlayerName.setText(yetToBatting.getString(0));
-                            playerNameDraw = getTextDrawable(yetToBatting.getString(0).substring(0,1),Color.RED);
+                            playerNameDraw = getTextDrawable(yetToBatting.getString(0).substring(0,1),Color.WHITE,Color.RED);
                             ivUppComingPlayerFirst.setImageDrawable(playerNameDraw);
                             tvSecondUpComingPlayerName.setText(yetToBatting.getString(1));
-                            playerNameDraw = getTextDrawable(yetToBatting.getString(1).substring(0,1),Color.RED);
+                            playerNameDraw = getTextDrawable(yetToBatting.getString(1).substring(0,1),Color.WHITE,Color.RED);
                             ivUppComingPlayerSecond.setImageDrawable(playerNameDraw);
                             tvThirdUpComingPlayerName.setText(yetToBatting.getString(2));
-                            playerNameDraw = getTextDrawable(yetToBatting.getString(2).substring(0,1),Color.RED);
+                            playerNameDraw = getTextDrawable(yetToBatting.getString(2).substring(0,1),Color.WHITE,Color.RED);
                             ivUppComingPlayerThird.setImageDrawable(playerNameDraw);
                         }else if (yetToBatting.length()==2){
                             tvFirstUpComingPlayerName.setText(yetToBatting.getString(0));
-                            playerNameDraw = getTextDrawable(yetToBatting.getString(0).substring(0,1),Color.RED);
+                            playerNameDraw = getTextDrawable(yetToBatting.getString(0).substring(0,1),Color.WHITE,Color.RED);
                             ivUppComingPlayerFirst.setImageDrawable(playerNameDraw);
                             tvSecondUpComingPlayerName.setText(yetToBatting.getString(1));
-                            playerNameDraw = getTextDrawable(yetToBatting.getString(1).substring(0,1),Color.RED);
+                            playerNameDraw = getTextDrawable(yetToBatting.getString(1).substring(0,1),Color.WHITE,Color.RED);
                             ivUppComingPlayerSecond.setImageDrawable(playerNameDraw);
                             tvThirdUpComingPlayerName.setText("N/A");
                         }else if(yetToBatting.length()==1){
                             tvFirstUpComingPlayerName.setText(yetToBatting.getString(0));
-                            playerNameDraw = getTextDrawable(yetToBatting.getString(0).substring(0,1),Color.RED);
+                            playerNameDraw = getTextDrawable(yetToBatting.getString(0).substring(0,1),Color.WHITE,Color.RED);
                             ivUppComingPlayerFirst.setImageDrawable(playerNameDraw);
                             tvSecondUpComingPlayerName.setText("N/A");
                             tvThirdUpComingPlayerName.setText("N/A");
@@ -271,7 +272,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                         }
                         if(!currentBowlerObject.isNull("name")){
                             tvBowlerName.setText(currentBowlerObject.getString("name"));
-                            playerNameDraw = getTextDrawable(currentBowlerObject.getString("name").substring(0,1),Color.RED);
+                            playerNameDraw = getTextDrawable(currentBowlerObject.getString("name").substring(0,1),Color.WHITE,Color.RED);
                             ivBowlerProfile.setImageDrawable(playerNameDraw);
                         }
 
@@ -295,12 +296,15 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
     }
 
-    private TextDrawable getTextDrawable(String value,int color) {
+    private TextDrawable getTextDrawable(String value,int textColor,int color) {
+        int radius = getContext().getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
+        int border = getContext().getResources().getDimensionPixelSize(R.dimen.user_image_border);
         return TextDrawable.builder()
                 .beginConfig()
-                .withBorder(2)
-                .width(60)
-                .height(60)
+                .textColor(textColor)
+                .withBorder(border)
+                .width(radius)
+                .height(radius)
                 .bold()
                 .endConfig()
                 .buildRound(value, color);
@@ -311,34 +315,61 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
         switch (value){
             case "r1":
                 ballDetail.setValue("1");
+                ballDetail.setForntColor(getBallColor(R.color.balls_color_dot));
+                ballDetail.setBackGroundColor(getBallColor(R.color.white_translucent));
                 break;
             case "r2":
                 ballDetail.setValue("2");
+                ballDetail.setForntColor(getBallColor(R.color.balls_color_dot));
+                ballDetail.setBackGroundColor(getBallColor(R.color.white_translucent));
                 break;
             case "r3":
                 ballDetail.setValue("3");
+                ballDetail.setForntColor(getBallColor(R.color.balls_color_dot));
+                ballDetail.setBackGroundColor(getBallColor(R.color.white_translucent));
                 break;
             case "r4":
                 ballDetail.setValue("4");
+                ballDetail.setForntColor(getBallColor(R.color.font_color_boundary));
+                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
                 break;
             case "r5":
                 ballDetail.setValue("5");
+                ballDetail.setForntColor(getBallColor(R.color.balls_color_dot));
+                ballDetail.setBackGroundColor(getBallColor(R.color.white_translucent));
                 break;
             case "r6":
                 ballDetail.setValue("6");
+                ballDetail.setForntColor(getBallColor(R.color.font_color_boundary));
+                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
                 break;
             case "e1,by":
                 ballDetail.setValue("B");
+                ballDetail.setForntColor(getBallColor(R.color.balls_color_dot));
+                ballDetail.setBackGroundColor(getBallColor(R.color.white_translucent));
                 break;
             case "e1,lb":
                 ballDetail.setValue("LB");
+                ballDetail.setForntColor(getBallColor(R.color.balls_color_dot));
+                ballDetail.setBackGroundColor(getBallColor(R.color.white_translucent));
                 break;
             case "w":
                 ballDetail.setValue("W");
+                ballDetail.setForntColor(getBallColor(R.color.font_color_wicket));
+                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_wicket));
                 break;
 
 
         }
       return    ballDetail;
     }
+
+    private int getBallColor(int id){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            return  getContext().getResources().getColor(id,getActivity().getTheme());
+        } else {
+            return  getContext().getResources().getColor(id);
+        }
+    }
+
 }

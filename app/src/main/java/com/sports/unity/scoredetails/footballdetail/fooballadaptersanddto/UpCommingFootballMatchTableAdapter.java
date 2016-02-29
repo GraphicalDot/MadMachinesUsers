@@ -53,7 +53,7 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
         holder.tvD.setText(holder.dto.getTvD());
         holder.tvL.setText(holder.dto.getTvL());
         holder.tvPts.setText(holder.dto.getTvPts());
-            if((holder.dto.getTvTeamName().equals(team1) || holder.dto.getTvTeamName().equals(team2))){
+            if(holder.dto.getTvTeamName().equalsIgnoreCase(team1) || holder.dto.getTvTeamName().equalsIgnoreCase(team2)){
                 holder.tvSerialNumber.setTextColor(Color.BLUE);
                 holder.tvTeamName.setTextColor(Color.BLUE);
                 holder.tvP.setTextColor(Color.BLUE);
@@ -61,6 +61,8 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
                 holder.tvD.setTextColor(Color.BLUE);
                 holder.tvL.setTextColor(Color.BLUE);
                 holder.tvPts.setTextColor(Color.BLUE);
+                holder.llLiveTeam.setVisibility(View.VISIBLE);
+
             }
 
 
@@ -84,6 +86,7 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
         private TextView tvD;
         private TextView tvL;
         private TextView tvPts;
+        private View llLiveTeam;
 
         public UpCommngFootbalMatchTableDTO dto;
 
@@ -98,6 +101,7 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
             tvD = (TextView) view.findViewById(R.id.tv_d);
             tvL = (TextView) view.findViewById(R.id.tv_l);
             tvPts = (TextView) view.findViewById(R.id.tv_pts);
+            llLiveTeam = view.findViewById(R.id.ll_live_team);
 
         }
     }

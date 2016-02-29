@@ -2,6 +2,8 @@ package com.sports.unity.scoredetails.footballdetail;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -89,7 +91,7 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
         swTimeLineRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (cricketUpcomingMatchSummaryHandler  != null) {
+                if (cricketUpcomingMatchSummaryHandler != null) {
                     cricketUpcomingMatchSummaryHandler.requestCompletedMatchTimeLine(matchId);
                     swTimeLineRefresh.setRefreshing(false);
                 }
@@ -142,8 +144,7 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
             swTimeLineRefresh.setRefreshing(false);
         }
         final JSONArray dataArray = jsonObject.getJSONArray("data");
-        final String localTeam = "localteam";
-        final String visitorTeam = "visitorteam";
+
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -151,48 +152,21 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
                     try {
                         CompleteFootballTimeLineDTO completeFootballTimeLineDTO = null;
 
-                        for (int i = 0 ;i<dataArray.length();i++){
+                        for (int i = 0; i < dataArray.length(); i++) {
                             completeFootballTimeLineDTO = new CompleteFootballTimeLineDTO();
                             JSONObject dataObject = dataArray.getJSONObject(i);
-                             if(!dataObject.isNull("team")){
+                            if (!dataObject.isNull("team")) {
 
-                                 if(dataObject.getString("team").equals(localTeam)){
-                                     StringBuilder teamBuilder = new StringBuilder();
-                                     if(!dataObject.isNull("event_time")){
-                                         teamBuilder.append(dataObject.getString("event_time"));
-                                     }else if(!dataObject.isNull("minute")){
-                                         teamBuilder.append(dataObject.getString("minute")+"'");
-                                     }
+                                if (dataObject.getString("team").equals(getContext().getString(R.string.home_team_name))) {
 
-                                     if(!dataObject.isNull("player_on")){
-                                         teamBuilder.append("ON: "+dataObject.getString("player_on")+"\n");
-                                         teamBuilder.append("OFF: "+dataObject.getString("player_off"));
-                                     }
-                                     completeFootballTimeLineDTO.setTvTeamFirst(teamBuilder.toString());
-                                     if(!dataObject.isNull("event")){
-                                         completeFootballTimeLineDTO.setKey(dataObject.getString("event"));
-                                         completeFootballTimeLineDTO.setTvTeamFirst(dataObject.getString("player_name"));
-                                     }
+                                    setTeamsTimeDTO(completeFootballTimeLineDTO, dataObject);
 
-                                 }else{
-                                     StringBuilder teamBuilder = new StringBuilder();
+                                } else {
 
-                                     if(!dataObject.isNull("player_on")){
-                                         teamBuilder.append("ON: "+dataObject.getString("player_on")+"\n");
-                                         teamBuilder.append("OFF: "+dataObject.getString("player_off"));
-                                     }
-                                     if(!dataObject.isNull("event_time")){
-                                         teamBuilder.append(dataObject.getString("event_time"));
-                                     }else if(!dataObject.isNull("minute")){
-                                         teamBuilder.append(dataObject.getString("minute")+"'");
-                                     }
-                                    completeFootballTimeLineDTO.setTvTeamSecond(teamBuilder.toString());
-                                     if(!dataObject.isNull("event")){
-                                         completeFootballTimeLineDTO.setKey(dataObject.getString("event"));
-                                         completeFootballTimeLineDTO.setTvTeamSecond(dataObject.getString("player_name"));
-                                     }
-                                 }
-                             }
+
+                                    setTeamsTimeDTO(completeFootballTimeLineDTO, dataObject);
+                                }
+                            }
                             list.add(completeFootballTimeLineDTO);
                         }
                         completeFootballTimeLineAdapter.notifyDataSetChanged();
@@ -205,6 +179,49 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
         }
 
     }
+
+    private void setTeamsTimeDTO(CompleteFootballTimeLineDTO completeFootballTimeLineDTO, JSONObject dataObject) throws JSONException {
+        if(!dataObject.isNull("event_time")){
+            completeFootballTimeLineDTO.setTvTeamFirstTime(dataObject.getString("event_time"));
+        }else if(!dataObject.isNull("minute")){
+            completeFootballTimeLineDTO.setTvTeamFirstTime(dataObject.getString("minute"));
+        }
+
+        if(!dataObject.isNull("player_on")){
+            completeFootballTimeLineDTO.setTvTeamFirstOnPlayer(dataObject.getString("player_on"));
+        }
+        if(!dataObject.isNull("player_off")){
+            completeFootballTimeLineDTO.setTvTeamFirstOffPlayer(dataObject.getString("player_off"));
+        }
+
+        if(!dataObject.isNull("event")){
+            completeFootballTimeLineDTO.setDrwDrawable(getDrwableResource(dataObject.getString("event")));
+        }else {
+            completeFootballTimeLineDTO.setDrwDrawable(getDrwableResource(""));
+        }
+
+    }
+
+    private Drawable getDrwableResource(String event) {
+        Resources.Theme theme = getActivity().getTheme();
+        int drwableId = R.drawable.ic_red_green_arrow;
+        if("yellowcards".equalsIgnoreCase(event)){
+           drwableId = R.drawable.ic_yellow_card;
+        }else if("goals".equalsIgnoreCase(event)){
+            drwableId = R.drawable.ic_football;
+        }
+        else if("redcards".equalsIgnoreCase(event)){
+            drwableId = R.drawable.ic_red_card;
+        }
+        Drawable drawable = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            drawable = getResources().getDrawable(drwableId,theme);
+        } else {
+            drawable = getResources().getDrawable(drwableId);
+        }
+        return drawable;
+    }
+
     private void  showProgressBar(){
         progressBar.setVisibility(View.VISIBLE);
     }

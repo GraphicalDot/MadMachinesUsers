@@ -3,6 +3,7 @@ package com.sports.unity.scoredetails.footballdetail;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.scores.ScoreDetailActivity;
@@ -210,16 +212,16 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                     tvnamefirstteam.setText(teamFromObject.getString("team_name"));
                                     if(!teamFromObject.isNull("recent_form")){
                                         String recentForm = teamFromObject.getString("recent_form");
-                                        ivfirstmatchteamfirst.setImageResource(R.drawable.recent_balls);
-                                        ivfirstmatchteamfirst.setBackgroundColor(getBallColor(recentForm.charAt(0)));
-                                        ivsecondmatchteamfirst.setImageResource(R.drawable.recent_balls);
-                                        ivsecondmatchteamfirst.setBackgroundColor(getBallColor(recentForm.charAt(1)));
-                                        ivthirdmatchteamfirst.setImageResource(R.drawable.recent_balls);
-                                        ivthirdmatchteamfirst.setBackgroundColor(getBallColor(recentForm.charAt(2)));
-                                        ivforthmatchteamfirst.setImageResource(R.drawable.recent_balls);
-                                        ivforthmatchteamfirst.setBackgroundColor(getBallColor(recentForm.charAt(3)));
-                                        ivfifthmatchteamfirst.setImageResource(R.drawable.recent_balls);
-                                        ivfifthmatchteamfirst.setBackgroundColor(getBallColor(recentForm.charAt(4)));}
+                                        ivfirstmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(0), getBallColor(recentForm.charAt(0))));
+
+                                        ivsecondmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(1), getBallColor(recentForm.charAt(1))));
+
+                                        ivthirdmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(2), getBallColor(recentForm.charAt(2))));
+
+                                        ivforthmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(3), getBallColor(recentForm.charAt(3))));
+
+                                        ivfifthmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(4), getBallColor(recentForm.charAt(4))));
+                                       }
                                     if(!teamFromObject.isNull("team_points")){
                                         tvpointoffirstteam.setText(teamFromObject.getString("team_points"));}
                                     if(!teamFromObject.isNull("games_won")) {
@@ -233,16 +235,16 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                     tvnamesecondteam.setText(teamFromObject.getString("team_name"));
                                     if(!teamFromObject.isNull("recent_form")) {
                                         String recentForm = teamFromObject.getString("recent_form");
-                                        tvfirstmatchteamsecond.setImageResource(R.drawable.recent_balls);
-                                        tvfirstmatchteamsecond.setBackgroundColor(getBallColor(recentForm.charAt(0)));
-                                        tvsecondmatchteamsecond.setImageResource(R.drawable.recent_balls);
-                                        tvsecondmatchteamsecond.setBackgroundColor(getBallColor(recentForm.charAt(1)));
-                                        tvthirdmatchteamsecond.setImageResource(R.drawable.recent_balls);
-                                        tvthirdmatchteamsecond.setBackgroundColor(getBallColor(recentForm.charAt(2)));
-                                        tvforthmatchteamsecond.setImageResource(R.drawable.recent_balls);
-                                        tvforthmatchteamsecond.setBackgroundColor(getBallColor(recentForm.charAt(3)));
-                                        tvfifthmatchteamsecond.setImageResource(R.drawable.recent_balls);
-                                        tvfifthmatchteamsecond.setBackgroundColor(getBallColor(recentForm.charAt(4)));
+                                        tvfirstmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(0), getBallColor(recentForm.charAt(0))));
+
+                                        tvsecondmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(1), getBallColor(recentForm.charAt(1))));
+
+                                        tvthirdmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(2), getBallColor(recentForm.charAt(2))));
+
+                                        tvforthmatchteamsecond.setImageDrawable(getBallColor(""+recentForm.charAt(3),getBallColor(recentForm.charAt(3))));
+
+                                        tvfifthmatchteamsecond.setImageDrawable(getBallColor(""+recentForm.charAt(4),getBallColor(recentForm.charAt(4))));
+
                                     } if(!teamFromObject.isNull("team_points")){
                                         tvpointofsecondteam.setText(teamFromObject.getString("team_points"));}
                                     if(!teamFromObject.isNull("games_won")){
@@ -286,6 +288,21 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         }
 
         return color ;
+    }
+
+
+    private Drawable getBallColor(String text,int color){
+        int radius = getContext().getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
+        int border = getContext().getResources().getDimensionPixelSize(R.dimen.user_image_border);
+       TextDrawable drawable = TextDrawable.builder()
+                .beginConfig().textColor(Color.WHITE)
+                .withBorder(border)
+                .width(radius)
+                .height(radius)
+                .bold()
+                .endConfig()
+                .buildRound(text, color);
+        return  drawable;
     }
 
 }

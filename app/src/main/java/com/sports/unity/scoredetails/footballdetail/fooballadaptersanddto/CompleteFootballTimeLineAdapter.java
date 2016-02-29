@@ -2,6 +2,7 @@ package com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,10 +23,11 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
 
     private final List<CompleteFootballTimeLineDTO> mValues;
     private Context context;
+
     public CompleteFootballTimeLineAdapter(List<CompleteFootballTimeLineDTO> mValues,Context context) {
         this.mValues = mValues;
         this.context = context;
-   }
+    }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -40,35 +42,26 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         try{
+            // context.getResources().getDimensionPixelSize(R.dimen.);
 
             TextDrawable drawable = null;
             holder.dto = mValues.get(position);
-            if(holder.dto.getTvTeamFirst()!= null) {
-                holder.tvFirstTeam.setText(holder.dto.getTvTeamFirst());
-                holder.tvSecondTeam.setVisibility(View.GONE);
+            if(holder.dto.getTeamName().equals(context.getString(R.string.home_team_name))) {
+                holder.tvTeamFirstTime.setText(holder.dto.getTvTeamFirstTime());
+                holder.tvTeamFirstOnPlayer.setText(holder.dto.getTvTeamFirstOnPlayer());
+                holder.tvTeamFirstOffPlayer.setText(holder.dto.getTvTeamFirstOffPlayer());
+                holder.teamSecondView.setVisibility(View.GONE);
 
-            }else {
-                holder.tvSecondTeam.setText(holder.dto.getTvTeamSecond());
-                holder.tvFirstTeam.setVisibility(View.GONE);
+            }else if(holder.dto.getTeamName().equals(context.getString(R.string.away_team_name)))
+            {
+                holder.tvTeamSecondTime.setText(holder.dto.getTvTeamSecondTime());
+                holder.tvTeamSecondOnPlayer.setText(holder.dto.getTvTeamSecondOnPlayer());
+                holder.tvTeamSecondOffPlayer.setText(holder.dto.getTvTeamSecondOffPlayer());
+                holder.teamFirstView.setVisibility(View.GONE);
+
 
             }
-            if(holder.dto.getKey()!=null){
-                drawable = TextDrawable.builder()
-                        .beginConfig().textColor(Color.BLACK)
-                        .withBorder(2)
-                        .width(100)
-                        .height(100)
-                        .bold()
-                        .endConfig()
-                        .buildRound(holder.dto.getKey(), (Color.WHITE));
-                holder.ivCenterStatus.setImageDrawable(drawable);
-            }else {
-                holder.ivCenterStatus.setImageResource(R.drawable.ic_football);
-            }
-
-
-
-
+            holder.keyImage.setImageDrawable(holder.dto.getDrwDrawable());
         }catch (Exception e){e.printStackTrace();}
     }
 
@@ -82,17 +75,30 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
     {
         public final View mView;
 
-        private TextView tvFirstTeam;
-        private TextView tvSecondTeam;
-        private ImageView ivCenterStatus;
+        private TextView tvTeamFirstTime;
+        private TextView tvTeamSecondTime;
+        private TextView tvTeamFirstOnPlayer;
+        private TextView tvTeamSecondOnPlayer;
+        private TextView tvTeamFirstOffPlayer;
+        private TextView tvTeamSecondOffPlayer;
+        private ImageView keyImage;
+        private View teamFirstView;
+        private View teamSecondView;
+
         public CompleteFootballTimeLineDTO dto;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            tvFirstTeam = (TextView) view.findViewById(R.id.iv_team_first_status);
-            tvSecondTeam = (TextView) view.findViewById(R.id.iv_team_second_status);
-            ivCenterStatus = (ImageView) view.findViewById(R.id.iv_center_status);
-            }
+            tvTeamFirstTime = (TextView) view.findViewById(R.id.tv_team_first_time);
+            tvTeamSecondTime = (TextView) view.findViewById(R.id.tv_team_second_time);
+            tvTeamFirstOnPlayer = (TextView) view.findViewById(R.id.tv_team_first_on);
+            tvTeamSecondOnPlayer = (TextView) view.findViewById(R.id.tv_team_second_on);
+            tvTeamFirstOffPlayer = (TextView) view.findViewById(R.id.tv_team_first_off);
+            tvTeamSecondOffPlayer = (TextView) view.findViewById(R.id.tv_team_second_off);
+            keyImage = (ImageView) view.findViewById(R.id.iv_time_line_image);
+            teamFirstView = view.findViewById(R.id.team_first_linearLayout);
+            teamSecondView = view.findViewById(R.id.team_second_linearLayout);
+        }
     }
 }

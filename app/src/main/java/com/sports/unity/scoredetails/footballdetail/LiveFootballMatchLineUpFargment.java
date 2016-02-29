@@ -20,6 +20,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
@@ -145,6 +146,9 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
                         for(int i = 0; i<subsArray.length();i++){
                             JSONObject subsObject = subsArray.getJSONObject(i);
                             linearLayout = new LinearLayout(getContext());
+                            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+                            lp.weight = 0.5f;
+                            linearLayout.setLayoutParams(lp);
                             tvPlayerName = new TextView(getContext());
                             tvPosition = new TextView(getContext());
                             tvPlayerName.setText(subsObject.getString("player_name"));
@@ -158,6 +162,9 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
                         for(int i = 0; i<teamsObjectArray.length();i++){
                             JSONObject teamsObject = teamsObjectArray.getJSONObject(i);
                             linearLayout = new LinearLayout(getContext());
+                            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
+                            lp.weight = 0.5f;
+                            linearLayout.setLayoutParams(lp);
                             tvPlayerName = new TextView(getContext());
                             tvPosition = new TextView(getContext());
                             tvPlayerName.setText(teamsObject.getString("name"));

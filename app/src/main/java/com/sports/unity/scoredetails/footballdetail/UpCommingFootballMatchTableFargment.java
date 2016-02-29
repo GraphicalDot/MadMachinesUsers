@@ -26,6 +26,7 @@ import org.solovyev.android.views.llm.LinearLayoutManager;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_NAME;
@@ -80,7 +81,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_football_match_table);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext() ,VERTICAL, false));
         adapter = new UpCommingFootballMatchTableAdapter(list, getContext(),team1,team2);
         recyclerView.setAdapter(adapter);
         initErrorLayout(view);

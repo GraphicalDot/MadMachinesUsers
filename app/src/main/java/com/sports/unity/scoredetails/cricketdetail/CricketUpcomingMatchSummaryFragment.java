@@ -2,7 +2,6 @@ package com.sports.unity.scoredetails.cricketdetail;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -16,7 +15,7 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.scores.ScoreDetailActivity;
-import com.sports.unity.util.Constants;
+import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -130,7 +129,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
                             tvMatchName.setText("Information is not Available");
                         }
                         if(date != null&& !date.equalsIgnoreCase("")){
-                            tvMatchDate.setText(date);
+                            tvMatchDate.setText(DateUtil.getFormattedDate(date));
                         }
                         else {
                             tvMatchName.setText("Information is not Available");
@@ -149,4 +148,14 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
         }
 
     }
+
+
+    public static void main(String [] arg){
+        DateUtil.getFormattedDate("2016-03-01");
+    }
+
+
+
+
+
 }

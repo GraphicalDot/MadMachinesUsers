@@ -153,7 +153,7 @@
                     android:orientation="horizontal"
                     android:layout_gravity="left"
                     android:gravity="center">
-                    <TextView
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                         android:id="@+id/tv_match_time"
                         android:paddingTop="@dimen/horizontal_padding_very_very_small"
                         android:layout_width="wrap_content"
@@ -161,9 +161,10 @@
                         android:layout_gravity="center"
                         android:textColor="@color/news_headline_mini"
                         android:textSize="@dimen/font_size_large"
+                        android:text=""
                         />
                 </LinearLayout>
-                <TextView
+                <com.sports.unity.common.view.CustomRobotoRegularTextView
                     android:id="@+id/tv_game_day"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -231,6 +232,7 @@
         android:layout_height="1dp"
         android:background="@color/gray3" />
     <LinearLayout
+        android:id="@+id/ll_match_detail_linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
