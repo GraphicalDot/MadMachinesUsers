@@ -19,7 +19,7 @@ import java.util.HashSet;
  */
 public class LiveFootballMatchLineUpHandler {
 
-    private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
+    private static final String REQUEST_TAG = "LIVE_FOOTBALL_MATCH_TAG";
     private static Context mContext;
     private String url = "http://52.74.75.79:8080/get_match_teams?match_id=";
 

@@ -16,24 +16,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/gray3"
-                android:paddingBottom="@dimen/horizontal_padding_small"
-                android:paddingLeft="@dimen/horizontal_padding_small"
-                android:paddingRight="@dimen/horizontal_padding_medium"
-                android:paddingTop="@dimen/horizontal_padding_small">
+                android:padding="@dimen/horizontal_padding_very_small">
 
                 <LinearLayout
                     android:id="@+id/ll_team_summery"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_widthPercent="40%">
+                    app:layout_widthPercent="46%">
 
                     <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_fteam_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/teams"
-                        android:textSize="@dimen/font_size_small_large"
+                        android:textColor="@color/news_static"
+                        android:textSize="@dimen/font_size_small_medium"
                 />
 
                     <com.sports.unity.common.view.CustomRobotoRegularTextView
@@ -41,7 +39,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/match_date"
-                        android:textSize="@dimen/font_size_small_large"
+                        android:textColor="@color/news_static"
+                        android:textSize="@dimen/font_size_small_medium"
                 />
                 </LinearLayout>
 
@@ -52,8 +51,9 @@
                     android:layout_toRightOf="@id/ll_team_summery"
                     android:gravity="right"
                     android:text="@string/p"
-                android:textSize="@dimen/font_size_small_large"
-                    app:layout_widthPercent="10%"
+                    android:textColor="@color/news_static"
+                    android:textSize="@dimen/font_size_small_medium"
+                    app:layout_widthPercent="7%"
                 />
 
                 <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
@@ -63,8 +63,9 @@
                     android:layout_toRightOf="@id/tv_p"
                     android:gravity="right"
                     android:text="@string/w"
-                android:textSize="@dimen/font_size_small_large"
-                    app:layout_widthPercent="10%"
+                    android:textColor="@color/news_static"
+                    android:textSize="@dimen/font_size_small_medium"
+                    app:layout_widthPercent="12%"
                 />
 
                 <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
@@ -74,7 +75,8 @@
                     android:layout_toRightOf="@id/tv_w"
                     android:gravity="right"
                     android:text="@string/d"
-                android:textSize="@dimen/font_size_small_large"
+                    android:textColor="@color/news_static"
+                    android:textSize="@dimen/font_size_small_medium"
                     app:layout_widthPercent="10%"
                 />
 
@@ -85,7 +87,8 @@
                     android:layout_toRightOf="@id/tv_d"
                     android:gravity="right"
                     android:text="@string/l"
-                android:textSize="@dimen/font_size_small_large"
+                    android:textColor="@color/news_static"
+                    android:textSize="@dimen/font_size_small_medium"
                     app:layout_widthPercent="10%"
                 />
 
@@ -96,8 +99,9 @@
                     android:layout_toRightOf="@id/tv_l"
                     android:gravity="right"
                     android:text="@string/pts"
-                android:textSize="@dimen/font_size_small_large"
-                    app:layout_widthPercent="10%"
+                    android:textColor="@color/news_static"
+                    android:textSize="@dimen/font_size_small_medium"
+                    app:layout_widthPercent="15%"
                 />
             </android.support.percent.PercentRelativeLayout>
             <android.support.v7.widget.RecyclerView
@@ -105,7 +109,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/gray3"
-                android:scrollbars="vertical"
                 app:layoutManager="com.sports.unity.common.view.CustomLinearLayoutManager"
                 tools:listitem="@layout/upcoming_football_match_table_card"
                 />
@@ -125,6 +128,12 @@
             android:textSize="@dimen/font_size_large"
             android:visibility="gone"
             />
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center" />
         </LinearLayout>
     </ScrollView>
+
    </android.support.v4.widget.SwipeRefreshLayout>

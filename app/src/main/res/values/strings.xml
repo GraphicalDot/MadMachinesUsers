@@ -375,5 +375,6 @@ Carrier SMS charges may apply.</string>
     <string name="participant_count">%1$d OF 50</string>
     <string name="umpires">Umpires</string>
     <string name="match_referee">Match Referee</string>
+    <string name="manager">MANAGERS</string>
 
 </resources>

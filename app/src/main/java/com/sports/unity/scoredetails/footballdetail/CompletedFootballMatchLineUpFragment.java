@@ -2,6 +2,7 @@ package com.sports.unity.scoredetails.footballdetail;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -10,16 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.sports.unity.R;
 import com.sports.unity.scoredetails.cricketdetail.CompletedMatchScoreCardHandler;
 import com.sports.unity.scoredetails.cricketdetail.CricketUpcomingMatchSummaryHandler;
 import com.sports.unity.scores.ScoreDetailActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,13 +42,14 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     String toss = "";
     String matchName="";
     String date = "";
-    private TextView tvcaption;
-    private TextView tvIkerCasillan;
+    private String matchId;
+    private TextView tvCaptainFirst;
+    private TextView tvCaptainSecond;
     private TextView tvCarlesPayol;
     private TextView tvlineup;
-    private GridLayout rclineup;
+    private GridLayout rcLineup;
     private TextView tvsubstitutes;
-    private GridLayout gvsubstitutes;
+    private GridLayout gvSubstitutes;
 
     public CompletedFootballMatchLineUpFragment() {
         // Required empty public constructor
@@ -54,7 +59,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     public void onAttach(Context context) {
         super.onAttach(context);
         Intent i = getActivity().getIntent();
-        String matchId =  i.getStringExtra(INTENT_KEY_ID);
+        matchId =  i.getStringExtra(INTENT_KEY_ID);
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
         toss = i.getStringExtra(INTENT_KEY_TOSS);
         date = i.getStringExtra(INTENT_KEY_DATE);
@@ -74,11 +79,13 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         initErrorLayout(view);
-        tvcaption=(TextView)view.findViewById(R.id.tv_caption);
-        tvIkerCasillan=(TextView)view.findViewById(R.id.tv_Iker_Casillan);
-        tvCarlesPayol=(TextView)view.findViewById(R.id.tv_Carles_Payol);
+        tvCaptainFirst=(TextView)view.findViewById(R.id.tv_team_first_captain);
+        tvCaptainSecond=(TextView)view.findViewById(R.id.tv_team_second_captain);
         tvlineup=(TextView)view.findViewById(R.id.tv_line_up);
         tvsubstitutes=(TextView)view.findViewById(R.id.tv_substitutes);
+        rcLineup = (GridLayout) view.findViewById(R.id.gv_lineup);
+        gvSubstitutes = (GridLayout) view.findViewById(R.id.gv_substitutes);
+
 
     }
     private void  showProgressBar(){
@@ -117,8 +124,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
             errorLayout.setVisibility(View.GONE);
         }catch (Exception e){e.printStackTrace();}
     }
-
-    private void showErrorLayout(View view) {
+   private void showErrorLayout(View view) {
 
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.VISIBLE);
@@ -128,15 +134,61 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         hideProgressBar();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-
+        final JSONObject dataObject = jsonObject.getJSONObject("data");
+         final  JSONArray subsArray = dataObject.getJSONArray("subs");
+        final JSONArray teamsObjectArray = dataObject.getJSONArray("teams");
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        Log.i("run: ",jsonObject.toString());
-                        showErrorLayout(getView());
-                    } catch (Exception ex) {
+                        TextDrawable drawable = null;
+                        tvCaptainFirst.setText("NA");
+                        tvCaptainSecond.setText("NA");
+                        LinearLayout linearLayout = null;
+                        TextView tvPlayerName = null;
+                        ImageView tvPosition = null;
+                        for(int i = 0; i<subsArray.length();i++){
+                            JSONObject subsObject = subsArray.getJSONObject(i);
+                            linearLayout = new LinearLayout(getContext());
+                            tvPlayerName = new TextView(getContext());
+                            tvPosition = new ImageView(getContext());
+                            tvPlayerName.setText(subsObject.getString("player_name"));
+                            drawable = TextDrawable.builder()
+                                    .beginConfig().textColor(Color.BLACK)
+                                    .withBorder(2)
+                                    .width(75)
+                                    .height(75)
+                                    .bold()
+                                    .endConfig()
+                                    .buildRound(subsObject.getString("position"), Color.WHITE);
+                            tvPosition.setImageDrawable(drawable);
+                            linearLayout.addView(tvPosition);
+                            linearLayout.addView(tvPlayerName);
+
+                            gvSubstitutes.addView(linearLayout);
+   }
+
+                        for(int i = 0; i<teamsObjectArray.length();i++){
+                            JSONObject teamsObject = teamsObjectArray.getJSONObject(i);
+                            linearLayout = new LinearLayout(getContext());
+                            tvPlayerName = new TextView(getContext());
+                            tvPosition = new ImageView(getContext());
+                            tvPlayerName.setText(teamsObject.getString("name"));
+                            drawable = TextDrawable.builder()
+                                    .beginConfig().textColor(Color.BLACK)
+                                    .withBorder(2)
+                                    .width(75)
+                                    .height(75)
+                                    .bold()
+                                    .endConfig()
+                                    .buildRound(teamsObject.getString("position"), Color.WHITE);
+                            tvPosition.setImageDrawable(drawable);
+                            linearLayout.addView(tvPosition);
+                            linearLayout.addView(tvPlayerName);
+                          rcLineup.addView(linearLayout);
+                        }
+                        } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());
                     }
@@ -145,5 +197,9 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         }
 
     }
+
+
+
+
 
 }

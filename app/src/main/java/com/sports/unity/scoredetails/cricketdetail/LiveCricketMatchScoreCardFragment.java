@@ -1,7 +1,6 @@
 package com.sports.unity.scoredetails.cricketdetail;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -21,8 +20,6 @@ import com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapte
 import com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters.LiveAndCompletedCricketBowlingCardDTO;
 import com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters.LiveAndCompletedCricketFallOfWicketAdapter;
 import com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters.LiveAndCompletedCricketFallOfWicketCardDTO;
-import com.sports.unity.scoredetails.cricketdetail.livecompletedmatchadapters.LiveAndCompletedCricketBattingAdapter;
-
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.Constants;
 
@@ -357,7 +354,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
 
 
                                  }
-                                 if(teamBFirstInning.isNull("fall_of_wickets")){
+                                 if (!teamBFirstInning.isNull("fall_of_wickets")) {
                                      JSONArray teamBFallWicketArray = teamBFirstInning.getJSONArray("fall_of_wickets");
                                      for (int k= 0 ; k<teamBFallWicketArray.length();k++){
                                          JSONObject fallOfWicketObject = teamBFallWicketArray.getJSONObject(k);

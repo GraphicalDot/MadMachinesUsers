@@ -135,6 +135,7 @@
     <dimen name="group_info_padding">4dp</dimen>
     <dimen name="user_image_border">1dp</dimen>
     <dimen name="group_image_border">1dp</dimen>
+    <dimen name="recent_ball_radius">24dp</dimen>
 
 
 </resources>

@@ -6,14 +6,17 @@
               android:background="@color/ColorPrimary"
               android:orientation="vertical">
 
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:background="@color/gray3"
         android:weightSum="10">
+
         <TextView
-            android:id="@+id/tv_player_age"
+            android:id="@+id/tv_team_first_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -23,7 +26,7 @@
             android:text="BARCELONA"
             />
         <TextView
-            android:id="@+id/tv_p"
+            android:id="@+id/tv_p1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -33,7 +36,7 @@
             android:text="@string/p"
             />
         <TextView
-            android:id="@+id/tv_pl"
+            android:id="@+id/tv_pl1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -43,7 +46,7 @@
             android:text="@string/pl"
             />
         <ImageView
-            android:id="@+id/tv_gol"
+            android:id="@+id/tv_gol1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -52,7 +55,7 @@
             android:layout_weight="1"
             />
         <ImageView
-            android:id="@+id/tv_yellow_card"
+            android:id="@+id/tv_yellow_card1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -61,7 +64,7 @@
             android:src="@drawable/ic_yellow_card"
             />
         <ImageView
-            android:id="@+id/tv_red_card"
+            android:id="@+id/tv_red_card1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -69,32 +72,95 @@
             android:src="@drawable/ic_red_card"
             android:layout_weight="1"
             />
+
     </LinearLayout>
 
-    <android.support.v7.widget.CardView
+      <android.support.v7.widget.RecyclerView
+        android:id="@+id/rc_child1_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        card:cardCornerRadius="5dp">
+        />
 
-        <LinearLayout
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/gray3"
+        android:weightSum="10">
+        <TextView
+            android:id="@+id/tv_team_second_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/horizontal_padding_small"
+            android:textSize="@dimen/font_size_small_large"
+            android:layout_weight="5"
+            android:text="BARCELONA"
+            />
+        <TextView
+            android:id="@+id/tv_p2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/horizontal_padding_small"
+            android:textSize="@dimen/font_size_small_large"
+            android:layout_weight="1"
+            android:text="@string/p"
+            />
+        <TextView
+            android:id="@+id/tv_pl2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/horizontal_padding_small"
+            android:textSize="@dimen/font_size_small_large"
+            android:layout_weight="1"
+            android:text="@string/pl"
+            />
+        <ImageView
+            android:id="@+id/tv_gol2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/horizontal_padding_small"
+            android:src="@drawable/ic_football"
+            android:layout_weight="1"
+            />
+        <ImageView
+            android:id="@+id/tv_yellow_card2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:layout_marginTop="@dimen/horizontal_padding_small"
+            android:src="@drawable/ic_yellow_card"
+            />
+        <ImageView
+            android:id="@+id/tv_red_card2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/horizontal_padding_small"
+            android:src="@drawable/ic_red_card"
+            android:layout_weight="1"
+            />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rc_child2_rv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/ColorPrimary"
-            android:orientation="vertical">
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/child_rv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                card:layoutManager="com.sports.unity.common.view.CustomLinearLayoutManager"/>
-        </LinearLayout>
-    </android.support.v7.widget.CardView>
+            />
+
+    </LinearLayout>
+
+
     <include
         android:id="@+id/error"
         layout="@layout/error_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"/>
+
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"

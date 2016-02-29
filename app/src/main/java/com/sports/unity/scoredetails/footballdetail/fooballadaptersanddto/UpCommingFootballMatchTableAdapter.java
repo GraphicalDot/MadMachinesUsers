@@ -1,6 +1,7 @@
 package com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -52,6 +53,17 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
         holder.tvD.setText(holder.dto.getTvD());
         holder.tvL.setText(holder.dto.getTvL());
         holder.tvPts.setText(holder.dto.getTvPts());
+            if((holder.dto.getTvTeamName().equals(team1) || holder.dto.getTvTeamName().equals(team2))){
+                holder.tvSerialNumber.setTextColor(Color.BLUE);
+                holder.tvTeamName.setTextColor(Color.BLUE);
+                holder.tvP.setTextColor(Color.BLUE);
+                holder.tvW.setTextColor(Color.BLUE);
+                holder.tvD.setTextColor(Color.BLUE);
+                holder.tvL.setTextColor(Color.BLUE);
+                holder.tvPts.setTextColor(Color.BLUE);
+            }
+
+
         }catch (Exception e){e.printStackTrace();}
     }
 

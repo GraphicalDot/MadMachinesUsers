@@ -115,11 +115,11 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             squadNumber = (TextView) findViewById(R.id.squad_number);
             nationality = (TextView) findViewById(R.id.nationality_value);
             idSeason = (TextView) findViewById(R.id.id_current_season);
-            noOfMatchesPlayed = (TextView) findViewById(R.id.tv_number_of_match);
+          /*  noOfMatchesPlayed = (TextView) findViewById(R.id.tv_number_of_match);
             goalsScoredNumber = (TextView) findViewById(R.id.tv_goals_scored_number);
             tvNumberOfAssist = (TextView) findViewById(R.id.tv_number_of_assist);
             tvNumberOfYellowCard= (TextView) findViewById(R.id.tv_number_of_yellow_card);
-            tvNumberOfRedCard= (TextView) findViewById(R.id.tv_number_of_red_card);
+            tvNumberOfRedCard= (TextView) findViewById(R.id.tv_number_of_red_card);*/
             leagueImage= (ImageView) findViewById(R.id.ic_league_image);
             tvNextGameName = (TextView) findViewById(R.id.tv_next_game_name);
             tvNextGameDetails = (TextView) findViewById(R.id.tv_next_game_name);

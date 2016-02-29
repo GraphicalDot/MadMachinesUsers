@@ -370,10 +370,6 @@
                         android:textColor="@color/news_static"
                         android:textSize="@dimen/font_size_small_medium" />
                 </LinearLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray4"></View>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_team_first_fall_wickets"
                     android:layout_width="match_parent"
@@ -728,11 +724,6 @@
                         android:textColor="@color/news_static"
                         android:textSize="@dimen/font_size_small_medium"/>
                 </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray3"></View>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_second_team_fall_wicket"
                     android:layout_width="match_parent"
