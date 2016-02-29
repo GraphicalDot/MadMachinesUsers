@@ -11,7 +11,7 @@
         <LinearLayout
             android:id="@+id/ll_header"
             android:layout_width="wrap_content"
-            card:layout_widthPercent="30%"
+            card:layout_widthPercent="40%"
             android:layout_height="wrap_content">
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_player_name"
@@ -42,7 +42,7 @@
             android:gravity="center"
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
-            card:layout_widthPercent="14%"
+            card:layout_widthPercent="12%"
             android:text=""
             />
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
@@ -53,7 +53,7 @@
             android:gravity="center"
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
-            card:layout_widthPercent="14%"
+            card:layout_widthPercent="12%"
             android:text=""
             />
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
@@ -64,7 +64,7 @@
             android:gravity="center"
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
-            card:layout_widthPercent="14%"
+            card:layout_widthPercent="12%"
             android:text=""
             />
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
@@ -75,7 +75,7 @@
             android:gravity="center"
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
-            card:layout_widthPercent="14%"
+            card:layout_widthPercent="12%"
             android:text=""
             />
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
@@ -86,12 +86,12 @@
             android:gravity="center"
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
-            card:layout_widthPercent="14%"
+            card:layout_widthPercent="12%"
             android:text=""
             />
     </android.support.percent.PercentRelativeLayout>
     <View
         android:layout_width="match_parent"
-        android:background="@color/gray4"
+        android:background="@color/gray3"
         android:layout_height="1dp"></View>
 </LinearLayout>

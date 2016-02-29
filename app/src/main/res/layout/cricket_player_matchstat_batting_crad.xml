@@ -6,16 +6,14 @@
     android:layout_height="wrap_content"
     android:background="@android:color/white"
     android:orientation="horizontal"
-    android:paddingLeft="@dimen/horizontal_padding_small"
-    android:paddingTop="@dimen/horizontal_padding_small"
-    android:paddingBottom="@dimen/horizontal_padding_small"
-    android:paddingRight="@dimen/horizontal_padding_medium">
+    android:padding="@dimen/horizontal_padding_very_small">
 
     <com.sports.unity.common.view.CustomRobotoRegularTextView
         android:id="@+id/tv_head"
         android:layout_height="wrap_content"
         android:gravity="left"
-        android:text="league"
+        android:text=""
+        android:textColor="@color/news_headline_mini"
         android:textSize="@dimen/font_size_small_medium"
         app:layout_widthPercent="25%" />
 
@@ -24,7 +22,8 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/tv_head"
         android:gravity="right"
-        android:text="tem"
+        android:text=""
+        android:textColor="@color/news_headline_mini"
         android:textSize="@dimen/font_size_small_medium"
         app:layout_widthPercent="22%" />
 
@@ -33,7 +32,8 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/tv_tests"
         android:gravity="right"
-        android:text="1"
+        android:text=""
+        android:textColor="@color/news_headline_mini"
         android:textSize="@dimen/font_size_small_medium"
         app:layout_widthPercent="22%" />
 
@@ -42,7 +42,8 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/tv_odis"
         android:gravity="right"
-        android:text="3"
+        android:text=""
+        android:textColor="@color/news_headline_mini"
         android:textSize="@dimen/font_size_small_medium"
         app:layout_widthPercent="22%" />
 </android.support.percent.PercentRelativeLayout>
