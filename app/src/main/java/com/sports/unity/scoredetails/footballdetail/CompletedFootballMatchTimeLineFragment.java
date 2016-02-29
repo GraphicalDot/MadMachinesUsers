@@ -182,9 +182,9 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
     private void setTeamFirstTimeDTO(CompleteFootballTimeLineDTO completeFootballTimeLineDTO, JSONObject dataObject) throws JSONException {
 
         if(!dataObject.isNull("event_time")){
-            completeFootballTimeLineDTO.setTvTeamFirstTime(dataObject.getString("event_time"));
+            completeFootballTimeLineDTO.setTvTeamFirstTime(dataObject.getString("event_time")+"'");
         }else if(!dataObject.isNull("minute")){
-            completeFootballTimeLineDTO.setTvTeamFirstTime(dataObject.getString("minute"));
+            completeFootballTimeLineDTO.setTvTeamFirstTime(dataObject.getString("minute")+"'");
         }
 
         if(!dataObject.isNull("player_on")){
@@ -206,9 +206,9 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
     private void setTeamSecondTimeDTO(CompleteFootballTimeLineDTO completeFootballTimeLineDTO, JSONObject dataObject) throws JSONException {
 
         if(!dataObject.isNull("event_time")){
-            completeFootballTimeLineDTO.setTvTeamSecondTime(dataObject.getString("event_time"));
+            completeFootballTimeLineDTO.setTvTeamSecondTime(dataObject.getString("event_time")+"'");
         }else if(!dataObject.isNull("minute")){
-            completeFootballTimeLineDTO.setTvTeamSecondTime(dataObject.getString("minute"));
+            completeFootballTimeLineDTO.setTvTeamSecondTime(dataObject.getString("minute")+"'");
         }
 
         if(!dataObject.isNull("player_on")){
