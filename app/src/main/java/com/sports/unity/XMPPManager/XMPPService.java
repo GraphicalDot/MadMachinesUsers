@@ -726,15 +726,15 @@ public class XMPPService extends Service {
             String nickname = card.getNickName();
 
             if (nearByChat) {
-                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, false);
+                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, SportsUnityDBHelper.AVAILABLE_BY_PEOPLE_AROUND_ME);
             } else {
-                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, true);
+                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, SportsUnityDBHelper.AVAILABLE_BY_OTHER_CONTACTS);
             }
             SportsUnityDBHelper.getInstance(context).updateContacts(jid, image, status);
 
             success = true;
-        } catch (Throwable throwable) {
-
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return success;
     }

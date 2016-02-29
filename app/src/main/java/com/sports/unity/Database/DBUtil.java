@@ -226,6 +226,17 @@ public class DBUtil {
         }
     }
 
+    public static boolean isFileExist(Context context, String fileName){
+        boolean exist = false;
+        if( fileName != null ) {
+            File file = new File(getFilePath(context, fileName));
+            exist = file.exists();
+        } else {
+            //nothing
+        }
+        return  exist;
+    }
+
     public static String getUniqueFileName(Context context, String mimeType){
         String fileName = String.valueOf(System.currentTimeMillis());
         if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){

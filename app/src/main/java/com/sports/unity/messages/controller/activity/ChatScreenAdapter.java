@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.text.Spannable;
@@ -27,6 +28,8 @@ import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -49,6 +52,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.io.File;
 
 /**
  * Created by madmachines on 8/9/15.
@@ -63,7 +67,7 @@ public class ChatScreenAdapter extends BaseAdapter {
     private Activity activity;
     private String searchString = "";
 
-    private HashMap<String, byte[]> mediaMap = null;
+//    private HashMap<String, byte[]> mediaMap = null;
     private AudioRecordingHelper audioRecordingHelper = null;
 
     private ArrayList<Integer> positions = new ArrayList<>();
@@ -75,7 +79,7 @@ public class ChatScreenAdapter extends BaseAdapter {
     public ChatScreenAdapter(ChatScreenActivity chatScreenActivity, ArrayList<Message> messagelist, boolean otherChat) {
         this.messageList = messagelist;
         activity = chatScreenActivity;
-        mediaMap = chatScreenActivity.getMediaMap();
+//        mediaMap = chatScreenActivity.getMediaMap();
         nearByChat = otherChat;
 
         audioRecordingHelper = AudioRecordingHelper.getInstance(activity);
@@ -318,13 +322,6 @@ public class ChatScreenAdapter extends BaseAdapter {
 
             holder.message.setText("");
 
-            byte[] content = null;
-            if (mediaMap.containsKey(message.mediaFileName)) {
-                content = mediaMap.get(message.mediaFileName);
-            } else {
-//                content = message.media;
-            }
-
             ImageView image = (ImageView) holder.mediaContentLayout.findViewById(R.id.image_message);
             image.setVisibility(View.VISIBLE);
 
@@ -333,25 +330,45 @@ public class ChatScreenAdapter extends BaseAdapter {
 
             image.setLayoutParams(new FrameLayout.LayoutParams(width, height));
 
-            if (content != null) {
-                image.setImageBitmap(BitmapFactory.decodeByteArray(content, 0, content.length));
-                image.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                image.setOnClickListener(imageOrVideoClickListener);
-                image.setTag(position);
+            if ( message.mediaFileName != null && DBUtil.isFileExist(activity, message.mediaFileName) ) {
+                File file = new File(DBUtil.getFilePath(activity, message.mediaFileName));
+                if (message.media != null) {
+                    BitmapDrawable thumbnailDrawable = new BitmapDrawable(activity.getResources(), BitmapFactory.decodeByteArray(message.media, 0, message.media.length));
+                    Glide.with(activity).load(file).placeholder(thumbnailDrawable).into(image);
+                } else {
+                    Glide.with(activity).load(file).into(image);
+                }
+//                image.setOnClickListener(imageOrVideoClickListener);
+//                image.setTag(R.id.image_message, position);
             } else {
                 if (message.media != null) {
                     image.setImageBitmap(BitmapFactory.decodeByteArray(message.media, 0, message.media.length));
-//                    image.setColorFilter(Color.parseColor("#22000000"), PorterDuff.Mode.DARKEN);
                 } else {
                     image.setImageResource(R.drawable.grey_bg_rectangle);
                 }
+//                image.setOnClickListener(null);
+//                image.setTag(R.id.image_message, null);
+            }
+            image.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
+            boolean inProgress = false;
+            int status = FileOnCloudHandler.getInstance(activity).getMediaContentStatus(message);
+            if (status == FileOnCloudHandler.STATUS_NONE) {
+                //nothing
+            } else if (status == FileOnCloudHandler.STATUS_DOWNLOADING || status == FileOnCloudHandler.STATUS_UPLOADING) {
+                inProgress = true;
+            }
+
+            if (inProgress) {
                 image.setOnClickListener(null);
-                image.setTag(null);
+                image.setTag(R.id.image_message, null);
+            } else {
+                image.setOnClickListener(imageOrVideoClickListener);
+                image.setTag(R.id.image_message, position);
             }
 
             ProgressBar progressBar = (ProgressBar) holder.mediaContentLayout.findViewById(R.id.progressBar);
-            if ((message.textData.length() == 0 && message.iAmSender == true) || (message.mediaFileName == null && message.iAmSender == false)) {
+            if ( inProgress ) {
                 progressBar.setVisibility(View.VISIBLE);
             } else {
                 progressBar.setVisibility(View.GONE);
@@ -370,6 +387,15 @@ public class ChatScreenAdapter extends BaseAdapter {
             int height = activity.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height);
             image.setLayoutParams(new FrameLayout.LayoutParams(width, height));
 
+            {
+                if (message.media != null) {
+                    image.setImageBitmap(BitmapFactory.decodeByteArray(message.media, 0, message.media.length));
+                } else {
+                    image.setImageResource(R.drawable.grey_bg_rectangle);
+                }
+                image.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            }
+
             boolean inProgress = false;
             int status = FileOnCloudHandler.getInstance(activity).getMediaContentStatus(message);
             if (status == FileOnCloudHandler.STATUS_NONE) {
@@ -380,19 +406,10 @@ public class ChatScreenAdapter extends BaseAdapter {
 
             if (inProgress) {
                 image.setOnClickListener(null);
-                image.setTag(null);
+                image.setTag(R.id.image_message, null);
             } else {
                 image.setOnClickListener(imageOrVideoClickListener);
-                image.setTag(position);
-            }
-            image.setImageResource(R.drawable.grey_bg_rectangle);
-
-            {
-                if (message.media != null) {
-                    image.setImageBitmap(BitmapFactory.decodeByteArray(message.media, 0, message.media.length));
-                } else {
-                    image.setImageResource(R.drawable.grey_bg_rectangle);
-                }
+                image.setTag(R.id.image_message, position);
             }
 
             ProgressBar progressBar = (ProgressBar) holder.mediaContentLayout.findViewById(R.id.progressBar);
@@ -426,10 +443,12 @@ public class ChatScreenAdapter extends BaseAdapter {
                 image.setImageBitmap(bitmap);
                 image.setVisibility(View.VISIBLE);
                 image.setLayoutParams(new FrameLayout.LayoutParams(size, size));
-                image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             } else {
                 image.setVisibility(View.GONE);
             }
+            image.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            image.setOnClickListener(null);
+            image.setTag(R.id.image_message, null);
 
         }
 
@@ -483,7 +502,7 @@ public class ChatScreenAdapter extends BaseAdapter {
 
         @Override
         public void onClick(View v) {
-            int position = (Integer) v.getTag();
+            int position = (Integer) v.getTag(R.id.image_message);
 
             Message message = messageList.get(position);
 
@@ -525,6 +544,7 @@ public class ChatScreenAdapter extends BaseAdapter {
     }
 
     private void showMediaContentStatus(Message message, ViewGroup imageContentLayout) {
+        int status = FileOnCloudHandler.getInstance(activity).getMediaContentStatus(message);
         if (message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             imageContentLayout.findViewById(R.id.image_content_status).setVisibility(View.GONE);
         } else if (message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
@@ -533,13 +553,35 @@ public class ChatScreenAdapter extends BaseAdapter {
             //TODO
         } else if (message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
             imageContentLayout.findViewById(R.id.image_content_status).setVisibility(View.GONE);
+            showImageContentStatus(status, imageContentLayout);
         } else if (message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
-            int status = FileOnCloudHandler.getInstance(activity).getMediaContentStatus(message);
-            showVideoContentStatus(status, message.mediaFileName, imageContentLayout);
+            showVideoContentStatus(status, imageContentLayout);
         }
     }
 
-    private void showVideoContentStatus(int status, String fileName, ViewGroup imageContentLayout) {
+    private void showImageContentStatus(int status, ViewGroup imageContentLayout) {
+        ImageView imageView = (ImageView) imageContentLayout.findViewById(R.id.image_content_status);
+        imageView.setVisibility(View.GONE);
+        if (status == FileOnCloudHandler.STATUS_NONE) {
+            //nothing
+        } else if (status == FileOnCloudHandler.STATUS_UPLOADING) {
+            //nothing
+        } else if (status == FileOnCloudHandler.STATUS_UPLOADED) {
+            //nothing
+        } else if (status == FileOnCloudHandler.STATUS_UPLOAD_FAILED) {
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageResource(R.drawable.ic_retry);
+        } else if (status == FileOnCloudHandler.STATUS_DOWNLOADING) {
+            //nothing
+        } else if (status == FileOnCloudHandler.STATUS_DOWNLOADED) {
+            //nothing
+        } else if (status == FileOnCloudHandler.STATUS_DOWNLOAD_FAILED) {
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageResource(R.drawable.ic_download);
+        }
+    }
+
+    private void showVideoContentStatus(int status, ViewGroup imageContentLayout) {
         ImageView imageView = (ImageView) imageContentLayout.findViewById(R.id.image_content_status);
         if (status == FileOnCloudHandler.STATUS_NONE) {
             //nothing

@@ -1,5 +1,6 @@
 package com.sports.unity.common.model;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,13 +12,7 @@ import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smackx.search.ReportedData;
-import org.jivesoftware.smackx.search.UserSearchManager;
-import org.jivesoftware.smackx.vcardtemp.packet.VCard;
-import org.jivesoftware.smackx.xdata.Form;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -42,6 +37,7 @@ public class ContactsHandler {
     private static final int CONTACT_PENDING_ACTION_COPY_LOCALLY = 3;
     private static final int CONTACT_PENDING_ACTION_FETCH_JID = 5;
     private static final int CONTACT_PENDING_ACTION_ADD_NEW_CONTACTS = 7;
+    private static final int CONTACT_PENDING_ACTION_UPDATE_USER_FAVORITES = 11;
 
     private static final int CONTACT_PENDING_ACTION_DEFAULT_VALUE = CONTACT_PENDING_ACTION_COPY_LOCALLY*CONTACT_PENDING_ACTION_FETCH_JID;
 
@@ -54,12 +50,6 @@ public class ContactsHandler {
         return CONTACT_HANDLER;
     }
 
-//    private static void addToContactList(String number) throws SmackException.NotLoggedInException, XMPPException.XMPPErrorException, SmackException.NotConnectedException, SmackException.NoResponseException {
-//        Presence response = new Presence(Presence.Type.subscribe);
-//        response.setTo(number + "@mm.io");
-//        XMPPClient.getConnection().sendPacket(response);
-//    }
-
     private Roster roster = null;
     private boolean inProcess = false;
 
@@ -69,7 +59,7 @@ public class ContactsHandler {
 
     synchronized public void addCallToSyncContacts(Context context){
         if( ! inProcess ){
-            addActionsToProcess(context, true);
+            addContactActionsToProcess(context, true);
             process(context);
         } else {
             //nothing
@@ -80,7 +70,7 @@ public class ContactsHandler {
 
     synchronized public void addCallToSyncLatestContacts(Context context, boolean wait){
         if( ! inProcess ){
-            addActionsToProcess(context, false);
+            addContactActionsToProcess(context, false);
             process(context);
         } else {
             if( wait ) {
@@ -90,6 +80,16 @@ public class ContactsHandler {
             }
 
             Log.d("ContactsHandler", "already processing");
+        }
+    }
+
+    synchronized public void addCallToUpdateUserFavorites(Context context){
+        addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_UPDATE_USER_FAVORITES);
+
+        if( ! inProcess ){
+            process(context);
+        } else {
+            //nothing
         }
     }
 
@@ -104,9 +104,7 @@ public class ContactsHandler {
 
     }
 
-    private void addActionsToProcess(Context context, boolean allContacts){
-        Log.d("ContactsHandler", "processing");
-
+    private void addContactActionsToProcess(Context context, boolean allContacts){
         if( allContacts ) {
             addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_COPY_LOCALLY);
             addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_FETCH_JID);
@@ -119,86 +117,6 @@ public class ContactsHandler {
     private void process(Context context){
         ContactsThread contactsThread = new ContactsThread(context);
         contactsThread.start();
-    }
-
-//    public void updateRegisteredUsers(Context context) throws XMPPException {
-////        String currentUserPhoneNumber = TinyDB.getInstance(context).getString(TinyDB.KEY_USERNAME);
-////        String userJID = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
-////
-////        SportsUnityDBHelper.getInstance(context).addToContacts(currentUserPhoneNumber, currentUserPhoneNumber, userJID, ContactsHandler.getInstance().defaultStatus, false);
-//
-//        ArrayList<String> contactNumberList = SportsUnityDBHelper.getInstance(context).readContactNumbers();
-//        syncContacts(context, contactNumberList);
-//    }
-
-//    private void syncContacts(Context context, ArrayList<String> contactNumberList) throws XMPPException {
-//        roster = Roster.getInstanceFor(XMPPClient.getConnection());
-//        for (int i = 0; i < contactNumberList.size(); i++) {
-//            String number = contactNumberList.get(i);
-//            XMPPService.answerForm.setAnswer("user", number);
-//
-//            UserVCardDetail userVCardDetail = getUserVCardDetail(number, XMPPService.searchManager, XMPPService.answerForm, roster);
-//            if ( userVCardDetail.registered ) {
-//                SportsUnityDBHelper.getInstance(context).updateContacts(number, userVCardDetail.profilePicture, userVCardDetail.status);
-//            } else {
-//                //nothing
-//            }
-//        }
-//    }
-
-//    private void matchAndUpdate(HashMap<String, String> androidContacts, Context context) {
-//
-//        SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
-//        Iterator<String> keyIterator = androidContacts.keySet().iterator();
-//        while (keyIterator.hasNext()) {
-//            String phoneNumber = keyIterator.next();
-//            String name = androidContacts.get(phoneNumber);
-//            name = name.trim();
-//
-//            sportsUnityDBHelper.addToContacts(name, phoneNumber, null, defaultStatus, true);
-//
-//            if (!name.isEmpty()) {
-//                sportsUnityDBHelper.updateUserName(phoneNumber, name);
-//                sportsUnityDBHelper.updateChatEntryName(sportsUnityDBHelper.getContactIdFromPhoneNumber(phoneNumber), name, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
-//            } else {
-//                sportsUnityDBHelper.setPhoneNumberAsName(phoneNumber);
-//                sportsUnityDBHelper.updateChatEntryName(sportsUnityDBHelper.getContactIdFromPhoneNumber(phoneNumber), phoneNumber, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
-//            }
-//        }
-//
-//    }
-
-    private UserVCardDetail getUserVCardDetail(String number, UserSearchManager search, Form answerForm, Roster roster) throws XMPPException {
-        UserVCardDetail userVCardDetail = new UserVCardDetail();
-        try {
-            ReportedData data = search.getSearchResults(answerForm, "vjud.mm.io");
-            if (data.getRows() != null) {
-                Log.i("Inside IF", "Now");
-                for (ReportedData.Row row : data.getRows()) {
-                    Log.i("Inside first ", "For loop");
-                    for (String value : row.getValues("jid")) {
-                        VCard card = new VCard();
-                        card.load(XMPPClient.getConnection(), number + "@mm.io");
-                        userVCardDetail.profilePicture = card.getAvatar();
-                        userVCardDetail.status = card.getMiddleName();
-                        String name = card.getNickName();
-                        Log.i("Creating Entry", "true");
-                        roster.createEntry(number, name, null);
-//                        addToContactList(number);
-                        Log.i("Iterator values......", " " + value);
-                        userVCardDetail.registered = true;
-                    }
-                }
-            }
-        } catch (SmackException.NoResponseException e) {
-            e.printStackTrace();
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
-        } catch (SmackException.NotLoggedInException e) {
-            e.printStackTrace();
-        }
-
-        return userVCardDetail;
     }
 
     private void onCompleteActionAndUpdatePendingActions(Context context, int completedAction){
@@ -287,10 +205,10 @@ public class ContactsHandler {
 
                         if ( isValidPhoneNumber(phoneNumber) ) {
                             SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
-                            long rowId = SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, null, defaultStatus, null, true);
+                            long rowId = SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, null, defaultStatus, null, SportsUnityDBHelper.AVAILABLE_BY_MY_CONTACTS);
                             if( rowId == -1 ){
                                 if ( ! name.isEmpty() ) {
-                                    sportsUnityDBHelper.updateUserName(phoneNumber, name);
+                                    sportsUnityDBHelper.updateUserContactFromPhoneContactDetails(phoneNumber, name);
                                     sportsUnityDBHelper.updateChatEntryName(sportsUnityDBHelper.getContactIdFromPhoneNumber(phoneNumber), name, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
                                 } else {
                                     sportsUnityDBHelper.setPhoneNumberAsName(phoneNumber);
@@ -472,11 +390,15 @@ public class ContactsHandler {
         return jsonObject.toString();
     }
 
-    private class UserVCardDetail {
-        private boolean registered = false;
-        private String status = null;
-        private byte[] profilePicture = null;
-
+    private boolean isContactAccessGranted(Context context) {
+        boolean granted = false;
+        if ( ! PermissionUtil.getInstance().isRuntimePermissionRequired() ) {
+            granted = true;
+        } else if( PermissionUtil.getInstance().isPermissionGranted(context, Manifest.permission.READ_CONTACTS) &&
+                PermissionUtil.getInstance().isPermissionGranted(context, Manifest.permission.WRITE_CONTACTS) ) {
+            granted = true;
+        }
+        return granted;
     }
 
     private class ContactsThread extends Thread {
@@ -501,13 +423,19 @@ public class ContactsHandler {
                 int pendingActions = TinyDB.getInstance(context).getInt(TinyDB.KEY_ALL_CONTACTS_SYNC_STATUS, CONTACT_PENDING_ACTION_DEFAULT_VALUE);
                 if (isPendingAction(pendingActions, CONTACT_PENDING_ACTION_COPY_LOCALLY)) {
                     Log.d("ContactsHandler", "copy contacts");
-                    addContactsToApplicationDB(context, true);
+
+                    if ( isContactAccessGranted(context) ) {
+                        addContactsToApplicationDB(context, true);
+                    } else {
+                        //nothing
+                    }
+
                     onCompleteActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_COPY_LOCALLY);
                 } else if (isPendingAction(pendingActions, CONTACT_PENDING_ACTION_FETCH_JID)) {
                     Log.d("ContactsHandler", "fetch jid");
 
                     boolean success = getAndUpdateContactJIDs(context);
-                    if( success ) {
+                    if (success) {
                         //nothing
                     } else {
                         failedActions = addPendingAction(failedActions, CONTACT_PENDING_ACTION_FETCH_JID);
@@ -517,19 +445,37 @@ public class ContactsHandler {
                 } else if (isPendingAction(pendingActions, CONTACT_PENDING_ACTION_ADD_NEW_CONTACTS)) {
                     Log.d("ContactsHandler", "copy latest contacts");
 
-                    ArrayList<String> phoneNumbers = addContactsToApplicationDB(context, false);
-                    addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_FETCH_JID);
-                    onCompleteActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_ADD_NEW_CONTACTS);
+                    if ( isContactAccessGranted(context) ) {
 
-                    Log.d("ContactsHandler", "fetch latest jid");
-                    boolean success = getAndUpdateContactJIDs(context, phoneNumbers);
+                        ArrayList<String> phoneNumbers = addContactsToApplicationDB(context, false);
+                        addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_FETCH_JID);
+                        onCompleteActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_ADD_NEW_CONTACTS);
+
+                        Log.d("ContactsHandler", "fetch latest jid");
+                        boolean success = getAndUpdateContactJIDs(context, phoneNumbers);
+                        if (success) {
+                            //nothing
+                        } else {
+                            failedActions = addPendingAction(failedActions, CONTACT_PENDING_ACTION_FETCH_JID);
+                        }
+
+                        onCompleteActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_FETCH_JID);
+                    } else {
+                        //nothing
+                        onCompleteActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_ADD_NEW_CONTACTS);
+                    }
+
+                } else if (isPendingAction(pendingActions, CONTACT_PENDING_ACTION_UPDATE_USER_FAVORITES)) {
+                    Log.d("ContactsHandler", "update login user favorites on server");
+
+                    boolean success = UserProfileHandler.getInstance().submitUserFavorites(context);
                     if( success ) {
                         //nothing
                     } else {
-                        failedActions = addPendingAction(failedActions, CONTACT_PENDING_ACTION_FETCH_JID);
+                        failedActions = addPendingAction(failedActions, CONTACT_PENDING_ACTION_UPDATE_USER_FAVORITES);
                     }
 
-                    onCompleteActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_FETCH_JID);
+                    onCompleteActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_UPDATE_USER_FAVORITES);
                 }
             }
 

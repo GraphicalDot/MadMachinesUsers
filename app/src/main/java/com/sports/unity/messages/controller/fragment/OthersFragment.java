@@ -160,7 +160,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
     }
 
     private void deleteContact(int contactId) {
-        SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).deleteContact(contactId);
+        SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).deleteContactIfNotAvailable(contactId);
     }
 
     private void updateContent() {

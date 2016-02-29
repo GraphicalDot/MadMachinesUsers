@@ -18,21 +18,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
-import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.controller.fragment.AdvancedFilterFragment;
+import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FavouriteContentHandler;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
-import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.vcardtemp.VCardManager;
-import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -137,8 +132,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             fragmentNum++;
         } else if (fragmentNum == sportsSelected.size()) {
             UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
-            VcardThread updateVcard = new VcardThread();
-            updateVcard.start();
+            ContactsHandler.getInstance().addCallToUpdateUserFavorites(getApplicationContext());
             if (isResultRequired) {
                 Log.d("max","setting result"+RESULT_OK);
                 setResult(RESULT_OK, getIntent());
@@ -331,31 +325,4 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         onBack();
     }
 
-    private class VcardThread extends Thread {
-        @Override
-        public void run() {
-            super.run();
-
-            try {
-                if (UserUtil.isFilterCompleted() && XMPPClient.getConnection() != null) {
-                    VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
-                    VCard vCard = new VCard();
-                    vCard.load(XMPPClient.getConnection());
-                    vCard.setField("fav_list", TinyDB.getInstance(AdvancedFilterActivity.this).getString(TinyDB.FAVOURITE_FILTERS));
-                    manager.saveVCard(vCard);
-                    UserUtil.setFavouriteVcardUpdated(AdvancedFilterActivity.this, true);
-
-                } else {
-                    UserUtil.setFavouriteVcardUpdated(AdvancedFilterActivity.this, false);
-                }
-
-            } catch (SmackException.NoResponseException e) {
-                e.printStackTrace();
-            } catch (XMPPException.XMPPErrorException e) {
-                e.printStackTrace();
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 }

@@ -221,9 +221,15 @@ Carrier SMS charges may apply.</string>
     <string name="media_using_mobile_data">When using Mobile Data</string>
     <string name="media_using_wifi">When Connected on Wi-Fi</string>
     <string name="chats">Chats</string>
-    <string name="clear_all_chats">Clear all chats</string>
-    <string name="delete_all_chats">Delete all chats</string>
     <string name="got_it">GOT IT</string>
+
+    <string name="ok">OK</string>
+    <string name="clear">Clear</string>
+
+    <string name="clear_all_chats">Clear all chats</string>
+    <string name="clear_all_chats_confirm_message">Clear messages in all chats?</string>
+    <string name="delete_all_chats">Delete all chats</string>
+    <string name="delete_all_chats_confirm_message">Are you sure you want to delete ALL chats and their messages?</string>
 
     <string name="privacy">Privacy</string>
     <string name="last_seen">Last Seen</string>

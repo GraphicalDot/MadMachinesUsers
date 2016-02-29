@@ -39,6 +39,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     public static final String MIME_TYPE_VIDEO = "v";
     public static final String MIME_TYPE_AUDIO = "a";
 
+    public static final int AVAILABLE_NOT = 0;
+    public static final int AVAILABLE_BY_PEOPLE_AROUND_ME = 1;
+    public static final int AVAILABLE_BY_OTHER_CONTACTS = 2;
+    public static final int AVAILABLE_BY_MY_CONTACTS = 3;
+
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "spu.db";
 
@@ -53,7 +58,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             ContactsEntry.COLUMN_PHONE_NUMBER + " VARCHAR UNIQUE " + COMMA_SEP +
             ContactsEntry.COLUMN_USER_IMAGE + " BLOB " + COMMA_SEP +
             ContactsEntry.COLUMN_STATUS + " VARCHAR " + COMMA_SEP +
-            ContactsEntry.COLUMN_AVAILABLE + " boolean DEFAULT 1 " + COMMA_SEP +
+            ContactsEntry.COLUMN_AVAILABLE_STATUS + " INTEGER DEFAULT " + AVAILABLE_NOT + " " + COMMA_SEP +
             ContactsEntry.COLUMN_BLOCK_USER + " boolean DEFAULT 0 " +
             ");";
 
@@ -150,7 +155,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     }
 
-    public long addToContacts(String name, String number, String jid, String defaultStatus, byte[] image, boolean available) {
+    public long addToContacts(String name, String number, String jid, String defaultStatus, byte[] image, int availableStatus) {
         long rowId = -1;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -161,7 +166,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             contentValues.put(ContactsEntry.COLUMN_JID, jid);
             contentValues.put(ContactsEntry.COLUMN_STATUS, defaultStatus);
             contentValues.put(ContactsEntry.COLUMN_USER_IMAGE, image);
-            contentValues.put(ContactsEntry.COLUMN_AVAILABLE, available);
+            contentValues.put(ContactsEntry.COLUMN_AVAILABLE_STATUS, availableStatus);
 
             rowId = db.insert(ContactsEntry.TABLE_NAME, null, contentValues);
         } catch (Exception e) {
@@ -185,9 +190,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             registerCondition = " is NULL ";
         }
 
-        String selection = ContactsEntry.COLUMN_JID + registerCondition + " and " + ContactsEntry.COLUMN_AVAILABLE + " LIKE ?";
-        String[] selectionArgs = {"1"};
-
+        String selection = ContactsEntry.COLUMN_JID + registerCondition + " and " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " != " + AVAILABLE_NOT;
+        String[] selectionArgs = null;
 
         Cursor c = db.query(
                 ContactsEntry.TABLE_NAME,                 // The table to query
@@ -286,13 +290,13 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         Log.i("updated :", String.valueOf(count));
     }
 
-    public void updateUserName(String phoneNumber, String name) {
+    public void updateUserContactFromPhoneContactDetails(String phoneNumber, String name) {
 
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(ContactsEntry.COLUMN_NAME, name);
-        values.put(ContactsEntry.COLUMN_AVAILABLE, true);
+        values.put(ContactsEntry.COLUMN_AVAILABLE_STATUS, AVAILABLE_BY_MY_CONTACTS);
 
         String selection = ContactsEntry.COLUMN_PHONE_NUMBER + " LIKE ? ";
         String[] selectionArgs = {phoneNumber};
@@ -452,11 +456,9 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                     ContactsEntry.COLUMN_STATUS
             };
 
-            String selection = ContactsEntry.COLUMN_AVAILABLE + " LIKE ? ";
-            String[] selectionArgs = {"1"};
-
-            String sortOrder =
-                    ContactsEntry.COLUMN_NAME + " COLLATE NOCASE ASC ";
+            String selection = ContactsEntry.COLUMN_AVAILABLE_STATUS + " != " + AVAILABLE_NOT;
+            String[] selectionArgs = null;
+            String sortOrder = ContactsEntry.COLUMN_NAME + " COLLATE NOCASE ASC ";
 
             Cursor c = db.query(
                     ContactsEntry.TABLE_NAME,  // The table to query
@@ -499,12 +501,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         if (registeredOnly) {
             registerCondition = " is not NULL ";
         } else {
-            registerCondition = " is NULLL ";
+            registerCondition = " is NULL ";
         }
 
-        String selection = ContactsEntry.COLUMN_JID + registerCondition + " and " + ContactsEntry.COLUMN_AVAILABLE + " LIKE ?";
-        String[] selectionArgs = {"1"};
-
+        String selection = ContactsEntry.COLUMN_JID + registerCondition + " and " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " != " + AVAILABLE_NOT;
+        String[] selectionArgs = null;
         String sortOrder = ContactsEntry.COLUMN_NAME + " COLLATE NOCASE ASC ";
 
         Cursor c = db.query(
@@ -570,7 +571,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         Log.i("updated :", String.valueOf(count));
     }
 
-    public int updateContacts(String phoneNumber, String jid, String name, byte[] userImage, String status, boolean available) {
+    public int updateContacts(String phoneNumber, String jid, String name, byte[] userImage, String status, int availableStatus) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -579,7 +580,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         values.put(ContactsEntry.COLUMN_JID, jid);
         values.put(ContactsEntry.COLUMN_USER_IMAGE, userImage);
         values.put(ContactsEntry.COLUMN_STATUS, status);
-        values.put(ContactsEntry.COLUMN_AVAILABLE, available);
+        values.put(ContactsEntry.COLUMN_AVAILABLE_STATUS, availableStatus);
 
         String selection = ContactsEntry.COLUMN_PHONE_NUMBER + " LIKE ? ";
         String[] selectionArgs = {phoneNumber};
@@ -1551,7 +1552,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    public void deleteContact(int contactId) {
+    public void deleteContactIfNotAvailable(int contactId) {
 
         if (isContactAvailable(contactId)) {
             //nothing
@@ -1571,7 +1572,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         boolean value = false;
         String[] projection = {
-                ContactsEntry.COLUMN_AVAILABLE
+                ContactsEntry.COLUMN_AVAILABLE_STATUS
         };
 
         String selection = ContactsEntry.COLUMN_CONTACT_ID + " = ? ";
@@ -1589,7 +1590,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         );
 
         if (c.moveToFirst()) {
-            value = c.getInt(0) > 0;
+            value = c.getInt(0) >= AVAILABLE_BY_OTHER_CONTACTS ;
         }
         return value;
     }

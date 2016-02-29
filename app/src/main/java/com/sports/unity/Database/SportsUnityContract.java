@@ -17,10 +17,9 @@ public final class SportsUnityContract {
         public static final String COLUMN_JID = "jid";
         public static final String COLUMN_PHONE_NUMBER = "phone_number";
         public static final String COLUMN_NAME = "display_name";
-        public static final String COLUMN_UNIQUE_INDEX = "id";
         public static final String COLUMN_USER_IMAGE = "user_image";
         public static final String COLUMN_STATUS = "status";
-        public static final String COLUMN_AVAILABLE = "available";
+        public static final String COLUMN_AVAILABLE_STATUS = "available_status";
         public static final String COLUMN_BLOCK_USER = "block_user";
 
     }

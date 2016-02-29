@@ -213,15 +213,44 @@ public class UserProfileHandler {
         return requestStatus;
     }
 
+    public boolean submitUserFavorites(Context context){
+        boolean success = false;
+        try {
+            if (UserUtil.isFilterCompleted() && XMPPClient.getConnection() != null) {
+                VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
+                VCard vCard = new VCard();
+                vCard.load(XMPPClient.getConnection());
+                vCard.setField("fav_list", TinyDB.getInstance(context).getString(TinyDB.FAVOURITE_FILTERS));
+                manager.saveVCard(vCard);
+
+                success = true;
+                UserUtil.setFavouriteVcardUpdated(context, true);
+            } else {
+                success = false;
+                UserUtil.setFavouriteVcardUpdated(context, false);
+            }
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        return success;
+    }
+
     public Contacts getLoginUserDetail(Context context){
         String jid = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
         return SportsUnityDBHelper.getInstance(context).getContactByJid(jid);
     }
 
     private void saveLoginUserDetail(Context context, Contacts loginUserDetail){
-        int count = SportsUnityDBHelper.getInstance(context).updateContacts( loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.name, loginUserDetail.image, loginUserDetail.status, false);
+        int count = SportsUnityDBHelper.getInstance(context).updateContacts( loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.name, loginUserDetail.image, loginUserDetail.status, SportsUnityDBHelper.AVAILABLE_NOT);
         if( count == 0 ) {
-            SportsUnityDBHelper.getInstance(context).addToContacts(loginUserDetail.name, loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.status, loginUserDetail.image, false);
+            SportsUnityDBHelper.getInstance(context).addToContacts(loginUserDetail.name, loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.status, loginUserDetail.image, SportsUnityDBHelper.AVAILABLE_NOT);
         }
     }
 

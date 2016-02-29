@@ -88,9 +88,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     private ListView mChatView;
     private boolean otherChat = false;
 
-
     private ToolbarActionsForChatScreen toolbarActionsForChatScreen = null;
-//    private ArrayList<Integer> positions = new ArrayList<>();
 
     public static void viewProfile(Activity activity, byte[] profilePicture, String name, String groupServerId, String phoneNumber, boolean otherChat) {
         if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
@@ -154,7 +152,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     private ChatKeyboardHelper chatKeyboardHelper = null;
 
-    private HashMap<String, byte[]> mediaMap = new HashMap<>();
+//    private HashMap<String, byte[]> mediaMap = new HashMap<>();
 
     private GlobalEventListener globalEventListener = new GlobalEventListener() {
 
@@ -244,13 +242,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                 handleSendingMediaContent(mimeType, messageContent, mediaContent, null);
             } else if (id == ActivityActionHandler.EVENT_ID_DOWNLOAD_COMPLETED) {
                 //download completed
-                mediaMap.put((String) messageContent, (byte[]) mediaContent);
+//                mediaMap.put((String) messageContent, (byte[]) mediaContent);
             } else if (id == ActivityActionHandler.EVENT_ID_INCOMING_MEDIA) {
                 //handle incoming media message
-                if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) || mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
+                if ( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) && UserUtil.isMediaAutoDownloadEnabled(getApplicationContext(), UserUtil.IMAGE_MEDIA) ) {
                     FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent);
-                } else {
-                    //nothing
+                } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO) && UserUtil.isMediaAutoDownloadEnabled(getApplicationContext(), UserUtil.AUDIO_MEDIA) ) {
+                    FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent);
+                } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) && UserUtil.isMediaAutoDownloadEnabled(getApplicationContext(), UserUtil.VIDEO_MEDIA) ) {
+                    FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent);
                 }
             }
 
@@ -543,28 +543,20 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             listOfMessages.add(message);
         }
 
-        loadAllMediaContent(listOfMessages, new CustomTask(listOfMessages) {
-
-            @Override
-            public void run() {
-                ArrayList<Message> listOfMessages = (ArrayList<Message>) getContent();
-                for (Message message : listOfMessages) {
-                    if (message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
-                        sendMessage(message.textData);
-                    } else if (message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_STICKER)) {
-                        handleSendingMediaContent(message.mimeType, message.textData, null, null);
-                    } else {
-                        String thumbnailImage = null;
-                        if (message.media != null) {
-                            thumbnailImage = new String(message.media);
-                        }
-                        handleSendingMediaContent(message.mimeType, message.mediaFileName, mediaMap.get(message.mediaFileName), thumbnailImage);
-                    }
+        for (Message message : listOfMessages) {
+            if (message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
+                sendMessage(message.textData);
+            } else if (message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_STICKER)) {
+                handleSendingMediaContent(message.mimeType, message.textData, null, null);
+            } else {
+                String thumbnailImage = null;
+                if (message.media != null) {
+                    thumbnailImage = Base64.encodeToString(message.media, Base64.DEFAULT);
                 }
+
+                handleSendingMediaContent(message.mimeType, message.mediaFileName, null, thumbnailImage);
             }
-
-        });
-
+        }
 
     }
 
@@ -590,7 +582,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             mChatView.setAdapter(chatScreenAdapter);
         }
 
-        loadAllMediaContent(messageList, null);
+//        loadAllMediaContent(messageList, null);
         mChatView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -775,7 +767,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
             String mediaFileName = (String) messageContent;
 
-            mediaMap.put(mediaFileName, (byte[]) mediaContent);
+//            mediaMap.put(mediaFileName, (byte[]) mediaContent);
 
             byte[] bytesOfThumbnail = null;
             if (thumbnailImage != null) {
@@ -807,7 +799,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
             String mediaFileName = (String) messageContent;
 
-            mediaMap.put(mediaFileName, (byte[]) mediaContent);
+//            mediaMap.put(mediaFileName, (byte[]) mediaContent);
 
             long messageId = sportsUnityDBHelper.addMediaMessage("", mimeType, "", true, String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()),
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
@@ -995,57 +987,57 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         return null;
     }
 
-    public HashMap<String, byte[]> getMediaMap() {
-        return mediaMap;
-    }
+//    public HashMap<String, byte[]> getMediaMap() {
+//        return mediaMap;
+//    }
 
-    private void loadAllMediaContent(ArrayList<Message> list, final CustomTask laterTask) {
-        new ThreadTask(list) {
-
-            @Override
-            public Object process() {
-                ArrayList<Message> messageList = (ArrayList<Message>) object;
-
-                for (Message message : messageList) {
-                    if (
-                            message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ||
-                                    message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)
-                            ) {
-                        if (message.mediaFileName != null) {
-                            if (!mediaMap.containsKey(message.mediaFileName)) {
-                                byte[] content = DBUtil.loadContentFromExternalFileStorage(ChatScreenActivity.this.getBaseContext(), message.mediaFileName);
-                                mediaMap.put(message.mediaFileName, content);
-
-                                if ((message.textData.length() == 0 && message.iAmSender == true)) {
-                                    FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(message.mediaFileName, null, message.mimeType, chat, message.id, otherChat);
-                                } else {
-                                    //nothing
-                                }
-                            } else {
-                                //nothing
-                            }
-                        } else {
-//                            FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload(message.textData, message.mimeType, message.id);
-                        }
-                    } else {
-                        //TODO
-                    }
-                }
-
-                if (laterTask != null) {
-                    ChatScreenActivity.this.runOnUiThread(laterTask);
-                }
-
-                return null;
-            }
-
-            @Override
-            public void postAction(Object object) {
-                ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY);
-            }
-
-        }.start();
-    }
+//    private void loadAllMediaContent(ArrayList<Message> list, final CustomTask laterTask) {
+//        new ThreadTask(list) {
+//
+//            @Override
+//            public Object process() {
+//                ArrayList<Message> messageList = (ArrayList<Message>) object;
+//
+//                for (Message message : messageList) {
+//                    if (
+//                            message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ||
+//                                    message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)
+//                            ) {
+//                        if (message.mediaFileName != null) {
+//                            if (!mediaMap.containsKey(message.mediaFileName)) {
+//                                byte[] content = DBUtil.loadContentFromExternalFileStorage(ChatScreenActivity.this.getBaseContext(), message.mediaFileName);
+//                                mediaMap.put(message.mediaFileName, content);
+//
+//                                if ((message.textData.length() == 0 && message.iAmSender == true)) {
+//                                    FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(message.mediaFileName, null, message.mimeType, chat, message.id, otherChat);
+//                                } else {
+//                                    //nothing
+//                                }
+//                            } else {
+//                                //nothing
+//                            }
+//                        } else {
+////                            FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload(message.textData, message.mimeType, message.id);
+//                        }
+//                    } else {
+//                        //TODO
+//                    }
+//                }
+//
+//                if (laterTask != null) {
+//                    ChatScreenActivity.this.runOnUiThread(laterTask);
+//                }
+//
+//                return null;
+//            }
+//
+//            @Override
+//            public void postAction(Object object) {
+//                ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY);
+//            }
+//
+//        }.start();
+//    }
 
     private void sendReadStatus() {
         for (Message message : messageList) {

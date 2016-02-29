@@ -351,6 +351,20 @@ public class UserUtil {
         return enabled;
     }
 
+    public static boolean isMediaAutoDownloadEnabled(Context context, int media){
+        boolean enabled = false;
+        if( CommonUtil.isConnectedWifi(context) ) {
+            if( MEDIA_USING_WIFI % media == 0 ){
+                enabled = true;
+            }
+        } else {
+            if (MEDIA_USING_MOBILE_DATA % media == 0) {
+                enabled = true;
+            }
+        }
+        return enabled;
+    }
+
     public static int getPrivacyLastSeen() {
         return PRIVACY_LAST_SEEN;
     }
