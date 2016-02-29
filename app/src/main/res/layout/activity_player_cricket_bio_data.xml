@@ -88,17 +88,15 @@
                     android:elevation="@dimen/toolbar_elevation" />
                 <View
                     android:layout_width="fill_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/ColorPrimary" />
+                    android:layout_height="2dp"
+                    android:background="@color/app_theme_blue" />
 
                 <com.sports.unity.common.view.CustomViewPager
                     android:id="@+id/cricket_player_pager"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
-
                 </com.sports.unity.common.view.CustomViewPager>
             </LinearLayout>
-
         </LinearLayout>
 
     </ScrollView>
