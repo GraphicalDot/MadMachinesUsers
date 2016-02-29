@@ -2,13 +2,23 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.sports.unity">
 
+    <supports-screens
+        android:anyDensity="true"
+        android:largeScreens="true"
+        android:normalScreens="true"
+        android:resizeable="true"
+        android:smallScreens="true"
+        android:xlargeScreens="true" />
+
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
     <uses-feature
         android:glEsVersion="0x00020000"
         android:required="true" />
-
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -25,7 +35,6 @@
 
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
-
 
 
     <application
@@ -139,12 +148,12 @@
             android:screenOrientation="portrait"></activity>
         <activity
             android:name=".player.view.PlayerProfileView"
-            android:theme="@style/AppTheme" >
+            android:theme="@style/AppTheme">
 
-            </activity>
+        </activity>
         <activity
             android:name=".scoredetails.cricketdetail.PlayerCricketBioDataActivity"
-            android:theme="@style/AppTheme" >
+            android:theme="@style/AppTheme">
 
         </activity>
         <activity

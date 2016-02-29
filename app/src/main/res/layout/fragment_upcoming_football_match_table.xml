@@ -11,11 +11,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <android.support.percent.PercentRelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/gray3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/gray3"
                 android:padding="@dimen/horizontal_padding_very_small">
 
                 <LinearLayout
@@ -26,90 +25,90 @@
                     app:layout_widthPercent="46%">
 
                     <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                android:id="@+id/tv_fteam_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/teams"
+                        android:id="@+id/tv_fteam_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
                         android:textColor="@color/news_static"
                         android:textSize="@dimen/font_size_small_medium"
-                />
+                        />
 
                     <com.sports.unity.common.view.CustomRobotoRegularTextView
-                android:id="@+id/tv_match_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/match_date"
+                        android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+                        android:id="@+id/tv_match_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
                         android:textColor="@color/news_static"
                         android:textSize="@dimen/font_size_small_medium"
-                />
+                        />
                 </LinearLayout>
 
                 <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                android:id="@+id/tv_p"
+                    android:id="@+id/tv_p"
                     android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/ll_team_summery"
                     android:gravity="right"
                     android:text="@string/p"
                     android:textColor="@color/news_static"
                     android:textSize="@dimen/font_size_small_medium"
                     app:layout_widthPercent="7%"
-                />
+                    />
 
                 <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                android:id="@+id/tv_w"
+                    android:id="@+id/tv_w"
                     android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/tv_p"
                     android:gravity="right"
                     android:text="@string/w"
                     android:textColor="@color/news_static"
                     android:textSize="@dimen/font_size_small_medium"
                     app:layout_widthPercent="12%"
-                />
+                    />
 
                 <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                android:id="@+id/tv_d"
+                    android:id="@+id/tv_d"
                     android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/tv_w"
                     android:gravity="right"
                     android:text="@string/d"
                     android:textColor="@color/news_static"
                     android:textSize="@dimen/font_size_small_medium"
                     app:layout_widthPercent="10%"
-                />
+                    />
 
                 <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                android:id="@+id/tv_l"
+                    android:id="@+id/tv_l"
                     android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/tv_d"
                     android:gravity="right"
                     android:text="@string/l"
                     android:textColor="@color/news_static"
                     android:textSize="@dimen/font_size_small_medium"
                     app:layout_widthPercent="10%"
-                />
+                    />
 
                 <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                android:id="@+id/tv_pts"
+                    android:id="@+id/tv_pts"
                     android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/tv_l"
                     android:gravity="right"
                     android:text="@string/pts"
                     android:textColor="@color/news_static"
                     android:textSize="@dimen/font_size_small_medium"
                     app:layout_widthPercent="15%"
-                />
+                    />
             </android.support.percent.PercentRelativeLayout>
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_football_match_table"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/gray3"
-                app:layoutManager="com.sports.unity.common.view.CustomLinearLayoutManager"
                 tools:listitem="@layout/upcoming_football_match_table_card"
                 />
             <include
@@ -117,17 +116,17 @@
                 layout="@layout/error_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-            android:visibility="gone"
-            />
-        <TextView
-            android:id="@+id/no_comments"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="No Comments"
-            android:textSize="@dimen/font_size_large"
-            android:visibility="gone"
-            />
+                android:visibility="gone"
+                />
+            <TextView
+                android:id="@+id/no_comments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="No Comments"
+                android:textSize="@dimen/font_size_large"
+                android:visibility="gone"
+                />
             <ProgressBar
                 android:id="@+id/progress"
                 android:layout_width="wrap_content"
@@ -136,4 +135,4 @@
         </LinearLayout>
     </ScrollView>
 
-   </android.support.v4.widget.SwipeRefreshLayout>
+</android.support.v4.widget.SwipeRefreshLayout>
