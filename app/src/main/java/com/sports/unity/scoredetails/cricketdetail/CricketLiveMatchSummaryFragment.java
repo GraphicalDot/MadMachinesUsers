@@ -94,7 +94,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             tvFirstPlayerRunOnBall = (TextView) view.findViewById(R.id.tv_first_player_run_on_ball);
             tvPartnershipRecord = (TextView) view.findViewById(R.id.tv_partnership_record);
             tvSecondPlayerName = (TextView) view.findViewById(R.id.tv_second_player_name);
-            tvSecondPlayerRunRate = (TextView) view.findViewById(R.id.tv_first_player_run_rate);
+            tvSecondPlayerRunRate = (TextView) view.findViewById(R.id.tv_second_player_run_rate);
             tvSecondPlayerRunOnBall = (TextView) view.findViewById(R.id.tv_second_player_run_on_ball);
             ivPlayerSecond = (ImageView) view.findViewById(R.id.iv_player_second);
             ivUppComingPlayerFirst = (ImageView) view.findViewById(R.id.iv_upp_coming_player_first);
@@ -122,7 +122,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
     @Override
     public void handleContent(String content) {
-      ///  content = "{\"error\":false,\"data\":[{\"recent_overs\":[[19,[\"r0\",\"r1\",\"r0\",\"b4\"]],[18,[\"b6\",\"b4\",\"b6\",\"r1\",\"r0\",\"b6\"]],[17,[\"b4\",\"b6\",\"r1\",\"r0\",\"r0\",\"r1\"]]],\"yet_to_bat\":[\"Sarfraz Ahmed\",\"Shahid Afridi\",\"Mohammad Sami\",\"Mohammad Amir\",\" Mohammad Irfan\",\"Mohammad Nawaz\"],\"current_partnership_details\":{\"player_b_balls\":4,\"player_a_balls\":5,\"player_b\":\"Umar Akmal\",\"player_a\":\"Shoaib Malik\",\"partnership_runrate\":\"0.67\",\"player_b_runs\":1,\"player_a_runs\":0,\"player_a_strikerate\":\"0.0\",\"player_b_strikerate\":\"25.0\",\"partnership_runs\":1,\"partnership_balls\":9},\"match_key\":\"asiacup_2016_g6\",\"current_bowler_details\":{\"stats\":[{\"economy\":7.64,\"inning\":\"1\",\"runs_conceded\":28,\"wickets\":0,\"overs\":\"3.4\"}],\"name\":\"Mohammad Naveed\"},\"match_id\":\"asiacup_2016_g6\"}],\"success\":true}";
+     // content = "{\"error\":false,\"data\":[{\"recent_overs\":[[19,[\"r0\",\"r1\",\"r0\",\"b4\"]],[18,[\"b6\",\"b4\",\"b6\",\"r1\",\"r0\",\"b6\"]],[17,[\"b4\",\"b6\",\"r1\",\"r0\",\"r0\",\"r1\"]]],\"yet_to_bat\":[\"Sarfraz Ahmed\",\"Shahid Afridi\",\"Mohammad Sami\",\"Mohammad Amir\",\" Mohammad Irfan\",\"Mohammad Nawaz\"],\"current_partnership_details\":{\"player_b_balls\":4,\"player_a_balls\":5,\"player_b\":\"Umar Akmal\",\"player_a\":\"Shoaib Malik\",\"partnership_runrate\":\"0.67\",\"player_b_runs\":1,\"player_a_runs\":0,\"player_a_strikerate\":\"0.0\",\"player_b_strikerate\":\"25.0\",\"partnership_runs\":1,\"partnership_balls\":9},\"match_key\":\"asiacup_2016_g6\",\"current_bowler_details\":{\"stats\":[{\"economy\":7.64,\"inning\":\"1\",\"runs_conceded\":28,\"wickets\":0,\"overs\":\"3.4\"}],\"name\":\"Mohammad Naveed\"},\"match_id\":\"asiacup_2016_g6\"}],\"success\":true}";
         try {
             showProgress();
             JSONObject object = new JSONObject(content);
@@ -302,13 +302,13 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                         }
 
                         if(!currentBowlerStatObject.isNull("economy"))
-                            tvBowlerEcon.setText(currentBowlerStatObject.getString("economy"));
+                            tvBowlerEcon.setText("ECON "+currentBowlerStatObject.getString("economy"));
                         if(!currentBowlerStatObject.isNull("overs"))
                             tvBowlerOver.setText(currentBowlerStatObject.getString("overs"));
-                        if(!currentBowlerStatObject.isNull("wickets"))
-                            tvBowlerWr.setText(currentBowlerStatObject.getString("wickets"));
-                        if(!currentBowlerStatObject.isNull("runs_conceded"))
-                            tvBowlerWRun.setText(currentBowlerStatObject.getString("runs_conceded"));
+                       /* if(!currentBowlerStatObject.isNull("wickets"))
+                            tvBowlerWr.setText(currentBowlerStatObject.getString("wickets"));*/
+                        if(!currentBowlerStatObject.isNull("runs_conceded") && !currentBowlerStatObject.isNull("wickets"))
+                            tvBowlerWRun.setText(currentBowlerStatObject.getString("wickets")+"/"+currentBowlerStatObject.getString("runs_conceded"));
 
 
                     } catch (Exception ex) {
@@ -326,10 +326,9 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
     private Drawable getTextDrawable(String text,int color, int backGroundColor){
         int radius = getContext().getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
-        int border = getContext().getResources().getDimensionPixelSize(R.dimen.recent_ball_border);
+        /*int border = getContext().getResources().getDimensionPixelSize(R.dimen.group_image_border);*/
         TextDrawable drawable = TextDrawable.builder()
                 .beginConfig().textColor(color)
-                .withBorder(border)
                 .width(radius)
                 .height(radius)
                 .bold()
