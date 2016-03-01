@@ -184,6 +184,7 @@
                             android:id="@+id/layout_batting"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                           android:layout_marginBottom="@dimen/horizontal_padding_large"
                             android:layout_toRightOf="@+id/iv_player_first"
                             android:orientation="vertical">
 
@@ -193,7 +194,8 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="left"
                                 android:text=""
-                                android:textSize="@dimen/font_size_very_very_small" />
+                                android:textColor="@color/news_static"
+                                android:textSize="@dimen/font_size_small_medium" />
 
                             <com.sports.unity.common.view.CustomRobotoRegularTextView
                                 android:id="@+id/tv_first_player_run_rate"
@@ -203,7 +205,7 @@
                                 android:gravity="left"
                                 android:text=""
                                 android:textColor="@color/score_light_grey"
-                                android:textSize="@dimen/font_size_very_very_small" />
+                                android:textSize="@dimen/font_size_very_small" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -218,7 +220,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="right"
                                 android:text=""
-                                android:textSize="@dimen/font_size_very_very_small" />
+                                android:textColor="@color/news_static"
+                                android:textSize="@dimen/font_size_small_medium"  />
 
                             <com.sports.unity.common.view.CustomRobotoRegularTextView
                                 android:id="@+id/tv_second_player_run_rate"
@@ -226,9 +229,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignTop="@id/v_divider"
                                 android:layout_gravity="right"
-                                android:text=""
+                                android:text="hhh"
                                 android:textColor="@color/score_light_grey"
-                                android:textSize="@dimen/font_size_very_very_small" />
+                                android:textSize="@dimen/font_size_very_small" />
                         </LinearLayout>
 
 
@@ -236,7 +239,7 @@
                             android:id="@+id/ll_players_summery"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_alignBottom="@id/iv_player_first"
+                            android:layout_below="@id/iv_player_first"
                             android:layout_toLeftOf="@id/iv_player_second"
                             android:layout_toRightOf="@id/iv_player_first"
                             android:orientation="horizontal">
@@ -247,8 +250,9 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="left"
+                                android:text=""
                                 android:gravity="left"
-                                android:textSize="@dimen/font_size_very_very_small" />
+                                android:textSize="@dimen/font_size_very_small" />
 
                             <com.sports.unity.common.view.CustomRobotoRegularTextView
                                 android:id="@+id/tv_partnership_record"
@@ -259,7 +263,7 @@
                                 android:gravity="center_horizontal"
                                 android:text=""
                                 android:textColor="@color/dark_blue"
-                                android:textSize="@dimen/font_size_very_very_small" />
+                                android:textSize="@dimen/font_size_very_small" />
 
                             <com.sports.unity.common.view.CustomRobotoRegularTextView
                                 android:id="@+id/tv_second_player_run_on_ball"
@@ -267,7 +271,7 @@
                                 android:layout_height="wrap_content"
                                 android:gravity="right"
                                 android:text=""
-                                android:textSize="@dimen/font_size_very_very_small" />
+                                android:textSize="@dimen/font_size_very_small" />
                         </LinearLayout>
 
                     </RelativeLayout>
@@ -332,7 +336,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:text=""
-                                android:textSize="@dimen/font_size_small_large" />
+                                android:textSize="@dimen/font_size_very_small" />
 
                             <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                                 android:id="@+id/tv_first_up_coming_player_run_rate"
@@ -364,7 +368,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:text=""
-                                android:textSize="@dimen/font_size_small_large" />
+                                android:textSize="@dimen/font_size_very_small" />
 
                             <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                                 android:id="@+id/tv_second_up_coming_player_run_rate"
@@ -397,7 +401,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center_horizontal"
                                 android:text=""
-                                android:textSize="@dimen/font_size_small_large" />
+                                android:textSize="@dimen/font_size_very_small" />
 
                             <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                                 android:id="@+id/tv_third_up_coming_player_run_rate"
@@ -473,7 +477,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="left"
                                     android:text=""
-                                    android:textSize="@dimen/font_size_small_large" />
+                                    android:textSize="@dimen/font_size_very_small" />
 
                                 <com.sports.unity.common.view.CustomRobotoRegularTextView
                                     android:id="@+id/tv_bowler_econ"
@@ -499,7 +503,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="center_horizontal"
                                     android:text=""
-                                    android:textSize="@dimen/font_size_small_large" />
+                                    android:textSize="@dimen/font_size_very_small" />
                                 <com.sports.unity.common.view.CustomRobotoRegularTextView
                                     android:id="@+id/tv_bowler_over_label"
                                     android:layout_width="wrap_content"
@@ -524,7 +528,7 @@
                                     android:layout_height="wrap_content"
                                     android:layout_gravity="right"
                                     android:text=""
-                                    android:textSize="@dimen/font_size_small_large" />
+                                    android:textSize="@dimen/font_size_very_small" />
                                 <com.sports.unity.common.view.CustomRobotoRegularTextView
                                     android:id="@+id/tv_bowler_wr"
                                     android:layout_width="wrap_content"
