@@ -83,7 +83,10 @@ public class CompletedMatchScoreCardHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
-        mContentListener.handleError();
+        if(mContentListener!=null){
+            mContentListener.handleError();
+        }
+
     }
 
     public void addListener(CompletedMatchContentListener contentListener) {

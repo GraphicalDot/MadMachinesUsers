@@ -136,7 +136,7 @@
     <dimen name="user_image_border">1dp</dimen>
     <dimen name="group_image_border">1dp</dimen>
     <dimen name="recent_ball_radius">24dp</dimen>
-    <dimen name="recent_ball_border">2dp</dimen>
+    <dimen name="recent_ball_border">3dp</dimen>
 
 
 </resources>

@@ -53,7 +53,7 @@
                         android:padding="@dimen/horizontal_padding_very_very_small"
                         android:weightSum="6">
 
-                        <de.hdodenhof.circleimageview.CircleImageView
+                        <ImageView
                             android:id="@+id/iv_first_ball"
                             android:layout_width="@dimen/recent_ball_radius"
                             android:layout_height="@dimen/recent_ball_radius"
@@ -61,35 +61,35 @@
 
                             android:src="@drawable/recent_balls" />
 
-                        <de.hdodenhof.circleimageview.CircleImageView
+                        <ImageView
                             android:id="@+id/iv_second_ball"
                             android:layout_width="@dimen/recent_ball_radius"
                             android:layout_height="@dimen/recent_ball_radius"
                             android:layout_weight="1"
                             android:src="@drawable/recent_balls" />
 
-                        <de.hdodenhof.circleimageview.CircleImageView
+                        <ImageView
                             android:id="@+id/iv_third_ball"
                             android:layout_width="@dimen/recent_ball_radius"
                             android:layout_height="@dimen/recent_ball_radius"
                             android:layout_weight="1"
                             android:src="@drawable/recent_balls" />
 
-                        <de.hdodenhof.circleimageview.CircleImageView
+                        <ImageView
                             android:id="@+id/iv_fourth_ball"
                             android:layout_width="@dimen/recent_ball_radius"
                             android:layout_height="@dimen/recent_ball_radius"
                             android:layout_weight="1"
                             android:src="@drawable/recent_balls" />
 
-                        <de.hdodenhof.circleimageview.CircleImageView
+                        <ImageView
                             android:id="@+id/iv_fifth_ball"
                             android:layout_width="@dimen/recent_ball_radius"
                             android:layout_height="@dimen/recent_ball_radius"
                             android:layout_weight="1"
                             android:src="@drawable/recent_balls" />
 
-                        <de.hdodenhof.circleimageview.CircleImageView
+                        <ImageView
                             android:id="@+id/iv_sixth_ball"
                             android:layout_width="@dimen/recent_ball_radius"
                             android:layout_height="@dimen/recent_ball_radius"
