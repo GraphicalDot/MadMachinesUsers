@@ -1,7 +1,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:background="@color/ColorPrimary">
     <ScrollView
         android:layout_below="@+id/tool_bar"
@@ -30,18 +31,18 @@
                 <LinearLayout
                     android:id="@+id/layout_team_first"
                     android:layout_width="match_parent"
+                    android:padding="@dimen/horizontal_padding_very_small"
                     android:layout_height="wrap_content"
                     android:background="@color/gray3"
                     android:orientation="horizontal">
-                    <TextView
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                         android:id="@+id/tv_name_first_team"
                         android:layout_width="match_parent"
-                        android:layout_marginTop="@dimen/activity_vertical_margin_small"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:textColor="@color/dark_blue"
                         android:textSize="@dimen/font_size_small_large"
-                        android:text="BARCELONA"/>
+                        android:textAllCaps="true"/>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/layout_last_match"
@@ -49,7 +50,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <TextView
+                    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                         android:id="@+id/tv_last_five_match_team_first"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -147,7 +148,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <TextView
+                    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                         android:id="@+id/tv_first_premiera_division"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -158,105 +159,131 @@
                         android:textSize="@dimen/font_size_very_small"
                         android:text="@string/premiera_division"/>
                 </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/layout_team_history_label"
-                    android:layout_below="@+id/layout_team_history_value"
-                    android:layout_width="match_parent"
-                    android:weightSum="4"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/tv_first_point"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="@string/point"/>
-                    <TextView
-                        android:id="@+id/tv_first_wins"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="@string/win"/>
-                    <TextView
-                        android:id="@+id/tv_first_draws"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="@string/draws"/>
-                    <TextView
-                        android:id="@+id/tv_first_loss"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="@string/loss"/>
-                </LinearLayout>
-
-                <LinearLayout
+                <android.support.percent.PercentRelativeLayout
                     android:id="@+id/layout_team_history_value"
                     android:paddingTop="@dimen/horizontal_padding_large"
                     android:layout_below="@+id/layout_last_five_match_value"
                     android:layout_width="match_parent"
-                    android:weightSum="4"
                     android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/tv_point_of_first_team"
+                    <LinearLayout
+                        android:id="@+id/ll_first_point"
+                        android:layout_width="wrap_content"
+                        app:layout_widthPercent="25%"
+                        android:gravity="center"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                            android:id="@+id/tv_point_of_first_team"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/green"
+                            android:textSize="@dimen/font_size_small_large"
+                            android:text=""/>
+                        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                            android:id="@+id/tv_first_point"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/green"
+                            android:textSize="@dimen/font_size_very_small"
+                            android:text="@string/point"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:gravity="center"
+                        android:layout_toRightOf="@id/ll_first_point"
+                        android:id="@+id/ll_first_wins"
+                        app:layout_widthPercent="25%"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                            android:id="@+id/tv_win_match_of_first_team"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textSize="@dimen/font_size_small_large"
+                            android:text=""/>
+                        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                            android:id="@+id/tv_first_wins"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textColor="@color/score_light_grey"
+                            android:textSize="@dimen/font_size_very_small"
+                            android:text="@string/win"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        app:layout_widthPercent="25%"
                         android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="10"/>
-                    <TextView
-                        android:id="@+id/tv_win_match_of_first_team"
+                        android:layout_toRightOf="@+id/ll_first_wins"
+                        android:id="@+id/ll_first_draws"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="5"/>
-                    <TextView
-                        android:id="@+id/tv_draw_match_of_first_team"
+                        android:orientation="vertical">
+                        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                            android:id="@+id/tv_draw_match_of_first_team"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textSize="@dimen/font_size_small_large"
+                            android:text=""/>
+                        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                            android:id="@+id/tv_first_draws"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textColor="@color/score_light_grey"
+                            android:textSize="@dimen/font_size_very_small"
+                            android:text="@string/draws"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        app:layout_widthPercent="25%"
+                        android:id="@+id/ll_first_loss"
+                        android:layout_toRightOf="@id/ll_first_draws"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="7"/>
-                    <TextView
-                        android:id="@+id/tv_loss_match_of_first_team"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="9"/>
-                </LinearLayout>
+                        android:orientation="vertical">
+                        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                            android:id="@+id/tv_loss_match_of_first_team"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textSize="@dimen/font_size_small_large"
+                            android:text=""/>
+                        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                            android:id="@+id/tv_first_loss"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textColor="@color/score_light_grey"
+                            android:textSize="@dimen/font_size_very_small"
+                            android:text="@string/loss"/>
+                    </LinearLayout>
+
+
+                </android.support.percent.PercentRelativeLayout>
             </RelativeLayout>
             <RelativeLayout
+                android:paddingTop="@dimen/horizontal_padding_very_small"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <LinearLayout
                     android:id="@+id/layout_team_second"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:padding="@dimen/horizontal_padding_very_small"
                     android:background="@color/gray3"
                     android:orientation="horizontal">
-                    <TextView
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                         android:id="@+id/tv_name_second_team"
                         android:layout_width="match_parent"
-                        android:layout_marginTop="@dimen/activity_vertical_margin_small"
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:textColor="@color/dark_blue"
+                        android:textAllCaps="true"
                         android:textSize="@dimen/font_size_small_large"
-                        android:text="INDIA"/>
+                        android:text=""/>
                 </LinearLayout>
                 <LinearLayout
                     android:id="@+id/layout_last_match_second_team"
@@ -264,7 +291,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <TextView
+                    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                         android:id="@+id/tv_last_five_match_team_second"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -352,85 +379,113 @@
                             android:layout_marginLeft="@dimen/activity_vertical_margin"/>
                     </FrameLayout>
                 </LinearLayout>
-                <LinearLayout
-                    android:id="@+id/layout_team_history_label_second_team"
-                    android:layout_below="@+id/layout_team_history_value_second_team"
-                    android:layout_width="match_parent"
-                    android:weightSum="4"
-                    android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/tv_second_point"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="@string/point"/>
-                    <TextView
-                        android:id="@+id/tv_second_wins"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="@string/win"/>
-                    <TextView
-                        android:id="@+id/tv_second_draws"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="@string/draws"/>
-                    <TextView
-                        android:id="@+id/tv_second_loss"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="@string/loss"/>
-                </LinearLayout>
-                <LinearLayout
+
+                <android.support.percent.PercentRelativeLayout
                     android:id="@+id/layout_team_history_value_second_team"
                     android:paddingTop="@dimen/horizontal_padding_large"
                     android:layout_below="@+id/layout_last_five_match_value_second_team"
                     android:layout_width="match_parent"
-                    android:weightSum="4"
                     android:layout_height="wrap_content">
-                    <TextView
-                        android:id="@+id/tv_point_of_second_team"
+                    <LinearLayout
+                        android:id="@+id/ll_second_point"
+                        android:layout_width="wrap_content"
+                        app:layout_widthPercent="25%"
+                        android:gravity="center"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                            android:id="@+id/tv_point_of_second_team"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textColor="@color/green"
+                            android:textSize="@dimen/font_size_small_large"
+                            android:text=""/>
+                        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                            android:id="@+id/tv_second_point"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textColor="@color/green"
+                            android:textSize="@dimen/font_size_very_small"
+                            android:text="@string/point"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:gravity="center"
+                        android:layout_toRightOf="@id/ll_second_point"
+                        android:id="@+id/ll_second_wins"
+                        app:layout_widthPercent="25%"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:orientation="vertical">
+                        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                            android:id="@+id/tv_win_match_of_second_team"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textSize="@dimen/font_size_small_large"
+                            android:text=""/>
+                        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                            android:id="@+id/tv_second_wins"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textColor="@color/score_light_grey"
+                            android:textSize="@dimen/font_size_very_small"
+                            android:text="@string/win"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        app:layout_widthPercent="25%"
                         android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="10"/>
-                    <TextView
-                        android:id="@+id/tv_win_match_of_second_team"
+                        android:layout_toRightOf="@+id/ll_second_wins"
+                        android:id="@+id/ll_second_draws"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="5"/>
-                    <TextView
-                        android:id="@+id/tv_draw_match_of_second_team"
+                        android:orientation="vertical">
+                        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                            android:id="@+id/tv_draw_match_of_second_team"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textSize="@dimen/font_size_small_large"
+                            android:text=""/>
+                        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                            android:id="@+id/tv_second_draws"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textColor="@color/score_light_grey"
+                            android:textSize="@dimen/font_size_very_small"
+                            android:text="@string/draws"/>
+                    </LinearLayout>
+                    <LinearLayout
+                        app:layout_widthPercent="25%"
+                        android:id="@+id/ll_second_loss"
+                        android:layout_toRightOf="@id/ll_second_draws"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
                         android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="7"/>
-                    <TextView
-                        android:id="@+id/tv_loss_match_of_second_team"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:text="0"/>
-                </LinearLayout>
+                        android:orientation="vertical">
+
+                        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                            android:id="@+id/tv_loss_match_of_second_team"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textSize="@dimen/font_size_small_large"
+                            android:text=""/>
+
+                        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                            android:id="@+id/tv_second_loss"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:textColor="@color/score_light_grey"
+                            android:textSize="@dimen/font_size_very_small"
+                            android:text="@string/loss"/>
+                    </LinearLayout>
+                </android.support.percent.PercentRelativeLayout>
                 <View
                     android:id="@+id/second_view"
                     android:layout_marginTop="@dimen/activity_vertical_margin_small"
@@ -443,7 +498,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal">
-                    <TextView
+                    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                         android:id="@+id/tv_second_premiera_division"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -456,8 +511,6 @@
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>
-
-
     </ScrollView>
     <include
         android:id="@+id/error"
