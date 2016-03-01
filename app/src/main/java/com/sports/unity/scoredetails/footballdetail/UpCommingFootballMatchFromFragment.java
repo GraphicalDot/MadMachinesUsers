@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -116,7 +117,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         initErrorLayout(view);
         tvnamefirstteam=(TextView)view.findViewById(R.id.tv_name_first_team);
         tvlastfivematchteamfirst=(TextView)view.findViewById(R.id.tv_last_five_match_team_first);
-        ivfirstmatchteamfirst=(ImageView)view.findViewById(R.id.iv_fifth_match_team_first);
+        ivfirstmatchteamfirst=(ImageView)view.findViewById(R.id.iv_first_match_team_first);
         ivsecondmatchteamfirst=(ImageView)view.findViewById(R.id.iv_second_match_team_first);
         ivthirdmatchteamfirst=(ImageView)view.findViewById(R.id.iv_third_match_team_first);
         ivforthmatchteamfirst=(ImageView)view.findViewById(R.id.iv_forth_match_team_first);
@@ -273,19 +274,21 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     }
 
 
-    private int getBallColor(Character c){
+    private int getBallColor(char c){
+        Log.i("getBallColor: "," "+c);
         int color= 0;
-
-        c = Character.toUpperCase(c);
         switch (c){
             case 'W':
-                color= R.color.green;
+            case 'w':
+                color=   getResources().getColor(R.color.green);
                 break;
             case 'L':
-                color=R.color.loose;
+            case 'l':
+                color=getResources().getColor(R.color.loose);
                 break;
             case 'D':
-                color= R.color.draw;
+            case 'd':
+                color= getResources().getColor(R.color.draw);
                 break;
             default:color = Color.WHITE;
         }
