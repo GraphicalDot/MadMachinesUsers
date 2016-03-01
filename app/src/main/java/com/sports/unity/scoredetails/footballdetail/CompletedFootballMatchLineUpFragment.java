@@ -2,8 +2,11 @@ package com.sports.unity.scoredetails.footballdetail;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.util.Log;
@@ -138,6 +141,9 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         final JSONObject dataObject = jsonObject.getJSONObject("data");
          final  JSONArray subsArray = dataObject.getJSONArray("subs");
         final JSONArray teamsObjectArray = dataObject.getJSONArray("teams");
+        final JSONArray substitutionsArray = dataObject.getJSONArray("substitutions");
+        final JSONArray matchEventsArray = dataObject.getJSONArray("match_events");
+
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -146,6 +152,9 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                         TextDrawable drawable = null;
                         tvCaptainFirst.setText("NA");
                         tvCaptainSecond.setText("NA");
+                         View view;
+
+
                         LinearLayout linearLayout = null;
                         TextView tvPlayerName = null;
                         ImageView tvPosition = null;
@@ -155,17 +164,15 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
                             lp.weight = 0.5f;
                             linearLayout.setLayoutParams(lp);
+                          // view =    getContext().getResources().getView(R.layout.football_live_match_lineups_card);
+
+
+
+
                             tvPlayerName = new TextView(getContext());
                             tvPosition = new ImageView(getContext());
                             tvPlayerName.setText(subsObject.getString("player_name"));
-                            drawable = TextDrawable.builder()
-                                    .beginConfig().textColor(Color.BLACK)
-                                    .withBorder(2)
-                                    .width(75)
-                                    .height(75)
-                                    .bold()
-                                    .endConfig()
-                                    .buildRound(subsObject.getString("position"), Color.WHITE);
+                            drawable=  getTextDrawable(subsObject.getString("position"), Color.WHITE, R.color.app_theme_blue);
                             tvPosition.setImageDrawable(drawable);
                             linearLayout.addView(tvPosition);
                             linearLayout.addView(tvPlayerName);
@@ -182,14 +189,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                             tvPlayerName = new TextView(getContext());
                             tvPosition = new ImageView(getContext());
                             tvPlayerName.setText(teamsObject.getString("name"));
-                            drawable = TextDrawable.builder()
-                                    .beginConfig().textColor(Color.BLACK)
-                                    .withBorder(2)
-                                    .width(75)
-                                    .height(75)
-                                    .bold()
-                                    .endConfig()
-                                    .buildRound(teamsObject.getString("position"), Color.WHITE);
+                            drawable=  getTextDrawable(teamsObject.getString("position"), Color.WHITE,R.color.app_theme_blue);
                             tvPosition.setImageDrawable(drawable);
                             linearLayout.addView(tvPosition);
                             linearLayout.addView(tvPlayerName);
@@ -207,6 +207,39 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
 
 
 
+    private TextDrawable getTextDrawable(String value,int textColor,int color) {
+
+        int radius = getContext().getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
+        int border = getContext().getResources().getDimensionPixelSize(R.dimen.user_image_border);
+        return TextDrawable.builder()
+                .beginConfig()
+                .textColor(textColor)
+                .withBorder(border)
+                .width(radius)
+                .height(radius)
+                .bold()
+                .endConfig()
+                .buildRound(value, color);
+    }
 
 
+    private Drawable getDrwableResource(String event) {
+        Resources.Theme theme = getActivity().getTheme();
+        int drwableId = R.drawable.ic_red_green_arrow;
+        if("yellowcards".equalsIgnoreCase(event)){
+            drwableId = R.drawable.ic_yellow_card;
+        }else if("goals".equalsIgnoreCase(event)){
+            drwableId = R.drawable.ic_football;
+        }
+        else if("redcards".equalsIgnoreCase(event)){
+            drwableId = R.drawable.ic_red_card;
+        }
+        Drawable drawable = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            drawable = getResources().getDrawable(drwableId,theme);
+        } else {
+            drawable = getResources().getDrawable(drwableId);
+        }
+        return drawable;
+    }
 }

@@ -273,12 +273,14 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     }
 
 
-    private int getBallColor(char c){
+    private int getBallColor(Character c){
         int color= 0;
+        c = Character.toUpperCase(c);
         switch (c){
             case 'W':
                 color= Color.GREEN;
-                break;case 'L':
+                break;
+            case 'L':
                 color=Color.RED;
                 break;
             case 'D':
