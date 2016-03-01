@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,13 +14,21 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.amulyakhare.textdrawable.TextDrawable;
 import com.sports.unity.R;
+import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballLineUpAdapter;
+import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballLineUpDTO;
 import com.sports.unity.scores.ScoreDetailActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.solovyev.android.views.llm.LinearLayoutManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_ID;
@@ -42,8 +51,9 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
     private TextView tvlineup;
     private GridLayout rcLineup;
     private TextView tvsubstitutes;
-    private GridLayout gvSubstitutes;
-
+    private RecyclerView recyclerView;
+    private CompleteFootballLineUpAdapter completeFootballLineUpAdapter;
+    private List<CompleteFootballLineUpDTO> list = new ArrayList<>();
 
     public LiveFootballMatchLineUpFargment() {
         // Required empty public constructor
@@ -77,8 +87,10 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
         tvCaptainSecond=(TextView)view.findViewById(R.id.tv_team_second_captain);
         tvlineup=(TextView)view.findViewById(R.id.tv_line_up);
         tvsubstitutes=(TextView)view.findViewById(R.id.tv_substitutes);
-        rcLineup = (GridLayout) view.findViewById(R.id.gv_lineup);
-        gvSubstitutes = (GridLayout) view.findViewById(R.id.gv_substitutes);
+        recyclerView = (RecyclerView) view.findViewById(R.id.rv_substitutes);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(list,getContext());
+        recyclerView.setAdapter(completeFootballLineUpAdapter);
 
 
     }
@@ -138,40 +150,42 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
                 @Override
                 public void run() {
                     try {
+                        TextDrawable drawable = null;
                         tvCaptainFirst.setText("NA");
                         tvCaptainSecond.setText("NA");
-                        LinearLayout linearLayout = null;
-                        TextView tvPlayerName = null;
-                        TextView tvPosition = null;
+                        View view;
+
+
+                        CompleteFootballLineUpDTO completeFootballLineUpDTO;
                         for(int i = 0; i<subsArray.length();i++){
                             JSONObject subsObject = subsArray.getJSONObject(i);
-                            linearLayout = new LinearLayout(getContext());
-                            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-                            lp.weight = 0.5f;
-                            linearLayout.setLayoutParams(lp);
-                            tvPlayerName = new TextView(getContext());
-                            tvPosition = new TextView(getContext());
-                            tvPlayerName.setText(subsObject.getString("player_name"));
-                            tvPosition.setText(subsObject.getString("position"));
-                            linearLayout.addView(tvPosition);
-                            linearLayout.addView(tvPlayerName);
+                            completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
+                            completeFootballLineUpDTO.setPlayerName(subsObject.getString("player_name"));
+                            completeFootballLineUpDTO.setPlayerPostionNumber(subsObject.getString("position"));
+                            completeFootballLineUpDTO.setCardType("yellow");
+                            completeFootballLineUpDTO.setGoal("goal");
+                            completeFootballLineUpDTO.getEnterExitImage();
 
-                            gvSubstitutes.addView(linearLayout);
-                        }
+
+                            list.add(completeFootballLineUpDTO);
+
+
+                        } completeFootballLineUpAdapter.notifyDataSetChanged();
 
                         for(int i = 0; i<teamsObjectArray.length();i++){
-                            JSONObject teamsObject = teamsObjectArray.getJSONObject(i);
+                            /*JSONObject teamsObject = teamsObjectArray.getJSONObject(i);
                             linearLayout = new LinearLayout(getContext());
                             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
                             lp.weight = 0.5f;
                             linearLayout.setLayoutParams(lp);
                             tvPlayerName = new TextView(getContext());
-                            tvPosition = new TextView(getContext());
+                            ivPlayerPosition = new ImageView(getContext());
                             tvPlayerName.setText(teamsObject.getString("name"));
-                            tvPosition.setText(teamsObject.getString("position"));
-                            linearLayout.addView(tvPosition);
+                            drawable=  getTextDrawable(teamsObject.getString("position"), Color.WHITE,R.color.app_theme_blue);
+                            ivPlayerPosition.setImageDrawable(drawable);
+                            linearLayout.addView(ivPlayerPosition);
                             linearLayout.addView(tvPlayerName);
-                            rcLineup.addView(linearLayout);
+                          rcLineup.addView(linearLayout);*/
                         }
                     } catch (Exception ex) {
                         ex.printStackTrace();

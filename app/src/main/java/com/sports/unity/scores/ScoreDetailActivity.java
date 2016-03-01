@@ -382,6 +382,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     getTvMatchDay.setText(DateUtil.getMatchDays(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000, this));
                     llMatchDetailLinear.setVisibility(View.GONE);
                 }
+                if(!footballMatchJsonCaller.isLive() && footballMatchJsonCaller.getMatchStatus().equalsIgnoreCase("FT")){
+                    getTvMatchDay.setText(R.string.full_time);
+                    llMatchDetailLinear.setVisibility(View.GONE);
+                }
                 Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000)));
                 String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
                 String day = (String) android.text.format.DateFormat.format("dd", date);

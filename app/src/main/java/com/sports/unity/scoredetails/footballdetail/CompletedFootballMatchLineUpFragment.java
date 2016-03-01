@@ -97,7 +97,6 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         tvCaptainSecond=(TextView)view.findViewById(R.id.tv_team_second_captain);
         tvlineup=(TextView)view.findViewById(R.id.tv_line_up);
         tvsubstitutes=(TextView)view.findViewById(R.id.tv_substitutes);
-        rcLineup = (GridLayout) view.findViewById(R.id.gv_lineup);
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_substitutes);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(list,getContext());
