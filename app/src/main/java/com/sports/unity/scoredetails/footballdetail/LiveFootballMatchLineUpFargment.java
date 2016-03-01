@@ -51,9 +51,12 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
     private TextView tvlineup;
     private GridLayout rcLineup;
     private TextView tvsubstitutes;
-    private RecyclerView recyclerView;
+    private RecyclerView rvLineup;
+    private RecyclerView rvSubstitutes;
     private CompleteFootballLineUpAdapter completeFootballLineUpAdapter;
-    private List<CompleteFootballLineUpDTO> list = new ArrayList<>();
+    private List<CompleteFootballLineUpDTO> lineUpList = new ArrayList<>();
+    private CompleteFootballLineUpAdapter completeFootballSubstituteUpAdapter;
+    private List<CompleteFootballLineUpDTO> substitutesList = new ArrayList<>();
 
     public LiveFootballMatchLineUpFargment() {
         // Required empty public constructor
@@ -87,10 +90,14 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
         tvCaptainSecond=(TextView)view.findViewById(R.id.tv_team_second_captain);
         tvlineup=(TextView)view.findViewById(R.id.tv_line_up);
         tvsubstitutes=(TextView)view.findViewById(R.id.tv_substitutes);
-        recyclerView = (RecyclerView) view.findViewById(R.id.rv_substitutes);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
-        completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(list,getContext());
-        recyclerView.setAdapter(completeFootballLineUpAdapter);
+        rvLineup = (RecyclerView) view.findViewById(R.id.rv_lineup);
+        rvLineup.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        rvSubstitutes = (RecyclerView) view.findViewById(R.id.rv_substitutes);
+        rvSubstitutes.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(lineUpList ,getContext());
+        rvLineup.setAdapter(completeFootballLineUpAdapter);
+        completeFootballSubstituteUpAdapter = new CompleteFootballLineUpAdapter(substitutesList ,getContext());
+        rvSubstitutes.setAdapter(completeFootballSubstituteUpAdapter);
 
 
     }
@@ -167,26 +174,26 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
                             completeFootballLineUpDTO.getEnterExitImage();
 
 
-                            list.add(completeFootballLineUpDTO);
+                            substitutesList.add(completeFootballLineUpDTO);
 
 
-                        } completeFootballLineUpAdapter.notifyDataSetChanged();
+                        }
 
                         for(int i = 0; i<teamsObjectArray.length();i++){
-                            /*JSONObject teamsObject = teamsObjectArray.getJSONObject(i);
-                            linearLayout = new LinearLayout(getContext());
-                            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-                            lp.weight = 0.5f;
-                            linearLayout.setLayoutParams(lp);
-                            tvPlayerName = new TextView(getContext());
-                            ivPlayerPosition = new ImageView(getContext());
-                            tvPlayerName.setText(teamsObject.getString("name"));
-                            drawable=  getTextDrawable(teamsObject.getString("position"), Color.WHITE,R.color.app_theme_blue);
-                            ivPlayerPosition.setImageDrawable(drawable);
-                            linearLayout.addView(ivPlayerPosition);
-                            linearLayout.addView(tvPlayerName);
-                          rcLineup.addView(linearLayout);*/
+                            JSONObject teamsObject = teamsObjectArray.getJSONObject(i);
+
+
+                            completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
+                            completeFootballLineUpDTO.setPlayerName(teamsObject.getString("name"));
+                            completeFootballLineUpDTO.setPlayerPostionNumber(teamsObject.getString("position"));
+                            completeFootballLineUpDTO.setCardType("yellow");
+                            completeFootballLineUpDTO.setGoal("goal");
+                            completeFootballLineUpDTO.getEnterExitImage();
+                            lineUpList.add(completeFootballLineUpDTO);
                         }
+
+                        completeFootballLineUpAdapter.notifyDataSetChanged();
+                        completeFootballSubstituteUpAdapter.notifyDataSetChanged();
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());
