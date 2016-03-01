@@ -10,6 +10,12 @@ public class CompleteFootballLineUpDTO {
     private String goal;
     private String enterExitImage;
 
+    private String playerPostionNumberSecond;
+    private String playerNameSecond;
+    private String cardTypeSecond;
+    private String goalSecond;
+    private String enterExitImageSecond;
+
     public String getPlayerPostionNumber() {
         return playerPostionNumber;
     }
@@ -48,5 +54,45 @@ public class CompleteFootballLineUpDTO {
 
     public void setEnterExitImage(String enterExitImage) {
         this.enterExitImage = enterExitImage;
+    }
+
+    public String getPlayerPostionNumberSecond() {
+        return playerPostionNumberSecond;
+    }
+
+    public void setPlayerPostionNumberSecond(String playerPostionNumberSecond) {
+        this.playerPostionNumberSecond = playerPostionNumberSecond;
+    }
+
+    public String getPlayerNameSecond() {
+        return playerNameSecond;
+    }
+
+    public void setPlayerNameSecond(String playerNameSecond) {
+        this.playerNameSecond = playerNameSecond;
+    }
+
+    public String getCardTypeSecond() {
+        return cardTypeSecond;
+    }
+
+    public void setCardTypeSecond(String cardTypeSecond) {
+        this.cardTypeSecond = cardTypeSecond;
+    }
+
+    public String getGoalSecond() {
+        return goalSecond;
+    }
+
+    public void setGoalSecond(String goalSecond) {
+        this.goalSecond = goalSecond;
+    }
+
+    public String getEnterExitImageSecond() {
+        return enterExitImageSecond;
+    }
+
+    public void setEnterExitImageSecond(String enterExitImageSecond) {
+        this.enterExitImageSecond = enterExitImageSecond;
     }
 }

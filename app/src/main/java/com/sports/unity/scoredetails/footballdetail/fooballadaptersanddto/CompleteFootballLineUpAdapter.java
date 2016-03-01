@@ -46,22 +46,22 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
     public void onBindViewHolder(ViewHolder holder, int position) {
         try{
 
-            TextDrawable drawable = null;
+            Drawable drawable = null;
             holder.dto = mValues.get(position);
-
-            drawable = TextDrawable.builder()
-                    .beginConfig().textColor(Color.BLACK)
-                    .withBorder(2)
-                    .width(75)
-                    .height(75)
-                    .bold()
-                    .endConfig()
-                    .buildRound(holder.dto.getPlayerPostionNumber(), Color.WHITE);
+            drawable = getTextDrawable(holder.dto.getPlayerPostionNumber(),Color.WHITE,Color.BLUE);
             holder.ivPlayerPosition.setImageDrawable(drawable);
             holder.tvPlayerName.setText(holder.dto.getPlayerName());
             holder.ivCardType.setImageDrawable(getDrwableResource(holder.dto.getCardType()));
             holder.ivBallPass.setImageDrawable(getDrwableResource(holder.dto.getGoal()));
             holder.ivEnterExit.setImageDrawable(getDrwableResource(holder.dto.getEnterExitImage()));
+            drawable = getTextDrawable(holder.dto.getPlayerPostionNumberSecond(),Color.WHITE,Color.BLUE);
+            holder.ivPlayerPositionSecond.setImageDrawable(drawable);
+            holder.tvPlayerNameSecond.setText(holder.dto.getPlayerNameSecond());
+            holder.ivCardTypeSecond.setImageDrawable(getDrwableResource(holder.dto.getCardTypeSecond()));
+            holder.ivBallPassSecond.setImageDrawable(getDrwableResource(holder.dto.getGoalSecond()));
+            holder.ivEnterExitSecond.setImageDrawable(getDrwableResource(holder.dto.getEnterExitImageSecond()));
+
+
         }catch (Exception e){e.printStackTrace();}
     }
 
@@ -80,6 +80,14 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
         private ImageView ivCardType;
         private ImageView ivBallPass;
         private ImageView ivEnterExit;
+
+        private ImageView ivPlayerPositionSecond;
+        private TextView tvPlayerNameSecond;
+        private ImageView ivCardTypeSecond;
+        private ImageView ivBallPassSecond;
+        private ImageView ivEnterExitSecond;
+
+
         public CompleteFootballLineUpDTO dto;
 
         public ViewHolder(View view) {
@@ -90,6 +98,15 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
             ivCardType =(ImageView)view.findViewById(R.id.iv_card_type);
             ivBallPass = (ImageView)view.findViewById(R.id.iv_ball_pass);
             ivEnterExit = (ImageView) view.findViewById(R.id.iv_enter_exit);
+
+
+            ivPlayerPositionSecond =(ImageView)view.findViewById(R.id.tv_player_number_or_replace_second);;
+            tvPlayerNameSecond = (TextView)view.findViewById(R.id.tv_player_name_second);
+            ivCardTypeSecond =(ImageView)view.findViewById(R.id.iv_card_type_second);
+            ivBallPassSecond = (ImageView)view.findViewById(R.id.iv_ball_pass_second);
+            ivEnterExitSecond = (ImageView) view.findViewById(R.id.iv_enter_exit_second);
+
+
        }
     }
     private Drawable getDrwableResource(String event) {
@@ -113,19 +130,22 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
     }
 
 
-    private TextDrawable getTextDrawable(String value,int textColor,int color) {
+    private Drawable getTextDrawable(String value,int textColor,int color) {
 
-        int radius = context.getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
-        int border = context.getResources().getDimensionPixelSize(R.dimen.user_image_border);
-        return TextDrawable.builder()
-                .beginConfig()
-                .textColor(textColor)
-                .withBorder(border)
-                .width(radius)
-                .height(radius)
-                .bold()
-                .endConfig()
-                .buildRound(value, color);
+        if (value != null) {
+            int radius = context.getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
+            int border = context.getResources().getDimensionPixelSize(R.dimen.user_image_border);
+            return TextDrawable.builder()
+                    .beginConfig()
+                    .textColor(textColor)
+                    .withBorder(border)
+                    .width(radius)
+                    .height(radius)
+                    .bold()
+                    .endConfig()
+                    .buildRound(value, color);
+        }
+      return  context.getResources().getDrawable(R.drawable.dot_circle);
     }
 
 
