@@ -89,8 +89,9 @@
 
     <color name="balls_color_freehit">#ffba00</color>
     <color name="font_color_freehit">#ffffff</color>
+    <color name="green">#2baf2b</color>
+    <color name="loose">#ff6666</color>
 
-
-
+    <color name="draw">#ffba00</color>
 
 </resources>

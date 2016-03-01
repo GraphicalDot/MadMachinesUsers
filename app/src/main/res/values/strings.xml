@@ -316,11 +316,11 @@ Carrier SMS charges may apply.</string>
     <string name="l">L</string>
     <string name="pts">Pts</string>
     <string name="pl">PL</string>
-    <string name="point">POINT</string>
+    <string name="point">POINTS</string>
     <string name="win">WINS</string>
-    <string name="draw">DRAW</string>
+    <string name="draw">DRAWS</string>
     <string name="draws">DRAWS</string>
-    <string name="loss">LOSS</string>
+    <string name="loss">LOSSES</string>
     <string name="premiera_division">PREMIERA DIVISION</string>
     <string name="caption">CAPTION</string>
     <string name="PLAYER_BIO">BIO</string>
@@ -381,6 +381,7 @@ Carrier SMS charges may apply.</string>
     <string name="away_team_name">visitorteam</string>
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
+
     <string name="days">%s Days</string>
 
 </resources>
