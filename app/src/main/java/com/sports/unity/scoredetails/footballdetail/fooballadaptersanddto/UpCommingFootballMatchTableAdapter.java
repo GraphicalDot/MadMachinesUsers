@@ -45,28 +45,41 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
 
 
         holder.dto = mValues.get(position);
-        holder.tvSerialNumber.setText(holder.dto.getTvSerialNumber());
-        Glide.with(context).load(holder.dto.getIvTeamProfileImage()).placeholder(R.drawable.ic_no_img).into(holder.ivTeamProfileImage);
-        holder.tvTeamName.setText(holder.dto.getTvTeamName());
-        holder.tvP.setText(holder.dto.getTvP());
-        holder.tvW.setText(holder.dto.getTvW());
-        holder.tvD.setText(holder.dto.getTvD());
-        holder.tvL.setText(holder.dto.getTvL());
-        holder.tvPts.setText(holder.dto.getTvPts());
+
             if(holder.dto.getTvTeamName().equalsIgnoreCase(team1) || holder.dto.getTvTeamName().equalsIgnoreCase(team2)){
-                holder.tvSerialNumber.setTextColor(Color.BLUE);
-                holder.tvTeamName.setTextColor(Color.BLUE);
-                holder.tvP.setTextColor(Color.BLUE);
-                holder.tvW.setTextColor(Color.BLUE);
-                holder.tvD.setTextColor(Color.BLUE);
-                holder.tvL.setTextColor(Color.BLUE);
-                holder.tvPts.setTextColor(Color.BLUE);
+                holder.tvSerialNumber.setText(String.valueOf(position+1));
+                Glide.with(context).load(holder.dto.getIvTeamProfileImage()).placeholder(R.drawable.ic_no_img).into(holder.ivTeamProfileImage);
+                holder.tvTeamName.setText(holder.dto.getTvTeamName());
+                holder.tvP.setText(holder.dto.getTvP());
+                holder.tvW.setText(holder.dto.getTvW());
+                holder.tvD.setText(holder.dto.getTvD());
+                holder.tvL.setText(holder.dto.getTvL());
+                holder.tvPts.setText(holder.dto.getTvPts());
+                holder.tvSerialNumber.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
+                holder.tvTeamName.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
+                holder.tvP.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
+                holder.tvW.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
+                holder.tvD.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
+                holder.tvL.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
+                holder.tvPts.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
                 holder.llLiveTeam.setVisibility(View.VISIBLE);
 
+            }else {
+                holder.tvSerialNumber.setText(String.valueOf(position+1));
+                Glide.with(context).load(holder.dto.getIvTeamProfileImage()).placeholder(R.drawable.ic_no_img).into(holder.ivTeamProfileImage);
+                holder.tvTeamName.setText(holder.dto.getTvTeamName());
+                holder.tvP.setText(holder.dto.getTvP());
+                holder.tvW.setText(holder.dto.getTvW());
+                holder.tvD.setText(holder.dto.getTvD());
+                holder.tvL.setText(holder.dto.getTvL());
+                holder.tvPts.setText(holder.dto.getTvPts());
             }
 
 
-        }catch (Exception e){e.printStackTrace();}
+        }catch (Exception e)
+        {
+            e.printStackTrace();
+        }
     }
 
     @Override
