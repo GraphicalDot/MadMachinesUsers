@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,12 +25,19 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.sports.unity.R;
 import com.sports.unity.scoredetails.cricketdetail.CompletedMatchScoreCardHandler;
 import com.sports.unity.scoredetails.cricketdetail.CricketUpcomingMatchSummaryHandler;
+import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballLineUpAdapter;
+import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballLineUpDTO;
 import com.sports.unity.scores.ScoreDetailActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.solovyev.android.views.llm.LinearLayoutManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_ID;
@@ -53,7 +61,9 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     private TextView tvlineup;
     private GridLayout rcLineup;
     private TextView tvsubstitutes;
-    private GridLayout gvSubstitutes;
+    private RecyclerView recyclerView;
+    private CompleteFootballLineUpAdapter completeFootballLineUpAdapter;
+    private List<CompleteFootballLineUpDTO> list = new ArrayList<>();
 
     public CompletedFootballMatchLineUpFragment() {
         // Required empty public constructor
@@ -88,7 +98,13 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         tvlineup=(TextView)view.findViewById(R.id.tv_line_up);
         tvsubstitutes=(TextView)view.findViewById(R.id.tv_substitutes);
         rcLineup = (GridLayout) view.findViewById(R.id.gv_lineup);
-        gvSubstitutes = (GridLayout) view.findViewById(R.id.gv_substitutes);
+        recyclerView = (RecyclerView) view.findViewById(R.id.rv_substitutes);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(list,getContext());
+        recyclerView.setAdapter(completeFootballLineUpAdapter);
+
+
+
 
 
     }
@@ -128,7 +144,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
             errorLayout.setVisibility(View.GONE);
         }catch (Exception e){e.printStackTrace();}
     }
-   private void showErrorLayout(View view) {
+    private void showErrorLayout(View view) {
 
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.VISIBLE);
@@ -139,7 +155,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         hideProgressBar();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         final JSONObject dataObject = jsonObject.getJSONObject("data");
-         final  JSONArray subsArray = dataObject.getJSONArray("subs");
+        final  JSONArray subsArray = dataObject.getJSONArray("subs");
         final JSONArray teamsObjectArray = dataObject.getJSONArray("teams");
         final JSONArray substitutionsArray = dataObject.getJSONArray("substitutions");
         final JSONArray matchEventsArray = dataObject.getJSONArray("match_events");
@@ -152,50 +168,41 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                         TextDrawable drawable = null;
                         tvCaptainFirst.setText("NA");
                         tvCaptainSecond.setText("NA");
-                         View view;
+                        View view;
 
 
-                        LinearLayout linearLayout = null;
-                        TextView tvPlayerName = null;
-                        ImageView tvPosition = null;
+                        CompleteFootballLineUpDTO completeFootballLineUpDTO;
                         for(int i = 0; i<subsArray.length();i++){
                             JSONObject subsObject = subsArray.getJSONObject(i);
-                            linearLayout = new LinearLayout(getContext());
-                            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
-                            lp.weight = 0.5f;
-                            linearLayout.setLayoutParams(lp);
-                          // view =    getContext().getResources().getView(R.layout.football_live_match_lineups_card);
+                            completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
+                            completeFootballLineUpDTO.setPlayerName(subsObject.getString("player_name"));
+                            completeFootballLineUpDTO.setPlayerPostionNumber(subsObject.getString("position"));
+                            completeFootballLineUpDTO.setCardType("yellow");
+                            completeFootballLineUpDTO.setGoal("goal");
+                            completeFootballLineUpDTO.getEnterExitImage();
 
 
+                            list.add(completeFootballLineUpDTO);
 
 
-                            tvPlayerName = new TextView(getContext());
-                            tvPosition = new ImageView(getContext());
-                            tvPlayerName.setText(subsObject.getString("player_name"));
-                            drawable=  getTextDrawable(subsObject.getString("position"), Color.WHITE, R.color.app_theme_blue);
-                            tvPosition.setImageDrawable(drawable);
-                            linearLayout.addView(tvPosition);
-                            linearLayout.addView(tvPlayerName);
-
-                            gvSubstitutes.addView(linearLayout);
-   }
+                        } completeFootballLineUpAdapter.notifyDataSetChanged();
 
                         for(int i = 0; i<teamsObjectArray.length();i++){
-                            JSONObject teamsObject = teamsObjectArray.getJSONObject(i);
+                            /*JSONObject teamsObject = teamsObjectArray.getJSONObject(i);
                             linearLayout = new LinearLayout(getContext());
                             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT);
                             lp.weight = 0.5f;
                             linearLayout.setLayoutParams(lp);
                             tvPlayerName = new TextView(getContext());
-                            tvPosition = new ImageView(getContext());
+                            ivPlayerPosition = new ImageView(getContext());
                             tvPlayerName.setText(teamsObject.getString("name"));
                             drawable=  getTextDrawable(teamsObject.getString("position"), Color.WHITE,R.color.app_theme_blue);
-                            tvPosition.setImageDrawable(drawable);
-                            linearLayout.addView(tvPosition);
+                            ivPlayerPosition.setImageDrawable(drawable);
+                            linearLayout.addView(ivPlayerPosition);
                             linearLayout.addView(tvPlayerName);
-                          rcLineup.addView(linearLayout);
+                          rcLineup.addView(linearLayout);*/
                         }
-                        } catch (Exception ex) {
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());
                     }
@@ -223,23 +230,5 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     }
 
 
-    private Drawable getDrwableResource(String event) {
-        Resources.Theme theme = getActivity().getTheme();
-        int drwableId = R.drawable.ic_red_green_arrow;
-        if("yellowcards".equalsIgnoreCase(event)){
-            drwableId = R.drawable.ic_yellow_card;
-        }else if("goals".equalsIgnoreCase(event)){
-            drwableId = R.drawable.ic_football;
-        }
-        else if("redcards".equalsIgnoreCase(event)){
-            drwableId = R.drawable.ic_red_card;
-        }
-        Drawable drawable = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            drawable = getResources().getDrawable(drwableId,theme);
-        } else {
-            drawable = getResources().getDrawable(drwableId);
-        }
-        return drawable;
-    }
+
 }

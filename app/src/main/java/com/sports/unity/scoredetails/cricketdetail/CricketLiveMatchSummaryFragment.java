@@ -118,9 +118,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-    }
+   }
 
     @Override
     public void handleContent(String content) {
@@ -417,9 +415,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary_no));
                 ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary_no));
                 break;
-
-
-        }
+       }
         return    ballDetail;
     }
 
