@@ -756,7 +756,6 @@ public class FavouriteContentHandler {
                     }
                 } else {
                     /*for (ListPreparedListener l : listPreparedListener) {
-                        Log.d("max","sending response");
                         l.onListPrepared(false, noResultMessage);
                     }*/
                 }

@@ -22,7 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class SelectSportsActivity extends AppCompatActivity {
+public class SelectSportsActivity extends CustomAppCompatActivity {
 
     private ArrayList<String> sports = new ArrayList<String>();
     private boolean isResultRequired;

@@ -27,7 +27,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sports.unity.ChatScreenApplication;
@@ -35,6 +34,7 @@ import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.UserProfileActivity;
 import com.sports.unity.common.model.FontTypeface;
@@ -60,10 +60,12 @@ import com.sports.unity.util.NotificationHandler;
 import com.sports.unity.util.ThreadTask;
 
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.muc.MultiUserChat;
@@ -87,7 +89,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     private ListView mChatView;
     private boolean otherChat = false;
-
+    private boolean isLastTimeRequired;
+    private boolean isRoasterEntryRequired;
     private ToolbarActionsForChatScreen toolbarActionsForChatScreen = null;
 
     public static void viewProfile(Activity activity, byte[] profilePicture, String name, String groupServerId, String phoneNumber, boolean otherChat) {
@@ -162,8 +165,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         }
 
         @Override
-        public void onXMPPServerConnected(boolean connected) {
-            ChatScreenActivity.this.onXMPPServerConnected(connected);
+        public void onXMPPServiceAuthenticated(boolean connected) {
+            ChatScreenActivity.this.onXMPPServiceAuthenticated(connected);
         }
 
     };
@@ -172,7 +175,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
         @Override
         public void handleAction(int id, final Object object) {
-            if( id == ActivityActionHandler.EVENT_ID_CHAT_STATUS ) {
+            if (id == ActivityActionHandler.EVENT_ID_CHAT_STATUS) {
                 if (isGroupChat) {
                     //TODO
                 } else {
@@ -188,7 +191,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                             } else if (object.toString().equals("available")) {
                                 status.setText("Online");
                             } else if (object.toString().equals("unavailable")) {
-                                personalMessaging.getLastTime(JABBERID);
+                                if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+                                    personalMessaging.getLastTime(JABBERID);
+                                } else {
+                                    isLastTimeRequired = true;
+                                }
                             } else {
                                 status.setText("last seen " + object.toString());
                             }
@@ -197,18 +204,18 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     });
 
                 }
-            } else if( id == ActivityActionHandler.EVENT_ID_RECEIPT ) {
+            } else if (id == ActivityActionHandler.EVENT_ID_RECEIPT) {
                 ChatScreenActivity.this.runOnUiThread(new Runnable() {
 
                     @Override
                     public void run() {
 
-                        int receiptKind = (Integer)object;
-                        if( receiptKind == PersonalMessaging.RECEIPT_KIND_CLIENT ){
+                        int receiptKind = (Integer) object;
+                        if (receiptKind == PersonalMessaging.RECEIPT_KIND_CLIENT) {
 
-                        } else if( receiptKind == PersonalMessaging.RECEIPT_KIND_SERVER ){
+                        } else if (receiptKind == PersonalMessaging.RECEIPT_KIND_SERVER) {
                             playConversationTone();
-                        } else if( receiptKind == PersonalMessaging.RECEIPT_KIND_READ ){
+                        } else if (receiptKind == PersonalMessaging.RECEIPT_KIND_READ) {
 
                         }
 
@@ -245,11 +252,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 //                mediaMap.put((String) messageContent, (byte[]) mediaContent);
             } else if (id == ActivityActionHandler.EVENT_ID_INCOMING_MEDIA) {
                 //handle incoming media message
-                if ( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) && UserUtil.isMediaAutoDownloadEnabled(getApplicationContext(), UserUtil.IMAGE_MEDIA) ) {
+                if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) && UserUtil.isMediaAutoDownloadEnabled(getApplicationContext(), UserUtil.IMAGE_MEDIA)) {
                     FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent);
-                } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO) && UserUtil.isMediaAutoDownloadEnabled(getApplicationContext(), UserUtil.AUDIO_MEDIA) ) {
+                } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO) && UserUtil.isMediaAutoDownloadEnabled(getApplicationContext(), UserUtil.AUDIO_MEDIA)) {
                     FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent);
-                } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) && UserUtil.isMediaAutoDownloadEnabled(getApplicationContext(), UserUtil.VIDEO_MEDIA) ) {
+                } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) && UserUtil.isMediaAutoDownloadEnabled(getApplicationContext(), UserUtil.VIDEO_MEDIA)) {
                     FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent);
                 }
             }
@@ -306,6 +313,19 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         GlobalEventHandler.getInstance().removeGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY);
 
         super.onStop();
+        RosterEntry rosterEntry = Roster.getInstanceFor(XMPPClient.getConnection()).getEntry(JABBERID+"@"+XMPPClient.SERVICE_NAME);
+        try {
+            Roster.getInstanceFor(XMPPClient.getConnection()).removeEntry(rosterEntry);
+        } catch (SmackException.NotLoggedInException e) {
+            e.printStackTrace();
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -613,9 +633,9 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         }
     }
 
-    private void updateMessageList(){
+    private void updateMessageList() {
         Message oldLastMessage = null;
-        if( messageList.size() > 0 ) {
+        if (messageList.size() > 0) {
             oldLastMessage = messageList.get(messageList.size() - 1);
         }
 
@@ -627,10 +647,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             chatScreenAdapter.notifydataset(messageList);
         }
 
-        if( messageList.size() > 0 ) {
-            Message lastMessage = messageList.get(messageList.size()-1);
-            if( ! lastMessage.iAmSender ) {
-                if ( (oldLastMessage == null ? 0 : oldLastMessage.id) != lastMessage.id ) {
+        if (messageList.size() > 0) {
+            Message lastMessage = messageList.get(messageList.size() - 1);
+            if (!lastMessage.iAmSender) {
+                if ((oldLastMessage == null ? 0 : oldLastMessage.id) != lastMessage.id) {
                     playConversationTone();
                 } else {
                     //nothing
@@ -672,7 +692,23 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void getIntentExtras() {
-        JABBERID = getIntent().getStringExtra("number");                                                 //name of the user you are messaging with
+        JABBERID = getIntent().getStringExtra("number");
+        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+            try {
+             Roster.getInstanceFor(XMPPClient.getConnection()).createEntry(JABBERID + "@" + XMPPClient.SERVICE_NAME, "", null);
+            } catch (SmackException.NotLoggedInException e) {
+                e.printStackTrace();
+            } catch (SmackException.NoResponseException e) {
+                e.printStackTrace();
+            } catch (XMPPException.XMPPErrorException e) {
+                e.printStackTrace();
+            }//name of the user you are messaging with
+            catch (SmackException.NotConnectedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            isRoasterEntryRequired = true;
+        }
         JABBERNAME = getIntent().getStringExtra("name");                                                 //phone number or jid of the user you are chatting with
         contactID = getIntent().getLongExtra("contactId", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
         chatID = getIntent().getLongExtra("chatId", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
@@ -729,7 +765,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             return userState;
         } else {
             userState = 0;
-            personalMessaging.getLastTime(JABBERID);
+            if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+                personalMessaging.getLastTime(JABBERID);
+            } else {
+                isLastTimeRequired = true;
+            }
             return userState;
         }
     }
@@ -810,8 +850,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         }
     }
 
-    private void playConversationTone(){
-        if(UserUtil.isConversationTones() ){
+    private void playConversationTone() {
+        if (UserUtil.isConversationTones()) {
             Uri notification = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.conversation_tone);
             Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
             r.play();
@@ -1053,8 +1093,32 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     }
 
-    public void onXMPPServerConnected(boolean connected) {
-
+    public void onXMPPServiceAuthenticated(boolean connected) {
+        if (connected) {
+            if (isLastTimeRequired) {
+                personalMessaging.getLastTime(JABBERID);
+                isLastTimeRequired = false;
+            } else {
+                //nothing
+            }
+            if(isRoasterEntryRequired){
+                try {
+                    Roster.getInstanceFor(XMPPClient.getConnection()).createEntry(JABBERID + "@" + XMPPClient.SERVICE_NAME, "", null);
+                    isRoasterEntryRequired=false;
+                } catch (SmackException.NotLoggedInException e) {
+                    e.printStackTrace();
+                } catch (SmackException.NoResponseException e) {
+                    e.printStackTrace();
+                } catch (XMPPException.XMPPErrorException e) {
+                    e.printStackTrace();
+                }//name of the user you are messaging with
+                catch (SmackException.NotConnectedException e) {
+                    e.printStackTrace();
+                }
+            }else{
+                //nothing;
+            }
+        }
     }
 
     private abstract class CustomTask implements Runnable {

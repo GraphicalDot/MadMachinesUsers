@@ -369,7 +369,6 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
     public void filterResults(String filter) {
         ((ContactListAdapter) contacts.getAdapter()).getFilter().filter(filter);
-        Log.d("max", "Filtering");
     }
 
     public ArrayList<Contacts> getSelectedMembersList() {

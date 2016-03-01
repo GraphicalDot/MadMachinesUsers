@@ -134,7 +134,6 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
             ContactsHandler.getInstance().addCallToUpdateUserFavorites(getApplicationContext());
             if (isResultRequired) {
-                Log.d("max","setting result"+RESULT_OK);
                 setResult(RESULT_OK, getIntent());
                 finish();
             } else {

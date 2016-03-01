@@ -92,12 +92,12 @@ public class ChatListAdapter extends ArrayAdapter<Chats> implements StickyListHe
             lastMsgTime.setText("");
         } else {
             if (chatArrayList.get(position).sent != null && !chatArrayList.get(position).sent.equals("")) {
-                int days = Integer.parseInt(CommonUtil.getTimeDifference(Long.parseLong(chatArrayList.get(position).sent)));
+                int days = CommonUtil.getTimeDifference(Long.parseLong(chatArrayList.get(position).sent));
                 if (days > 0) {
                     if (days == 1) {
                         lastMsgTime.setText("YESTERDAY");
                     } else {
-                        lastMsgTime.setText(days + " days ago");
+                        lastMsgTime.setText(CommonUtil.getDefaultTimezoneTime(Long.parseLong(chatArrayList.get(position).sent)));
                     }
                 } else {
 
@@ -105,12 +105,12 @@ public class ChatListAdapter extends ArrayAdapter<Chats> implements StickyListHe
                 }
 
             } else {
-                int days = Integer.parseInt(CommonUtil.getTimeDifference(Long.parseLong(chatArrayList.get(position).received)));
+                int days = CommonUtil.getTimeDifference(Long.parseLong(chatArrayList.get(position).received));
                 if (days > 0) {
                     if (days == 1) {
                         lastMsgTime.setText("YESTERDAY");
                     } else {
-                        lastMsgTime.setText(days + " days ago");
+                        lastMsgTime.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(chatArrayList.get(position).received)));
                     }
                 } else {
 
@@ -153,7 +153,7 @@ public class ChatListAdapter extends ArrayAdapter<Chats> implements StickyListHe
     }
 
     public void updateList(ArrayList<Chats> chatList) {
-        isSearch=false;
+        isSearch = false;
         this.chatArrayList.clear();
         this.chatArrayList.addAll(chatList);
         super.notifyDataSetChanged();
@@ -188,7 +188,7 @@ public class ChatListAdapter extends ArrayAdapter<Chats> implements StickyListHe
             convertView = inflater.inflate(R.layout.chat_search_header, parent, false);
             holder.text = (TextView) convertView.findViewById(R.id.list_header_title);
             holder.text.setTypeface(FontTypeface.getInstance(context).getRobotoMedium());
-            holder.linearLayout= (LinearLayout) convertView.findViewById(R.id.linearLayout2);
+            holder.linearLayout = (LinearLayout) convertView.findViewById(R.id.linearLayout2);
             convertView.setTag(holder);
         } else {
             holder = (HeaderViewHolder) convertView.getTag();
@@ -230,7 +230,7 @@ public class ChatListAdapter extends ArrayAdapter<Chats> implements StickyListHe
         TextView text;
     }
 
-    public void updateSearch( ArrayList<Chats> contact, ArrayList<Chats> messages) {
+    public void updateSearch(ArrayList<Chats> contact, ArrayList<Chats> messages) {
         this.isSearch = true;
         this.contact = contact;
         this.messages = messages;

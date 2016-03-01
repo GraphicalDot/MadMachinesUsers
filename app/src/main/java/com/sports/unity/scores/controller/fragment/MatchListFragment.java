@@ -314,6 +314,5 @@ public class MatchListFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("max", "IN_SCORE-request>>>" + requestCode+"--result-->>>"+resultCode);
     }
 }

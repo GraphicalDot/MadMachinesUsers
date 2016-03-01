@@ -494,6 +494,5 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("max", "IN_NEWS-request>>>" + requestCode+"--result-->>>"+resultCode);
     }
 }

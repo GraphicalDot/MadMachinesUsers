@@ -23,7 +23,7 @@ import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 
-public class FilterActivity extends AppCompatActivity implements PlayerProfileDetails {
+public class FilterActivity extends CustomAppCompatActivity implements PlayerProfileDetails {
 
     private int[] sportsCategoryLayoutID = new int[]{R.id.cricket, R.id.football};
     private boolean[] checkedFlag = new boolean[]{false, false};

@@ -307,7 +307,6 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                     String userJid = response.getString(Constants.REQUEST_PARAMETER_KEY_USER_NAME);
                     TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_USER_JID, userJid);
 
-                    Log.d("max", "Jid is-" + userJid);
                     TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
                     UserUtil.setOtpSent(EnterOtpActivity.this, false);
                     UserUtil.setUserRegistered(EnterOtpActivity.this, true);

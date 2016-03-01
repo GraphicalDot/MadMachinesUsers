@@ -7,6 +7,6 @@ public interface GlobalEventListener {
 
     public void onInternetStateChanged(boolean connected);
 
-    public void onXMPPServerConnected(boolean connected);
+    public void onXMPPServiceAuthenticated(boolean connected);
 
 }

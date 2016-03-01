@@ -16,7 +16,7 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
-public class About extends AppCompatActivity {
+public class About extends CustomAppCompatActivity {
 
     private View.OnClickListener onClickListener = new View.OnClickListener() {
 

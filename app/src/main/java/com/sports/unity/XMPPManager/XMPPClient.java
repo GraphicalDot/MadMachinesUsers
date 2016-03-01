@@ -126,45 +126,6 @@ public class XMPPClient {
         return authenticated;
     }
 
-    public void sendOfflinePresence() {
-        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
-            Presence presence = new Presence(Presence.Type.available);
-            presence.setStatus("Offline");
-            try {
-                connection.sendStanza(presence);
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            }
-
-            Message message = new Message("settimedev@mm.io", Message.Type.headline);
-            message.setBody(String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()));
-            try {
-                connection.sendPacket(message);
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            }
-        } else {
-            //nothing
-        }
-    }
-
-    public void sendOnlinePresence() {
-        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
-            Presence presence = new Presence(Presence.Type.available);
-            presence.setStatus("Online");
-            Message message = new Message("settimedev@mm.io", Message.Type.headline);
-            message.setBody(String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()));
-            try {
-                connection.sendStanza(presence);
-                connection.sendStanza(message);
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            }
-        } else {
-            //nothing
-        }
-    }
-
     synchronized public boolean authenticateConnection(Context context) {
         boolean success = false;
         TinyDB tinyDB = TinyDB.getInstance(context);

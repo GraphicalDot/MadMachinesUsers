@@ -29,16 +29,20 @@ import com.sports.unity.util.GlobalEventHandler;
 import com.sports.unity.util.NotificationHandler;
 
 import org.jivesoftware.smack.ConnectionListener;
+import org.jivesoftware.smack.PacketListener;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.filter.PacketFilter;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
 import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
@@ -46,6 +50,8 @@ import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
 import org.jivesoftware.smackx.muc.InvitationListener;
 import org.jivesoftware.smackx.muc.MultiUserChat;
 import org.jivesoftware.smackx.muc.MultiUserChatManager;
+import org.jivesoftware.smackx.ping.PingManager;
+import org.jivesoftware.smackx.ping.packet.Ping;
 import org.jivesoftware.smackx.pubsub.Item;
 import org.jivesoftware.smackx.pubsub.ItemPublishEvent;
 import org.jivesoftware.smackx.pubsub.LeafNode;
@@ -57,6 +63,7 @@ import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Collection;
 import java.util.List;
 
 public class XMPPService extends Service {
@@ -310,12 +317,10 @@ public class XMPPService extends Service {
                     if (presence.getType() == Presence.Type.subscribe) {
                         try {
                             Log.i("addingToRoster", "true");
-                            Roster.getInstanceFor(connection).createEntry(from, "", null);
-                        } catch (SmackException.NotLoggedInException e) {
-                            e.printStackTrace();
-                        } catch (SmackException.NoResponseException e) {
-                            e.printStackTrace();
-                        } catch (XMPPException.XMPPErrorException e) {
+                            Presence presence1 = new Presence(Presence.Type.subscribed);
+                            presence1.setTo(from);
+                            connection.sendStanza(presence1);
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     } else {
@@ -358,7 +363,6 @@ public class XMPPService extends Service {
         @Override
         public void connected(XMPPConnection connection) {
             Log.i("XMPP Connection", "connected");
-
             if (UserUtil.isProfileCreated()) {
                 XMPPClient.getInstance().authenticateConnection(XMPPService.this);
             } else {
@@ -377,7 +381,6 @@ public class XMPPService extends Service {
 //                getForms((XMPPTCPConnection) connection);
 
                 GlobalEventHandler.getInstance().xmppServerConnected(true);
-
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -436,14 +439,17 @@ public class XMPPService extends Service {
                     //TODO
                 } else {
                     String gmtEpoch = message.getBody();
-                    int days = Integer.parseInt(CommonUtil.getTimeDifference(Long.parseLong(gmtEpoch)));
+                    int days = CommonUtil.getTimeDifference(Long.parseLong(gmtEpoch));
                     if (days > 0) {
                         if (days == 1) {
                             String lastSeen = CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(gmtEpoch));
                             lastSeen = "yesterday at " + lastSeen;
                             ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, lastSeen);
-                        } else {
+                        } else if (days > 1 && days <= 3) {
                             String lastSeen = days + " days ago";
+                            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, lastSeen);
+                        } else {
+                            String lastSeen = CommonUtil.getDefaultTimezoneTime(Long.parseLong(gmtEpoch));
                             ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, lastSeen);
                         }
                     } else {

@@ -34,7 +34,7 @@ import com.sports.unity.util.NotificationHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends CustomAppCompatActivity {
 
     private HashMap<Integer, int[]> drillDownItemsMap = new HashMap<>();
     private int currentItemId = SettingsHelper.SETTINGS_MAIN_ID;
