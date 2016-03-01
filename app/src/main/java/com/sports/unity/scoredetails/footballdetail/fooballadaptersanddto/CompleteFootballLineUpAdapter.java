@@ -51,16 +51,27 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
             drawable = getTextDrawable(holder.dto.getPlayerPostionNumber(),Color.WHITE,Color.BLUE);
             holder.ivPlayerPosition.setImageDrawable(drawable);
             holder.tvPlayerName.setText(holder.dto.getPlayerName());
-            holder.ivCardType.setImageDrawable(getDrwableResource(holder.dto.getCardType()));
-            holder.ivBallPass.setImageDrawable(getDrwableResource(holder.dto.getGoal()));
-            holder.ivEnterExit.setImageDrawable(getDrwableResource(holder.dto.getEnterExitImage()));
+            if(holder.dto.getCardType()!=null && !holder.dto.getCardType().equals("")) {
+                holder.ivCardType.setImageDrawable(getDrwableResource(holder.dto.getCardType()));
+            }
+            if(holder.dto.getGoal()!=null && !holder.dto.getGoal().equals("")) {
+                holder.ivBallPass.setImageDrawable(getDrwableResource(holder.dto.getGoal()));
+            }
+            if(holder.dto.getEnterExitImage()!= null && !holder.dto.getEnterExitImage().equals("")) {
+                holder.ivEnterExit.setImageDrawable(getDrwableResource(holder.dto.getEnterExitImage()));
+            }
             drawable = getTextDrawable(holder.dto.getPlayerPostionNumberSecond(),Color.WHITE,Color.BLUE);
             holder.ivPlayerPositionSecond.setImageDrawable(drawable);
-            holder.tvPlayerNameSecond.setText(holder.dto.getPlayerNameSecond());
-            holder.ivCardTypeSecond.setImageDrawable(getDrwableResource(holder.dto.getCardTypeSecond()));
-            holder.ivBallPassSecond.setImageDrawable(getDrwableResource(holder.dto.getGoalSecond()));
-            holder.ivEnterExitSecond.setImageDrawable(getDrwableResource(holder.dto.getEnterExitImageSecond()));
-
+            if(holder.dto.getPlayerNameSecond()!= null && !holder.dto.getPlayerNameSecond().equals("")) {
+                holder.tvPlayerNameSecond.setText(holder.dto.getPlayerNameSecond());
+            }
+            if(holder.dto.getCardTypeSecond()!= null && !holder.dto.getCardTypeSecond().equals("")) {
+            holder.ivCardTypeSecond.setImageDrawable(getDrwableResource(holder.dto.getCardTypeSecond()));}
+            if(holder.dto.getGoalSecond()!= null && !holder.dto.getGoalSecond().equals("")) {
+            holder.ivBallPassSecond.setImageDrawable(getDrwableResource(holder.dto.getGoalSecond()));}
+            if(holder.dto.getEnterExitImageSecond()!= null && !holder.dto.getEnterExitImageSecond().equals("")) {
+                holder.ivEnterExitSecond.setImageDrawable(getDrwableResource(holder.dto.getEnterExitImageSecond()));
+            }
 
         }catch (Exception e){e.printStackTrace();}
     }

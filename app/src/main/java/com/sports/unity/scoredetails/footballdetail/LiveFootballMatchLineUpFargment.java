@@ -182,7 +182,6 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
                         for(int i = 0; i<teamsObjectArray.length();i++){
                             JSONObject teamsObject = teamsObjectArray.getJSONObject(i);
 
-
                             completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
                             completeFootballLineUpDTO.setPlayerName(teamsObject.getString("name"));
                             completeFootballLineUpDTO.setPlayerPostionNumber(teamsObject.getString("position"));

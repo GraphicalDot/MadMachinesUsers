@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.JsonObject;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
@@ -115,11 +117,6 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             squadNumber = (TextView) findViewById(R.id.squad_number);
             nationality = (TextView) findViewById(R.id.nationality_value);
             idSeason = (TextView) findViewById(R.id.id_current_season);
-          /*  noOfMatchesPlayed = (TextView) findViewById(R.id.tv_number_of_match);
-            goalsScoredNumber = (TextView) findViewById(R.id.tv_goals_scored_number);
-            tvNumberOfAssist = (TextView) findViewById(R.id.tv_number_of_assist);
-            tvNumberOfYellowCard= (TextView) findViewById(R.id.tv_number_of_yellow_card);
-            tvNumberOfRedCard= (TextView) findViewById(R.id.tv_number_of_red_card);*/
             leagueImage= (ImageView) findViewById(R.id.ic_league_image);
             tvNextGameName = (TextView) findViewById(R.id.tv_next_game_name);
             tvNextGameDetails = (TextView) findViewById(R.id.tv_next_game_name);
@@ -138,7 +135,8 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
 
                 }
             });
-
+            LinearLayout errorLayout = (LinearLayout) findViewById(R.id.error);
+            errorLayout.setVisibility(View.GONE);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -150,12 +148,12 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             parameters.put(Constants.PLAYER_NAME, playerNameKey);
             parameters.put(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_FOOTBALL);
             ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_PLAYER_PROFILE, parameters, REQUEST_LISTENER_KEY, PLAYER_PROFILE_REQUEST_TAG);
-            showProgress();
+
         }catch (Exception e){
             e.printStackTrace();
         }
     }
-   @Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
     }
@@ -168,22 +166,16 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
         }
 
         @Override
-        protected void showErrorLayout() {
-            Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
         public boolean handleContent(String tag, String content) {
             boolean success = false;
             try {
+                showProgress();
                 JSONObject response = new JSONObject(content);
                 if (response.getBoolean("success")) {
                     this.success = true;
                     Log.i("player profile", content);
                     populateData(content);
-
-
-                } else {
+               } else {
                     this.success = false;
                 }
             } catch (JSONException e) {
@@ -216,65 +208,81 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
     private void populateData(String content){
         try {
             hideProgress();
-          JSONObject jsonObject = new JSONObject(content);
+            JSONObject jsonObject = new JSONObject(content);
 
             boolean success = jsonObject.getBoolean("success");
             boolean error = jsonObject.getBoolean("error");
 
             if( success ) {
-                JSONArray array = (JSONArray) jsonObject.get("data");
-                for( int index=0; index < array.length(); index++){
-                    JSONObject object = array.getJSONObject(index);
-                    if(object == null){
-                        continue;
+                JSONArray datArray = (JSONArray) jsonObject.get("data");
+
+                JSONObject dataObject = datArray.getJSONObject(0);
+                JSONArray profileArray = dataObject.getJSONArray("profile");
+                JSONObject profileData = profileArray.getJSONObject(0);
+                JSONArray otherComptetionArray =  dataObject.getJSONArray("other_competitions");
+                hideProgress();
+                if(profileData != null){
+
+                    if(!dataObject.isNull("name")){
+                        playerName.setText(dataObject.getString("name"));
+                    }
+                    if(!profileData.isNull("Date of Birth")){
+                        playerAge.setText(profileData.getString("Date of Birth"));
+                    }
+                    if(!profileData.isNull("nationality")){
+                        nationality.setText(profileData.getString("nationality"));
+                    }
+                    if(!dataObject.isNull("player_image")){
+                        Glide.with(this).load(dataObject.getString("player_image")).placeholder(R.drawable.ic_no_img).into(playerProfileImage);
+                    }
+                    if(!dataObject.isNull("team")){
+                        teamName.setText(dataObject.getString("team"));
                     } else {
-                        if(!object.isNull("name")){
-                            playerName.setText(object.getString("name"));
-                        }
-                        if(!object.isNull("yellow_cards")){
+                        teamName.setText("NA");
+                    }
+                    PlayerScoreCardDTO dto;
+                    for (int i = 0;i<otherComptetionArray.length();i++){
+                        JSONObject comtObject = otherComptetionArray.getJSONObject(i);
+                        dto = new PlayerScoreCardDTO();
+                        dto.setTeamName(comtObject.getString("team"));
+                        dto.setLeagueName(comtObject.getString("league"));
+                        dto.setNoOfAssists(comtObject.getString("assists"));
+                        dto.setNoOfGames(comtObject.getString("games"));
+                        dto.setNoOfgoals(comtObject.getString("goals"));
+                        dto.setNoOfYellowCard(comtObject.getString("yellow_card"));
+                        dto.setNoOfRedCard(comtObject.getString("red_card"));
+                        playerScoreCardDTOs.add(dto);
+                    }
+                    mplayerScorecardAdapter.notifyDataSetChanged();
+                       /* if(!object.isNull("yellow_cards")){
                             tvNumberOfYellowCard.setText(object.getString("yellow_cards"));
                         }
                         if(!object.isNull("red_cards")){
                             tvNumberOfRedCard.setText(object.getString("red_cards"));
                         }
-                        if(!object.isNull("age")){
-                            playerAge.setText(object.getString("age"));
-                        }
+
                         if(!object.isNull("assists")){
                             tvNumberOfAssist.setText(object.getString("assists"));
                         }
                         if(!object.isNull("goals")){
                             goalsScoredNumber.setText(object.getString("goals"));
                         }
-                        if(!object.isNull("nationality")){
-                            nationality.setText(object.getString("nationality"));
-                        }
+
                         if(!object.isNull("position")){
                             positionValue.setText(object.getString("position"));
-                        }
-                        if(!object.isNull("image")){
-                            Glide.with(this).load(object.getString("image")).placeholder(R.drawable.ic_no_img).into(playerProfileImage);
-                        }
-                        if(!object.isNull("team_name")){
-                            teamName.setText("team_name");
-                        } else {
-                            teamName.setText("NA");
-                        }
+                        }*/
 
-                    }
+
+
+
                 }
             } else {
-                Toast.makeText(getApplicationContext(), R.string.player_details_not_exists, Toast.LENGTH_SHORT).show();
+                showErrorLayout();
             }
         }catch (Exception ex){
             ex.printStackTrace();
-            Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+            showErrorLayout();
         }
-
-
-
-
-
     }
 
 
@@ -288,5 +296,12 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
     }
 
 
+
+    private void showErrorLayout() {
+
+        LinearLayout errorLayout = (LinearLayout)findViewById(R.id.error);
+        errorLayout.setVisibility(View.VISIBLE);
+
+    }
 
 }

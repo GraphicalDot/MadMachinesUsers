@@ -256,7 +256,7 @@ public class FilterActivity extends AppCompatActivity implements PlayerProfileDe
          if(Constants.FILTER_TYPE_PLAYER.equals(FilterType)) {
              if(Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)){
                  Intent intent = new Intent(FilterActivity.this, PlayerProfileView.class);
-                 intent.putExtra(Constants.INTENT_KEY_ID, playerName);
+                 intent.putExtra(Constants.INTENT_KEY_ID, playerId);
                  startActivity(intent);
              }else {
                  Intent intent = new Intent(FilterActivity.this, PlayerCricketBioDataActivity.class);

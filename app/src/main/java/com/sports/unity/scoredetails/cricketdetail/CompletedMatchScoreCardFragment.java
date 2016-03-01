@@ -208,12 +208,12 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                     renderDisplay(object);
 
                 } else {
-                    Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();
+
                     showErrorLayout(getView());
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
-                Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+                  showErrorLayout(getView());
             }
         }
     }

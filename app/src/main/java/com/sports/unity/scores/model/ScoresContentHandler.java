@@ -65,13 +65,7 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_CRICKET_MATCH_DETAIL = "get_cricket_match_scores?match_key=";
     private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "get_cricket_match_commentary?match_key=";
     private static final String URL_PARAMS_FOR_FOOTBALL_COMMENTARY = "get_football_commentary?match_id=";
-    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = "get_football_player_stats?player_name=";
-    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_CRICKET = "get_cricket_player_stats?player_name=";
-
-    private static final String URL_PARAMS_FOR_FOOTBALL_TIMELINE = "get_football_match_timeline?match_id=";
-    private static final String URL_PARAMS_FOR_MATCHLINEUP = "get_match_teams?match_id=";
-    private static final String URL_PARAMS_FOR_STAT = "get_match_player_stats?match_id=";
-
+    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = "http://52.76.74.188:5600/get_football_player_profile?player_id=";
 
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
 
@@ -177,16 +171,6 @@ public class ScoresContentHandler {
             String playerName = parameters.get(Constants.PLAYER_NAME);
             String sportsType = parameters.get(Constants.SPORTS_TYPE);
             requestPlayerProfile(sportsType, playerName, requestListenerKey, requestTag);
-        } else if(callName.equals(CALL_NAME_MATCH_TIMELINE)){
-            String matchId = parameters.get(PARAM_ID);
-            requestMatchTimeline(matchId, requestListenerKey, requestTag);
-        } else if(callName.equals(CALL_NAME_MATCH_LINEUP)){
-            String matchId = parameters.get(PARAM_ID);
-            requestMatchLineup(matchId, requestListenerKey, requestTag);
-        } else if(callName.equals(CALL_NAME_MATCH_STAT)){
-            String matchId = parameters.get(PARAM_ID);
-            requestMatchStat(matchId, requestListenerKey, requestTag);
-//>>>>>>> team2_dev_branch
         }
 
     }
@@ -217,7 +201,7 @@ public class ScoresContentHandler {
             urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_UDID);
             urlBuilder.append("=");
             urlBuilder.append(udid);
-            Log.d("max","Create user URI>>"+urlBuilder.toString());
+            Log.d("max", "Create user URI>>"+urlBuilder.toString());
             requestContent(requestTag, listenerKey, urlBuilder.toString());
         } else {
             //nothing
@@ -357,24 +341,8 @@ public class ScoresContentHandler {
         }
     }
 
-    private void requestMatchLineup(String matchId, String listenerKey, String requestTag){
-        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
-            String url = generateURL(URL_PARAMS_FOR_MATCHLINEUP  + matchId);
-            requestContent(requestTag, listenerKey, url);
-        }
-    }
-    private void requestMatchTimeline(String matchId, String listenerKey, String requestTag){
-        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
-            String url = generateURL(URL_PARAMS_FOR_FOOTBALL_TIMELINE  + matchId);
-            requestContent(requestTag, listenerKey, url);
-        }
-    }
-    private void requestMatchStat(String matchId, String listenerKey, String requestTag){
-        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
-            String url = generateURL(URL_PARAMS_FOR_STAT + matchId);
-            requestContent(requestTag, listenerKey, url);
-        }
-    }
+
+
 
     private String generateURL(String parameters) {
         StringBuilder stringBuilder = new StringBuilder(SCORES_BASE_URL);
@@ -412,15 +380,7 @@ public class ScoresContentHandler {
     }
     private void requestPlayerProfile(String sportType, String playerName, String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
-
-            String baseUrl = null;
-            if( sportType.equalsIgnoreCase(ScoresJsonParser.CRICKET) ){
-                baseUrl = URL_PARAMS_FOR_PLAYER_PROFILE_CRICKET;
-            } else if( sportType.equalsIgnoreCase(ScoresJsonParser.FOOTBALL) ){
-                baseUrl = URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL;
-            }
-
-            String url = generateURL(baseUrl + URLEncoder.encode(playerName));
+            String url = URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL+ URLEncoder.encode(playerName);
             Log.i( "requestPlayerProfile: ", url);
             requestContent(requestTag, listenerKey, url);
         }
