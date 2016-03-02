@@ -121,7 +121,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
                 @Override
                 public void run() {
                     try {
-                        JSONArray dataArray = jsonObject.getJSONArray("data");
+                        //JSONArray dataArray = jsonObject.getJSONArray("data");
                         Log.i("run: ", jsonObject.toString());
                         if(matchName != null && !matchName.equalsIgnoreCase("")){
                             tvMatchName.setText(matchName);
@@ -150,9 +150,6 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
     }
 
 
-    public static void main(String [] arg){
-        DateUtil.getFormattedDate("2016-03-01");
-    }
 
 
 

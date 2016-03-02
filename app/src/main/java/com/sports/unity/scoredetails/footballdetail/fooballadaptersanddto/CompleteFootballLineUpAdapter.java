@@ -45,10 +45,10 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         try{
-
+            int color = context.getResources().getColor(R.color.app_theme_blue);
             Drawable drawable = null;
             holder.dto = mValues.get(position);
-            drawable = getTextDrawable(holder.dto.getPlayerPostionNumber(),Color.WHITE,Color.BLUE);
+            drawable = getTextDrawable(holder.dto.getPlayerPostionNumber(),Color.WHITE,color);
             holder.ivPlayerPosition.setImageDrawable(drawable);
             holder.tvPlayerName.setText(holder.dto.getPlayerName());
             if(holder.dto.getCardType()!=null && !holder.dto.getCardType().equals("")) {
@@ -60,7 +60,7 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
             if(holder.dto.getEnterExitImage()!= null && !holder.dto.getEnterExitImage().equals("")) {
                 holder.ivEnterExit.setImageDrawable(getDrwableResource(holder.dto.getEnterExitImage()));
             }
-            drawable = getTextDrawable(holder.dto.getPlayerPostionNumberSecond(),Color.WHITE,Color.BLUE);
+            drawable = getTextDrawable(holder.dto.getPlayerPostionNumberSecond(),Color.WHITE,color);
             holder.ivPlayerPositionSecond.setImageDrawable(drawable);
             if(holder.dto.getPlayerNameSecond()!= null && !holder.dto.getPlayerNameSecond().equals("")) {
                 holder.tvPlayerNameSecond.setText(holder.dto.getPlayerNameSecond());
