@@ -110,7 +110,8 @@
                 android:layout_marginLeft="@dimen/horizontal_padding_small"
                 android:layout_marginRight="@dimen/horizontal_padding_small"
                 android:layout_marginTop="@dimen/marginTop_user_info_card"
-                android:background="@color/ColorPrimary">
+                android:background="@drawable/round_edge_black_box">
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -398,7 +399,7 @@
                 android:layout_marginBottom="@dimen/horizontal_padding_small"
                 android:layout_marginLeft="@dimen/horizontal_padding_small"
                 android:layout_marginRight="@dimen/horizontal_padding_small"
-                android:background="@color/ColorPrimary"
+                android:background="@drawable/round_edge_black_box"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -499,14 +500,14 @@
                     <android.support.percent.PercentRelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_small">
+                       >
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/league_label_current_season"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
                             android:text="@string/league"
+                            android:paddingLeft="@dimen/horizontal_padding_very_small"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_small_medium"
                             app:layout_widthPercent="15%" />
@@ -516,8 +517,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/league_label_current_season"
-                            android:gravity="center"
                             android:text="@string/team"
+                            android:gravity="center"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_small_medium"
                             app:layout_widthPercent="15%" />
@@ -539,8 +540,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/geam_label"
-                            android:gravity="center"
                             android:text="@string/goals"
+                            android:gravity="center"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_small_medium"
                             app:layout_widthPercent="14%" />
@@ -550,8 +551,8 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/league_label"
-                            android:gravity="center"
                             android:text="@string/assists"
+                            android:gravity="center"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_small_medium"
                             app:layout_widthPercent="14%" />
@@ -562,6 +563,7 @@
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/goals_label"
                             android:gravity="center"
+                            android:paddingLeft="@dimen/horizontal_padding_very_very_small"
                             android:text="@string/yc"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_small_medium"
