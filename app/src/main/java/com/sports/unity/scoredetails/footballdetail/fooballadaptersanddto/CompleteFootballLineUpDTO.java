@@ -16,6 +16,22 @@ public class CompleteFootballLineUpDTO {
     private String goalSecond;
     private String enterExitImageSecond;
 
+
+
+
+    private String offPlayerPostionNumber;
+    private String offPlayerName;
+    private String offCardType;
+    private String offGoal;
+    private String offEnterExitImage;
+
+    private String offPlayerPostionNumberSecond;
+    private String offPlayerNameSecond;
+    private String offCardTypeSecond;
+    private String offGoalSecond;
+    private String offEnterExitImageSecond;
+
+
     public String getPlayerPostionNumber() {
         return playerPostionNumber;
     }
@@ -94,5 +110,85 @@ public class CompleteFootballLineUpDTO {
 
     public void setEnterExitImageSecond(String enterExitImageSecond) {
         this.enterExitImageSecond = enterExitImageSecond;
+    }
+
+    public String getOffPlayerPostionNumber() {
+        return offPlayerPostionNumber;
+    }
+
+    public void setOffPlayerPostionNumber(String offPlayerPostionNumber) {
+        this.offPlayerPostionNumber = offPlayerPostionNumber;
+    }
+
+    public String getOffPlayerName() {
+        return offPlayerName;
+    }
+
+    public void setOffPlayerName(String offPlayerName) {
+        this.offPlayerName = offPlayerName;
+    }
+
+    public String getOffCardType() {
+        return offCardType;
+    }
+
+    public void setOffCardType(String offCardType) {
+        this.offCardType = offCardType;
+    }
+
+    public String getOffGoal() {
+        return offGoal;
+    }
+
+    public void setOffGoal(String offGoal) {
+        this.offGoal = offGoal;
+    }
+
+    public String getOffEnterExitImage() {
+        return offEnterExitImage;
+    }
+
+    public void setOffEnterExitImage(String offEnterExitImage) {
+        this.offEnterExitImage = offEnterExitImage;
+    }
+
+    public String getOffPlayerPostionNumberSecond() {
+        return offPlayerPostionNumberSecond;
+    }
+
+    public void setOffPlayerPostionNumberSecond(String offPlayerPostionNumberSecond) {
+        this.offPlayerPostionNumberSecond = offPlayerPostionNumberSecond;
+    }
+
+    public String getOffPlayerNameSecond() {
+        return offPlayerNameSecond;
+    }
+
+    public void setOffPlayerNameSecond(String offPlayerNameSecond) {
+        this.offPlayerNameSecond = offPlayerNameSecond;
+    }
+
+    public String getOffCardTypeSecond() {
+        return offCardTypeSecond;
+    }
+
+    public void setOffCardTypeSecond(String offCardTypeSecond) {
+        this.offCardTypeSecond = offCardTypeSecond;
+    }
+
+    public String getOffGoalSecond() {
+        return offGoalSecond;
+    }
+
+    public void setOffGoalSecond(String offGoalSecond) {
+        this.offGoalSecond = offGoalSecond;
+    }
+
+    public String getOffEnterExitImageSecond() {
+        return offEnterExitImageSecond;
+    }
+
+    public void setOffEnterExitImageSecond(String offEnterExitImageSecond) {
+        this.offEnterExitImageSecond = offEnterExitImageSecond;
     }
 }

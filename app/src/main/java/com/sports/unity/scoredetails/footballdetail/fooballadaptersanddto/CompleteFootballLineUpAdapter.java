@@ -53,17 +53,25 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
             holder.tvPlayerName.setText(holder.dto.getPlayerName());
             if(holder.dto.getCardType()!=null && !holder.dto.getCardType().equals("")) {
                 holder.ivCardType.setImageDrawable(getDrwableResource(holder.dto.getCardType()));
+            }else {
+                holder.ivCardType.setVisibility(View.GONE);
             }
             if(holder.dto.getGoal()!=null && !holder.dto.getGoal().equals("")) {
                 holder.ivBallPass.setImageDrawable(getDrwableResource(holder.dto.getGoal()));
+            }else {
+                holder.ivBallPass.setVisibility(View.GONE);
             }
-            if(holder.dto.getEnterExitImage()!= null && !holder.dto.getEnterExitImage().equals("")) {
-                holder.ivEnterExit.setImageDrawable(getDrwableResource(holder.dto.getEnterExitImage()));
+            if(holder.dto.getEnterExitImage()!= null && !holder.dto.getEnterExitImage().equalsIgnoreCase("OFF")) {
+                holder.ivEnterExit.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_down_arrow));
+            }else {
+                holder.ivEnterExit.setVisibility(View.GONE);
             }
             drawable = getTextDrawable(holder.dto.getPlayerPostionNumberSecond(),Color.WHITE,color);
             holder.ivPlayerPositionSecond.setImageDrawable(drawable);
             if(holder.dto.getPlayerNameSecond()!= null && !holder.dto.getPlayerNameSecond().equals("")) {
                 holder.tvPlayerNameSecond.setText(holder.dto.getPlayerNameSecond());
+            }else {
+                holder.tvPlayerNameSecond.setVisibility(View.GONE);
             }
             if(holder.dto.getCardTypeSecond()!= null && !holder.dto.getCardTypeSecond().equals("")) {
             holder.ivCardTypeSecond.setImageDrawable(getDrwableResource(holder.dto.getCardTypeSecond()));}
@@ -71,6 +79,48 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
             holder.ivBallPassSecond.setImageDrawable(getDrwableResource(holder.dto.getGoalSecond()));}
             if(holder.dto.getEnterExitImageSecond()!= null && !holder.dto.getEnterExitImageSecond().equals("")) {
                 holder.ivEnterExitSecond.setImageDrawable(getDrwableResource(holder.dto.getEnterExitImageSecond()));
+            }else {
+                holder.ivEnterExitSecond.setVisibility(View.GONE);
+            }
+            if(holder.dto.getOffPlayerName()!=null) {
+                drawable = context.getResources().getDrawable(R.drawable.ic_arrow_red);
+                holder.ivOffPlayerPosition.setImageDrawable(drawable);
+                holder.tvOffPlayerName.setText(holder.dto.getOffPlayerName());
+                if (holder.dto.getOffCardType() != null && !holder.dto.getOffCardType().equals("")) {
+                    holder.ivOffCardType.setImageDrawable(getDrwableResource(holder.dto.getOffCardType()));
+                } else {
+                    holder.ivOffCardType.setVisibility(View.GONE);
+                }
+                if (holder.dto.getOffEnterExitImage() != null && !holder.dto.getOffEnterExitImage().equalsIgnoreCase("ON")) {
+                    holder.ivOffEnterExit.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_green));
+                } else {
+                    holder.ivOffEnterExit.setVisibility(View.GONE);
+                }
+            }else{
+                holder.ivOffPlayerPosition.setVisibility(View.GONE);
+                holder.tvOffPlayerName.setVisibility(View.GONE);
+                holder.ivOffCardType.setVisibility(View.GONE);
+                holder.ivOffEnterExit.setVisibility(View.GONE);
+            }
+            if(holder.dto.getOffPlayerNameSecond()!=null){
+                drawable = context.getResources().getDrawable(R.drawable.ic_arrow_red);
+                holder.ivOffPlayerPositionSecond.setImageDrawable(drawable);
+                holder.tvOffPlayerNameSecond.setText(holder.dto.getOffPlayerNameSecond());
+                if (holder.dto.getOffCardTypeSecond() != null && !holder.dto.getOffCardTypeSecond().equals("")) {
+                    holder.ivOffCardTypeSecond.setImageDrawable(getDrwableResource(holder.dto.getOffCardTypeSecond()));
+                } else {
+                    holder.ivOffCardTypeSecond.setVisibility(View.GONE);
+                }
+                if (holder.dto.getOffEnterExitImageSecond() != null && !holder.dto.getOffEnterExitImageSecond().equalsIgnoreCase("ON")) {
+                    holder.ivOffEnterExitSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_green));
+                } else {
+                    holder.ivOffEnterExitSecond.setVisibility(View.GONE);
+                }
+            }else {
+                holder.ivOffPlayerPositionSecond.setVisibility(View.GONE);
+                holder.tvOffPlayerNameSecond.setVisibility(View.GONE);
+                holder.ivOffCardTypeSecond.setVisibility(View.GONE);
+                holder.ivOffEnterExitSecond.setVisibility(View.GONE);
             }
 
         }catch (Exception e){e.printStackTrace();}
@@ -99,30 +149,59 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
         private ImageView ivEnterExitSecond;
 
 
+
+
+        private ImageView ivOffPlayerPosition;
+        private TextView tvOffPlayerName;
+        private ImageView ivOffCardType;
+
+        private ImageView ivOffEnterExit;
+
+        private ImageView ivOffPlayerPositionSecond;
+        private TextView tvOffPlayerNameSecond;
+        private ImageView ivOffCardTypeSecond;
+
+        private ImageView ivOffEnterExitSecond;
+
+
         public CompleteFootballLineUpDTO dto;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
+
             ivPlayerPosition =(ImageView)view.findViewById(R.id.tv_player_number_or_replace);;
             tvPlayerName = (TextView)view.findViewById(R.id.tv_player_name);
             ivCardType =(ImageView)view.findViewById(R.id.iv_card_type);
             ivBallPass = (ImageView)view.findViewById(R.id.iv_ball_pass);
             ivEnterExit = (ImageView) view.findViewById(R.id.iv_enter_exit);
-
-
             ivPlayerPositionSecond =(ImageView)view.findViewById(R.id.tv_player_number_or_replace_second);;
             tvPlayerNameSecond = (TextView)view.findViewById(R.id.tv_player_name_second);
             ivCardTypeSecond =(ImageView)view.findViewById(R.id.iv_card_type_second);
             ivBallPassSecond = (ImageView)view.findViewById(R.id.iv_ball_pass_second);
             ivEnterExitSecond = (ImageView) view.findViewById(R.id.iv_enter_exit_second);
+            //offplayer
+            ivOffPlayerPosition =(ImageView)view.findViewById(R.id.tv_off_player_number_or_replace);;
+            tvOffPlayerName = (TextView)view.findViewById(R.id.tv_off_player_name);
+            ivOffCardType =(ImageView)view.findViewById(R.id.iv_off_card_type);
+
+            ivOffEnterExit = (ImageView) view.findViewById(R.id.iv_off_enter_exit);
+            ivOffPlayerPositionSecond =(ImageView)view.findViewById(R.id.tv_off_player_number_or_replace_second);;
+            tvOffPlayerNameSecond = (TextView)view.findViewById(R.id.tv_off_player_name_second);
+            ivOffCardTypeSecond =(ImageView)view.findViewById(R.id.iv_off_card_type_second);
+
+            ivOffEnterExitSecond = (ImageView) view.findViewById(R.id.iv_off_enter_exit_second);
+
+
+
+
 
 
        }
     }
     private Drawable getDrwableResource(String event) {
         Resources.Theme theme = context.getTheme();
-        int drwableId = R.drawable.ic_red_green_arrow;
+        int drwableId = 0;
         if("yellowcards".equalsIgnoreCase(event)){
             drwableId = R.drawable.ic_yellow_card;
         }else if("goals".equalsIgnoreCase(event)){
@@ -156,7 +235,7 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
                     .endConfig()
                     .buildRound(value, color);
         }
-      return  context.getResources().getDrawable(R.drawable.dot_circle);
+      return  null;
     }
 
 
