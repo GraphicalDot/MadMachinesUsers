@@ -112,7 +112,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             playerTagImage = (ImageView) findViewById(R.id.player_tag_image);
             playerName = (TextView) findViewById(R.id.player_name);
             teamName = (TextView) findViewById(R.id.team_name);
-            playerAge = (TextView) findViewById(R.id.player_age);
+            playerAge = (TextView) findViewById(R.id.player_age_value);
             positionValue = (TextView) findViewById(R.id.position_value);
             squadNumber = (TextView) findViewById(R.id.squad_number);
             nationality = (TextView) findViewById(R.id.nationality_value);
