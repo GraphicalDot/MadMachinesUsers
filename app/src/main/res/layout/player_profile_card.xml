@@ -3,17 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/activity_vertical_margin"
-    android:padding="@dimen/horizontal_padding_small"
+    android:orientation="vertical"
+    android:padding="@dimen/horizontal_padding_very_very_small"
     app:cardCornerRadius="@dimen/card_edge_curve_radius">
-
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray3"></View>
     <android.support.percent.PercentRelativeLayout
         android:id="@+id/rootLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/ColorPrimary"
-        android:padding="@dimen/horizontal_padding_very_very_small">
-
+        android:background="@color/ColorPrimary">
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/league_name"
 
@@ -21,7 +22,7 @@
             android:layout_height="wrap_content"
             android:text="league"
             android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="15%" />
+            app:layout_widthPercent="22%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/team_name"
             android:layout_width="0dp"
@@ -29,13 +30,14 @@
             android:layout_toRightOf="@id/league_name"
             android:text="tem"
             android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="15%" />
+            app:layout_widthPercent="22%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/game_count"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/team_name"
             android:text="1"
+            android:gravity="center"
             android:textSize="@dimen/font_size_small_medium"
             app:layout_widthPercent="14%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
@@ -44,16 +46,18 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/game_count"
             android:text="3"
+            android:gravity="center"
             android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="14%" />
+            app:layout_widthPercent="12%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/assist"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/goals_count"
             android:text="6"
+            android:gravity="center"
             android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="14%" />
+            app:layout_widthPercent="12%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/yc"
             android:layout_width="0dp"
@@ -61,19 +65,18 @@
             android:layout_toRightOf="@id/assist"
             android:text="2"
             android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="14%" />
+            android:gravity="center"
+            app:layout_widthPercent="10%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/rc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/yc"
             android:text="8"
+            android:gravity="center"
             android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="14%" />
+            app:layout_widthPercent="10%" />
     </android.support.percent.PercentRelativeLayout>
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/gray3"></View>
+
 </LinearLayout>
 

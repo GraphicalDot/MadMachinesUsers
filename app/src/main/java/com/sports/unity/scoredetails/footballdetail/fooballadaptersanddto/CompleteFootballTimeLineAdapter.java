@@ -99,8 +99,8 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
             tvTeamFirstOffPlayer = (TextView) view.findViewById(R.id.tv_team_first_off);
             tvTeamSecondOffPlayer = (TextView) view.findViewById(R.id.tv_team_second_off);
             keyImage = (ImageView) view.findViewById(R.id.iv_time_line_image);
-            teamFirstView = view.findViewById(R.id.team_first_linearLayout);
-            teamSecondView = view.findViewById(R.id.team_second_linearLayout);
+           /* teamFirstView = view.findViewById(R.id.team_first_linearLayout);
+            teamSecondView = view.findViewById(R.id.team_second_linearLayout);*/
         }
     }
 }
