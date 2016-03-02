@@ -302,9 +302,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
             MarkerOptions markerOption = new MarkerOptions();
             markerOption.position(new LatLng(person.getLatitude(), person.getLongitude()));
             if (friend) {
-                markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mrkr_fball));
+                markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_my_friends));
             } else {
-                markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mrkr_cri));
+                markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_su_users));
             }
             Marker marker = map.addMarker(markerOption);
             if (person.getUsername().equalsIgnoreCase(getInstance(getApplicationContext()).getString(KEY_USERNAME))) {
