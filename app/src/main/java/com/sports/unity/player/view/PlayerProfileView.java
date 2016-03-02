@@ -35,6 +35,7 @@ import com.sports.unity.util.Constants;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,6 +43,8 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 public class PlayerProfileView extends CustomVolleyCallerActivity {
 
@@ -124,6 +127,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             tvNextGameDate = (TextView) findViewById(R.id.tv_next_game_date);
             notificationImage = (ImageView) findViewById(R.id.notificationicon_image);
             recyclerView= (RecyclerView) findViewById(R.id.rc_player_details);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this , VERTICAL, false));
             mplayerScorecardAdapter = new PlayerScorecardAdapter(playerScoreCardDTOs);
             recyclerView.setAdapter(mplayerScorecardAdapter);
             progressBar = (ProgressBar) findViewById(R.id.progress);

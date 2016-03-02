@@ -51,6 +51,7 @@
                 />
         </LinearLayout>
         <RelativeLayout
+
             android:id="@+id/ll_imv_center"
             android:layout_toRightOf="@id/ll_first_player_info"
             app:layout_widthPercent="10%"

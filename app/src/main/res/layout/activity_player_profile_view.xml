@@ -650,7 +650,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="left"
-                                    android:text="Chelsea"
+                                    android:text=""
                                     android:textSize="@dimen/font_size_medium" />
 
                                 <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
@@ -658,7 +658,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="left"
-                                    android:text="Chelsea"
+                                    android:text=""
                                     android:textColor="@color/gray1"
                                     android:textSize="@dimen/font_size_small_medium" />
                             </LinearLayout>
@@ -666,7 +666,7 @@
                         <RelativeLayout
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:background="@color/gray3"
+                            android:background="@color/gray4"
                             android:padding="@dimen/horizontal_padding_very_very_small"
                             android:orientation="horizontal">
 
@@ -674,7 +674,7 @@
                                 android:id="@+id/next_game_venue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/venue_name"
+                                android:text=""
                                 android:textSize="@dimen/font_size_small_large" />
 
                             <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
@@ -682,8 +682,8 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/next_game_venue"
-                                android:text="match date"
-                                android:textColor="@color/gray1"
+                                android:text=""
+                                android:textColor="@color/news_static"
                                 android:textSize="@dimen/font_size_small_medium" />
 
                             <ImageView
