@@ -50,20 +50,26 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
                 holder.tvTeamFirstTime.setText(holder.dto.getTvTeamFirstTime());
                 holder.tvTeamFirstOnPlayer.setText(holder.dto.getTvTeamFirstOnPlayer());
                 holder.tvTeamFirstOffPlayer.setText(holder.dto.getTvTeamFirstOffPlayer());
-                holder.teamSecondView.setVisibility(View.GONE);
+                holder.tvTeamSecondTime.setVisibility(View.INVISIBLE);
+                holder.teamSecondView.setVisibility(View.INVISIBLE);
 
             }else if(holder.dto.getTeamName().equalsIgnoreCase(context.getString(R.string.away_team_name)))
             {
                 holder.tvTeamSecondTime.setText(holder.dto.getTvTeamSecondTime());
                 holder.tvTeamSecondOnPlayer.setText(holder.dto.getTvTeamSecondOnPlayer());
                 holder.tvTeamSecondOffPlayer.setText(holder.dto.getTvTeamSecondOffPlayer());
-                holder.teamFirstView.setVisibility(View.GONE);
+                holder.teamFirstView.setVisibility(View.INVISIBLE);
+                holder.tvTeamFirstTime.setVisibility(View.INVISIBLE);
 
             } else {
-                holder.teamFirstView.setVisibility(View.GONE);
-                holder.teamSecondView.setVisibility(View.GONE);
+                holder.tvTeamFirstTime.setVisibility(View.INVISIBLE);
+                holder.teamFirstView.setVisibility(View.INVISIBLE);
+                holder.teamSecondView.setVisibility(View.INVISIBLE);
+                holder.tvTeamSecondTime.setVisibility(View.INVISIBLE);
+                holder.centralLineImage.setVisibility(View.VISIBLE);
+                holder.centralCircularImage.setVisibility(View.GONE);
             }
-            holder.keyImage.setImageDrawable(holder.dto.getDrwDrawable());
+            holder.centralCircularImage.setImageDrawable(holder.dto.getDrwDrawable());
         }catch (Exception e){e.printStackTrace();}
     }
 
@@ -86,6 +92,8 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
         private ImageView keyImage;
         private View teamFirstView;
         private View teamSecondView;
+        private View centralLineImage;
+        private ImageView centralCircularImage;
 
         public CompleteFootballTimeLineDTO dto;
 
@@ -99,8 +107,10 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
             tvTeamFirstOffPlayer = (TextView) view.findViewById(R.id.tv_team_first_off);
             tvTeamSecondOffPlayer = (TextView) view.findViewById(R.id.tv_team_second_off);
             keyImage = (ImageView) view.findViewById(R.id.iv_time_line_image);
-           /* teamFirstView = view.findViewById(R.id.team_first_linearLayout);
-            teamSecondView = view.findViewById(R.id.team_second_linearLayout);*/
+            teamFirstView = view.findViewById(R.id.ll_first_player_info);
+            teamSecondView = view.findViewById(R.id.ll_second_player_info);
+            centralLineImage = view.findViewById(R.id.ll_imv_center);
+            centralCircularImage = (ImageView) view.findViewById(R.id.iv_time_line_image);
         }
     }
 }

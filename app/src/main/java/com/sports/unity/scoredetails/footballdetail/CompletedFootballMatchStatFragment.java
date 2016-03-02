@@ -170,13 +170,14 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
                         while (keysSetItr.hasNext()) {
                             String key = keysSetItr.next();
                             try {
+                                if(getLabelValue(key)!=null){
                                 if(!(key.equals("match_id") || key.equals("team"))) {
-                                   completeFootballMatchStatDTO = new CompleteFootballMatchStatDTO();
+                                    completeFootballMatchStatDTO = new CompleteFootballMatchStatDTO();
                                     completeFootballMatchStatDTO.setTvLable(key);
                                     completeFootballMatchStatDTO.setIvLeftStatus(teamFirstStatsObject.getString(key));
                                     completeFootballMatchStatDTO.setIvRightStatus(teamSecondStatsObject.getString(key));
                                     list.add(completeFootballMatchStatDTO);
-                                }
+                                }}
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -191,6 +192,38 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
         }
 
     }
+
+    private String getLabelValue(String tvLable) {
+        String lableValue = null;
+
+        switch (tvLable){
+            case "possestiontimetotal":
+                lableValue = "POSSESION (%)";
+                break;
+            case "shotstotal":
+                lableValue = "SHOTS";
+                break;
+            case "shotsongoal":
+                lableValue = "SHOTS ON TARGET";
+                break;
+            case "cornerstotal":
+                lableValue = "CORNERS";
+                break;
+            case "foulstotal":
+                lableValue = "FOULS";
+                break;
+            case "offsidestotal":
+                lableValue = "OFFSIDES";
+                break;
+        }
+
+
+
+        return lableValue;
+    }
+
+
+
 
     @Override
     public void onResume() {

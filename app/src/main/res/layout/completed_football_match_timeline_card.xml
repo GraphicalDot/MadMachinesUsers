@@ -21,7 +21,8 @@
             android:text=""
             android:background="@drawable/grey_rht"
             android:padding="@dimen/vertical_padding_very_very_small"
-            android:textSize="@dimen/font_size_small_large" />
+            android:textSize="@dimen/font_size_small_large"
+            />
         <LinearLayout
             android:id="@+id/ll_first_player_info"
             android:layout_toRightOf="@id/tv_team_first_time"
@@ -31,7 +32,8 @@
             android:padding="@dimen/vertical_padding_very_very_small"
             android:layout_height="@dimen/horizontal_padding_large"
             android:background="@drawable/white_rht"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            >
             <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                 android:id="@+id/tv_team_first_on"
                 android:paddingLeft="@dimen/horizontal_padding_very_very_small"
