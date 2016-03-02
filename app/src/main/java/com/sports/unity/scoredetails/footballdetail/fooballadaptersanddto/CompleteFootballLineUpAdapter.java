@@ -41,8 +41,7 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
         }catch (Exception e){e.printStackTrace();}
         return new ViewHolder(view);
     }
-
-    @Override
+   @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         try{
             int color = context.getResources().getColor(R.color.app_theme_blue);
@@ -61,49 +60,64 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
             }else {
                 holder.ivBallPass.setVisibility(View.GONE);
             }
-            if(holder.dto.getEnterExitImage()!= null && !holder.dto.getEnterExitImage().equalsIgnoreCase("OFF")) {
-                holder.ivEnterExit.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_down_arrow));
-            }else {
-                holder.ivEnterExit.setVisibility(View.GONE);
-            }
+                 if(holder.dto.getOffPlayerName()!= null) {
+                         holder.tvOffPlayerName.setText(holder.dto.getOffPlayerName());
+                         holder.ivEnterExit.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_red));
+                         holder.ivOffCardType.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_green));
+                         holder.ivOffPlayerPosition.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_substitue));
+                  }
+
+            // right side player postion
             drawable = getTextDrawable(holder.dto.getPlayerPostionNumberSecond(),Color.WHITE,color);
             holder.ivPlayerPositionSecond.setImageDrawable(drawable);
+
             if(holder.dto.getPlayerNameSecond()!= null && !holder.dto.getPlayerNameSecond().equals("")) {
                 holder.tvPlayerNameSecond.setText(holder.dto.getPlayerNameSecond());
-            }else {
-                holder.tvPlayerNameSecond.setVisibility(View.GONE);
             }
             if(holder.dto.getCardTypeSecond()!= null && !holder.dto.getCardTypeSecond().equals("")) {
-            holder.ivCardTypeSecond.setImageDrawable(getDrwableResource(holder.dto.getCardTypeSecond()));}
+                holder.ivCardTypeSecond.setImageDrawable(getDrwableResource(holder.dto.getCardTypeSecond()));}
+
             if(holder.dto.getGoalSecond()!= null && !holder.dto.getGoalSecond().equals("")) {
-            holder.ivBallPassSecond.setImageDrawable(getDrwableResource(holder.dto.getGoalSecond()));}
-            if(holder.dto.getEnterExitImageSecond()!= null && !holder.dto.getEnterExitImageSecond().equals("")) {
-                holder.ivEnterExitSecond.setImageDrawable(getDrwableResource(holder.dto.getEnterExitImageSecond()));
-            }else {
-                holder.ivEnterExitSecond.setVisibility(View.GONE);
+                holder.ivBallPassSecond.setImageDrawable(getDrwableResource(holder.dto.getGoalSecond()));
             }
-            if(holder.dto.getOffPlayerName()!=null) {
-                drawable = context.getResources().getDrawable(R.drawable.ic_arrow_red);
+
+            if(holder.dto.getOffPlayerNameSecond()!= null) {
+                holder.tvOffPlayerNameSecond.setText(holder.dto.getOffPlayerNameSecond());
+                holder.ivEnterExitSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_red));
+                holder.ivOffCardTypeSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_green));
+                holder.ivOffPlayerPositionSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_substitue));
+            }
+            /*if(holder.dto.getOffPlayerName()!=null) {
+                drawable = context.getResources().getDrawable(R.drawable.ic_substitue);
                 holder.ivOffPlayerPosition.setImageDrawable(drawable);
                 holder.tvOffPlayerName.setText(holder.dto.getOffPlayerName());
+
                 if (holder.dto.getOffCardType() != null && !holder.dto.getOffCardType().equals("")) {
                     holder.ivOffCardType.setImageDrawable(getDrwableResource(holder.dto.getOffCardType()));
                 } else {
                     holder.ivOffCardType.setVisibility(View.GONE);
                 }
-                if (holder.dto.getOffEnterExitImage() != null && !holder.dto.getOffEnterExitImage().equalsIgnoreCase("ON")) {
-                    holder.ivOffEnterExit.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_green));
-                } else {
+                if (holder.dto.getOffEnterExitImage() != null) {
+
+
+                    if(holder.dto.getOffEnterExitImage().equalsIgnoreCase("OFF")){
+                        holder.ivOffEnterExit.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_red));
+                    }else {
+                        holder.ivOffEnterExit.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_green));
+                        holder.ivOffPlayerPositionSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_substitue));
+                    }
+                  } else {
                     holder.ivOffEnterExit.setVisibility(View.GONE);
                 }
-            }else{
+            }{
                 holder.ivOffPlayerPosition.setVisibility(View.GONE);
                 holder.tvOffPlayerName.setVisibility(View.GONE);
                 holder.ivOffCardType.setVisibility(View.GONE);
                 holder.ivOffEnterExit.setVisibility(View.GONE);
-            }
-            if(holder.dto.getOffPlayerNameSecond()!=null){
-                drawable = context.getResources().getDrawable(R.drawable.ic_arrow_red);
+            }*/
+
+            /*if(holder.dto.getOffPlayerNameSecond()!=null){
+                drawable = context.getResources().getDrawable(R.drawable.ic_substitue);
                 holder.ivOffPlayerPositionSecond.setImageDrawable(drawable);
                 holder.tvOffPlayerNameSecond.setText(holder.dto.getOffPlayerNameSecond());
                 if (holder.dto.getOffCardTypeSecond() != null && !holder.dto.getOffCardTypeSecond().equals("")) {
@@ -111,8 +125,15 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
                 } else {
                     holder.ivOffCardTypeSecond.setVisibility(View.GONE);
                 }
-                if (holder.dto.getOffEnterExitImageSecond() != null && !holder.dto.getOffEnterExitImageSecond().equalsIgnoreCase("ON")) {
-                    holder.ivOffEnterExitSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_green));
+                if (holder.dto.getOffEnterExitImageSecond() != null) {
+
+                    if(holder.dto.getOffEnterExitImageSecond().equalsIgnoreCase("OFF")){
+                        holder.ivOffEnterExitSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_red));
+                    }else {
+                        holder.ivOffEnterExitSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_green));
+                        holder.ivOffPlayerPositionSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_substitue));
+                    }
+
                 } else {
                     holder.ivOffEnterExitSecond.setVisibility(View.GONE);
                 }
@@ -121,7 +142,7 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
                 holder.tvOffPlayerNameSecond.setVisibility(View.GONE);
                 holder.ivOffCardTypeSecond.setVisibility(View.GONE);
                 holder.ivOffEnterExitSecond.setVisibility(View.GONE);
-            }
+            }*/
 
         }catch (Exception e){e.printStackTrace();}
     }
@@ -154,7 +175,6 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
         private ImageView ivOffPlayerPosition;
         private TextView tvOffPlayerName;
         private ImageView ivOffCardType;
-
         private ImageView ivOffEnterExit;
 
         private ImageView ivOffPlayerPositionSecond;
@@ -192,12 +212,7 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
 
             ivOffEnterExitSecond = (ImageView) view.findViewById(R.id.iv_off_enter_exit_second);
 
-
-
-
-
-
-       }
+        }
     }
     private Drawable getDrwableResource(String event) {
         Resources.Theme theme = context.getTheme();
@@ -235,7 +250,7 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
                     .endConfig()
                     .buildRound(value, color);
         }
-      return  null;
+        return  null;
     }
 
 
