@@ -15,7 +15,8 @@
             android:layout_width="0dp"
             app:layout_widthPercent="5%"
             android:layout_height="wrap_content"
-            android:gravity="center"/>
+            android:gravity="center"
+           />
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:layout_toRightOf="@id/tv_player_number_or_replace"
             android:paddingLeft="@dimen/vertical_padding_very_very_small"
@@ -34,7 +35,8 @@
             app:layout_widthPercent="5%"
             android:paddingLeft="2dp"
             android:layout_height="wrap_content"
-            android:gravity="center" />
+            android:gravity="center"
+            />
         <ImageView
             android:layout_toRightOf="@id/iv_card_type"
             android:id="@+id/iv_ball_pass"
@@ -42,7 +44,9 @@
             app:layout_widthPercent="5%"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingLeft="2dp" />
+            android:paddingLeft="2dp"
+            />
+
         <ImageView
             android:layout_toRightOf="@id/iv_ball_pass"
             android:id="@+id/iv_enter_exit"
@@ -51,20 +55,23 @@
             android:gravity="center"
             android:paddingLeft="2dp"
             android:layout_height="wrap_content"
+
             />
         <TextView
             android:layout_toRightOf="@id/iv_enter_exit"
             android:id="@+id/tv_dummy_view"
             android:layout_width="0dp"
             app:layout_widthPercent="10%"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_arrow_green"/>
         <ImageView
             android:layout_toRightOf="@id/tv_dummy_view"
             android:id="@+id/tv_player_number_or_replace_second"
             android:layout_width="0dp"
             app:layout_widthPercent="5%"
             android:layout_height="wrap_content"
-            android:gravity="center" />
+            android:gravity="center"
+            />
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:layout_toRightOf="@id/tv_player_number_or_replace_second"
             android:id="@+id/tv_player_name_second"
@@ -83,7 +90,9 @@
             app:layout_widthPercent="5%"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingLeft="2dp" />
+            android:paddingLeft="2dp"
+
+            />
         <ImageView
             android:layout_toRightOf="@id/iv_card_type_second"
             android:id="@+id/iv_ball_pass_second"
@@ -91,7 +100,8 @@
             app:layout_widthPercent="5%"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingLeft="2dp" />
+            android:paddingLeft="2dp"
+           />
         <ImageView
             android:layout_toRightOf="@id/iv_ball_pass_second"
             android:id="@+id/iv_enter_exit_second"
@@ -100,13 +110,22 @@
             android:gravity="center"
             android:paddingLeft="2dp"
             android:layout_height="wrap_content"
+
             />
+    </android.support.percent.PercentRelativeLayout>
+    <android.support.percent.PercentRelativeLayout
+        android:id="@+id/rootLayout_off_player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/horizontal_padding_very_very_small"
+        android:background="@android:color/white">
         <ImageView
             android:id="@+id/tv_off_player_number_or_replace"
             android:layout_width="0dp"
             app:layout_widthPercent="5%"
             android:layout_height="wrap_content"
-            android:gravity="center"/>
+            android:gravity="center"
+            />
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:id="@+id/tv_off_player_name"
             android:layout_toRightOf="@id/tv_off_player_number_or_replace"
@@ -125,6 +144,7 @@
             app:layout_widthPercent="5%"
             android:paddingLeft="2dp"
             android:layout_height="wrap_content"
+
             android:gravity="center" />
         <ImageView
             android:layout_toRightOf="@id/iv_off_card_type"
@@ -133,7 +153,9 @@
             app:layout_widthPercent="5%"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingLeft="2dp" />
+
+            android:paddingLeft="2dp"
+           />
         <ImageView
             android:layout_toRightOf="@id/iv_off_ball_pass"
             android:id="@+id/iv_off_enter_exit"
@@ -141,26 +163,30 @@
             app:layout_widthPercent="5%"
             android:gravity="center"
             android:paddingLeft="2dp"
+
             android:layout_height="wrap_content"
+
             />
         <TextView
             android:layout_toRightOf="@id/iv_off_enter_exit"
             android:id="@+id/tv_off_dummy_view"
             android:layout_width="0dp"
             app:layout_widthPercent="10%"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+
+            />
         <ImageView
             android:layout_toRightOf="@id/tv_off_dummy_view"
             android:id="@+id/tv_off_player_number_or_replace_second"
             android:layout_width="0dp"
             app:layout_widthPercent="5%"
             android:layout_height="wrap_content"
+
             android:gravity="center" />
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:layout_toRightOf="@id/tv_off_player_number_or_replace_second"
             android:id="@+id/tv_off_player_name_second"
-            android:layout_width="0dp"
-            android:paddingLeft="@dimen/vertical_padding_very_very_small"
+            android:layout_width="wrap_content"
             app:layout_widthPercent="24%"
             android:layout_height="wrap_content"
             android:gravity="left"
@@ -168,29 +194,34 @@
             android:textSize="@dimen/font_size_small_medium"
             android:text=""/>
         <ImageView
-            android:layout_toRightOf="@id/tv_player_name_second"
+            android:layout_toRightOf="@id/tv_off_player_name_second"
             android:id="@+id/iv_off_card_type_second"
             android:layout_width="0dp"
             app:layout_widthPercent="5%"
             android:layout_height="wrap_content"
             android:gravity="center"
+
             android:paddingLeft="2dp" />
         <ImageView
-            android:layout_toRightOf="@id/iv_card_type_second"
+            android:layout_toRightOf="@id/iv_off_card_type_second"
             android:id="@+id/iv_off_ball_pass_second"
             android:layout_width="0dp"
             app:layout_widthPercent="5%"
+
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:paddingLeft="2dp" />
+            android:paddingLeft="2dp"
+/>
         <ImageView
-            android:layout_toRightOf="@id/iv_ball_pass_second"
+            android:layout_toRightOf="@id/iv_off_ball_pass_second"
             android:id="@+id/iv_off_enter_exit_second"
             android:layout_width="0dp"
             app:layout_widthPercent="5%"
             android:gravity="center"
             android:paddingLeft="2dp"
+            android:src="@drawable/ic_football"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             />
     </android.support.percent.PercentRelativeLayout>
 </LinearLayout>
