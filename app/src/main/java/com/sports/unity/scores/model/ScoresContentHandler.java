@@ -5,21 +5,11 @@ import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.sports.unity.XMPPManager.XMPPClient;
-import com.sports.unity.common.model.TinyDB;
-import com.sports.unity.util.CommonUtil;
-import android.util.Log;
-
-import com.android.volley.VolleyError;
-import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.VolleyRequestHandler;
 import com.sports.unity.util.network.VolleyResponseListener;
 import com.sports.unity.util.network.VolleyTagRequest;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.net.URLEncoder;
 import java.util.HashMap;
 
@@ -43,19 +33,19 @@ public class ScoresContentHandler {
     public static final String PARAM_SPORTS_TYPE = "SPORTS_TYPE";
     public static final String PARAM_ID = "ID";
 
+    public static final String PARAM_USERNAME = "USERNAME";
+    public static final String PARAM_PASSWORD = "PASSWORD";
     public static final String PARAM_LATITUDE = "LATITUDE";
     public static final String PARAM_LONGITUDE = "LONGITUDE";
     public static final String PARAM_RADIUS = "RADIUS";
 
     public static final String PARAM_NEWS_IMAGE_DPI = "IMAGE_DPI";
     public static final String PARAM_NEWS_ID = "NEWS_ID";
-
-    private static final String URL_CREATE = "http://" + XMPPClient.SERVER_HOST + "/create?";
     public static final String URL_REGISTER = "http://" + XMPPClient.SERVER_HOST + "/register?";
+    public static final String URL_NEWS = "http://52.76.74.188:8000/mixed?";
+    private static final String URL_CREATE = "http://" + XMPPClient.SERVER_HOST + "/create?";
     private static final String URL_REQUEST_OTP = "http://" + XMPPClient.SERVER_HOST + "/create?";
     private static final String URL_NEAR_BY = "http://" + XMPPClient.SERVER_HOST + "/retrieve_nearby_users?";
-
-    public static final String URL_NEWS = "http://52.76.74.188:8000/mixed?";
     private static final String URL_PARAMS_NEWS_IMAGE_DPI = "image_size";
     private static final String URL_PARAMS_NEWS_ID = "news_id";
 
@@ -68,34 +58,8 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = "http://52.76.74.188:5600/get_football_player_profile?player_id=";
 
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
-
-    public static ScoresContentHandler getInstance() {
-        if (SCORES_CONTENT_HANDLER == null) {
-            SCORES_CONTENT_HANDLER = new ScoresContentHandler();
-        }
-        return SCORES_CONTENT_HANDLER;
-    }
-
-    public static void clean() {
-        if (SCORES_CONTENT_HANDLER != null) {
-            SCORES_CONTENT_HANDLER.cleanUp();
-            SCORES_CONTENT_HANDLER = null;
-        }
-    }
-
-    public interface ContentListener {
-
-        public void handleContent(String tag, String content, int responseCode);
-
-    }
-
     private HashMap<String, ContentListener> mapOfResponseListeners = new HashMap<>();
-    private HashMap<String, String>requestInProcess_RequestTagAndListenerKey = new HashMap<>();
-
-    private ScoresContentHandler() {
-
-    }
-
+    private HashMap<String, String> requestInProcess_RequestTagAndListenerKey = new HashMap<>();
     private VolleyResponseListener responseListener = new VolleyResponseListener() {
 
         @Override
@@ -121,6 +85,24 @@ public class ScoresContentHandler {
         }
 
     };
+
+    private ScoresContentHandler() {
+
+    }
+
+    public static ScoresContentHandler getInstance() {
+        if (SCORES_CONTENT_HANDLER == null) {
+            SCORES_CONTENT_HANDLER = new ScoresContentHandler();
+        }
+        return SCORES_CONTENT_HANDLER;
+    }
+
+    public static void clean() {
+        if (SCORES_CONTENT_HANDLER != null) {
+            SCORES_CONTENT_HANDLER.cleanUp();
+            SCORES_CONTENT_HANDLER = null;
+        }
+    }
 
     public void addResponseListener(ContentListener responseListener, String listenerKey) {
         mapOfResponseListeners.put(listenerKey, responseListener);
@@ -201,7 +183,7 @@ public class ScoresContentHandler {
             urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_UDID);
             urlBuilder.append("=");
             urlBuilder.append(udid);
-            Log.d("max", "Create user URI>>"+urlBuilder.toString());
+            Log.d("max", "Create user URI>>" + urlBuilder.toString());
             requestContent(requestTag, listenerKey, urlBuilder.toString());
         } else {
             //nothing
@@ -246,7 +228,7 @@ public class ScoresContentHandler {
         }
     }
 
-    private void requestNearByUsers(String apk_version,String udid,String lat, String lng, String radius, String listenerKey, String requestTag) {
+    private void requestNearByUsers(String apk_version, String udid, String lat, String lng, String radius, String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             StringBuilder urlBuilder = new StringBuilder(URL_NEAR_BY);
             urlBuilder.append("lat=");
@@ -307,7 +289,6 @@ public class ScoresContentHandler {
             requestContent(requestTag, listenerKey, url);
         }
     }
-//<<<<<<< HEAD
 
     private void requestContent(String requestTag, String listenerKey, String url) {
         if (url != null) {
@@ -322,6 +303,7 @@ public class ScoresContentHandler {
             //nothing
         }
     }
+//<<<<<<< HEAD
 
     private void requestContent(String requestTag, String listenerKey, String url, String requestBody) {
         if (url != null) {
@@ -340,9 +322,6 @@ public class ScoresContentHandler {
             requestInProcess_RequestTagAndListenerKey.put(requestTag, listenerKey);
         }
     }
-
-
-
 
     private String generateURL(String parameters) {
         StringBuilder stringBuilder = new StringBuilder(SCORES_BASE_URL);
@@ -378,12 +357,19 @@ public class ScoresContentHandler {
             requestContent(requestTag, listenerKey, url);
         }
     }
+
     private void requestPlayerProfile(String sportType, String playerName, String listenerKey, String requestTag){
         if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
             String url = URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL+ URLEncoder.encode(playerName);
             Log.i( "requestPlayerProfile: ", url);
             requestContent(requestTag, listenerKey, url);
         }
+    }
+
+    public interface ContentListener {
+
+        public void handleContent(String tag, String content, int responseCode);
+
     }
 
 }
