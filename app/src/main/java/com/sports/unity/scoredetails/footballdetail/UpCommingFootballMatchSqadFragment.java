@@ -8,10 +8,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,10 +41,10 @@ import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
  */
 public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCommingFootballMatchSqadHandler.UpCommingFootballMatchSqadContentListener{
 
-    private ProgressBar progressBar;
     String toss = "";
     String matchName="";
     String date = "";
+    private ProgressBar progressBar;
     private String teamFirstName;
     private String teamSecondName;
     private String teamFirstId;
@@ -99,8 +97,10 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         rcRecyclerViewTeamFirst = (RecyclerView) view.findViewById(R.id.rc_child1_rv);
         rcRecyclerViewTeamFirst.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        rcRecyclerViewTeamFirst.setNestedScrollingEnabled(false);
         rcRecyclerViewTeamSecond = (RecyclerView) view.findViewById(R.id.rc_child2_rv);
         rcRecyclerViewTeamSecond.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        rcRecyclerViewTeamSecond.setNestedScrollingEnabled(false);
         upCommingFootballMatchSquadAdapterFirst = new UpCommingFootballMatchSquadAdapter(listTeamFirst,getContext());
         rcRecyclerViewTeamFirst.setAdapter(upCommingFootballMatchSquadAdapterFirst);
         upCommingFootballMatchSquadAdapterSecond = new UpCommingFootballMatchSquadAdapter(listTeamFirst,getContext());

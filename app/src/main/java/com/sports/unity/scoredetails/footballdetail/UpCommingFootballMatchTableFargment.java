@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.sports.unity.R;
@@ -83,6 +82,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_table);
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_football_match_table);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext() ,VERTICAL, false));
+        recyclerView.setNestedScrollingEnabled(false);
         adapter = new UpCommingFootballMatchTableAdapter(list, getContext(),team1,team2);
         recyclerView.setAdapter(adapter);
         initErrorLayout(view);
