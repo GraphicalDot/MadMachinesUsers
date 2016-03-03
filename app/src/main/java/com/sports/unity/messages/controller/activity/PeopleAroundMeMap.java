@@ -300,15 +300,23 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         Log.i("plottingmarkers", "true");
         for (Person person : persons) {
             MarkerOptions markerOption = new MarkerOptions();
-            markerOption.position(new LatLng(person.getLatitude(), person.getLongitude()));
+            markerOption.position(person.getPosition());
             if (friend) {
                 markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_my_friends));
             } else {
                 markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_su_users));
             }
-            Marker marker = map.addMarker(markerOption);
+            Marker marker = null;
             if (person.getUsername().equalsIgnoreCase(getInstance(getApplicationContext()).getString(KEY_USERNAME))) {
+                if (sportSelection.equalsIgnoreCase(SPORT_SELECTION_FOOTBALL)) {
+                    markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mrkr_fball));
+                } else {
+                    markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mrkr_cri));
+                }
+                marker = map.addMarker(markerOption);
                 marker.setDraggable(true);
+            } else {
+                marker = map.addMarker(markerOption);
             }
 
             markers.add(marker);
@@ -395,7 +403,23 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
 
     private void openMap(final GoogleMap googleMap) {
         map = googleMap;
+        map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
+            @Override
+            public void onMarkerDragStart(Marker marker) {
 
+            }
+
+            @Override
+            public void onMarkerDrag(Marker marker) {
+
+            }
+
+            @Override
+            public void onMarkerDragEnd(Marker marker) {
+                LatLng position = marker.getPosition();
+                getPeopleAroundMe(position.latitude, position.longitude);
+            }
+        });
         map.getUiSettings().setZoomGesturesEnabled(true);
         try {
             map.setMyLocationEnabled(true);

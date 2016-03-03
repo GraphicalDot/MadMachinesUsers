@@ -1,5 +1,6 @@
 package com.sports.unity.scores.model;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.sports.unity.common.model.MatchDay;
 import com.sports.unity.messages.controller.model.PeoplesNearMe;
 import com.sports.unity.messages.controller.model.Person;
@@ -75,8 +76,7 @@ public class ScoresJsonParser {
                     Person p = new Person();
                     p.setUsername(personObject.getString("username"));
                     p.setDistance(personObject.getDouble("distance"));
-                    p.setLatitude(personObject.getDouble("lat"));
-                    p.setLongitude(personObject.getDouble("lng"));
+                    p.setPosition(new LatLng(personObject.getDouble("lat"), personObject.getDouble("lng")));
                     String friendship_status = personObject.getString("friendship_status");
                     JSONArray interestsObjects = personObject.getJSONArray("interests");
                     int totalInterests = interestsObjects.length();

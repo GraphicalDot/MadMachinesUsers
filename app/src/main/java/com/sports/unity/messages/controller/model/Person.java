@@ -1,16 +1,20 @@
 package com.sports.unity.messages.controller.model;
 
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by manish on 02/03/16.
  */
-public class Person {
+public class Person implements ClusterItem {
     private String username;
     private double distance;
-    private double longitude;
-    private double latitude;
+    private LatLng position;
+    private boolean friend;
+    private boolean commonInterest;
     private List<String> interests = new ArrayList<>();
 
     public List<String> getInterests() {
@@ -34,19 +38,28 @@ public class Person {
         this.distance = distance;
     }
 
-    public double getLongitude() {
-        return longitude;
+    public boolean isFriend() {
+        return friend;
     }
 
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
+    public void setFriend(boolean friend) {
+        this.friend = friend;
     }
 
-    public double getLatitude() {
-        return latitude;
+    public boolean isCommonInterest() {
+        return commonInterest;
     }
 
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
+    public void setCommonInterest(boolean commonInterest) {
+        this.commonInterest = commonInterest;
+    }
+
+    @Override
+    public LatLng getPosition() {
+        return position;
+    }
+
+    public void setPosition(LatLng position) {
+        this.position = position;
     }
 }
