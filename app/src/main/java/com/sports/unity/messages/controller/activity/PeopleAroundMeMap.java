@@ -39,6 +39,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.ClusterManager;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -107,6 +108,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
     private ProgressDialog dialog = null;
 
     private PeoplesNearMe peoplesNearMe;
+    private ClusterManager<Person> mClusterManager;
 
     private ScoresContentHandler.ContentListener contentListener = new ScoresContentHandler.ContentListener() {
 
@@ -426,6 +428,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         } catch (SecurityException ex) {
 
         }
+        mClusterManager = new ClusterManager<Person>(getApplicationContext(), map);
+        map.setOnCameraChangeListener(mClusterManager);
+        map.setOnMarkerClickListener(mClusterManager);
         hideLocationbutton();
         map.setTrafficEnabled(false);
         double latitude = getInstance(getApplicationContext()).getDouble(TinyDB.KEY_CURRENT_LATITUDE, 0.0);
