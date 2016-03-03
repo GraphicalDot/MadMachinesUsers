@@ -10,7 +10,7 @@
         android:id="@+id/sepratorhead"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/gray3"></ImageView>
+        android:background="@color/gray3" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +23,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:padding="@dimen/horizontal_padding_very_very_small"
+            android:paddingBottom="@dimen/vertical_padding_very_very_small"
+            android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+            android:paddingRight="@dimen/horizontal_padding_very_very_small"
+            android:paddingTop="@dimen/vertical_padding_very_very_small"
             android:scaleType="center"
             android:src="@drawable/ic_cricket" />
 
@@ -33,7 +36,6 @@
             android:layout_height="@dimen/drawer_item_height"
             android:ellipsize="end"
             android:gravity="center_vertical"
-            android:maxLength="30"
             android:singleLine="true"
             android:textColor="@color/gray2"
             android:textSize="@dimen/font_size_small_xlarge"

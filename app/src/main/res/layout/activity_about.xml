@@ -111,7 +111,7 @@
                 android:id="@+id/version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=" Version "
+                android:text="@string/app_version"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/font_size_very_very_small" />
 

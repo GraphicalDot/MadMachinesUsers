@@ -14,7 +14,10 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="@dimen/horizontal_padding_very_small">
+        android:paddingBottom="@dimen/vertical_padding_very_small"
+        android:paddingLeft="@dimen/horizontal_padding_very_small"
+        android:paddingRight="@dimen/horizontal_padding_very_small"
+        android:paddingTop="@dimen/vertical_padding_very_small">
 
         <TextView
             android:id="@+id/title"
@@ -46,7 +49,10 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="@dimen/horizontal_padding_small">
+        android:paddingBottom="@dimen/vertical_padding_small"
+        android:paddingLeft="@dimen/horizontal_padding_small"
+        android:paddingRight="@dimen/horizontal_padding_small"
+        android:paddingTop="@dimen/vertical_padding_small">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -116,7 +122,10 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="horizontal"
-        android:padding="@dimen/horizontal_padding_very_small">
+        android:paddingBottom="@dimen/vertical_padding_very_small"
+        android:paddingLeft="@dimen/horizontal_padding_very_small"
+        android:paddingRight="@dimen/horizontal_padding_very_small"
+        android:paddingTop="@dimen/vertical_padding_very_small">
 
         <TextView
             android:layout_width="wrap_content"

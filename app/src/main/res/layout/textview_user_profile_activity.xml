@@ -9,5 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:padding="@dimen/horizontal_padding_small" />
+        android:paddingBottom="@dimen/vertical_padding_small"
+        android:paddingLeft="@dimen/horizontal_padding_small"
+        android:paddingRight="@dimen/horizontal_padding_small"
+        android:paddingTop="@dimen/vertical_padding_small" />
 </LinearLayout>

@@ -64,6 +64,7 @@
     <string name="tour_score_title">Score</string>
     <string name="tour_news_details">Personalized sports news from thousands of sources.</string>
     <string name="tour_news_title">News</string>
+    <string name="published">published</string>
     <string name="tour_people_details">Allows you to find people who love teams, players and leagues similar to the ones you appreciate.</string>
     <string name="tour_people_title">People Around You</string>
     <string name="basketball">Basketball</string>
@@ -96,6 +97,7 @@
 
     <string name="profile_facebook_login_failed">Login failed</string>
     <string name="profile_facebook_login_cancelled">Login cancelled</string>
+    <string name="use_fb_details">USE MY FACEBOOK DETAILS</string>
 
     <string name="select_your_favourite_sports">Select your favourite sports</string>
     <string name="select_atleast_one_sport_message">Select at least one sport.</string>
@@ -105,6 +107,8 @@
     <string name="news">News</string>
     <string name="messages">Messages</string>
     <string name="title_activity_camera">CameraActivity</string>
+
+    <string name="send_to">Send to</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_on_return">OnReturnActivity</string>
@@ -279,6 +283,7 @@ Carrier SMS charges may apply.</string>
     <string name="privacy_policy">Privacy Policy</string>
     <string name="terms_of_use">Terms of Use</string>
     <string name="sportsunity.co">sportsunity.co</string>
+    <string name="app_version"> Version </string>
 
     <!--Sending invite related-->
     <string name="download_sports_unity">Check out Sports Unity for your smartphone. Download it from https://goo.gl/mQUaiy</string>
@@ -383,5 +388,4 @@ Carrier SMS charges may apply.</string>
     <string name="participant_count">%1$d OF 50</string>
     <string name="umpires">Umpires</string>
     <string name="match_referee">Match Referee</string>
-
 </resources>

@@ -4,8 +4,8 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="horizontal"
-    android:paddingBottom="@dimen/horizontal_padding_very_very_small"
-    android:paddingTop="@dimen/horizontal_padding_very_very_small">
+    android:paddingBottom="@dimen/vertical_padding_very_very_small"
+    android:paddingTop="@dimen/vertical_padding_very_very_small">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/user_icon"
