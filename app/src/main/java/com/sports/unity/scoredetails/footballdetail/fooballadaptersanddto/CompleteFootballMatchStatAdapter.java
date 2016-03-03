@@ -62,14 +62,40 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
                 holder.ivRightStatus.setImageDrawable(drawable);
                 holder.ivCenterStatus.setImageDrawable(getCentralImageResource(holder.dto.getTvLable()));
                 try{
+                    int radius=  context.getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
+
+
                     Integer redValue= Integer.parseInt(holder.dto.getIvLeftStatus());
                     Integer blueValue= Integer.parseInt(holder.dto.getIvRightStatus());
-                    holder.redView.getLayoutParams().width = (redValue+blueValue)/blueValue*100;
-                    holder.blueView.getLayoutParams().width =(redValue+blueValue)/redValue*100;
+                    redValue = (redValue+blueValue)/redValue;
+                    blueValue = (redValue+blueValue)/blueValue;
+
+                    holder.redView.setImageResource(R.drawable.ic_stat_red_bg);
+                    holder.blueView.setImageResource(R.drawable.ic_stat_blue_bg);
+                    holder.redView.getLayoutParams().width = redValue;
+                    holder.blueView.getLayoutParams().width =blueValue;
+                   /* holder.redView.setImageDrawable(getBackgroundDrawable(redValue, Color.RED));
+                    holder.blueView.setImageDrawable(getBackgroundDrawable(blueValue,Color.BLUE));*/
+
 
                 }catch (Exception e){e.printStackTrace();}
           }catch (Exception e){e.printStackTrace();}
     }
+
+    private Drawable getBackgroundDrawable(int width, int color) {
+        int radius = context.getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
+        Drawable drawable;
+        drawable = TextDrawable.builder()
+                .beginConfig().textColor(Color.BLACK)
+                .withBorder(radius)
+                .width(width*1)
+                .height(radius)
+                .bold()
+                .endConfig()
+                .buildRect(" ",color);
+        return drawable;
+    }
+
 
     private TextDrawable getTextDrawable(String strRightStatus) {
         int radius = context.getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);

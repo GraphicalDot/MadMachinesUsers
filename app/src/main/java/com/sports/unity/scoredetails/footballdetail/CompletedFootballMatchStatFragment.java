@@ -55,6 +55,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
     private List<CompleteFootballMatchStatDTO> list = new ArrayList<>();
     private SwipeRefreshLayout swipeRefreshLayout;
     private CompletedFootballMatchStatHandler completedFootballMatchStatHandler;
+
     public CompletedFootballMatchStatFragment() {
         // Required empty public constructor
     }
@@ -84,6 +85,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
     }
     private void initView(View view) {
         try{
+
             rvFootballMatchStat = (RecyclerView) view.findViewById(R.id.rv_football_match_stat);
             rvFootballMatchStat.setHasFixedSize(true);
             rvFootballMatchStat.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
@@ -100,7 +102,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
                 public void onRefresh() {
                     if (completedFootballMatchStatHandler != null) {
                         completedFootballMatchStatHandler.requestCompledFootabllMatchStat(matchId);
-                        swipeRefreshLayout.setRefreshing(false);
+                        //swipeRefreshLayout.setRefreshing(false);
                     }
                 }
             });
@@ -153,43 +155,47 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
 
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
+          if(!jsonObject.isNull("data")) {
+              final JSONArray dataArray = jsonObject.getJSONArray("data");
+              final JSONObject teamFirstStatsObject = dataArray.getJSONObject(0);
+              final JSONObject teamSecondStatsObject = dataArray.getJSONObject(1);
+              final Iterator<String> keysSetItr = teamFirstStatsObject.keys();
+              hideProgressBar();
+              swipeRefreshLayout.setRefreshing(false);
+              if (activity != null) {
+                  activity.runOnUiThread(new Runnable() {
+                      @Override
+                      public void run() {
+                          try {
 
-        final JSONArray dataArray= jsonObject.getJSONArray("data");
-        final JSONObject  teamFirstStatsObject = dataArray.getJSONObject(0);
-        final  JSONObject teamSecondStatsObject = dataArray.getJSONObject(1);
-        final Iterator<String> keysSetItr = teamFirstStatsObject.keys();
-        hideProgressBar();
-        swipeRefreshLayout.setRefreshing(false);
-        if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-
-                        CompleteFootballMatchStatDTO completeFootballMatchStatDTO = null;
-                        while (keysSetItr.hasNext()) {
-                            String key = keysSetItr.next();
-                            try {
-                                if(getLabelValue(key)!=null){
-                                if(!(key.equals("match_id") || key.equals("team"))) {
-                                    completeFootballMatchStatDTO = new CompleteFootballMatchStatDTO();
-                                    completeFootballMatchStatDTO.setTvLable(key);
-                                    completeFootballMatchStatDTO.setIvLeftStatus(teamFirstStatsObject.getString(key));
-                                    completeFootballMatchStatDTO.setIvRightStatus(teamSecondStatsObject.getString(key));
-                                    list.add(completeFootballMatchStatDTO);
-                                }}
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        completeFootballMatchStatAdapter.notifyDataSetChanged();
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        showErrorLayout(getView());
-                    }
-                }
-            });
-        }
+                              CompleteFootballMatchStatDTO completeFootballMatchStatDTO = null;
+                              while (keysSetItr.hasNext()) {
+                                  String key = keysSetItr.next();
+                                  try {
+                                      if (getLabelValue(key) != null) {
+                                          if (!(key.equals("match_id") || key.equals("team"))) {
+                                              completeFootballMatchStatDTO = new CompleteFootballMatchStatDTO();
+                                              completeFootballMatchStatDTO.setTvLable(key);
+                                              completeFootballMatchStatDTO.setIvLeftStatus(teamFirstStatsObject.getString(key));
+                                              completeFootballMatchStatDTO.setIvRightStatus(teamSecondStatsObject.getString(key));
+                                              list.add(completeFootballMatchStatDTO);
+                                          }
+                                      }
+                                  } catch (JSONException e) {
+                                      e.printStackTrace();
+                                  }
+                              }
+                              completeFootballMatchStatAdapter.notifyDataSetChanged();
+                          } catch (Exception ex) {
+                              ex.printStackTrace();
+                              showErrorLayout(getView());
+                          }
+                      }
+                  });
+              }
+          }else{
+              showErrorLayout(getView());
+          }
 
     }
 
@@ -216,9 +222,6 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
                 lableValue = "OFFSIDES";
                 break;
         }
-
-
-
         return lableValue;
     }
 

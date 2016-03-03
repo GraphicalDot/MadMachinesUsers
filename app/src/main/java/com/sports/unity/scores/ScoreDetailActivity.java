@@ -51,9 +51,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private static final String SCORE_DETAIL_REQUEST_TAG = "score_detail_request_tag";
     private static final String LIST_OF_COMMENTARIES_REQUEST_TAG = "list_commentaries_request_tag";
     private static final String LIST_OF_SUMMARY_REQUEST_TAG = "list_summary_request_tag";
-    private static final String LIST_OF_LINEUP_REQUEST_TAG = "footballmatch_lineup_request_tag";
-    private static final String LIST_OF_FOOTBALLMATCH_STAT_REQUEST_TAG = "footballmatch_stat_request_tag";
-    private static final String LIST_OF_FOOTBALLMATCH_TIMELINE_REQUEST_TAG = "footbalmatch_timeline_request_tag";
+
+
 
 //    private ScoresContentListener contentListener = new ScoresContentListener();
 

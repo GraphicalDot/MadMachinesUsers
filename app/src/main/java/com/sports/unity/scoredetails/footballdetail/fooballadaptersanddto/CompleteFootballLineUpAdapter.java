@@ -65,7 +65,12 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
                          holder.ivEnterExit.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_red));
                          holder.ivOffCardType.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_green));
                          holder.ivOffPlayerPosition.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_substitue));
-                  }
+                  } else {
+                     holder.tvOffPlayerName.setVisibility(View.GONE);
+                     holder.ivEnterExit.setVisibility(View.GONE);
+                     holder.ivOffCardType.setVisibility(View.GONE);
+                     holder.ivOffPlayerPosition.setVisibility(View.GONE);
+                 }
 
             // right side player postion
             drawable = getTextDrawable(holder.dto.getPlayerPostionNumberSecond(),Color.WHITE,color);
@@ -73,12 +78,19 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
 
             if(holder.dto.getPlayerNameSecond()!= null && !holder.dto.getPlayerNameSecond().equals("")) {
                 holder.tvPlayerNameSecond.setText(holder.dto.getPlayerNameSecond());
+            }else {
+                holder.tvPlayerNameSecond.setVisibility(View.GONE);
             }
             if(holder.dto.getCardTypeSecond()!= null && !holder.dto.getCardTypeSecond().equals("")) {
-                holder.ivCardTypeSecond.setImageDrawable(getDrwableResource(holder.dto.getCardTypeSecond()));}
+                holder.ivCardTypeSecond.setImageDrawable(getDrwableResource(holder.dto.getCardTypeSecond()));
+            }else{
+                holder.ivCardTypeSecond.setVisibility(View.GONE);
+            }
 
             if(holder.dto.getGoalSecond()!= null && !holder.dto.getGoalSecond().equals("")) {
                 holder.ivBallPassSecond.setImageDrawable(getDrwableResource(holder.dto.getGoalSecond()));
+            }else{
+                holder.ivBallPassSecond.setVisibility(View.GONE);
             }
 
             if(holder.dto.getOffPlayerNameSecond()!= null) {
@@ -86,6 +98,11 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
                 holder.ivEnterExitSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_red));
                 holder.ivOffCardTypeSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_green));
                 holder.ivOffPlayerPositionSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_substitue));
+            }else {
+                holder.tvOffPlayerNameSecond.setVisibility(View.GONE);
+                holder.ivEnterExitSecond.setVisibility(View.GONE);
+                holder.ivOffCardTypeSecond.setVisibility(View.GONE);
+                holder.ivOffPlayerPositionSecond.setVisibility(View.GONE);
             }
             /*if(holder.dto.getOffPlayerName()!=null) {
                 drawable = context.getResources().getDrawable(R.drawable.ic_substitue);

@@ -1,5 +1,4 @@
 package com.sports.unity.scores.model;
-
 import com.google.android.gms.maps.model.LatLng;
 import com.sports.unity.common.model.MatchDay;
 import com.sports.unity.messages.controller.model.PeoplesNearMe;
