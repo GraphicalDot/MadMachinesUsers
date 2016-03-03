@@ -431,6 +431,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         mClusterManager = new ClusterManager<Person>(getApplicationContext(), map);
         map.setOnCameraChangeListener(mClusterManager);
         map.setOnMarkerClickListener(mClusterManager);
+        mClusterManager.setRenderer(new CustomClusterRenderer(getApplicationContext(), map, mClusterManager));
         hideLocationbutton();
         map.setTrafficEnabled(false);
         double latitude = getInstance(getApplicationContext()).getDouble(TinyDB.KEY_CURRENT_LATITUDE, 0.0);
