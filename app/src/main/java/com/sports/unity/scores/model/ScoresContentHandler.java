@@ -45,7 +45,7 @@ public class ScoresContentHandler {
     public static final String URL_NEWS = "http://52.76.74.188:8000/mixed?";
     private static final String URL_CREATE = "http://" + XMPPClient.SERVER_HOST + "/create?";
     private static final String URL_REQUEST_OTP = "http://" + XMPPClient.SERVER_HOST + "/create?";
-    private static final String URL_NEAR_BY = "http://" + XMPPClient.SERVER_HOST + "/retrieve_nearby_users?";
+    private static final String URL_NEAR_BY = "http://" + XMPPClient.SERVER_HOST + "/get_nearby_users?";
     private static final String URL_PARAMS_NEWS_IMAGE_DPI = "image_size";
     private static final String URL_PARAMS_NEWS_ID = "news_id";
 
@@ -134,7 +134,9 @@ public class ScoresContentHandler {
             String radius = parameters.get(PARAM_RADIUS);
             String apk_version = parameters.get(Constants.REQUEST_PARAMETER_KEY_APK_VERSION);
             String udid = parameters.get(Constants.REQUEST_PARAMETER_KEY_UDID);
-            requestNearByUsers(apk_version,udid,lat, lng, radius, requestListenerKey, requestTag);
+            String username = parameters.get(PARAM_USERNAME);
+            String password = parameters.get(PARAM_PASSWORD);
+            requestNearByUsers(apk_version, udid, lat, lng, radius, requestListenerKey, requestTag, username, password);
         } else if (callName.equals(CALL_NAME_MATCHES_LIST)) {
             requestListOfMatches(requestListenerKey, requestTag);
         } else if (callName.equals(CALL_NAME_MATCH_DETAIL)) {
@@ -228,7 +230,7 @@ public class ScoresContentHandler {
         }
     }
 
-    private void requestNearByUsers(String apk_version, String udid, String lat, String lng, String radius, String listenerKey, String requestTag) {
+    private void requestNearByUsers(String apk_version, String udid, String lat, String lng, String radius, String listenerKey, String requestTag, String username, String password) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             StringBuilder urlBuilder = new StringBuilder(URL_NEAR_BY);
             urlBuilder.append("lat=");
@@ -245,6 +247,14 @@ public class ScoresContentHandler {
             urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_UDID);
             urlBuilder.append("=");
             urlBuilder.append(udid);
+            urlBuilder.append("&");
+            urlBuilder.append(PARAM_USERNAME);
+            urlBuilder.append("=");
+            urlBuilder.append(username);
+            urlBuilder.append("&");
+            urlBuilder.append(PARAM_PASSWORD);
+            urlBuilder.append("=");
+            urlBuilder.append(password);
             requestContent(requestTag, listenerKey, urlBuilder.toString());
         } else {
             //nothing

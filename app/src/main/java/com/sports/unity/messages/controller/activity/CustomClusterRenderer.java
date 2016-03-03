@@ -12,6 +12,7 @@ import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import com.sports.unity.R;
+import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.messages.controller.model.Person;
 
 /**
@@ -24,7 +25,7 @@ public class CustomClusterRenderer extends DefaultClusterRenderer<Person> {
     public CustomClusterRenderer(Context context, GoogleMap map, ClusterManager<Person> clusterManager) {
         super(context, map, clusterManager);
         this.clusterIconGenerator = new IconGenerator(context);
-        Activity act = (Activity) context;
+        Activity act = (CustomAppCompatActivity) context;
         this.clusterIconGenerator.setContentView(act.getLayoutInflater().inflate(R.layout.cluster_view, null));
 
     }
