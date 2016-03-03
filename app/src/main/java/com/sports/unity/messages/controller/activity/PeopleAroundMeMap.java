@@ -322,6 +322,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
             }
 
             markers.add(marker);
+            mClusterManager.addItem(person);
         }
 //        for (JSONObject user : users) {
 //            nearByUserJsonCaller.setJsonObject(user);
@@ -431,7 +432,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         mClusterManager = new ClusterManager<Person>(getApplicationContext(), map);
         map.setOnCameraChangeListener(mClusterManager);
         map.setOnMarkerClickListener(mClusterManager);
-        mClusterManager.setRenderer(new CustomClusterRenderer(getApplicationContext(), map, mClusterManager));
+        mClusterManager.setRenderer(new CustomClusterRenderer(PeopleAroundMeMap.this, map, mClusterManager));
         hideLocationbutton();
         map.setTrafficEnabled(false);
         double latitude = getInstance(getApplicationContext()).getDouble(TinyDB.KEY_CURRENT_LATITUDE, 0.0);
@@ -467,7 +468,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
 
         map.clear();
-
+        mClusterManager.clearItems();
         dialog = ProgressDialog.show(PeopleAroundMeMap.this, "",
                 "fetching...", true);
         dialog.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
