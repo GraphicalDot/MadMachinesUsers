@@ -7,14 +7,10 @@ import java.util.List;
  * Created by manish on 02/03/16.
  */
 public class PeoplesNearMe {
-    List<Person> friendsNearMe = new ArrayList<>();
-    List<Person> anonymousPeoples = new ArrayList<>();
+    List<Person> persons = new ArrayList<>();
 
-    public List<Person> getFriendsNearMe() {
-        return friendsNearMe;
+    public List<Person> getPersons() {
+        return persons;
     }
 
-    public List<Person> getAnonymousPeoples() {
-        return anonymousPeoples;
-    }
 }

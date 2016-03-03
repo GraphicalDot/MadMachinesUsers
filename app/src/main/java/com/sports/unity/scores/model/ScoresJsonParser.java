@@ -84,10 +84,9 @@ public class ScoresJsonParser {
                         p.getInterests().add(interest);
                     }
                     if (friendship_status.equalsIgnoreCase("friends")) {
-                        peoplesNearMe.getFriendsNearMe().add(p);
-                    } else {
-                        peoplesNearMe.getAnonymousPeoples().add(p);
+                        p.setFriend(true);
                     }
+                    peoplesNearMe.getPersons().add(p);
                 }
             }
         }catch (Exception ex){

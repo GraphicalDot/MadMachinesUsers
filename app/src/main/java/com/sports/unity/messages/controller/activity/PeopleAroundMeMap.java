@@ -32,13 +32,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.sports.unity.Database.SportsUnityDBHelper;
@@ -68,7 +66,6 @@ import java.util.List;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import static com.sports.unity.common.model.TinyDB.KEY_PASSWORD;
-import static com.sports.unity.common.model.TinyDB.KEY_USERNAME;
 import static com.sports.unity.common.model.TinyDB.KEY_USER_JID;
 import static com.sports.unity.common.model.TinyDB.getInstance;
 import static com.sports.unity.scores.model.ScoresContentHandler.CALL_NAME_NEAR_BY_USERS;
@@ -121,11 +118,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                         dialog.dismiss();
                     }
                     peoplesNearMe = ScoresJsonParser.parseListOfNearByUsers(content);
-                    List<Person> friends = peoplesNearMe.getFriendsNearMe();
-                    List<Person> peoples = peoplesNearMe.getAnonymousPeoples();
-                    if (friends.size() > 1 || peoples.size() > 1) {
-                        plotMarkers(friends, sportSelection, true);
-                        plotMarkers(peoples, sportSelection, false);
+                    List<Person> people = peoplesNearMe.getPersons();
+                    if (people.size() > 1) {
+                        plotMarkers(people, sportSelection);
                     } else {
                         map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                         LayoutInflater inflater = PeopleAroundMeMap.this.getLayoutInflater();
@@ -207,8 +202,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 sportSelection = SPORT_SELECTION_FOOTBALL;
                 football.setTextColor(Color.WHITE);
                 cricket.setTextColor(getResources().getColor(R.color.app_theme_blue));
-                plotMarkers(peoplesNearMe.getFriendsNearMe(), sportSelection, true);
-                plotMarkers(peoplesNearMe.getAnonymousPeoples(), sportSelection, false);
+                plotMarkers(peoplesNearMe.getPersons(), sportSelection);
             }
         });
 
@@ -221,8 +215,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 sportSelection = SPORT_SELECTION_CRICKET;
                 cricket.setTextColor(Color.WHITE);
                 football.setTextColor(getResources().getColor(R.color.app_theme_blue));
-                plotMarkers(peoplesNearMe.getFriendsNearMe(), sportSelection, true);
-                plotMarkers(peoplesNearMe.getAnonymousPeoples(), sportSelection, false);
+                plotMarkers(peoplesNearMe.getPersons(), sportSelection);
             }
         });
     }
@@ -298,33 +291,36 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         getPeopleAroundMe(latLong.latitude, latLong.longitude);
     }
 
-    private void plotMarkers(List<Person> persons, String sportSelection, boolean friend) {
+    private void plotMarkers(List<Person> persons, String sportSelection) {
         ArrayList<Marker> markers = new ArrayList<>();
         Log.i("plottingmarkers", "true");
-        for (Person person : persons) {
-            MarkerOptions markerOption = new MarkerOptions();
-            markerOption.position(person.getPosition());
-            if (friend) {
-                markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_my_friends));
-            } else {
-                markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_su_users));
-            }
-            Marker marker = null;
-            if (person.getUsername().equalsIgnoreCase(getInstance(getApplicationContext()).getString(KEY_USERNAME))) {
-                if (sportSelection.equalsIgnoreCase(SPORT_SELECTION_FOOTBALL)) {
-                    markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mrkr_fball));
-                } else {
-                    markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mrkr_cri));
-                }
-                marker = map.addMarker(markerOption);
-                marker.setDraggable(true);
-            } else {
-                marker = map.addMarker(markerOption);
-            }
-
-            markers.add(marker);
-            mClusterManager.addItem(person);
-        }
+        mClusterManager.clearItems();
+        mClusterManager.addItems(persons);
+        mClusterManager.cluster();
+//        for (Person person : persons) {
+//            MarkerOptions markerOption = new MarkerOptions();
+//            markerOption.position(person.getPosition());
+//            if (friend) {
+//                markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_my_friends));
+//            } else {
+//                markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_su_users));
+//            }
+//            Marker marker = null;
+//            if (person.getUsername().equalsIgnoreCase(getInstance(getApplicationContext()).getString(KEY_USERNAME))) {
+//                if (sportSelection.equalsIgnoreCase(SPORT_SELECTION_FOOTBALL)) {
+//                    markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mrkr_fball));
+//                } else {
+//                    markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mrkr_cri));
+//                }
+//                marker = map.addMarker(markerOption);
+//                marker.setDraggable(true);
+//            } else {
+//                marker = map.addMarker(markerOption);
+//            }
+//
+//            markers.add(marker);
+//            mClusterManager.addItem(person);
+//        }
 //        for (JSONObject user : users) {
 //            nearByUserJsonCaller.setJsonObject(user);
 //            try {
