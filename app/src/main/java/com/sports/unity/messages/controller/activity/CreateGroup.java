@@ -1,5 +1,9 @@
 package com.sports.unity.messages.controller.activity;
 
+import android.app.Fragment;
+import android.app.ProgressDialog;
+import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -7,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +26,7 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.GroupMessaging;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.LocManager;
 
 import java.util.ArrayList;
 
@@ -31,6 +37,8 @@ public class CreateGroup extends CustomAppCompatActivity {
 
     private String currentUserJID = null;
     private byte[] groupImageArray;
+
+    Thread newGroupThread = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,12 +107,45 @@ public class CreateGroup extends CustomAppCompatActivity {
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 ContactsFragment fragment = (ContactsFragment) fragmentManager.findFragmentByTag("as_member");
 
-                createGroup(fragment.getSelectedMembersList());
+                new createNewGroup(fragment).execute();
+
             }
 
         });
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+    }
+
+    class createNewGroup extends AsyncTask<Void, Void, Void> {
+
+        private ProgressDialog pdia;
+        ContactsFragment f;
+
+        public createNewGroup(ContactsFragment fragment) {
+            f = fragment;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            ProgressBar progressBar = new ProgressBar(CreateGroup.this);
+            progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+            pdia = new ProgressDialog(CreateGroup.this);
+            pdia.setMessage("creating group...");
+            pdia.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
+            pdia.show();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            createGroup(f.getSelectedMembersList());
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            pdia.dismiss();
+        }
     }
 
     private void createGroup(ArrayList<Contacts> selectedMembers) {
@@ -149,11 +190,11 @@ public class CreateGroup extends CustomAppCompatActivity {
                 groupMessaging.inviteMembers(roomName, selectedMembers, "");
                 finish();
             } else {
-                Toast.makeText(this, R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+//                Toast.makeText(this, R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             }
 
         } else {
-            Toast.makeText(this, R.string.group_message_try_again, Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, R.string.group_message_try_again, Toast.LENGTH_SHORT).show();
         }
     }
 

@@ -184,13 +184,13 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
             long contactId = chatObject.contactId;
             Contacts contact = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
 
-            String number = contact.jid;
+            String jid = contact.jid;
             String name = chatObject.name;
             Boolean blockStatus = chatObject.block;
             long chatId = chatObject.chatid;
             byte[] userpicture = chatObject.userImage;
 
-            intent.putExtra("number", number);
+            intent.putExtra("jid", jid);
             intent.putExtra("name", name);
             intent.putExtra("contactId", contactId);
             intent.putExtra("chatId", chatId);
@@ -199,17 +199,17 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
             intent.putExtra("blockStatus", blockStatus);
         } else {
             long contactId = chatObject.contactId;
-            String number = groupSeverId;
+//            String number = groupSeverId;
             String name = chatObject.name;
             long chatId = chatObject.chatid;
             byte[] groupImage = chatObject.chatImage;
 
-            intent.putExtra("number", number);
-            intent.putExtra("name", name);
+//            intent.putExtra("number", number);
+            intent.putExtra("subject", name);
             intent.putExtra("contactId", contactId);
             intent.putExtra("chatId", chatId);
             intent.putExtra("groupServerId", groupSeverId);
-            intent.putExtra("userpicture", groupImage);
+            intent.putExtra("groupImage", groupImage);
         }
 
         startActivity(intent);
@@ -314,7 +314,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
             chatArrayList = SportsUnityDBHelper.getInstance(getActivity()).getChatList(filterText, false);
 
             ArrayList<Chats> searchedBasedOnMessage = SportsUnityDBHelper.getInstance(getActivity()).getChatsBasedOnSearchedMessage(filterText, false);
-            adapter.updateSearch(chatArrayList,searchedBasedOnMessage);
+            adapter.updateSearch(chatArrayList, searchedBasedOnMessage);
         } else {
             chatArrayList = SportsUnityDBHelper.getInstance(getActivity()).getChatList(false);
             adapter.updateList(chatArrayList);

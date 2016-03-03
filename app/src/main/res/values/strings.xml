@@ -126,7 +126,7 @@
 message to verify your phone number.
 Carrier SMS charges may apply.</string>
     <string name="chat_activity_username">chat_username</string>
-    <string name="chat_activity_status">status</string>
+    <string name="chat_activity_status">tap here for contact info</string>
     <string name="group_chat_receive_time">8:02 pm</string>
     <string name="group_receive_name">Andrew Scott</string>
     <string name="chat_receive_time">9:00 am</string>

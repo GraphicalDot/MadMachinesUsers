@@ -30,19 +30,17 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.sports.unity.ChatScreenApplication;
-import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
-import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.UserProfileActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.BlockUnblockUserHelper;
 import com.sports.unity.messages.controller.model.Contacts;
-import com.sports.unity.messages.controller.model.GroupMessaging;
 import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
@@ -57,7 +55,6 @@ import com.sports.unity.util.FileOnCloudHandler;
 import com.sports.unity.util.GlobalEventHandler;
 import com.sports.unity.util.GlobalEventListener;
 import com.sports.unity.util.NotificationHandler;
-import com.sports.unity.util.ThreadTask;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
@@ -66,14 +63,12 @@ import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smack.roster.RosterEntry;
+import org.jivesoftware.smack.roster.packet.RosterPacket;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.chatstates.ChatState;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.muc.MultiUserChatManager;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -81,7 +76,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     private static ArrayList<Message> messageList;
     private static ChatScreenAdapter chatScreenAdapter;
-    private static GroupChatScreenAdapter groupChatScreenAdapter;
 
     private static String JABBERID;
     private static String JABBERNAME;
@@ -92,6 +86,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     private boolean isLastTimeRequired;
     private boolean isRoasterEntryRequired;
     private ToolbarActionsForChatScreen toolbarActionsForChatScreen = null;
+    private String selfJid;
 
     public static void viewProfile(Activity activity, byte[] profilePicture, String name, String groupServerId, String phoneNumber, boolean otherChat) {
         if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
@@ -110,16 +105,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             intent.putExtra("profilePicture", profilePicture);
             intent.putExtra("groupServerId", groupServerId);
             intent.putExtra("chatID", chatID);
-            /*intent.putExtra("number", phoneNumber);
-            intent.putExtra("status", "available");
-            intent.putExtra("otherChat", otherChat);*/
             activity.startActivity(intent);
         }
-    }
-
-    private void viewGroupProfile() {
-        Intent intent = new Intent(this, GroupInfoActivity.class);
-        startActivity(intent);
     }
 
     private static long chatID = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
@@ -131,7 +118,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private long contactID = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
-    private static String groupServerId = null;
+    private static String groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
     private boolean isGroupChat = false;
 
     private EditText messageText;
@@ -141,13 +128,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     private ViewGroup parentLayout;
     private CircleImageView userPic;
+    private Button mSend;
 
     private SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
 
     private PersonalMessaging personalMessaging = PersonalMessaging.getInstance(this);
-    private GroupMessaging groupMessaging = GroupMessaging.getInstance(this);
+//    private GroupMessaging groupMessaging = GroupMessaging.getInstance(this);
 
-    private MultiUserChat multiUserChat = null;
+    //    private MultiUserChat multiUserChat = null;
+    private PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance(this);
 
     private BlockUnblockUserHelper blockUnblockUserHelper = null;
 
@@ -200,9 +189,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                                 status.setText("last seen " + object.toString());
                             }
                         }
-
                     });
-
                 }
             } else if (id == ActivityActionHandler.EVENT_ID_RECEIPT) {
                 ChatScreenActivity.this.runOnUiThread(new Runnable() {
@@ -235,7 +222,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                 @Override
                 public void run() {
                     updateMessageList();
-
                     sendReadStatus();
                 }
 
@@ -308,24 +294,47 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     @Override
     public void onStop() {
+
         ChatScreenApplication.activityStopped();
         ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.CHAT_SCREEN_KEY);
         GlobalEventHandler.getInstance().removeGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY);
-
         super.onStop();
-        RosterEntry rosterEntry = Roster.getInstanceFor(XMPPClient.getConnection()).getEntry(JABBERID+"@"+XMPPClient.SERVICE_NAME);
-        try {
-            Roster.getInstanceFor(XMPPClient.getConnection()).removeEntry(rosterEntry);
-        } catch (SmackException.NotLoggedInException e) {
-            e.printStackTrace();
-        } catch (SmackException.NoResponseException e) {
-            e.printStackTrace();
-        } catch (XMPPException.XMPPErrorException e) {
-            e.printStackTrace();
-        } catch (SmackException.NotConnectedException e) {
-            e.printStackTrace();
-        }
+        if (XMPPClient.getConnection().isAuthenticated()) {
+            try {
 
+                RosterEntry rosterSelf = Roster.getInstanceFor(XMPPClient.getConnection()).getEntry(selfJid+ "@" + XMPPClient.SERVICE_NAME);
+                RosterEntry rosterFriend = Roster.getInstanceFor(XMPPClient.getConnection()).getEntry(JABBERID + "@" + XMPPClient.SERVICE_NAME);
+                Log.d("max","selfjid is--"+selfJid+"@" + XMPPClient.SERVICE_NAME+"<<roseterself"+rosterSelf);
+                if (rosterFriend != null) {
+                    if (!rosterFriend.getType().equals(RosterPacket.ItemType.both)) {
+                        Roster.getInstanceFor(XMPPClient.getConnection()).removeEntry(rosterFriend);
+                        if (rosterSelf != null) {
+                            Log.d("max","SelfType__"+rosterSelf.getType());
+                                Roster.getInstanceFor(XMPPClient.getConnection()).removeEntry(rosterSelf);
+
+                        }
+                    } else {
+                        Presence presence1 = new Presence(Presence.Type.unsubscribe);
+                        presence1.setTo(JABBERID + "@" + XMPPClient.SERVICE_NAME);
+                        XMPPClient.getConnection().sendStanza(presence1);
+                    }
+                } else {
+                    Presence presence1 = new Presence(Presence.Type.unsubscribe);
+                    presence1.setTo(JABBERID + "@" + XMPPClient.SERVICE_NAME);
+                    XMPPClient.getConnection().sendStanza(presence1);
+                }
+            } catch (SmackException.NotConnectedException e) {
+                e.printStackTrace();
+            } catch (SmackException.NotLoggedInException e) {
+                e.printStackTrace();
+            } catch (XMPPException.XMPPErrorException e) {
+                e.printStackTrace();
+            } catch (SmackException.NoResponseException e) {
+                e.printStackTrace();
+            }
+        } else {
+            //nothing
+        }
     }
 
     @Override
@@ -385,69 +394,59 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         chatKeyboardHelper = ChatKeyboardHelper.getInstance(true);
         chatKeyboardHelper.createPopupWindowOnKeyBoard(parentLayout, this);
         chatKeyboardHelper.checkKeyboardHeight();
-
-        con = XMPPClient.getConnection();
-
-        /**
-         * Initialising toolbar for chat screen activity
-         */
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_chat);
-        setSupportActionBar(toolbar);
-        // toolbar.setContentInsetsAbsolute(0, 0);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        final Handler mHandler = new Handler();
-
-        /**
-         * Declarations ofr all the textviews and other ui elements
-         */
-
-        back = (ImageView) toolbar.findViewById(R.id.backarrow);
-        back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
-        messageText = (EditText) findViewById(R.id.msg);
-        status = (TextView) toolbar.findViewById(R.id.status_active);
-        LinearLayout profile_link = (LinearLayout) toolbar.findViewById(R.id.profile);
-
-        profile_link.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                viewProfile(ChatScreenActivity.this, userImageBytes, JABBERNAME, groupServerId, JABBERID, otherChat);
-            }
-        });
-        Button mSend = (Button) findViewById(R.id.send);
-
-        {
-            /**
-             * getting all the extras in the intent neccesary for communicating in chat and layout
-             */
-            getIntentExtras();
-        }
-
-        if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
-            ChatManager chatManager = ChatManager.getInstanceFor(con);
-            chat = chatManager.getThreadChat(JABBERID);
-            if (chat == null) {
-                chat = chatManager.createChat(JABBERID + "@mm.io");
-            }
-        } else {
-            isGroupChat = true;
-            MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(con);
-            multiUserChat = manager.getMultiUserChat(groupServerId + "@conference.mm.io");
-
-        }
-
-        otherChat = getIntent().getBooleanExtra("otherChat", false);
-
-        initUI(toolbar);
-
-        clearUnreadCount();
-
         toolbarActionsForChatScreen = ToolbarActionsForChatScreen.getInstance(this);
 
-        /**
-         * Adding custom font to views
-         */
+        con = XMPPClient.getConnection();
+selfJid=TinyDB.getInstance(ChatScreenActivity.this).getString(TinyDB.KEY_USER_JID);
+        getIntentExtras();
+        clearUnreadCount();
+        initToolbar();
+        hideStatusIfUserBlocked();
+
+        final Handler mHandler = new Handler();
+
+        mSend = (Button) findViewById(R.id.send);
         mSend.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
+
+        getChatThread();
+
+        populateMessagesOnScreen();
+        setEventListeners(mHandler);
+
+        checkForwardMessageQueue();
+    }
+
+    private void hideStatusIfUserBlocked() {
+        boolean blockStatus = getIntent().getBooleanExtra("blockStatus", false);
+        if (blockStatus) {
+            status.setVisibility(View.GONE);
+        } else {
+            status.setVisibility(View.VISIBLE);
+        }
+        blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus, this, status);
+        disableChatIfUserBlocked();
+    }
+
+    private void checkForwardMessageQueue() {
+        ArrayList<Integer> selectedMessageIds = getIntent().getIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS);
+        if (selectedMessageIds != null) {
+            ForwardMessages(selectedMessageIds);
+        }
+    }
+
+    final Runnable userStoppedTyping = new Runnable() {
+
+        @Override
+        public void run() {
+            if (chat != null) {
+                personalMessaging.sendStatus(ChatState.paused, chat);
+            }
+        }
+    };
+
+    private void setEventListeners(Handler mHandler) {
+
+        final Handler handler = mHandler;
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -461,15 +460,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             }
         });
 
-        final Runnable userStoppedTyping = new Runnable() {
-
-            @Override
-            public void run() {
-                if (chat != null) {
-                    personalMessaging.sendStatus(ChatState.paused, chat);
-                }
-            }
-        };
 
         messageText.addTextChangedListener(new TextWatcher() {
             @Override
@@ -484,19 +474,17 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     if (!isGroupChat) {
                         personalMessaging.sendStatus(ChatState.composing, chat);
                     } else {
-                        groupMessaging.sendStatus(ChatState.composing, multiUserChat);
+//                        groupMessaging.sendStatus(ChatState.composing, multiUserChat);
                     }
                 }
-
             }
 
             @Override
             public void afterTextChanged(Editable s) {
-                mHandler.postDelayed(userStoppedTyping, 2000);
+                handler.postDelayed(userStoppedTyping, 2000);
             }
         });
 
-        populateMessagesOnScreen();
         mSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -504,10 +492,65 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             }
         });
 
-        ArrayList<Integer> selectedMessageIds = getIntent().getIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS);
-        if (selectedMessageIds != null) {
-            ForwardMessages(selectedMessageIds);
+        mChatView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                boolean invalidate = toolbarActionsForChatScreen.onClickSelectView(view, position, messageList);
+                if (invalidate) {
+                    invalidateOptionsMenu();
+                }
+            }
+        });
+        mChatView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                boolean invalidate = toolbarActionsForChatScreen.onLongClickSelectView(view, messageList.get(position), position);
+                if (invalidate) {
+                    invalidateOptionsMenu();
+                }
+                chatScreenAdapter.filterSearchQuery("");
+                return true;
+            }
+        });
+
+
+    }
+
+    private void getChatThread() {
+        if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+            ChatManager chatManager = ChatManager.getInstanceFor(con);
+            chat = chatManager.getThreadChat(JABBERID + "@mm.io");
+            if (chat == null) {
+                chat = chatManager.createChat(JABBERID + "@mm.io");
+            }
+        } else {
+            isGroupChat = true;
+            pubSubMessaging.updateLeadNode(groupServerId);
+//            MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(con);
+//            multiUserChat = manager.getMultiUserChat(groupServerId + "@conference.mm.io");
         }
+    }
+
+    private void initToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_chat);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        back = (ImageView) toolbar.findViewById(R.id.backarrow);
+        back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
+        messageText = (EditText) findViewById(R.id.msg);
+        status = (TextView) toolbar.findViewById(R.id.status_active);
+        LinearLayout profile_link = (LinearLayout) toolbar.findViewById(R.id.profile);
+
+        profile_link.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                viewProfile(ChatScreenActivity.this, userImageBytes, JABBERNAME, groupServerId, JABBERID, otherChat);
+            }
+        });
+
+        initUI(toolbar);
     }
 
     private void disableChatIfUserBlocked() {
@@ -583,47 +626,28 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     private void populateMessagesOnScreen() {
         mChatView = (ListView) findViewById(R.id.msgview);               // List for messages
         if (isGroupChat) {
-            //TODO
-            String s = "";
-            SportsUnityDBHelper.GroupParticipants participants = sportsUnityDBHelper.getGroupParticipants(chatID);
-            ArrayList<Contacts> users = participants.usersInGroup;
-            for (Contacts c : users) {
-                s += c.name;
-                s += ", ";
-            }
-            s += "You";
-            status.setText(s);
-            messageList = sportsUnityDBHelper.getMessages(chatID);
-            groupChatScreenAdapter = new GroupChatScreenAdapter(ChatScreenActivity.this, messageList);
-            mChatView.setAdapter(groupChatScreenAdapter);
-        } else {
-            messageList = sportsUnityDBHelper.getMessages(chatID);
-            chatScreenAdapter = new ChatScreenAdapter(ChatScreenActivity.this, messageList, otherChat);
-            mChatView.setAdapter(chatScreenAdapter);
+            setGroupMembers();
         }
 
+        messageList = sportsUnityDBHelper.getMessages(chatID);
+        chatScreenAdapter = new ChatScreenAdapter(ChatScreenActivity.this, messageList, otherChat, isGroupChat, groupServerId);
+        mChatView.setAdapter(chatScreenAdapter);
+
 //        loadAllMediaContent(messageList, null);
-        mChatView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                boolean invalidate = toolbarActionsForChatScreen.onClickSelectView(view, position, messageList);
-                if (invalidate) {
-                    invalidateOptionsMenu();
-                }
-            }
-        });
-        mChatView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                boolean invalidate = toolbarActionsForChatScreen.onLongClickSelectView(view, messageList.get(position), position);
-                if (invalidate) {
-                    invalidateOptionsMenu();
-                }
-                chatScreenAdapter.filterSearchQuery("");
-                return true;
-            }
-        });
+
         sendReadStatus();
+    }
+
+    private void setGroupMembers() {
+        String s = "";
+        SportsUnityDBHelper.GroupParticipants participants = sportsUnityDBHelper.getGroupParticipants(chatID);
+        ArrayList<Contacts> users = participants.usersInGroup;
+        for (Contacts c : users) {
+            s += c.name;
+            s += ", ";
+        }
+        s += "You";
+        status.setText(s);
     }
 
 
@@ -639,13 +663,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             oldLastMessage = messageList.get(messageList.size() - 1);
         }
 
-        if (isGroupChat) {
-            messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
-            groupChatScreenAdapter.notifydataset(messageList);
-        } else {
-            messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
-            chatScreenAdapter.notifydataset(messageList);
-        }
+//        if (isGroupChat) {
+//            messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
+//            groupChatScreenAdapter.notifydataset(messageList);
+//        } else {
+//
+//        }
+
+        messageList = SportsUnityDBHelper.getInstance(getApplicationContext()).getMessages(chatID);
+        chatScreenAdapter.notifydataset(messageList);
 
         if (messageList.size() > 0) {
             Message lastMessage = messageList.get(messageList.size() - 1);
@@ -657,7 +683,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                 }
             }
         }
-
     }
 
     private void initUI(Toolbar toolbar) {
@@ -678,8 +703,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         }
 
         if (isGroupChat) {
-            status.setText("");
-            //get group participants
             //TODO
         } else {
             try {
@@ -688,43 +711,40 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                 e.printStackTrace();
             }
         }
-
     }
 
     private void getIntentExtras() {
-        JABBERID = getIntent().getStringExtra("number");
-        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
-            try {
-             Roster.getInstanceFor(XMPPClient.getConnection()).createEntry(JABBERID + "@" + XMPPClient.SERVICE_NAME, "", null);
-            } catch (SmackException.NotLoggedInException e) {
-                e.printStackTrace();
-            } catch (SmackException.NoResponseException e) {
-                e.printStackTrace();
-            } catch (XMPPException.XMPPErrorException e) {
-                e.printStackTrace();
-            }//name of the user you are messaging with
-            catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            }
-        } else {
-            isRoasterEntryRequired = true;
-        }
-        JABBERNAME = getIntent().getStringExtra("name");                                                 //phone number or jid of the user you are chatting with
-        contactID = getIntent().getLongExtra("contactId", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
-        chatID = getIntent().getLongExtra("chatId", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
-        userImageBytes = getIntent().getByteArrayExtra("userpicture");
-
         groupServerId = getIntent().getStringExtra("groupServerId");
-
-        boolean blockStatus = getIntent().getBooleanExtra("blockStatus", false);
-        if (blockStatus) {
-            status.setVisibility(View.GONE);
+        if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+            JABBERID = getIntent().getStringExtra("jid");
+            if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+                createRosterEntry();
+            } else {
+                isRoasterEntryRequired = true;
+            }
+            JABBERNAME = getIntent().getStringExtra("name");                                                 //jid of the user you are chatting with
+            contactID = getIntent().getLongExtra("contactId", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
+            chatID = getIntent().getLongExtra("chatId", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
+            userImageBytes = getIntent().getByteArrayExtra("userpicture");
+            otherChat = getIntent().getBooleanExtra("otherChat", false);
         } else {
-            status.setVisibility(View.VISIBLE);
-        }
-        blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus, this, status);
-        disableChatIfUserBlocked();
+            JABBERNAME = getIntent().getStringExtra("subject");
+            contactID = getIntent().getLongExtra("contactId", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
 
+            chatID = getIntent().getLongExtra("chatId", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
+            userImageBytes = getIntent().getByteArrayExtra("groupImage");
+            otherChat = getIntent().getBooleanExtra("otherChat", false);
+        }
+    }
+
+    private void createRosterEntry() {
+        try {
+            Presence presence1 = new Presence(Presence.Type.subscribe);
+            presence1.setTo(JABBERID + "@" + XMPPClient.SERVICE_NAME);
+            XMPPClient.getConnection().sendStanza(presence1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void createChatEntryifNotExists() {
@@ -745,16 +765,18 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     public void getLastSeen() throws SmackException.NotConnectedException {
 
-        Roster roster = Roster.getInstanceFor(con);
-        Presence availability = roster.getPresence(JABBERID + "@mm.io");
-        Log.i("userPresence :", String.valueOf(availability.toXML()));
-        int state = retrieveState_mode(availability.getStatus());
-        if (state == 1) {
-            status.setText("Online");
-        } else {
-            status.setText("");
+        if (con != null) {
+            Roster roster = Roster.getInstanceFor(con);
+            Presence availability = roster.getPresence(JABBERID + "@mm.io");
+            Log.i("userPresence :", String.valueOf(availability.toXML()));
+            int state = retrieveState_mode(availability.getStatus());
+            if (state == 1) {
+                status.setText("Online");
+            } else {
+                //do nothing
+            }
         }
-        //Log.i("State", String.valueOf(state));
+
     }
 
     private int retrieveState_mode(String status) {
@@ -785,18 +807,13 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
             if (isGroupChat) {
 //                groupMessaging.sendMessageToGroup(messageText.getText().toString(), multiUserChat, chatID, groupServerId, TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME));
-                PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance(this);
-                boolean success = pubSubMessaging.publishMessage(message, chatID, groupServerId, this);
-                if (success) {
-                    messageList = sportsUnityDBHelper.getMessages(chatID);
-                    groupChatScreenAdapter.notifydataset(messageList);
-                }
+                pubSubMessaging.publishMessage(message, chatID, groupServerId, this);
             } else {
                 personalMessaging.sendTextMessage(message, chat, JABBERID, chatID, otherChat);
                 personalMessaging.sendStatus(ChatState.paused, chat);
-                messageList = sportsUnityDBHelper.getMessages(chatID);
-                chatScreenAdapter.notifydataset(messageList);
             }
+            messageList = sportsUnityDBHelper.getMessages(chatID);
+            chatScreenAdapter.notifydataset(messageList);
         }
         messageText.setText("");
     }
@@ -816,9 +833,9 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
             long messageId = sportsUnityDBHelper.addMediaMessage("", mimeType, "", true, String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()),
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, bytesOfThumbnail);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+            sportsUnityDBHelper.updateChatEntry(messageId, chatID, groupServerId);
 
-            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, thumbnailImage, mimeType, chat, messageId, otherChat);
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, thumbnailImage, mimeType, chat, messageId, otherChat, isGroupChat, groupServerId);
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
             String mediaFileName = (String) messageContent;
 
@@ -831,10 +848,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, bytesOfThumbnail);
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
-            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, thumbnailImage, mimeType, chat, messageId, otherChat);
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, thumbnailImage, mimeType, chat, messageId, otherChat, isGroupChat, groupServerId);
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             String stickerAssetPath = (String) messageContent;
-            personalMessaging.sendStickerMessage(stickerAssetPath, chat, JABBERID, chatID, otherChat);
+            if (!this.isGroupChat) {
+                personalMessaging.sendStickerMessage(stickerAssetPath, chat, JABBERID, chatID, otherChat);
+            } else {
+                PubSubMessaging.getInstance(getApplicationContext()).sendStickerMessage(stickerAssetPath, chatID, groupServerId);
+            }
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
 
             String mediaFileName = (String) messageContent;
@@ -845,7 +866,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
-            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, null, mimeType, chat, messageId, otherChat);
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, null, mimeType, chat, messageId, otherChat, isGroupChat, groupServerId);
 
         }
     }
@@ -980,12 +1001,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         } else if (id == R.id.action_block_user) {
             blockUnblockUserHelper.onMenuItemSelected(this, contactID, JABBERID, menu);
         } else if (id == R.id.action_clear_chat) {
+
             sportsUnityDBHelper.clearChat(getApplicationContext(), chatID, groupServerId);
 
             AudioRecordingHelper.getInstance(this).stopAndReleaseMediaPlayer();
             AudioRecordingHelper.getInstance(this).clearProgressMap();
 
             messageList = sportsUnityDBHelper.getMessages(chatID);
+
             chatScreenAdapter.notifydataset(messageList);
         } else if (id == R.id.forward) {
             toolbarActionsForChatScreen.forwardSelectedMessages(messageList);
@@ -1101,21 +1124,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             } else {
                 //nothing
             }
-            if(isRoasterEntryRequired){
-                try {
-                    Roster.getInstanceFor(XMPPClient.getConnection()).createEntry(JABBERID + "@" + XMPPClient.SERVICE_NAME, "", null);
-                    isRoasterEntryRequired=false;
-                } catch (SmackException.NotLoggedInException e) {
-                    e.printStackTrace();
-                } catch (SmackException.NoResponseException e) {
-                    e.printStackTrace();
-                } catch (XMPPException.XMPPErrorException e) {
-                    e.printStackTrace();
-                }//name of the user you are messaging with
-                catch (SmackException.NotConnectedException e) {
-                    e.printStackTrace();
-                }
-            }else{
+            if (isRoasterEntryRequired) {
+                createRosterEntry();
+                isRoasterEntryRequired = false;
+            } else {
                 //nothing;
             }
         }

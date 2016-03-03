@@ -9,10 +9,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.text.Spannable;
 import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.style.BackgroundColorSpan;
 import android.util.Base64;
 import android.util.Log;
@@ -36,7 +33,6 @@ import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.model.Message;
-import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.messages.controller.model.Stickers;
 import com.sports.unity.messages.controller.model.ToolbarActionsForChatScreen;
 import com.sports.unity.messages.controller.viewhelper.AudioRecordingHelper;
@@ -48,9 +44,6 @@ import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.File;
@@ -67,8 +60,10 @@ public class ChatScreenAdapter extends BaseAdapter {
     private boolean nearByChat = false;
     private Activity activity;
     private String searchString = "";
+    private boolean isGroupChat = false;
+    private String groupServerId;
 
-//    private HashMap<String, byte[]> mediaMap = null;
+    //    private HashMap<String, byte[]> mediaMap = null;
     private AudioRecordingHelper audioRecordingHelper = null;
 
     private ArrayList<Integer> positions = new ArrayList<>();
@@ -77,14 +72,15 @@ public class ChatScreenAdapter extends BaseAdapter {
     private AudioEventListener audioEventListener = new AudioEventListener();
     private ImageOrVideoClickListener imageOrVideoClickListener = new ImageOrVideoClickListener();
 
-    public ChatScreenAdapter(ChatScreenActivity chatScreenActivity, ArrayList<Message> messagelist, boolean otherChat) {
+    public ChatScreenAdapter(ChatScreenActivity chatScreenActivity, ArrayList<Message> messagelist, boolean otherChat, boolean isGroupChat, String groupServerId) {
         this.messageList = messagelist;
         activity = chatScreenActivity;
 //        mediaMap = chatScreenActivity.getMediaMap();
         nearByChat = otherChat;
-
+        this.isGroupChat = isGroupChat;
         audioRecordingHelper = AudioRecordingHelper.getInstance(activity);
         audioRecordingHelper.clearProgressMap();
+        this.groupServerId = groupServerId;
     }
 
     @Override
@@ -181,6 +177,7 @@ public class ChatScreenAdapter extends BaseAdapter {
         private ImageView playandPause;
         private SeekBar seekBar;
         private TextView duration;
+        private TextView sendersName;
 
         public SeekBar getSeekBar() {
             return seekBar;
@@ -217,6 +214,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                     holder.seekBar = (SeekBar) vi.findViewById(R.id.seekbar);
                     holder.mediaPlayerLayout = (RelativeLayout) vi.findViewById(R.id.mediaPlayer);
                     holder.duration = (TextView) vi.findViewById(R.id.duration);
+                    holder.sendersName = (TextView) vi.findViewById(R.id.group_sender_name);
                     holder.receivedStatus = null;
                     vi.setTag(holder);
                     break;
@@ -232,6 +230,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                     holder.seekBar = (SeekBar) vi.findViewById(R.id.seekbar);
                     holder.mediaPlayerLayout = (RelativeLayout) vi.findViewById(R.id.mediaPlayer);
                     holder.duration = (TextView) vi.findViewById(R.id.duration);
+                    holder.sendersName = null;
                     vi.setTag(holder);
                     break;
             }
@@ -259,6 +258,29 @@ public class ChatScreenAdapter extends BaseAdapter {
             ((FrameLayout) vi).setForeground(drawable);
         }
 
+        if (isGroupChat) {
+            if (holder.sendersName != null) {
+                holder.sendersName.setVisibility(View.VISIBLE);
+            } else {
+                //nothing
+            }
+        } else {
+            if (holder.sendersName != null) {
+                holder.sendersName.setVisibility(View.GONE);
+            } else {
+                //nothing
+            }
+        }
+
+        if (holder.sendersName != null) {
+            String name = SportsUnityDBHelper.getInstance(activity).getUserNameByPhoneNumber(messageList.get(position).number);
+            if (name == null) {
+                holder.sendersName.setText(messageList.get(position).number);
+            } else {
+                holder.sendersName.setText(name);
+            }
+        }
+
         if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
 
             Integer lastTag = (Integer) holder.seekBar.getTag();
@@ -281,7 +303,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                 inProgress = true;
             }
 
-            if ( inProgress ) {
+            if (inProgress) {
                 holder.playandPause.setVisibility(View.GONE);
             } else {
                 holder.playandPause.setVisibility(View.VISIBLE);
@@ -294,7 +316,7 @@ public class ChatScreenAdapter extends BaseAdapter {
 
             audioRecordingHelper.initUI(message.mediaFileName, holder, message.id);
 
-            if ( message.mediaFileName != null && DBUtil.isFileExist(activity, message.mimeType, message.mediaFileName) ) {
+            if (message.mediaFileName != null && DBUtil.isFileExist(activity, message.mimeType, message.mediaFileName)) {
                 holder.seekBar.setEnabled(true);
                 holder.seekBar.setOnSeekBarChangeListener(audioEventListener);
             } else {
@@ -303,7 +325,7 @@ public class ChatScreenAdapter extends BaseAdapter {
             }
 
             ProgressBar progressBar = (ProgressBar) holder.mediaPlayerLayout.findViewById(R.id.progressBarAudio);
-            if ( inProgress ) {
+            if (inProgress) {
                 progressBar.setVisibility(View.VISIBLE);
             } else {
                 progressBar.setVisibility(View.GONE);
@@ -346,7 +368,7 @@ public class ChatScreenAdapter extends BaseAdapter {
 
             image.setLayoutParams(new FrameLayout.LayoutParams(width, height));
 
-            if ( message.mediaFileName != null && DBUtil.isFileExist(activity, message.mimeType, message.mediaFileName) ) {
+            if (message.mediaFileName != null && DBUtil.isFileExist(activity, message.mimeType, message.mediaFileName)) {
                 File file = new File(DBUtil.getFilePath(activity, message.mimeType, message.mediaFileName));
                 if (message.media != null) {
                     BitmapDrawable thumbnailDrawable = new BitmapDrawable(activity.getResources(), BitmapFactory.decodeByteArray(message.media, 0, message.media.length));
@@ -384,7 +406,7 @@ public class ChatScreenAdapter extends BaseAdapter {
             }
 
             ProgressBar progressBar = (ProgressBar) holder.mediaContentLayout.findViewById(R.id.progressBar);
-            if ( inProgress ) {
+            if (inProgress) {
                 progressBar.setVisibility(View.VISIBLE);
             } else {
                 progressBar.setVisibility(View.GONE);
@@ -473,7 +495,7 @@ public class ChatScreenAdapter extends BaseAdapter {
             showMediaContentStatus(message, (ImageView) holder.mediaContentLayout.findViewById(R.id.image_content_status), FileOnCloudHandler.STATUS_NONE);
         }
 
-        switch ( getItemViewType(position) ) {
+        switch (getItemViewType(position)) {
             case 0:
                 holder.timeStamp.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(message.sendTime)));
                 break;
@@ -515,7 +537,7 @@ public class ChatScreenAdapter extends BaseAdapter {
             int contentStatus = FileOnCloudHandler.getInstance(activity).getMediaContentStatus(message);
 
             if (contentStatus == FileOnCloudHandler.STATUS_DOWNLOADED || contentStatus == FileOnCloudHandler.STATUS_UPLOADED) {
-                if( DBUtil.isFileExist(activity, message.mimeType, message.mediaFileName) ) {
+                if (DBUtil.isFileExist(activity, message.mimeType, message.mediaFileName)) {
                     Intent intent = new Intent(activity, ImageOrVideoViewActivity.class);
                     intent.putExtra(Constants.INTENT_KEY_FILENAME, message.mediaFileName);
                     intent.putExtra(Constants.INTENT_KEY_MIMETYPE, message.mimeType);
@@ -533,10 +555,15 @@ public class ChatScreenAdapter extends BaseAdapter {
                     }
                 });
             } else if (contentStatus == FileOnCloudHandler.STATUS_UPLOAD_FAILED) {
-                ChatManager chatManager = ChatManager.getInstanceFor(XMPPClient.getConnection());
-                Chat chat = chatManager.getThreadChat(ChatScreenActivity.getJABBERID());
-                if (chat == null) {
-                    chat = chatManager.createChat(ChatScreenActivity.getJABBERID() + "@mm.io");
+                Chat chat = null;
+                if (!isGroupChat) {
+                    ChatManager chatManager = ChatManager.getInstanceFor(XMPPClient.getConnection());
+                    chat = chatManager.getThreadChat(ChatScreenActivity.getJABBERID());
+                    if (chat == null) {
+                        chat = chatManager.createChat(ChatScreenActivity.getJABBERID() + "@mm.io");
+                    }
+                } else {
+                    //do nothing
                 }
 
                 String thumbnailImage = null;
@@ -544,7 +571,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                     thumbnailImage = Base64.encodeToString(message.media, Base64.DEFAULT);
                 }
 
-                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, thumbnailImage, message.mimeType, chat, message.id, nearByChat);
+                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, null, message.mimeType, chat, message.id, nearByChat, isGroupChat, groupServerId);
 
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -673,7 +700,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                 if (message.media != null) {
                     thumbnailImage = Base64.encodeToString(message.media, Base64.DEFAULT);
                 }
-                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, thumbnailImage, message.mimeType, chat, message.id, nearByChat);
+                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, thumbnailImage, message.mimeType, chat, message.id, nearByChat, isGroupChat, groupServerId);
 
                 activity.runOnUiThread(new Runnable() {
                     @Override

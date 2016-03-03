@@ -9,6 +9,7 @@ import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
+import com.sports.unity.messages.controller.model.PubSubMessaging;
 
 import org.jivesoftware.smack.chat.Chat;
 import org.json.JSONObject;
@@ -74,28 +75,28 @@ public class FileOnCloudHandler {
 //        }
 //    }
 
-    public void requestForUpload(String fileName, String thumbnailImage, String mimeType, Chat chat, long messageId, boolean nearByChat) {
+    public void requestForUpload(String fileName, String thumbnailImage, String mimeType, Chat chat, long messageId, boolean nearByChat, boolean isGroupChat, String groupServerId) {
         boolean handleRequest = shouldHandleRequest(messageId);
 
-        if ( handleRequest ) {
+        if (handleRequest) {
             Log.i("File on cloud", "upload request message id " + messageId);
             CloudContentRequest request = new CloudContentRequest(true, mimeType, messageId, null, fileName, thumbnailImage, chat);
             requests.add(request);
             requestMapWithStatus.put(String.valueOf(messageId), STATUS_UPLOADING);
 
-            processRequests(nearByChat);
+            processRequests(nearByChat, isGroupChat, groupServerId);
         }
     }
 
     public void requestForDownload(String checksum, String mimeType, long messageId) {
         boolean handleRequest = shouldHandleRequest(messageId);
 
-        if ( handleRequest ) {
+        if (handleRequest) {
             CloudContentRequest request = new CloudContentRequest(false, mimeType, messageId, checksum, null, null, null);
             requests.add(request);
             requestMapWithStatus.put(String.valueOf(messageId), STATUS_DOWNLOADING);
 
-            processRequests(false);
+            processRequests(false, false, null);
         }
     }
 
@@ -124,7 +125,7 @@ public class FileOnCloudHandler {
         return status;
     }
 
-    private boolean downloadContentDirectToFile(String mimeType){
+    private boolean downloadContentDirectToFile(String mimeType) {
         boolean directToFile = false;
         if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
             directToFile = true;
@@ -132,11 +133,11 @@ public class FileOnCloudHandler {
         return directToFile;
     }
 
-    private boolean shouldHandleRequest(long messageId){
+    private boolean shouldHandleRequest(long messageId) {
         boolean handleRequest = false;
-        if( requestMapWithStatus.containsKey(String.valueOf(messageId)) ){
+        if (requestMapWithStatus.containsKey(String.valueOf(messageId))) {
             int status = requestMapWithStatus.get(String.valueOf(messageId));
-            if( status == STATUS_DOWNLOAD_FAILED || status == STATUS_UPLOAD_FAILED ){
+            if (status == STATUS_DOWNLOAD_FAILED || status == STATUS_UPLOAD_FAILED) {
                 handleRequest = true;
                 requestMapWithStatus.remove(String.valueOf(messageId));
             } else {
@@ -148,7 +149,7 @@ public class FileOnCloudHandler {
         return handleRequest;
     }
 
-    private void processRequests(final boolean nearByChat) {
+    private void processRequests(final boolean nearByChat, final boolean isGroupChat, final String groupServerId) {
         if (threadToHandleRequests != null && threadToHandleRequests.isAlive()) {
 
         } else {
@@ -160,7 +161,7 @@ public class FileOnCloudHandler {
                     while (isThereMoreRequestsToServe()) {
                         CloudContentRequest request = getContentRequestToBeServed();
                         if (request.isUploadRequest()) {
-                            handleUploadRequest(request, context, nearByChat);
+                            handleUploadRequest(request, context, nearByChat, isGroupChat, groupServerId);
                         } else {
                             handleDownloadRequest(request, context);
                         }
@@ -185,7 +186,7 @@ public class FileOnCloudHandler {
         return requests.size() > 0;
     }
 
-    private void handleUploadRequest(CloudContentRequest request, Context context, boolean nearByChat) {
+    private void handleUploadRequest(CloudContentRequest request, Context context, boolean nearByChat, boolean isGroupChat, String groupServerId) {
 //        if ( ! downloadContentDirectToFile(request.mimeType) ) {
 //            String checksum = uploadContent((byte[]) request.getContent());
 //            if (checksum != null) {
@@ -217,7 +218,11 @@ public class FileOnCloudHandler {
         String checksum = uploadContent((String) request.getFileName(), request.mimeType);
         if (checksum != null) {
 //            String thumbnailImage = PersonalMessaging.getInstance(context).createThumbnailImageAsBase64(context, request.mimeType, request.fileName);
-            PersonalMessaging.getInstance(context).sendMediaMessage(checksum, request.thumbnailImage, (Chat) request.extra, request.messageId, request.mimeType, nearByChat);
+            if (!isGroupChat) {
+                PersonalMessaging.getInstance(context).sendMediaMessage(checksum, request.thumbnailImage, (Chat) request.extra, request.messageId, request.mimeType, nearByChat);
+            } else {
+                PubSubMessaging.getInstance(context).sendMediaMessage(checksum, request.thumbnailImage, request.mimeType, groupServerId);
+            }
 
             ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY);
 
@@ -230,7 +235,7 @@ public class FileOnCloudHandler {
     }
 
     private void handleDownloadRequest(CloudContentRequest request, Context context) {
-        if ( ! downloadContentDirectToFile(request.mimeType) ) {
+        if (!downloadContentDirectToFile(request.mimeType)) {
             byte[] content = downloadContent(request.checksum);
             if (content != null) {
                 String fileName = DBUtil.getUniqueFileName(request.mimeType, UserUtil.isSaveIncomingMediaToGallery());
@@ -330,7 +335,7 @@ public class FileOnCloudHandler {
         try {
             checksum = CommonUtil.getMD5EncryptedString(context, mimeType, fileName);
 
-            if( checkIfContentAlreadyExist(checksum)){
+            if (checkIfContentAlreadyExist(checksum)) {
                 //nothing
             } else {
 
@@ -490,7 +495,7 @@ public class FileOnCloudHandler {
         return success;
     }
 
-    private boolean checkIfContentAlreadyExist(String checksum){
+    private boolean checkIfContentAlreadyExist(String checksum) {
         boolean existOnServer = false;
 
         HttpURLConnection httpURLConnection = null;
@@ -519,13 +524,13 @@ public class FileOnCloudHandler {
             if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                 try {
                     JSONObject jsonObject = new JSONObject(new String(data));
-                    if( jsonObject.getInt("status") == 200 ){
+                    if (jsonObject.getInt("status") == 200) {
                         existOnServer = true;
                         Log.i("File on cloud", "Check for existence of content on server, Exist ");
                     } else {
                         Log.i("File on cloud", "Check for existence of content on server, Don't Exist ");
                     }
-                }catch (Exception ex){
+                } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             } else {
