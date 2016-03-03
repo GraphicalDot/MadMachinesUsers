@@ -93,7 +93,7 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
             public void onRefresh() {
                 if (completedFootballMatchTimeLineHandler != null) {
                     completedFootballMatchTimeLineHandler.requestCompletedMatchTimeLine(matchId);
-                    swTimeLineRefresh.setRefreshing(false);
+                    swTimeLineRefresh.setRefreshing(true);
                 }
             }
         });

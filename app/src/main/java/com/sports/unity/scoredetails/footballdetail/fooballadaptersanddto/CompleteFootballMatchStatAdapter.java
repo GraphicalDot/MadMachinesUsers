@@ -114,12 +114,12 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
     private Drawable getCentralImageResource(String tvLable) {
 
         Resources.Theme theme = context.getTheme();
-        int drwableId =R.drawable.ic_football;
+        int drwableId =R.drawable.ic_shots;
         switch (tvLable){
             case "possestiontimetotal":
                 drwableId = R.drawable.ic_possession;
                 break;
-            case "shotsgoal":
+            case "shotstotal":
                 drwableId = R.drawable.ic_shots;
                 break;
             case "shotsongoal":
