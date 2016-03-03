@@ -17,7 +17,6 @@
         android:background="@color/ColorPrimary">
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/league_name"
-
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="league"
