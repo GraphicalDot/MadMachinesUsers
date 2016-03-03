@@ -88,14 +88,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     private ToolbarActionsForChatScreen toolbarActionsForChatScreen = null;
     private String selfJid;
 
-    public static void viewProfile(Activity activity, byte[] profilePicture, String name, String groupServerId, String phoneNumber, boolean otherChat) {
+    public static void viewProfile(Activity activity, byte[] profilePicture, String name, String groupServerId, String jid, boolean otherChat) {
         if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
             Intent intent = new Intent(activity, UserProfileActivity.class);
 
             intent.putExtra("name", name);
             intent.putExtra("profilePicture", profilePicture);
             intent.putExtra("groupServerId", groupServerId);
-            intent.putExtra("number", phoneNumber);
+            intent.putExtra("jid", jid);
             intent.putExtra("status", "available");
             intent.putExtra("otherChat", otherChat);
             activity.startActivity(intent);
@@ -299,7 +299,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.CHAT_SCREEN_KEY);
         GlobalEventHandler.getInstance().removeGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY);
         super.onStop();
-        if (XMPPClient.getConnection().isAuthenticated()) {
+        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
             try {
 
                 RosterEntry rosterSelf = Roster.getInstanceFor(XMPPClient.getConnection()).getEntry(selfJid + "@" + XMPPClient.SERVICE_NAME);

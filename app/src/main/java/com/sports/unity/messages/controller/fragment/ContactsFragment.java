@@ -76,8 +76,8 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             ContactListAdapter contactListAdapter = (ContactListAdapter) contacts.getAdapter();
             Contacts c = contactListAdapter.getUsedContact().get(position);
 
-            if ( c.isRegistered() ) {
-                String number = c.jid;
+            if (c.isRegistered()) {
+                String jid = c.jid;
                 String name = c.name;
                 long contactId = c.id;
                 byte[] userPicture = c.image;
@@ -87,7 +87,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
                 boolean blockStatus = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).isChatBlocked(contactId);
 
                 Intent chatScreenIntent = new Intent(getActivity(), ChatScreenActivity.class);
-                chatScreenIntent.putExtra("number", number);
+                chatScreenIntent.putExtra("jid", jid);
                 chatScreenIntent.putExtra("name", name);
                 chatScreenIntent.putExtra("contactId", contactId);
                 chatScreenIntent.putExtra("chatId", chatId);
@@ -170,7 +170,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     };
 
     private void forward(Contacts contact) {
-        if ( contact.isRegistered() ) {
+        if (contact.isRegistered()) {
             ToolbarActionsForChatScreen.getInstance(getActivity().getApplicationContext()).resetVariables();
             String number = contact.jid;
             String name = contact.name;
@@ -239,13 +239,13 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 //                if (listeningCopyFinishPostCall) {
 //                    removeListenerToHandleContactCopyPostCall();
 
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
 //                            copyContactCallInitiated = false;
-                            setContactList(v);
-                        }
-                    });
+                setContactList(v);
+            }
+        });
 //                }
 //            }
 //        });
@@ -392,7 +392,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             //TODO need to handle it cleanly.
 
             Activity activity = getActivity();
-            if( activity instanceof MainActivity ) {
+            if (activity instanceof MainActivity) {
                 ((MainActivity) getActivity()).addContactResultListener(this);
             } else {
                 //TODO to handle permission on forward activity.

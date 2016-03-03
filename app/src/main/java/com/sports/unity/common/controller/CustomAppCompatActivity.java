@@ -53,7 +53,6 @@ public class CustomAppCompatActivity extends AppCompatActivity implements Global
                 }
             }
         }
-
     }
 
     public static boolean isActivityCounterNull() {

@@ -199,12 +199,12 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
             intent.putExtra("blockStatus", blockStatus);
         } else {
             long contactId = chatObject.contactId;
-//            String number = groupSeverId;
+            String groupSId = groupSeverId;
             String name = chatObject.name;
             long chatId = chatObject.chatid;
             byte[] groupImage = chatObject.chatImage;
 
-//            intent.putExtra("number", number);
+            intent.putExtra("jid", groupSId);
             intent.putExtra("subject", name);
             intent.putExtra("contactId", contactId);
             intent.putExtra("chatId", chatId);

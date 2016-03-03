@@ -185,13 +185,13 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
         long contactId = chatObject.contactId;
         Contacts contact = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
 
-        String number = contact.jid;
+        String jid = contact.jid;
         String name = chatObject.name;
         Boolean blockStatus = chatObject.block;
         long chatId = chatObject.chatid;
         byte[] userpicture = chatObject.userImage;
 
-        intent.putExtra("number", number);
+        intent.putExtra("jid", jid);
         intent.putExtra("name", name);
         intent.putExtra("contactId", contactId);
         intent.putExtra("chatId", chatId);
