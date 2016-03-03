@@ -225,4 +225,8 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
         }
         cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(matchId);
     }
+    public void handleError(){
+        showErrorLayout(getView());
+    }
+
 }

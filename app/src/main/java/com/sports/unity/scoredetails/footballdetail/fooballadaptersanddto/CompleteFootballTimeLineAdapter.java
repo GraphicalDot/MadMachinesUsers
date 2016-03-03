@@ -52,6 +52,7 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
                 holder.tvTeamFirstOffPlayer.setText(holder.dto.getTvTeamFirstOffPlayer());
                 holder.tvTeamSecondTime.setVisibility(View.INVISIBLE);
                 holder.teamSecondView.setVisibility(View.INVISIBLE);
+                holder.centralCircularImage.setImageDrawable(holder.dto.getDrwDrawable());
 
             }else if(holder.dto.getTeamName().equalsIgnoreCase(context.getString(R.string.away_team_name)))
             {
@@ -60,16 +61,10 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
                 holder.tvTeamSecondOffPlayer.setText(holder.dto.getTvTeamSecondOffPlayer());
                 holder.teamFirstView.setVisibility(View.INVISIBLE);
                 holder.tvTeamFirstTime.setVisibility(View.INVISIBLE);
+                holder.centralCircularImage.setImageDrawable(holder.dto.getDrwDrawable());
 
-            } else {
-                holder.tvTeamFirstTime.setVisibility(View.INVISIBLE);
-                holder.teamFirstView.setVisibility(View.INVISIBLE);
-                holder.teamSecondView.setVisibility(View.INVISIBLE);
-                holder.tvTeamSecondTime.setVisibility(View.INVISIBLE);
-                holder.centralLineImage.setVisibility(View.VISIBLE);
-                holder.centralCircularImage.setVisibility(View.GONE);
             }
-            holder.centralCircularImage.setImageDrawable(holder.dto.getDrwDrawable());
+
         }catch (Exception e){e.printStackTrace();}
     }
 

@@ -103,10 +103,14 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
                 public void onRefresh() {
                     if (completedFootballMatchStatHandler != null) {
                         completedFootballMatchStatHandler.requestCompledFootabllMatchStat(matchId);
-                        //swipeRefreshLayout.setRefreshing(false);
+                        swipeRefreshLayout.setRefreshing(false);
                     }
                 }
             });
+
+
+
+
         }catch (Exception e){e.printStackTrace();}
 
 
@@ -163,6 +167,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
               final Iterator<String> keysSetItr = teamFirstStatsObject.keys();
               hideProgressBar();
               swipeRefreshLayout.setRefreshing(false);
+              list.clear();
               if (activity != null) {
                   activity.runOnUiThread(new Runnable() {
                       @Override

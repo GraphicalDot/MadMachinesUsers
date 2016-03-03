@@ -110,6 +110,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         secondFallofWicketsLinearLayout = (LinearLayout) view.findViewById(R.id.layout_fall_wicket_second);
 
         linearLayout = (LinearLayout) view.findViewById(R.id.scorecard_parent_layout);
+        linearLayout.setVisibility(View.GONE);
         tvFirstTeamInning = (TextView) view.findViewById(R.id.tv_first_team_inning);
         tvSecondTeamInning = (TextView) view.findViewById(R.id.tv_Second_team_inning);
         ivDwn = (ImageView) view.findViewById(R.id.iv_down);
@@ -240,6 +241,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         hideProgress();
+        linearLayout.setVisibility(View.VISIBLE);
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override

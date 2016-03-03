@@ -51,6 +51,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
     private TextView tvMatchDate;
     private SwipeRefreshLayout swipeRefreshLayout;
     private UpCommingFootballMatchTableHandler upCommingFootballMatchTableHandler;
+    private View llTeamSummery;
     public UpCommingFootballMatchTableFargment() {
         // Required empty public constructor
     }
@@ -81,19 +82,19 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         tvMatchDate = (TextView) view.findViewById(R.id.tv_match_date);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_table);
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_football_match_table);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext() ,VERTICAL, false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
         adapter = new UpCommingFootballMatchTableAdapter(list, getContext(),team1,team2);
         recyclerView.setAdapter(adapter);
         initErrorLayout(view);
-
-
+        llTeamSummery = view.findViewById(R.id.ll_team_summery);
+        llTeamSummery.setVisibility(View.GONE);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 if (upCommingFootballMatchTableHandler != null) {
                     upCommingFootballMatchTableHandler.requestUpcommingMatchTableContent(leagueId);
-                    swipeRefreshLayout.setRefreshing(false);
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             }
         });
@@ -102,9 +103,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
     @Override
     public void handleContent(String object) {
         {
-
-
-            try {
+           try {
 
                 JSONObject jsonObject = new JSONObject(object);
                 boolean success = jsonObject.getBoolean("success");
@@ -143,7 +142,8 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         if(swipeRefreshLayout.isRefreshing()){
             swipeRefreshLayout.setRefreshing(false);
         }
-
+        list.clear();
+        llTeamSummery.setVisibility(View.VISIBLE);
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -173,10 +173,6 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
                                 upCommngFootbalMatchTableDTO.setTvW(teamObject.getString("games_won"));
                             if(!teamObject.isNull("team_points"))
                                 upCommngFootbalMatchTableDTO.setTvPts(teamObject.getString("team_points"));
-
-
-
-
                             list.add(upCommngFootbalMatchTableDTO);
                         }
                         adapter.notifyDataSetChanged();

@@ -184,7 +184,7 @@
                             android:id="@+id/tv_first_point"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-
+                            android:textColor="@color/score_light_grey"
                             android:textSize="@dimen/font_size_very_small"
                             android:text="@string/point"/>
                     </LinearLayout>
@@ -408,6 +408,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:textSize="@dimen/font_size_very_small"
+                            android:textColor="@color/score_light_grey"
                             android:text="@string/point"/>
                     </LinearLayout>
 

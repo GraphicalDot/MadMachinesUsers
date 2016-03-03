@@ -75,7 +75,6 @@
                 app:civ_border_color="@color/gray1"
                 app:civ_border_width="1dp"
                 android:layout_centerHorizontal="true"
-                android:src="@drawable/ic_red_green_arrow"
                 />
             <View
                 android:layout_below="@id/iv_time_line_image"

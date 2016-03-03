@@ -223,6 +223,12 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         hideProgress();
+        teamABattingCardList.clear();
+        teamABowlingCardList.clear();
+        teamAFallOfWicketCardList.clear();
+        teamBBattingCardList.clear();
+        teamBBowlingCardList.clear();
+        teamBFallOfWicketCardList.clear();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {

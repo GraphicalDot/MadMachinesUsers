@@ -82,6 +82,7 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
     private void initView(View view) {
         recyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        recyclerView.setNestedScrollingEnabled(false);
         completeFootballTimeLineAdapter = new CompleteFootballTimeLineAdapter(list,getContext());
         recyclerView.setAdapter(completeFootballTimeLineAdapter);
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
@@ -140,11 +141,9 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         hideProgressBar();
-        if(swTimeLineRefresh.isRefreshing()){
-            swTimeLineRefresh.setRefreshing(false);
-        }
+        swTimeLineRefresh.setRefreshing(false);
         final JSONArray dataArray = jsonObject.getJSONArray("data");
-
+        list.clear();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override

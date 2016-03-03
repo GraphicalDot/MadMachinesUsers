@@ -38,6 +38,7 @@ public class CricketCompletedMatchSummaryHandler {
     public interface CricketCompletedMatchSummaryContentListener {
 
         void handleContent(JSONObject jsonObject);
+        void handleError();
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -81,6 +82,7 @@ public class CricketCompletedMatchSummaryHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
+        mcontentListener.handleError();
 
     }
     public void addListener(CricketCompletedMatchSummaryContentListener contentListener) {

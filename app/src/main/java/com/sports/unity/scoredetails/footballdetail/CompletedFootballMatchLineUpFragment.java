@@ -324,16 +324,19 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     private String getMatchEventNumber(JSONArray matchEventsArray ,String playerName) {
         String event = null;
         try{
-            for(int i = 0;i<matchEventsArray.length();i++){
-                JSONObject eventObject = matchEventsArray.getJSONObject(i);
-                if(eventObject.isNull("player_name")) {
-                    if (!playerName.equalsIgnoreCase(eventObject.getString("player_name"))) {
-                        if (!eventObject.isNull("event")) {
-                            event = eventObject.getString("event");
+            if(playerName != null){
+                for(int i = 0;i<matchEventsArray.length();i++){
+                    JSONObject eventObject = matchEventsArray.getJSONObject(i);
+                    if(!eventObject.isNull("player_name")) {
+                        if (playerName.equalsIgnoreCase(eventObject.getString("player_name"))) {
+                            if (!eventObject.isNull("event")) {
+                                event = eventObject.getString("event");
+                            }
                         }
                     }
                 }
             }
+
         }catch (Exception e){
             e.printStackTrace();
         }
