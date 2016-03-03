@@ -300,7 +300,7 @@ public class XMPPService extends Service {
              * Listen for subscription packets to read status
              */
 
-            Roster.getInstanceFor(connection).setSubscriptionMode(Roster.SubscriptionMode.accept_all);
+
             connection.addSyncStanzaListener(new StanzaListener() {
 
                 @Override
@@ -368,6 +368,28 @@ public class XMPPService extends Service {
             Log.i("XMPP Connection", "connected");
             if (UserUtil.isProfileCreated()) {
                 XMPPClient.getInstance().authenticateConnection(XMPPService.this);
+                /*Roster.getInstanceFor(connection).setSubscriptionMode(Roster.SubscriptionMode.accept_all);
+                Roster.getInstanceFor(connection).addRosterListener(new RosterListener() {
+                    @Override
+                    public void entriesAdded(Collection<String> addresses) {
+
+                    }
+
+                    @Override
+                    public void entriesUpdated(Collection<String> addresses) {
+
+                    }
+
+                    @Override
+                    public void entriesDeleted(Collection<String> addresses) {
+
+                    }
+
+                    @Override
+                    public void presenceChanged(Presence presence) {
+                        Log.d("max","User-->"+presence.getFrom()+"<<status>>"+presence.getStatus());
+                    }
+                });*/
             } else {
                 //nothing
             }

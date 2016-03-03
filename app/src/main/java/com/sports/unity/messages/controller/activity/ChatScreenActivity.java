@@ -299,7 +299,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.CHAT_SCREEN_KEY);
         GlobalEventHandler.getInstance().removeGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY);
         super.onStop();
-        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+        /*if (XMPPClient.getInstance().isConnectionAuthenticated()) {
             try {
 
                 RosterEntry rosterSelf = Roster.getInstanceFor(XMPPClient.getConnection()).getEntry(selfJid + "@" + XMPPClient.SERVICE_NAME);
@@ -334,7 +334,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             }
         } else {
             //nothing
-        }
+        }*/
     }
 
     @Override
@@ -738,13 +738,13 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void createRosterEntry() {
-        try {
+       /* try {
             Presence presence1 = new Presence(Presence.Type.subscribe);
             presence1.setTo(JABBERID + "@" + XMPPClient.SERVICE_NAME);
             XMPPClient.getConnection().sendStanza(presence1);
         } catch (Exception e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     private void createChatEntryifNotExists() {

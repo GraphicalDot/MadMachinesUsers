@@ -4,33 +4,37 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout android:id="@+id/text"
+    <LinearLayout
+        android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/gray3"
+        android:paddingBottom="@dimen/vertical_padding_medium_small"
         android:paddingLeft="@dimen/horizontal_padding_very_small"
         android:paddingRight="@dimen/horizontal_padding_very_small"
-        android:paddingTop="@dimen/vertical_padding_medium_small"
-        android:paddingBottom="@dimen/vertical_padding_medium_small"
-        android:background="@color/gray3">
-    <com.sports.unity.common.view.CustomRobotoRegularTextView
-        android:paddingLeft="@dimen/vertical_padding_very_small"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/player_message"
-        android:textSize="@dimen/font_size_very_small"/>
+        android:paddingTop="@dimen/vertical_padding_medium_small">
+
+        <com.sports.unity.common.view.CustomRobotoRegularTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/vertical_padding_very_small"
+            android:text="@string/player_message"
+            android:textSize="@dimen/font_size_very_small" />
     </LinearLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycle_view"
-        android:layout_below="@+id/text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/text" />
+
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_centerInParent="true"
         android:visibility="gone" />
+
     <include
         android:id="@+id/error"
         layout="@layout/error_layout"
