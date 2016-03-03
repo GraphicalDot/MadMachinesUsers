@@ -21,8 +21,6 @@
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:paddingRight="@dimen/horizontal_padding_small"
-            android:paddingTop="@dimen/horizontal_padding_small"
-            android:paddingBottom="@dimen/horizontal_padding_small"
             android:scaleType="center"
             android:src="@drawable/ic_menu_back" /> />
 
@@ -75,7 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_marginRight="@dimen/vertical_padding_very_small"
+            android:layout_marginRight="@dimen/horizontal_padding_very_small"
             android:src="@drawable/ic_cancel" />
     </LinearLayout>
 </android.support.v7.widget.Toolbar>

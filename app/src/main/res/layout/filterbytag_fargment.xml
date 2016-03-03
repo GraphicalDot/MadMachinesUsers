@@ -7,10 +7,10 @@
     <LinearLayout android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/vertical_padding_medium_small"
-        android:paddingLeft="@dimen/vertical_padding_very_small"
-        android:paddingRight="@dimen/vertical_padding_very_small"
+        android:paddingLeft="@dimen/horizontal_padding_very_small"
+        android:paddingRight="@dimen/horizontal_padding_very_small"
         android:paddingTop="@dimen/vertical_padding_medium_small"
+        android:paddingBottom="@dimen/vertical_padding_medium_small"
         android:background="@color/gray3">
     <com.sports.unity.common.view.CustomRobotoRegularTextView
         android:paddingLeft="@dimen/vertical_padding_very_small"
