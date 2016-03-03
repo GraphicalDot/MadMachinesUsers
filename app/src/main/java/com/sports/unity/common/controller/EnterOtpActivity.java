@@ -143,7 +143,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                         String message = currentMessage.getDisplayMessageBody();
 
                         try {
-                            if (senderNum.contains("SPOUNI")) {
+                            if (senderNum.contains("SPOUNI") || senderNum.contains("INFINI")) {
                                 String str = message.replaceAll("\\D+", "");
                                 otpEditText.setText(str);
                                 createUser();
@@ -195,7 +195,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
         TextView otpText = (TextView) findViewById(com.sports.unity.R.id.enterotpText);
         otpText.setText(getString(R.string.otp_message_verification) +"+"+ countryCode +" "+ getPhoneNumber());
-        otpText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+        otpText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoLight());
 
         otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         otpEditText.addTextChangedListener(new TextWatcher() {

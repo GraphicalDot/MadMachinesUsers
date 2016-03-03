@@ -5,9 +5,9 @@
     android:layout_height="wrap_content"
     android:background="@color/gray3"
     android:orientation="horizontal"
-    android:paddingBottom="@dimen/horizontal_padding_medium"
-    android:paddingLeft="@dimen/horizontal_padding_medium"
-    android:paddingRight="@dimen/horizontal_padding_medium"
+    android:paddingBottom="@dimen/padding"
+    android:paddingLeft="@dimen/padding"
+    android:paddingRight="@dimen/padding"
     android:paddingTop="@dimen/horizontal_padding_large">
 
     <de.hdodenhof.circleimageview.CircleImageView
@@ -26,7 +26,7 @@
         android:layout_gravity="center"
         android:gravity="center|left"
         android:orientation="vertical"
-        android:padding="@dimen/vertical_padding_small">
+        android:padding="@dimen/horizontal_padding_small">
 
         <TextView
             android:id="@+id/name"

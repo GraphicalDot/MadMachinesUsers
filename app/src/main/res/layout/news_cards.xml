@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@color/ColorPrimary"
-        android:layout_marginBottom="@dimen/horizontal_padding_small"
+        android:layout_marginBottom="@dimen/horizontal_padding_very_small"
         >
 
         <LinearLayout
@@ -35,8 +35,8 @@
                     android:layout_height="@dimen/news_fav_icon_height"
                     android:scaleType="centerInside"
                     android:layout_gravity="center"
-                    android:paddingLeft="@dimen/vertical_padding_very_small"
-                    android:paddingRight="@dimen/vertical_padding_very_small"/>
+                    android:paddingLeft="@dimen/horizontal_padding_very_small"
+                    android:paddingRight="@dimen/horizontal_padding_very_small"/>
 
                 <View
                     android:layout_width="1dp"
@@ -51,7 +51,7 @@
                     android:textColor="@color/news_data"
                     android:text="published"
                     android:textSize="@dimen/font_size_very_small"
-                    android:paddingLeft="@dimen/vertical_padding_very_small"
+                    android:paddingLeft="@dimen/horizontal_padding_very_small"
                      />
 
                 <TextView
@@ -82,8 +82,8 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/vertical_padding_very_small"
                 android:paddingRight="@dimen/vertical_padding_very_small"
-                android:paddingTop="@dimen/vertical_padding_very_small"
-                android:paddingBottom="@dimen/vertical_padding_very_small"
+                android:paddingTop="@dimen/horizontal_padding_very_small"
+                android:paddingBottom="@dimen/horizontal_padding_very_small"
                 android:textColor="@color/news_headline_mini"
                 android:textSize="@dimen/font_size_medium" />
 
@@ -92,7 +92,7 @@
                 android:text="Text subtitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/vertical_padding_very_small"
+                android:paddingBottom="@dimen/horizontal_padding_very_small"
                 android:paddingLeft="@dimen/vertical_padding_very_small"
                 android:paddingRight="@dimen/vertical_padding_very_small"
                 android:lineSpacingExtra="@dimen/vertical_padding_very_very_small"

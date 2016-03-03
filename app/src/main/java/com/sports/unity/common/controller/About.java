@@ -28,8 +28,8 @@ public class About extends CustomAppCompatActivity {
                 CommonUtil.openLinkOnBrowser(About.this, getResources().getString(R.string.link_of_terms_of_use));
             } else if (v.getId() == R.id.privacy_policy) {
                 CommonUtil.openLinkOnBrowser(About.this, getResources().getString(R.string.link_of_privacy_policy));
-            }else if (v.getId() == R.id.sportsunity_club) {
-                CommonUtil.openLinkOnBrowser(About.this, getResources().getString(R.string.link_of_sportsunity_club));
+            }else if (v.getId() == R.id.sportsunity_co) {
+                CommonUtil.openLinkOnBrowser(About.this, getResources().getString(R.string.link_of_sportsunity_co));
             }
         }
 
@@ -45,7 +45,7 @@ public class About extends CustomAppCompatActivity {
     }
 
     private void initCustomFonts() {
-        TextView sportsUnityClub = (TextView) findViewById(R.id.sportsunity_club);
+        TextView sportsUnityCo = (TextView) findViewById(R.id.sportsunity_co);
         TextView terms = (TextView) findViewById(R.id.terms);
         TextView privacyPolicy = (TextView) findViewById(R.id.privacy_policy);
         TextView copyright = (TextView) findViewById(R.id.copyright);
@@ -56,7 +56,7 @@ public class About extends CustomAppCompatActivity {
         copyright.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         version.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         versionNumber.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
-        sportsUnityClub.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+        sportsUnityCo.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         terms.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         privacyPolicy.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
@@ -74,8 +74,8 @@ public class About extends CustomAppCompatActivity {
         privacyPolicy.setOnClickListener(onClickListener);
         privacyPolicy.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
 
-        sportsUnityClub.setOnClickListener(onClickListener);
-        sportsUnityClub.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+        sportsUnityCo.setOnClickListener(onClickListener);
+        sportsUnityCo.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
     }
 
     private void initToolbar() {

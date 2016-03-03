@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <LinearLayout android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/vertical_padding_medium_small"
+        android:paddingLeft="@dimen/vertical_padding_very_small"
+        android:paddingRight="@dimen/vertical_padding_very_small"
+        android:paddingTop="@dimen/vertical_padding_medium_small"
+        android:background="@color/gray3">
+    <com.sports.unity.common.view.CustomRobotoRegularTextView
+        android:paddingLeft="@dimen/vertical_padding_very_small"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/player_message"
+        android:textSize="@dimen/font_size_very_small"/>
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycle_view"
+        android:layout_below="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     <ProgressBar
@@ -20,4 +37,4 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone" />
-</FrameLayout>
+</RelativeLayout>

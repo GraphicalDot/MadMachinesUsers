@@ -35,7 +35,7 @@
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:gravity="center"
-        android:padding="@dimen/vertical_padding_small"
+        android:padding="@dimen/activity_horizontal_margin"
         android:text="@string/apply_filters"
         android:textColor="@color/ColorPrimary"
         android:textSize="@dimen/font_size_medium" />

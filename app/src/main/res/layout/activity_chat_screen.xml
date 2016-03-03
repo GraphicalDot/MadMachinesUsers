@@ -79,8 +79,8 @@
                     android:inputType="textMultiLine|textCapSentences"
                     android:maxLength="2000"
                     android:maxLines="5"
-                    android:paddingLeft="@dimen/vertical_padding_small"
-                    android:paddingTop="@dimen/vertical_padding_small"
+                    android:paddingLeft="@dimen/horizontal_padding_small"
+                    android:paddingTop="@dimen/horizontal_padding_small"
                     android:scrollbars="vertical"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/font_size_medium" />
