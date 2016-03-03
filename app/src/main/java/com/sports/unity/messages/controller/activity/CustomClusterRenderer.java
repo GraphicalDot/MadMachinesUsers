@@ -21,11 +21,13 @@ import com.sports.unity.messages.controller.model.Person;
 public class CustomClusterRenderer extends DefaultClusterRenderer<Person> {
 
     private IconGenerator clusterIconGenerator;
+    private PeopleService peopleService;
 
     public CustomClusterRenderer(Context context, GoogleMap map, ClusterManager<Person> clusterManager) {
         super(context, map, clusterManager);
         this.clusterIconGenerator = new IconGenerator(context);
         Activity act = (CustomAppCompatActivity) context;
+        peopleService = (PeopleService) context;
         this.clusterIconGenerator.setContentView(act.getLayoutInflater().inflate(R.layout.cluster_view, null));
 
     }
@@ -55,5 +57,10 @@ public class CustomClusterRenderer extends DefaultClusterRenderer<Person> {
         }
         Bitmap icon = clusterIconGenerator.makeIcon(count);
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
+    }
+
+    @Override
+    protected boolean shouldRenderAsCluster(Cluster<Person> cluster) {
+        return cluster.getSize() > 1;
     }
 }

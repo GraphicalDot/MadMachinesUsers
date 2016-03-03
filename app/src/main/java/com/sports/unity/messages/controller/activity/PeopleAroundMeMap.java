@@ -39,6 +39,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
@@ -81,7 +82,7 @@ import static com.sports.unity.util.CommonUtil.getDeviceId;
 import static com.sports.unity.util.Constants.REQUEST_PARAMETER_KEY_APK_VERSION;
 import static com.sports.unity.util.Constants.REQUEST_PARAMETER_KEY_UDID;
 
-public class PeopleAroundMeMap extends CustomAppCompatActivity {
+public class PeopleAroundMeMap extends CustomAppCompatActivity implements PeopleService, ClusterManager.OnClusterClickListener<Person>, ClusterManager.OnClusterItemClickListener<Person> {
 
     private static final String REQUEST_LISTENER_KEY = "nearby_key";
     private static final String REQUEST_TAG = "nearby_tag";
@@ -137,7 +138,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
                         aDialog.setContentView(R.layout.chat_other_profile_layout);
                         aDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                         aDialog.show();
-                        populateProfilePopup(null, view, null, 0, null);
+                        populateProfilePopup(null, view, null, 0, null, null);
                     }
 
                 } else {
@@ -433,6 +434,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         map.setOnCameraChangeListener(mClusterManager);
         map.setOnMarkerClickListener(mClusterManager);
         mClusterManager.setRenderer(new CustomClusterRenderer(PeopleAroundMeMap.this, map, mClusterManager));
+        mClusterManager.setOnClusterItemClickListener(this);
         hideLocationbutton();
         map.setTrafficEnabled(false);
         double latitude = getInstance(getApplicationContext()).getDouble(TinyDB.KEY_CURRENT_LATITUDE, 0.0);
@@ -442,19 +444,8 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         if (checkIfGPSEnabled()) {
             getPeopleAroundMe(latitude, longitude);
         }
-        map.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                if (profilefetching == true) {
-                    //nothing
-                } else {
-                    profilefetching = true;
-                    showProfile(marker);
-                }
-                return false;
-            }
-        });
     }
+
 
     private void hideLocationbutton() {
         View mapView = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getView();
@@ -493,7 +484,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         return success;
     }
 
-    private void showProfile(final Marker marker) {
+    private void renderProfile(final Person person) {
         LayoutInflater inflater = PeopleAroundMeMap.this.getLayoutInflater();
         View popupProfile = inflater.inflate(R.layout.chat_other_profile_layout, null);
 
@@ -522,12 +513,29 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
 
         aDialog.findViewById(R.id.progressBarProfile).setVisibility(View.VISIBLE);
 
-        int distance = (int) Math.round(Double.parseDouble(marker.getSnippet().substring(marker.getSnippet().indexOf(",") + 1, marker.getSnippet().length())));
-        new GetVcardForUser(popupProfile, distance).execute(marker.getSnippet().substring(0, marker.getSnippet().indexOf(",")).trim());
+//        int distance = (int) Math.round(Double.parseDouble(marker.getSnippet().substring(marker.getSnippet().indexOf(",") + 1, marker.getSnippet().length())));
+        int distance = (int) (person.getDistance() * radius);
+        new GetVcardForUser(popupProfile, distance, person).execute(person.getUsername());
 
     }
 
-    private void populateProfilePopup(final VCard vCard, View popupProfile, final String jid, int distance, String info) {
+    @Override
+    public boolean showProfile(Person person) {
+        if (profilefetching == true) {
+            //nothing
+        } else {
+            profilefetching = true;
+            renderProfile(person);
+        }
+        return false;
+    }
+
+    @Override
+    public void showCluster(Cluster<Person> cluster) {
+
+    }
+
+    private void populateProfilePopup(final VCard vCard, View popupProfile, final String jid, int distance, String info, Person person) {
 
         CircleImageView imageview = (CircleImageView) aDialog.findViewById(R.id.user_pic);
 
@@ -764,14 +772,25 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         ScoresContentHandler.getInstance().removeResponseListener(REQUEST_LISTENER_KEY);
     }
 
-    private void onUnSuccessfulVcardRetrieval(View view) {
+    private void onUnSuccessfulVcardRetrieval(View view, Person person) {
         String info = "Something went wrong";
-        populateProfilePopup(null, view, null, 0, info);
+        populateProfilePopup(null, view, null, 0, info, person);
         //TODO
     }
 
-    private void onSuccessfulVcardRetrieval(View view, VCard vCard, String jid, int distance) {
-        populateProfilePopup(vCard, view, jid, distance, null);
+    private void onSuccessfulVcardRetrieval(View view, VCard vCard, String jid, int distance, Person person) {
+        populateProfilePopup(vCard, view, jid, distance, null, person);
+    }
+
+    @Override
+    public boolean onClusterClick(Cluster<Person> cluster) {
+
+        return false;
+    }
+
+    @Override
+    public boolean onClusterItemClick(Person person) {
+        return showProfile(person);
     }
 
     class FetchAndDisplayCurrentAddress extends AsyncTask<Void, Void, Void> {
@@ -802,10 +821,12 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
 
         private View view = null;
         private int distance = 0;
+        private Person person;
 
-        public GetVcardForUser(View view, int distance) {
+        public GetVcardForUser(View view, int distance, Person person) {
             this.view = view;
             this.distance = distance;
+            this.person = person;
         }
 
         @Override
@@ -831,9 +852,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
         @Override
         protected void onPostExecute(VCard vCard) {
             if (success) {
-                onSuccessfulVcardRetrieval(view, vCard, jid, distance);
+                onSuccessfulVcardRetrieval(view, vCard, jid, distance, person);
             } else {
-                onUnSuccessfulVcardRetrieval(view);
+                onUnSuccessfulVcardRetrieval(view, person);
             }
         }
 
