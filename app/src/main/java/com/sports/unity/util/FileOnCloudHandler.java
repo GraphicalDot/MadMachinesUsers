@@ -6,6 +6,7 @@ import android.util.Log;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 
@@ -39,8 +40,8 @@ public class FileOnCloudHandler {
     public static final int STATUS_UPLOAD_FAILED = 7;
 
 
-    private static final String CONTENT_CLOUD_URL = "http://54.169.217.88/media?";
-    private static final String CONTENT_PRESENT_URL = "http://54.169.217.88/media_present?";
+    private static final String CONTENT_CLOUD_URL = "http://" + XMPPClient.SERVER_HOST + "/media?";
+    private static final String CONTENT_PRESENT_URL = "http://" + XMPPClient.SERVER_HOST + "/media_present?";
 
     private static FileOnCloudHandler FILE_ON_CLOUD_HANDLER = null;
 
@@ -213,7 +214,7 @@ public class FileOnCloudHandler {
 //            }
 //        }
 
-        String checksum = uploadContent((String) request.getFileName());
+        String checksum = uploadContent((String) request.getFileName(), request.mimeType);
         if (checksum != null) {
 //            String thumbnailImage = PersonalMessaging.getInstance(context).createThumbnailImageAsBase64(context, request.mimeType, request.fileName);
             PersonalMessaging.getInstance(context).sendMediaMessage(checksum, request.thumbnailImage, (Chat) request.extra, request.messageId, request.mimeType, nearByChat);
@@ -232,8 +233,8 @@ public class FileOnCloudHandler {
         if ( ! downloadContentDirectToFile(request.mimeType) ) {
             byte[] content = downloadContent(request.checksum);
             if (content != null) {
-                String fileName = DBUtil.getUniqueFileName(context, request.mimeType);
-                DBUtil.writeContentToExternalFileStorage(context, fileName, content);
+                String fileName = DBUtil.getUniqueFileName(request.mimeType, UserUtil.isSaveIncomingMediaToGallery());
+                DBUtil.writeContentToExternalFileStorage(context, fileName, content, request.mimeType);
                 SportsUnityDBHelper.getInstance(context).updateMediaMessage_ContentDownloaded(request.messageId, fileName);
 
                 ActivityActionHandler.getInstance().dispatchDownloadCompletedEvent(ActivityActionHandler.CHAT_SCREEN_KEY, request.mimeType, fileName, content);
@@ -245,8 +246,8 @@ public class FileOnCloudHandler {
                 requestMapWithStatus.put(String.valueOf(request.getMessageId()), STATUS_DOWNLOAD_FAILED);
             }
         } else {
-            String fileName = DBUtil.getUniqueFileName(context, request.mimeType);
-            boolean success = downloadContentFromFile(request.checksum, fileName);
+            String fileName = DBUtil.getUniqueFileName(request.mimeType, UserUtil.isSaveIncomingMediaToGallery());
+            boolean success = downloadContentFromFile(request.checksum, fileName, request.mimeType);
 
             if (success) {
                 SportsUnityDBHelper.getInstance(context).updateMediaMessage_ContentDownloaded(request.messageId, fileName);
@@ -320,20 +321,20 @@ public class FileOnCloudHandler {
 //        return checksum;
 //    }
 
-    private String uploadContent(String fileName) {
+    private String uploadContent(String fileName, String mimeType) {
         Log.i("File on cloud", "uploading file");
 
         HttpURLConnection httpURLConnection = null;
         FileInputStream fileInputStream = null;
         String checksum = null;
         try {
-            checksum = CommonUtil.getMD5EncryptedString(context, fileName);
+            checksum = CommonUtil.getMD5EncryptedString(context, mimeType, fileName);
 
             if( checkIfContentAlreadyExist(checksum)){
                 //nothing
             } else {
 
-                File file = new File(DBUtil.getFilePath(context, fileName));
+                File file = new File(DBUtil.getFilePath(context, mimeType, fileName));
                 fileInputStream = new FileInputStream(file);
 
                 URL url = new URL(CONTENT_CLOUD_URL + Constants.REQUEST_PARAMETER_KEY_APK_VERSION + "=" + CommonUtil.getBuildConfig() +
@@ -433,7 +434,7 @@ public class FileOnCloudHandler {
         return data;
     }
 
-    private boolean downloadContentFromFile(String cloudFileName, String fileName) {
+    private boolean downloadContentFromFile(String cloudFileName, String fileName, String mimeType) {
         Log.i("File on cloud", "downloading file from " + cloudFileName);
 
         boolean success = false;
@@ -441,7 +442,7 @@ public class FileOnCloudHandler {
         HttpURLConnection httpURLConnection = null;
         FileOutputStream fileOutputStream = null;
         try {
-            File file = new File(DBUtil.getFilePath(context, fileName));
+            File file = new File(DBUtil.getFilePath(context, mimeType, fileName));
             fileOutputStream = new FileOutputStream(file);
 
             URL url = new URL(CONTENT_CLOUD_URL + "name=" + cloudFileName + "&" + Constants.REQUEST_PARAMETER_KEY_APK_VERSION + "=" + CommonUtil.getBuildConfig() +
@@ -462,7 +463,7 @@ public class FileOnCloudHandler {
             }
 
             if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                String checksum = CommonUtil.getMD5EncryptedString(context, fileName);
+                String checksum = CommonUtil.getMD5EncryptedString(context, mimeType, fileName);
                 if (checksum.equals(cloudFileName)) {
                     success = true;
                     Log.i("File on cloud", "downloaded");

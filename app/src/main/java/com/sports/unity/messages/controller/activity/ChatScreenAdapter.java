@@ -27,6 +27,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.Database.DBUtil;
@@ -272,28 +273,43 @@ public class ChatScreenAdapter extends BaseAdapter {
             holder.message.setVisibility(View.GONE);
             holder.mediaPlayerLayout.setVisibility(View.VISIBLE);
 
-            ProgressBar progressBar = (ProgressBar) holder.mediaPlayerLayout.findViewById(R.id.progressBarAudio);
-            if (message.textData.length() == 0 && message.iAmSender == true || message.mediaFileName == null && message.iAmSender == false) {
-                holder.playandPause.setVisibility(View.GONE);
-                progressBar.setVisibility(View.VISIBLE);
-            } else {
-                progressBar.setVisibility(View.GONE);
-                holder.playandPause.setVisibility(View.VISIBLE);
+            boolean inProgress = false;
+            int status = FileOnCloudHandler.getInstance(activity).getMediaContentStatus(message);
+            if (status == FileOnCloudHandler.STATUS_NONE) {
+                //nothing
+            } else if (status == FileOnCloudHandler.STATUS_DOWNLOADING || status == FileOnCloudHandler.STATUS_UPLOADING) {
+                inProgress = true;
             }
 
-            if (message.mediaFileName != null) {
-                audioRecordingHelper.initUI(message.mediaFileName, holder, message.id);
+            if ( inProgress ) {
+                holder.playandPause.setVisibility(View.GONE);
             } else {
-                //nothing
+                holder.playandPause.setVisibility(View.VISIBLE);
             }
 
             holder.seekBar.setTag(message.id);
             holder.seekBar.getThumb().setColorFilter(activity.getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
-            holder.seekBar.setOnSeekBarChangeListener(audioEventListener);
-
             holder.playandPause.setTag(position);
             holder.playandPause.setOnClickListener(audioEventListener);
 
+            audioRecordingHelper.initUI(message.mediaFileName, holder, message.id);
+
+            if ( message.mediaFileName != null && DBUtil.isFileExist(activity, message.mimeType, message.mediaFileName) ) {
+                holder.seekBar.setEnabled(true);
+                holder.seekBar.setOnSeekBarChangeListener(audioEventListener);
+            } else {
+                holder.seekBar.setEnabled(false);
+                holder.seekBar.setOnSeekBarChangeListener(null);
+            }
+
+            ProgressBar progressBar = (ProgressBar) holder.mediaPlayerLayout.findViewById(R.id.progressBarAudio);
+            if ( inProgress ) {
+                progressBar.setVisibility(View.VISIBLE);
+            } else {
+                progressBar.setVisibility(View.GONE);
+            }
+
+            showMediaContentStatus(message, holder.playandPause, status);
         } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
             holder.message.setVisibility(View.VISIBLE);
             holder.mediaPlayerLayout.setVisibility(View.GONE);
@@ -330,8 +346,8 @@ public class ChatScreenAdapter extends BaseAdapter {
 
             image.setLayoutParams(new FrameLayout.LayoutParams(width, height));
 
-            if ( message.mediaFileName != null && DBUtil.isFileExist(activity, message.mediaFileName) ) {
-                File file = new File(DBUtil.getFilePath(activity, message.mediaFileName));
+            if ( message.mediaFileName != null && DBUtil.isFileExist(activity, message.mimeType, message.mediaFileName) ) {
+                File file = new File(DBUtil.getFilePath(activity, message.mimeType, message.mediaFileName));
                 if (message.media != null) {
                     BitmapDrawable thumbnailDrawable = new BitmapDrawable(activity.getResources(), BitmapFactory.decodeByteArray(message.media, 0, message.media.length));
                     Glide.with(activity).load(file).placeholder(thumbnailDrawable).into(image);
@@ -373,6 +389,8 @@ public class ChatScreenAdapter extends BaseAdapter {
             } else {
                 progressBar.setVisibility(View.GONE);
             }
+
+            showMediaContentStatus(message, (ImageView) holder.mediaContentLayout.findViewById(R.id.image_content_status), status);
         } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
             holder.message.setVisibility(View.GONE);
             holder.mediaPlayerLayout.setVisibility(View.GONE);
@@ -418,6 +436,8 @@ public class ChatScreenAdapter extends BaseAdapter {
             } else {
                 progressBar.setVisibility(View.GONE);
             }
+
+            showMediaContentStatus(message, (ImageView) holder.mediaContentLayout.findViewById(R.id.image_content_status), status);
         } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             holder.message.setText("");
             holder.message.setVisibility(View.GONE);
@@ -450,34 +470,21 @@ public class ChatScreenAdapter extends BaseAdapter {
             image.setOnClickListener(null);
             image.setTag(R.id.image_message, null);
 
+            showMediaContentStatus(message, (ImageView) holder.mediaContentLayout.findViewById(R.id.image_content_status), FileOnCloudHandler.STATUS_NONE);
         }
 
-        showMediaContentStatus(message, holder.mediaContentLayout);
-
-        switch (
-
-                getItemViewType(position)
-
-                )
-
-        {
+        switch ( getItemViewType(position) ) {
             case 0:
                 holder.timeStamp.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(message.sendTime)));
                 break;
             case 1:
                 holder.timeStamp.setText(CommonUtil.getDefaultTimezoneTimeInAMANDPM(Long.parseLong(message.sendTime)));
                 break;
-
         }
 
-        if (holder.receivedStatus == null)
-
-        {
+        if (holder.receivedStatus == null) {
             //do nothing
-        } else
-
-        {
-
+        } else {
             if (message.messagesRead == true) {
                 holder.receivedStatus.setImageResource(R.drawable.ic_msg_read);
             } else if (message.recipientR != null) {
@@ -487,7 +494,6 @@ public class ChatScreenAdapter extends BaseAdapter {
             } else {
                 holder.receivedStatus.setImageResource(R.drawable.ic_msg_pending);
             }
-
         }
 
         return vi;
@@ -509,10 +515,14 @@ public class ChatScreenAdapter extends BaseAdapter {
             int contentStatus = FileOnCloudHandler.getInstance(activity).getMediaContentStatus(message);
 
             if (contentStatus == FileOnCloudHandler.STATUS_DOWNLOADED || contentStatus == FileOnCloudHandler.STATUS_UPLOADED) {
-                Intent intent = new Intent(activity, ImageOrVideoViewActivity.class);
-                intent.putExtra(Constants.INTENT_KEY_FILENAME, message.mediaFileName);
-                intent.putExtra(Constants.INTENT_KEY_MIMETYPE, message.mimeType);
-                activity.startActivity(intent);
+                if( DBUtil.isFileExist(activity, message.mimeType, message.mediaFileName) ) {
+                    Intent intent = new Intent(activity, ImageOrVideoViewActivity.class);
+                    intent.putExtra(Constants.INTENT_KEY_FILENAME, message.mediaFileName);
+                    intent.putExtra(Constants.INTENT_KEY_MIMETYPE, message.mimeType);
+                    activity.startActivity(intent);
+                } else {
+                    Toast.makeText(activity, "Media doesn't exist.", Toast.LENGTH_SHORT).show();
+                }
             } else if (contentStatus == FileOnCloudHandler.STATUS_DOWNLOAD_FAILED) {
                 FileOnCloudHandler.getInstance(activity).requestForDownload(message.textData, message.mimeType, message.id);
 
@@ -529,7 +539,12 @@ public class ChatScreenAdapter extends BaseAdapter {
                     chat = chatManager.createChat(ChatScreenActivity.getJABBERID() + "@mm.io");
                 }
 
-                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, null, message.mimeType, chat, message.id, nearByChat);
+                String thumbnailImage = null;
+                if (message.media != null) {
+                    thumbnailImage = Base64.encodeToString(message.media, Base64.DEFAULT);
+                }
+
+                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, thumbnailImage, message.mimeType, chat, message.id, nearByChat);
 
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -543,24 +558,21 @@ public class ChatScreenAdapter extends BaseAdapter {
 
     }
 
-    private void showMediaContentStatus(Message message, ViewGroup imageContentLayout) {
-        int status = FileOnCloudHandler.getInstance(activity).getMediaContentStatus(message);
+    private void showMediaContentStatus(Message message, ImageView statusView, int status) {
         if (message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
-            imageContentLayout.findViewById(R.id.image_content_status).setVisibility(View.GONE);
+            statusView.setVisibility(View.GONE);
         } else if (message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
             //nothing
         } else if (message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
-            //TODO
+            showAudioContentStatus(status, statusView);
         } else if (message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
-            imageContentLayout.findViewById(R.id.image_content_status).setVisibility(View.GONE);
-            showImageContentStatus(status, imageContentLayout);
+            showImageContentStatus(status, statusView);
         } else if (message.mimeType.equalsIgnoreCase(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
-            showVideoContentStatus(status, imageContentLayout);
+            showVideoContentStatus(status, statusView);
         }
     }
 
-    private void showImageContentStatus(int status, ViewGroup imageContentLayout) {
-        ImageView imageView = (ImageView) imageContentLayout.findViewById(R.id.image_content_status);
+    private void showImageContentStatus(int status, ImageView imageView) {
         imageView.setVisibility(View.GONE);
         if (status == FileOnCloudHandler.STATUS_NONE) {
             //nothing
@@ -581,8 +593,7 @@ public class ChatScreenAdapter extends BaseAdapter {
         }
     }
 
-    private void showVideoContentStatus(int status, ViewGroup imageContentLayout) {
-        ImageView imageView = (ImageView) imageContentLayout.findViewById(R.id.image_content_status);
+    private void showVideoContentStatus(int status, ImageView imageView) {
         if (status == FileOnCloudHandler.STATUS_NONE) {
             //nothing
         } else if (status == FileOnCloudHandler.STATUS_UPLOADING) {
@@ -604,6 +615,28 @@ public class ChatScreenAdapter extends BaseAdapter {
         }
     }
 
+    private void showAudioContentStatus(int status, ImageView imageView) {
+        if (status == FileOnCloudHandler.STATUS_NONE) {
+            //nothing
+        } else if (status == FileOnCloudHandler.STATUS_UPLOADING) {
+            imageView.setVisibility(View.GONE);
+        } else if (status == FileOnCloudHandler.STATUS_UPLOADED) {
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageResource(R.drawable.ic_play_blue);
+        } else if (status == FileOnCloudHandler.STATUS_UPLOAD_FAILED) {
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageResource(R.drawable.ic_retry_blue);
+        } else if (status == FileOnCloudHandler.STATUS_DOWNLOADING) {
+            imageView.setVisibility(View.GONE);
+        } else if (status == FileOnCloudHandler.STATUS_DOWNLOADED) {
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageResource(R.drawable.ic_play_blue);
+        } else if (status == FileOnCloudHandler.STATUS_DOWNLOAD_FAILED) {
+            imageView.setVisibility(View.VISIBLE);
+            imageView.setImageResource(R.drawable.ic_download_blue);
+        }
+    }
+
     private class AudioEventListener implements View.OnClickListener, SeekBar.OnSeekBarChangeListener {
 
         @Override
@@ -611,7 +644,44 @@ public class ChatScreenAdapter extends BaseAdapter {
             ViewHolder holder = (ViewHolder) v.getTag(R.id.playAndPause);
             int position = (Integer) v.getTag();
             Message message = messageList.get(position);
-            audioRecordingHelper.handlePlayOrPauseEvent(message, holder);
+
+            int contentStatus = FileOnCloudHandler.getInstance(activity).getMediaContentStatus(message);
+
+            if (contentStatus == FileOnCloudHandler.STATUS_DOWNLOADED || contentStatus == FileOnCloudHandler.STATUS_UPLOADED) {
+                if (DBUtil.isFileExist(v.getContext(), message.mimeType, message.mediaFileName)) {
+                    audioRecordingHelper.handlePlayOrPauseEvent(message, holder);
+                } else {
+                    Toast.makeText(activity, "Media doesn't exist.", Toast.LENGTH_SHORT).show();
+                }
+            } else if (contentStatus == FileOnCloudHandler.STATUS_DOWNLOAD_FAILED) {
+                FileOnCloudHandler.getInstance(activity).requestForDownload(message.textData, message.mimeType, message.id);
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyDataSetChanged();
+                    }
+                });
+            } else if (contentStatus == FileOnCloudHandler.STATUS_UPLOAD_FAILED) {
+                ChatManager chatManager = ChatManager.getInstanceFor(XMPPClient.getConnection());
+                Chat chat = chatManager.getThreadChat(ChatScreenActivity.getJABBERID());
+                if (chat == null) {
+                    chat = chatManager.createChat(ChatScreenActivity.getJABBERID() + "@mm.io");
+                }
+
+                String thumbnailImage = null;
+                if (message.media != null) {
+                    thumbnailImage = Base64.encodeToString(message.media, Base64.DEFAULT);
+                }
+                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, thumbnailImage, message.mimeType, chat, message.id, nearByChat);
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyDataSetChanged();
+                    }
+                });
+            }
         }
 
         @Override

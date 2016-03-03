@@ -14,6 +14,7 @@ import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import de.measite.minidns.record.A;
 
@@ -1305,8 +1306,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return userBlockedList;
     }
 
-    public ArrayList<String> clearChat(Context context, long chatId, String groupServerId) {
-        ArrayList<String> mediaFileNames = getMediaFileNamesForParticularChat(chatId);
+    public HashMap<String, ArrayList<String>> clearChat(Context context, long chatId, String groupServerId) {
+        HashMap<String, ArrayList<String>> mapOnType = getMediaFileNamesForParticularChat(chatId);
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -1317,17 +1318,20 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             db.delete(MessagesEntry.TABLE_NAME, selection, selectionArgs);
             updateChatEntry(getDummyMessageRowId(), chatId, groupServerId);
 
-            DBUtil.deleteContentFromExternalFileStorage(context, mediaFileNames);
+            DBUtil.deleteContentFromExternalFileStorage(context, mapOnType);
         }
 
-        return mediaFileNames;
+        return mapOnType;
     }
 
-    public ArrayList<String> getMediaFileNamesForParticularChat(long chatId) {
-        ArrayList<String> mediaFileNames = new ArrayList<>();
+    public HashMap<String, ArrayList<String>> getMediaFileNamesForParticularChat(long chatId) {
+        HashMap<String, ArrayList<String>> mapOnType = new HashMap<>();
+        mapOnType.put(MIME_TYPE_IMAGE, new ArrayList<String>());
+        mapOnType.put(MIME_TYPE_VIDEO, new ArrayList<String>());
+        mapOnType.put(MIME_TYPE_AUDIO, new ArrayList<String>());
 
         SQLiteDatabase db = this.getReadableDatabase();
-        String selectQuery = "SELECT " + MessagesEntry.COLUMN_MEDIA_FILE_NAME + " FROM " + MessagesEntry.TABLE_NAME + " where " + MessagesEntry.COLUMN_CHAT_ID + " = ? ";
+        String selectQuery = "SELECT " + MessagesEntry.COLUMN_MEDIA_FILE_NAME + " , " + MessagesEntry.COLUMN_MIME_TYPE + " FROM " + MessagesEntry.TABLE_NAME + " where " + MessagesEntry.COLUMN_CHAT_ID + " = ? ";
 
         String[] args = {String.valueOf(chatId)};
         Cursor cursor = db.rawQuery(selectQuery, args);
@@ -1335,14 +1339,17 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 String filename = cursor.getString(0);
+                String mimeType = cursor.getString(1);
+
                 if (filename != null) {
-                    mediaFileNames.add(filename);
+                    ArrayList<String> list = mapOnType.get(mimeType);
+                    list.add(filename);
                 }
             } while (cursor.moveToNext());
         }
         cursor.close();
 
-        return mediaFileNames;
+        return mapOnType;
     }
 
     public void clearChatEntry(long chatId) {

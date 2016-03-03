@@ -279,11 +279,11 @@ public class PersonalMessaging {
         String thumbnailImage = null;
         if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) || mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
             try {
-                if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
-                    Bitmap videoThumbnail = ThumbnailUtils.createVideoThumbnail(DBUtil.getFilePath(context, fileName), MediaStore.Images.Thumbnails.MINI_KIND);
+                if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ) {
+                    Bitmap videoThumbnail = ThumbnailUtils.createVideoThumbnail( DBUtil.getFilePath(context, mimeType, fileName), MediaStore.Images.Thumbnails.MINI_KIND);
                     thumbnailImage = ImageUtil.getBaseEncoded_ThumbnailImage(context, videoThumbnail);
                 } else {
-                    thumbnailImage = ImageUtil.getBaseEncoded_ThumbnailImage(context, DBUtil.getFilePath(context, fileName));
+                    thumbnailImage = ImageUtil.getBaseEncoded_ThumbnailImage(context, DBUtil.getFilePath(context, mimeType, fileName));
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();

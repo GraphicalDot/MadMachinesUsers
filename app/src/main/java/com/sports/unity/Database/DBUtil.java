@@ -1,12 +1,16 @@
 package com.sports.unity.Database;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
@@ -16,6 +20,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Locale;
 
 /**
  * Created by amandeep on 24/10/15.
@@ -25,6 +32,13 @@ public class DBUtil {
     private static final String DIRECTORY_AUDIO = "audio";
     private static final String DIRECTORY_VIDEO = "video";
     private static final String DIRECTORY_IMAGE = "image";
+
+    private static final String EXTERNAL_FILE_NAME_PREFIX = "SPU-";
+    private static final String INTERNAL_FILE_NAME_PREFIX = "IN-SPU-";
+
+    private static final String IMAGE_DIRECTORY = "SportsUnity/SportsUnity_Images";
+    private static final String VIDEO_DIRECTORY = "SportsUnity/SportsUnity_Videos";
+    private static final String AUDIO_DIRECTORY = "SportsUnity/SportsUnity_Audio";
 
     static long insertContentValuesInTable( SQLiteOpenHelper sqLiteOpenHelper, String tableName, ContentValues contentValues){
         long rowId = -1;
@@ -111,14 +125,11 @@ public class DBUtil {
         return content;
     }
 
-    public static void writeContentToExternalFileStorage( Context context, String fileName, byte[] content){
+    public static void writeContentToExternalFileStorage( Context context, String fileName, byte[] content, String mimeType){
         Log.d("File I/O", "start writing");
-        File dirPath = new File(getExternalStorageDirectoryPath(context));
-        if( ! dirPath.exists() ){
-            dirPath.mkdir();
-        }
+        boolean isVisibleInGallery = isExternalFile(fileName);
 
-        File file = new File ( getFilePath( context, fileName));
+        File file = new File ( getFilePath( context, mimeType, fileName));
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(file);
@@ -134,17 +145,18 @@ public class DBUtil {
             }catch (Exception ex){}
         }
 
+        if( isVisibleInGallery ) {
+            addMediaContentToResolver(context, file.getAbsolutePath(), fileName, mimeType);
+        }
+
         Log.d("File I/O", "end writing");
     }
 
-    public static void writeContentToExternalFileStorage( Context context, String sourceFileName, String destinationFileName){
+    public static void writeContentToExternalFileStorage( Context context, String sourceFileName, String destinationFileName, String mimeType){
         Log.d("File I/O", "start writing");
-        File dirPath = new File(getExternalStorageDirectoryPath(context));
-        if( ! dirPath.exists() ){
-            dirPath.mkdir();
-        }
+        boolean isVisibleInGallery = isExternalFile(destinationFileName);
 
-        File file = new File ( getFilePath( context, destinationFileName));
+        File file = new File ( getFilePath(context, mimeType, destinationFileName));
         FileOutputStream out = null;
         FileInputStream fileInputStream = null;
         try {
@@ -167,18 +179,17 @@ public class DBUtil {
             }catch (Exception ex){}
         }
 
+        if( isVisibleInGallery ) {
+            addMediaContentToResolver(context, file.getAbsolutePath(), destinationFileName, mimeType);
+        }
+
         Log.d("File I/O", "end writing");
     }
 
-    public static byte[] loadContentFromExternalFileStorage( Context context, String fileName){
+    public static byte[] loadContentFromExternalFileStorage( Context context, String mimeType, String fileName){
         Log.d("File I/O", "start reading");
         byte [] content = null;
-        File dirPath = new File(getExternalStorageDirectoryPath(context));
-        if( ! dirPath.exists() ){
-            dirPath.mkdir();
-        }
-
-        File file = new File ( getFilePath( context, fileName));
+        File file = new File ( getFilePath( context, mimeType, fileName));
         FileInputStream in = null;
         ByteArrayOutputStream byteArrayOutputStream = null;
         try {
@@ -206,30 +217,38 @@ public class DBUtil {
         return content;
     }
 
-    public static void deleteContentFromExternalFileStorage(Context context, ArrayList<String> fileNames){
-        for(String name : fileNames){
-            deleteContentFromExternalFileStorage(context, name);
-        }
-    }
-
-    public static boolean deleteContentFromExternalFileStorage(Context context, String fileName){
-        if( fileName != null ) {
-            File dirPath = new File(getExternalStorageDirectoryPath(context));
-            if (!dirPath.exists()) {
-                dirPath.mkdir();
+    public static void deleteContentFromExternalFileStorage(Context context, HashMap<String, ArrayList<String>> mapOnType){
+        Iterator<String> iterator = mapOnType.keySet().iterator();
+        while( iterator.hasNext() ) {
+            String mimeType = iterator.next();
+            ArrayList<String> fileNames = mapOnType.get(mimeType);
+            for (int index = 0; index < fileNames.size(); index++) {
+                deleteContentFromExternalFileStorage(context, mimeType, fileNames.get(index));
             }
-
-            File file = new File(getFilePath(context, fileName));
-            return file.delete();
-        } else {
-            return false;
         }
     }
 
-    public static boolean isFileExist(Context context, String fileName){
+    public static boolean deleteContentFromExternalFileStorage(Context context, String mimeType, String fileName){
+        boolean deleted = false;
+        if( fileName != null ) {
+            boolean isVisibleInGallery = isExternalFile(fileName);
+
+            if( ! isVisibleInGallery ) {
+                File file = new File(getFilePath(context, mimeType, fileName));
+                deleted = file.delete();
+            } else {
+                //nothing
+            }
+        } else {
+            deleted = false;
+        }
+        return deleted;
+    }
+
+    public static boolean isFileExist(Context context, String mimeType, String fileName){
         boolean exist = false;
         if( fileName != null ) {
-            File file = new File(getFilePath(context, fileName));
+            File file = new File(getFilePath(context, mimeType, fileName));
             exist = file.exists();
         } else {
             //nothing
@@ -237,30 +256,100 @@ public class DBUtil {
         return  exist;
     }
 
-    public static String getUniqueFileName(Context context, String mimeType){
-        String fileName = String.valueOf(System.currentTimeMillis());
+    public static String getUniqueFileName(String mimeType, boolean isVisibleInPhoneGallery){
+        String filePrefix = INTERNAL_FILE_NAME_PREFIX;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if( isVisibleInPhoneGallery ) {
+                filePrefix = EXTERNAL_FILE_NAME_PREFIX;
+            } else {
+                //nothing
+            }
+        } else {
+            filePrefix = EXTERNAL_FILE_NAME_PREFIX;
+        }
+
+
+        String fileName = filePrefix + String.valueOf(System.currentTimeMillis());
         if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
             fileName += ".png";
         } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO) ){
-            fileName += ".mp4";
+            fileName += ".mp3";
         } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ){
             fileName += ".mp4";
         }
         return fileName;
     }
 
-    public static String getFilePath(Context context, String fileName){
-        String dirPath = getExternalStorageDirectoryPath(context);
+    public static String getFilePath(Context context, String mimeType, String fileName){
+        String dirPath = getExternalStorageDirectoryPath(context, mimeType, isExternalFile(fileName));
         return dirPath + "/" + fileName;
     }
 
-    private static String getExternalStorageDirectoryPath(Context context){
+    private static void addMediaContentToResolver(Context context, String filePath, String fileName, String mimeType){
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.MediaColumns.DATA, filePath);
+        values.put(MediaStore.MediaColumns.TITLE, fileName);
+        values.put(MediaStore.MediaColumns.DATE_ADDED, System.currentTimeMillis());
+
+        if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ) {
+            values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+            values.put(MediaStore.Images.ImageColumns.BUCKET_ID, fileName.toLowerCase(Locale.US).hashCode());
+            values.put(MediaStore.Images.ImageColumns.BUCKET_DISPLAY_NAME, fileName.toLowerCase(Locale.US));
+
+            ContentResolver cr = context.getContentResolver();
+            cr.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ) {
+            values.put(MediaStore.Video.Media.ALBUM, "Sports Unity");
+            values.put(MediaStore.Video.Media.ARTIST, "Sports Unity");
+
+            values.put(MediaStore.Video.VideoColumns.DATE_TAKEN, System.currentTimeMillis());
+            values.put(MediaStore.Video.VideoColumns.BUCKET_ID, fileName.toLowerCase(Locale.US).hashCode());
+            values.put(MediaStore.Video.VideoColumns.BUCKET_DISPLAY_NAME, fileName.toLowerCase(Locale.US));
+            values.put(MediaStore.Video.Media.CONTENT_TYPE, fileName.toLowerCase(Locale.US));
+            values.put(MediaStore.MediaColumns.MIME_TYPE, "video/mp4");
+
+            ContentResolver cr = context.getContentResolver();
+            cr.insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, values);
+        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO) ) {
+            values.put(MediaStore.Audio.Media.ALBUM, "Sports Unity");
+            values.put(MediaStore.MediaColumns.MIME_TYPE, "audio/mp3");
+            values.put(MediaStore.Audio.Media.IS_MUSIC, true);
+
+            ContentResolver cr = context.getContentResolver();
+            cr.insert(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, values);
+        }
+
+//        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://"+ Environment.getExternalStorageDirectory())));
+    }
+
+    private static boolean isExternalFile(String fileName){
+        return fileName.startsWith(EXTERNAL_FILE_NAME_PREFIX);
+    }
+
+    private static String getExternalStorageDirectoryPath(Context context, String mimeType, boolean useGalleryPath){
         String path = null;
+        String directory = IMAGE_DIRECTORY;
+        if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
+            directory = IMAGE_DIRECTORY;
+        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ){
+            directory = VIDEO_DIRECTORY;
+        } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO) ){
+            directory = AUDIO_DIRECTORY;
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            path = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+            if( useGalleryPath ) {
+                path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + directory;
+            } else {
+                path = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+            }
         } else {
-            path = Environment.getExternalStorageDirectory().getAbsolutePath();
+            path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + directory;
+        }
+
+        File file = new File(path);
+        if( ! file.exists() ){
+            file.mkdirs();
         }
 
         return path;

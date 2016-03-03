@@ -29,6 +29,7 @@ import com.sports.unity.util.FileOnCloudHandler;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Created by madmachines on 19/11/15.
@@ -100,13 +101,17 @@ public class ToolbarActionsForChatScreen {
     }
 
     public void deleteMessages(ArrayList<Message> messageList, long chatID, ChatScreenAdapter chatScreenAdapter) {
-        ArrayList<String> deletedFileNames = new ArrayList<>();
+        HashMap<String, ArrayList<String>> mapOnType = new HashMap<>();
+        mapOnType.put(SportsUnityDBHelper.MIME_TYPE_IMAGE, new ArrayList<String>());
+        mapOnType.put(SportsUnityDBHelper.MIME_TYPE_VIDEO, new ArrayList<String>());
+        mapOnType.put(SportsUnityDBHelper.MIME_TYPE_AUDIO, new ArrayList<String>());
 
         Collections.sort(selectedItemsList, Collections.reverseOrder());
         for (int itemPosition : selectedItemsList) {
             Message message = messageList.get(itemPosition);
 
             if (message.mediaFileName != null) {
+                ArrayList<String> deletedFileNames = mapOnType.get(message.mimeType);
                 deletedFileNames.add(message.mediaFileName);
             }
 
@@ -114,7 +119,7 @@ public class ToolbarActionsForChatScreen {
             messageList.remove(message);
         }
 
-        DBUtil.deleteContentFromExternalFileStorage(context, deletedFileNames);
+        DBUtil.deleteContentFromExternalFileStorage(context, mapOnType);
 
         chatScreenAdapter.notifydataset(messageList);
         if (messageList.isEmpty()) {

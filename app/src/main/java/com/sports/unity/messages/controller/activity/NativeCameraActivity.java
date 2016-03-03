@@ -57,6 +57,7 @@ import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.Constants;
@@ -334,8 +335,8 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
         recorder.setProfile(CamcorderProfile.get(CamcorderProfile.QUALITY_480P));
 
-        videoContentOutputFilename = DBUtil.getUniqueFileName(this, SportsUnityDBHelper.MIME_TYPE_VIDEO);
-        recorder.setOutputFile(DBUtil.getFilePath(this, videoContentOutputFilename));
+        videoContentOutputFilename = DBUtil.getUniqueFileName(SportsUnityDBHelper.MIME_TYPE_VIDEO, UserUtil.isSaveInAppCaptureMediaToGallery());
+        recorder.setOutputFile(DBUtil.getFilePath(this, SportsUnityDBHelper.MIME_TYPE_VIDEO, videoContentOutputFilename));
 
         boolean success = false;
         try {
@@ -458,7 +459,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
 
     private void playVideo() {
         try {
-            Uri uri = Uri.parse(DBUtil.getFilePath(this.getBaseContext(), videoContentOutputFilename));
+            Uri uri = Uri.parse(DBUtil.getFilePath(this.getBaseContext(), SportsUnityDBHelper.MIME_TYPE_VIDEO, videoContentOutputFilename));
 
             VideoView videoView = (VideoView) findViewById(R.id.video_container);
             videoView.setVisibility(View.VISIBLE);
@@ -636,7 +637,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
     }
 
     private void clearDiscardedContent() {
-        DBUtil.deleteContentFromExternalFileStorage(this, videoContentOutputFilename);
+        DBUtil.deleteContentFromExternalFileStorage(this, SportsUnityDBHelper.MIME_TYPE_VIDEO, videoContentOutputFilename);
     }
 
     /**
@@ -663,9 +664,9 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
                 String fileName = null;
                 if (contentMimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
                     byte[] byteArray = (byte[]) object;
-                    fileName = DBUtil.getUniqueFileName(getBaseContext(), SportsUnityDBHelper.MIME_TYPE_IMAGE);
+                    fileName = DBUtil.getUniqueFileName(SportsUnityDBHelper.MIME_TYPE_IMAGE, UserUtil.isSaveInAppCaptureMediaToGallery());
 
-                    DBUtil.writeContentToExternalFileStorage(getBaseContext(), fileName, byteArray);
+                    DBUtil.writeContentToExternalFileStorage(getBaseContext(), fileName, byteArray, contentMimeType);
                 } else if (contentMimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
                     fileName = videoContentOutputFilename;
                 }

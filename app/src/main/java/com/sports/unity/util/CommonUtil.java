@@ -285,11 +285,11 @@ public class CommonUtil {
         return checksum;
     }
 
-    public static String getMD5EncryptedString(Context context, String fileName) {
+    public static String getMD5EncryptedString(Context context, String mimeType, String fileName) {
         String checksum = null;
         MessageDigest mdEnc = null;
 
-        File file = new File(DBUtil.getFilePath(context, fileName));
+        File file = new File(DBUtil.getFilePath(context, mimeType, fileName));
         FileInputStream fileInputStream = null;
         try {
             mdEnc = MessageDigest.getInstance("MD5");
