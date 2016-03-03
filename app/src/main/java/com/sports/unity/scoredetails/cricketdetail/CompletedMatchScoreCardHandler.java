@@ -38,7 +38,7 @@ public class CompletedMatchScoreCardHandler {
     public interface CompletedMatchContentListener {
 
         void handleContent(JSONObject object);
-        public void handleError();
+        void handleError();
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -92,6 +92,4 @@ public class CompletedMatchScoreCardHandler {
     public void addListener(CompletedMatchContentListener contentListener) {
         mContentListener = contentListener;
     }
-
-
 }

@@ -20,7 +20,7 @@ public class CricketLiveMatchSummaryHandler {
 
     private static final String REQUEST_TAG = "LIVE_SUMMARY_TAG";
     private static Context mContext;
-    private String url = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
+    private String BASEURL = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
 
     private LiveCricketMatchSummaryContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -56,8 +56,8 @@ public class CricketLiveMatchSummaryHandler {
 
     public void requestLiveMatchSummary(String matchId) {
         Log.i("Score Detail", "Request Score Details");
-
-        url = url+matchId;
+        String url = BASEURL+matchId;
+        url = BASEURL+matchId;
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
