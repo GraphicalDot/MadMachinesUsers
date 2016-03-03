@@ -15,30 +15,30 @@
         android:text="No Teams selected :("
         android:textColor="@color/text_color"
         android:textSize="@dimen/font_size_large"
-        android:textStyle="bold"/>
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/something_wrong"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:gravity="center_horizontal"
-        android:layout_marginBottom="@dimen/vertical_padding_very_small"
         android:text="Add your favourite teams \n to see more details"
         android:textColor="@color/gray2"
         android:textSize="@dimen/font_size_small_medium" />
+
     <TextView
         android:id="@+id/addteam"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/filter_next_height"
         android:layout_gravity="center"
+        android:layout_marginTop="@dimen/nav_flag_margin"
+        android:background="@drawable/round_edge_box_blue"
         android:gravity="center"
         android:paddingLeft="@dimen/horizontal_padding_small"
         android:paddingRight="@dimen/horizontal_padding_small"
-        android:layout_marginTop="@dimen/nav_flag_margin"
-        android:background="@drawable/round_edge_box_blue"
         android:text="ADD TEAM"
         android:textColor="@color/ColorPrimary"
-        android:textSize="@dimen/font_size_small_xlarge"
-        />
+        android:textSize="@dimen/font_size_small_xlarge" />
 </LinearLayout>

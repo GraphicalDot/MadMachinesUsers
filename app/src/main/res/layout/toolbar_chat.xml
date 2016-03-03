@@ -18,9 +18,9 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
-            android:paddingBottom="@dimen/horizontal_padding_small"
+            android:paddingBottom="@dimen/vertical_padding_small"
             android:paddingRight="@dimen/horizontal_padding_small"
-            android:paddingTop="@dimen/horizontal_padding_small"
+            android:paddingTop="@dimen/vertical_padding_small"
             android:scaleType="center"
             android:src="@drawable/ic_menu_back" />
 
@@ -73,6 +73,7 @@
                     android:id="@+id/chat_username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:ellipsize="end"
                     android:gravity="left"
                     android:singleLine="true"
                     android:text="@string/chat_activity_username"

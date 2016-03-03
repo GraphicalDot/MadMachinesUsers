@@ -9,10 +9,10 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/white"
-        android:paddingBottom="@dimen/horizontal_padding_very_very_small"
+        android:paddingBottom="@dimen/vertical_padding_very_very_small"
         android:paddingLeft="@dimen/horizontal_padding_small"
         android:paddingRight="@dimen/horizontal_padding_small"
-        android:paddingTop="@dimen/horizontal_padding_very_very_small"
+        android:paddingTop="@dimen/vertical_padding_very_very_small"
         android:text="A"
         android:textColor="@color/gray1"
         android:textSize="@dimen/font_size_small_large" />

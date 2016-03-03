@@ -5,10 +5,10 @@
     android:layout_height="wrap_content"
     android:background="@color/gray3"
     android:orientation="horizontal"
-    android:paddingBottom="@dimen/padding"
-    android:paddingLeft="@dimen/padding"
-    android:paddingRight="@dimen/padding"
-    android:paddingTop="@dimen/horizontal_padding_large">
+    android:paddingBottom="@dimen/vertical_padding_medium"
+    android:paddingLeft="@dimen/horizontal_padding_medium"
+    android:paddingRight="@dimen/horizontal_padding_medium"
+    android:paddingTop="@dimen/vertical_padding_large">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/circleView"
@@ -26,7 +26,10 @@
         android:layout_gravity="center"
         android:gravity="center|left"
         android:orientation="vertical"
-        android:padding="@dimen/horizontal_padding_small">
+        android:paddingBottom="@dimen/vertical_padding_small"
+        android:paddingLeft="@dimen/horizontal_padding_small"
+        android:paddingRight="@dimen/horizontal_padding_small"
+        android:paddingTop="@dimen/vertical_padding_small">
 
         <TextView
             android:id="@+id/name"
@@ -49,7 +52,6 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/vertical_padding_very_very_small"
             android:maxLines="1"
             android:orientation="horizontal"
             android:visibility="gone">
@@ -59,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:paddingRight="@dimen/vertical_padding_very_very_small"
+                android:paddingRight="@dimen/horizontal_padding_very_very_small"
                 android:text="Member of 0 groups"
                 android:textColor="@color/dot_color_grey"
                 android:textSize="@dimen/font_size_very_small"
@@ -77,7 +79,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:paddingLeft="@dimen/vertical_padding_very_very_small"
+                android:paddingLeft="@dimen/horizontal_padding_very_very_small"
                 android:text="Admin of 0 groups"
                 android:textColor="@color/dot_color_grey"
                 android:textSize="@dimen/font_size_very_small"

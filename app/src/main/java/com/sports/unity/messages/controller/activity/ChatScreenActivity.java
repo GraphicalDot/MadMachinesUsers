@@ -302,15 +302,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         if (XMPPClient.getConnection().isAuthenticated()) {
             try {
 
-                RosterEntry rosterSelf = Roster.getInstanceFor(XMPPClient.getConnection()).getEntry(selfJid+ "@" + XMPPClient.SERVICE_NAME);
+                RosterEntry rosterSelf = Roster.getInstanceFor(XMPPClient.getConnection()).getEntry(selfJid + "@" + XMPPClient.SERVICE_NAME);
                 RosterEntry rosterFriend = Roster.getInstanceFor(XMPPClient.getConnection()).getEntry(JABBERID + "@" + XMPPClient.SERVICE_NAME);
-                Log.d("max","selfjid is--"+selfJid+"@" + XMPPClient.SERVICE_NAME+"<<roseterself"+rosterSelf);
+                Log.d("max", "selfjid is--" + selfJid + "@" + XMPPClient.SERVICE_NAME + "<<roseterself" + rosterSelf);
                 if (rosterFriend != null) {
                     if (!rosterFriend.getType().equals(RosterPacket.ItemType.both)) {
                         Roster.getInstanceFor(XMPPClient.getConnection()).removeEntry(rosterFriend);
                         if (rosterSelf != null) {
-                            Log.d("max","SelfType__"+rosterSelf.getType());
-                                Roster.getInstanceFor(XMPPClient.getConnection()).removeEntry(rosterSelf);
+                            Log.d("max", "SelfType__" + rosterSelf.getType());
+                            Roster.getInstanceFor(XMPPClient.getConnection()).removeEntry(rosterSelf);
 
                         }
                     } else {
@@ -397,7 +397,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         toolbarActionsForChatScreen = ToolbarActionsForChatScreen.getInstance(this);
 
         con = XMPPClient.getConnection();
-selfJid=TinyDB.getInstance(ChatScreenActivity.this).getString(TinyDB.KEY_USER_JID);
+        selfJid = TinyDB.getInstance(ChatScreenActivity.this).getString(TinyDB.KEY_USER_JID);
         getIntentExtras();
         clearUnreadCount();
         initToolbar();
