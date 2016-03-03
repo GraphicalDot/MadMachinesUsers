@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -55,31 +56,23 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
             TextDrawable drawable = null;
             holder.dto = mValues.get(position);
             String value = getLabelValue(holder.dto.getTvLable());
-               holder.tvLable.setText(getLabelValue(holder.dto.getTvLable()));
-                drawable = getTextDrawable(holder.dto.getIvLeftStatus());
-                holder.ivLeftStatus.setImageDrawable(drawable);
-                drawable = getTextDrawable(holder.dto.getIvRightStatus());
-                holder.ivRightStatus.setImageDrawable(drawable);
-                holder.ivCenterStatus.setImageDrawable(getCentralImageResource(holder.dto.getTvLable()));
-                try{
-                    int radius=  context.getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
+            holder.tvLable.setText(getLabelValue(holder.dto.getTvLable()));
+            drawable = getTextDrawable(holder.dto.getIvLeftStatus());
+            holder.ivLeftStatus.setImageDrawable(drawable);
+            drawable = getTextDrawable(holder.dto.getIvRightStatus());
+            holder.ivRightStatus.setImageDrawable(drawable);
+            holder.ivCenterStatus.setImageDrawable(getCentralImageResource(holder.dto.getTvLable()));
+            try{
+                int radius=  context.getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
 
 
-                    Integer redValue= Integer.parseInt(holder.dto.getIvLeftStatus());
-                    Integer blueValue= Integer.parseInt(holder.dto.getIvRightStatus());
-                    redValue = (redValue+blueValue)/redValue;
-                    blueValue = (redValue+blueValue)/blueValue;
+                int redValue= Integer.parseInt(holder.dto.getIvLeftStatus());
+                int blueValue= Integer.parseInt(holder.dto.getIvRightStatus());
+                holder.redView.getLayoutParams().width = 400*redValue/(redValue+blueValue);
+                holder.blueView.getLayoutParams().width = 400*blueValue/(redValue+blueValue);
 
-                    holder.redView.setImageResource(R.drawable.ic_stat_red_bg);
-                    holder.blueView.setImageResource(R.drawable.ic_stat_blue_bg);
-                    holder.redView.getLayoutParams().width = redValue;
-                    holder.blueView.getLayoutParams().width =blueValue;
-                   /* holder.redView.setImageDrawable(getBackgroundDrawable(redValue, Color.RED));
-                    holder.blueView.setImageDrawable(getBackgroundDrawable(blueValue,Color.BLUE));*/
-
-
-                }catch (Exception e){e.printStackTrace();}
-          }catch (Exception e){e.printStackTrace();}
+            }catch (Exception e){e.printStackTrace();}
+        }catch (Exception e){e.printStackTrace();}
     }
 
     private Drawable getBackgroundDrawable(int width, int color) {
@@ -186,8 +179,8 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
         private ImageView ivLeftStatus;
         private ImageView ivRightStatus;
         private ImageView ivCenterStatus;
-        private ImageView redView;
-        private ImageView blueView;
+        private View redView;
+        private View blueView;
         public CompleteFootballMatchStatDTO dto;
 
 
@@ -198,8 +191,8 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
             ivLeftStatus = (ImageView) view.findViewById(R.id.iv_left_status);
             ivRightStatus = (ImageView) view.findViewById(R.id.iv_right_status);
             ivCenterStatus = (ImageView) view.findViewById(R.id.iv_center_status);
-            redView = (ImageView) view.findViewById(R.id.vw_red);
-            blueView = (ImageView) view.findViewById(R.id.vw_blue);
+            redView =view.findViewById(R.id.vw_red);
+            blueView =view.findViewById(R.id.vw_blue);
 
         }
     }

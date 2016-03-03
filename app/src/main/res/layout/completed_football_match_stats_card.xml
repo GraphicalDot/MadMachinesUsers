@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textSize="@dimen/font_size_very_small"
-            android:text="possession(%)"/>
+            android:text=""/>
         <LinearLayout
             android:id="@+id/rootLayout"
             android:layout_width="match_parent"
@@ -45,37 +45,41 @@
 
                     >
                 </View>
-                <ImageView
+                <View
                     android:id="@+id/vw_red"
                     android:layout_toLeftOf="@+id/v_dummy"
-                    android:layout_width="40dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:orientation="horizontal"
+                    android:layout_height="24dp"
+                    android:background="@color/brick_red"
    />
-                <ImageView
+                <View
                     android:id="@+id/vw_blue"
                     android:layout_toRightOf="@+id/v_dummy"
-                    android:layout_width="40dp"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:orientation="horizontal"
+                    android:layout_height="24dp"
+                    android:background="@color/app_theme_blue"
                     />
                 <ImageView
                     android:id="@+id/iv_center_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
-                    android:src="@drawable/ic_distance_slider_01"/>
+                    />
                <ImageView
                     android:id="@+id/iv_left_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_gravity="left"
-                    android:src="@drawable/ic_distance_slider_01"/>
+                   />
                 <ImageView
                     android:id="@+id/iv_right_status"
                     android:layout_alignParentRight="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_distance_slider_01"/>
+                    />
 
             </RelativeLayout>
 
