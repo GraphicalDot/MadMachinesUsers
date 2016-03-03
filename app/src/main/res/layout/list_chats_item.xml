@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal"
-    android:paddingBottom="@dimen/horizontal_padding_very_very_small"
-    android:paddingTop="@dimen/horizontal_padding_very_very_small">
+    android:paddingBottom="@dimen/vertical_padding_very_very_small"
+    android:paddingTop="@dimen/vertical_padding_very_very_small">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/user_pic"
@@ -28,6 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:ellipsize="end"
+            android:singleLine="true"
             android:text="username"
             android:textColor="@android:color/black"
             android:textSize="@dimen/font_size_small_large" />
@@ -49,7 +50,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:maxLines="1"
+                android:singleLine="true"
                 android:text="message"
                 android:textColor="@color/last_msg"
                 android:textSize="@dimen/font_size_very_small" />
@@ -59,7 +60,7 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_gravity="right"
@@ -69,24 +70,21 @@
         android:orientation="vertical"
         android:padding="@dimen/horizontal_padding_very_very_small">
 
-
         <TextView
             android:id="@+id/lastmsg_time"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
+            android:gravity="right|top"
             android:text="11:04 AM"
             android:textColor="@android:color/black"
             android:textSize="@dimen/font_size_very_small" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="center_horizontal"
+            android:layout_gravity="bottom"
+            android:gravity="center"
             android:orientation="horizontal"
-            android:paddingTop="@dimen/horizontal_padding_very_very_small">
-
+            >
             <ImageView
                 android:id="@+id/mute_icon"
                 android:layout_width="wrap_content"
@@ -94,17 +92,17 @@
                 android:layout_gravity="left"
                 android:layout_weight="1"
                 android:src="@drawable/ic_mute" />
-
             <TextView
                 android:id="@+id/unread_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/notification_bg_msg"
                 android:gravity="center"
-                android:text="0"
+                android:text="100"
                 android:textColor="@android:color/white"
                 android:textSize="@dimen/font_size_very_small" />
-
         </LinearLayout>
-    </LinearLayout>
+
+    </FrameLayout>
+
 </LinearLayout>

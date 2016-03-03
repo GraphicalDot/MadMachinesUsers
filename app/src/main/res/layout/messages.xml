@@ -48,7 +48,8 @@
                     android:gravity="center"
                     android:text="99+"
                     android:textColor="@android:color/black"
-                    android:textSize="@dimen/font_size_small_medium" />
+                    android:textStyle="bold"
+                    android:textSize="@dimen/font_size_very_small" />
 
             </LinearLayout>
 
@@ -93,7 +94,8 @@
                     android:gravity="center"
                     android:text="99+"
                     android:textColor="@android:color/white"
-                    android:textSize="@dimen/font_size_small_medium" />
+                    android:textStyle="bold"
+                    android:textSize="@dimen/font_size_very_small" />
             </LinearLayout>
 
 

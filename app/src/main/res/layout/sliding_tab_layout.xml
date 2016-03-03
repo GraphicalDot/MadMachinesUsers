@@ -14,7 +14,7 @@
         android:text="Messages"
         android:textAllCaps="true" />
 
-    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+    <TextView
         android:id="@+id/unread_messages"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,5 +23,6 @@
         android:gravity="center"
         android:text="12"
         android:textColor="@color/app_theme_blue"
-        android:textSize="@dimen/font_size_small_medium" />
+        android:textSize="@dimen/font_size_very_small"
+        android:textStyle="bold" />
 </LinearLayout>

@@ -25,7 +25,6 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-
                 />
 
             <RelativeLayout
@@ -42,9 +41,6 @@
                     android:padding="@dimen/vertical_padding_very_very_small"
                     android:layout_alignParentBottom="true"
                     >
-
-                    // android:layout_width="@dimen/news_fav_icon_small_width"
-                    //android:layout_height="@dimen/news_fav_icon_height"
                     <ImageView
                         android:id="@+id/fab_icon"
                         android:layout_width="@dimen/news_fav_icon_large_width"
@@ -53,12 +49,10 @@
                         android:layout_gravity="center"
                         android:paddingLeft="@dimen/horizontal_padding_very_small"
                         android:paddingRight="@dimen/horizontal_padding_very_small"/>
-
                     <View
                         android:layout_width="1dp"
                         android:layout_height="fill_parent"
                         android:background="@color/news_vertical_strip" />
-
                     <TextView
                         android:id="@+id/published"
                         android:layout_width="wrap_content"
@@ -69,14 +63,13 @@
                         android:layout_gravity="center"
                         android:paddingLeft="@dimen/horizontal_padding_very_small"
                         />
-
                     <TextView
                         android:id="@+id/type"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="right"
                         android:layout_gravity="center"
-                        android:paddingRight="@dimen/vertical_padding_very_small"
+                        android:paddingRight="@dimen/horizontal_padding_very_small"
                         android:textAllCaps="true"
                         android:text="CRICKET"
                         android:textColor="@color/app_theme_blue"
@@ -88,16 +81,16 @@
                     android:layout_height="match_parent"
                     android:layout_above="@+id/bottom"
                     android:gravity="center">
-                <TextView
-                    android:id="@+id/TitleText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="2"
-                    android:paddingLeft="@dimen/vertical_padding_very_small"
-                    android:paddingRight="@dimen/vertical_padding_very_small"
-                    android:textColor="@color/news_headline_mini"
-                    android:text="This is my news article\nplease help :P"
-                    android:textSize="@dimen/font_size_small_large" />
+                    <TextView
+                        android:id="@+id/TitleText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="2"
+                        android:paddingLeft="@dimen/horizontal_padding_very_small"
+                        android:paddingRight="@dimen/horizontal_padding_very_small"
+                        android:textColor="@color/news_headline_mini"
+                        android:text="This is my news article\nplease help :P"
+                        android:textSize="@dimen/font_size_small_large" />
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>
