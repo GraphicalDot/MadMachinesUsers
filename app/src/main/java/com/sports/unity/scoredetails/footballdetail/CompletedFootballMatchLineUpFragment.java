@@ -105,8 +105,10 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         rvLineup.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         rvSubstitutes = (RecyclerView) view.findViewById(R.id.rv_substitutes);
         rvSubstitutes.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        rvSubstitutes.setNestedScrollingEnabled(false);
         completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(lineUpList ,getContext());
         rvLineup.setAdapter(completeFootballLineUpAdapter);
+        rvLineup.setNestedScrollingEnabled(false);
         completeFootballSubstituteUpAdapter = new CompleteFootballLineUpAdapter(substitutesList ,getContext());
         rvSubstitutes.setAdapter(completeFootballSubstituteUpAdapter);
 

@@ -21,7 +21,7 @@ import java.util.HashSet;
 public class CompletedMatchScoreCardHandler {
     private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
     private static Context mContext;
-    private String url = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
+    private String BASEURL = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
 
     private CompletedMatchContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -58,7 +58,7 @@ public class CompletedMatchScoreCardHandler {
 
     public void requestCompletdMatchScoreCard(String matchId) {
         Log.i("Score Detail", "Request Score Details");
-
+         String url = BASEURL+matchId;
         url = url+matchId;
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(mContext);

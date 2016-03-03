@@ -138,16 +138,21 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         teamBFallOfWicketRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamABattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamABattingCardList);
         teamABattingRecycler.setAdapter(teamABattingAdapter);
+        teamABattingRecycler.setNestedScrollingEnabled(false);
         teamBBattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamBBattingCardList);
         teamBBattingRecycler.setAdapter(teamBBattingAdapter);
+        teamBBattingRecycler.setNestedScrollingEnabled(false);
         teamABowlingAdapter = new LiveAndCompletedCricketBowlingCardAdapter(teamABowlingCardList);
         teamABowlingRecycler.setAdapter(teamABowlingAdapter);
+        teamABowlingRecycler.setNestedScrollingEnabled(false);
         teamBBowlingAdapter = new LiveAndCompletedCricketBowlingCardAdapter(teamBBowlingCardList);
         teamBBowlingRecycler.setAdapter(teamBBowlingAdapter);
         teamAFallOfWicketAdapter = new LiveAndCompletedCricketFallOfWicketAdapter(teamAFallOfWicketCardList);
         teamAFallOfWicketRecycler.setAdapter(teamAFallOfWicketAdapter);
+        teamAFallOfWicketRecycler.setNestedScrollingEnabled(false);
         teamBFallOfWicketAdapter = new LiveAndCompletedCricketFallOfWicketAdapter(teamBFallOfWicketCardList);
         teamBFallOfWicketRecycler.setAdapter(teamBFallOfWicketAdapter);
+        teamBFallOfWicketRecycler.setNestedScrollingEnabled(false);
         initErrorLayout(view);
         ivDwn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -103,11 +103,11 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                 if (rcBattingPerformanceSummery.getVisibility() == GONE) {
                     rcBattingPerformanceSummery.setVisibility(VISIBLE);
                     battingRow.setVisibility(VISIBLE);
-                    battingImageView.setImageResource(R.drawable.ic_droable);
+                    battingImageView.setImageResource(R.drawable.ic_down_arrow_gray);
                 } else {
                     rcBattingPerformanceSummery.setVisibility(GONE);
                     battingRow.setVisibility(GONE);
-                    battingImageView.setImageResource(R.drawable.ic_dropdown);
+                    battingImageView.setImageResource(R.drawable.ic_up_arrow_gray);
                 }
             }
         });
@@ -116,11 +116,11 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                 if (rcBowlingPerformanceSummary.getVisibility() == GONE) {
                     rcBowlingPerformanceSummary.setVisibility(VISIBLE);
                     bowlingRow.setVisibility(VISIBLE);
-                    bowlingImageView.setImageResource(R.drawable.ic_droable);
+                    bowlingImageView.setImageResource(R.drawable.ic_down_arrow_gray);
                 } else {
                     rcBowlingPerformanceSummary.setVisibility(GONE);
                     bowlingRow.setVisibility(GONE);
-                    bowlingImageView.setImageResource(R.drawable.ic_dropdown);
+                    bowlingImageView.setImageResource(R.drawable.ic_up_arrow_gray);
                 }
             }
         });

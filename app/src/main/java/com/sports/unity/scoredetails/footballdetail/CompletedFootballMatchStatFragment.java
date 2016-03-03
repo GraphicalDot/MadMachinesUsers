@@ -88,6 +88,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
 
             rvFootballMatchStat = (RecyclerView) view.findViewById(R.id.rv_football_match_stat);
             rvFootballMatchStat.setHasFixedSize(true);
+            rvFootballMatchStat.setNestedScrollingEnabled(false);
             rvFootballMatchStat.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
             completeFootballMatchStatAdapter = new CompleteFootballMatchStatAdapter(list,getContext());
             rvFootballMatchStat.setAdapter(completeFootballMatchStatAdapter);

@@ -155,6 +155,7 @@
             app:layout_widthPercent="48%"
             android:layout_height="wrap_content">
             <android.support.percent.PercentRelativeLayout
+                android:id="@+id/pr_off_left"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <ImageView
@@ -225,6 +226,7 @@
             app:layout_widthPercent="48%"
             android:layout_height="wrap_content">
             <android.support.percent.PercentRelativeLayout
+                android:id="@+id/pr_off_right"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <ImageView

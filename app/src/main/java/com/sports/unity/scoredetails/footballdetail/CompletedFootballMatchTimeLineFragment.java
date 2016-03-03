@@ -52,7 +52,7 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
     private ProgressBar progressBar;
     private CompleteFootballTimeLineAdapter completeFootballTimeLineAdapter;
     private List<CompleteFootballTimeLineDTO> list = new ArrayList<>();
-    CompletedFootballMatchTimeLineHandler cricketUpcomingMatchSummaryHandler;
+    private CompletedFootballMatchTimeLineHandler completedFootballMatchTimeLineHandler;
 
     public CompletedFootballMatchTimeLineFragment() {
         // Required empty public constructor
@@ -66,9 +66,9 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
         toss = i.getStringExtra(INTENT_KEY_TOSS);
         date = i.getStringExtra(INTENT_KEY_DATE);
-        cricketUpcomingMatchSummaryHandler = CompletedFootballMatchTimeLineHandler.getInstance(context);
-        cricketUpcomingMatchSummaryHandler.addListener(this);
-        cricketUpcomingMatchSummaryHandler.requestCompletedMatchTimeLine(matchId);
+        completedFootballMatchTimeLineHandler = CompletedFootballMatchTimeLineHandler.getInstance(context);
+        completedFootballMatchTimeLineHandler.addListener(this);
+        completedFootballMatchTimeLineHandler.requestCompletedMatchTimeLine(matchId);
 
     }
     @Override
@@ -91,8 +91,8 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
         swTimeLineRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (cricketUpcomingMatchSummaryHandler != null) {
-                    cricketUpcomingMatchSummaryHandler.requestCompletedMatchTimeLine(matchId);
+                if (completedFootballMatchTimeLineHandler != null) {
+                    completedFootballMatchTimeLineHandler.requestCompletedMatchTimeLine(matchId);
                     swTimeLineRefresh.setRefreshing(false);
                 }
             }
