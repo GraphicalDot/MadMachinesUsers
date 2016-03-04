@@ -93,10 +93,10 @@
                     android:text=""
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingLeft="@dimen/vertical_padding_small"
-                    android:paddingRight="@dimen/vertical_padding_small"
-                    android:paddingTop="@dimen/horizontal_padding_small"
-                    android:paddingBottom="@dimen/horizontal_padding_small"
+                    android:paddingLeft="@dimen/horizontal_padding_small"
+                    android:paddingRight="@dimen/horizontal_padding_small"
+                    android:paddingTop="@dimen/vertical_padding_small"
+                    android:paddingBottom="@dimen/vertical_padding_small"
                     android:textColor="@color/news_headline_mini"
                     android:textSize="@dimen/font_size_medium" />
 

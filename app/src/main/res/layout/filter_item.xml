@@ -7,8 +7,8 @@
     android:orientation="horizontal"
     android:paddingBottom="@dimen/vertical_padding_medium_small"
     android:paddingTop="@dimen/vertical_padding_medium_small"
-    android:paddingLeft="@dimen/horizontal_padding_very_small"
-    android:paddingRight="@dimen/horizontal_padding_very_small"
+    android:paddingLeft="@dimen/horizontal_padding_small"
+    android:paddingRight="@dimen/horizontal_padding_small"
     >
 
     <TextView
