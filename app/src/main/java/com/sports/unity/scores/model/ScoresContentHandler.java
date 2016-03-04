@@ -248,11 +248,11 @@ public class ScoresContentHandler {
             urlBuilder.append("=");
             urlBuilder.append(udid);
             urlBuilder.append("&");
-            urlBuilder.append(PARAM_USERNAME);
+            urlBuilder.append(PARAM_USERNAME.toLowerCase());
             urlBuilder.append("=");
             urlBuilder.append(username);
             urlBuilder.append("&");
-            urlBuilder.append(PARAM_PASSWORD);
+            urlBuilder.append(PARAM_PASSWORD.toLowerCase());
             urlBuilder.append("=");
             urlBuilder.append(password);
             requestContent(requestTag, listenerKey, urlBuilder.toString());
