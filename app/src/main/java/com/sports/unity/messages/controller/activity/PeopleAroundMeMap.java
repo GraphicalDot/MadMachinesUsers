@@ -510,7 +510,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         aDialog.findViewById(R.id.progressBarProfile).setVisibility(View.VISIBLE);
 
 //        int distance = (int) Math.round(Double.parseDouble(marker.getSnippet().substring(marker.getSnippet().indexOf(",") + 1, marker.getSnippet().length())));
-        int distance = (int) (person.getDistance() * radius);
+        int distance = (int) (person.getDistance());
         new GetVcardForUser(popupProfile, distance, person).execute(person.getUsername());
 
     }
