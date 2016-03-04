@@ -38,7 +38,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/gray4">
+            android:background="@color/gray3">
 
         </View>
         <android.support.percent.PercentRelativeLayout
@@ -100,7 +100,12 @@
              android:layout_height="wrap_content">
          </android.support.v7.widget.RecyclerView>
     </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray4">
 
+    </View>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -132,7 +137,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/gray4">
+            android:background="@color/gray3">
 
         </View>
         <android.support.percent.PercentRelativeLayout
