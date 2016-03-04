@@ -27,37 +27,6 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class CricketMatchSummaryFragment extends Fragment implements CricketMatchSummaryHandler.ContentListener {
-  /*  private TextView tvBatting;
-    private ImageView ivPlayerFrst;
-    private TextView tvFirstPlayerName;
-    private TextView tvFirstPlayerRunRate;
-    private TextView tvSecondPlayerName;
-    private TextView tvsecondplayerrunrate;
-    private ImageView ivplayersecond;
-    private TextView tvfirstplayerrunonball;
-    private TextView tvpartnershiprecord;
-    private TextView tvsecondplayerrunonball;
-    private TextView tvupcoming;
-    private ImageView ivupcomingplayerfirst;
-    private ImageView ivupcomingplayersecond;
-    private ImageView ivupcomingplayerthird;
-    private TextView tvfirstupcomingplayername;
-    private TextView tvsecondupcomingplayername;
-    private TextView tvthirdupcomingplayername;
-    private TextView tvfirstupcomingplayerrunrate;
-    private TextView tvsecondupcomingplayerrunrate;
-    private TextView tvthirdupcomingplayerrunrate;
-    private TextView tvbowling;
-    private ImageView ivupcomingbowler;
-    private TextView tvbowlername;
-    private TextView tvbowlerover;
-    private TextView tvbowlerWRun;
-    private TextView tvbowlerecon;
-    private TextView tvbowlerovers;
-    private TextView tvbowlerwr;
-    private RecyclerView mreRecyclerView;
-    private SwipeRefreshLayout swipeRefreshLayout;
-*/
     // upcomming match summary card
     private TextView tvMatchName;
     private TextView tvMatchDate;

@@ -769,7 +769,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
         if(Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)){
             Intent intent = new Intent(UserProfileActivity.this, PlayerProfileView.class);
-            intent.putExtra(Constants.INTENT_KEY_ID, playerName);
+            intent.putExtra(Constants.INTENT_KEY_ID, playerId);
             startActivity(intent);
         }else {
             Intent intent = new Intent(UserProfileActivity.this, PlayerCricketBioDataActivity.class);

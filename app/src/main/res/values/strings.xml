@@ -329,11 +329,11 @@ Carrier SMS charges may apply.</string>
     <string name="l">L</string>
     <string name="pts">Pts</string>
     <string name="pl">PL</string>
-    <string name="point">POINT</string>
+    <string name="point">POINTS</string>
     <string name="win">WINS</string>
-    <string name="draw">DRAW</string>
+    <string name="draw">DRAWS</string>
     <string name="draws">DRAWS</string>
-    <string name="loss">LOSS</string>
+    <string name="loss">LOSSES</string>
     <string name="premiera_division">PREMIERA DIVISION</string>
     <string name="caption">CAPTION</string>
     <string name="PLAYER_BIO">BIO</string>
@@ -374,11 +374,11 @@ Carrier SMS charges may apply.</string>
     <string name="T20_s">T20s</string>
     <string name="match_not_exist">This match does not exists</string>
     <string name="commentary_not_exist">Commentary not available for this match yet</string>
-    <string name="scorecard_not_exist">ScoreCard not exists yet</string>
+    <string name="scorecard_not_exist">Scorecard not exists yet</string>
     <string name="table">TABLE</string>
     <string name="form">FORM</string>
     <string name="squad">SQUAD</string>
-    <string name="foot_match_stat_not_exists">Match stats not availlable</string>
+    <string name="foot_match_stat_not_exists">Match stats not available</string>
 
 
     <!-- group related strings-->
@@ -388,4 +388,14 @@ Carrier SMS charges may apply.</string>
     <string name="participant_count">%1$d OF 50</string>
     <string name="umpires">Umpires</string>
     <string name="match_referee">Match Referee</string>
+    <string name="manager">MANAGERS</string>
+    <string name="ucoming_match_day_format">Starts in %s days</string>
+    <string name="home_team_name">localteam</string>
+    <string name="away_team_name">visitorteam</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+
+    <string name="days">%s Days</string>
+    <string name="full_time">Full TIme</string>
+
 </resources>

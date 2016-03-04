@@ -21,7 +21,7 @@ import java.util.HashSet;
 public class CompletedMatchScoreCardHandler {
     private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
     private static Context mContext;
-    private String url = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
+    private String BASEURL = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
 
     private CompletedMatchContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -38,7 +38,7 @@ public class CompletedMatchScoreCardHandler {
     public interface CompletedMatchContentListener {
 
         void handleContent(JSONObject object);
-        public void handleError();
+        void handleError();
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -47,6 +47,7 @@ public class CompletedMatchScoreCardHandler {
         public void onResponse(String s) {
             requestInProcess.remove(REQUEST_TAG);
             CompletedMatchScoreCardHandler.this.handleResponse(s);
+
         }
 
         @Override
@@ -58,8 +59,7 @@ public class CompletedMatchScoreCardHandler {
 
     public void requestCompletdMatchScoreCard(String matchId) {
         Log.i("Score Detail", "Request Score Details");
-
-        url = url+matchId;
+         String url = BASEURL+matchId;
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
@@ -83,12 +83,13 @@ public class CompletedMatchScoreCardHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
-        mContentListener.handleError();
+        if(mContentListener!=null){
+            mContentListener.handleError();
+        }
+
     }
 
     public void addListener(CompletedMatchContentListener contentListener) {
         mContentListener = contentListener;
     }
-
-
 }

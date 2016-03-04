@@ -110,6 +110,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         secondFallofWicketsLinearLayout = (LinearLayout) view.findViewById(R.id.layout_fall_wicket_second);
 
         linearLayout = (LinearLayout) view.findViewById(R.id.scorecard_parent_layout);
+        linearLayout.setVisibility(View.GONE);
         tvFirstTeamInning = (TextView) view.findViewById(R.id.tv_first_team_inning);
         tvSecondTeamInning = (TextView) view.findViewById(R.id.tv_Second_team_inning);
         ivDwn = (ImageView) view.findViewById(R.id.iv_down);
@@ -138,16 +139,21 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         teamBFallOfWicketRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamABattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamABattingCardList);
         teamABattingRecycler.setAdapter(teamABattingAdapter);
+        teamABattingRecycler.setNestedScrollingEnabled(false);
         teamBBattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamBBattingCardList);
         teamBBattingRecycler.setAdapter(teamBBattingAdapter);
+        teamBBattingRecycler.setNestedScrollingEnabled(false);
         teamABowlingAdapter = new LiveAndCompletedCricketBowlingCardAdapter(teamABowlingCardList);
         teamABowlingRecycler.setAdapter(teamABowlingAdapter);
+        teamABowlingRecycler.setNestedScrollingEnabled(false);
         teamBBowlingAdapter = new LiveAndCompletedCricketBowlingCardAdapter(teamBBowlingCardList);
         teamBBowlingRecycler.setAdapter(teamBBowlingAdapter);
         teamAFallOfWicketAdapter = new LiveAndCompletedCricketFallOfWicketAdapter(teamAFallOfWicketCardList);
         teamAFallOfWicketRecycler.setAdapter(teamAFallOfWicketAdapter);
+        teamAFallOfWicketRecycler.setNestedScrollingEnabled(false);
         teamBFallOfWicketAdapter = new LiveAndCompletedCricketFallOfWicketAdapter(teamBFallOfWicketCardList);
         teamBFallOfWicketRecycler.setAdapter(teamBFallOfWicketAdapter);
+        teamBFallOfWicketRecycler.setNestedScrollingEnabled(false);
         initErrorLayout(view);
         ivDwn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -208,12 +214,12 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                     renderDisplay(object);
 
                 } else {
-                    Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();
+
                     showErrorLayout(getView());
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
-                Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+                  showErrorLayout(getView());
             }
         }
     }
@@ -235,12 +241,19 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         hideProgress();
+        teamABattingCardList.clear();
+        teamABowlingCardList.clear();
+        teamAFallOfWicketCardList.clear();
+        teamBBattingCardList.clear();
+        teamBBowlingCardList.clear();
+        teamBFallOfWicketCardList.clear();
+        linearLayout.setVisibility(View.VISIBLE);
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        if(!jsonObject.isNull("data")){
+
                             JSONArray jsonArray = jsonObject.getJSONArray("data");
                             JSONObject dataObject = jsonArray.getJSONObject(0);
                             tvFirstTeamInning.setText(dataObject.getString("team_a") + " Innings");
@@ -365,14 +378,16 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
                                 }
                             }
-                        }
+                            teamABattingAdapter.notifyDataSetChanged();
+                            teamABowlingAdapter.notifyDataSetChanged();
+                            teamAFallOfWicketAdapter.notifyDataSetChanged();
+                            teamBBattingAdapter.notifyDataSetChanged();
+                            teamBBowlingAdapter.notifyDataSetChanged();
+                            teamBFallOfWicketAdapter.notifyDataSetChanged();
 
-                        teamABattingAdapter.notifyDataSetChanged();
-                        teamABowlingAdapter.notifyDataSetChanged();
-                        teamAFallOfWicketAdapter.notifyDataSetChanged();
-                        teamBBattingAdapter.notifyDataSetChanged();
-                        teamBBowlingAdapter.notifyDataSetChanged();
-                        teamBFallOfWicketAdapter.notifyDataSetChanged();
+
+
+
 
                     } catch (Exception ex) {
                         ex.printStackTrace();

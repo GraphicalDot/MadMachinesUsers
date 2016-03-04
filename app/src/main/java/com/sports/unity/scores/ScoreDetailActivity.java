@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.format.Formatter;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -30,9 +31,11 @@ import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
 import com.sports.unity.scores.model.football.FootballMatchJsonCaller;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONObject;
 
+import java.text.Format;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -48,9 +51,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private static final String SCORE_DETAIL_REQUEST_TAG = "score_detail_request_tag";
     private static final String LIST_OF_COMMENTARIES_REQUEST_TAG = "list_commentaries_request_tag";
     private static final String LIST_OF_SUMMARY_REQUEST_TAG = "list_summary_request_tag";
-    private static final String LIST_OF_LINEUP_REQUEST_TAG = "footballmatch_lineup_request_tag";
-    private static final String LIST_OF_FOOTBALLMATCH_STAT_REQUEST_TAG = "footballmatch_stat_request_tag";
-    private static final String LIST_OF_FOOTBALLMATCH_TIMELINE_REQUEST_TAG = "footbalmatch_timeline_request_tag";
+
+
 
 //    private ScoresContentListener contentListener = new ScoresContentListener();
 
@@ -65,6 +67,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private String matchStatus;
     private  String matchTime;
     private Boolean isLive;
+    private View llMatchDetailLinear;
 
     private Timer timerToRefreshContent = null;
 
@@ -74,6 +77,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private ViewPagerFootballScoreDetailAdapter footballScoreDetailAdapter;
     private TextView teamFirstOvers;
     private TextView teamSecondOvers;
+    private TextView tvMatchTime;
+    private TextView getTvMatchDay;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -204,8 +209,13 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             ImageView refreshImage = (ImageView) findViewById(R.id.refresh);
             /*refreshImage.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
+
                 }
-            });*/
+            });
+*/
+            llMatchDetailLinear = findViewById(R.id.ll_match_detail_linear);
+            tvMatchTime = (TextView) findViewById(R.id.tv_match_time);
+            getTvMatchDay = (TextView) findViewById(R.id.tv_game_day);
         }catch (Exception e){
             Log.i("Exception Occured", "initView: ");
             Toast.makeText(this,"Error Occured",Toast.LENGTH_LONG);
@@ -292,21 +302,24 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 Glide.with(this).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(flag1);
                 Glide.with(this).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(flag2);
 
-                //findViewById(R.id.central_score).setVisibility(View.GONE);
+               // findViewById(R.id.central_score).setVisibility(View.GONE);
 
                 ((TextView)findViewById(R.id.venue)).setText(cricketMatchJsonCaller.getVenue());
                 ((TextView)findViewById(R.id.date)).setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
                 tvNeededRun.setText(cricketMatchJsonCaller.getTeam1() + " vs " + cricketMatchJsonCaller.getTeam2() + ", " + cricketMatchJsonCaller.getMatchNumber());
 
                 if ( cricketMatchJsonCaller.getStatus().equals("notstarted") ) {
+
                     tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
+                    tvCurrentScore.setText(DateUtil.getDaysDiffrence(cricketMatchJsonCaller.getMatchDate(), this));
                     showNoCommentaries();
 
                 } else {
 
-                    if ( cricketMatchJsonCaller.getStatus().equals("completed") ) {
-                         tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
+                    if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("completed") ) {
+                         tvCurrentScore.setText(cricketMatchJsonCaller.getWinnerTeam(cricketMatchJsonCaller.getResult())+"Won The Match");
                     } else {
+
                         enableAutoRefreshContent();
                     }
 
@@ -346,6 +359,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         } else if ( sportsType.equals(ScoresJsonParser.FOOTBALL) ) {
             footballMatchJsonCaller.setJsonObject(matchScoreDetails);
 
+
+
+
+
             {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.FILL_PARENT);
                 params.gravity = Gravity.CENTER;
@@ -359,6 +376,15 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
 
             try {
+                if(footballMatchJsonCaller.getMatchTime().equals(footballMatchJsonCaller.getMatchStatus()) && !footballMatchJsonCaller.isLive()){
+                    tvMatchTime.setText(DateUtil.getMatchTime(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000));
+                    getTvMatchDay.setText(DateUtil.getMatchDays(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000, this));
+                    llMatchDetailLinear.setVisibility(View.GONE);
+                }
+                if(!footballMatchJsonCaller.isLive() && footballMatchJsonCaller.getMatchStatus().equalsIgnoreCase("FT")){
+                    getTvMatchDay.setText(R.string.full_time);
+                    llMatchDetailLinear.setVisibility(View.GONE);
+                }
                 Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000)));
                 String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
                 String day = (String) android.text.format.DateFormat.format("dd", date);
@@ -402,7 +428,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     score.append(" - ");
                     score.append(footballMatchJsonCaller.getAwayTeamScore());
 
-                    //textView = (TextView)findViewById(R.id.c);
+                    textView = (TextView)findViewById(R.id.tv_match_time);
                     textView.setText(score.toString());
 
                     requestCommentaries = true;

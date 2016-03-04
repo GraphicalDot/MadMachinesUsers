@@ -21,7 +21,7 @@ public class UpCommingFootballMatchFromHandler {
 
     private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
     private static Context mContext;
-    private String url = "http://52.74.75.79:8080/get_league_standings?league_id=";
+    private String BASEURL = "http://52.74.75.79:8080/get_league_standings?league_id=";
 
     private UpCommingMatchFromContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -57,7 +57,7 @@ public class UpCommingFootballMatchFromHandler {
     public void requestUpcommingMatchFrom(String leagueId) {
         Log.i("Score Detail", "Request Score Details");
 
-        url = url+leagueId;
+       String  url = BASEURL+leagueId;
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);

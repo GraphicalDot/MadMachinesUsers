@@ -20,6 +20,13 @@
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:minHeight="?android:attr/actionBarSize" />
+    <include
+        android:id="@+id/error"
+        layout="@layout/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
+
 
     <ScrollView
         android:layout_width="match_parent"
@@ -103,7 +110,8 @@
                 android:layout_marginLeft="@dimen/horizontal_padding_small"
                 android:layout_marginRight="@dimen/horizontal_padding_small"
                 android:layout_marginTop="@dimen/marginTop_user_info_card"
-                android:background="@color/ColorPrimary">
+                android:background="@drawable/round_edge_black_box">
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -118,44 +126,44 @@
                         <TableRow>
 
                             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                                android:id="@+id/player_age"
+                                android:id="@+id/player_age_value"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight=".5"
                                 android:gravity="center"
                                 android:text=""
                                 android:textColor="@color/Very_dark_gray"
-                                android:textSize="@dimen/font_size_medium" />
+                                android:textSize="@dimen/font_size_very_small" />
 
                             <TextView
                                 android:id="@+id/position_value"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight="1.5"
                                 android:gravity="center"
                                 android:text=""
                                 android:textColor="@color/Very_dark_gray"
-                                android:textSize="@dimen/font_size_medium" />
+                                android:textSize="@dimen/font_size_very_small" />
 
                             <TextView
                                 android:id="@+id/squad_number"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight=".5"
                                 android:gravity="center"
                                 android:text=""
                                 android:textColor="#1a1a1a"
-                                android:textSize="@dimen/font_size_medium" />
+                                android:textSize="@dimen/font_size_very_small" />
 
                             <TextView
                                 android:id="@+id/nationality_value"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight="1.5"
                                 android:gravity="center"
                                 android:text=""
                                 android:textColor="@color/Very_dark_gray"
-                                android:textSize="@dimen/font_size_medium" />
+                                android:textSize="@dimen/font_size_very_small" />
                         </TableRow>
 
                         <TableRow>
@@ -164,7 +172,7 @@
                                 android:id="@+id/age_label"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight=".5"
                                 android:gravity="center"
                                 android:text="@string/age"
                                 android:textColor="@color/dot_color_grey"
@@ -174,7 +182,7 @@
                                 android:id="@+id/position_label"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight="1.5"
                                 android:gravity="center"
                                 android:text="@string/position"
                                 android:textColor="@color/dot_color_grey"
@@ -184,7 +192,7 @@
                                 android:id="@+id/squad_label"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight=".5"
                                 android:gravity="center"
                                 android:text="@string/scored"
                                 android:textColor="@color/dot_color_grey"
@@ -194,7 +202,7 @@
                                 android:id="@+id/nationality_label"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_weight="1"
+                                android:layout_weight="1.5"
                                 android:gravity="center"
                                 android:text="@string/nation"
                                 android:textColor="@color/dot_color_grey"
@@ -204,7 +212,7 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
+       <!--     <LinearLayout
                 android:id="@+id/id_team_summery"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -381,17 +389,16 @@
                         </TableRow>
                     </TableLayout>
                 </LinearLayout>
-            </LinearLayout>
+            </LinearLayout>-->
 
             <LinearLayout
                 android:id="@+id/current_season"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/profile_info"
-                android:layout_marginBottom="@dimen/horizontal_padding_small"
                 android:layout_marginLeft="@dimen/horizontal_padding_small"
                 android:layout_marginRight="@dimen/horizontal_padding_small"
-                android:background="@color/ColorPrimary"
+                android:background="@drawable/round_edge_black_box"
                 android:orientation="vertical">
 
                 <LinearLayout
@@ -403,7 +410,7 @@
                         android:id="@+id/id_current_season"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_very_small"
+                        android:padding="@dimen/horizontal_padding_very_very_small"
                         android:text="Current Season Statistics"
                         android:textColor="@color/dark_blue"
                         android:textSize="@dimen/font_size_small_large" />
@@ -422,52 +429,50 @@
                     <android.support.percent.PercentRelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_small">
+                        android:gravity="center">
 
                         <ImageView
                             android:id="@+id/iv_league"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_weight="1"
+                            android:paddingRight="@dimen/horizontal_padding_medium"
                             android:src="@drawable/ic_league"
-                            app:layout_widthPercent="15%" />
+                            app:layout_widthPercent="21%" />
 
                         <ImageView
                             android:id="@+id/iv_teams"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
+                            android:layout_gravity="left"
+                            android:paddingRight="@dimen/horizontal_padding_medium"
                             android:layout_toRightOf="@id/iv_league"
                             android:src="@drawable/ic_teams"
-                            app:layout_widthPercent="15%" />
+                            app:layout_widthPercent="21%" />
 
                         <ImageView
                             android:id="@+id/iv_match_played"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
+                            android:paddingLeft="@dimen/horizontal_padding_small"
                             android:layout_toRightOf="@id/iv_teams"
-                            android:layout_weight="1"
                             android:src="@drawable/ic_match_played"
-                            app:layout_widthPercent="14%" />
+                            app:layout_widthPercent="12%" />
 
                         <ImageView
                             android:id="@+id/iv_goals_scored"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
+                            android:paddingLeft="@dimen/horizontal_padding_small"
                             android:layout_toRightOf="@id/iv_match_played"
-                            android:layout_weight="1"
                             android:src="@drawable/ic_goals_scored"
-                            app:layout_widthPercent="14%" />
+                            app:layout_widthPercent="12%" />
 
                         <ImageView
                             android:id="@+id/iv_ic_assist"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/iv_goals_scored"
-                            android:layout_weight="1"
+                            android:paddingLeft="@dimen/horizontal_padding_small"
                             android:src="@drawable/ic_assist"
                             app:layout_widthPercent="14%" />
 
@@ -475,52 +480,50 @@
                             android:id="@+id/iv_yellow_card"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
                             android:layout_toRightOf="@id/iv_ic_assist"
                             android:src="@drawable/ic_yellow_card"
-                            app:layout_widthPercent="14%" />
+                            app:layout_widthPercent="10%" />
 
                         <ImageView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
                             android:layout_toRightOf="@id/iv_yellow_card"
                             android:src="@drawable/ic_red_card"
-                            app:layout_widthPercent="14%" />
+                            app:layout_widthPercent="10%" />
                     </android.support.percent.PercentRelativeLayout>
 
                     <android.support.percent.PercentRelativeLayout
                         android:layout_width="match_parent"
+                        android:padding="@dimen/horizontal_padding_very_very_small"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_small">
+                       >
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/league_label_current_season"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:gravity="center"
                             android:text="@string/league"
+                            android:gravity="left"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_small_medium"
-                            app:layout_widthPercent="15%" />
+                            app:layout_widthPercent="21%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/team_label"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/league_label_current_season"
-                            android:gravity="center"
                             android:text="@string/team"
+                            android:gravity="left"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_small_medium"
-                            app:layout_widthPercent="15%" />
+                            app:layout_widthPercent="21%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/geam_label"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/team_label"
-                            android:layout_weight="1"
                             android:gravity="center"
                             android:text="@string/games"
                             android:textColor="@color/dot_color_grey"
@@ -532,19 +535,19 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/geam_label"
-                            android:gravity="center"
                             android:text="@string/goals"
+                            android:gravity="center"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_small_medium"
-                            app:layout_widthPercent="14%" />
+                            app:layout_widthPercent="12%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/goals_label"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/league_label"
-                            android:gravity="center"
                             android:text="@string/assists"
+                            android:gravity="center"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_small_medium"
                             app:layout_widthPercent="14%" />
@@ -554,40 +557,28 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/goals_label"
-                            android:gravity="center"
+                            android:gravity="left"
                             android:text="@string/yc"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_small_medium"
-                            app:layout_widthPercent="14%" />
+                            app:layout_widthPercent="10%" />
 
                         <com.sports.unity.common.view.CustomRobotoRegularTextView
                             android:id="@+id/red_label_season"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/yellow_label_season"
-                            android:gravity="center"
+                            android:gravity="left"
                             android:text="@string/rc"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_small_medium"
-                            app:layout_widthPercent="14%" />
+                            app:layout_widthPercent="10%" />
                     </android.support.percent.PercentRelativeLayout>
 
-                    <TableLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_small"
-                        android:weightSum="7">
-                        <TableRow android:padding="@dimen/horizontal_padding_small">
-
-
-                        </TableRow>
-                    </TableLayout>
                     <android.support.v7.widget.RecyclerView
                         android:id="@+id/rc_player_details"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_small"
-                        app:layoutManager="com.sports.unity.common.view.CustomLinearLayoutManager"
                         tools:listitem="@layout/player_profile_card">
                     </android.support.v7.widget.RecyclerView>
                 </LinearLayout>
@@ -596,20 +587,20 @@
                 android:id="@+id/footer_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/profile_info"
-                android:layout_marginBottom="@dimen/horizontal_padding_small">
+                android:layout_below="@+id/profile_info">
 
-                <android.support.v7.widget.CardView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/activity_vertical_margin"
-                    android:padding="@dimen/horizontal_padding_small"
-                    card:cardCornerRadius="@dimen/card_edge_curve_radius">
+                    android:orientation="vertical"
+                    >
 
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:orientation="vertical"
+                        android:background="@drawable/round_edge_black_box">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -618,7 +609,7 @@
                             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
-                                android:padding="@dimen/horizontal_padding_small"
+                                android:padding="@dimen/horizontal_padding_very_very_small"
                                 android:text="Next Game"
                                 android:textColor="@color/dark_blue"
                                 android:textSize="@dimen/font_size_small_large" />
@@ -632,8 +623,8 @@
                         <LinearLayout
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:padding="@dimen/horizontal_padding_small">
+                            android:padding="@dimen/horizontal_padding_very_very_small"
+                            android:orientation="horizontal">
 
                             <FrameLayout
                                 android:layout_width="wrap_content"
@@ -654,20 +645,20 @@
                                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                                 android:orientation="vertical">
 
-                                <TextView
+                                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                     android:id="@+id/tv_next_game_name"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="left"
-                                    android:text="Chelsea"
+                                    android:text=""
                                     android:textSize="@dimen/font_size_medium" />
 
-                                <TextView
+                                <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                                     android:id="@+id/tv_next_game_details"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:gravity="left"
-                                    android:text="Chelsea"
+                                    android:text=""
                                     android:textColor="@color/gray1"
                                     android:textSize="@dimen/font_size_small_medium" />
                             </LinearLayout>
@@ -675,24 +666,24 @@
                         <RelativeLayout
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:background="@color/gray3"
-                            android:orientation="horizontal"
-                            android:padding="@dimen/horizontal_padding_small">
+                            android:background="@color/gray4"
+                            android:padding="@dimen/horizontal_padding_very_very_small"
+                            android:orientation="horizontal">
 
-                            <TextView
+                            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                                 android:id="@+id/next_game_venue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="@string/venue_name"
+                                android:text=""
                                 android:textSize="@dimen/font_size_small_large" />
 
-                            <TextView
+                            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                                 android:id="@+id/tv_next_game_date"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/next_game_venue"
-                                android:text="match date"
-                                android:textColor="@color/gray1"
+                                android:text=""
+                                android:textColor="@color/news_static"
                                 android:textSize="@dimen/font_size_small_medium" />
 
                             <ImageView
@@ -705,7 +696,7 @@
                                 android:src="@drawable/ic_notification_enable" />
                         </RelativeLayout>
                     </LinearLayout>
-                </android.support.v7.widget.CardView>
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

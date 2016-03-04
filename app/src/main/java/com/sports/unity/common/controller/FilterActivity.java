@@ -3,14 +3,12 @@ package com.sports.unity.common.controller;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
@@ -19,7 +17,6 @@ import com.sports.unity.player.view.PlayerProfileView;
 import com.sports.unity.scoredetails.cricketdetail.PlayerCricketBioDataActivity;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
-
 
 import java.util.ArrayList;
 
@@ -262,12 +259,28 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
 
     }
 
+    //    @Override
+//<<<<<<< HEAD
+//    public void playerProfile(String playerName, String playerId, String sportsType, String FilterType) {
+//        if (Constants.FILTER_TYPE_PLAYER.equals(FilterType)) {
+//            if (Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)) {
+//                Intent intent = new Intent(FilterActivity.this, PlayerProfileView.class);
+//                intent.putExtra(Constants.INTENT_KEY_ID, playerName);
+//                startActivity(intent);
+//            } else {
+//                Intent intent = new Intent(FilterActivity.this, PlayerCricketBioDataActivity.class);
+//                intent.putExtra(Constants.INTENT_KEY_ID, playerId);
+//                startActivity(intent);
+//            }
+//        }
+//    }
+//=======
     @Override
     public void playerProfile(String playerName, String playerId, String sportsType, String FilterType) {
         if (Constants.FILTER_TYPE_PLAYER.equals(FilterType)) {
             if (Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)) {
                 Intent intent = new Intent(FilterActivity.this, PlayerProfileView.class);
-                intent.putExtra(Constants.INTENT_KEY_ID, playerName);
+                intent.putExtra(Constants.INTENT_KEY_ID, playerId);
                 startActivity(intent);
             } else {
                 Intent intent = new Intent(FilterActivity.this, PlayerCricketBioDataActivity.class);
@@ -276,6 +289,7 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
             }
         }
     }
+//>>>>>>> team2_dev_branch
 
 
     /**

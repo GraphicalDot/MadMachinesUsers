@@ -88,8 +88,8 @@
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingBottom="@dimen/vertical_padding_very_very_small"
-            android:paddingLeft="@dimen/horizontal_padding_large"
-            android:paddingRight="@dimen/horizontal_padding_large"
+            android:layout_marginLeft="@dimen/vertical_padding_small"
+            android:layout_marginRight="@dimen/vertical_padding_small"
             android:paddingTop="@dimen/vertical_padding_very_small">
 
             <LinearLayout
@@ -139,6 +139,40 @@
                     android:singleLine="true"
                     android:text=""
                     android:textColor="@color/news_headline_mini"
+                    />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_gravity="left"
+                    android:gravity="center">
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                        android:id="@+id/tv_match_time"
+                        android:paddingTop="@dimen/horizontal_padding_very_very_small"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:textColor="@color/news_headline_mini"
+                        android:textSize="@dimen/font_size_large"
+                        android:text=""
+                        />
+                </LinearLayout>
+                <com.sports.unity.common.view.CustomRobotoRegularTextView
+                    android:id="@+id/tv_game_day"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:paddingTop="@dimen/horizontal_padding_very_very_small"
+                    android:layout_gravity="center"
+                    android:textColor="@color/score_light_grey"
+                    android:textSize="@dimen/font_size_small_medium"
                     />
             </LinearLayout>
             <LinearLayout
@@ -198,6 +232,7 @@
         android:layout_height="1dp"
         android:background="@color/gray3" />
     <LinearLayout
+        android:id="@+id/ll_match_detail_linear"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">

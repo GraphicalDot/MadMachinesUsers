@@ -81,7 +81,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
     }
     public void showProgress() {
-    progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
 
     }
     public void hideProgress() {
@@ -91,8 +91,12 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     private void initView(View view) {
         rcBattingPerformanceSummery = (RecyclerView) view.findViewById(R.id.rc_batting_performance_summary);
         rcBattingPerformanceSummery.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
+        rcBattingPerformanceSummery.setNestedScrollingEnabled(false);
+        rcBattingPerformanceSummery.setHasFixedSize(false);
         rcBowlingPerformanceSummary = (RecyclerView) view.findViewById(R.id.rc_bowling_performance_summary);
         rcBowlingPerformanceSummary.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
+        rcBowlingPerformanceSummary.setNestedScrollingEnabled(false);
+        rcBowlingPerformanceSummary.setHasFixedSize(false);
         battingImageView = (ImageView) view.findViewById(R.id.iv_down);
         bowlingImageView = (ImageView) view.findViewById(R.id.iv_down_second);
         final View battingRow = view.findViewById(R.id.prl_batting);
@@ -103,11 +107,11 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                 if (rcBattingPerformanceSummery.getVisibility() == GONE) {
                     rcBattingPerformanceSummery.setVisibility(VISIBLE);
                     battingRow.setVisibility(VISIBLE);
-                    battingImageView.setImageResource(R.drawable.ic_droable);
+                    battingImageView.setImageResource(R.drawable.ic_down_arrow_gray);
                 } else {
                     rcBattingPerformanceSummery.setVisibility(GONE);
                     battingRow.setVisibility(GONE);
-                    battingImageView.setImageResource(R.drawable.ic_dropdown);
+                    battingImageView.setImageResource(R.drawable.ic_up_arrow_gray);
                 }
             }
         });
@@ -116,11 +120,11 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                 if (rcBowlingPerformanceSummary.getVisibility() == GONE) {
                     rcBowlingPerformanceSummary.setVisibility(VISIBLE);
                     bowlingRow.setVisibility(VISIBLE);
-                    bowlingImageView.setImageResource(R.drawable.ic_droable);
+                    bowlingImageView.setImageResource(R.drawable.ic_down_arrow_gray);
                 } else {
                     rcBowlingPerformanceSummary.setVisibility(GONE);
                     bowlingRow.setVisibility(GONE);
-                    bowlingImageView.setImageResource(R.drawable.ic_dropdown);
+                    bowlingImageView.setImageResource(R.drawable.ic_up_arrow_gray);
                 }
             }
         });
@@ -171,6 +175,20 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     }
 
     private void renderDisplay(JSONObject jsonObject) throws JSONException {
+        playerMatchBattingStatDTOList.clear();
+        playerMatchBowlingStatDTOList.clear();
+        battingTestsmatchMap.clear();
+        battingOdisMap.clear();
+        battingT20sMap .clear();
+        battingIPLMap .clear();
+        bowlingTestsmatchMap .clear();
+        bowlingOdisMap .clear();
+        bowlingT20sMap .clear();
+        bowlingIPLMap .clear();
+
+
+
+
         rcBattingPerformanceSummery.setVisibility(VISIBLE);
         rcBowlingPerformanceSummary.setVisibility(VISIBLE);
         final JSONObject data = (JSONObject) jsonObject.get("data");
@@ -313,7 +331,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     bowlingIPLMap.put("economy", bowling.getString("economy"));
                 }
             }
-       }
+        }
         CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
         Set<String> keySet = bowlingTestsmatchMap.keySet();
         for (String key : keySet) {

@@ -1,77 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <android.support.v7.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/card_view"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:background="@color/ColorPrimary"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:id="@+id/ll_title"
         android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/activity_vertical_margin_small"
+        android:orientation="vertical"
         android:background="@color/ColorPrimary"
         android:layout_height="wrap_content">
-        <LinearLayout
-            android:id="@+id/ll_title"
+        <TextView
+            android:id="@+id/tv_lable"
             android:layout_width="match_parent"
-            android:layout_marginTop="@dimen/activity_vertical_margin_small"
-            android:orientation="vertical"
-            android:background="@color/ColorPrimary"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/tv_lable"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="@dimen/font_size_very_small"
-                android:text="possession(%)"/>
-            <RelativeLayout
-                android:id="@+id/rootLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingRight="@dimen/vertical_padding_very_very_small"
-                android:paddingLeft="@dimen/vertical_padding_very_very_small"
-                android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="@dimen/font_size_very_small"
+            android:text=""/>
+        <LinearLayout
+            android:id="@+id/rootLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/vertical_padding_very_very_small"
+            android:paddingLeft="@dimen/vertical_padding_very_very_small"
+            android:orientation="horizontal"
+            android:weightSum="1">
 
-                <RelativeLayout
-                    android:background="@color/gray3"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginStart="@dimen/activity_horizontal_margin"
-                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+
+            <RelativeLayout
+                android:background="@drawable/shape"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="@dimen/activity_horizontal_margin"
+                android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
                 <View
                     android:id="@+id/v_dummy"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
-                    android:layout_centerInParent="true">
+                    android:layout_centerInParent="true"
+
+                    >
                 </View>
                 <View
-                    android:id="@+id/tv_red"
+                    android:id="@+id/vw_red"
                     android:layout_toLeftOf="@+id/v_dummy"
-                    android:layout_width="90dp"
-                    android:layout_height="40dp"
-                    android:background="@color/brick_red"/>
+                    android:layout_width="0dp"
+                    android:orientation="horizontal"
+                    android:layout_height="24dp"
+                    android:background="@color/brick_red"
+   />
                 <View
-                    android:id="@+id/tv_blue"
+                    android:id="@+id/vw_blue"
                     android:layout_toRightOf="@+id/v_dummy"
-                    android:layout_width="90dp"
-                    android:layout_height="40dp"
-                    android:background="@color/dark_blue"/>
-                    <ImageView
-                        android:id="@+id/iv_right_status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_centerInParent="true"
-                        android:src="@drawable/ic_distance_slider_01"/>
-                </RelativeLayout>
+                    android:layout_width="0dp"
+                    android:orientation="horizontal"
+                    android:layout_height="24dp"
+                    android:background="@color/app_theme_blue"
+                    />
                 <ImageView
+                    android:id="@+id/iv_center_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    />
+               <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/iv_left_status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
-                    android:src="@drawable/ic_distance_slider_01"/>
-                <ImageView
-                    android:layout_alignParentEnd="true"
+                   android:layout_gravity="left"
+                   app:civ_border_color="@color/gray3"
+                   app:civ_border_width="1dp"
+                   />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/iv_right_status"
                     android:layout_alignParentRight="true"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/ic_distance_slider_01"/>
+                    app:civ_border_color="@color/gray3"
+                    app:civ_border_width="1dp"
+                    />
+
             </RelativeLayout>
+
+
+
         </LinearLayout>
-    </android.support.v7.widget.CardView>
+    </LinearLayout>
+</LinearLayout>

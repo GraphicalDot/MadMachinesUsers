@@ -4,13 +4,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.UpCommingFootballMatchTableAdapter;
@@ -24,15 +25,14 @@ import org.json.JSONObject;
 import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_LEAGUE_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
 import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_NAME;
 import static com.sports.unity.util.Constants.INTENT_KEY_TEAM2_NAME;
-import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 
 /**
  * Created by madmachines on 23/2/16.
@@ -50,6 +50,11 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
     private UpCommingFootballMatchTableAdapter adapter;
     private List<UpCommngFootbalMatchTableDTO> list = new ArrayList<>();
     private RecyclerView recyclerView;
+    private TextView tvMatchDate;
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private UpCommingFootballMatchTableHandler upCommingFootballMatchTableHandler;
+    private View llTeamSummary;
+    private ProgressBar progressBar;
     public UpCommingFootballMatchTableFargment() {
         // Required empty public constructor
     }
@@ -63,7 +68,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         date = i.getStringExtra(INTENT_KEY_DATE);
         team1 = i.getStringExtra(INTENT_KEY_TEAM1_NAME);
         team2 = i.getStringExtra(INTENT_KEY_TEAM2_NAME);
-        UpCommingFootballMatchTableHandler upCommingFootballMatchTableHandler = UpCommingFootballMatchTableHandler.getInstance(context);
+        upCommingFootballMatchTableHandler = UpCommingFootballMatchTableHandler.getInstance(context);
         upCommingFootballMatchTableHandler.addListener(this);
         upCommingFootballMatchTableHandler.requestUpcommingMatchTableContent(leagueId);
 
@@ -77,19 +82,35 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         return view;
     }
     private void initView(View view) {
+        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+        tvMatchDate = (TextView) view.findViewById(R.id.tv_match_date);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_table);
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_football_match_table);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setHasFixedSize(false);
         adapter = new UpCommingFootballMatchTableAdapter(list, getContext(),team1,team2);
         recyclerView.setAdapter(adapter);
         initErrorLayout(view);
+        llTeamSummary = view.findViewById(R.id.sv_football_match_table);
+        llTeamSummary.setVisibility(View.GONE);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (upCommingFootballMatchTableHandler != null) {
+                    upCommingFootballMatchTableHandler.requestUpcommingMatchTableContent(leagueId);
+                    swipeRefreshLayout.setRefreshing(true);
+                }
+            }
+        });
 
     }
     @Override
     public void handleContent(String object) {
         {
-
-
-            try {
+           try {
+               showProgressBar();
                 JSONObject jsonObject = new JSONObject(object);
                 boolean success = jsonObject.getBoolean("success");
                 boolean error = jsonObject.getBoolean("error");
@@ -107,6 +128,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
             }
         }
     }
+
     private void initErrorLayout(View view) {
         try {
             LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
@@ -120,13 +142,21 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         errorLayout.setVisibility(View.VISIBLE);
 
     }
-
+    private void  showProgressBar(){
+        progressBar.setVisibility(View.VISIBLE);
+    }
+    private void  hideProgressBar(){
+        progressBar.setVisibility(View.GONE);
+    }
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         final JSONArray dataArray = jsonObject.getJSONArray("data");
-
-
-
+        if(swipeRefreshLayout.isRefreshing()){
+            swipeRefreshLayout.setRefreshing(false);
+        }
+        list.clear();
+        hideProgressBar();
+        llTeamSummary.setVisibility(View.VISIBLE);
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -136,23 +166,29 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
                         for (int i = 0;i< dataArray.length();i++){
                             upCommngFootbalMatchTableDTO = new UpCommngFootbalMatchTableDTO();
                             JSONObject teamObject = dataArray.getJSONObject(i);
-                            upCommngFootbalMatchTableDTO.setTvSerialNumber(String.valueOf(i + 1));
+                            if(!teamObject.isNull("stand_season"))
+                                tvMatchDate.setText(teamObject.getString("stand_season"));
                             if(!teamObject.isNull("flag_image"))
-                            upCommngFootbalMatchTableDTO.setIvTeamProfileImage(teamObject.getString("flag_image"));
+                                upCommngFootbalMatchTableDTO.setIvTeamProfileImage(teamObject.getString("flag_image"));
                             if(!teamObject.isNull("team_name"))
-                            upCommngFootbalMatchTableDTO.setTvTeamName(teamObject.getString("team_name"));
+                            {
+                                upCommngFootbalMatchTableDTO.setTvTeamName(teamObject.getString("team_name"));
+
+                            }
                             if(!teamObject.isNull("games_drawn"))
-                            upCommngFootbalMatchTableDTO.setTvD(teamObject.getString("games_drawn"));
+                                upCommngFootbalMatchTableDTO.setTvD(teamObject.getString("games_drawn"));
                             if(!teamObject.isNull("games_lost"))
-                            upCommngFootbalMatchTableDTO.setTvL(teamObject.getString("games_lost"));
+                                upCommngFootbalMatchTableDTO.setTvL(teamObject.getString("games_lost"));
                             if(!teamObject.isNull("team_points"))
-                            upCommngFootbalMatchTableDTO.setTvP(teamObject.getString("team_points"));
+                                upCommngFootbalMatchTableDTO.setTvP(teamObject.getString("team_points"));
                             if(!teamObject.isNull("games_won"))
-                            upCommngFootbalMatchTableDTO.setTvW(teamObject.getString("games_won"));
+                                upCommngFootbalMatchTableDTO.setTvW(teamObject.getString("games_won"));
                             if(!teamObject.isNull("team_points"))
-                            upCommngFootbalMatchTableDTO.setTvPts(teamObject.getString("team_points"));
+                                upCommngFootbalMatchTableDTO.setTvPts(teamObject.getString("team_points"));
                             list.add(upCommngFootbalMatchTableDTO);
+
                         }
+
                         adapter.notifyDataSetChanged();
                     } catch (Exception ex) {
                         ex.printStackTrace();

@@ -75,6 +75,9 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         private TextView venue;
         private TextView date;
         private TextView odds;
+        private TextView team1Overs;
+        private TextView team2Overs;
+        private TextView matchMinutes;
 
         private View view;
 
@@ -94,6 +97,9 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             venue = (TextView) v.findViewById(R.id.venue);
             date = (TextView) v.findViewById(R.id.date);
             odds = (TextView) v.findViewById(R.id.show_odds);
+            team1Overs = (TextView) v.findViewById(R.id.t1over);
+            team2Overs = (TextView) v.findViewById(R.id.t2over);
+            matchMinutes = (TextView) v.findViewById(R.id.minutes);
 
         }
     }
@@ -204,13 +210,15 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     stringBuilder.append("/");
                     stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
                     holder.t1score.setText(stringBuilder.toString());
-
+                    holder.team1Overs.setText(cricketMatchJsonCaller.getOvers(score));
                     score = cricketMatchJsonCaller.getTeam2Score();
                     stringBuilder = new StringBuilder("");
                     stringBuilder.append(cricketMatchJsonCaller.getScore(score));
                     stringBuilder.append("/");
                     stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
-                    holder.t2score.setText( stringBuilder.toString());
+                    holder.t2score.setText(stringBuilder.toString());
+                   holder.team2Overs.setText(cricketMatchJsonCaller.getOvers(score));
+
                 }
 
                 if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {
@@ -256,7 +264,9 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     holder.t2score.setText( "");
                 } else {
                     if( footballMatchJsonCaller.isLive() ){
+                        holder.matchMinutes.setText(footballMatchJsonCaller.getMatchMinute());
                         holder.liveText.setVisibility(View.VISIBLE);
+
                     } else {
                         holder.matchDay.setText("Completed");
                         holder.liveText.setVisibility(View.GONE);

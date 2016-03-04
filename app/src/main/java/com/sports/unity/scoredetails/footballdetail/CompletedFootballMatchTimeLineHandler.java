@@ -21,7 +21,7 @@ public class CompletedFootballMatchTimeLineHandler {
 
     private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
     private static Context mContext;
-    private String url = "http://52.74.75.79:8080/get_football_match_timeline?match_id=";
+    private String BASEURL = "http://52.74.75.79:8080/get_football_match_timeline?match_id=";
 
     private CompletedMatchContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -56,8 +56,7 @@ public class CompletedFootballMatchTimeLineHandler {
 
     public void requestCompletedMatchTimeLine(String matchId) {
         Log.i("Score Detail", "Request Score Details");
-
-        url = url+matchId;
+        String url = BASEURL+matchId;
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);

@@ -10,7 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
+
 
 
 import org.json.JSONObject;
@@ -23,7 +23,7 @@ import java.util.HashSet;
 public class LivedMatchScoreCardHandler {
     private static final String REQUEST_TAG = "LIVE_CRICKET_MATCH_TAG";
     private static Context mContext;
-    private String url = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
+    private String BASEURL = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
 
     private LiveMatchContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -60,7 +60,7 @@ public class LivedMatchScoreCardHandler {
     public void requestMatchScoreCard(String matchId) {
         Log.i("Score Detail", "Request Score Details");
 
-        url = url+matchId;
+        String url = BASEURL+matchId;
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
@@ -69,7 +69,7 @@ public class LivedMatchScoreCardHandler {
         requestInProcess.add(REQUEST_TAG);
     }
     private void handleResponse(String response) {
-        Gson gson = new Gson();
+
         try{
             JSONObject jsonObject = new JSONObject(response);
             Log.i("Score Card", "handleResponse: ");

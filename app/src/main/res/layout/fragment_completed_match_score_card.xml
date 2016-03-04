@@ -6,19 +6,7 @@
     android:background="@color/ColorPrimary"
     android:focusableInTouchMode="true"
     android:orientation="vertical">
-    <include
-        android:id="@+id/error"
-        layout="@layout/error_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
 
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"/>
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -370,10 +358,6 @@
                         android:textColor="@color/news_static"
                         android:textSize="@dimen/font_size_small_medium" />
                 </LinearLayout>
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray4"></View>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_team_first_fall_wickets"
                     android:layout_width="match_parent"
@@ -728,11 +712,6 @@
                         android:textColor="@color/news_static"
                         android:textSize="@dimen/font_size_small_medium"/>
                 </LinearLayout>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray3"></View>
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_second_team_fall_wicket"
                     android:layout_width="match_parent"
@@ -746,5 +725,17 @@
 
     </ScrollView>
 
+    <include
+        android:id="@+id/error"
+        layout="@layout/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"/>
 
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
 </LinearLayout>

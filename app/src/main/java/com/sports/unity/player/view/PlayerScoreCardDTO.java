@@ -6,11 +6,11 @@ package com.sports.unity.player.view;
 public class PlayerScoreCardDTO {
     private String leagueName;
     private String teamName;
-    private int noOfGames;
-    private int noOfgoals;
-    private int noOfAssists;
-    private int noOfYellowCard;
-    private int noOfRedCard;
+    private String noOfGames;
+    private String noOfgoals;
+    private String noOfAssists;
+    private String noOfYellowCard;
+    private String noOfRedCard;
 
     public String getLeagueName() {
         return leagueName;
@@ -28,42 +28,43 @@ public class PlayerScoreCardDTO {
         this.teamName = teamName;
     }
 
-    public int getNoOfGames() {
+    public String getNoOfGames() {
         return noOfGames;
     }
-    public void setNoOfGames(int noOfGames) {
+
+    public void setNoOfGames(String noOfGames) {
         this.noOfGames = noOfGames;
     }
 
-    public int getNoOfgoals() {
+    public String getNoOfgoals() {
         return noOfgoals;
     }
 
-    public void setNoOfgoals(int noOfgoals) {
+    public void setNoOfgoals(String noOfgoals) {
         this.noOfgoals = noOfgoals;
     }
 
-    public int getNoOfAssists() {
+    public String getNoOfAssists() {
         return noOfAssists;
     }
 
-    public void setNoOfAssists(int noOfAssists) {
+    public void setNoOfAssists(String noOfAssists) {
         this.noOfAssists = noOfAssists;
     }
 
-    public int getNoOfYellowCard() {
+    public String getNoOfYellowCard() {
         return noOfYellowCard;
     }
 
-    public void setNoOfYellowCard(int noOfYellowCard) {
+    public void setNoOfYellowCard(String noOfYellowCard) {
         this.noOfYellowCard = noOfYellowCard;
     }
 
-    public int getNoOfRedCard() {
+    public String getNoOfRedCard() {
         return noOfRedCard;
     }
 
-    public void setNoOfRedCard(int noOfRedCard) {
+    public void setNoOfRedCard(String noOfRedCard) {
         this.noOfRedCard = noOfRedCard;
     }
 }

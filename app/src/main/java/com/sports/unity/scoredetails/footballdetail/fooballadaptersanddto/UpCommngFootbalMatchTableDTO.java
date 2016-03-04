@@ -7,7 +7,7 @@ import android.widget.TextView;
  * Created by madmachines on 25/2/16.
  */
 public class UpCommngFootbalMatchTableDTO  {
-    private String tvSerialNumber;
+
     private String ivTeamProfileImage;
     private String tvTeamName;
     private String tvP;
@@ -16,13 +16,6 @@ public class UpCommngFootbalMatchTableDTO  {
     private String tvL;
     private String tvPts;
 
-    public String getTvSerialNumber() {
-        return tvSerialNumber;
-    }
-
-    public void setTvSerialNumber(String tvSerialNumber) {
-        this.tvSerialNumber = tvSerialNumber;
-    }
 
     public String getIvTeamProfileImage() {
         return ivTeamProfileImage;
@@ -79,4 +72,6 @@ public class UpCommngFootbalMatchTableDTO  {
     public void setTvPts(String tvPts) {
         this.tvPts = tvPts;
     }
+
+
 }

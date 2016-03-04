@@ -14,7 +14,7 @@
         android:paddingRight="@dimen/horizontal_padding_small"
         android:paddingBottom="@dimen/horizontal_padding_very_very_small"
         android:paddingTop="@dimen/horizontal_padding_very_very_small">
-        <com.sports.unity.common.view.CustomRobotoRegularTextView
+        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:id="@+id/tv_wicket"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -23,7 +23,7 @@
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
             app:layout_widthPercent="30%" />
-        <com.sports.unity.common.view.CustomRobotoRegularTextView
+        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:id="@+id/tv_bowler_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
             app:layout_widthPercent="45%" />
-        <com.sports.unity.common.view.CustomRobotoRegularTextView
+        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:id="@+id/tv_over_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

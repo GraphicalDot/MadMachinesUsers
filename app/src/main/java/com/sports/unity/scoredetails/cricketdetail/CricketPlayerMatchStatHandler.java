@@ -19,7 +19,7 @@ public class CricketPlayerMatchStatHandler {
 
     private static final String REQUEST_TAG = "CRICKET_PLAYER_STATS_TAG";
     private static Context mContext;
-    private String url = "http://52.76.74.188:5400/get_player_stats?player_id=";
+    private String BASEURL = "http://52.76.74.188:5400/get_player_stats?player_id=";
 
 
     private CricketPlayerMatchStatContentListener mContentListener = null;
@@ -55,8 +55,7 @@ public class CricketPlayerMatchStatHandler {
     };
     public void requestData(String playerId) {
         Log.i("Score Detail", "Request Score Details");
-
-        url = url+playerId;
+        String url =  BASEURL+playerId;
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
