@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/filter_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#fff">
+    android:background="#fff"
+    android:orientation="vertical">
 
     <include
         android:id="@+id/tool_bar"
@@ -12,11 +13,11 @@
         android:layout_height="?android:attr/actionBarSize"
         android:minHeight="?android:attr/actionBarSize" />
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/filter1"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tool_bar">
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/category"
@@ -24,7 +25,10 @@
             android:layout_height="wrap_content"
             android:background="@color/gray3"
             android:orientation="horizontal"
-            android:padding="@dimen/horizontal_padding_very_small">
+            android:paddingBottom="@dimen/vertical_padding_very_small"
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
+            android:paddingRight="@dimen/horizontal_padding_very_small"
+            android:paddingTop="@dimen/vertical_padding_very_small">
 
             <TextView
                 android:id="@+id/filter"
@@ -38,8 +42,8 @@
                 android:id="@+id/edit"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/edit_sports"
                 android:gravity="right"
+                android:text="@string/edit_sports"
                 android:textColor="@color/gray2"
                 android:textSize="@dimen/font_size_small_large" />
 
@@ -47,12 +51,15 @@
 
         <LinearLayout
             android:id="@+id/cricket"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/category"
             android:onClick="onCheckboxClicked"
             android:orientation="horizontal"
-            android:padding="@dimen/horizontal_padding_very_small">
+            android:paddingBottom="@dimen/vertical_padding_very_small"
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
+            android:paddingRight="@dimen/horizontal_padding_very_small"
+            android:paddingTop="@dimen/vertical_padding_very_small"
+            android:visibility="gone">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -82,10 +89,13 @@
             android:id="@+id/football"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/cricket"
             android:onClick="onCheckboxClicked"
             android:orientation="horizontal"
-            android:padding="@dimen/horizontal_padding_very_small">
+            android:paddingBottom="@dimen/vertical_padding_very_small"
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
+            android:paddingRight="@dimen/horizontal_padding_very_small"
+            android:paddingTop="@dimen/vertical_padding_very_small"
+            android:visibility="gone">
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -111,12 +121,11 @@
                 android:clickable="false"
                 android:gravity="right" />
         </LinearLayout>
-    </RelativeLayout>
+    </LinearLayout>
 
     <LinearLayout
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/filter1"
         android:orientation="vertical">
 
         <LinearLayout
@@ -124,7 +133,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/gray3"
-            android:padding="@dimen/horizontal_padding_very_small">
+            android:paddingBottom="@dimen/vertical_padding_very_small"
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
+            android:paddingRight="@dimen/horizontal_padding_very_small"
+            android:paddingTop="@dimen/vertical_padding_very_small">
 
             <TextView
                 android:id="@+id/filter3"
@@ -144,7 +156,7 @@
             android:elevation="@dimen/toolbar_elevation" />
 
         <View
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="@color/app_theme_blue" />
 
@@ -156,4 +168,4 @@
 
 
     </LinearLayout>
-</RelativeLayout>
+</LinearLayout>

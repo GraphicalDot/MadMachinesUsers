@@ -4,6 +4,9 @@
     android:layout_height="wrap_content"
     android:background="?android:selectableItemBackground"
     android:gravity="center"
-    android:padding="@dimen/vertical_padding_very_small"
+    android:paddingBottom="@dimen/vertical_padding_very_small"
+    android:paddingLeft="@dimen/horizontal_padding_very_small"
+    android:paddingRight="@dimen/horizontal_padding_very_small"
+    android:paddingTop="@dimen/vertical_padding_very_small"
     android:textSize="@dimen/font_size_very_small"
     android:textStyle="bold" />

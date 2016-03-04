@@ -3,11 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingLeft="@dimen/horizontal_padding_medium">
+    android:paddingLeft="@dimen/padding">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <ExpandableListView
             android:id="@+id/fav_sports"
             android:layout_width="match_parent"
@@ -16,20 +16,17 @@
             android:fitsSystemWindows="true"
             android:nestedScrollingEnabled="true"
             android:scrollbars="none" />
-
         <TextView
-        android:id="@+id/edit_sports"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/drawer_header_height"
-        android:layout_toLeftOf="@+id/sportsindi"
-        android:gravity="center"
-        android:paddingLeft="@dimen/horizontal_padding_small"
-        android:paddingRight="@dimen/horizontal_padding_small"
-        android:text="@string/nav_edit"
-        android:textColor="@color/app_theme_blue"
-        android:textSize="@dimen/font_size_very_small"
-        android:visibility="invisible" />
-
+            android:id="@+id/edit_sports"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/drawer_header_height"
+            android:layout_toLeftOf="@+id/sportsindi"
+            android:gravity="center"
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:text="@string/nav_edit"
+            android:textColor="@color/app_theme_blue"
+            android:textSize="@dimen/font_size_very_small"
+            android:visibility="invisible" />
         <ImageView
             android:id="@+id/sportsindi"
             android:layout_width="wrap_content"
@@ -45,10 +42,10 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/gray3"></LinearLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
         <ExpandableListView
             android:id="@+id/fav_team"
             android:layout_width="match_parent"
@@ -57,20 +54,6 @@
             android:fitsSystemWindows="true"
             android:nestedScrollingEnabled="true"
             android:scrollbars="none" />
-
-        <!--<TextView-->
-        <!--android:id="@+id/edit_team"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="@dimen/drawer_header_height"-->
-        <!--android:layout_toLeftOf="@+id/favindi"-->
-        <!--android:gravity="center"-->
-        <!--android:paddingLeft="@dimen/horizontal_padding_small"-->
-        <!--android:paddingRight="@dimen/horizontal_padding_small"-->
-        <!--android:text="@string/nav_edit"-->
-        <!--android:textColor="@color/app_theme_blue"-->
-        <!--android:textSize="@dimen/font_size_very_small"-->
-        <!--android:visibility="invisible" />-->
-
         <ImageView
             android:id="@+id/favindi"
             android:layout_width="wrap_content"
@@ -90,18 +73,14 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-
         <ExpandableListView
             android:id="@+id/complist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/edit_comp"
             android:divider="@null"
             android:fitsSystemWindows="true"
             android:nestedScrollingEnabled="true"
             android:scrollbars="none" />
-
         <TextView
             android:id="@+id/edit_comp"
             android:layout_width="wrap_content"
@@ -114,7 +93,6 @@
             android:textColor="@color/app_theme_blue"
             android:textSize="@dimen/font_size_very_small"
             android:visibility="invisible" />
-
         <ImageView
             android:id="@+id/compindi"
             android:layout_width="wrap_content"
@@ -124,7 +102,6 @@
             android:paddingRight="@dimen/horizontal_padding_small"
             android:scaleType="center"
             android:src="@drawable/ic_side_nav_expand" />
-
     </RelativeLayout>
 
     <LinearLayout
@@ -137,7 +114,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/nav_item_margin_v"
         android:orientation="vertical">
-
         <TextView
             android:id="@+id/settings"
             android:layout_width="match_parent"
@@ -146,7 +122,6 @@
             android:text="@string/settings"
             android:textColor="@color/gray1"
             android:textSize="@dimen/font_size_small_large" />
-
         <TextView
             android:id="@+id/feedback"
             android:layout_width="match_parent"
@@ -155,7 +130,6 @@
             android:text="@string/feedback"
             android:textColor="@color/gray1"
             android:textSize="@dimen/font_size_small_large" />
-
         <TextView
             android:id="@+id/rate"
             android:layout_width="match_parent"
@@ -164,8 +138,6 @@
             android:text="@string/app_rate"
             android:textColor="@color/gray1"
             android:textSize="@dimen/font_size_small_large" />
-
-
         <TextView
             android:id="@+id/about"
             android:layout_width="match_parent"
@@ -174,7 +146,6 @@
             android:text="@string/about"
             android:textColor="@color/gray1"
             android:textSize="@dimen/font_size_small_large" />
-
-
     </LinearLayout>
+
 </LinearLayout>

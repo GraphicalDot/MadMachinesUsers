@@ -58,7 +58,6 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
     }
 
     public View getView(final int position, View view, ViewGroup parent) {
-        Log.d("max", "position is-+" + position);
         Contacts contacts = null;
         try {
             contacts = usedContact.get(position);

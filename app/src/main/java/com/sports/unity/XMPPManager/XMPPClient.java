@@ -31,6 +31,7 @@ public class XMPPClient {
 
     public static String SERVER_HOST = "52.74.142.219"; //staging server
 //    public static String SERVER_HOST = "54.169.217.88"; //production server
+//    public static String SERVER_HOST = "192.168.1.143"; //local server
     public static int SERVER_PORT = 5222;
     public static String SERVICE_NAME = "mm.io";
 
@@ -124,45 +125,6 @@ public class XMPPClient {
             //nothing
         }
         return authenticated;
-    }
-
-    public void sendOfflinePresence() {
-        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
-            Presence presence = new Presence(Presence.Type.available);
-            presence.setStatus("Offline");
-            try {
-                connection.sendStanza(presence);
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            }
-
-            Message message = new Message("settimedev@mm.io", Message.Type.headline);
-            message.setBody(String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()));
-            try {
-                connection.sendPacket(message);
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            }
-        } else {
-            //nothing
-        }
-    }
-
-    public void sendOnlinePresence() {
-        if (connection != null && connection.isConnected() && connection.isAuthenticated()) {
-            Presence presence = new Presence(Presence.Type.available);
-            presence.setStatus("Online");
-            Message message = new Message("settimedev@mm.io", Message.Type.headline);
-            message.setBody(String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()));
-            try {
-                connection.sendStanza(presence);
-                connection.sendStanza(message);
-            } catch (SmackException.NotConnectedException e) {
-                e.printStackTrace();
-            }
-        } else {
-            //nothing
-        }
     }
 
     synchronized public boolean authenticateConnection(Context context) {

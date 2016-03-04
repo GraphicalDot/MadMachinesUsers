@@ -332,6 +332,9 @@ public class SettingsHelper {
             }
             mediaListing.append("Video");
         }
+        if( mediaListing.length() == 0  ){
+            mediaListing.append("No Media");
+        }
         return mediaListing.toString();
     }
 
@@ -351,6 +354,9 @@ public class SettingsHelper {
                 mediaListing.append(", ");
             }
             mediaListing.append("Video");
+        }
+        if( mediaListing.length() == 0  ){
+            mediaListing.append("No Media");
         }
         return mediaListing.toString();
     }

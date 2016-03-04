@@ -143,7 +143,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                         String message = currentMessage.getDisplayMessageBody();
 
                         try {
-                            if (senderNum.contains("SPOUNI")) {
+                            if (senderNum.contains("SPOUNI") || senderNum.contains("INFINI")) {
                                 String str = message.replaceAll("\\D+", "");
                                 otpEditText.setText(str);
                                 createUser();
@@ -195,7 +195,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
         TextView otpText = (TextView) findViewById(com.sports.unity.R.id.enterotpText);
         otpText.setText(getString(R.string.otp_message_verification) +"+"+ countryCode +" "+ getPhoneNumber());
-        otpText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+        otpText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoLight());
 
         otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         otpEditText.addTextChangedListener(new TextWatcher() {
@@ -307,7 +307,6 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                     String userJid = response.getString(Constants.REQUEST_PARAMETER_KEY_USER_NAME);
                     TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_USER_JID, userJid);
 
-                    Log.d("max", "Jid is-" + userJid);
                     TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
                     UserUtil.setOtpSent(EnterOtpActivity.this, false);
                     UserUtil.setUserRegistered(EnterOtpActivity.this, true);

@@ -6,12 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.SearchView;
+import android.text.Html;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -87,13 +89,21 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
             friendsUnreadCount.setVisibility(View.GONE);
         } else {
             friendsUnreadCount.setVisibility(View.VISIBLE);
-            friendsUnreadCount.setText(String.valueOf(friendsChatUnreadCount));
+            if (friendsChatUnreadCount > 99) {
+                friendsUnreadCount.setText(Html.fromHtml("99<sup>+</sup>"));
+            } else {
+                friendsUnreadCount.setText(String.valueOf(friendsChatUnreadCount));
+            }
         }
         if (otherChatUnreadCount == 0) {
             othersUnreadCount.setVisibility(View.GONE);
         } else {
             othersUnreadCount.setVisibility(View.VISIBLE);
-            othersUnreadCount.setText(String.valueOf(otherChatUnreadCount));
+            if (otherChatUnreadCount > 99) {
+                othersUnreadCount.setText(Html.fromHtml("99<sup>+</sup>"));
+            } else {
+                othersUnreadCount.setText(String.valueOf(otherChatUnreadCount));
+            }
         }
         ((MainActivity) getActivity()).updateUnreadMessages(messagesCount);
     }

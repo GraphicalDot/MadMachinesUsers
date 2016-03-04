@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@android:color/black">
 
     <FrameLayout
         android:id="@+id/camera_preview"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@android:color/transparent" />
 
     <ImageView
         android:id="@+id/taken_picture"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:scaleType="center"
         android:visibility="gone" />
 
@@ -24,7 +24,10 @@
         android:layout_height="wrap_content"
         android:background="@color/semi_transparent"
         android:orientation="horizontal"
-        android:padding="@dimen/vertical_padding_very_very_small"
+        android:paddingBottom="@dimen/vertical_padding_very_very_small"
+        android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+        android:paddingRight="@dimen/horizontal_padding_very_very_small"
+        android:paddingTop="@dimen/vertical_padding_very_very_small"
         android:visibility="gone">
 
         <TextView
@@ -32,7 +35,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/horizontal_padding_very_small"
-            android:text="Send to"
+            android:text="@string/send_to"
             android:textColor="@android:color/white"
             android:textSize="@dimen/font_size_small_large" />
 
@@ -46,8 +49,8 @@
             android:textSize="@dimen/font_size_medium" />
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:gravity="right"
             android:orientation="horizontal">
 
@@ -71,7 +74,7 @@
 
     <RelativeLayout
         android:id="@+id/camera_config_layout"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@color/semi_transparent"
@@ -82,7 +85,7 @@
 
         <TextView
             android:id="@+id/hold_message"
-            android:layout_width="fill_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="@dimen/vertical_padding_very_small"
@@ -127,9 +130,10 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
         android:visibility="gone" />
+
     <LinearLayout
         android:id="@+id/send_discard_layout"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:background="@color/semi_transparent"

@@ -74,7 +74,6 @@ public class GroupInfoActivity extends CustomAppCompatActivity {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
         SportsUnityDBHelper.GroupParticipants participants = sportsUnityDBHelper.getGroupParticipants(chatID);
         groupParticipants = participants.usersInGroup;
-        Log.d("max", "size is>" + groupParticipants.size());
         String partCount = getResources().getString(R.string.participant_count);
         partCount = String.format(partCount, groupParticipants.size());
 

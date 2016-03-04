@@ -9,11 +9,10 @@
         android:layout_width="fill_parent"
         android:layout_height="@dimen/menu_item_height"
         android:layout_gravity="right"
+        android:clickable="false"
+        android:focusable="false"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:text="Mute"
-        android:textColor="@color/popup_menu_options"
-        android:focusable="false"
-        android:clickable="false"
-        />
+        android:textColor="@color/popup_menu_options" />
 
 </LinearLayout>

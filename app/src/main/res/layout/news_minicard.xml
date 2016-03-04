@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:background="@color/ColorPrimary"
-        android:layout_marginBottom="@dimen/vertical_padding_very_small">
+        android:layout_marginBottom="@dimen/horizontal_padding_very_small">
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:layout_width="fill_parent"
@@ -25,24 +25,15 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 android:scaleType="centerCrop"
-
                 />
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <TextView
-                    android:id="@+id/TitleText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:maxLines="2"
-                    android:padding="@dimen/vertical_padding_very_small"
-                    android:textColor="@color/news_headline_mini"
-                    android:text="This is my news article\nplease help :P"
-                    android:textSize="@dimen/font_size_small_large" />
+                android:layout_height="match_parent"
+               >
 
                 <LinearLayout
+                    android:id="@+id/bottom"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -50,23 +41,18 @@
                     android:padding="@dimen/vertical_padding_very_very_small"
                     android:layout_alignParentBottom="true"
                     >
-
-                   // android:layout_width="@dimen/news_fav_icon_small_width"
-                    //android:layout_height="@dimen/news_fav_icon_height"
                     <ImageView
                         android:id="@+id/fab_icon"
-                        android:layout_width="@dimen/news_fav_icon_small_width"
+                        android:layout_width="@dimen/news_fav_icon_large_width"
                         android:layout_height="@dimen/news_fav_icon_height"
                         android:scaleType="centerInside"
                         android:layout_gravity="center"
-                        android:paddingLeft="@dimen/vertical_padding_very_small"
-                        android:paddingRight="@dimen/vertical_padding_very_small"/>
-
+                        android:paddingLeft="@dimen/horizontal_padding_very_small"
+                        android:paddingRight="@dimen/horizontal_padding_very_small"/>
                     <View
                         android:layout_width="1dp"
                         android:layout_height="fill_parent"
                         android:background="@color/news_vertical_strip" />
-
                     <TextView
                         android:id="@+id/published"
                         android:layout_width="wrap_content"
@@ -75,22 +61,37 @@
                         android:text="published"
                         android:textSize="@dimen/font_size_very_small"
                         android:layout_gravity="center"
-                        android:paddingLeft="@dimen/vertical_padding_very_small"
-                         />
-
+                        android:paddingLeft="@dimen/horizontal_padding_very_small"
+                        />
                     <TextView
                         android:id="@+id/type"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="right"
                         android:layout_gravity="center"
-                        android:paddingRight="@dimen/vertical_padding_very_small"
+                        android:paddingRight="@dimen/horizontal_padding_very_small"
                         android:textAllCaps="true"
                         android:text="CRICKET"
                         android:textColor="@color/app_theme_blue"
                         android:textSize="@dimen/font_size_very_small" />
                 </LinearLayout>
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_above="@+id/bottom"
+                    android:gravity="center">
+                    <TextView
+                        android:id="@+id/TitleText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLines="2"
+                        android:paddingLeft="@dimen/horizontal_padding_very_small"
+                        android:paddingRight="@dimen/horizontal_padding_very_small"
+                        android:textColor="@color/news_headline_mini"
+                        android:text="This is my news article\nplease help :P"
+                        android:textSize="@dimen/font_size_small_large" />
+                </LinearLayout>
             </RelativeLayout>
         </LinearLayout>
 

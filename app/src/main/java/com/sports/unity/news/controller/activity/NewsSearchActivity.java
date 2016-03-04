@@ -21,12 +21,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.news.controller.fragment.NewsFragment;
 import com.sports.unity.news.model.NewsContentHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
-public class NewsSearchActivity extends AppCompatActivity {
+public class NewsSearchActivity extends CustomAppCompatActivity {
     private Bundle searchFilterBundle;
 
     private static final String NEWS_FRAGMENT_TAG = "news_fragment_tag";

@@ -5,6 +5,4 @@
     android:orientation="vertical"
     tools:context="com.sports.unity.Activity.SelectSportsActivity">
 
-
-
 </RelativeLayout>

@@ -228,7 +228,6 @@ public class GetCountryCode extends AppCompatActivity {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
                 String searchQwery=constraint.toString().toLowerCase();
-                Log.d("max","Filtering"+searchQwery);
                 FilterResults results = new FilterResults();
                 ArrayList<String>finalName= countryNameList;
                 ArrayList<String>finalCode= countryCodeList;
@@ -237,8 +236,6 @@ public class GetCountryCode extends AppCompatActivity {
                 ArrayList<String> searchName = new ArrayList<String>();
                 for(int i=0;i<finalName.size();i++){
                     if(finalName.get(i).toLowerCase().contains(searchQwery)){
-
-                        Log.d("max","inside--searchName->"+searchQwery+"<contry>+"+finalName.get(i).toLowerCase());
                         usedCountryCode.add(finalCode.get(i));
                         usedCountryName.add(finalName.get(i));                    }
                 }

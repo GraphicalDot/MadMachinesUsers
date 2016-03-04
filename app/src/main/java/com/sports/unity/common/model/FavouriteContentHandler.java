@@ -2,6 +2,7 @@ package com.sports.unity.common.model;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
@@ -572,6 +573,8 @@ public class FavouriteContentHandler {
                                 item.setName(s);
                                 s = obj.getString("league_id");
                                 item.setId(s);
+                                s=obj.getString("flag_image");
+                                item.setFlagImageUrl(s);
                                 item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                 item.setFilterType(Constants.FILTER_TYPE_LEAGUE);
                                 if (savedFavList.contains(item)) {
@@ -674,6 +677,8 @@ public class FavouriteContentHandler {
                                     item.setName(s);
                                     s = obj.getString("league_id");
                                     item.setId(s);
+                                    s=obj.getString("flag_image");
+                                    item.setFlagImageUrl(s);
                                     item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                     item.setFilterType(Constants.FILTER_TYPE_LEAGUE);
                                     if (savedFavList.contains(item)) {
@@ -756,7 +761,6 @@ public class FavouriteContentHandler {
                     }
                 } else {
                     /*for (ListPreparedListener l : listPreparedListener) {
-                        Log.d("max","sending response");
                         l.onListPrepared(false, noResultMessage);
                     }*/
                 }

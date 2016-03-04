@@ -417,7 +417,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity {
 
     private boolean createContact(String jid, Context context, VCard vCard) {
         boolean success = false;
-        SportsUnityDBHelper.getInstance(context).addToContacts(vCard.getNickName(), null, jid, ContactsHandler.getInstance().defaultStatus, null, false);
+        SportsUnityDBHelper.getInstance(context).addToContacts(vCard.getNickName(), null, jid, ContactsHandler.getInstance().defaultStatus, null, SportsUnityDBHelper.AVAILABLE_BY_PEOPLE_AROUND_ME);
         SportsUnityDBHelper.getInstance(context).updateContacts(jid, vCard.getAvatar(), vCard.getMiddleName());
         return success;
     }

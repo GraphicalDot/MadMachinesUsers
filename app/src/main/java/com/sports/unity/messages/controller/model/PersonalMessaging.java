@@ -9,6 +9,7 @@ import android.util.Log;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -17,6 +18,9 @@ import com.sports.unity.util.ImageUtil;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Presence;
+import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
 import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
@@ -84,7 +88,7 @@ public class PersonalMessaging {
 
     public void sendMediaMessage(String contentChecksum, String thumbnailImageAsBase64, Chat chat, long messageId, String mimeType, boolean nearByChat) {
         String messageBody = null;
-        if( thumbnailImageAsBase64 != null ){
+        if (thumbnailImageAsBase64 != null) {
             messageBody = contentChecksum + ":" + thumbnailImageAsBase64;
         } else {
             messageBody = contentChecksum;
@@ -99,10 +103,10 @@ public class PersonalMessaging {
         sportsUnityDBHelper.updateMediaMessage_ContentUploaded(messageId, stanzaId, contentChecksum);
     }
 
-    public static String getChecksumOutOfMessageBody(String messageBody){
+    public static String getChecksumOutOfMessageBody(String messageBody) {
         int separatorIndex = messageBody.indexOf(':');
         String checksum = null;
-        if( separatorIndex == -1 ){
+        if (separatorIndex == -1) {
             checksum = messageBody;
         } else {
             checksum = messageBody.substring(0, separatorIndex);
@@ -110,13 +114,13 @@ public class PersonalMessaging {
         return checksum;
     }
 
-    public static String getEncodedImageOutOfImage(String messageBody){
+    public static String getEncodedImageOutOfImage(String messageBody) {
         int separatorIndex = messageBody.indexOf(':');
         String encodedImage = null;
-        if( separatorIndex == -1 ){
+        if (separatorIndex == -1) {
             encodedImage = null;
         } else {
-            encodedImage = messageBody.substring(separatorIndex+1);
+            encodedImage = messageBody.substring(separatorIndex + 1);
         }
         return encodedImage;
     }
@@ -167,6 +171,46 @@ public class PersonalMessaging {
             XMPPClient.getConnection().sendPacket(msg);
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
+        }
+
+    }
+
+    public void sendOfflinePresence() {
+        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+            Presence presence = new Presence(Presence.Type.available);
+            presence.setStatus("Offline");
+            try {
+                XMPPClient.getConnection().sendStanza(presence);
+            } catch (SmackException.NotConnectedException e) {
+                e.printStackTrace();
+            }
+
+            Message message = new Message("settimedev@mm.io", Message.Type.headline);
+            message.setBody(String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()));
+            try {
+                XMPPClient.getConnection().sendStanza(message);
+            } catch (SmackException.NotConnectedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            //nothing
+        }
+    }
+
+    public void sendOnlinePresence() {
+        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+            Presence presence = new Presence(Presence.Type.available);
+            presence.setStatus("Online");
+            Message message = new Message("settimedev@mm.io", Message.Type.headline);
+            message.setBody(String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()));
+            try {
+                XMPPClient.getConnection().sendStanza(presence);
+                XMPPClient.getConnection().sendStanza(message);
+            } catch (SmackException.NotConnectedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            //nothing
         }
     }
 
@@ -220,28 +264,28 @@ public class PersonalMessaging {
         return success;
     }
 
-    public String createMediaMessageBody(Context context, String checksum, String mimeType, String fileName){
+    public String createMediaMessageBody(Context context, String checksum, String mimeType, String fileName) {
         String messageBody = checksum;
         String thumbnailImage = createThumbnailImageAsBase64(context, mimeType, fileName);
 
-        if( thumbnailImage != null ) {
+        if (thumbnailImage != null) {
             messageBody = checksum + ":" + thumbnailImage;
         }
 
         return messageBody;
     }
 
-    public static String createThumbnailImageAsBase64(Context context, String mimeType, String fileName){
+    public static String createThumbnailImageAsBase64(Context context, String mimeType, String fileName) {
         String thumbnailImage = null;
-        if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) || mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ){
+        if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) || mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
             try {
                 if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ) {
-                    Bitmap videoThumbnail = ThumbnailUtils.createVideoThumbnail( DBUtil.getFilePath(context, fileName), MediaStore.Images.Thumbnails.MINI_KIND);
+                    Bitmap videoThumbnail = ThumbnailUtils.createVideoThumbnail( DBUtil.getFilePath(context, mimeType, fileName), MediaStore.Images.Thumbnails.MINI_KIND);
                     thumbnailImage = ImageUtil.getBaseEncoded_ThumbnailImage(context, videoThumbnail);
                 } else {
-                    thumbnailImage = ImageUtil.getBaseEncoded_ThumbnailImage(context, DBUtil.getFilePath(context, fileName));
+                    thumbnailImage = ImageUtil.getBaseEncoded_ThumbnailImage(context, DBUtil.getFilePath(context, mimeType, fileName));
                 }
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         } else {

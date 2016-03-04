@@ -217,16 +217,16 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
                     String fileName = null;
                     try {
                         if ( hasVideoContent == null ) {
-                            fileName = DBUtil.getUniqueFileName(activity.getBaseContext(), SportsUnityDBHelper.MIME_TYPE_IMAGE);
+                            fileName = DBUtil.getUniqueFileName(SportsUnityDBHelper.MIME_TYPE_IMAGE, false);
                             this.object = ImageUtil.getCompressedBytes(file, screenHeight, screenWidth);
 
-                            DBUtil.writeContentToExternalFileStorage(activity.getBaseContext(), fileName, (byte[])this.object);
+                            DBUtil.writeContentToExternalFileStorage(activity.getBaseContext(), fileName, (byte[])this.object, SportsUnityDBHelper.MIME_TYPE_IMAGE);
                             thumbnailImage = PersonalMessaging.createThumbnailImageAsBase64(activity, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName);
                         } else {
-                            fileName = DBUtil.getUniqueFileName(activity.getBaseContext(), SportsUnityDBHelper.MIME_TYPE_VIDEO);
+                            fileName = DBUtil.getUniqueFileName(SportsUnityDBHelper.MIME_TYPE_VIDEO, false);
                             this.object = fileName;
 
-                            DBUtil.writeContentToExternalFileStorage(activity.getBaseContext(), file, fileName);
+                            DBUtil.writeContentToExternalFileStorage(activity.getBaseContext(), file, fileName, SportsUnityDBHelper.MIME_TYPE_VIDEO);
                             thumbnailImage = PersonalMessaging.createThumbnailImageAsBase64(activity, SportsUnityDBHelper.MIME_TYPE_VIDEO, fileName);
                         }
                     }catch (Exception ex){

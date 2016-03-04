@@ -118,7 +118,7 @@ public class NewsAdapter extends BaseNewsAdapter {
                 if (newsJsonCaller.getImage_link() != null && !newsJsonCaller.getImage_link().equals("null")) {
                     holder.imageView.setVisibility(View.VISIBLE);
                     String myUri = newsJsonCaller.getImage_link();
-                    Glide.with(activity).load(myUri).into(holder.imageView);
+                    Glide.with(activity).load(myUri).placeholder(R.drawable.ic_blank_img).into(holder.imageView);
 
                 } else {
                     holder.imageView.setVisibility(View.GONE);

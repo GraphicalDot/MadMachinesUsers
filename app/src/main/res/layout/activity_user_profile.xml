@@ -27,7 +27,7 @@
 
             <LinearLayout
                 android:id="@+id/profile_info"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tool_bar"
                 android:background="@drawable/round_edge_black_box"
@@ -38,16 +38,23 @@
                     android:layout_width="@dimen/profile_thumb_image_xxlarge"
                     android:layout_height="@dimen/profile_thumb_image_xxlarge"
                     android:layout_gravity="center"
-                    android:layout_margin="@dimen/vertical_padding_very_very_small"
+                    android:layout_marginBottom="@dimen/vertical_padding_very_very_small"
+                    android:layout_marginTop="@dimen/vertical_padding_very_very_small"
                     android:src="@drawable/ic_user" />
 
                 <EditText
                     android:id="@+id/name"
-                    android:layout_width="fill_parent"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="@dimen/horizontal_padding_very_small"
+                    android:layout_marginBottom="@dimen/vertical_padding_very_small"
+                    android:layout_marginLeft="@dimen/horizontal_padding_very_small"
+                    android:layout_marginRight="@dimen/horizontal_padding_very_small"
+                    android:layout_marginTop="@dimen/vertical_padding_very_small"
                     android:gravity="center"
-                    android:padding="@dimen/horizontal_padding_very_small"
+                    android:paddingBottom="@dimen/vertical_padding_very_small"
+                    android:paddingLeft="@dimen/horizontal_padding_very_small"
+                    android:paddingRight="@dimen/horizontal_padding_very_small"
+                    android:paddingTop="@dimen/vertical_padding_very_small"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/font_size_large" />
 
@@ -57,23 +64,26 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_margin="@dimen/horizontal_padding_very_small"
+                    android:layout_marginBottom="@dimen/vertical_padding_very_small"
+                    android:layout_marginLeft="@dimen/horizontal_padding_very_small"
+                    android:layout_marginRight="@dimen/horizontal_padding_very_small"
+                    android:layout_marginTop="@dimen/vertical_padding_very_small"
                     android:visibility="gone">
 
                     <com.facebook.login.widget.LoginButton xmlns:facebook="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/login_button_facebook"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_below="@+id/nameView"
                         android:layout_gravity="center"
-                        android:layout_marginEnd="@dimen/vertical_padding_medium"
-                        android:layout_marginStart="@dimen/vertical_padding_medium"
+                        android:layout_marginEnd="@dimen/horizontal_padding_medium"
+                        android:layout_marginStart="@dimen/horizontal_padding_medium"
                         android:textSize="@dimen/font_size_small_medium"
-                        facebook:com_facebook_login_text="USE MY FACEBOOK DETAILS" />
+                        facebook:com_facebook_login_text="@string/use_fb_details" />
 
                     <LinearLayout
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:background="@drawable/white_stroke_round_edge_button">
 
                         <ImageView
@@ -86,17 +96,17 @@
 
                         <View
                             android:layout_width="1dp"
-                            android:layout_height="fill_parent"
+                            android:layout_height="match_parent"
                             android:layout_marginBottom="1dp"
                             android:layout_marginTop="1dp"
                             android:background="@color/facebook_button_separator" />
 
                         <Button
-                            android:layout_width="fill_parent"
-                            android:layout_height="fill_parent"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:background="@android:color/transparent"
                             android:clickable="false"
-                            android:text="USE MY FACEBOOK DETAILS"
+                            android:text="@string/use_fb_details"
                             android:textColor="@color/ColorPrimary"
                             android:textSize="@dimen/font_size_small_medium" />
                     </LinearLayout>
@@ -140,15 +150,16 @@
                 android:id="@+id/favDetails"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
                 android:layout_marginTop="@dimen/horizontal_padding_small"
-                android:background="@drawable/round_edge_black_box">
+                android:background="@drawable/round_edge_black_box"
+                android:orientation="vertical">
 
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:paddingLeft="@dimen/horizontal_padding_very_small"
                     android:paddingRight="@dimen/horizontal_padding_very_small">
+
                     <TextView
                         android:id="@+id/fav"
                         android:layout_width="wrap_content"
@@ -161,9 +172,9 @@
                         android:id="@+id/edit_fav"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="right"
                         android:padding="@dimen/horizontal_padding_small"
                         android:text="@string/edit_fav_sports"
-                        android:layout_gravity="right"
                         android:textColor="@color/app_theme_blue" />
                 </FrameLayout>
 
@@ -172,141 +183,153 @@
                     android:layout_height="0.3dp"
                     android:background="@color/grayBorder" />
 
-            <LinearLayout
-                android:id="@+id/team"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/status"
-                android:layout_gravity="center"
-                android:layout_margin="@dimen/horizontal_padding_very_small"
-                android:background="@drawable/round_edge_black_box">
-
                 <LinearLayout
+                    android:id="@+id/team"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_below="@+id/status"
+                    android:layout_gravity="center"
+                    android:layout_margin="@dimen/horizontal_padding_very_small"
+                    android:background="@drawable/round_edge_black_box">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/fav_team"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/horizontal_padding_small"
+                            android:text="@string/fav_team"
+                            android:textColor="@color/app_theme_blue" />
+
+                        <View
+                            android:layout_width="fill_parent"
+                            android:layout_height="0.3dp"
+                            android:background="@color/grayBorder" />
+
+
+                        <LinearLayout
+                            android:id="@+id/teamlist"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/league"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/team"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="@dimen/horizontal_padding_very_small"
+                    android:layout_marginRight="@dimen/horizontal_padding_very_small"
+                    android:background="@drawable/round_edge_black_box">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+
+                        <TextView
+                            android:id="@+id/fav_league"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/horizontal_padding_small"
+                            android:text="@string/fav_league"
+                            android:textColor="@color/app_theme_blue" />
+
+                        <View
+                            android:layout_width="fill_parent"
+                            android:layout_height="0.3dp"
+                            android:background="@color/grayBorder" />
+
+                        <LinearLayout
+                            android:id="@+id/leaguelist"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/player"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/league"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="@dimen/vertical_padding_very_small"
+                    android:layout_marginLeft="@dimen/horizontal_padding_very_small"
+                    android:layout_marginRight="@dimen/horizontal_padding_very_small"
+                    android:layout_marginTop="@dimen/vertical_padding_very_small"
+                    android:background="@drawable/round_edge_black_box"
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/fav_team"
+                        android:id="@+id/fav_player"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_small"
-                        android:text="@string/fav_team"
+                        android:paddingBottom="@dimen/vertical_padding_small"
+                        android:paddingLeft="@dimen/horizontal_padding_small"
+                        android:paddingRight="@dimen/horizontal_padding_small"
+                        android:paddingTop="@dimen/vertical_padding_small"
+                        android:text="@string/fav_player"
                         android:textColor="@color/app_theme_blue" />
 
                     <View
-                        android:layout_width="fill_parent"
+                        android:layout_width="match_parent"
                         android:layout_height="0.3dp"
                         android:background="@color/grayBorder" />
 
-
                     <LinearLayout
-                        android:id="@+id/teamlist"
+                        android:id="@+id/playerlist"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical" />
                 </LinearLayout>
             </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/league"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/team"
-                android:layout_gravity="center"
-                android:layout_marginLeft="@dimen/horizontal_padding_very_small"
-                android:layout_marginRight="@dimen/horizontal_padding_very_small"
-                android:background="@drawable/round_edge_black_box">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-
-                    <TextView
-                        android:id="@+id/fav_league"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_small"
-                        android:text="@string/fav_league"
-                        android:textColor="@color/app_theme_blue" />
-
-                    <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="0.3dp"
-                        android:background="@color/grayBorder" />
-
-                    <LinearLayout
-                        android:id="@+id/leaguelist"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical" />
-                </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/player"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/league"
-                android:layout_gravity="center"
-                android:layout_margin="@dimen/horizontal_padding_very_small"
-                android:background="@drawable/round_edge_black_box"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/fav_player"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="@dimen/horizontal_padding_small"
-                    android:text="@string/fav_player"
-                    android:textColor="@color/app_theme_blue" />
-
-                <View
-                    android:layout_width="fill_parent"
-                    android:layout_height="0.3dp"
-                    android:background="@color/grayBorder" />
-
-                <LinearLayout
-                    android:id="@+id/playerlist"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical" />
-            </LinearLayout>
-                </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/status_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:orientation="vertical"
-                android:layout_margin="@dimen/horizontal_padding_very_small"
-                android:background="@drawable/round_edge_black_box">
+                android:layout_marginBottom="@dimen/vertical_padding_very_small"
+                android:layout_marginLeft="@dimen/horizontal_padding_very_small"
+                android:layout_marginRight="@dimen/horizontal_padding_very_small"
+                android:layout_marginTop="@dimen/vertical_padding_very_small"
+                android:background="@drawable/round_edge_black_box"
+                android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/select_status"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_small"
-                        android:text="@string/select_status"
-                        android:textColor="@color/app_theme_blue" />
+                <TextView
+                    android:id="@+id/select_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/vertical_padding_small"
+                    android:paddingLeft="@dimen/horizontal_padding_small"
+                    android:paddingRight="@dimen/horizontal_padding_small"
+                    android:paddingTop="@dimen/vertical_padding_small"
+                    android:text="@string/select_status"
+                    android:textColor="@color/app_theme_blue" />
 
-                    <View
-                        android:layout_width="fill_parent"
-                        android:layout_height="0.3dp"
-                        android:background="@color/grayBorder" />
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.3dp"
+                    android:background="@color/grayBorder" />
 
                 <LinearLayout
-                        android:id="@+id/list"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:background="@android:color/transparent"/>
+                    android:id="@+id/list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:orientation="vertical" />
 
-                </LinearLayout>
             </LinearLayout>
+        </LinearLayout>
     </ScrollView>
 
     <ProgressBar
@@ -314,7 +337,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_centerInParent="true"
         android:layout_centerVertical="true"
         android:visibility="gone" />
 

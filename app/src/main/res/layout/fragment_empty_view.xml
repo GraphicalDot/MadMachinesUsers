@@ -3,15 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
         android:id="@+id/tv_empty_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:gravity="center"
-        android:padding="@dimen/horizontal_padding_large"
+        android:paddingBottom="@dimen/vertical_padding_large"
+        android:paddingLeft="@dimen/horizontal_padding_large"
+        android:paddingRight="@dimen/horizontal_padding_large"
+        android:paddingTop="@dimen/vertical_padding_large"
         android:text="Scorecard not available for this match yet"
         android:textColor="@color/gray1"
-        android:textSize="@dimen/font_size_large"
-        />
-    </RelativeLayout>
+        android:textSize="@dimen/font_size_large" />
+</RelativeLayout>

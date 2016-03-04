@@ -415,7 +415,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 //TODO
             }
         }
-        String jid = getIntent().getStringExtra("number");
+        String jid = getIntent().getStringExtra("jid");
         UserProfileHandler.getInstance().loadProfile(getApplicationContext(), jid, LISTENER_KEY);
     }
 

@@ -2,6 +2,7 @@ package com.sports.unity.util;
 
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.logging.Filter;
 
 /**
  * Created by madmachines on 29/10/15.
@@ -31,6 +32,7 @@ public class ActivityActionHandler {
 
     private HashMap<String, ActivityActionListener> activityListenerMap = new HashMap<>();
     private HashMap<String, ActionItem> actionItemOnHoldMap = new HashMap<>();
+    private HashMap<String, String> filterMap = new HashMap<>();
 
     private ActivityActionHandler() {
 
@@ -46,12 +48,53 @@ public class ActivityActionHandler {
         }
     }
 
+    public void addActionListener(String key, String filter, ActivityActionListener listener) {
+        activityListenerMap.put(key, listener);
+
+        boolean filterMatched = false;
+        if( filterMap.containsKey(key) && filterMap.get(key).equals(filter) ) {
+            filterMatched = true;
+        }
+
+        if ( filterMatched && actionItemOnHoldMap.containsKey(key)) {
+            ActionItem actionItem = actionItemOnHoldMap.get(key);
+            listener.handleMediaContent(actionItem.id, actionItem.getMimeType(), actionItem.getMessageContent(), actionItem.getThumbnailImage(), actionItem.getMediaContent());
+            actionItemOnHoldMap.remove(key);
+        }
+
+        filterMap.put(key, filter);
+    }
+
     public void removeActionListener(String key) {
-        activityListenerMap.remove(key);
+        if( ! filterMap.containsKey(key) ) {
+            activityListenerMap.remove(key);
+        }
+    }
+
+    public void removeActionListener(String key, String filter) {
+        if( filterMap.containsKey(key) && filterMap.get(key).equals(filter) ) {
+            activityListenerMap.remove(key);
+        }
     }
 
     public ActivityActionListener getActionListener(String key) {
         return activityListenerMap.get(key);
+    }
+
+    public ActivityActionListener getActionListener(String key, String filter) {
+        boolean filterMatched = false;
+        if( filterMap.containsKey(key) && filterMap.get(key).equals(filter) ) {
+            filterMatched = true;
+        }
+
+        ActivityActionListener activityActionListener = null;
+        if( filterMatched ){
+            activityActionListener = activityListenerMap.get(key);
+        } else {
+            //nothing
+        }
+
+        return activityActionListener;
     }
 
     public void addActionOnHold(String key, ActionItem actionItem) {
@@ -71,28 +114,41 @@ public class ActivityActionHandler {
         return success;
     }
 
-    public boolean dispatchCommonEvent(String key, Object data) {
+    public boolean dispatchCommonEvent(String key, String filter) {
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key, filter);
 
         if (actionListener != null) {
-            if (data == null) {
-                actionListener.handleAction(EVENT_ID_COMMON);
-            } else {
-                actionListener.handleAction(EVENT_ID_COMMON, data);
-            }
+            actionListener.handleAction(EVENT_ID_COMMON);
             success = true;
         }
         return success;
     }
 
+//    public boolean dispatchCommonEventWithData(String key, String filter, Object data) {
+//        boolean success = false;
+//
+//        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+//        ActivityActionListener actionListener = null;//activityActionHandler.getActionListener(key, filter);
+//
+//        if (actionListener != null) {
+//            if (data == null) {
+//                actionListener.handleAction(EVENT_ID_COMMON);
+//            } else {
+//                actionListener.handleAction(EVENT_ID_COMMON, data);
+//            }
+//            success = true;
+//        }
+//        return success;
+//    }
+
     public boolean dispatchReceiptEvent(String key, Object data) {
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key, filterMap.get(key));
 
         if (actionListener != null) {
             actionListener.handleAction(EVENT_ID_RECEIPT, data);
@@ -101,11 +157,11 @@ public class ActivityActionHandler {
         return success;
     }
 
-    public boolean dispatchUserStatusOnChat(String key, Object data) {
+    public boolean dispatchUserStatusOnChat(String key, String filter, Object data) {
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key, filter);
 
         if (actionListener != null) {
             actionListener.handleAction(EVENT_ID_CHAT_STATUS, data);
@@ -114,24 +170,11 @@ public class ActivityActionHandler {
         return success;
     }
 
-    public boolean dispatchSendStickerEvent(String key, String mimeType, String stickerPath) {
+    public boolean dispatchDownloadCompletedEvent(String key, String filter, String mimeType, String fileName, Object mediaContent) {
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
-
-        if (actionListener != null) {
-            actionListener.handleMediaContent(EVENT_ID_SEND_MEDIA, mimeType, stickerPath, null);
-            success = true;
-        }
-        return success;
-    }
-
-    public boolean dispatchDownloadCompletedEvent(String key, String mimeType, String fileName, Object mediaContent) {
-        boolean success = false;
-
-        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key, filter);
 
         if (actionListener != null) {
             actionListener.handleMediaContent(EVENT_ID_DOWNLOAD_COMPLETED, mimeType, fileName, mediaContent);
@@ -140,7 +183,7 @@ public class ActivityActionHandler {
         return success;
     }
 
-    public boolean dispatchIncomingMediaEvent(String key, String mimeType, String checksum, long messageId) {
+    public boolean dispatchIncomingMediaEvent(String key, String filter, String mimeType, String checksum, long messageId) {
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
@@ -153,11 +196,24 @@ public class ActivityActionHandler {
         return success;
     }
 
+    public boolean dispatchSendStickerEvent(String key, String mimeType, String stickerPath) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key, filterMap.get(key));
+
+        if (actionListener != null) {
+            actionListener.handleMediaContent(EVENT_ID_SEND_MEDIA, mimeType, stickerPath, null);
+            success = true;
+        }
+        return success;
+    }
+
     public boolean dispatchSendMediaEvent(String key, String mimeType, String fileName, Object mediaContent) {
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key, filterMap.get(key));
 
         if (actionListener != null) {
             actionListener.handleMediaContent(EVENT_ID_SEND_MEDIA, mimeType, fileName, mediaContent);
@@ -170,7 +226,7 @@ public class ActivityActionHandler {
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
-        ActivityActionListener actionListener = activityActionHandler.getActionListener(key);
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key, filterMap.get(key));
 
         if (actionListener != null) {
             actionListener.handleMediaContent(EVENT_ID_SEND_MEDIA, mimeType, fileName, thumbnailImageAsBase64, mediaContent);

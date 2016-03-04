@@ -145,7 +145,7 @@ public class AudioRecordingHelper {
             try {
                 pauseAudio();
 
-                File file = new File(DBUtil.getFilePath(activity.getBaseContext(), fileName));
+                File file = new File(DBUtil.getFilePath(activity.getBaseContext(), SportsUnityDBHelper.MIME_TYPE_AUDIO, fileName));
                 mediaPlayer = MediaPlayer.create(activity, Uri.parse(file.getAbsolutePath()));
 
                 if( mediaPlayer != null ) {
@@ -167,7 +167,12 @@ public class AudioRecordingHelper {
                 setDurationOnTimeView(holder.getDuration(), progressState);
                 mediaPlayer.release();
             } else {
-                //nothing
+                progressState = new ProgressState(0, 0);
+
+                holder.getSeekBar().setMax(progressState.getMaxDuration());
+                holder.getSeekBar().setProgress(0);
+
+                setDurationOnTimeView(holder.getDuration(), progressState);//nothing
             }
         }
     }
@@ -248,7 +253,7 @@ public class AudioRecordingHelper {
             if (filename == null) {
                //nothing
             } else {
-                File file = new File(DBUtil.getFilePath(activity.getBaseContext(), filename));
+                File file = new File(DBUtil.getFilePath(activity.getBaseContext(), SportsUnityDBHelper.MIME_TYPE_AUDIO, filename));
 
                 mediaPlayer.reset();
                 mediaPlayer = MediaPlayer.create(activity, Uri.parse(file.getAbsolutePath()));
@@ -300,13 +305,13 @@ public class AudioRecordingHelper {
 
             new ThreadTask(null) {
 
-                private File file = new File(DBUtil.getFilePath(activity, mFilename));
+                private File file = new File(DBUtil.getFilePath(activity, SportsUnityDBHelper.MIME_TYPE_AUDIO, mFilename));
                 private int size = (int) file.length();
                 private byte[] voiceContent = new byte[size];
 
                 @Override
                 public Object process() {
-                    voiceContent = DBUtil.loadContentFromExternalFileStorage(activity, mFilename);
+                    voiceContent = DBUtil.loadContentFromExternalFileStorage(activity, SportsUnityDBHelper.MIME_TYPE_AUDIO, mFilename);
                     Log.d("Audio Helper", "content size " + voiceContent.length);
                     return null;
                 }
@@ -331,12 +336,12 @@ public class AudioRecordingHelper {
         counter_time.setTag(0);
         counter_time.setTextColor(rootLayout.getResources().getColor(android.R.color.holo_red_light));
 
-        mFilename = DBUtil.getUniqueFileName(activity, SportsUnityDBHelper.MIME_TYPE_AUDIO);
+        mFilename = DBUtil.getUniqueFileName(SportsUnityDBHelper.MIME_TYPE_AUDIO, false);
         recorder = new MediaRecorder();
         recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         recorder.setOutputFormat(output_formats[currentFormat]);
         recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-        recorder.setOutputFile(DBUtil.getFilePath(activity, mFilename));
+        recorder.setOutputFile(DBUtil.getFilePath(activity, SportsUnityDBHelper.MIME_TYPE_AUDIO, mFilename));
         recorder.setOnErrorListener(new MediaRecorder.OnErrorListener() {
 
             @Override
@@ -381,7 +386,7 @@ public class AudioRecordingHelper {
     }
 
     private void cancelVoiceRecord() {
-        DBUtil.deleteContentFromExternalFileStorage(activity, mFilename);
+        DBUtil.deleteContentFromExternalFileStorage(activity, SportsUnityDBHelper.MIME_TYPE_AUDIO, mFilename);
 
         {
             View button = rootLayout.findViewById(R.id.record_button);

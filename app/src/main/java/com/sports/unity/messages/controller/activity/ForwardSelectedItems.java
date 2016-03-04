@@ -39,9 +39,8 @@ public class ForwardSelectedItems extends CustomAppCompatActivity {
 
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        toolbar.setContentInsetsAbsolute(0, 0);
         ImageView backArrow = (ImageView) findViewById(R.id.backarrow);
-        backArrow.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE,false));
+        backArrow.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
         backArrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

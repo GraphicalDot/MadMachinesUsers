@@ -15,30 +15,29 @@
 
     <EditText
         android:id="@+id/searchCountry"
-        android:layout_marginEnd="@dimen/horizontal_padding_medium"
-        android:layout_marginStart="@dimen/horizontal_padding_medium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
         android:hint="Type country name"
-        android:textSize="@dimen/font_size_small_large"
+        android:paddingLeft="@dimen/horizontal_padding_small"
+        android:paddingRight="@dimen/horizontal_padding_small"
+        android:paddingTop="@dimen/vertical_padding_very_small"
+        android:paddingBottom="@dimen/vertical_padding_very_small"
         android:textColor="@color/ColorPrimaryDark"
-        android:paddingTop="@dimen/horizontal_padding_very_small"
-        android:paddingBottom="@dimen/horizontal_padding_very_small"
-        android:background="@android:color/transparent"/>
+        android:textSize="@dimen/font_size_small_large" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/app_theme_blue"
-        android:layout_marginEnd="@dimen/horizontal_padding_medium"
-        android:layout_marginStart="@dimen/horizontal_padding_medium"/>
+        android:layout_marginLeft="@dimen/horizontal_padding_small"
+        android:layout_marginRight="@dimen/horizontal_padding_small"
+        android:background="@color/app_theme_blue" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/country_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/horizontal_padding_medium"
-        android:layout_marginStart="@dimen/horizontal_padding_medium">
+      >
 
     </android.support.v7.widget.RecyclerView>
-    </LinearLayout>
+</LinearLayout>

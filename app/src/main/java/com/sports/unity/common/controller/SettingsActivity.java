@@ -34,7 +34,7 @@ import com.sports.unity.util.NotificationHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends CustomAppCompatActivity {
 
     private HashMap<Integer, int[]> drillDownItemsMap = new HashMap<>();
     private int currentItemId = SettingsHelper.SETTINGS_MAIN_ID;
@@ -315,9 +315,11 @@ public class SettingsActivity extends AppCompatActivity {
                 checkBox.setChecked(!checkBox.isChecked());
             } else if (itemType == SettingsHelper.ITEM_TYPE_CLICK) {
                 if (itemId == SettingsHelper.CLEAR_ALL_CHATS_ITEM_ID) {
-                    clearAllChat();
+                    ConfirmationAlertDialog confirmationAlertDialog = new ConfirmationAlertDialog(itemId, getResources().getString(R.string.clear_all_chats_confirm_message), getResources().getString(R.string.clear));
+                    confirmationAlertDialog.show();
                 } else if (itemId == SettingsHelper.DELETE_ALL_CHATS_ITEM_ID) {
-                    deleteAllChat();
+                    ConfirmationAlertDialog confirmationAlertDialog = new ConfirmationAlertDialog(itemId, getResources().getString(R.string.delete_all_chats_confirm_message), getResources().getString(R.string.ok));
+                    confirmationAlertDialog.show();
                 } else if (itemId == SettingsHelper.BLOCKED_CONTACTS_ITEM_ID) {
                     //TODO
                 }
@@ -519,6 +521,51 @@ public class SettingsActivity extends AppCompatActivity {
                         }
 
                     });
+
+            builder.create().show();
+        }
+
+    }
+
+    public class ConfirmationAlertDialog {
+
+        private int itemId = 0;
+        private String dialogTitle = null;
+        private String okButtonTitle = null;
+
+        public ConfirmationAlertDialog(int itemId, String dialogTitle, String okButtonTitle) {
+            this.itemId = itemId;
+            this.dialogTitle = dialogTitle;
+            this.okButtonTitle = okButtonTitle;
+        }
+
+        private void show() {
+            AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+            builder.setTitle(dialogTitle);
+
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+
+            });
+
+            builder.setPositiveButton(okButtonTitle, new DialogInterface.OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                    if (itemId == SettingsHelper.CLEAR_ALL_CHATS_ITEM_ID) {
+                        clearAllChat();
+                    } else if (itemId == SettingsHelper.DELETE_ALL_CHATS_ITEM_ID) {
+                        deleteAllChat();
+                    }
+
+                }
+
+            });
 
             builder.create().show();
         }

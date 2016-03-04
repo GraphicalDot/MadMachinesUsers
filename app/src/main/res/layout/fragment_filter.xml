@@ -12,12 +12,10 @@
         android:layout_height="match_parent"
         android:background="@android:color/white"
         android:dividerHeight="0dp" />
-
     <include
         android:id="@+id/error"
         layout="@layout/filter_error"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-    <!--<TextView android:layout_width="match_parent" android:layout_height="match_parent"-->
-        <!--android:text="@string/fragment_filter" />-->
+
 </FrameLayout>

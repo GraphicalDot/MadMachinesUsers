@@ -10,4 +10,5 @@
         android:textSize="@dimen/font_size_small_large"
         android:id="@+id/itemheader"
         android:gravity="left|center_vertical"/>
+
 </LinearLayout>

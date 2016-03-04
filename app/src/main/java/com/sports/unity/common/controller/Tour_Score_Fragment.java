@@ -31,7 +31,7 @@ public class Tour_Score_Fragment extends Fragment {
         title.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoSlabBold());
 
         TextView details = (TextView) view.findViewById(R.id.details);
-        FrameLayout frame = (FrameLayout) view.findViewById(R.id.frame);
+        //FrameLayout frame = (FrameLayout) view.findViewById(R.id.frame);
         ImageView img = (ImageView) view.findViewById(R.id.img);
     }
 

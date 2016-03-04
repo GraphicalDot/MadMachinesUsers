@@ -124,7 +124,7 @@ public class CommonUtil {
     }
 
     public static String getDefaultTimezoneTime(long gmtEpoch) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss zzz");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MMM-yyyy");
         simpleDateFormat.setTimeZone(TimeZone.getDefault());
         String time = String.valueOf(simpleDateFormat.format(gmtEpoch * 1000));
         return time;
@@ -138,7 +138,16 @@ public class CommonUtil {
     }
 
     public static String getDefaultTimezoneTimeInAMANDPM(long gmtEpoch) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("h:mm a");
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(gmtEpoch * 1000);
+        SimpleDateFormat simpleDateFormat;
+        int a = cal.get(Calendar.AM_PM);
+        if (a == Calendar.AM) {
+            simpleDateFormat = new SimpleDateFormat("K:mm aa");
+        } else {
+            simpleDateFormat = new SimpleDateFormat("h:mm aa");
+        }
+
         simpleDateFormat.setTimeZone(TimeZone.getDefault());
         String time = String.valueOf(simpleDateFormat.format(gmtEpoch * 1000));
         return time;
@@ -154,38 +163,46 @@ public class CommonUtil {
         return details;
     }
 
-    public static String getDefaultISOCountryCode(Context context){
+    public static String getDefaultISOCountryCode(Context context) {
         TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         String isoCode = manager.getSimCountryIso().toUpperCase();
 
-        if( isoCode.isEmpty() ) {
+        if (isoCode.isEmpty()) {
             isoCode = Locale.getDefault().getCountry();
         }
 
         return isoCode;
     }
 
-    public static String getDefaultCountyCode(Context context){
+    public static String getDefaultCountyCode(Context context) {
         String isoCountyCode = getDefaultISOCountryCode(context);
         String countryCode = getCountryDetailsByIsoCountryCode(context, isoCountyCode).get(0);
         return countryCode;
     }
 
-    public static String getTimeDifference(long epochTime) {
-        long currentTime = getCurrentGMTTimeInEpoch();
-        Calendar time = Calendar.getInstance();
-        time.setTimeInMillis((epochTime) * 1000);
-        int day = time.get(Calendar.DAY_OF_MONTH);
-        time.setTimeInMillis((currentTime) * 1000);
-        int currentday = time.get(Calendar.DAY_OF_MONTH);
-//        DateTime dateTime = new DateTime(epochTime * 1000);
-//        DateTime dateTimenow = new DateTime(currentTime * 1000);
-//        int days = Days.daysBetween(dateTime, dateTimenow).getDays();
-//        if (days > 0) {
-//            return String.valueOf(days);
-//        }
+    public static int getTimeDifference(long epochTime) {
+        int diff = 0;
 
-        return String.valueOf(currentday - day);
+        Calendar currentTime = Calendar.getInstance();
+        currentTime.setTimeInMillis((getCurrentGMTTimeInEpoch()) * 1000);
+        int currentDay = currentTime.get(Calendar.DAY_OF_YEAR);
+        int currentYear = currentTime.get(Calendar.YEAR);
+
+
+        Calendar messageTime = Calendar.getInstance();
+        messageTime.setTimeInMillis((epochTime) * 1000);
+        int messageDay = messageTime.get(Calendar.DAY_OF_YEAR);
+        int messageYear = messageTime.get(Calendar.YEAR);
+
+        if (currentYear - messageYear == 0) {
+            diff = currentDay - messageDay;
+        } else {
+            int daysInYear = messageTime.getActualMaximum(Calendar.DAY_OF_YEAR);
+            diff = (daysInYear - messageDay) + currentDay;
+        }
+
+
+        return diff;
     }
 
     public static void openSMSIntent(Contacts contact, Context context) {
@@ -268,11 +285,11 @@ public class CommonUtil {
         return checksum;
     }
 
-    public static String getMD5EncryptedString(Context context, String fileName) {
+    public static String getMD5EncryptedString(Context context, String mimeType, String fileName) {
         String checksum = null;
         MessageDigest mdEnc = null;
 
-        File file = new File(DBUtil.getFilePath(context, fileName));
+        File file = new File(DBUtil.getFilePath(context, mimeType, fileName));
         FileInputStream fileInputStream = null;
         try {
             mdEnc = MessageDigest.getInstance("MD5");
@@ -306,8 +323,8 @@ public class CommonUtil {
         ArrayList<String> countryDetails = new ArrayList<>();
 
         String[] countryList = context.getResources().getStringArray(R.array.CountryCodes);
-        for(int i=0;i<countryList.length;i++){
-            String[] code=countryList[i].split(",");
+        for (int i = 0; i < countryList.length; i++) {
+            String[] code = countryList[i].split(",");
 
             if (code[1].trim().equals(isoCountryCode.trim())) {
                 countryDetails.add(code[0]);
@@ -324,8 +341,8 @@ public class CommonUtil {
         ArrayList<String> countryDetails = new ArrayList<>();
 
         String[] countryList = context.getResources().getStringArray(R.array.CountryCodes);
-        for(int i=0;i<countryList.length;i++){
-            String[] code=countryList[i].split(",");
+        for (int i = 0; i < countryList.length; i++) {
+            String[] code = countryList[i].split(",");
 
             if (code[0].trim().equals(countryCode.trim())) {
                 countryDetails.add(code[0]);

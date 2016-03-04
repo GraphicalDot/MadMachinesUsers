@@ -38,18 +38,18 @@ public class ImageOrVideoViewActivity extends CustomAppCompatActivity {
             videoView.setVisibility(View.VISIBLE);
             imageView.setVisibility(View.GONE);
 
-            playVideo(videoView, fileName);
+            playVideo(videoView, fileName, mimeType);
         } else if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) ){
             videoView.setVisibility(View.GONE);
             imageView.setVisibility(View.VISIBLE);
 
-            imageView.setImageBitmap(BitmapFactory.decodeFile(DBUtil.getFilePath(this, fileName)));
+            imageView.setImageBitmap(BitmapFactory.decodeFile(DBUtil.getFilePath(this, mimeType, fileName)));
         }
     }
 
-    private void playVideo(VideoView videoView, String fileName){
+    private void playVideo(VideoView videoView, String fileName, String mimeType){
         try {
-            Uri uri = Uri.parse(DBUtil.getFilePath(this, fileName));
+            Uri uri = Uri.parse(DBUtil.getFilePath(this, mimeType, fileName));
 
             videoView.setZOrderOnTop(true);
             videoView.setMediaController(new MediaController(this));

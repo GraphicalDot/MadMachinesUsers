@@ -48,6 +48,8 @@
                     android:background="@drawable/round_edge_gray_box"
                     android:gravity="center"
                     android:padding="@dimen/group_name_padding"
+                    android:singleLine="true"
+                    android:ellipsize="end"
                     android:text="IPL-T20"
                     android:textSize="@dimen/font_size_large"
                     android:textStyle="bold" />
@@ -67,7 +69,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="@dimen/group_part_margin_horizontal"
+                android:layout_marginBottom="@dimen/group_part_margin_top"
                 android:layout_marginLeft="@dimen/group_part_margin_horizontal"
                 android:layout_marginRight="@dimen/group_part_margin_horizontal"
                 android:layout_marginTop="@dimen/group_part_margin_top"
@@ -104,7 +106,7 @@
                         android:textSize="@dimen/font_size_small_medium" />
                 </LinearLayout>
 
-                <ImageView
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="0.3dp"
                     android:layout_marginLeft="@dimen/horizontal_padding_very_small"

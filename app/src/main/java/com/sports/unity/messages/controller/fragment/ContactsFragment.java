@@ -76,8 +76,8 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             ContactListAdapter contactListAdapter = (ContactListAdapter) contacts.getAdapter();
             Contacts c = contactListAdapter.getUsedContact().get(position);
 
-            if ( c.isRegistered() ) {
-                String number = c.jid;
+            if (c.isRegistered()) {
+                String jid = c.jid;
                 String name = c.name;
                 long contactId = c.id;
                 byte[] userPicture = c.image;
@@ -86,14 +86,16 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
                 long chatId = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatEntryID(contactId, groupServerId);
                 boolean blockStatus = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).isChatBlocked(contactId);
 
-                Intent chatScreenIntent = new Intent(getActivity(), ChatScreenActivity.class);
-                chatScreenIntent.putExtra("number", number);
-                chatScreenIntent.putExtra("name", name);
-                chatScreenIntent.putExtra("contactId", contactId);
-                chatScreenIntent.putExtra("chatId", chatId);
-                chatScreenIntent.putExtra("groupServerId", groupServerId);
-                chatScreenIntent.putExtra("userpicture", userPicture);
-                chatScreenIntent.putExtra("blockStatus", blockStatus);
+                Intent chatScreenIntent;
+//                chatScreenIntent.putExtra("jid", jid);
+//                chatScreenIntent.putExtra("name", name);
+//                chatScreenIntent.putExtra("contactId", contactId);
+//                chatScreenIntent.putExtra("chatId", chatId);
+//                chatScreenIntent.putExtra("groupServerId", groupServerId);
+//                chatScreenIntent.putExtra("userpicture", userPicture);
+//                chatScreenIntent.putExtra("blockStatus", blockStatus);
+
+                chatScreenIntent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, userPicture, blockStatus);
                 startActivity(chatScreenIntent);
             } else {
                 CommonUtil.openSMSIntent(c, getContext());
@@ -170,9 +172,9 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     };
 
     private void forward(Contacts contact) {
-        if ( contact.isRegistered() ) {
+        if (contact.isRegistered()) {
             ToolbarActionsForChatScreen.getInstance(getActivity().getApplicationContext()).resetVariables();
-            String number = contact.jid;
+            String jid = contact.jid;
             String name = contact.name;
             long contactId = contact.id;
             byte[] userPicture = contact.image;
@@ -181,14 +183,16 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             long chatId = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatEntryID(contactId, groupServerId);
             boolean blockStatus = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).isChatBlocked(contactId);
 
-            Intent chatScreenIntent = new Intent(getActivity(), ChatScreenActivity.class);
-            chatScreenIntent.putExtra("number", number);
-            chatScreenIntent.putExtra("name", name);
-            chatScreenIntent.putExtra("contactId", contactId);
-            chatScreenIntent.putExtra("chatId", chatId);
-            chatScreenIntent.putExtra("groupServerId", groupServerId);
-            chatScreenIntent.putExtra("userpicture", userPicture);
-            chatScreenIntent.putExtra("blockStatus", blockStatus);
+            Intent chatScreenIntent;
+//            chatScreenIntent.putExtra("number", jid);
+//            chatScreenIntent.putExtra("name", name);
+//            chatScreenIntent.putExtra("contactId", contactId);
+//            chatScreenIntent.putExtra("chatId", chatId);
+//            chatScreenIntent.putExtra("groupServerId", groupServerId);
+//            chatScreenIntent.putExtra("userpicture", userPicture);
+//            chatScreenIntent.putExtra("blockStatus", blockStatus);
+
+            chatScreenIntent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, userPicture, blockStatus);
 
             if (blockStatus) {
                 Toast.makeText(getActivity().getApplicationContext(), "This user is blocked Please select another user", Toast.LENGTH_SHORT).show();
@@ -239,13 +243,13 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 //                if (listeningCopyFinishPostCall) {
 //                    removeListenerToHandleContactCopyPostCall();
 
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
 //                            copyContactCallInitiated = false;
-                            setContactList(v);
-                        }
-                    });
+                setContactList(v);
+            }
+        });
 //                }
 //            }
 //        });
@@ -369,7 +373,6 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
     public void filterResults(String filter) {
         ((ContactListAdapter) contacts.getAdapter()).getFilter().filter(filter);
-        Log.d("max", "Filtering");
     }
 
     public ArrayList<Contacts> getSelectedMembersList() {
@@ -393,7 +396,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             //TODO need to handle it cleanly.
 
             Activity activity = getActivity();
-            if( activity instanceof MainActivity ) {
+            if (activity instanceof MainActivity) {
                 ((MainActivity) getActivity()).addContactResultListener(this);
             } else {
                 //TODO to handle permission on forward activity.

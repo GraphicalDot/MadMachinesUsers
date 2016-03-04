@@ -272,7 +272,6 @@ public class FavouriteItemWrapper {
             FavouriteItem f = new FavouriteItem();
             String sportsName= CommonUtil.capitalize(s);
             f.setName(sportsName);
-            Log.d("max","sports--"+sportsName);
            /* if(sportsName.toLowerCase().contains(Constants.GAME_KEY_CRICKET.toLowerCase())){
                 Uri uri = Uri.parse("android.resource://"+context.getPackageName()+"/drawable/ic_cricket");
                 f.setFlagImageUrl(uri.toString());

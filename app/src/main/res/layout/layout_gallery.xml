@@ -1,29 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:background="@android:color/white"
-    >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white">
 
     <ImageView
         android:id="@+id/img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"
         android:paddingRight="2dp"
         android:scaleType="centerCrop"
-        android:src="@drawable/grey_bg_rectangle"
-        android:layout_gravity="center"/>
+        android:src="@drawable/grey_bg_rectangle" />
 
     <TextView
         android:id="@+id/duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/round_edge_box"
-        android:text="hello"
         android:layout_gravity="right"
-        android:paddingLeft="@dimen/vertical_padding_very_very_small"
-        android:paddingRight="@dimen/vertical_padding_very_very_small"
-        android:layout_margin="@dimen/vertical_padding_very_very_small"
-        />
+        android:layout_marginBottom="@dimen/vertical_padding_very_very_small"
+        android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
+        android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
+        android:layout_marginTop="@dimen/vertical_padding_very_very_small"
+        android:background="@drawable/round_edge_box"
+        android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+        android:paddingRight="@dimen/horizontal_padding_very_very_small"
+        android:text="hello" />
 
 </FrameLayout>

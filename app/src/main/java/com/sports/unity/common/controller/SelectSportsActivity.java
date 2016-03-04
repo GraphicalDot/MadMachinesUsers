@@ -22,7 +22,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class SelectSportsActivity extends AppCompatActivity {
+public class SelectSportsActivity extends CustomAppCompatActivity {
 
     private ArrayList<String> sports = new ArrayList<String>();
     private boolean isResultRequired;
@@ -76,7 +76,7 @@ public class SelectSportsActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_select_sports);
-        sports = UserUtil.getSportsSelected();
+        sports = new ArrayList<>(UserUtil.getSportsSelected());
         try {
         } catch (Exception e) {
             e.printStackTrace();
@@ -171,6 +171,7 @@ public class SelectSportsActivity extends AppCompatActivity {
     private void moveOn() {
         executeThreadToUpdateInterests();
         UserUtil.setSportsSelected(SelectSportsActivity.this, sports);
+        UserUtil.setFilterSportsSelected(SelectSportsActivity.this, new ArrayList<String>(sports));
         Intent intent = new Intent(getIntent());
         intent.setClass(this, AdvancedFilterActivity.class);
         intent.putExtra(Constants.SPORTS_TYPE, UserUtil.getSportsSelected().get(0));
@@ -179,6 +180,17 @@ public class SelectSportsActivity extends AppCompatActivity {
             finish();
         } else {
             startActivityForResult(intent, Constants.REQUEST_CODE_ADD_SPORT);
+        }
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(isResultRequired){
+            setResult(RESULT_CANCELED);
+            finish();
+        }else{
+            super.onBackPressed();
         }
 
     }

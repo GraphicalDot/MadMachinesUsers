@@ -62,8 +62,8 @@ public class MatchListFragment extends Fragment {
 
         View view = inflater.inflate(com.sports.unity.R.layout.fragment_match_list, container, false);
         initView(view);
-        sportsSelectedNum = UserUtil.getSportsSelected().size();
-        sportSelected = UserUtil.getSportsSelected();
+        sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
+        sportSelected = UserUtil.getFilterSportsSelected();
         return view;
     }
 
@@ -113,8 +113,8 @@ public class MatchListFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        sportsSelectedNum = UserUtil.getSportsSelected().size();
-        sportSelected = UserUtil.getSportsSelected();
+        sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
+        sportSelected = UserUtil.getFilterSportsSelected();
         removeResponseListener();
         mSwipeRefreshLayout.setRefreshing(false);
     }
@@ -160,11 +160,11 @@ public class MatchListFragment extends Fragment {
 
     private void handleIfSportsChanged() {
         boolean isSportsChanged = false;
-        if (sportsSelectedNum != UserUtil.getSportsSelected().size()) {
+        if (sportsSelectedNum != UserUtil.getFilterSportsSelected().size()) {
             isSportsChanged = true;
         } else {
             for (int i = 0; i < sportSelected.size(); i++) {
-                if (!UserUtil.getSportsSelected().contains(sportSelected.get(i))) {
+                if (!UserUtil.getFilterSportsSelected().contains(sportSelected.get(i))) {
                     isSportsChanged = true;
                 }
             }
@@ -172,8 +172,8 @@ public class MatchListFragment extends Fragment {
         if (isSportsChanged) {
             mSwipeRefreshLayout.setRefreshing(true);
             requestContent();
-            sportSelected = UserUtil.getSportsSelected();
-            sportsSelectedNum = UserUtil.getSportsSelected().size();
+            sportSelected = UserUtil.getFilterSportsSelected();
+            sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
         }
     }
 
@@ -314,6 +314,5 @@ public class MatchListFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("max", "IN_SCORE-request>>>" + requestCode+"--result-->>>"+resultCode);
     }
 }

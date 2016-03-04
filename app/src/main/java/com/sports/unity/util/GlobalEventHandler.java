@@ -48,7 +48,7 @@ public class GlobalEventHandler {
             String key = iterator.next();
             GlobalEventListener listener = globalEventListenerMap.get(key);
             if( listener != null ){
-                listener.onXMPPServerConnected(connected);
+                listener.onXMPPServiceAuthenticated(connected);
             }
         }
     }

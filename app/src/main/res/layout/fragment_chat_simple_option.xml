@@ -9,9 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/menu_item_height"
         android:gravity="center_vertical"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingLeft="@dimen/horizontal_padding_small"
         android:textColor="@color/popup_menu_options"
-        android:textSize="@dimen/font_size_small_large"
-        />
+        android:textSize="@dimen/font_size_small_large" />
 
 </LinearLayout>

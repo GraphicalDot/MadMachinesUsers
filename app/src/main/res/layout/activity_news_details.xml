@@ -1,10 +1,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/news_detail_toolbar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.ashwinarora.sports.WebView">
+    >
 
     <include
         android:id="@+id/tool_bar"
@@ -37,7 +36,10 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:background="@color/news_strip"
-                    android:padding="@dimen/vertical_padding_very_very_small" >
+                    android:paddingTop="@dimen/vertical_padding_very_very_small"
+                    android:paddingBottom="@dimen/vertical_padding_very_very_small"
+                    android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+                    android:paddingRight="@dimen/horizontal_padding_very_very_small" >
 
                     <ImageView
                         android:id="@+id/fab_icon"
@@ -45,8 +47,8 @@
                         android:layout_height="@dimen/news_fav_icon_height"
                         android:scaleType="centerInside"
                         android:layout_gravity="center"
-                        android:paddingLeft="@dimen/vertical_padding_very_small"
-                        android:paddingRight="@dimen/vertical_padding_very_small"/>
+                        android:paddingLeft="@dimen/horizontal_padding_very_small"
+                        android:paddingRight="@dimen/horizontal_padding_very_small"/>
 
                     <View
                         android:layout_width="1dp"
@@ -61,7 +63,7 @@
                         android:textColor="@color/news_data"
                         android:text=""
                         android:textSize="@dimen/font_size_very_small"
-                        android:paddingLeft="@dimen/vertical_padding_very_small"
+                        android:paddingLeft="@dimen/horizontal_padding_very_small"
                         />
 
                     <TextView
@@ -71,7 +73,7 @@
                         android:layout_gravity="center"
                         android:gravity="right"
                         android:textAllCaps="true"
-                        android:paddingRight="@dimen/vertical_padding_very_small"
+                        android:paddingRight="@dimen/horizontal_padding_very_small"
                         android:textColor="@color/app_theme_blue"
                         android:textSize="@dimen/font_size_very_small"
                         android:text="" />
@@ -91,7 +93,10 @@
                     android:text=""
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:padding="@dimen/vertical_padding_small"
+                    android:paddingLeft="@dimen/horizontal_padding_small"
+                    android:paddingRight="@dimen/horizontal_padding_small"
+                    android:paddingTop="@dimen/vertical_padding_small"
+                    android:paddingBottom="@dimen/vertical_padding_small"
                     android:textColor="@color/news_headline_mini"
                     android:textSize="@dimen/font_size_medium" />
 
@@ -101,8 +106,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="@dimen/vertical_padding_small"
-                    android:paddingLeft="@dimen/vertical_padding_small"
-                    android:paddingRight="@dimen/vertical_padding_small"
+                    android:paddingLeft="@dimen/horizontal_padding_small"
+                    android:paddingRight="@dimen/horizontal_padding_small"
                     android:textColor="@color/news_headline_mini"
                     android:textSize="@dimen/font_size_small_large"
                     android:lineSpacingExtra="@dimen/vertical_padding_very_very_small"
@@ -110,17 +115,15 @@
             </LinearLayout>
        </ScrollView>
     <include layout="@layout/error_layout"
-    android:id="@+id/error"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-        />
+        android:id="@+id/error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
     <ProgressBar
-    android:id="@+id/progress"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:visibility="gone"
-        />
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
     </FrameLayout>
 
 </LinearLayout>

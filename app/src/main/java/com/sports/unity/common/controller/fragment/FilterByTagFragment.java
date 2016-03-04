@@ -96,6 +96,14 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     }
 
     private void initViews(View view) {
+        LinearLayout textPlayer = (LinearLayout) view.findViewById(R.id.text);
+
+        if(!SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_PLAYER)) {
+            textPlayer.setVisibility(View.GONE);
+        }else {
+            //nothing
+        }
+
         errorLayout = (LinearLayout) view.findViewById(R.id.error);
         TextView oops = (TextView) errorLayout.findViewById(R.id.oops);
         oops.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());

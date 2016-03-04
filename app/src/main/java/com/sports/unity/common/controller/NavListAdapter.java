@@ -62,9 +62,10 @@ public class NavListAdapter extends BaseExpandableListAdapter {
                 e.printStackTrace();
             }
             if (uri != null) {
-                Glide.with(act).load(Uri.parse(uri)).into(iv);
+                Glide.with(act).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).into(iv);
             } else {
-                iv.setVisibility(View.GONE);
+                iv.setVisibility(View.VISIBLE);
+                iv.setImageResource(R.drawable.ic_no_img);
             }
             if (childItems.get(childPosition).getName().toLowerCase().equals(Constants.GAME_KEY_CRICKET.toLowerCase())) {
                 iv.setVisibility(View.VISIBLE);
