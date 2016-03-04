@@ -102,5 +102,6 @@
     <dimen name="marginLeft_user_profile_tag">300dp</dimen>
     <dimen name="layout_height_card_divider">1dp</dimen>
     <dimen name="recent_ball_radius">24dp</dimen>
+    <dimen name="people_nearme_custom_location_height">60dp</dimen>
 
 </resources>

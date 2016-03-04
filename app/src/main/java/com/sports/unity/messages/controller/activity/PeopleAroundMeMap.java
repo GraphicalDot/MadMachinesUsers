@@ -27,6 +27,10 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -65,6 +69,8 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static android.widget.Toast.LENGTH_LONG;
 import static android.widget.Toast.makeText;
 import static com.sports.unity.common.model.TinyDB.KEY_PASSWORD;
@@ -145,8 +151,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                     }
                     makeText(getApplicationContext(), "Something went wrong please try again", LENGTH_LONG).show();
                 }
-            } else {
-                //nothing
+            }
+            if (dialog != null) {
+                dialog.dismiss();
             }
         }
 
@@ -167,6 +174,25 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         InitSeekbar();
         setsportSelectionButtons();
         setCustomButtonsForNavigationAndUsers();
+        bindAutoComplete();
+    }
+
+    private void bindAutoComplete() {
+        PlaceAutocompleteFragment fragment = (PlaceAutocompleteFragment) getFragmentManager()
+                .findFragmentById(R.id.custom_location);
+        fragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                findViewById(R.id.fl_custom_location).setVisibility(GONE);
+                //getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
+            }
+
+            @Override
+            public void onError(Status status) {
+                findViewById(R.id.fl_custom_location).setVisibility(GONE);
+                Toast.makeText(getApplicationContext(), getText(R.string.oops_try_again), LENGTH_LONG).show();
+            }
+        });
     }
 
 
@@ -392,6 +418,12 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 makeText(getApplicationContext(), "Privacy Policy work in progress", LENGTH_LONG).show();
             }
         });
+        toolbar.findViewById(R.id.myaddress).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                findViewById(R.id.fl_custom_location).setVisibility(VISIBLE);
+            }
+        });
 
     }
 
@@ -515,7 +547,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         aDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         aDialog.show();
 
-        aDialog.findViewById(R.id.progressBarProfile).setVisibility(View.VISIBLE);
+        aDialog.findViewById(R.id.progressBarProfile).setVisibility(VISIBLE);
 
 //        int distance = (int) Math.round(Double.parseDouble(marker.getSnippet().substring(marker.getSnippet().indexOf(",") + 1, marker.getSnippet().length())));
         int distance = (int) (person.getDistance());
@@ -562,21 +594,21 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 aDialog.cancel();
             }
         });
-        aDialog.findViewById(R.id.progressBarProfile).setVisibility(View.GONE);
+        aDialog.findViewById(R.id.progressBarProfile).setVisibility(GONE);
 
         if (vCard == null) {
             if (info == null) {
-                sayHello.setVisibility(View.GONE);
-                aDialog.findViewById(R.id.dot).setVisibility(View.GONE);
-                sport.setVisibility(View.GONE);
+                sayHello.setVisibility(GONE);
+                aDialog.findViewById(R.id.dot).setVisibility(GONE);
+                sport.setVisibility(GONE);
 
                 name.setText(R.string.no_users_nearby);
                 distancefromUser.setText(R.string.try_broadening_search_increasing_radius);
                 imageview.setImageResource(R.drawable.img_no_frnd_found);
             } else {
-                sayHello.setVisibility(View.GONE);
-                aDialog.findViewById(R.id.dot).setVisibility(View.GONE);
-                sport.setVisibility(View.GONE);
+                sayHello.setVisibility(GONE);
+                aDialog.findViewById(R.id.dot).setVisibility(GONE);
+                sport.setVisibility(GONE);
 
                 name.setText("Whoops!!");
                 distancefromUser.setText(info);

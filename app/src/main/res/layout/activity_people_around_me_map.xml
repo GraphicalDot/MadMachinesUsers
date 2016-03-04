@@ -26,6 +26,7 @@
             android:layout_height="match_parent"
             tools:layout="@layout/people_around_me" />
 
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="@dimen/map_sport_selection_button_height"
@@ -63,6 +64,21 @@
 
 
         </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_custom_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/textColorPrimary"
+            android:visibility="gone">
+
+            <fragment
+                android:id="@+id/custom_location"
+                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/people_nearme_custom_location_height" />
+        </FrameLayout>
+
 
         <RelativeLayout
             android:layout_width="wrap_content"
