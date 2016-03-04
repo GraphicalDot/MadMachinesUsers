@@ -84,6 +84,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_football_match_table);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setHasFixedSize(false);
         adapter = new UpCommingFootballMatchTableAdapter(list, getContext(),team1,team2);
         recyclerView.setAdapter(adapter);
         initErrorLayout(view);

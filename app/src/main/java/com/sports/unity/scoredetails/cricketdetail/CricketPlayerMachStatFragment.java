@@ -92,9 +92,11 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         rcBattingPerformanceSummery = (RecyclerView) view.findViewById(R.id.rc_batting_performance_summary);
         rcBattingPerformanceSummery.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
         rcBattingPerformanceSummery.setNestedScrollingEnabled(false);
+        rcBattingPerformanceSummery.setHasFixedSize(false);
         rcBowlingPerformanceSummary = (RecyclerView) view.findViewById(R.id.rc_bowling_performance_summary);
         rcBowlingPerformanceSummary.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
         rcBowlingPerformanceSummary.setNestedScrollingEnabled(false);
+        rcBowlingPerformanceSummary.setHasFixedSize(false);
         battingImageView = (ImageView) view.findViewById(R.id.iv_down);
         bowlingImageView = (ImageView) view.findViewById(R.id.iv_down_second);
         final View battingRow = view.findViewById(R.id.prl_batting);
