@@ -317,7 +317,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 } else {
 
                     if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("completed") ) {
-                         tvCurrentScore.setText(cricketMatchJsonCaller.getWinnerTeam(cricketMatchJsonCaller.getResult()));
+                         tvCurrentScore.setText(cricketMatchJsonCaller.getWinnerTeam(cricketMatchJsonCaller.getResult())+"Won The Match");
                     } else {
 
                         enableAutoRefreshContent();

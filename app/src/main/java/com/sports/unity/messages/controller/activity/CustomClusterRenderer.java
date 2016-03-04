@@ -3,9 +3,13 @@ package com.sports.unity.messages.controller.activity;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
@@ -13,6 +17,7 @@ import com.google.maps.android.clustering.view.DefaultClusterRenderer;
 import com.google.maps.android.ui.IconGenerator;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.messages.controller.model.Person;
 
 /**
@@ -21,26 +26,49 @@ import com.sports.unity.messages.controller.model.Person;
 public class CustomClusterRenderer extends DefaultClusterRenderer<Person> {
 
     private IconGenerator clusterIconGenerator;
+    private ImageView icon;
+    private TextView textView;
     private PeopleService peopleService;
+    private String username;
 
     public CustomClusterRenderer(Context context, GoogleMap map, ClusterManager<Person> clusterManager) {
         super(context, map, clusterManager);
         this.clusterIconGenerator = new IconGenerator(context);
         Activity act = (CustomAppCompatActivity) context;
         peopleService = (PeopleService) context;
-        this.clusterIconGenerator.setContentView(act.getLayoutInflater().inflate(R.layout.cluster_view, null));
+        View view = act.getLayoutInflater().inflate(R.layout.cluster_view, null);
+        icon = (ImageView) view.findViewById(R.id.cluster_icon);
+        this.clusterIconGenerator.setContentView(view);
+        this.username = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
 
     }
 
     @Override
     protected void onBeforeClusterItemRendered(Person item, MarkerOptions markerOptions) {
-        super.onBeforeClusterItemRendered(item, markerOptions);
+        //super.onBeforeClusterItemRendered(item, markerOptions);
         if (item.isFriend()) {
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_my_friends));
+            icon.setImageResource(R.drawable.ic_marker_my_friends);
+//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_my_friends));
         } else if (item.isCommonInterest()) {
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_ppl_with_same_int));
+            icon.setImageResource(R.drawable.ic_marker_ppl_with_same_int);
+//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_ppl_with_same_int));
+        } else if (item.getUsername().equalsIgnoreCase(username)) {
+            //Set Marker for self user
         } else {
-            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_su_users));
+            icon.setImageResource(R.drawable.ic_marker_su_users);
+//            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_su_users));
+        }
+        // super.onBeforeClusterItemRendered(item, markerOptions);
+        clusterIconGenerator.setBackground(icon.getDrawable());
+        Bitmap markerIcon = clusterIconGenerator.makeIcon("");
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(markerIcon));
+    }
+
+    @Override
+    protected void onClusterItemRendered(Person clusterItem, Marker marker) {
+        super.onClusterItemRendered(clusterItem, marker);
+        if (clusterItem.getUsername().equalsIgnoreCase(username)) {
+            marker.setDraggable(true);
         }
     }
 
@@ -55,6 +83,8 @@ public class CustomClusterRenderer extends DefaultClusterRenderer<Person> {
             numeric = numeric * 10;
             count = numeric + "+";
         }
+        clusterIconGenerator.setBackground(icon.getDrawable());
+        icon.setImageResource(R.drawable.ic_marker_cluster);
         Bitmap icon = clusterIconGenerator.makeIcon(count);
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
     }

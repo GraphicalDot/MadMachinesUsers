@@ -46,7 +46,27 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
 
             TextDrawable drawable = null;
             holder.dto = mValues.get(position);
+
+
+            if(position==0){
+                holder.tvTimeInterval.setVisibility(View.VISIBLE);
+                holder.upperDotView.setVisibility(View.VISIBLE);
+            }else {
+                holder.tvTimeInterval.setVisibility(View.GONE);
+                holder.upperDotView.setVisibility(View.GONE);
+            }
+
+            if(getItemCount()-1== position){
+                holder.gameStartImage.setVisibility(View.VISIBLE);
+                holder.gameStartImage.setImageResource(R.drawable.ic_match_start);
+            }else {
+                holder.gameStartImage.setVisibility(View.GONE);
+            }
+
             if(holder.dto.getTeamName().equalsIgnoreCase(context.getString(R.string.home_team_name))) {
+                if(holder.dto.getTvTeamFirstOffPlayer()!=null){
+
+                }
                 holder.tvTeamFirstTime.setText(holder.dto.getTvTeamFirstTime());
                 holder.tvTeamFirstOnPlayer.setText(holder.dto.getTvTeamFirstOnPlayer());
                 holder.tvTeamFirstOffPlayer.setText(holder.dto.getTvTeamFirstOffPlayer());
@@ -94,7 +114,9 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
         private View teamSecondView;
         private View centralLineImage;
         private ImageView centralCircularImage;
-
+        private ImageView gameStartImage;
+        private TextView tvTimeInterval;
+        private View upperDotView;
         public CompleteFootballTimeLineDTO dto;
 
         public ViewHolder(View view) {
@@ -111,6 +133,9 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
             teamSecondView = view.findViewById(R.id.ll_second_player_info);
             centralLineImage = view.findViewById(R.id.ll_imv_center);
             centralCircularImage = (ImageView) view.findViewById(R.id.iv_time_line_image);
+            gameStartImage = (ImageView) view.findViewById(R.id.iv_centre_image);
+            tvTimeInterval = (TextView) view.findViewById(R.id.tv_time_interval);
+            upperDotView = view.findViewById(R.id.iv_dot_upper);
         }
     }
 }

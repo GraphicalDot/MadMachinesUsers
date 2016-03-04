@@ -65,6 +65,8 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static android.widget.Toast.LENGTH_LONG;
+import static android.widget.Toast.makeText;
 import static com.sports.unity.common.model.TinyDB.KEY_PASSWORD;
 import static com.sports.unity.common.model.TinyDB.KEY_USER_JID;
 import static com.sports.unity.common.model.TinyDB.getInstance;
@@ -141,7 +143,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                         if (dialog.isShowing())
                             dialog.dismiss();
                     }
-                    Toast.makeText(getApplicationContext(), "Something went wrong please try again", Toast.LENGTH_LONG).show();
+                    makeText(getApplicationContext(), "Something went wrong please try again", LENGTH_LONG).show();
                 }
             } else {
                 //nothing
@@ -362,7 +364,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 int padding = 10; // offset from edges of the map in pixels
                 CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
                 map.animateCamera(cu);
-                Toast.makeText(PeopleAroundMeMap.this, markers.size() + " people around you", Toast.LENGTH_SHORT).show();
+                makeText(PeopleAroundMeMap.this, markers.size() + " people around you", Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -382,6 +384,12 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+        toolbar.findViewById(R.id.privacy_icon).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                makeText(getApplicationContext(), "Privacy Policy work in progress", LENGTH_LONG).show();
             }
         });
 
@@ -510,7 +518,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         aDialog.findViewById(R.id.progressBarProfile).setVisibility(View.VISIBLE);
 
 //        int distance = (int) Math.round(Double.parseDouble(marker.getSnippet().substring(marker.getSnippet().indexOf(",") + 1, marker.getSnippet().length())));
-        int distance = (int) (person.getDistance() * radius);
+        int distance = (int) (person.getDistance());
         new GetVcardForUser(popupProfile, distance, person).execute(person.getUsername());
 
     }

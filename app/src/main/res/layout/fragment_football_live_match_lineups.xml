@@ -90,6 +90,7 @@
                 android:id="@+id/rv_lineup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingBottom="@dimen/horizontal_padding_very_very_small"
                 >
             </android.support.v7.widget.RecyclerView>
         </LinearLayout>
@@ -123,8 +124,7 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_substitutes"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
+                android:layout_height="wrap_content">
             </android.support.v7.widget.RecyclerView>
 
         </LinearLayout>
