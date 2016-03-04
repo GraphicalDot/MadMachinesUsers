@@ -50,24 +50,28 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
             drawable = getTextDrawable(holder.dto.getPlayerPostionNumber(),Color.WHITE,color);
             holder.ivPlayerPosition.setImageDrawable(drawable);
             holder.tvPlayerName.setText(holder.dto.getPlayerName());
-            if(holder.dto.getCardType()!=null && !holder.dto.getCardType().equals("")) {
+            if(holder.dto.getCardType()!=null) {
                 holder.ivCardType.setImageDrawable(getDrwableResource(holder.dto.getCardType()));
             }else {
                 holder.ivCardType.setVisibility(View.GONE);
             }
-            if(holder.dto.getGoal()!=null && !holder.dto.getGoal().equals("")) {
+            if(holder.dto.getGoal()!=null) {
                 holder.ivBallPass.setImageDrawable(getDrwableResource(holder.dto.getGoal()));
             }else {
                 holder.ivBallPass.setVisibility(View.GONE);
             }
-                 if(holder.dto.getOffPlayerName()!= null) {
-                         holder.tvOffPlayerName.setText(holder.dto.getOffPlayerName());
-                         holder.ivEnterExit.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_red));
-                         holder.ivOffCardType.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_green));
-                         holder.ivOffPlayerPosition.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_substitue));
-                  } else {
-                     holder.proffRightPercentRelativeLayout.setVisibility(View.GONE);
-                      }
+            if(holder.dto.getOffPlayerName()!= null) {
+                holder.tvOffPlayerName.setText(holder.dto.getOffPlayerName());
+                holder.ivEnterExit.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_red));
+                holder.ivOffCardType.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_green));
+                holder.ivOffPlayerPosition.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_substitue));
+            } else {
+                holder.tvOffPlayerName.setVisibility(View.GONE);
+                holder.ivEnterExit.setVisibility(View.GONE);
+                holder.ivOffCardType.setVisibility(View.GONE);
+                holder.ivOffPlayerPosition.setVisibility(View.GONE);
+                holder.prOffLeftPercentRelativeLayout.setVisibility(View.GONE);
+            }
 
             // right side player postion
             drawable = getTextDrawable(holder.dto.getPlayerPostionNumberSecond(),Color.WHITE,color);
@@ -96,7 +100,11 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
                 holder.ivOffCardTypeSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_green));
                 holder.ivOffPlayerPositionSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_substitue));
             }else {
-                holder.prOffLeftPercentRelativeLayout.setVisibility(View.GONE);
+                holder.tvOffPlayerNameSecond.setVisibility(View.GONE);
+                holder.ivEnterExitSecond.setVisibility(View.GONE);
+                holder.ivOffCardTypeSecond.setVisibility(View.GONE);
+                holder.ivOffPlayerPositionSecond.setVisibility(View.GONE);
+                holder.proffRightPercentRelativeLayout.setVisibility(View.GONE);
             }
             /*if(holder.dto.getOffPlayerName()!=null) {
                 drawable = context.getResources().getDrawable(R.drawable.ic_substitue);
@@ -224,8 +232,8 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
             ivOffCardTypeSecond =(ImageView)view.findViewById(R.id.iv_off_card_type_second);
 
             ivOffEnterExitSecond = (ImageView) view.findViewById(R.id.iv_off_enter_exit_second);
-            prOffLeftPercentRelativeLayout = view.findViewById(R.id.pr_off_left);
-            proffRightPercentRelativeLayout = view.findViewById(R.id.pr_off_right);
+            prOffLeftPercentRelativeLayout = view.findViewById(R.id.ll_off_lineup_team_left);
+            proffRightPercentRelativeLayout = view.findViewById(R.id.ll_lineup_team_right_off);
 
 
 

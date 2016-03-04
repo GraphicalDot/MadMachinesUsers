@@ -60,6 +60,17 @@
                                 android:textSize="@dimen/font_size_small_large"
                                 android:text=""
                                 />
+                            <TextView
+                                android:id="@+id/t1over"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerInParent="true"
+                                android:paddingRight="@dimen/vertical_padding_very_small"
+                                android:textColor="@android:color/black"
+                                android:textSize="@dimen/font_size_small_large"
+                                android:text=""
+                                />
 
                             <TextView
                                 android:id="@+id/team1"
@@ -108,7 +119,17 @@
                                 android:textSize="@dimen/font_size_small_large"
                                 android:text=""
                                 />
-
+                            <TextView
+                                android:id="@+id/t2over"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentRight="true"
+                                android:layout_centerInParent="true"
+                                android:paddingRight="@dimen/vertical_padding_very_small"
+                                android:textColor="@android:color/black"
+                                android:textSize="@dimen/font_size_small_large"
+                                android:text=""
+                                />
                             <TextView
                                 android:id="@+id/team2"
                                 android:layout_width="wrap_content"
@@ -141,7 +162,16 @@
                     android:orientation="vertical"
                     android:gravity="center"
                     >
-
+                    <TextView
+                        android:id="@+id/minutes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        android:textColor="@color/app_theme_blue"
+                        android:textSize="@dimen/font_size_small_large"
+                        android:text=""
+                        />
                     <TextView
                         android:id="@+id/liveText"
                         android:layout_width="wrap_content"

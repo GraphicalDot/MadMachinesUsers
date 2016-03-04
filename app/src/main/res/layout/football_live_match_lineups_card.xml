@@ -150,7 +150,7 @@
         android:layout_height="wrap_content"
         android:padding="@dimen/horizontal_padding_very_small">
         <LinearLayout
-            android:id="@+id/ll_lineup_team_right"
+            android:id="@+id/ll_off_lineup_team_left"
             android:layout_width="0dp"
             app:layout_widthPercent="48%"
             android:layout_height="wrap_content">
@@ -211,14 +211,14 @@
             </android.support.percent.PercentRelativeLayout>
         </LinearLayout>
         <FrameLayout
-            android:layout_toRightOf="@id/ll_lineup_team_right"
+            android:layout_toRightOf="@id/ll_off_lineup_team_left"
             android:id="@+id/tv_off_dummy_view"
             android:layout_width="0dp"
             app:layout_widthPercent="4%"
             android:layout_centerVertical="true"
             android:paddingLeft="@dimen/vertical_padding_very_very_small"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_arrow_green"/>
+            />
         <LinearLayout
             android:layout_toRightOf="@id/tv_off_dummy_view"
             android:id="@+id/ll_lineup_team_right_off"

@@ -10,7 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.google.gson.Gson;
+
 
 
 import org.json.JSONObject;
@@ -69,7 +69,7 @@ public class LivedMatchScoreCardHandler {
         requestInProcess.add(REQUEST_TAG);
     }
     private void handleResponse(String response) {
-        Gson gson = new Gson();
+
         try{
             JSONObject jsonObject = new JSONObject(response);
             Log.i("Score Card", "handleResponse: ");

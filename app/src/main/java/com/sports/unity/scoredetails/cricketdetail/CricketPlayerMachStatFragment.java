@@ -81,7 +81,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
     }
     public void showProgress() {
-    progressBar.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
 
     }
     public void hideProgress() {
@@ -178,6 +178,17 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         playerMatchBattingStatDTOList.clear();
         playerMatchBowlingStatDTOList.clear();
         battingTestsmatchMap.clear();
+        battingOdisMap.clear();
+        battingT20sMap .clear();
+        battingIPLMap .clear();
+        bowlingTestsmatchMap .clear();
+        bowlingOdisMap .clear();
+        bowlingT20sMap .clear();
+        bowlingIPLMap .clear();
+
+
+
+
         rcBattingPerformanceSummery.setVisibility(VISIBLE);
         rcBowlingPerformanceSummary.setVisibility(VISIBLE);
         final JSONObject data = (JSONObject) jsonObject.get("data");
@@ -320,7 +331,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     bowlingIPLMap.put("economy", bowling.getString("economy"));
                 }
             }
-       }
+        }
         CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
         Set<String> keySet = bowlingTestsmatchMap.keySet();
         for (String key : keySet) {

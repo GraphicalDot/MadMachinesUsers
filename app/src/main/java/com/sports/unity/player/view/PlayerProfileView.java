@@ -1,35 +1,21 @@
 package com.sports.unity.player.view;
 
-import android.graphics.BitmapFactory;
+
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.gson.JsonObject;
-import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
-import com.sports.unity.common.controller.CustomAppCompatActivity;
-import com.sports.unity.common.controller.EnterOtpActivity;
-import com.sports.unity.common.model.TinyDB;
-import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
-import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scores.model.ScoresContentHandler;
-import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
@@ -38,7 +24,6 @@ import org.json.JSONObject;
 import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 

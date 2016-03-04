@@ -90,4 +90,12 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         }
         return jsonObject.getString("short_name");
     }
+    public String getWinnerTeam(String team) throws JSONException {
+        if(jsonObject.isNull(team))
+        {
+            return "";
+        }
+        return jsonObject.getString(team);
+    }
+
 }

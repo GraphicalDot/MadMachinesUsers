@@ -105,7 +105,8 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
         rcRecyclerViewTeamFirst.setAdapter(upCommingFootballMatchSquadAdapterFirst);
         upCommingFootballMatchSquadAdapterSecond = new UpCommingFootballMatchSquadAdapter(listTeamFirst,getContext());
         rcRecyclerViewTeamSecond.setAdapter(upCommingFootballMatchSquadAdapterSecond);
-        squadParnetLinearLayout = (LinearLayout) view.findViewById(R.id.squad_parnet_linearlayout);
+        squadParnetLinearLayout = (LinearLayout) view.findViewById(R.id.squad_parent_linearlayout);
+        squadParnetLinearLayout.setVisibility(View.GONE);
         initErrorLayout(view);
 
     }
@@ -118,7 +119,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     @Override
     public void handleContent(String object) {
         {
-            hideProgressBar();
+            showProgressBar();
 
             try {
                 JSONObject jsonObject = new JSONObject(object);
@@ -157,8 +158,9 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         listTeamFirst.clear();
         listTeamSecond.clear();
-        hideProgressBar();
+
         squadParnetLinearLayout.setVisibility(View.VISIBLE);
+        hideProgressBar();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
          JSONObject dataObject = jsonObject.getJSONObject("data");
          final JSONArray teamFirstSquadArray = dataObject.getJSONArray("team_1_squad");

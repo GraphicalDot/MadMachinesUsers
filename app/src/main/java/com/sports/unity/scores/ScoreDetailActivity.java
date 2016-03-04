@@ -312,12 +312,12 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                     tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
                     tvCurrentScore.setText(DateUtil.getDaysDiffrence(cricketMatchJsonCaller.getMatchDate(), this));
-                     showNoCommentaries();
+                    showNoCommentaries();
 
                 } else {
 
-                    if ( cricketMatchJsonCaller.getStatus().equals("completed") ) {
-                         tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
+                    if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("completed") ) {
+                         tvCurrentScore.setText(cricketMatchJsonCaller.getWinnerTeam(cricketMatchJsonCaller.getResult()));
                     } else {
 
                         enableAutoRefreshContent();

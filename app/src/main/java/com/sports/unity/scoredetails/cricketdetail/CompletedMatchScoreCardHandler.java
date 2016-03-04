@@ -47,6 +47,7 @@ public class CompletedMatchScoreCardHandler {
         public void onResponse(String s) {
             requestInProcess.remove(REQUEST_TAG);
             CompletedMatchScoreCardHandler.this.handleResponse(s);
+
         }
 
         @Override
@@ -59,7 +60,6 @@ public class CompletedMatchScoreCardHandler {
     public void requestCompletdMatchScoreCard(String matchId) {
         Log.i("Score Detail", "Request Score Details");
          String url = BASEURL+matchId;
-        url = url+matchId;
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);

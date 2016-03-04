@@ -35,7 +35,8 @@
                     android:layout_centerVertical="true"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/tv_serial_number"/>
+                    android:layout_toRightOf="@id/tv_serial_number"
+                    android:scaleType="fitXY"/>
 
                 <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                     android:paddingLeft="@dimen/horizontal_padding_very_very_small"

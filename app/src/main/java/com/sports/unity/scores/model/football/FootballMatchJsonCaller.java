@@ -63,6 +63,11 @@ public class FootballMatchJsonCaller extends MatchJsonCaller {
     public String getTeam2Id() throws JSONException {
         return jsonObject.getString("away_team_id");
     }
-
+    public String getMatchMinute() throws JSONException {
+        if(jsonObject.isNull("minutes")){
+            return  "";
+        }
+        return jsonObject.getString("minutes");
+    }
 
 }

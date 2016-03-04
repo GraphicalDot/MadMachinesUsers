@@ -71,6 +71,7 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
                 holder.redView.getLayoutParams().width = 400*redValue/(redValue+blueValue);
                 holder.blueView.getLayoutParams().width = 400*blueValue/(redValue+blueValue);
 
+
             }catch (Exception e){e.printStackTrace();}
         }catch (Exception e){e.printStackTrace();}
     }

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.sports.unity.R;
@@ -52,7 +53,8 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
     private TextView tvMatchDate;
     private SwipeRefreshLayout swipeRefreshLayout;
     private UpCommingFootballMatchTableHandler upCommingFootballMatchTableHandler;
-    private View llTeamSummery;
+    private View llTeamSummary;
+    private ProgressBar progressBar;
     public UpCommingFootballMatchTableFargment() {
         // Required empty public constructor
     }
@@ -80,6 +82,8 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         return view;
     }
     private void initView(View view) {
+        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         tvMatchDate = (TextView) view.findViewById(R.id.tv_match_date);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_table);
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_football_match_table);
@@ -89,8 +93,8 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         adapter = new UpCommingFootballMatchTableAdapter(list, getContext(),team1,team2);
         recyclerView.setAdapter(adapter);
         initErrorLayout(view);
-        llTeamSummery = view.findViewById(R.id.ll_team_summery);
-        llTeamSummery.setVisibility(View.GONE);
+        llTeamSummary = view.findViewById(R.id.sv_football_match_table);
+        llTeamSummary.setVisibility(View.GONE);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -106,7 +110,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
     public void handleContent(String object) {
         {
            try {
-
+               showProgressBar();
                 JSONObject jsonObject = new JSONObject(object);
                 boolean success = jsonObject.getBoolean("success");
                 boolean error = jsonObject.getBoolean("error");
@@ -138,7 +142,12 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         errorLayout.setVisibility(View.VISIBLE);
 
     }
-
+    private void  showProgressBar(){
+        progressBar.setVisibility(View.VISIBLE);
+    }
+    private void  hideProgressBar(){
+        progressBar.setVisibility(View.GONE);
+    }
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         final JSONArray dataArray = jsonObject.getJSONArray("data");
@@ -146,7 +155,8 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
             swipeRefreshLayout.setRefreshing(false);
         }
         list.clear();
-        llTeamSummery.setVisibility(View.VISIBLE);
+        hideProgressBar();
+        llTeamSummary.setVisibility(View.VISIBLE);
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override

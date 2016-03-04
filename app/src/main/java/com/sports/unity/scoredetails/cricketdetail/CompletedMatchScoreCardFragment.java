@@ -253,7 +253,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                 @Override
                 public void run() {
                     try {
-                        if(!jsonObject.isNull("data")){
+
                             JSONArray jsonArray = jsonObject.getJSONArray("data");
                             JSONObject dataObject = jsonArray.getJSONObject(0);
                             tvFirstTeamInning.setText(dataObject.getString("team_a") + " Innings");
@@ -378,14 +378,16 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
                                 }
                             }
-                        }
+                            teamABattingAdapter.notifyDataSetChanged();
+                            teamABowlingAdapter.notifyDataSetChanged();
+                            teamAFallOfWicketAdapter.notifyDataSetChanged();
+                            teamBBattingAdapter.notifyDataSetChanged();
+                            teamBBowlingAdapter.notifyDataSetChanged();
+                            teamBFallOfWicketAdapter.notifyDataSetChanged();
 
-                        teamABattingAdapter.notifyDataSetChanged();
-                        teamABowlingAdapter.notifyDataSetChanged();
-                        teamAFallOfWicketAdapter.notifyDataSetChanged();
-                        teamBBattingAdapter.notifyDataSetChanged();
-                        teamBBowlingAdapter.notifyDataSetChanged();
-                        teamBFallOfWicketAdapter.notifyDataSetChanged();
+
+
+
 
                     } catch (Exception ex) {
                         ex.printStackTrace();

@@ -6,12 +6,16 @@
     android:layout_height="match_parent">
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        >
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:id="@+id/sv_football_match_table"
+            >
             <android.support.percent.PercentRelativeLayout
+                android:id="@+id/pl_team_table"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/gray3"
@@ -111,28 +115,28 @@
                 android:background="@color/gray3"
                 tools:listitem="@layout/upcoming_football_match_table_card"
                 />
-            <include
-                android:id="@+id/error"
-                layout="@layout/error_layout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                />
-            <TextView
-                android:id="@+id/no_comments"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="No Comments"
-                android:textSize="@dimen/font_size_large"
-                android:visibility="gone"
-                />
-            <ProgressBar
-                android:id="@+id/progress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center" />
+
         </LinearLayout>
     </ScrollView>
-
+    <include
+        android:id="@+id/error"
+        layout="@layout/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
+    <TextView
+        android:id="@+id/no_comments"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="No Comments"
+        android:textSize="@dimen/font_size_large"
+        android:visibility="gone"
+        />
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center" />
 </android.support.v4.widget.SwipeRefreshLayout>

@@ -68,6 +68,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     private List<CompleteFootballLineUpDTO> lineUpList = new ArrayList<>();
     private CompleteFootballLineUpAdapter completeFootballSubstituteUpAdapter;
     private List<CompleteFootballLineUpDTO> substitutesList = new ArrayList<>();
+    private View llParentLayout;
 
     public CompletedFootballMatchLineUpFragment() {
         // Required empty public constructor
@@ -111,7 +112,8 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         rvLineup.setNestedScrollingEnabled(false);
         completeFootballSubstituteUpAdapter = new CompleteFootballLineUpAdapter(substitutesList ,getContext());
         rvSubstitutes.setAdapter(completeFootballSubstituteUpAdapter);
-
+        llParentLayout = view.findViewById(R.id.parent_layout);
+        llParentLayout.setVisibility(View.GONE);
 
 
 
@@ -164,6 +166,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         hideProgressBar();
         lineUpList.clear();
         substitutesList.clear();
+        llParentLayout.setVisibility(View.VISIBLE);
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if(!jsonObject.isNull("data")) {
             final JSONObject dataObject = jsonObject.getJSONObject("data");
@@ -180,8 +183,6 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
 
                             tvCaptainFirst.setText("NA");
                             tvCaptainSecond.setText("NA");
-
-
                             boolean first = true;
                             CompleteFootballLineUpDTO completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
                             ;
@@ -191,7 +192,6 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
 
                                 if (first) {
                                     completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
-
                                     completeFootballLineUpDTO.setPlayerName(subsObject.getString("player_name"));
                                     completeFootballLineUpDTO.setPlayerPostionNumber(subsObject.getString("jersey_number"));
                                     completeFootballLineUpDTO.setEnterExitImage(getOnOffPlayer(substitutionsArray, subsObject.getString("player_name")));

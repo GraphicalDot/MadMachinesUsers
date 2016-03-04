@@ -5,7 +5,7 @@ import android.graphics.drawable.Drawable;
 /**
  * Created by cfeindia on 28/2/16.
  */
-public class CompleteFootballTimeLineDTO implements Comparable<CompleteFootballTimeLineDTO>{
+public class CompleteFootballTimeLineDTO {
     private String teamName;
     private String tvTeamFirstTime;
     private String tvTeamSecondTime;
@@ -79,17 +79,6 @@ public class CompleteFootballTimeLineDTO implements Comparable<CompleteFootballT
         this.teamName = teamName;
     }
 
-    public void getDrwDrawableImage(String event) {
-
-    }
 
 
-
-    @Override
-    public int compareTo(CompleteFootballTimeLineDTO another) {
-        if(this.getTvTeamFirstTime().equals(another.getTvTeamFirstTime())){
-          return 0;
-        }else {return  1;}
-
-    }
 }

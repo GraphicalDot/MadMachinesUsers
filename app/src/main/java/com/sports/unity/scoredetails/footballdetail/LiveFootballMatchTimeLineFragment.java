@@ -176,7 +176,6 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
                                 list.add(completeFootballTimeLineDTO);
                             }
 
-                            Collections.sort(list);
                             completeFootballTimeLineAdapter.notifyDataSetChanged();
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -185,7 +184,6 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
                     }
                 });
             }
-
         }
     }
     private void setTeamFirstTimeDTO(CompleteFootballTimeLineDTO completeFootballTimeLineDTO, JSONObject dataObject) throws JSONException {
