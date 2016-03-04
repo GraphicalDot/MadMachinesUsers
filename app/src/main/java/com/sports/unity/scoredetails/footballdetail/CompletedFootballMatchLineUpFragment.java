@@ -162,6 +162,8 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         hideProgressBar();
+        lineUpList.clear();
+        substitutesList.clear();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if(!jsonObject.isNull("data")) {
             final JSONObject dataObject = jsonObject.getJSONObject("data");

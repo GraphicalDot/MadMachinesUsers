@@ -77,11 +77,8 @@ public class ScoresJsonParser {
                     p.setDistance(personObject.getDouble("distance"));
                     p.setPosition(new LatLng(personObject.getDouble("lat"), personObject.getDouble("lng")));
                     String friendship_status = personObject.getString("friendship_status");
-                    JSONArray interestsObjects = personObject.getJSONArray("interests");
-                    int totalInterests = interestsObjects.length();
-                    for (int i = 0; i < totalInterests; i++) {
-                        String interest = interestsObjects.getString(i);
-                        p.getInterests().add(interest);
+                    if (!personObject.isNull("interests") && personObject.getJSONArray("interests").length() > 0) {
+                        p.setCommonInterest(true);
                     }
                     if (friendship_status.equalsIgnoreCase("friends")) {
                         p.setFriend(true);

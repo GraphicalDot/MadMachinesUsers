@@ -128,6 +128,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             notificationImage = (ImageView) findViewById(R.id.notificationicon_image);
             recyclerView= (RecyclerView) findViewById(R.id.rc_player_details);
             recyclerView.setLayoutManager(new LinearLayoutManager(this , VERTICAL, false));
+            recyclerView.setNestedScrollingEnabled(false);
             mplayerScorecardAdapter = new PlayerScorecardAdapter(playerScoreCardDTOs);
             recyclerView.setAdapter(mplayerScorecardAdapter);
             progressBar = (ProgressBar) findViewById(R.id.progress);

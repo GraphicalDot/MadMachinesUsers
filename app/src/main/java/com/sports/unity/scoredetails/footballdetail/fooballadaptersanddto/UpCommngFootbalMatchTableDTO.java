@@ -72,4 +72,6 @@ public class UpCommngFootbalMatchTableDTO  {
     public void setTvPts(String tvPts) {
         this.tvPts = tvPts;
     }
+
+
 }

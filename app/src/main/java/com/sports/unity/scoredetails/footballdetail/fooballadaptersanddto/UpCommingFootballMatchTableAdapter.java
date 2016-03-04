@@ -2,6 +2,7 @@ package com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,8 +44,8 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
 
 
         holder.dto = mValues.get(position);
-
-            if(holder.dto.getTvTeamName().equalsIgnoreCase(team1) || holder.dto.getTvTeamName().equalsIgnoreCase(team2)){
+            Log.i("Teams", holder.dto.getTvTeamName());
+            if(team1.equals(holder.dto.getTvTeamName())){
                 holder.tvSerialNumber.setText(String.valueOf(position+1));
                 holder.tvTeamName.setText(holder.dto.getTvTeamName());
                 holder.tvP.setText(holder.dto.getTvP());

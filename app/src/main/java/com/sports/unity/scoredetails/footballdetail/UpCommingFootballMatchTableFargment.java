@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
@@ -84,6 +85,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         recyclerView = (RecyclerView) view.findViewById(R.id.rv_football_match_table);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setHasFixedSize(false);
         adapter = new UpCommingFootballMatchTableAdapter(list, getContext(),team1,team2);
         recyclerView.setAdapter(adapter);
         initErrorLayout(view);
@@ -122,6 +124,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
             }
         }
     }
+
     private void initErrorLayout(View view) {
         try {
             LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
@@ -162,7 +165,6 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
                                 upCommngFootbalMatchTableDTO.setTvTeamName(teamObject.getString("team_name"));
 
                             }
-
                             if(!teamObject.isNull("games_drawn"))
                                 upCommngFootbalMatchTableDTO.setTvD(teamObject.getString("games_drawn"));
                             if(!teamObject.isNull("games_lost"))
@@ -174,7 +176,9 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
                             if(!teamObject.isNull("team_points"))
                                 upCommngFootbalMatchTableDTO.setTvPts(teamObject.getString("team_points"));
                             list.add(upCommngFootbalMatchTableDTO);
+
                         }
+
                         adapter.notifyDataSetChanged();
                     } catch (Exception ex) {
                         ex.printStackTrace();

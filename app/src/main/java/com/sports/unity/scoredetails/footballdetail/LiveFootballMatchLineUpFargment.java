@@ -94,8 +94,10 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
         rvLineup.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         rvSubstitutes = (RecyclerView) view.findViewById(R.id.rv_substitutes);
         rvSubstitutes.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        rvSubstitutes.setNestedScrollingEnabled(false);
         completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(lineUpList ,getContext());
         rvLineup.setAdapter(completeFootballLineUpAdapter);
+        rvLineup.setNestedScrollingEnabled(false);
         completeFootballSubstituteUpAdapter = new CompleteFootballLineUpAdapter(substitutesList ,getContext());
         rvSubstitutes.setAdapter(completeFootballSubstituteUpAdapter);
 
@@ -147,6 +149,8 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
+        lineUpList.clear();
+        substitutesList.clear();
         hideProgressBar();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         final JSONObject dataObject = jsonObject.getJSONObject("data");

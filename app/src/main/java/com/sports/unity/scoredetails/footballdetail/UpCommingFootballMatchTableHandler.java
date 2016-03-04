@@ -82,7 +82,7 @@ public class UpCommingFootballMatchTableHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
-    }
+        }
 
     public void addListener(UpCommingFootballMatchTableContentListener contentListener) {
         mContentListener = contentListener;
