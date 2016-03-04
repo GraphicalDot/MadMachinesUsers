@@ -62,6 +62,7 @@ public class ChatScreenAdapter extends BaseAdapter {
     private String searchString = "";
     private boolean isGroupChat = false;
     private String groupServerId;
+    private String jid = null;
 
     //    private HashMap<String, byte[]> mediaMap = null;
     private AudioRecordingHelper audioRecordingHelper = null;
@@ -72,7 +73,7 @@ public class ChatScreenAdapter extends BaseAdapter {
     private AudioEventListener audioEventListener = new AudioEventListener();
     private ImageOrVideoClickListener imageOrVideoClickListener = new ImageOrVideoClickListener();
 
-    public ChatScreenAdapter(ChatScreenActivity chatScreenActivity, ArrayList<Message> messagelist, boolean otherChat, boolean isGroupChat, String groupServerId) {
+    public ChatScreenAdapter(ChatScreenActivity chatScreenActivity, ArrayList<Message> messagelist, boolean otherChat, boolean isGroupChat, String groupServerId, String jid) {
         this.messageList = messagelist;
         activity = chatScreenActivity;
 //        mediaMap = chatScreenActivity.getMediaMap();
@@ -81,6 +82,7 @@ public class ChatScreenAdapter extends BaseAdapter {
         audioRecordingHelper = AudioRecordingHelper.getInstance(activity);
         audioRecordingHelper.clearProgressMap();
         this.groupServerId = groupServerId;
+        this.jid = jid;
     }
 
     @Override
@@ -546,7 +548,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                     Toast.makeText(activity, "Media doesn't exist.", Toast.LENGTH_SHORT).show();
                 }
             } else if (contentStatus == FileOnCloudHandler.STATUS_DOWNLOAD_FAILED) {
-                FileOnCloudHandler.getInstance(activity).requestForDownload(message.textData, message.mimeType, message.id);
+                FileOnCloudHandler.getInstance(activity).requestForDownload(message.textData, message.mimeType, message.id, jid);
 
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -558,9 +560,9 @@ public class ChatScreenAdapter extends BaseAdapter {
                 Chat chat = null;
                 if (!isGroupChat) {
                     ChatManager chatManager = ChatManager.getInstanceFor(XMPPClient.getConnection());
-                    chat = chatManager.getThreadChat(ChatScreenActivity.getJABBERID());
+                    chat = chatManager.getThreadChat(jid);
                     if (chat == null) {
-                        chat = chatManager.createChat(ChatScreenActivity.getJABBERID() + "@mm.io");
+                        chat = chatManager.createChat(jid + "@mm.io");
                     }
                 } else {
                     //do nothing
@@ -571,7 +573,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                     thumbnailImage = Base64.encodeToString(message.media, Base64.DEFAULT);
                 }
 
-                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, null, message.mimeType, chat, message.id, nearByChat, isGroupChat, groupServerId);
+                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, null, message.mimeType, chat, message.id, nearByChat, isGroupChat, groupServerId, jid);
 
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -681,7 +683,7 @@ public class ChatScreenAdapter extends BaseAdapter {
                     Toast.makeText(activity, "Media doesn't exist.", Toast.LENGTH_SHORT).show();
                 }
             } else if (contentStatus == FileOnCloudHandler.STATUS_DOWNLOAD_FAILED) {
-                FileOnCloudHandler.getInstance(activity).requestForDownload(message.textData, message.mimeType, message.id);
+                FileOnCloudHandler.getInstance(activity).requestForDownload(message.textData, message.mimeType, message.id, jid);
 
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -691,16 +693,16 @@ public class ChatScreenAdapter extends BaseAdapter {
                 });
             } else if (contentStatus == FileOnCloudHandler.STATUS_UPLOAD_FAILED) {
                 ChatManager chatManager = ChatManager.getInstanceFor(XMPPClient.getConnection());
-                Chat chat = chatManager.getThreadChat(ChatScreenActivity.getJABBERID());
+                Chat chat = chatManager.getThreadChat(jid);
                 if (chat == null) {
-                    chat = chatManager.createChat(ChatScreenActivity.getJABBERID() + "@mm.io");
+                    chat = chatManager.createChat(jid + "@mm.io");
                 }
 
                 String thumbnailImage = null;
                 if (message.media != null) {
                     thumbnailImage = Base64.encodeToString(message.media, Base64.DEFAULT);
                 }
-                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, thumbnailImage, message.mimeType, chat, message.id, nearByChat, isGroupChat, groupServerId);
+                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, thumbnailImage, message.mimeType, chat, message.id, nearByChat, isGroupChat, groupServerId, jid);
 
                 activity.runOnUiThread(new Runnable() {
                     @Override

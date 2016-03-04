@@ -1,5 +1,6 @@
 package com.sports.unity.Database;
 
+import android.Manifest;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,6 +14,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
+import com.sports.unity.common.model.PermissionUtil;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -126,64 +129,74 @@ public class DBUtil {
     }
 
     public static void writeContentToExternalFileStorage( Context context, String fileName, byte[] content, String mimeType){
-        Log.d("File I/O", "start writing");
-        boolean isVisibleInGallery = isExternalFile(fileName);
+        if( PermissionUtil.getInstance().isPermissionGranted(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ) {
+            Log.d("File I/O", "start writing");
+            boolean isVisibleInGallery = isExternalFile(fileName);
 
-        File file = new File ( getFilePath( context, mimeType, fileName));
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(file);
-            out.write(content);
-            out.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+            File file = new File(getFilePath(context, mimeType, fileName));
+            FileOutputStream out = null;
             try {
-                if (out != null) {
-                    out.close();
+                out = new FileOutputStream(file);
+                out.write(content);
+                out.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (out != null) {
+                        out.close();
+                    }
+                } catch (Exception ex) {
                 }
-            }catch (Exception ex){}
-        }
+            }
 
-        if( isVisibleInGallery ) {
-            addMediaContentToResolver(context, file.getAbsolutePath(), fileName, mimeType);
-        }
+            if (isVisibleInGallery) {
+                addMediaContentToResolver(context, file.getAbsolutePath(), fileName, mimeType);
+            }
 
-        Log.d("File I/O", "end writing");
+            Log.d("File I/O", "end writing");
+        } else {
+            //TODO
+        }
     }
 
     public static void writeContentToExternalFileStorage( Context context, String sourceFileName, String destinationFileName, String mimeType){
-        Log.d("File I/O", "start writing");
-        boolean isVisibleInGallery = isExternalFile(destinationFileName);
+        if( PermissionUtil.getInstance().isPermissionGranted(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ) {
+            Log.d("File I/O", "start writing");
+            boolean isVisibleInGallery = isExternalFile(destinationFileName);
 
-        File file = new File ( getFilePath(context, mimeType, destinationFileName));
-        FileOutputStream out = null;
-        FileInputStream fileInputStream = null;
-        try {
-            out = new FileOutputStream(file);
-            fileInputStream = new FileInputStream(sourceFileName);
-
-            byte[] chunk = new byte[1024];
-            int read = 0;
-            while( (read = fileInputStream.read(chunk)) != -1 ) {
-                out.write(chunk, 0, read);
-            }
-            out.flush();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+            File file = new File(getFilePath(context, mimeType, destinationFileName));
+            FileOutputStream out = null;
+            FileInputStream fileInputStream = null;
             try {
-                if (out != null) {
-                    out.close();
+                out = new FileOutputStream(file);
+                fileInputStream = new FileInputStream(sourceFileName);
+
+                byte[] chunk = new byte[1024];
+                int read = 0;
+                while ((read = fileInputStream.read(chunk)) != -1) {
+                    out.write(chunk, 0, read);
                 }
-            }catch (Exception ex){}
-        }
+                out.flush();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (out != null) {
+                        out.close();
+                    }
+                } catch (Exception ex) {
+                }
+            }
 
-        if( isVisibleInGallery ) {
-            addMediaContentToResolver(context, file.getAbsolutePath(), destinationFileName, mimeType);
-        }
+            if (isVisibleInGallery) {
+                addMediaContentToResolver(context, file.getAbsolutePath(), destinationFileName, mimeType);
+            }
 
-        Log.d("File I/O", "end writing");
+            Log.d("File I/O", "end writing");
+        } else {
+            //TODO
+        }
     }
 
     public static byte[] loadContentFromExternalFileStorage( Context context, String mimeType, String fileName){

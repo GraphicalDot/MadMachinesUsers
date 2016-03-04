@@ -241,7 +241,7 @@ public class ContactsHandler {
 
     private String checkAndUpdateCountryCode(String phoneNumber){
         String countryCode = UserUtil.getCountryCode();
-        if( phoneNumber.startsWith(countryCode) ){
+        if( phoneNumber.startsWith("+" + countryCode) || phoneNumber.startsWith(countryCode) ){
 
         } else {
             phoneNumber = countryCode + phoneNumber;

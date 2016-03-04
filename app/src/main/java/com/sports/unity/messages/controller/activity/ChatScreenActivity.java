@@ -84,12 +84,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     public static final String INTENT_KEY_BLOCK_STATUS = "blockStatus";
     public static final String INTENT_KEY_NEARBY_CHAT = "nearbyChat";
 
-    private static String JABBERID;
     private static String groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
-
-    public static String getJABBERID() {
-        return JABBERID;
-    }
 
     public static String getGroupServerId() {
         if (groupServerId != null) {
@@ -137,6 +132,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     private byte[] userImageBytes;
 
     private boolean isGroupChat = false;
+    private String JABBERID;
     private String JABBERNAME;
 
     private ArrayList<Message> messageList;
@@ -261,11 +257,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             } else if (id == ActivityActionHandler.EVENT_ID_INCOMING_MEDIA) {
                 //handle incoming media message
                 if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) && UserUtil.isMediaAutoDownloadEnabled(getApplicationContext(), UserUtil.IMAGE_MEDIA)) {
-                    FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent);
+                    FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent, JABBERID);
                 } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO) && UserUtil.isMediaAutoDownloadEnabled(getApplicationContext(), UserUtil.AUDIO_MEDIA)) {
-                    FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent);
+                    FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent, JABBERID);
                 } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) && UserUtil.isMediaAutoDownloadEnabled(getApplicationContext(), UserUtil.VIDEO_MEDIA)) {
-                    FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent);
+                    FileOnCloudHandler.getInstance(getBaseContext()).requestForDownload((String) messageContent, mimeType, (Long) mediaContent, JABBERID);
                 }
             }
 
@@ -318,7 +314,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     public void onStop() {
 
         ChatScreenApplication.activityStopped();
-        ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.CHAT_SCREEN_KEY);
+        ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, JABBERID);
         GlobalEventHandler.getInstance().removeGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY);
         super.onStop();
         /*if (XMPPClient.getInstance().isConnectionAuthenticated()) {
@@ -363,7 +359,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     protected void onResume() {
         super.onResume();
 
-        ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, activityActionListener);
+        ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, JABBERID, activityActionListener);
         GlobalEventHandler.getInstance().addGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY, globalEventListener);
         ChatScreenApplication.activityResumed();
 
@@ -651,7 +647,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         }
 
         messageList = sportsUnityDBHelper.getMessages(chatID);
-        chatScreenAdapter = new ChatScreenAdapter(ChatScreenActivity.this, messageList, otherChat, isGroupChat, groupServerId);
+        chatScreenAdapter = new ChatScreenAdapter(ChatScreenActivity.this, messageList, otherChat, isGroupChat, groupServerId, JABBERID);
         mChatView.setAdapter(chatScreenAdapter);
 
 //        loadAllMediaContent(messageList, null);
@@ -856,7 +852,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, bytesOfThumbnail);
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, groupServerId);
 
-            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, thumbnailImage, mimeType, chat, messageId, otherChat, isGroupChat, groupServerId);
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, thumbnailImage, mimeType, chat, messageId, otherChat, isGroupChat, groupServerId, JABBERID);
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
             String mediaFileName = (String) messageContent;
 
@@ -869,7 +865,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, bytesOfThumbnail);
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
-            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, thumbnailImage, mimeType, chat, messageId, otherChat, isGroupChat, groupServerId);
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, thumbnailImage, mimeType, chat, messageId, otherChat, isGroupChat, groupServerId, JABBERID);
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
             String stickerAssetPath = (String) messageContent;
             if (!this.isGroupChat) {
@@ -887,7 +883,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     null, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS, mediaFileName, null);
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
 
-            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, null, mimeType, chat, messageId, otherChat, isGroupChat, groupServerId);
+            FileOnCloudHandler.getInstance(getBaseContext()).requestForUpload(mediaFileName, null, mimeType, chat, messageId, otherChat, isGroupChat, groupServerId, JABBERID);
 
         }
     }
@@ -907,7 +903,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
             chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
         } else {
-            if (PermissionUtil.getInstance().requestPermission(ChatScreenActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.CAMERA)), getResources().getString(R.string.camera_permission_message), Constants.REQUEST_CODE_CAMERA_PERMISSION)) {
+            if (PermissionUtil.getInstance().requestPermission(ChatScreenActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE)), getResources().getString(R.string.camera_permission_message), Constants.REQUEST_CODE_CAMERA_PERMISSION)) {
 
                 chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
             }
@@ -936,7 +932,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
             chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
         } else {
-            if (PermissionUtil.getInstance().requestPermission(ChatScreenActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.RECORD_AUDIO)), getResources().getString(R.string.audio_permission_message), Constants.REQUEST_CODE_RECORD_AUDIO_PERMISSION)) {
+            if (PermissionUtil.getInstance().requestPermission(ChatScreenActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.RECORD_AUDIO, Manifest.permission.WRITE_EXTERNAL_STORAGE)), getResources().getString(R.string.audio_permission_message), Constants.REQUEST_CODE_RECORD_AUDIO_PERMISSION)) {
                 chatKeyboardHelper.tapOnTab(JABBERNAME, view, this);
             }
         }

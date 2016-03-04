@@ -1,11 +1,13 @@
 package com.sports.unity.util;
 
+import android.Manifest;
 import android.content.Context;
 import android.util.Log;
 
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
@@ -75,12 +77,12 @@ public class FileOnCloudHandler {
 //        }
 //    }
 
-    public void requestForUpload(String fileName, String thumbnailImage, String mimeType, Chat chat, long messageId, boolean nearByChat, boolean isGroupChat, String groupServerId) {
+    public void requestForUpload(String fileName, String thumbnailImage, String mimeType, Chat chat, long messageId, boolean nearByChat, boolean isGroupChat, String groupServerId, String toJid) {
         boolean handleRequest = shouldHandleRequest(messageId);
 
         if (handleRequest) {
             Log.i("File on cloud", "upload request message id " + messageId);
-            CloudContentRequest request = new CloudContentRequest(true, mimeType, messageId, null, fileName, thumbnailImage, chat);
+            CloudContentRequest request = new CloudContentRequest(true, mimeType, messageId, null, fileName, thumbnailImage, chat, toJid);
             requests.add(request);
             requestMapWithStatus.put(String.valueOf(messageId), STATUS_UPLOADING);
 
@@ -88,11 +90,11 @@ public class FileOnCloudHandler {
         }
     }
 
-    public void requestForDownload(String checksum, String mimeType, long messageId) {
+    public void requestForDownload(String checksum, String mimeType, long messageId, String fromJid) {
         boolean handleRequest = shouldHandleRequest(messageId);
 
         if (handleRequest) {
-            CloudContentRequest request = new CloudContentRequest(false, mimeType, messageId, checksum, null, null, null);
+            CloudContentRequest request = new CloudContentRequest(false, mimeType, messageId, checksum, null, null, null, fromJid);
             requests.add(request);
             requestMapWithStatus.put(String.valueOf(messageId), STATUS_DOWNLOADING);
 
@@ -187,44 +189,15 @@ public class FileOnCloudHandler {
     }
 
     private void handleUploadRequest(CloudContentRequest request, Context context, boolean nearByChat, boolean isGroupChat, String groupServerId) {
-//        if ( ! downloadContentDirectToFile(request.mimeType) ) {
-//            String checksum = uploadContent((byte[]) request.getContent());
-//            if (checksum != null) {
-//                PersonalMessaging.getInstance(context).sendMediaMessage(checksum, (Chat) request.extra, request.messageId, request.mimeType, nearByChat);
-//
-//                dispatchCommonEvent(0, ActivityActionHandler.CHAT_SCREEN_KEY);
-//
-//                requests.remove(request);
-//                requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
-//            } else {
-//                requests.remove(request);
-//                requestMapWithStatus.put(String.valueOf(request.getMessageId()), STATUS_UPLOAD_FAILED);
-//            }
-//        } else {
-//            String checksum = uploadContent((String) request.getFileName());
-//            if (checksum != null) {
-//                PersonalMessaging.getInstance(context).sendMediaMessage(checksum, (Chat) request.extra, request.messageId, request.mimeType, nearByChat);
-//
-//                dispatchCommonEvent(0, ActivityActionHandler.CHAT_SCREEN_KEY);
-//
-//                requests.remove(request);
-//                requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
-//            } else {
-//                requests.remove(request);
-//                requestMapWithStatus.put(String.valueOf(request.getMessageId()), STATUS_UPLOAD_FAILED);
-//            }
-//        }
-
         String checksum = uploadContent((String) request.getFileName(), request.mimeType);
         if (checksum != null) {
-//            String thumbnailImage = PersonalMessaging.getInstance(context).createThumbnailImageAsBase64(context, request.mimeType, request.fileName);
             if (!isGroupChat) {
                 PersonalMessaging.getInstance(context).sendMediaMessage(checksum, request.thumbnailImage, (Chat) request.extra, request.messageId, request.mimeType, nearByChat);
             } else {
                 PubSubMessaging.getInstance(context).sendMediaMessage(checksum, request.thumbnailImage, request.mimeType, groupServerId);
             }
 
-            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY);
+            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, request.jid);
 
             requests.remove(request);
             requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
@@ -242,7 +215,7 @@ public class FileOnCloudHandler {
                 DBUtil.writeContentToExternalFileStorage(context, fileName, content, request.mimeType);
                 SportsUnityDBHelper.getInstance(context).updateMediaMessage_ContentDownloaded(request.messageId, fileName);
 
-                ActivityActionHandler.getInstance().dispatchDownloadCompletedEvent(ActivityActionHandler.CHAT_SCREEN_KEY, request.mimeType, fileName, content);
+                ActivityActionHandler.getInstance().dispatchDownloadCompletedEvent(ActivityActionHandler.CHAT_SCREEN_KEY, request.jid, request.mimeType, fileName, content);
 
                 requests.remove(request);
                 requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
@@ -257,7 +230,7 @@ public class FileOnCloudHandler {
             if (success) {
                 SportsUnityDBHelper.getInstance(context).updateMediaMessage_ContentDownloaded(request.messageId, fileName);
 
-                ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY);
+                ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, request.jid);
 
                 requests.remove(request);
                 requestMapWithStatus.remove(String.valueOf(request.getMessageId()));
@@ -564,30 +537,28 @@ public class FileOnCloudHandler {
         private String fileName = null;
         private String thumbnailImage = null;
 
-//        private boolean isContentBytes = false;
-//        private Object content = null;
+        private String jid = null;
 
         private Object extra = null;
 
-        public CloudContentRequest(boolean uploadRequest, String mimeType, long messageId, String checksum, String fileName, String thumbnailImage, Object extra) {
+        public CloudContentRequest(boolean uploadRequest, String mimeType, long messageId, String checksum, String fileName, String thumbnailImage, Object extra, String jid) {
             this.uploadRequest = uploadRequest;
             this.mimeType = mimeType;
             this.messageId = messageId;
             this.checksum = checksum;
             this.fileName = fileName;
             this.thumbnailImage = thumbnailImage;
-//            this.content = content;
-//            this.isContentBytes = isContentBytes;
             this.extra = extra;
+            this.jid = jid;
+        }
+
+        public String getJid() {
+            return jid;
         }
 
         public String getMimeType() {
             return mimeType;
         }
-
-//        public Object getContent() {
-//            return content;
-//        }
 
         public long getMessageId() {
             return messageId;
