@@ -177,6 +177,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     private void renderDisplay(JSONObject jsonObject) throws JSONException {
         playerMatchBattingStatDTOList.clear();
         playerMatchBowlingStatDTOList.clear();
+        battingTestsmatchMap.clear();
         rcBattingPerformanceSummery.setVisibility(VISIBLE);
         rcBowlingPerformanceSummary.setVisibility(VISIBLE);
         final JSONObject data = (JSONObject) jsonObject.get("data");

@@ -46,7 +46,6 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
         holder.dto = mValues.get(position);
             Log.i("Teams", holder.dto.getTvTeamName());
             if(team1.equals(holder.dto.getTvTeamName())){
-
                 holder.tvSerialNumber.setText(String.valueOf(position+1));
                 holder.tvTeamName.setText(holder.dto.getTvTeamName());
                 holder.tvP.setText(holder.dto.getTvP());

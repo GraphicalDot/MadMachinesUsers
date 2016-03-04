@@ -27,6 +27,7 @@ import org.json.JSONObject;
 import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
@@ -174,6 +175,8 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
                                 }
                                 list.add(completeFootballTimeLineDTO);
                             }
+
+                            Collections.sort(list);
                             completeFootballTimeLineAdapter.notifyDataSetChanged();
                         } catch (Exception ex) {
                             ex.printStackTrace();
