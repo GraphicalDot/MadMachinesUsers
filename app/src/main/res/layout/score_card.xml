@@ -56,9 +56,9 @@
                                 android:layout_alignParentRight="true"
                                 android:layout_centerInParent="true"
                                 android:paddingRight="@dimen/vertical_padding_very_small"
+                                android:text=""
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
-                                android:text=""
                                 />
                             <TextView
                                 android:id="@+id/t1over"
@@ -67,9 +67,10 @@
                                 android:layout_alignParentRight="true"
                                 android:layout_centerInParent="true"
                                 android:paddingRight="@dimen/vertical_padding_very_small"
+                                android:text=""
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
-                                android:text=""
+                                android:visibility="gone"
                                 />
 
                             <TextView
@@ -77,13 +78,13 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentLeft="true"
-                                android:layout_toLeftOf="@id/t1score"
                                 android:layout_centerInParent="true"
+                                android:layout_toLeftOf="@id/t1score"
                                 android:paddingLeft="@dimen/vertical_padding_very_small"
                                 android:singleLine="true"
+                                android:text="USA"
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
-                                android:text="USA"
                                 />
 
                         </RelativeLayout>
@@ -115,9 +116,9 @@
                                 android:layout_alignParentRight="true"
                                 android:layout_centerInParent="true"
                                 android:paddingRight="@dimen/vertical_padding_very_small"
+                                android:text=""
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
-                                android:text=""
                                 />
                             <TextView
                                 android:id="@+id/t2over"
@@ -126,22 +127,23 @@
                                 android:layout_alignParentRight="true"
                                 android:layout_centerInParent="true"
                                 android:paddingRight="@dimen/vertical_padding_very_small"
+                                android:text=""
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
-                                android:text=""
+                                android:visibility="gone"
                                 />
                             <TextView
                                 android:id="@+id/team2"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentLeft="true"
-                                android:layout_toLeftOf="@id/t2score"
                                 android:layout_centerInParent="true"
+                                android:layout_toLeftOf="@id/t2score"
                                 android:paddingLeft="@dimen/vertical_padding_very_small"
                                 android:singleLine="true"
+                                android:text="Canada"
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
-                                android:text="Canada"
                                 />
 
                         </RelativeLayout>
@@ -159,8 +161,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1.5"
-                    android:orientation="vertical"
                     android:gravity="center"
+                    android:orientation="vertical"
                     >
                     <TextView
                         android:id="@+id/minutes"
@@ -168,9 +170,9 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
+                        android:text=""
                         android:textColor="@color/app_theme_blue"
                         android:textSize="@dimen/font_size_small_large"
-                        android:text=""
                         />
                     <TextView
                         android:id="@+id/liveText"
@@ -178,20 +180,20 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:gravity="center"
+                        android:text="@string/live"
                         android:textColor="@color/app_theme_blue"
                         android:textSize="@dimen/font_size_small_large"
-                        android:text="@string/live"
                         />
                     <TextView
                         android:id="@+id/matchDay"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:paddingBottom="@dimen/vertical_padding_very_very_small"
                         android:layout_gravity="center"
                         android:gravity="center"
+                        android:paddingBottom="@dimen/vertical_padding_very_very_small"
+                        android:text=""
                         android:textColor="@color/gray1"
                         android:textSize="@dimen/font_size_small_medium"
-                        android:text=""
                         />
 
                     <TextView
@@ -199,9 +201,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:background="@drawable/round_edge_box_blue"
                         android:gravity="center"
                         android:padding="@dimen/horizontal_padding_very_very_small"
-                        android:background="@drawable/round_edge_box_blue"
                         android:text="@string/show_odds"
                         android:textColor="@color/ColorPrimary"
                         android:textSize="@dimen/font_size_very_very_small"
@@ -222,9 +224,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/horizontal_padding_small"
                     android:layout_marginTop="@dimen/vertical_padding_very_very_small"
+                    android:text="San Siro"
                     android:textColor="@color/score_dark_grey"
                     android:textSize="@dimen/font_size_small_medium"
-                    android:text="San Siro"
                     />
 
                 <TextView
@@ -233,9 +235,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/vertical_padding_very_very_small"
                     android:layout_marginLeft="@dimen/horizontal_padding_small"
+                    android:text="Friday, January 01, 00:00 (IST)"
                     android:textColor="@color/score_light_grey"
                     android:textSize="@dimen/font_size_small_medium"
-                    android:text="Friday, January 01, 00:00 (IST)"
                     />
             </LinearLayout>
         </LinearLayout>
