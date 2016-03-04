@@ -7,21 +7,27 @@
     android:minHeight="?android:attr/actionBarSize"
     android:theme="@style/Base.ThemeOverlay.AppCompat.Dark">
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
     <ImageView
         android:id="@+id/close_icon"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_centerVertical="true"
+        android:paddingBottom="@dimen/horizontal_padding_small"
         android:paddingRight="@dimen/horizontal_padding_small"
         android:paddingTop="@dimen/horizontal_padding_small"
-        android:paddingBottom="@dimen/horizontal_padding_small"
         android:scaleType="center"
         android:src="@drawable/ic_cancel" />
 
     <LinearLayout
         android:id="@+id/myaddress"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
+        android:layout_toRightOf="@id/close_icon"
         android:gravity="center_vertical|start"
         android:orientation="vertical">
 
@@ -45,4 +51,17 @@
 
     </LinearLayout>
 
+        <ImageView
+            android:id="@+id/privacy_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:paddingBottom="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_small"
+            android:paddingTop="@dimen/horizontal_padding_small"
+            android:scaleType="center"
+            android:src="@drawable/ic_show_my_location_white" />
+    </RelativeLayout>
 </android.support.v7.widget.Toolbar>
