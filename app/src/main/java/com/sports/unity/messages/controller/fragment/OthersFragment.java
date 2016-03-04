@@ -101,10 +101,10 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
                 switch (position) {
                     case 0:
                         if (chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
-                            ChatScreenActivity.viewProfile(getActivity(), chatObject.userImage, chatObject.name,
+                            ChatScreenActivity.viewProfile(getActivity(), chatObject.chatid, chatObject.userImage, chatObject.name,
                                     chatObject.groupServerId, SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid, true);
                         } else {
-                            ChatScreenActivity.viewProfile(getActivity(), chatObject.chatImage, chatObject.name, chatObject.groupServerId,
+                            ChatScreenActivity.viewProfile(getActivity(), chatObject.chatid, chatObject.chatImage, chatObject.name, chatObject.groupServerId,
                                     SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid, true);
                         }
                         alert.dismiss();

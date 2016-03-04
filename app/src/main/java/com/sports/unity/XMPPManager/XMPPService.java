@@ -896,13 +896,15 @@ public class XMPPService extends Service {
     }
 
     private PendingIntent getPendingIntentForChatActivity(String name, String from, long chatId, long contactId, String groupServerId, byte[] contactImage) {
-        Intent notificationIntent = new Intent(this, ChatScreenActivity.class);
-        notificationIntent.putExtra("name", name);
-        notificationIntent.putExtra("number", from);
-        notificationIntent.putExtra("chatId", chatId);
-        notificationIntent.putExtra("contactId", contactId);
-        notificationIntent.putExtra("groupServerId", groupServerId);
-        notificationIntent.putExtra("userpicture", contactImage);
+        Intent notificationIntent;
+//        notificationIntent.putExtra("name", name);
+//        notificationIntent.putExtra("number", from);
+//        notificationIntent.putExtra("chatId", chatId);
+//        notificationIntent.putExtra("contactId", contactId);
+//        notificationIntent.putExtra("groupServerId", groupServerId);
+//        notificationIntent.putExtra("userpicture", contactImage);
+
+        notificationIntent = ChatScreenActivity.createChatScreenIntent(getApplicationContext(), from, name, contactId, chatId, groupServerId, contactImage, false);
 
         Intent backIntent = new Intent(this, MainActivity.class);
         backIntent.putExtra("tab_index", 2);

@@ -86,14 +86,16 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
                 long chatId = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatEntryID(contactId, groupServerId);
                 boolean blockStatus = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).isChatBlocked(contactId);
 
-                Intent chatScreenIntent = new Intent(getActivity(), ChatScreenActivity.class);
-                chatScreenIntent.putExtra("jid", jid);
-                chatScreenIntent.putExtra("name", name);
-                chatScreenIntent.putExtra("contactId", contactId);
-                chatScreenIntent.putExtra("chatId", chatId);
-                chatScreenIntent.putExtra("groupServerId", groupServerId);
-                chatScreenIntent.putExtra("userpicture", userPicture);
-                chatScreenIntent.putExtra("blockStatus", blockStatus);
+                Intent chatScreenIntent;
+//                chatScreenIntent.putExtra("jid", jid);
+//                chatScreenIntent.putExtra("name", name);
+//                chatScreenIntent.putExtra("contactId", contactId);
+//                chatScreenIntent.putExtra("chatId", chatId);
+//                chatScreenIntent.putExtra("groupServerId", groupServerId);
+//                chatScreenIntent.putExtra("userpicture", userPicture);
+//                chatScreenIntent.putExtra("blockStatus", blockStatus);
+
+                chatScreenIntent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, userPicture, blockStatus);
                 startActivity(chatScreenIntent);
             } else {
                 CommonUtil.openSMSIntent(c, getContext());
@@ -172,7 +174,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     private void forward(Contacts contact) {
         if (contact.isRegistered()) {
             ToolbarActionsForChatScreen.getInstance(getActivity().getApplicationContext()).resetVariables();
-            String number = contact.jid;
+            String jid = contact.jid;
             String name = contact.name;
             long contactId = contact.id;
             byte[] userPicture = contact.image;
@@ -181,14 +183,16 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             long chatId = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatEntryID(contactId, groupServerId);
             boolean blockStatus = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).isChatBlocked(contactId);
 
-            Intent chatScreenIntent = new Intent(getActivity(), ChatScreenActivity.class);
-            chatScreenIntent.putExtra("number", number);
-            chatScreenIntent.putExtra("name", name);
-            chatScreenIntent.putExtra("contactId", contactId);
-            chatScreenIntent.putExtra("chatId", chatId);
-            chatScreenIntent.putExtra("groupServerId", groupServerId);
-            chatScreenIntent.putExtra("userpicture", userPicture);
-            chatScreenIntent.putExtra("blockStatus", blockStatus);
+            Intent chatScreenIntent;
+//            chatScreenIntent.putExtra("number", jid);
+//            chatScreenIntent.putExtra("name", name);
+//            chatScreenIntent.putExtra("contactId", contactId);
+//            chatScreenIntent.putExtra("chatId", chatId);
+//            chatScreenIntent.putExtra("groupServerId", groupServerId);
+//            chatScreenIntent.putExtra("userpicture", userPicture);
+//            chatScreenIntent.putExtra("blockStatus", blockStatus);
+
+            chatScreenIntent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, userPicture, blockStatus);
 
             if (blockStatus) {
                 Toast.makeText(getActivity().getApplicationContext(), "This user is blocked Please select another user", Toast.LENGTH_SHORT).show();
