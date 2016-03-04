@@ -155,7 +155,7 @@ public class NewsContentHandler {
     }
 
     public void selectedSportsChanged() {
-        selectedSports = UserUtil.getSportsSelected();
+        selectedSports = UserUtil.getFilterSportsSelected();
          if(selectedSports != null) {
              StringBuilder stringBuilder = new StringBuilder();
              for (int i = 0; i < selectedSports.size(); i++) {

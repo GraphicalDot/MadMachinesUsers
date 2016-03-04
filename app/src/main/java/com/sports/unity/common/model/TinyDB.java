@@ -27,6 +27,7 @@ public class TinyDB {
     public static final String KEY_REGISTERED = "Registered";
     public static final String KEY_PROFILE_CREATED = "profile_created";
     public static final String KEY_SPORTS_SELECTED = "sports_selected";
+    public static final String KEY_FILTER_SPORTS_SELECTED = "filter_sports_selected";
     public static final String KEY_OTP_SENT = "otp_sent";
     public static final String KEY_COUNTRY_CODE = "country_code";
     public static final String KEY_GET_JOINED_GROUPS_ON_REGISTRATION = "get_groups";

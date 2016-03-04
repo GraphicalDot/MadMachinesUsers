@@ -31,6 +31,7 @@ public class UserUtil {
     private static String COUNTRY_CODE = "";
 
     private static ArrayList<String> SPORTS_SELECTED = null;
+    private static ArrayList<String> FILTER_SPORTS_SELECTED = null;
     private static boolean leagueSelected;
     private static boolean teamSelected;
     private static boolean playerSelected;
@@ -93,7 +94,12 @@ public class UserUtil {
         TinyDB tinyDB = TinyDB.getInstance(context);
         tinyDB.putListString(TinyDB.KEY_SPORTS_SELECTED, sportsSelected);
     }
+    public static void setFilterSportsSelected(Context context, ArrayList<String> filterSportsSelected) {
+        FILTER_SPORTS_SELECTED = filterSportsSelected;
 
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putListString(TinyDB.KEY_FILTER_SPORTS_SELECTED, filterSportsSelected);
+    }
     public static void setOtpSent(Context context, boolean otpSent) {
         OTP_SENT = otpSent;
 
@@ -119,6 +125,9 @@ public class UserUtil {
 
     public static ArrayList<String> getSportsSelected() {
         return SPORTS_SELECTED;
+    }
+    public static ArrayList<String> getFilterSportsSelected() {
+        return FILTER_SPORTS_SELECTED;
     }
 
     public static void setLeagueSelected(Context context, boolean isLeagueSelected) {
@@ -433,7 +442,7 @@ public class UserUtil {
 
     private static void loadFavoritePreferences(TinyDB tinyDB){
         SPORTS_SELECTED = tinyDB.getListString(TinyDB.KEY_SPORTS_SELECTED);
-
+        FILTER_SPORTS_SELECTED=tinyDB.getListString(TinyDB.KEY_FILTER_SPORTS_SELECTED);
         favFilterList = tinyDB.getString(TinyDB.FAVOURITE_FILTERS);
 
         leagueSelected = tinyDB.getBoolean(TinyDB.LEAGUE_SELECTION, false);

@@ -27,8 +27,8 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
 
     private int[] sportsCategoryLayoutID = new int[]{R.id.cricket, R.id.football};
     private boolean[] checkedFlag = new boolean[]{false, false};
+    private boolean[] visibility = new boolean[]{false, false};
     private LinearLayout teamFilter, leagueFilter, playerFilter;
-    private ArrayList<String> sportsSelected;
     private ViewPagerAdapterForFilter adapter;
     private ViewPager pager;
     private ArrayList<OnResultReceivedListener> resultReceivedListeners;
@@ -39,7 +39,6 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
 
         setContentView(R.layout.activity_filter);
         setToolBar();
-        sportsSelected = UserUtil.getSportsSelected();
         initCheckedFlagList();
         initViews();
         setTab();
@@ -47,12 +46,19 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
     }
 
     private void initCheckedFlagList() {
-        ArrayList<String> filter = UserUtil.getSportsSelected();
+        ArrayList<String> sportsSelected = UserUtil.getSportsSelected();
+        ArrayList<String> filter = UserUtil.getFilterSportsSelected();
         if (filter.contains(Constants.GAME_KEY_CRICKET)) {
             checkedFlag[0] = true;
         }
         if (filter.contains(Constants.GAME_KEY_FOOTBALL)) {
             checkedFlag[1] = true;
+        }
+        if (sportsSelected.contains(Constants.GAME_KEY_CRICKET)) {
+            visibility[0] = true;
+        }
+        if (sportsSelected.contains(Constants.GAME_KEY_FOOTBALL)) {
+            visibility[1] = true;
         }
     }
 
@@ -66,7 +72,7 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
             filter.add(Constants.GAME_KEY_FOOTBALL);
         }
 
-        UserUtil.setSportsSelected(this, filter);
+        UserUtil.setFilterSportsSelected(this, filter);
     }
 
     private void setToolBar() {
@@ -163,12 +169,16 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
 
     private void initCheckBox(int layoutId, boolean checked, int index) {
         LinearLayout layout = (LinearLayout) findViewById(layoutId);
-        layout.setTag(index);
+        if (visibility[index]) {
+            layout.setVisibility(View.VISIBLE);
+            layout.setTag(index);
 
-        initTextViewBasedOnCheckFlag(layout, checked);
-
-        CheckBox checkbox = (CheckBox) layout.getChildAt(2);
-        checkbox.setChecked(checked);
+            initTextViewBasedOnCheckFlag(layout, checked);
+            CheckBox checkbox = (CheckBox) layout.getChildAt(2);
+            checkbox.setChecked(checked);
+        } else {
+            layout.setVisibility(View.GONE);
+        }
     }
 
     private void initTextViewBasedOnCheckFlag(LinearLayout layout, boolean checked) {
@@ -178,6 +188,7 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
         } else {
             title.setTextColor(getResources().getColor(R.color.gray1));
         }
+
     }
 
     private int checkedItemCount() {
@@ -252,19 +263,19 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
     }
 
     @Override
-    public void playerProfile(String playerName, String playerId, String sportsType,String FilterType) {
-         if(Constants.FILTER_TYPE_PLAYER.equals(FilterType)) {
-             if(Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)){
-                 Intent intent = new Intent(FilterActivity.this, PlayerProfileView.class);
-                 intent.putExtra(Constants.INTENT_KEY_ID, playerName);
-                 startActivity(intent);
-             }else {
-                 Intent intent = new Intent(FilterActivity.this, PlayerCricketBioDataActivity.class);
-                 intent.putExtra(Constants.INTENT_KEY_ID, playerId);
-                 startActivity(intent);
-             }
-         }
-      }
+    public void playerProfile(String playerName, String playerId, String sportsType, String FilterType) {
+        if (Constants.FILTER_TYPE_PLAYER.equals(FilterType)) {
+            if (Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)) {
+                Intent intent = new Intent(FilterActivity.this, PlayerProfileView.class);
+                intent.putExtra(Constants.INTENT_KEY_ID, playerName);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(FilterActivity.this, PlayerCricketBioDataActivity.class);
+                intent.putExtra(Constants.INTENT_KEY_ID, playerId);
+                startActivity(intent);
+            }
+        }
+    }
 
 
     /**
