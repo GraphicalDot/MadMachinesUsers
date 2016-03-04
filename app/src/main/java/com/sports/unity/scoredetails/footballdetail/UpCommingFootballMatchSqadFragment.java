@@ -155,6 +155,8 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
+        listTeamFirst.clear();
+        listTeamSecond.clear();
         hideProgressBar();
         squadParnetLinearLayout.setVisibility(View.VISIBLE);
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();

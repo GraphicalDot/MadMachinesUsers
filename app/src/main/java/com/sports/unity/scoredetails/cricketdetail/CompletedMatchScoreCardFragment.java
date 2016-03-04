@@ -241,6 +241,12 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         hideProgress();
+        teamABattingCardList.clear();
+        teamABowlingCardList.clear();
+        teamAFallOfWicketCardList.clear();
+        teamBBattingCardList.clear();
+        teamBBowlingCardList.clear();
+        teamBFallOfWicketCardList.clear();
         linearLayout.setVisibility(View.VISIBLE);
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {

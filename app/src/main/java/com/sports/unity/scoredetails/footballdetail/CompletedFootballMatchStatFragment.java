@@ -158,7 +158,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-
+        list.clear();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
           if(!jsonObject.isNull("data")) {
               final JSONArray dataArray = jsonObject.getJSONArray("data");

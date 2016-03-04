@@ -91,8 +91,10 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     private void initView(View view) {
         rcBattingPerformanceSummery = (RecyclerView) view.findViewById(R.id.rc_batting_performance_summary);
         rcBattingPerformanceSummery.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
+        rcBattingPerformanceSummery.setNestedScrollingEnabled(false);
         rcBowlingPerformanceSummary = (RecyclerView) view.findViewById(R.id.rc_bowling_performance_summary);
         rcBowlingPerformanceSummary.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
+        rcBowlingPerformanceSummary.setNestedScrollingEnabled(false);
         battingImageView = (ImageView) view.findViewById(R.id.iv_down);
         bowlingImageView = (ImageView) view.findViewById(R.id.iv_down_second);
         final View battingRow = view.findViewById(R.id.prl_batting);
@@ -171,6 +173,8 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     }
 
     private void renderDisplay(JSONObject jsonObject) throws JSONException {
+        playerMatchBattingStatDTOList.clear();
+        playerMatchBowlingStatDTOList.clear();
         rcBattingPerformanceSummery.setVisibility(VISIBLE);
         rcBowlingPerformanceSummary.setVisibility(VISIBLE);
         final JSONObject data = (JSONObject) jsonObject.get("data");

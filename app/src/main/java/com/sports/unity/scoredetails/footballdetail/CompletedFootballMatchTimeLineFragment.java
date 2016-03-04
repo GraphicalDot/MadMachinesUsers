@@ -139,6 +139,7 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
+        list.clear();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         hideProgressBar();
         swTimeLineRefresh.setRefreshing(false);
