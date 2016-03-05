@@ -515,7 +515,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
     private boolean createContact(String jid, Context context, VCard vCard) {
         boolean success = false;
-        SportsUnityDBHelper.getInstance(context).addToContacts(vCard.getNickName(), null, jid, ContactsHandler.getInstance().defaultStatus, null, SportsUnityDBHelper.AVAILABLE_BY_PEOPLE_AROUND_ME);
+        SportsUnityDBHelper.getInstance(context).addToContacts(vCard.getNickName(), null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
         SportsUnityDBHelper.getInstance(context).updateContacts(jid, vCard.getAvatar(), vCard.getMiddleName());
         return success;
     }
@@ -668,21 +668,10 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
         }
         boolean blockStatus = SportsUnityDBHelper.getInstance(getApplicationContext()).isChatBlocked(contactId);
+        boolean othersChat = contact.isOthers();
 
-        Intent chatScreenIntent = new Intent(PeopleAroundMeMap.this, ChatScreenActivity.class);
-        chatScreenIntent.putExtra("number", number);
-        chatScreenIntent.putExtra("name", name);
-        chatScreenIntent.putExtra("contactId", contactId);
-        chatScreenIntent.putExtra("chatId", chatId);
-        chatScreenIntent.putExtra("groupServerId", groupServerId);
-        chatScreenIntent.putExtra("userpicture", userPicture);
-        chatScreenIntent.putExtra("blockStatus", blockStatus);
-        if (contactAvailable) {
-            chatScreenIntent.putExtra("otherChat", false);
-        } else {
-            chatScreenIntent.putExtra("otherChat", true);
-        }
-        startActivity(chatScreenIntent);
+        Intent intent = ChatScreenActivity.createChatScreenIntent(this, number, name, contactId, chatId, groupServerId, userPicture, blockStatus, othersChat);
+        startActivity(intent);
     }
 
     private boolean checkIfGPSEnabled() {
