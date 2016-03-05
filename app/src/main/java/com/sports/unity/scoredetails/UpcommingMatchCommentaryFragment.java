@@ -4,23 +4,12 @@ package com.sports.unity.scoredetails;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sports.unity.R;
-import com.sports.unity.scores.DataServiceContract;
-import com.sports.unity.scores.ErrorContract;
-import com.sports.unity.scores.controller.fragment.BroadcastListAdapter;
-import com.sports.unity.util.Constants;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.

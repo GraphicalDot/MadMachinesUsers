@@ -24,6 +24,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 public class CricketLiveMatchSummaryFragment extends Fragment implements  CricketLiveMatchSummaryHandler.LiveCricketMatchSummaryContentListener {
 
@@ -60,6 +63,9 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     private TextView tvBowlerWr;
     private ProgressBar progressBar;
     private String matchId;
+    private Context context;
+    private CricketLiveMatchSummaryHandler cricketLiveMatchSummaryHandler;
+    private Timer timerToRefreshContent;
     public CricketLiveMatchSummaryFragment() {
         // Required empty public constructor
     }
@@ -68,9 +74,9 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     public void onAttach(Context context) {
         super.onAttach(context);
         matchId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-        CricketLiveMatchSummaryHandler cricketLiveMatchSummaryHandler = CricketLiveMatchSummaryHandler.getInstance(context);
-        cricketLiveMatchSummaryHandler.addListener(this);
-        cricketLiveMatchSummaryHandler.requestLiveMatchSummary(matchId);
+        this.context = context;
+        matchSummary();
+        enableAutoRefreshContent();
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -119,6 +125,25 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             e.printStackTrace();
         }
    }
+
+    public void matchSummary(){
+        cricketLiveMatchSummaryHandler = CricketLiveMatchSummaryHandler.getInstance(context);
+        cricketLiveMatchSummaryHandler.addListener(this);
+        cricketLiveMatchSummaryHandler.requestLiveMatchSummary(matchId);
+    }
+
+
+    private void enableAutoRefreshContent(){
+        timerToRefreshContent = new Timer();
+        timerToRefreshContent.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                matchSummary();
+            }
+
+        }, 6000, 6000);
+    }
 
     @Override
     public void handleContent(String content) {
@@ -178,10 +203,6 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
         final JSONObject currentBowlerObject = matchObject.getJSONObject("current_bowler_details");
         final JSONArray bowlerStatsArray = currentBowlerObject.getJSONArray("stats");
         final JSONObject currentBowlerStatObject = bowlerStatsArray.getJSONObject(0);
-
-
-
-
         hideProgress();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
