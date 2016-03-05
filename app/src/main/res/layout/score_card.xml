@@ -50,12 +50,25 @@
                             android:gravity="center">
 
                             <TextView
+                                android:id="@+id/team1"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerInParent="true"
+                                android:layout_toLeftOf="@id/t1score"
+                                android:paddingLeft="@dimen/vertical_padding_very_small"
+                                android:singleLine="true"
+                                android:text="USA"
+                                android:textColor="@android:color/black"
+                                android:textSize="@dimen/font_size_small_large"
+                                />
+                            <TextView
                                 android:id="@+id/t1score"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerInParent="true"
-                                android:paddingRight="@dimen/vertical_padding_very_small"
+                                android:paddingRight="@dimen/vertical_padding_large"
                                 android:text=""
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
@@ -66,23 +79,8 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerInParent="true"
-                                android:paddingRight="@dimen/vertical_padding_very_small"
+                                android:paddingRight="@dimen/vertical_padding_very_very_small"
                                 android:text=""
-                                android:textColor="@android:color/black"
-                                android:textSize="@dimen/font_size_small_large"
-                                android:visibility="gone"
-                                />
-
-                            <TextView
-                                android:id="@+id/team1"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentLeft="true"
-                                android:layout_centerInParent="true"
-                                android:layout_toLeftOf="@id/t1score"
-                                android:paddingLeft="@dimen/vertical_padding_very_small"
-                                android:singleLine="true"
-                                android:text="USA"
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
                                 />
@@ -115,7 +113,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerInParent="true"
-                                android:paddingRight="@dimen/vertical_padding_very_small"
+                                android:paddingRight="@dimen/vertical_padding_large"
                                 android:text=""
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
@@ -126,11 +124,10 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerInParent="true"
-                                android:paddingRight="@dimen/vertical_padding_very_small"
+                                android:paddingRight="@dimen/vertical_padding_very_very_small"
                                 android:text=""
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
-                                android:visibility="gone"
                                 />
                             <TextView
                                 android:id="@+id/team2"
