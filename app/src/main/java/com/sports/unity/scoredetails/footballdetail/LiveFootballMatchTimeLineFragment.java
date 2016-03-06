@@ -20,6 +20,7 @@ import com.sports.unity.R;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballTimeLineAdapter;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballTimeLineDTO;
 import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -266,7 +267,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
             public void run() {
                 getFootballmatchTimeLine();
             }
-        }, 6000, 6000);
+        }, Constants.TIMEINMILISECOND,  Constants.TIMEINMILISECOND);
     }
 
     private void getFootballmatchTimeLine() {

@@ -200,7 +200,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                 matchScoreCrad();
             }
 
-        }, 6000, 6000);
+        }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
     }
 
     private void matchScoreCrad() {

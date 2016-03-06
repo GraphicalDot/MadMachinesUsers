@@ -19,6 +19,7 @@ import com.sports.unity.R;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballLineUpAdapter;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballLineUpDTO;
 import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -325,7 +326,7 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
             public void run() {
                 getFootballmatchLineUps();
             }
-       }, 6000, 6000);
+       }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
     }
 
     private void getFootballmatchLineUps() {
