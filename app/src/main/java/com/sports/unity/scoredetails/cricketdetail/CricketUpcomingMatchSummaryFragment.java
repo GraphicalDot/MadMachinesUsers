@@ -35,6 +35,8 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
     String toss = "";
     String matchName="";
     String date = "";
+    private LinearLayout errorLayout;
+    private CricketUpcomingMatchSummaryHandler cricketUpcomingMatchSummaryHandler;
     public CricketUpcomingMatchSummaryFragment() {
         // Required empty public constructor
     }
@@ -47,7 +49,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
         toss = i.getStringExtra(INTENT_KEY_TOSS);
         date = i.getStringExtra(INTENT_KEY_DATE);
-        CricketUpcomingMatchSummaryHandler cricketUpcomingMatchSummaryHandler = CricketUpcomingMatchSummaryHandler.getInstance(context);
+        cricketUpcomingMatchSummaryHandler = CricketUpcomingMatchSummaryHandler.getInstance(context);
         cricketUpcomingMatchSummaryHandler.addListener(this);
         cricketUpcomingMatchSummaryHandler.requestCricketUpcommingMatchSummary(matchId);
 
@@ -70,8 +72,8 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
 
     }
     private void  showProgressBar(){
-    progressBar.setVisibility(View.VISIBLE);
-}
+        progressBar.setVisibility(View.VISIBLE);
+    }
     private void  hideProgressBar(){
         progressBar.setVisibility(View.GONE);
     }
@@ -83,31 +85,30 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
 
                 boolean success = object.getBoolean("success");
                 boolean error = object.getBoolean("error");
-
-                if( success ) {
+                 if( success ) {
 
                     renderDisplay(object);
 
                 } else {
-                    showErrorLayout(getView());
+                    //showErrorLayout(getView());
+                    renderDisplay(object);
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
-                Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
                 showErrorLayout(getView());
             }
         }
     }
     private void initErrorLayout(View view) {
         try {
-            LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+             errorLayout = (LinearLayout) view.findViewById(R.id.error);
             errorLayout.setVisibility(View.GONE);
         }catch (Exception e){e.printStackTrace();}
     }
 
     private void showErrorLayout(View view) {
 
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+         errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.VISIBLE);
 
     }
@@ -123,23 +124,8 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
                     try {
                         //JSONArray dataArray = jsonObject.getJSONArray("data");
                         Log.i("run: ", jsonObject.toString());
-                        if(matchName != null && !matchName.equalsIgnoreCase("")){
-                            tvMatchName.setText(matchName);
-                        } else {
-                            tvMatchName.setText("Information is not Available");
-                        }
-                        if(date != null&& !date.equalsIgnoreCase("")){
-                            tvMatchDate.setText(DateUtil.getFormattedDate(date));
-                        }
-                        else {
-                            tvMatchName.setText("Information is not Available");
-                        }
-                        if(toss != null && !toss.equalsIgnoreCase("")){
-                            tvMatchToss.setText(toss);
-                        }else {
-                            tvMatchToss.setText("Information is not Available");
-                        }
-                   } catch (Exception ex) {
+                        initData();
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());
                     }
@@ -149,10 +135,23 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
 
     }
 
-
-
-
-
+    private void initData() {
+        if (matchName != null && !matchName.equalsIgnoreCase("")) {
+            tvMatchName.setText(matchName);
+        } else {
+            tvMatchName.setText("Information is not Available");
+        }
+        if (date != null && !date.equalsIgnoreCase("")) {
+            tvMatchDate.setText(DateUtil.getFormattedDate(date));
+        } else {
+            tvMatchName.setText("Information is not Available");
+        }
+        if (toss != null && !toss.equalsIgnoreCase("")) {
+            tvMatchToss.setText(toss);
+        } else {
+            tvMatchToss.setText("Information is not Available");
+        }
+    }
 
 
 }

@@ -248,14 +248,13 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         teamBBowlingCardList.clear();
         teamBFallOfWicketCardList.clear();
         linearLayout.setVisibility(View.VISIBLE);
+        JSONArray jsonArray = jsonObject.getJSONArray("data");
+        final JSONObject dataObject = jsonArray.getJSONObject(0);
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-
-                            JSONArray jsonArray = jsonObject.getJSONArray("data");
-                            JSONObject dataObject = jsonArray.getJSONObject(0);
                             tvFirstTeamInning.setText(dataObject.getString("team_a") + " Innings");
                             tvSecondTeamInning.setText(dataObject.getString("team_b") + " Innings");
                             JSONObject scoreCard = dataObject.getJSONObject("scorecard");

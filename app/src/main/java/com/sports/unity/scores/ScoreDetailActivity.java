@@ -317,7 +317,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 } else {
 
                     if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("completed") ) {
-                         tvCurrentScore.setText(cricketMatchJsonCaller.getWinnerTeam(cricketMatchJsonCaller.getResult())+"Won The Match");
+                         tvCurrentScore.setText(cricketMatchJsonCaller.getWinnerTeam(cricketMatchJsonCaller.getResult())+" Won The Match");
                     } else {
 
                         enableAutoRefreshContent();
@@ -553,32 +553,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         }
         return success;
     }
-    private boolean handleFootballTimeLine(String content){
-        Log.i("Score Detail", "Handle Content");
-        boolean success = false;
-        if(content != null){
-            success = true;
-        }
-        return success;
-    }
 
-    private boolean handleFootballMatchStat(String content){
-        Log.i("Score Detail", "Handle Content");
-        boolean success = false;
-        if(content != null){
-            success = true;
-        }
-        return success;
-    }
 
-    private boolean handleFootballLineUp(String content){
-        Log.i("Linup ", "Handle Content");
-        boolean success = false;
-        if(content != null){
-            success = true;
-        }
-        return success;
-    }
 
     private class ScoreDetailComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
 
