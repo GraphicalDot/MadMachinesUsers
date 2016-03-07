@@ -135,10 +135,8 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
 
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.VISIBLE);
-
-    }
-
-    private void renderDisplay(final JSONObject jsonObject) throws JSONException {
+   }
+   private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         list.clear();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         hideProgressBar();
@@ -234,7 +232,7 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
         if("yellowcards".equalsIgnoreCase(event)){
            drwableId = R.drawable.ic_yellow_card;
         }else if("goals".equalsIgnoreCase(event)){
-            drwableId = R.drawable.ic_football;
+            drwableId = R.drawable.ic_goal_blue;
         }
         else if("redcards".equalsIgnoreCase(event)){
             drwableId = R.drawable.ic_red_card;
