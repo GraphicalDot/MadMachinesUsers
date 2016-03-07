@@ -57,17 +57,18 @@
                     android:gravity="center"
                     android:text="Carles Payol"
                     android:textSize="@dimen/font_size_small_large"/>
-            </LinearLayout></LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
 
 
         <LinearLayout
             android:id="@+id/layout_line_up"
-            android:layoutwidth="match_parent"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:background="@drawable/round_edge_black_box"
             android:orientation="vertical">
-            <LinearLayou
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/horizontal_padding_very_very_small"
@@ -76,11 +77,11 @@
                     android:id="@+id/tv_line_up"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:gravity="centr"
+                    android:gravity="center"
                     android:text="@string/line_up"
                     android:textColor="@color/dark_blue"
                     android:textSize="@dimen/font_size_small_large"/>
-            </LinearLayou>
+            </LinearLayout>
                 <View
                     android:layout_width="wrap_content"
                     android:layout_height="1dp"
@@ -88,7 +89,8 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_lineup"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
             </android.support.v7.widget.RecyclerView>
         </LinearLayout>
 
@@ -121,7 +123,8 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_substitutes"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
             </android.support.v7.widget.RecyclerView>
 
         </LinearLayout>

@@ -52,15 +52,15 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
                 holder.tvTimeInterval.setVisibility(View.VISIBLE);
                 holder.upperDotView.setVisibility(View.VISIBLE);
             }else {
-                holder.tvTimeInterval.setVisibility(View.INVISIBLE);
-                holder.upperDotView.setVisibility(View.INVISIBLE);
+                holder.tvTimeInterval.setVisibility(View.GONE);
+                holder.upperDotView.setVisibility(View.GONE);
             }
 
             if(getItemCount()-1== position){
                 holder.gameStartImage.setVisibility(View.VISIBLE);
                 holder.gameStartImage.setImageResource(R.drawable.ic_match_start);
             }else {
-                holder.gameStartImage.setVisibility(View.INVISIBLE);
+                holder.gameStartImage.setVisibility(View.GONE);
             }
 
             if(holder.dto.getTeamName().equalsIgnoreCase(context.getString(R.string.home_team_name))) {
@@ -73,7 +73,7 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
                 if(holder.dto.getTvTeamFirstOffPlayer()!=null){
                     holder.tvTeamFirstOffPlayer.setText(holder.dto.getTvTeamFirstOffPlayer());
                 }else {
-                    holder.tvTeamFirstOffPlayer.setVisibility(View.INVISIBLE);
+                    holder.tvTeamFirstOffPlayer.setVisibility(View.GONE);
                 }
 
                 holder.tvTeamFirstTime.setVisibility(View.VISIBLE);
@@ -89,7 +89,7 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
                 if(holder.dto.getTvTeamSecondOffPlayer()!=null){
                     holder.tvTeamSecondOffPlayer.setText(holder.dto.getTvTeamSecondOffPlayer());
                 }else{
-                    holder.tvTeamSecondOffPlayer.setVisibility(View.INVISIBLE);
+                    holder.tvTeamSecondOffPlayer.setVisibility(View.GONE);
                 }
 
                 holder.tvTeamSecondTime.setVisibility(View.VISIBLE);
