@@ -16,7 +16,7 @@
         android:layout_gravity="center" />
     <include
         android:id="@+id/tool_bar"
-        layout="@layout/tool_bar_player_profile"
+        layout="@layout/toolbar_score_details"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:minHeight="?android:attr/actionBarSize" />
@@ -44,7 +44,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tool_bar"
-                android:background="@color/com_facebook_button_background_color"
+                android:background="@color/app_theme_blue"
                 android:orientation="vertical"
                 android:paddingBottom="@dimen/activity_horizontal_margin">
                 <FrameLayout
@@ -60,12 +60,12 @@
                         android:layout_margin="@dimen/vertical_padding_very_very_small"
                         android:src="@drawable/ic_user" />
 
-                    <ImageView
+                    <!--<ImageView
                         android:id="@+id/player_tag_image"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="bottom|end"
-                        android:src="@drawable/ic_distance_slider_01" />
+                        android:src="@drawable/ic_distance_slider_01" />-->
                 </FrameLayout>
 
                 <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
@@ -410,7 +410,7 @@
                         android:id="@+id/id_current_season"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_very_very_small"
+                        android:padding="@dimen/horizontal_padding_very_small"
                         android:text="Current Season Statistics"
                         android:textColor="@color/dark_blue"
                         android:textSize="@dimen/font_size_small_large" />
@@ -424,6 +424,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/vertical_padding_very_small"
                     android:orientation="vertical">
 
                     <android.support.percent.PercentRelativeLayout
@@ -433,60 +434,56 @@
 
                         <ImageView
                             android:id="@+id/iv_league"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:paddingRight="@dimen/horizontal_padding_medium"
+                            android:layout_width="@dimen/icon_football_info"
+                            android:layout_height="@dimen/icon_football_info"
+                            android:layout_centerVertical="true"
                             android:src="@drawable/ic_league"
                             app:layout_widthPercent="21%" />
 
                         <ImageView
                             android:id="@+id/iv_teams"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="left"
-                            android:paddingRight="@dimen/horizontal_padding_medium"
+                            android:layout_width="@dimen/icon_football_info"
+                            android:layout_height="@dimen/icon_football_info"
+                            android:layout_centerVertical="true"
                             android:layout_toRightOf="@id/iv_league"
                             android:src="@drawable/ic_teams"
                             app:layout_widthPercent="21%" />
 
                         <ImageView
                             android:id="@+id/iv_match_played"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="@dimen/horizontal_padding_small"
+                            android:layout_width="@dimen/icon_football_info"
+                            android:layout_height="@dimen/icon_football_info"
                             android:layout_toRightOf="@id/iv_teams"
                             android:src="@drawable/ic_match_played"
-                            app:layout_widthPercent="12%" />
+                            app:layout_widthPercent="14%" />
 
                         <ImageView
                             android:id="@+id/iv_goals_scored"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="@dimen/horizontal_padding_small"
+                            android:layout_width="@dimen/icon_football_info"
+                            android:layout_height="@dimen/icon_football_info"
                             android:layout_toRightOf="@id/iv_match_played"
                             android:src="@drawable/ic_goals_scored"
                             app:layout_widthPercent="12%" />
 
                         <ImageView
                             android:id="@+id/iv_ic_assist"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_width="@dimen/icon_football_info"
+                            android:layout_height="@dimen/icon_football_info"
                             android:layout_toRightOf="@id/iv_goals_scored"
-                            android:paddingLeft="@dimen/horizontal_padding_small"
                             android:src="@drawable/ic_assist"
                             app:layout_widthPercent="14%" />
 
                         <ImageView
                             android:id="@+id/iv_yellow_card"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_width="@dimen/icon_football_info"
+                            android:layout_height="@dimen/icon_football_info"
                             android:layout_toRightOf="@id/iv_ic_assist"
                             android:src="@drawable/ic_yellow_card"
                             app:layout_widthPercent="10%" />
 
                         <ImageView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
+                            android:layout_width="@dimen/icon_football_info"
+                            android:layout_height="@dimen/icon_football_info"
                             android:layout_toRightOf="@id/iv_yellow_card"
                             android:src="@drawable/ic_red_card"
                             app:layout_widthPercent="10%" />
@@ -503,7 +500,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:text="@string/league"
-                            android:gravity="left"
+                            android:gravity="center"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_small_medium"
                             app:layout_widthPercent="21%" />
@@ -514,7 +511,7 @@
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/league_label_current_season"
                             android:text="@string/team"
-                            android:gravity="left"
+                            android:gravity="center"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_small_medium"
                             app:layout_widthPercent="21%" />
@@ -557,7 +554,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/goals_label"
-                            android:gravity="left"
+                            android:gravity="center"
                             android:text="@string/yc"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_small_medium"
@@ -568,7 +565,7 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_toRightOf="@id/yellow_label_season"
-                            android:gravity="left"
+                            android:gravity="center"
                             android:text="@string/rc"
                             android:textColor="@color/dot_color_grey"
                             android:textSize="@dimen/font_size_small_medium"
@@ -589,18 +586,19 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/profile_info">
 
-                <LinearLayout
+                <android.support.v7.widget.CardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/ColorPrimary"
                     android:layout_margin="@dimen/activity_vertical_margin"
-                    android:orientation="vertical"
+                    card:cardCornerRadius="5dp"
                     >
 
                     <LinearLayout
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:background="@drawable/round_edge_black_box">
+                        android:background="@color/ColorPrimary"
+                        android:orientation="vertical">
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -609,7 +607,7 @@
                             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
-                                android:padding="@dimen/horizontal_padding_very_very_small"
+                                android:padding="@dimen/horizontal_padding_very_small"
                                 android:text="Next Game"
                                 android:textColor="@color/dark_blue"
                                 android:textSize="@dimen/font_size_small_large" />
@@ -635,8 +633,7 @@
                                     android:id="@+id/ic_league_image"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:layout_gravity="center"
-                                    android:src="@drawable/ic_goals_scored" />
+                                    android:layout_gravity="center"/>
                             </FrameLayout>
 
                             <LinearLayout
@@ -666,7 +663,7 @@
                         <RelativeLayout
                             android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
-                            android:background="@color/gray4"
+                            android:background="@color/gray3"
                             android:padding="@dimen/horizontal_padding_very_very_small"
                             android:orientation="horizontal">
 
@@ -696,7 +693,7 @@
                                 android:src="@drawable/ic_notification_enable" />
                         </RelativeLayout>
                     </LinearLayout>
-                </LinearLayout>
+                </android.support.v7.widget.CardView>
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

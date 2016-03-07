@@ -35,7 +35,7 @@
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_width="match_parent"
-                android:layout_height="32dp"
+                android:layout_height="30dp"
                 android:orientation="horizontal">
                 <View
                     android:id="@+id/v_dummy"
@@ -74,7 +74,7 @@
                     android:layout_alignParentLeft="true"
                    android:layout_gravity="left"
                    app:civ_border_color="@color/gray3"
-                   app:civ_border_width="2dp"
+                   app:civ_border_width="1dp"
                    />
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/iv_right_status"
@@ -82,7 +82,7 @@
                     android:layout_width="32dp"
                     android:layout_height="32dp"
                     app:civ_border_color="@color/gray3"
-                    app:civ_border_width="2dp"
+                    app:civ_border_width="1dp"
                     />
 
             </RelativeLayout>

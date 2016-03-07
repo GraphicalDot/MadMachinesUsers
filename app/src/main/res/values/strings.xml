@@ -358,8 +358,8 @@ Carrier SMS charges may apply.</string>
     <string name="games">Games</string>
     <string name="goals">Goals</string>
     <string name="assists">Assists</string>
-    <string name="rc">Rc</string>
-    <string name="yc">Yc</string>
+    <string name="rc">RC</string>
+    <string name="yc">YC</string>
     <string name="age">AGE</string>
     <string name="position">POSITION</string>
     <string name="scored">SQUAD NO.</string>
