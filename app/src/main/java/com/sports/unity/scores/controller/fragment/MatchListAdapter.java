@@ -223,7 +223,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
                 if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {
                     holder.odds.setVisibility(View.VISIBLE);
-
                     ((ViewGroup) holder.odds.getParent()).setTag(position);
                     ((ViewGroup) holder.odds.getParent()).setClickable(true);
                     ((ViewGroup) holder.odds.getParent()).setOnClickListener(oddsClickListener);
@@ -304,7 +303,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                                 holder.t1score.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
                                 holder.team1.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
                                 holder.t1score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
-                            } else if (result.equals("away_team")) {
+                            }
+                            else if (result.equals("away_team")) {
                                 holder.team2.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
                                 holder.t2score.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
                                 holder.team2.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());

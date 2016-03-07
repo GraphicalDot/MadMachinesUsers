@@ -357,6 +357,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                                 liveAndCompletedCricketBattingCardDTO.setTvFourGainByPlayer(battingObject.getString("4s"));
                                 liveAndCompletedCricketBattingCardDTO.setTvSixGainByPlayer(battingObject.getString("6s"));
                                 liveAndCompletedCricketBattingCardDTO.setTvPlayerRun(battingObject.getString("R"));
+                                liveAndCompletedCricketBattingCardDTO.setTvWicketBy(battingObject.getString("player_status"));
                                 teamBBattingCardList.add(liveAndCompletedCricketBattingCardDTO);
                             }
                             for (int j= 0 ; j<teamBBowlingArray.length();j++){
