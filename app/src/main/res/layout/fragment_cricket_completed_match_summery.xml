@@ -180,7 +180,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/round_edge_black_box"
-        android:layout_margin="@dimen/activity_vertical_margin"
+       android:layout_marginLeft="@dimen/horizontal_padding_small"
+        android:layout_marginRight="@dimen/horizontal_padding_small"
         >
         <LinearLayout
             android:layout_width="match_parent"
