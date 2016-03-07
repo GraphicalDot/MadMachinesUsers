@@ -403,7 +403,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         formatter.setTimeZone(TimeZone.getTimeZone("Etc/UTC"));
         java.sql.Time timeValue = new java.sql.Time(formatter.parse(matchTime).getTime());
         String time = timeValue.toString();
-
         return time;
     }
 
