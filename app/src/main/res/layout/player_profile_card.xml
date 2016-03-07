@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="@dimen/horizontal_padding_very_very_small"
     app:cardCornerRadius="@dimen/card_edge_curve_radius">
     <View
         android:layout_width="match_parent"
@@ -13,6 +12,7 @@
     <android.support.percent.PercentRelativeLayout
         android:id="@+id/rootLayout"
         android:layout_width="match_parent"
+        android:padding="@dimen/horizontal_padding_very_small"
         android:layout_height="wrap_content"
         android:background="@color/ColorPrimary">
         <com.sports.unity.common.view.CustomRobotoRegularTextView
@@ -21,6 +21,7 @@
             android:layout_height="wrap_content"
             android:text="league"
             android:textSize="@dimen/font_size_small_medium"
+            android:maxLength="10"
             app:layout_widthPercent="22%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/team_name"
@@ -29,6 +30,7 @@
             android:layout_toRightOf="@id/league_name"
             android:text="tem"
             android:textSize="@dimen/font_size_small_medium"
+            android:maxLength="10"
             app:layout_widthPercent="22%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/game_count"
