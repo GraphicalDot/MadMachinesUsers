@@ -88,7 +88,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         matchId = i.getStringExtra(Constants.INTENT_KEY_ID);
         matchStatus= i.getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
         matchTime = i.getStringExtra(Constants.INTENT_KEY_MATCH_TIME);
-        isLive = Boolean.getBoolean(i.getStringExtra(Constants.INTENT_KEY_MATCH_LIVE));
+        isLive = i.getBooleanExtra(Constants.INTENT_KEY_MATCH_LIVE,false);
 
         initView();
         setToolbar();

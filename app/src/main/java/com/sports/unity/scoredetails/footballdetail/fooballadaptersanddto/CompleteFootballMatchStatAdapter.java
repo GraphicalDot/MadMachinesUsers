@@ -99,7 +99,7 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
                 .withBorder(radius)
                 .width(radius)
                 .height(radius)
-                .bold()
+                .bold().fontSize(20)
                 .endConfig()
                 .buildRound(strRightStatus, (Color.WHITE));
         return drawable;

@@ -182,7 +182,6 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                 }
             }
         });
-
         team2ScoreDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -52,15 +52,15 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
                 holder.tvTimeInterval.setVisibility(View.VISIBLE);
                 holder.upperDotView.setVisibility(View.VISIBLE);
             }else {
-                holder.tvTimeInterval.setVisibility(View.GONE);
-                holder.upperDotView.setVisibility(View.GONE);
+                holder.tvTimeInterval.setVisibility(View.INVISIBLE);
+                holder.upperDotView.setVisibility(View.INVISIBLE);
             }
 
             if(getItemCount()-1== position){
                 holder.gameStartImage.setVisibility(View.VISIBLE);
                 holder.gameStartImage.setImageResource(R.drawable.ic_match_start);
             }else {
-                holder.gameStartImage.setVisibility(View.GONE);
+                holder.gameStartImage.setVisibility(View.INVISIBLE);
             }
 
             if(holder.dto.getTeamName().equalsIgnoreCase(context.getString(R.string.home_team_name))) {
@@ -68,8 +68,14 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
 
                 }
                 holder.tvTeamFirstTime.setText(holder.dto.getTvTeamFirstTime());
+
                 holder.tvTeamFirstOnPlayer.setText(holder.dto.getTvTeamFirstOnPlayer());
-                holder.tvTeamFirstOffPlayer.setText(holder.dto.getTvTeamFirstOffPlayer());
+                if(holder.dto.getTvTeamFirstOffPlayer()!=null){
+                    holder.tvTeamFirstOffPlayer.setText(holder.dto.getTvTeamFirstOffPlayer());
+                }else {
+                    holder.tvTeamFirstOffPlayer.setVisibility(View.INVISIBLE);
+                }
+
                 holder.tvTeamFirstTime.setVisibility(View.VISIBLE);
                 holder.tvTeamFirstOnPlayer.setVisibility(View.VISIBLE);
                 holder.tvTeamFirstOffPlayer.setVisibility(View.VISIBLE);
@@ -80,7 +86,12 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
             {
                 holder.tvTeamSecondTime.setText(holder.dto.getTvTeamSecondTime());
                 holder.tvTeamSecondOnPlayer.setText(holder.dto.getTvTeamSecondOnPlayer());
-                holder.tvTeamSecondOffPlayer.setText(holder.dto.getTvTeamSecondOffPlayer());
+                if(holder.dto.getTvTeamSecondOffPlayer()!=null){
+                    holder.tvTeamSecondOffPlayer.setText(holder.dto.getTvTeamSecondOffPlayer());
+                }else{
+                    holder.tvTeamSecondOffPlayer.setVisibility(View.INVISIBLE);
+                }
+
                 holder.tvTeamSecondTime.setVisibility(View.VISIBLE);
                 holder.tvTeamSecondOnPlayer.setVisibility(View.VISIBLE);
                 holder.tvTeamSecondOffPlayer.setVisibility(View.VISIBLE);
