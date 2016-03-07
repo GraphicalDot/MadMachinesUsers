@@ -308,9 +308,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
                     tvCurrentScore.setText(DateUtil.getDaysDiffrence(cricketMatchJsonCaller.getMatchDate(), this));
                     showNoCommentaries();
-
-                    teamFirstOvers.setText(cricketMatchJsonCaller.getTeam1());
-                    teamSecondOvers.setText(cricketMatchJsonCaller.getTeam2());
+                    TextView  text1Score = (TextView) findViewById(R.id.team1_score);
+                    TextView  team2Score = (TextView) findViewById(R.id.team2_score);
+                    text1Score.setText(cricketMatchJsonCaller.getTeam1());
+                    team2Score.setText(cricketMatchJsonCaller.getTeam2());
 
                } else {
 

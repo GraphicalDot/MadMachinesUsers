@@ -31,6 +31,7 @@
                 android:paddingBottom="@dimen/horizontal_padding_very_very_small"
                 android:paddingTop="@dimen/horizontal_padding_very_very_small">
                 <RelativeLayout
+                    android:id="@+id/team1_scroll_details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
                     <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
@@ -376,6 +377,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/gray3">
                 <RelativeLayout
+                    android:id="@+id/team2_scroll_details"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingBottom="@dimen/horizontal_padding_very_very_small"
