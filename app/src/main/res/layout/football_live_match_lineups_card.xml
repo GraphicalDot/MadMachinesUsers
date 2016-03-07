@@ -3,12 +3,12 @@
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:padding="@dimen/horizontal_padding_very_small"
     android:layout_height="wrap_content">
     <android.support.percent.PercentRelativeLayout
         android:id="@+id/rootLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/horizontal_padding_very_small">
+        android:layout_height="wrap_content">
         <LinearLayout
             android:id="@+id/ll_lineup_team_left"
             android:layout_width="0dp"
@@ -141,14 +141,10 @@
             </android.support.percent.PercentRelativeLayout>
         </LinearLayout>
     </android.support.percent.PercentRelativeLayout>
-
-
-
     <android.support.percent.PercentRelativeLayout
         android:id="@+id/rootLayout_off_player"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/horizontal_padding_very_small">
+        android:layout_height="wrap_content">
         <LinearLayout
             android:id="@+id/ll_off_lineup_team_left"
             android:layout_width="0dp"
