@@ -64,7 +64,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                moveToNextActivity(position, ChatScreenActivity.class);
+                moveToNextActivity(position);
             }
 
         });
@@ -170,13 +170,13 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
         }
     }
 
-    private void moveToNextActivity(int position, Class<?> cls) {
+    private void moveToNextActivity(int position) {
         ArrayList<Chats> chatList = ((ChatListAdapter) chatListView.getAdapter()).getChatArrayList();
         Chats chatObject = chatList.get(position);
-        moveToNextActivity(chatObject, cls);
+        moveToNextActivity(chatObject);
     }
 
-    private void moveToNextActivity(Chats chatObject, Class<?> cls) {
+    private void moveToNextActivity(Chats chatObject) {
         Intent intent;
 
         boolean nearByChat = false;
@@ -191,14 +191,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
             long chatId = chatObject.chatid;
             byte[] userpicture = chatObject.userImage;
 
-//            intent.putExtra("jid", jid);
-//            intent.putExtra("name", name);
-//            intent.putExtra("contactId", contactId);
-//            intent.putExtra("chatId", chatId);
-//            intent.putExtra("groupServerId", groupSeverId);
-//            intent.putExtra("userpicture", userpicture);
-//            intent.putExtra("blockStatus", blockStatus);
-            intent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, userpicture, blockStatus);
+            intent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, userpicture, blockStatus, nearByChat);
         } else {
             long contactId = chatObject.contactId;
             String jid = groupServerId;
@@ -206,13 +199,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
             long chatId = chatObject.chatid;
             byte[] groupImage = chatObject.chatImage;
 
-//            intent.putExtra("jid", groupSId);
-//            intent.putExtra("subject", name);
-//            intent.putExtra("contactId", contactId);
-//            intent.putExtra("chatId", chatId);
-//            intent.putExtra("groupServerId", groupSeverId);
-//            intent.putExtra("groupImage", groupImage);
-            intent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, groupImage, false);
+            intent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, groupImage, false, nearByChat);
         }
 
         startActivity(intent);
