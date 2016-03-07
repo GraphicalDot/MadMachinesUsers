@@ -57,7 +57,6 @@ public class CricketLiveMatchSummaryHandler {
     public void requestLiveMatchSummary(String matchId) {
         Log.i("Score Detail", "Request Score Details");
         String url = BASEURL+matchId;
-        url = BASEURL+matchId;
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);

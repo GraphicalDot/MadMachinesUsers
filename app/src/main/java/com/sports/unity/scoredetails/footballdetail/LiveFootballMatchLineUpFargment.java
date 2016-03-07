@@ -19,6 +19,7 @@ import com.sports.unity.R;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballLineUpAdapter;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballLineUpDTO;
 import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -27,6 +28,8 @@ import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
@@ -41,10 +44,9 @@ import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFootballMatchLineUpHandler.LiveMatchContentListener {
 
     private ProgressBar progressBar;
-    String toss = "";
-    String matchName="";
-    String date = "";
-    private String matchId;
+
+   private  String matchName="";
+    private String date = "";
     private TextView tvCaptainFirst;
     private TextView tvCaptainSecond;
     private TextView tvCarlesPayol;
@@ -57,6 +59,10 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
     private List<CompleteFootballLineUpDTO> lineUpList = new ArrayList<>();
     private CompleteFootballLineUpAdapter completeFootballSubstituteUpAdapter;
     private List<CompleteFootballLineUpDTO> substitutesList = new ArrayList<>();
+    private Timer timerToRefreshContent;
+    private LiveFootballMatchLineUpHandler liveFootballMatchLineUpHandler;
+    private String matchId;
+    private Context context;
 
     public LiveFootballMatchLineUpFargment() {
         // Required empty public constructor
@@ -66,14 +72,11 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
     public void onAttach(Context context) {
         super.onAttach(context);
         Intent i = getActivity().getIntent();
-        String matchId =  i.getStringExtra(INTENT_KEY_ID);
+        matchId =  i.getStringExtra(INTENT_KEY_ID);
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
-        toss = i.getStringExtra(INTENT_KEY_TOSS);
         date = i.getStringExtra(INTENT_KEY_DATE);
-        LiveFootballMatchLineUpHandler liveFootballMatchLineUpHandler = LiveFootballMatchLineUpHandler.getInstance(context);
-        liveFootballMatchLineUpHandler.addListener(this);
-        liveFootballMatchLineUpHandler.requestLiveMatchLineUp(matchId);
-
+        this.context = context;
+        getFootballmatchLineUps();
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -316,5 +319,22 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
         }
         return event;
     }
+    private void enableAutoRefreshContent(){
+        timerToRefreshContent = new Timer();
+        timerToRefreshContent.schedule(new TimerTask() {
+          @Override
+            public void run() {
+                getFootballmatchLineUps();
+            }
+       }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
+    }
+
+    private void getFootballmatchLineUps() {
+        liveFootballMatchLineUpHandler = LiveFootballMatchLineUpHandler.getInstance(context);
+        liveFootballMatchLineUpHandler.addListener(this);
+        liveFootballMatchLineUpHandler.requestLiveMatchLineUp(matchId);
+
+    }
+
 
 }

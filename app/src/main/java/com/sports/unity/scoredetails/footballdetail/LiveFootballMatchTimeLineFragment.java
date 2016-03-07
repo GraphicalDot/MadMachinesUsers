@@ -20,6 +20,7 @@ import com.sports.unity.R;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballTimeLineAdapter;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballTimeLineDTO;
 import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +30,8 @@ import org.solovyev.android.views.llm.LinearLayoutManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
@@ -52,6 +55,9 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
     private CompleteFootballTimeLineAdapter completeFootballTimeLineAdapter;
     private List<CompleteFootballTimeLineDTO> list = new ArrayList<>();
     private LiveFootballMatchTimeLineHandler liveFootballMatchTimeLineHandler;
+    private Timer timerToRefreshContent;
+    private Context context;
+
     public LiveFootballMatchTimeLineFragment() {
         // Required empty public constructor
     }
@@ -64,9 +70,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
         toss = i.getStringExtra(INTENT_KEY_TOSS);
         date = i.getStringExtra(INTENT_KEY_DATE);
-        liveFootballMatchTimeLineHandler = LiveFootballMatchTimeLineHandler.getInstance(context);
-        liveFootballMatchTimeLineHandler.addListener(this);
-        liveFootballMatchTimeLineHandler.requestLiveMatchTimeLine(matchId);
+        getFootballmatchTimeLine();
 
     }
     @Override
@@ -143,6 +147,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
+       list.clear();
         hideProgressBar();
         {
             ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
@@ -254,4 +259,24 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
         }
         return drawable;
     }
+
+    private void enableAutoRefreshContent(){
+        timerToRefreshContent = new Timer();
+        timerToRefreshContent.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                getFootballmatchTimeLine();
+            }
+        }, Constants.TIMEINMILISECOND,  Constants.TIMEINMILISECOND);
+    }
+
+    private void getFootballmatchTimeLine() {
+        liveFootballMatchTimeLineHandler = LiveFootballMatchTimeLineHandler.getInstance(context);
+        liveFootballMatchTimeLineHandler.addListener(this);
+        liveFootballMatchTimeLineHandler.requestLiveMatchTimeLine(matchId);
+
+
+
+    }
+
 }
