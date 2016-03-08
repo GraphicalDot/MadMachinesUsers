@@ -73,6 +73,8 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static android.widget.Toast.LENGTH_LONG;
 import static android.widget.Toast.makeText;
+import static com.sports.unity.common.model.TinyDB.KEY_CURRENT_LATITUDE;
+import static com.sports.unity.common.model.TinyDB.KEY_CURRENT_LONGITUDE;
 import static com.sports.unity.common.model.TinyDB.KEY_PASSWORD;
 import static com.sports.unity.common.model.TinyDB.KEY_USER_JID;
 import static com.sports.unity.common.model.TinyDB.getInstance;
@@ -105,6 +107,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
     private Toolbar toolbar;
     private TextView titleAddress;
     private TextView titleCity;
+    private boolean customLocation;
 
     private int radius = 1000;
 
@@ -164,7 +167,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_people_around_me_map);
-
+        this.customLocation = false;
         aDialog = new Dialog(PeopleAroundMeMap.this);
         aDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
@@ -183,12 +186,16 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         fragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
+                customLocation = true;
                 findViewById(R.id.fl_custom_location).setVisibility(GONE);
+                getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LATITUDE, place.getLatLng().latitude);
+                getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LONGITUDE, place.getLatLng().longitude);
                 //getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
             }
 
             @Override
             public void onError(Status status) {
+                customLocation = false;
                 findViewById(R.id.fl_custom_location).setVisibility(GONE);
                 Toast.makeText(getApplicationContext(), getText(R.string.oops_try_again), LENGTH_LONG).show();
             }
@@ -201,6 +208,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         myLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                customLocation = false;
                 boolean success = checkIfGPSEnabled();
                 if (success) {
                     getLocation();
@@ -473,8 +481,8 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         mClusterManager.setOnClusterItemClickListener(this);
         hideLocationbutton();
         map.setTrafficEnabled(false);
-        double latitude = getInstance(getApplicationContext()).getDouble(TinyDB.KEY_CURRENT_LATITUDE, 0.0);
-        double longitude = getInstance(getApplicationContext()).getDouble(TinyDB.KEY_CURRENT_LONGITUDE, 0.0);
+        double latitude = getInstance(getApplicationContext()).getDouble(KEY_CURRENT_LATITUDE, 0.0);
+        double longitude = getInstance(getApplicationContext()).getDouble(KEY_CURRENT_LONGITUDE, 0.0);
         latLong = new LatLng(latitude, longitude);
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, calculateZoomLevel(radius)));
         if (checkIfGPSEnabled()) {
@@ -499,7 +507,6 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         dialog = ProgressDialog.show(PeopleAroundMeMap.this, "",
                 "fetching...", true);
         dialog.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
-
         ScoresContentHandler.getInstance().addResponseListener(contentListener, REQUEST_LISTENER_KEY);
 
         HashMap<String, String> parameters = new HashMap<>();
@@ -743,8 +750,8 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         Location location = map.getMyLocation();
         if (location != null) {
             LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location, true);
-            getInstance(getApplicationContext()).putDouble(TinyDB.KEY_CURRENT_LATITUDE, location.getLatitude());
-            getInstance(getApplicationContext()).putDouble(TinyDB.KEY_CURRENT_LONGITUDE, location.getLongitude());
+            getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LATITUDE, location.getLatitude());
+            getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LONGITUDE, location.getLongitude());
             latLong = new LatLng(location.getLatitude(), location.getLongitude());
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
             new FetchAndDisplayCurrentAddress(location).execute();
