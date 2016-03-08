@@ -225,7 +225,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
                     if(!dataObject.isNull("player_image")){
                         Glide.with(this).load(dataObject.getString("player_image")).placeholder(R.drawable.ic_no_img).into(playerProfileImage);
                     }
-                    playerTagImage.setImageResource(R.drawable.ic_no_img);
+//                 /*   playerTagImage.setImageResource(R.drawable.ic_no_img);*/
                    /* if(!dataObject.isNull("player_image")){
                         Glide.with(this).load(dataObject.getString("player_image")).placeholder(R.drawable.ic_no_img).into(playerTagImage);
                     }*/
