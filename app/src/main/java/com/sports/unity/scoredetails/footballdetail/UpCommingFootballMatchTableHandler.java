@@ -70,9 +70,7 @@ public class UpCommingFootballMatchTableHandler {
         try{
             JSONObject jsonObject = new JSONObject(response);
             Log.i("Score Card", "handleResponse: ");
-            if(jsonObject.getBoolean("success")){
                 mContentListener.handleContent(response);
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }

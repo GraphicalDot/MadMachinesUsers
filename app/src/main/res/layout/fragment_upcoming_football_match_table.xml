@@ -108,6 +108,28 @@
                     app:layout_widthPercent="15%"
                     />
             </android.support.percent.PercentRelativeLayout>
+            <include
+                android:id="@+id/error"
+                layout="@layout/error_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone"
+                />
+            <TextView
+                android:id="@+id/no_comments"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="No Comments"
+                android:textSize="@dimen/font_size_large"
+                android:visibility="gone"
+                />
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_football_match_table"
                 android:layout_width="match_parent"
@@ -115,28 +137,7 @@
                 android:background="@color/gray3"
                 tools:listitem="@layout/upcoming_football_match_table_card"
                 />
-
         </LinearLayout>
     </ScrollView>
-    <include
-        android:id="@+id/error"
-        layout="@layout/error_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        />
-    <TextView
-        android:id="@+id/no_comments"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="No Comments"
-        android:textSize="@dimen/font_size_large"
-        android:visibility="gone"
-        />
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+
 </android.support.v4.widget.SwipeRefreshLayout>
