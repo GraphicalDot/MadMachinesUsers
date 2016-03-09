@@ -120,11 +120,19 @@ public class DateUtil {
         {
             days = context.getString(R.string.tomorrow);
         } else {
-               if(diffDay<0){
+            Date utilDate = with.getTime();
+             days =   utilDate.toString();
+
+
+
+
+               /*if(diffDay<0){
                    days=   String.format(context.getString(R.string.daysago),String.valueOf(Math.abs(diffDay)));
                }else{
                    days=   String.format(context.getString(R.string.days),String.valueOf(diffDay));
-               }
+               }*/
+
+
 
 
         }
