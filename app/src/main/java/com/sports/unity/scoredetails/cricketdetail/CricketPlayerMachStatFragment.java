@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.sports.unity.R;
@@ -52,6 +53,10 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     private List<CricketPlayerMatchStatDTO> playerMatchBowlingStatDTOList = new ArrayList<>();
     private CricketPlayerMatchStatHandler cricketPlayerMatchStatHandler;
     private ProgressBar progressBar;
+    private RelativeLayout relativeLayoutBatting;
+    private RelativeLayout relativeLayoutBolling;
+    private LinearLayout linearLayoutBatting;
+    private LinearLayout linearLayoutBolling;
     public CricketPlayerMachStatFragment() {
         super();
     }
@@ -99,10 +104,14 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         rcBowlingPerformanceSummary.setHasFixedSize(false);
         battingImageView = (ImageView) view.findViewById(R.id.iv_down);
         bowlingImageView = (ImageView) view.findViewById(R.id.iv_down_second);
+        relativeLayoutBatting = (RelativeLayout) view.findViewById(R.id.ll_batting);
+        relativeLayoutBolling = (RelativeLayout) view.findViewById(R.id.ll_bolling);
+        linearLayoutBatting = (LinearLayout) view.findViewById(R.id.ll_batting_layout);
+        linearLayoutBolling = (LinearLayout) view.findViewById(R.id.ll_bolling_layout);
         final View battingRow = view.findViewById(R.id.prl_batting);
         final View bowlingRow = view.findViewById(R.id.prl_bowling);
 
-        battingImageView.setOnClickListener(new View.OnClickListener() {
+        relativeLayoutBatting.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (rcBattingPerformanceSummery.getVisibility() == GONE) {
                     rcBattingPerformanceSummery.setVisibility(VISIBLE);
@@ -115,7 +124,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                 }
             }
         });
-        bowlingImageView.setOnClickListener(new View.OnClickListener() {
+        relativeLayoutBolling.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (rcBowlingPerformanceSummary.getVisibility() == GONE) {
                     rcBowlingPerformanceSummary.setVisibility(VISIBLE);
@@ -147,15 +156,20 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
             boolean error = jsonObject.getBoolean("error");
 
             if (success) {
-
+                linearLayoutBatting.setVisibility(View.VISIBLE);
+                linearLayoutBolling.setVisibility(View.VISIBLE);
                 renderDisplay(jsonObject);
 
             } else {
+                linearLayoutBatting.setVisibility(View.GONE);
+                linearLayoutBolling.setVisibility(View.GONE);
                 Toast.makeText(getActivity(), R.string.player_details_not_exists, Toast.LENGTH_SHORT).show();
                 showErrorLayout(getView());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+            linearLayoutBatting.setVisibility(View.GONE);
+            linearLayoutBolling.setVisibility(View.GONE);
             Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             showErrorLayout(getView());
         }
@@ -185,10 +199,6 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         bowlingOdisMap .clear();
         bowlingT20sMap .clear();
         bowlingIPLMap .clear();
-
-
-
-
         rcBattingPerformanceSummery.setVisibility(VISIBLE);
         rcBowlingPerformanceSummary.setVisibility(VISIBLE);
         final JSONObject data = (JSONObject) jsonObject.get("data");

@@ -56,9 +56,9 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             holder.tvDayName.setText(dto.getDay());
             holder.tvLeagueName.setText(dto.getLeagueName());
             if(dto.getSportsType().equals(Constants.SPORTS_TYPE_CRICKET)){
-                holder.ivSportsIcon.setImageResource(R.drawable.ic_cricket);
+                holder.ivSportsIcon.setImageResource(R.drawable.ic_cricket_group);
             }else{
-                holder.ivSportsIcon.setImageResource(R.drawable.ic_football);
+                holder.ivSportsIcon.setImageResource(R.drawable.ic_football_group);
             }
             holder.mAdapter.notifyDataSetChanged();
         }catch (Exception  e){e.printStackTrace();}
