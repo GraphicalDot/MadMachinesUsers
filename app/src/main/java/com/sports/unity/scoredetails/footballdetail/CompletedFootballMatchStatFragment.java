@@ -160,7 +160,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         list.clear();
-        ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
+          ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
           if(!jsonObject.isNull("data")) {
               final JSONArray dataArray = jsonObject.getJSONArray("data");
               final JSONObject teamFirstStatsObject = dataArray.getJSONObject(0);
@@ -168,8 +168,8 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
               final Iterator<String> keysSetItr = teamFirstStatsObject.keys();
               hideProgressBar();
               swipeRefreshLayout.setRefreshing(false);
-              list.clear();
-              if (activity != null) {
+
+            if (activity != null) {
                   activity.runOnUiThread(new Runnable() {
                       @Override
                       public void run() {
@@ -182,17 +182,24 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
                                       if (getLabelValue(key) != null) {
                                           if (!(key.equals("match_id") || key.equals("team"))) {
                                               completeFootballMatchStatDTO = new CompleteFootballMatchStatDTO();
-                                              completeFootballMatchStatDTO.setTvLable(key);
-                                              completeFootballMatchStatDTO.setIvLeftStatus(teamFirstStatsObject.getString(key));
-                                              completeFootballMatchStatDTO.setIvRightStatus(teamSecondStatsObject.getString(key));
-                                              list.add(completeFootballMatchStatDTO);
+                                                   completeFootballMatchStatDTO.setTvLable(getLabelValue(key));
+                                                   completeFootballMatchStatDTO.setIvLeftStatus(teamFirstStatsObject.getString(key));
+                                                   completeFootballMatchStatDTO.setIvRightStatus(teamSecondStatsObject.getString(key));
+                                                  int red =Integer.parseInt(teamFirstStatsObject.getString(key));
+                                                  int blue =Integer.parseInt(teamSecondStatsObject.getString(key));
+                                                   completeFootballMatchStatDTO.setLeftGraphValue(400*red/(red+blue));
+                                                   completeFootballMatchStatDTO.setRightGraphValue(400*blue/(red+blue));
+                                                   list.add(completeFootballMatchStatDTO);
                                           }
                                       }
                                   } catch (JSONException e) {
                                       e.printStackTrace();
                                   }
                               }
+
                               completeFootballMatchStatAdapter.notifyDataSetChanged();
+
+
                           } catch (Exception ex) {
                               ex.printStackTrace();
                               showErrorLayout(getView());
@@ -200,6 +207,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
                       }
                   });
               }
+
           }else{
               showErrorLayout(getView());
           }

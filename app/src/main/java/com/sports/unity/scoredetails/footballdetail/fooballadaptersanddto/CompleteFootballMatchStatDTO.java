@@ -11,6 +11,9 @@ public class CompleteFootballMatchStatDTO {
     private String ivLeftStatus;
     private String ivRightStatus;
     private String ivCenterStatus;
+    private int leftGraphValue;
+    private int rightGraphValue;
+
 
     public String getTvLable() {
         return tvLable;
@@ -42,5 +45,31 @@ public class CompleteFootballMatchStatDTO {
 
     public void setIvCenterStatus(String ivCenterStatus) {
         this.ivCenterStatus = ivCenterStatus;
+    }
+
+    public int getLeftGraphValue() {
+        return leftGraphValue;
+    }
+
+    public void setLeftGraphValue(int leftGraphValue) {
+        this.leftGraphValue = leftGraphValue;
+    }
+
+    public int getRightGraphValue() {
+        return rightGraphValue;
+    }
+
+    public void setRightGraphValue(int rightGraphValue) {
+        this.rightGraphValue = rightGraphValue;
+    }
+
+    @Override
+    public String toString() {
+        return "CompleteFootballMatchStatDTO{" +
+                "tvLable='" + tvLable + '\'' +
+                ", ivLeftStatus='" + ivLeftStatus + '\'' +
+                ", ivRightStatus='" + ivRightStatus + '\'' +
+                ", ivCenterStatus='" + ivCenterStatus + '\'' +
+                '}';
     }
 }

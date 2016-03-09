@@ -155,7 +155,7 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
             JSONObject battingData = null;
 
               final JSONArray statsArray= manOftheMatch.getJSONArray("stats");
- final JSONObject statObject = statsArray.getJSONObject(0);
+          final JSONObject statObject = statsArray.getJSONObject(0);
 
 
 

@@ -224,26 +224,20 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
     private void onClickSaveButton() {
         if (!TextUtils.isEmpty(name.getText().toString()) && !TextUtils.isEmpty(status.getText().toString())) {
-            //new SubmitVCardAsyncTask().execute();
             String nickname = name.getText().toString();
             String status = currentStatus.getText().toString();
             String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
-
             String jid = TinyDB.getInstance(UserProfileActivity.this).getString(TinyDB.KEY_USER_JID);
 
-            //TODO some shit going down here ...
-
-            Contacts contacts = new Contacts(nickname, jid, phoneNumber, byteArray, -1, status);
+            Contacts contacts = new Contacts(nickname, jid, phoneNumber, byteArray, -1, status, Contacts.AVAILABLE_NOT);
             UserProfileHandler.getInstance().submitUserProfile(UserProfileActivity.this, contacts, LISTENER_KEY);
         } else {
             if (TextUtils.isEmpty(name.getText().toString())) {
                 Toast.makeText(this, "Please enter your name", Toast.LENGTH_SHORT).show();
-
             } else if (TextUtils.isEmpty(status.getText().toString())) {
                 Toast.makeText(this, "Please enter your status", Toast.LENGTH_SHORT).show();
             }
         }
-
     }
 
     private void onClickEditButton() {

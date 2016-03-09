@@ -81,6 +81,17 @@ public class CompletedFootballMatchStatHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
+        String response = "{\"success\": false, \"error\": true}";
+        try{
+
+            Log.i("Score Card", "handleResponse: ");
+
+            mContentListener.handleContent(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     public void addListener(CompletedFootballMatchContentListener contentListener) {

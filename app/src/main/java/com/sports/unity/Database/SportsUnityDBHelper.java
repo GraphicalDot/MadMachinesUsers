@@ -28,7 +28,6 @@ import static com.sports.unity.Database.SportsUnityContract.GroupUserEntry;
  */
 public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
-    private static long DUMMY_MESSAGE_ROW_ID = -1;
     public static final long DEFAULT_ENTRY_ID = -1;
     public static final boolean DEFAULT_READ_STATUS = false;
 
@@ -40,16 +39,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     public static final String MIME_TYPE_VIDEO = "v";
     public static final String MIME_TYPE_AUDIO = "a";
 
-    public static final int AVAILABLE_NOT = 0;
-    public static final int AVAILABLE_BY_PEOPLE_AROUND_ME = 1;
-    public static final int AVAILABLE_BY_OTHER_CONTACTS = 2;
-    public static final int AVAILABLE_BY_MY_CONTACTS = 3;
-
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "spu.db";
 
     private static final String COMMA_SEP = ",";
-
+    private static long DUMMY_MESSAGE_ROW_ID = -1;
 
     private static final String CREATE_CONTACTS_TABLE = "CREATE TABLE IF NOT EXISTS " +
             ContactsEntry.TABLE_NAME + "( " +
@@ -59,7 +53,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             ContactsEntry.COLUMN_PHONE_NUMBER + " VARCHAR UNIQUE " + COMMA_SEP +
             ContactsEntry.COLUMN_USER_IMAGE + " BLOB " + COMMA_SEP +
             ContactsEntry.COLUMN_STATUS + " VARCHAR " + COMMA_SEP +
-            ContactsEntry.COLUMN_AVAILABLE_STATUS + " INTEGER DEFAULT " + AVAILABLE_NOT + " " + COMMA_SEP +
+            ContactsEntry.COLUMN_AVAILABLE_STATUS + " INTEGER DEFAULT " + Contacts.AVAILABLE_NOT + " " + COMMA_SEP +
             ContactsEntry.COLUMN_BLOCK_USER + " boolean DEFAULT 0 " +
             ");";
 
@@ -191,7 +185,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             registerCondition = " is NULL ";
         }
 
-        String selection = ContactsEntry.COLUMN_JID + registerCondition + " and " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " != " + AVAILABLE_NOT;
+        String selection = ContactsEntry.COLUMN_JID + registerCondition + " and " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " != " + Contacts.AVAILABLE_NOT;
         String[] selectionArgs = null;
 
         Cursor c = db.query(
@@ -297,7 +291,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(ContactsEntry.COLUMN_NAME, name);
-        values.put(ContactsEntry.COLUMN_AVAILABLE_STATUS, AVAILABLE_BY_MY_CONTACTS);
+        values.put(ContactsEntry.COLUMN_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
 
         String selection = ContactsEntry.COLUMN_PHONE_NUMBER + " LIKE ? ";
         String[] selectionArgs = {phoneNumber};
@@ -319,7 +313,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactsEntry.COLUMN_PHONE_NUMBER,
                 ContactsEntry.COLUMN_USER_IMAGE,
                 ContactsEntry.COLUMN_CONTACT_ID,
-                ContactsEntry.COLUMN_STATUS
+                ContactsEntry.COLUMN_STATUS,
+                ContactsEntry.COLUMN_AVAILABLE_STATUS
         };
         String selection = ContactsEntry.COLUMN_PHONE_NUMBER + " LIKE ?";
         String[] selectionArgs = {phoneNumber};
@@ -336,7 +331,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         Contacts contacts = null;
         if (c.moveToFirst()) {
-            contacts = new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5));
+            contacts = new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5), c.getInt(6));
         }
 
         c.close();
@@ -353,7 +348,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactsEntry.COLUMN_PHONE_NUMBER,
                 ContactsEntry.COLUMN_USER_IMAGE,
                 ContactsEntry.COLUMN_CONTACT_ID,
-                ContactsEntry.COLUMN_STATUS
+                ContactsEntry.COLUMN_STATUS,
+                ContactsEntry.COLUMN_AVAILABLE_STATUS
         };
         String selection = ContactsEntry.COLUMN_JID + " LIKE ?";
         String[] selectionArgs = {jid};
@@ -370,7 +366,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         Contacts contacts = null;
         if (c.moveToFirst()) {
-            contacts = new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5));
+            contacts = new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5), c.getInt(6));
         }
 
         c.close();
@@ -387,7 +383,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactsEntry.COLUMN_PHONE_NUMBER,
                 ContactsEntry.COLUMN_USER_IMAGE,
                 ContactsEntry.COLUMN_CONTACT_ID,
-                ContactsEntry.COLUMN_STATUS
+                ContactsEntry.COLUMN_STATUS,
+                ContactsEntry.COLUMN_AVAILABLE_STATUS
         };
         String selection = ContactsEntry.COLUMN_CONTACT_ID + " = ?";
         String[] selectionArgs = {String.valueOf(contactId)};
@@ -404,7 +401,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         Contacts contacts = null;
         if (c.moveToFirst()) {
-            contacts = new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5));
+            contacts = new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5), c.getInt(6));
         }
 
         c.close();
@@ -454,10 +451,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                     ContactsEntry.COLUMN_PHONE_NUMBER,
                     ContactsEntry.COLUMN_USER_IMAGE,
                     ContactsEntry.COLUMN_CONTACT_ID,
-                    ContactsEntry.COLUMN_STATUS
+                    ContactsEntry.COLUMN_STATUS,
+                    ContactsEntry.COLUMN_AVAILABLE_STATUS
             };
 
-            String selection = ContactsEntry.COLUMN_AVAILABLE_STATUS + " != " + AVAILABLE_NOT;
+            String selection = ContactsEntry.COLUMN_AVAILABLE_STATUS + " != " + Contacts.AVAILABLE_NOT;
             String[] selectionArgs = null;
             String sortOrder = ContactsEntry.COLUMN_NAME + " COLLATE NOCASE ASC ";
 
@@ -472,7 +470,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             );
             if (c.moveToFirst()) {
                 do {
-                    list.add(new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5)));
+                    list.add(new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5), c.getInt(6)));
                 } while (c.moveToNext());
             }
             c.close();
@@ -495,7 +493,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactsEntry.COLUMN_PHONE_NUMBER,
                 ContactsEntry.COLUMN_USER_IMAGE,
                 ContactsEntry.COLUMN_CONTACT_ID,
-                ContactsEntry.COLUMN_STATUS
+                ContactsEntry.COLUMN_STATUS,
+                ContactsEntry.COLUMN_AVAILABLE_STATUS
         };
 
         String registerCondition = null;
@@ -505,7 +504,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             registerCondition = " is NULL ";
         }
 
-        String selection = ContactsEntry.COLUMN_JID + registerCondition + " and " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " != " + AVAILABLE_NOT;
+        String selection = ContactsEntry.COLUMN_JID + registerCondition + " and " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " != " + Contacts.AVAILABLE_NOT;
         String[] selectionArgs = null;
         String sortOrder = ContactsEntry.COLUMN_NAME + " COLLATE NOCASE ASC ";
 
@@ -520,7 +519,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         );
         if (c.moveToFirst()) {
             do {
-                list.add(new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5)));
+                list.add(new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5), c.getInt(6)));
             } while (c.moveToNext());
         }
         c.close();
@@ -617,7 +616,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String selectQuery = "SELECT " + ContactsEntry.COLUMN_NAME + ", " + ContactsEntry.COLUMN_JID + ", " + ContactsEntry.COLUMN_PHONE_NUMBER + ", " +
-                ContactsEntry.COLUMN_USER_IMAGE + ", A." + ContactsEntry.COLUMN_CONTACT_ID + ", " + ContactsEntry.COLUMN_STATUS +
+                ContactsEntry.COLUMN_USER_IMAGE + ", A." + ContactsEntry.COLUMN_CONTACT_ID + ", " + ContactsEntry.COLUMN_STATUS + ", " + ContactsEntry.COLUMN_AVAILABLE_STATUS +
                 " FROM " + ContactsEntry.TABLE_NAME + " A INNER JOIN " + GroupUserEntry.TABLE_NAME + " B ON A." + ContactsEntry.COLUMN_CONTACT_ID + " = B." + GroupUserEntry.COLUMN_CONTACT_ID +
                 " WHERE B." + GroupUserEntry.COLUMN_CHAT_ID + " LIKE ?";
         String[] selectionArgs = {String.valueOf(chatId)};
@@ -627,7 +626,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         ArrayList<Contacts> users = new ArrayList<>();
         if (cursor.moveToFirst()) {
             do {
-                users.add(new Contacts(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getBlob(3), cursor.getInt(4), cursor.getString(5)));
+                users.add(new Contacts(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getBlob(3), cursor.getInt(4), cursor.getString(5), cursor.getInt(6)));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -1597,7 +1596,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         );
 
         if (c.moveToFirst()) {
-            value = c.getInt(0) >= AVAILABLE_BY_OTHER_CONTACTS ;
+            value = c.getInt(0) >= Contacts.AVAILABLE_BY_OTHER_CONTACTS ;
         }
         return value;
     }
