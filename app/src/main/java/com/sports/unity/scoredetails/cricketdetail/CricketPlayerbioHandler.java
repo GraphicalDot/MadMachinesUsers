@@ -75,9 +75,13 @@ public class CricketPlayerbioHandler {
         }
    }
     private void handleErrorResponse(VolleyError volleyError) {
-        //Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
-        if(mContentListener != null) {
-            //Log.i("handleErrorResponse: ",volleyError.getMessage() );
+        String response = "data{"+"success"+":"+"false"+","+"error"+":"+"true"+"}";
+        try{
+            Log.i("Score Card", "handleResponse: "+response.toString());
+            mContentListener.handleContent(response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

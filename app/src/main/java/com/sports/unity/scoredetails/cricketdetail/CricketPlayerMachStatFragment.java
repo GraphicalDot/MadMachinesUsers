@@ -55,6 +55,8 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     private ProgressBar progressBar;
     private RelativeLayout relativeLayoutBatting;
     private RelativeLayout relativeLayoutBolling;
+    private LinearLayout linearLayoutBatting;
+    private LinearLayout linearLayoutBolling;
     public CricketPlayerMachStatFragment() {
         super();
     }
@@ -104,6 +106,8 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         bowlingImageView = (ImageView) view.findViewById(R.id.iv_down_second);
         relativeLayoutBatting = (RelativeLayout) view.findViewById(R.id.ll_batting);
         relativeLayoutBolling = (RelativeLayout) view.findViewById(R.id.ll_bolling);
+        linearLayoutBatting = (LinearLayout) view.findViewById(R.id.ll_batting_layout);
+        linearLayoutBolling = (LinearLayout) view.findViewById(R.id.ll_bolling_layout);
         final View battingRow = view.findViewById(R.id.prl_batting);
         final View bowlingRow = view.findViewById(R.id.prl_bowling);
 
@@ -152,15 +156,20 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
             boolean error = jsonObject.getBoolean("error");
 
             if (success) {
-
+                linearLayoutBatting.setVisibility(View.VISIBLE);
+                linearLayoutBolling.setVisibility(View.VISIBLE);
                 renderDisplay(jsonObject);
 
             } else {
+                linearLayoutBatting.setVisibility(View.GONE);
+                linearLayoutBolling.setVisibility(View.GONE);
                 Toast.makeText(getActivity(), R.string.player_details_not_exists, Toast.LENGTH_SHORT).show();
                 showErrorLayout(getView());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+            linearLayoutBatting.setVisibility(View.GONE);
+            linearLayoutBolling.setVisibility(View.GONE);
             Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             showErrorLayout(getView());
         }
@@ -190,10 +199,6 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         bowlingOdisMap .clear();
         bowlingT20sMap .clear();
         bowlingIPLMap .clear();
-
-
-
-
         rcBattingPerformanceSummery.setVisibility(VISIBLE);
         rcBowlingPerformanceSummary.setVisibility(VISIBLE);
         final JSONObject data = (JSONObject) jsonObject.get("data");
