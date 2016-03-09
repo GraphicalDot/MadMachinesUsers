@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.sports.unity.R;
@@ -52,6 +53,8 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     private List<CricketPlayerMatchStatDTO> playerMatchBowlingStatDTOList = new ArrayList<>();
     private CricketPlayerMatchStatHandler cricketPlayerMatchStatHandler;
     private ProgressBar progressBar;
+    private RelativeLayout relativeLayoutBatting;
+    private RelativeLayout relativeLayoutBolling;
     public CricketPlayerMachStatFragment() {
         super();
     }
@@ -99,10 +102,12 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         rcBowlingPerformanceSummary.setHasFixedSize(false);
         battingImageView = (ImageView) view.findViewById(R.id.iv_down);
         bowlingImageView = (ImageView) view.findViewById(R.id.iv_down_second);
+        relativeLayoutBatting = (RelativeLayout) view.findViewById(R.id.ll_batting);
+        relativeLayoutBolling = (RelativeLayout) view.findViewById(R.id.ll_bolling);
         final View battingRow = view.findViewById(R.id.prl_batting);
         final View bowlingRow = view.findViewById(R.id.prl_bowling);
 
-        battingImageView.setOnClickListener(new View.OnClickListener() {
+        relativeLayoutBatting.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (rcBattingPerformanceSummery.getVisibility() == GONE) {
                     rcBattingPerformanceSummery.setVisibility(VISIBLE);
@@ -115,7 +120,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                 }
             }
         });
-        bowlingImageView.setOnClickListener(new View.OnClickListener() {
+        relativeLayoutBolling.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (rcBowlingPerformanceSummary.getVisibility() == GONE) {
                     rcBowlingPerformanceSummary.setVisibility(VISIBLE);
