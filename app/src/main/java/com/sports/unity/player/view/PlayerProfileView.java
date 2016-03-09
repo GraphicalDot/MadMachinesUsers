@@ -95,7 +95,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
 
     private void initView() {
         try{
-            backImage = (ImageView) findViewById(R.id.img);
+            backImage = (ImageView) findViewById(R.id.back_img);
             playerProfileImage = (CircleImageView) findViewById(R.id.player_profile_image);
           /*  playerTagImage = (ImageView) findViewById(R.id.player_tag_image);*/
             playerName = (TextView) findViewById(R.id.player_name);

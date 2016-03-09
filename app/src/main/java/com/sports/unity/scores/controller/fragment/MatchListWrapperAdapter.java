@@ -7,10 +7,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.common.model.MatchDay;
+import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONObject;
@@ -44,19 +46,24 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
         return new ViewHolder(view);
     }
-   @Override
+    @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-       try{
-               MatchListWrapperDTO dto = matchDay.get(position);
-              List<JSONObject>  list = holder.mAdapter.getList();
-               list.clear();
-               list.addAll(dto.getList());
-               holder.tvDayName.setText(dto.getDay());
-               holder.tvLeagueName.setText(dto.getLeagueName());
-               holder.mAdapter.notifyDataSetChanged();
-           }catch (Exception  e){e.printStackTrace();}
+        try{
+            MatchListWrapperDTO dto = matchDay.get(position);
+            List<JSONObject>  list = holder.mAdapter.getList();
+            list.clear();
+            list.addAll(dto.getList());
+            holder.tvDayName.setText(dto.getDay());
+            holder.tvLeagueName.setText(dto.getLeagueName());
+            if(dto.getSportsType().equals(Constants.SPORTS_TYPE_CRICKET)){
+                holder.ivSportsIcon.setImageResource(R.drawable.ic_cricket);
+            }else{
+                holder.ivSportsIcon.setImageResource(R.drawable.ic_football);
+            }
+            holder.mAdapter.notifyDataSetChanged();
+        }catch (Exception  e){e.printStackTrace();}
 
-   }
+    }
 
     @Override
     public int getItemCount() {
@@ -71,6 +78,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         private TextView tvLeagueName;
         private RecyclerView rvChild;
         private MatchListAdapter mAdapter;
+        private ImageView ivSportsIcon;
 
 
         public MatchDay dto;
@@ -80,6 +88,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             mView = view;
             tvDayName = (TextView) view.findViewById(R.id.id_day_name);
             tvLeagueName = (TextView) view.findViewById(R.id.league_name);
+            ivSportsIcon = (ImageView) view.findViewById(R.id.iv_league);
             rvChild = (RecyclerView) view.findViewById(R.id.child_rv);
             mAdapter = new MatchListAdapter(new ArrayList<JSONObject>() ,activity);
             rvChild.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));

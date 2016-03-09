@@ -41,7 +41,8 @@
                 android:orientation="horizontal">
 
                 <ImageView
-                    android:id="@+id/ic_league"
+                    android:id="@+id/iv_league"
+                    android:paddingLeft="@dimen/horizontal_padding_very_small"
                     android:layout_width="@dimen/flag_size_small"
                     android:layout_height="@dimen/flag_size_small"
                     />
