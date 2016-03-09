@@ -34,6 +34,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
+
 /**
  * Created by Edwin on 15/02/2015.
  */
@@ -44,16 +46,20 @@ public class MatchListFragment extends Fragment {
     private static final String LIST_LISTENER_KEY = "list_listener";
     private static final String LIST_OF_MATCHES_REQUEST_TAG = "list_request_tag";
 
-    private RecyclerView mRecyclerView;
+    //private RecyclerView mRecyclerView;
+     /*private MatchListAdapter mAdapter;*/
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private ArrayList<JSONObject> matches = new ArrayList<>();
 
     private ScoresContentListener contentListener = new ScoresContentListener();
 
-    private MatchListAdapter mAdapter;
+
     private int sportsSelectedNum = 0;
     private ArrayList<String> sportSelected;
+    private MatchListWrapperAdapter matchListWrapperAdapter;
+    private RecyclerView mWraperRecyclerView;
+
 
 
     @Override
@@ -120,7 +126,7 @@ public class MatchListFragment extends Fragment {
     }
 
     private void initView(View view) {
-
+/*
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_scores);
         mRecyclerView.setHasFixedSize(true);
 
@@ -128,7 +134,14 @@ public class MatchListFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(mLayoutManager);*/
+
+        mWraperRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_scores);
+        mWraperRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getContext(), VERTICAL, false));
+
+        matchListWrapperAdapter = new MatchListWrapperAdapter(matches,getActivity());
+        mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
+
 
         initErrorLayout(view);
         hideErrorLayout(view);
@@ -180,7 +193,7 @@ public class MatchListFragment extends Fragment {
     private void renderContent() {
         Log.i("List of Matches", "Render Content");
 
-        mRecyclerView.getAdapter().notifyDataSetChanged();
+        matchListWrapperAdapter.notifyDataSetChanged();
     }
 
     private boolean handleContent(String content) {
@@ -213,7 +226,7 @@ public class MatchListFragment extends Fragment {
                 }
             }
             success = true;
-            mAdapter.updateChild(matches);
+            matchListWrapperAdapter.notifyDataSetChanged();
         } else {
             //nothing
         }

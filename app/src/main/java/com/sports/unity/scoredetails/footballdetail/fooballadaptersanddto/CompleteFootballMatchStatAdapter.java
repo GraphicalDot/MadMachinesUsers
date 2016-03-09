@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
@@ -82,8 +83,8 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
         drawable = TextDrawable.builder()
                 .beginConfig().textColor(Color.BLACK)
                 .withBorder(radius)
-                .width(width*1)
-                .height(radius)
+                .width(width*2)
+                .height(radius*2)
                 .bold()
                 .endConfig()
                 .buildRect(" ",color);
@@ -99,6 +100,7 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
                 .withBorder(radius)
                 .width(radius)
                 .height(radius)
+                .useFont(Typeface.DEFAULT_BOLD)
                 .bold()
                 .endConfig()
                 .buildRound(strRightStatus, (Color.WHITE));

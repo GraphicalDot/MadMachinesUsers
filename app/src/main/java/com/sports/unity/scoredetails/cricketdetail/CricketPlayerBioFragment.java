@@ -16,12 +16,14 @@ import android.widget.Toast;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -134,7 +136,12 @@ showProgress();
                     try {
 
                       if (!playerInfo.isNull("Born")) {
-                            tvPlayerDateOfBirth.setText(playerInfo.getString("Born"));
+                          try{
+                              tvPlayerDateOfBirth.setText(DateUtil.getFormattedDate(playerInfo.getString("Born")));
+                          }catch (Exception e){
+                              tvPlayerDateOfBirth.setText(playerInfo.getString("Born"));
+                          }
+
                         }
                         if (!playerInfo.isNull("Batting style")) {
                             tvPlayerbattingStyle.setText(playerInfo.getString("Batting style"));
@@ -150,7 +157,7 @@ showProgress();
                             JSONArray array = data.getJSONArray("teams_played_for");
                             for (int i = 0; i < array.length(); i++) {
 
-                                tvPlayerMajorTeam.setText(array.get(i).toString()+"\n");
+                                tvPlayerMajorTeam.setText(array.get(i).toString()+"\n\n");
                             }
 
                         }

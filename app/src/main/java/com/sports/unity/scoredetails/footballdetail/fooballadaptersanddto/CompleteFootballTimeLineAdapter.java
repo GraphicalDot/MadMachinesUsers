@@ -68,8 +68,14 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
 
                 }
                 holder.tvTeamFirstTime.setText(holder.dto.getTvTeamFirstTime());
+
                 holder.tvTeamFirstOnPlayer.setText(holder.dto.getTvTeamFirstOnPlayer());
-                holder.tvTeamFirstOffPlayer.setText(holder.dto.getTvTeamFirstOffPlayer());
+                if(holder.dto.getTvTeamFirstOffPlayer()!=null){
+                    holder.tvTeamFirstOffPlayer.setText(holder.dto.getTvTeamFirstOffPlayer());
+                }else {
+                    holder.tvTeamFirstOffPlayer.setVisibility(View.GONE);
+                }
+
                 holder.tvTeamFirstTime.setVisibility(View.VISIBLE);
                 holder.tvTeamFirstOnPlayer.setVisibility(View.VISIBLE);
                 holder.tvTeamFirstOffPlayer.setVisibility(View.VISIBLE);
@@ -80,7 +86,12 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
             {
                 holder.tvTeamSecondTime.setText(holder.dto.getTvTeamSecondTime());
                 holder.tvTeamSecondOnPlayer.setText(holder.dto.getTvTeamSecondOnPlayer());
-                holder.tvTeamSecondOffPlayer.setText(holder.dto.getTvTeamSecondOffPlayer());
+                if(holder.dto.getTvTeamSecondOffPlayer()!=null){
+                    holder.tvTeamSecondOffPlayer.setText(holder.dto.getTvTeamSecondOffPlayer());
+                }else{
+                    holder.tvTeamSecondOffPlayer.setVisibility(View.GONE);
+                }
+
                 holder.tvTeamSecondTime.setVisibility(View.VISIBLE);
                 holder.tvTeamSecondOnPlayer.setVisibility(View.VISIBLE);
                 holder.tvTeamSecondOffPlayer.setVisibility(View.VISIBLE);

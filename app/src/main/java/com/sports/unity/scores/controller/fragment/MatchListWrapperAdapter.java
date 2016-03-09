@@ -10,46 +10,43 @@ import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.common.model.MatchDay;
-import com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters.LiveAndCompletedCricketBattingCardDTO;
 
 import org.json.JSONObject;
+import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
-import java.util.List;
+
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 /**
  * Created by madmachines on 3/3/16.
  */
-public class MatchListWrapperAdapter  extends RecyclerView.Adapter<MatchListWrapperAdapter.ViewHolder> {
+public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapperAdapter.ViewHolder> {
 
-    private  ArrayList<JSONObject>  mValues;
-    private Activity context;
-    private ArrayList<JSONObject> matches = new ArrayList<>();
+    private ArrayList<JSONObject> matchDay;
+    private Activity activity;
     private MatchListAdapter mAdapter;
-
-    public MatchListWrapperAdapter(ArrayList<JSONObject> list, Activity context) {
-        this.mValues = list;
-        this.context = context;
+    public MatchListWrapperAdapter(ArrayList<JSONObject> matchDay, Activity context) {
+        this.matchDay = matchDay;
+        this.activity = context;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_score_wrapper,parent,false);
-        mAdapter = new MatchListAdapter(matches,context);
+
         return new ViewHolder(view);
     }
    @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
        holder.tvDayName.setText("Day");
-       holder.rvChild.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(context, VERTICAL, false));
-       holder.rvChild.getAdapter().notifyDataSetChanged();
+       mAdapter.notifyDataSetChanged();
    }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return matchDay.size();
     }
 
 
@@ -67,12 +64,11 @@ public class MatchListWrapperAdapter  extends RecyclerView.Adapter<MatchListWrap
             mView = view;
             tvDayName = (TextView) view.findViewById(R.id.id_day_name);
             rvChild = (RecyclerView) view.findViewById(R.id.child_rv);
-
+            mAdapter = new MatchListAdapter(matchDay,activity);
+            rvChild.setLayoutManager(new LinearLayoutManager(activity, VERTICAL, false));
+            rvChild.setAdapter(mAdapter);
 
         }
     }
-    public void updateChild(ArrayList<JSONObject> list){
-        this.mValues=list;
-        this.notifyDataSetChanged();
-    }
+
 }

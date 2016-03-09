@@ -16,14 +16,14 @@
             android:paddingTop="@dimen/horizontal_padding_very_small"
             android:paddingLeft="@dimen/horizontal_padding_very_small"
             android:paddingRight="@dimen/horizontal_padding_very_small">
-            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                 android:id="@+id/row0_col0"
                 android:layout_height="wrap_content"
                 android:text="@string/player_of_birth"
                 android:textColor="@color/news_headline_mini"
                 android:textSize="@dimen/font_size_small_large"
                 app:layout_widthPercent="50%" />
-            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                 android:id="@+id/tv_player_birth_of_place"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/row0_col0"
@@ -39,14 +39,14 @@
             android:paddingTop="@dimen/horizontal_padding_very_small"
             android:paddingLeft="@dimen/horizontal_padding_very_small"
             android:paddingRight="@dimen/horizontal_padding_very_small">
-            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                 android:id="@+id/row1_col0"
                 android:layout_height="wrap_content"
                 android:text="@string/date_of_birth"
                 android:textColor="@color/news_headline_mini"
                 android:textSize="@dimen/font_size_small_large"
                 app:layout_widthPercent="50%" />
-            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                 android:id="@+id/tv_player_date_of_birth"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/row1_col0"
@@ -61,14 +61,14 @@
             android:paddingTop="@dimen/horizontal_padding_very_small"
             android:paddingLeft="@dimen/horizontal_padding_very_small"
             android:paddingRight="@dimen/horizontal_padding_very_small">
-            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                 android:id="@+id/row2_col0"
                 android:layout_height="wrap_content"
                 android:text="@string/bating_style"
                 android:textColor="@color/news_headline_mini"
                 android:textSize="@dimen/font_size_small_large"
                 app:layout_widthPercent="50%"/>
-            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                 android:id="@+id/tv_player_batting_style"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/row2_col0"
@@ -83,14 +83,14 @@
             android:paddingTop="@dimen/horizontal_padding_very_small"
             android:paddingLeft="@dimen/horizontal_padding_very_small"
             android:paddingRight="@dimen/horizontal_padding_very_small">
-            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                 android:id="@+id/row3_col0"
                 android:layout_height="wrap_content"
                 android:text="@string/bowling_style"
                 android:textColor="@color/news_headline_mini"
                 android:textSize="@dimen/font_size_small_large"
                 app:layout_widthPercent="50%" />
-            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                 android:id="@+id/tv_player_bowing_style"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/row3_col0"
@@ -105,14 +105,14 @@
             android:paddingTop="@dimen/horizontal_padding_very_small"
             android:paddingLeft="@dimen/horizontal_padding_very_small"
             android:paddingRight="@dimen/horizontal_padding_very_small">
-            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                 android:id="@+id/row4_col0"
                 android:layout_height="wrap_content"
                 android:text="@string/major_team"
                 android:textColor="@color/news_headline_mini"
                 android:textSize="@dimen/font_size_small_large"
                 app:layout_widthPercent="50%" />
-            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                 android:id="@+id/tv_player_major_team"
                 android:layout_height="wrap_content"
                 android:layout_toRightOf="@id/row4_col0"

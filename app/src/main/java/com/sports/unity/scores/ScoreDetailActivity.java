@@ -88,7 +88,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         matchId = i.getStringExtra(Constants.INTENT_KEY_ID);
         matchStatus= i.getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
         matchTime = i.getStringExtra(Constants.INTENT_KEY_MATCH_TIME);
-        isLive = Boolean.getBoolean(i.getStringExtra(Constants.INTENT_KEY_MATCH_LIVE));
+        isLive = i.getBooleanExtra(Constants.INTENT_KEY_MATCH_LIVE,false);
 
         initView();
         setToolbar();
@@ -290,11 +290,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     e.printStackTrace();
                 }
 
-                TextView textView = (TextView) findViewById(R.id.team1_name);
-                textView.setText(cricketMatchJsonCaller.getTeam1());
-
-                textView = (TextView) findViewById(R.id.team2_name);
-                textView.setText(cricketMatchJsonCaller.getTeam2());
 
                 ImageView flag1 = (ImageView)findViewById(R.id.team1_image);
                 ImageView flag2 = (ImageView)findViewById(R.id.team2_image);
@@ -313,42 +308,53 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
                     tvCurrentScore.setText(DateUtil.getDaysDiffrence(cricketMatchJsonCaller.getMatchDate(), this));
                     showNoCommentaries();
+                    TextView  text1Score = (TextView) findViewById(R.id.team1_score);
+                    TextView  team2Score = (TextView) findViewById(R.id.team2_score);
+                    text1Score.setText(cricketMatchJsonCaller.getTeam1());
+                    team2Score.setText(cricketMatchJsonCaller.getTeam2());
 
-                } else {
+               } else {
 
+                    TextView textView = (TextView) findViewById(R.id.team1_name);
+                    textView.setText(cricketMatchJsonCaller.getTeam1());
+
+                    textView = (TextView) findViewById(R.id.team2_name);
+                    textView.setText(cricketMatchJsonCaller.getTeam2());
                     if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("completed") ) {
-                         tvCurrentScore.setText(cricketMatchJsonCaller.getWinnerTeam(cricketMatchJsonCaller.getResult())+"Won The Match");
+                         tvCurrentScore.setText(cricketMatchJsonCaller.getWinnerTeam(cricketMatchJsonCaller.getResult())+" Won The Match");
+                        {
+                            JSONObject scoreJsonObject = cricketMatchJsonCaller.getTeam1Score();
+                            StringBuilder stringBuilder = new StringBuilder("");
+                            stringBuilder.append(cricketMatchJsonCaller.getScore(scoreJsonObject));
+                            stringBuilder.append("/");
+                            stringBuilder.append(cricketMatchJsonCaller.getWickets(scoreJsonObject));
+
+                            teamFirstOvers.setText("("+cricketMatchJsonCaller.getOvers(scoreJsonObject)+")");
+
+                            textView = (TextView) findViewById(R.id.team1_score);
+                            textView.setText(stringBuilder.toString());
+
+                            textView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+                        }
+
+                        {
+                            JSONObject scoreJsonObject = cricketMatchJsonCaller.getTeam2Score();
+                            StringBuilder stringBuilder = new StringBuilder("");
+                            stringBuilder.append(cricketMatchJsonCaller.getScore(scoreJsonObject));
+                            stringBuilder.append("/");
+                            stringBuilder.append(cricketMatchJsonCaller.getWickets(scoreJsonObject));
+                            teamSecondOvers.setText("("+cricketMatchJsonCaller.getOvers(scoreJsonObject)+")");
+                            textView = (TextView) findViewById(R.id.team2_score);
+                            textView.setText(stringBuilder.toString());
+                            textView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+                        }
+
                     } else {
 
                         enableAutoRefreshContent();
                     }
 
-                    {
-                        JSONObject scoreJsonObject = cricketMatchJsonCaller.getTeam1Score();
-                        StringBuilder stringBuilder = new StringBuilder("");
-                        stringBuilder.append(cricketMatchJsonCaller.getScore(scoreJsonObject));
-                        stringBuilder.append("/");
-                        stringBuilder.append(cricketMatchJsonCaller.getWickets(scoreJsonObject));
 
-                        teamFirstOvers.setText("("+cricketMatchJsonCaller.getOvers(scoreJsonObject)+")");
-
-                        textView = (TextView) findViewById(R.id.team1_score);
-                        textView.setText(stringBuilder.toString());
-
-                        textView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
-                    }
-
-                    {
-                        JSONObject scoreJsonObject = cricketMatchJsonCaller.getTeam2Score();
-                        StringBuilder stringBuilder = new StringBuilder("");
-                        stringBuilder.append(cricketMatchJsonCaller.getScore(scoreJsonObject));
-                        stringBuilder.append("/");
-                        stringBuilder.append(cricketMatchJsonCaller.getWickets(scoreJsonObject));
-                        teamSecondOvers.setText("("+cricketMatchJsonCaller.getOvers(scoreJsonObject)+")");
-                        textView = (TextView) findViewById(R.id.team2_score);
-                        textView.setText(stringBuilder.toString());
-                        textView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
-                    }
 
                     requestCommentaries = true;
                 }
@@ -553,32 +559,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         }
         return success;
     }
-    private boolean handleFootballTimeLine(String content){
-        Log.i("Score Detail", "Handle Content");
-        boolean success = false;
-        if(content != null){
-            success = true;
-        }
-        return success;
-    }
 
-    private boolean handleFootballMatchStat(String content){
-        Log.i("Score Detail", "Handle Content");
-        boolean success = false;
-        if(content != null){
-            success = true;
-        }
-        return success;
-    }
 
-    private boolean handleFootballLineUp(String content){
-        Log.i("Linup ", "Handle Content");
-        boolean success = false;
-        if(content != null){
-            success = true;
-        }
-        return success;
-    }
 
     private class ScoreDetailComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
 

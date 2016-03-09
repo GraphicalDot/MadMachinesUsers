@@ -62,10 +62,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
 
     @Override
     public void onBindViewHolder(BroadcastListAdapter.ViewHolder holder, int position) {
-
-
-
-        //jsonCaller.setJsonObject(jsonObject);
+       //jsonCaller.setJsonObject(jsonObject);
 
         try {
             if(list != null ) {
@@ -83,8 +80,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
             ex.printStackTrace();
         }
     }
-
-    @Override
+   @Override
     public int getItemCount() {
         return list.size();
     }

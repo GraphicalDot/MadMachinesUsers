@@ -35,7 +35,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:textColor="@color/score_light_grey"
+                android:textColor="@color/gray1"
                 android:textSize="@dimen/font_size_very_very_small" />
         </LinearLayout>
 

@@ -19,6 +19,7 @@ import com.sports.unity.R;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -188,7 +189,7 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
                                 tvPlayerStrike_Rate.setText(statObject.getString("strike_rate"));}else{
                                 tvPlayerStrike_Rate.setText("N/A");
                             }
-                            tvMatchDate.setText(date);
+                            tvMatchDate.setText(DateUtil.getFormattedDate(date));
                             tvTossWinTeam.setText(toss);
                             tvSeriesName.setText(matchName);
                             tvUmpiresName.setText("N/A");

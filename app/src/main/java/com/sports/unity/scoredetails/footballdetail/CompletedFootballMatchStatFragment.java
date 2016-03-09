@@ -53,6 +53,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
     private TextView nocomments;
     private CompleteFootballMatchStatAdapter completeFootballMatchStatAdapter;
     private List<CompleteFootballMatchStatDTO> list = new ArrayList<>();
+
     private SwipeRefreshLayout swipeRefreshLayout;
     private CompletedFootballMatchStatHandler completedFootballMatchStatHandler;
 

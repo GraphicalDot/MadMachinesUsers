@@ -70,7 +70,7 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
                 holder.ivEnterExit.setVisibility(View.GONE);
                 holder.ivOffCardType.setVisibility(View.GONE);
                 holder.ivOffPlayerPosition.setVisibility(View.GONE);
-                holder.prOffLeftPercentRelativeLayout.setVisibility(View.GONE);
+                holder.prOffLeftPercentRelativeLayout.setVisibility(View.INVISIBLE);
             }
 
             // right side player postion
@@ -93,7 +93,6 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
             }else{
                 holder.ivBallPassSecond.setVisibility(View.GONE);
             }
-
             if(holder.dto.getOffPlayerNameSecond()!= null) {
                 holder.tvOffPlayerNameSecond.setText(holder.dto.getOffPlayerNameSecond());
                 holder.ivEnterExitSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_red));
@@ -104,7 +103,7 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
                 holder.ivEnterExitSecond.setVisibility(View.GONE);
                 holder.ivOffCardTypeSecond.setVisibility(View.GONE);
                 holder.ivOffPlayerPositionSecond.setVisibility(View.GONE);
-                holder.proffRightPercentRelativeLayout.setVisibility(View.GONE);
+                holder.proffRightPercentRelativeLayout.setVisibility(View.INVISIBLE);
             }
             /*if(holder.dto.getOffPlayerName()!=null) {
                 drawable = context.getResources().getDrawable(R.drawable.ic_substitue);

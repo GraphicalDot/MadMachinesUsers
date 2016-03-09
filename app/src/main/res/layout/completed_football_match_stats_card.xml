@@ -8,7 +8,7 @@
     <LinearLayout
         android:id="@+id/ll_title"
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/activity_vertical_margin_small"
+        android:layout_marginTop="@dimen/vertical_padding_medium_small"
         android:orientation="vertical"
         android:background="@color/ColorPrimary"
         android:layout_height="wrap_content">
@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:paddingRight="@dimen/vertical_padding_very_very_small"
             android:paddingLeft="@dimen/vertical_padding_very_very_small"
+            android:paddingTop="@dimen/vertical_padding_very_very_small"
             android:orientation="horizontal"
             android:weightSum="1">
 
@@ -35,7 +36,7 @@
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
                 android:orientation="horizontal">
                 <View
                     android:id="@+id/v_dummy"
@@ -50,7 +51,7 @@
                     android:layout_toLeftOf="@+id/v_dummy"
                     android:layout_width="0dp"
                     android:orientation="horizontal"
-                    android:layout_height="24dp"
+                    android:layout_height="match_parent"
                     android:background="@color/brick_red"
    />
                 <View
@@ -58,7 +59,7 @@
                     android:layout_toRightOf="@+id/v_dummy"
                     android:layout_width="0dp"
                     android:orientation="horizontal"
-                    android:layout_height="24dp"
+                    android:layout_height="match_parent"
                     android:background="@color/app_theme_blue"
                     />
                 <ImageView
@@ -69,8 +70,8 @@
                     />
                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/iv_left_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     android:layout_alignParentLeft="true"
                    android:layout_gravity="left"
                    app:civ_border_color="@color/gray3"
@@ -79,8 +80,8 @@
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/iv_right_status"
                     android:layout_alignParentRight="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
                     app:civ_border_color="@color/gray3"
                     app:civ_border_width="1dp"
                     />

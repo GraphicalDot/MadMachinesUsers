@@ -97,7 +97,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
         try{
             backImage = (ImageView) findViewById(R.id.img);
             playerProfileImage = (CircleImageView) findViewById(R.id.player_profile_image);
-            playerTagImage = (ImageView) findViewById(R.id.player_tag_image);
+          /*  playerTagImage = (ImageView) findViewById(R.id.player_tag_image);*/
             playerName = (TextView) findViewById(R.id.player_name);
             teamName = (TextView) findViewById(R.id.team_name);
             playerAge = (TextView) findViewById(R.id.player_age_value);
@@ -225,7 +225,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
                     if(!dataObject.isNull("player_image")){
                         Glide.with(this).load(dataObject.getString("player_image")).placeholder(R.drawable.ic_no_img).into(playerProfileImage);
                     }
-                    playerTagImage.setImageResource(R.drawable.ic_no_img);
+//                 /*   playerTagImage.setImageResource(R.drawable.ic_no_img);*/
                    /* if(!dataObject.isNull("player_image")){
                         Glide.with(this).load(dataObject.getString("player_image")).placeholder(R.drawable.ic_no_img).into(playerTagImage);
                     }*/

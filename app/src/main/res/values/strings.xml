@@ -358,8 +358,8 @@ Carrier SMS charges may apply.</string>
     <string name="games">Games</string>
     <string name="goals">Goals</string>
     <string name="assists">Assists</string>
-    <string name="rc">Rc</string>
-    <string name="yc">Yc</string>
+    <string name="rc">RC</string>
+    <string name="yc">YC</string>
     <string name="age">AGE</string>
     <string name="position">POSITION</string>
     <string name="scored">SQUAD NO.</string>
@@ -396,6 +396,6 @@ Carrier SMS charges may apply.</string>
     <string name="tomorrow">Tomorrow</string>
 
     <string name="days">%s Days</string>
-    <string name="full_time">Full TIme</string>
+    <string name="full_time">Full Time</string>
 
 </resources>
