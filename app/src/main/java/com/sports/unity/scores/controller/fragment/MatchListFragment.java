@@ -27,12 +27,17 @@ import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
@@ -59,6 +64,7 @@ public class MatchListFragment extends Fragment {
     private ArrayList<String> sportSelected;
     private MatchListWrapperAdapter matchListWrapperAdapter;
     private RecyclerView mWraperRecyclerView;
+    private List<MatchListWrapperDTO> matchList = new ArrayList<>();
 
 
 
@@ -139,7 +145,7 @@ public class MatchListFragment extends Fragment {
         mWraperRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_scores);
         mWraperRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getContext(), VERTICAL, false));
 
-        matchListWrapperAdapter = new MatchListWrapperAdapter(matches,getActivity());
+        matchListWrapperAdapter = new MatchListWrapperAdapter(matchList,getActivity(),getContext());
         mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
 
 
@@ -199,9 +205,11 @@ public class MatchListFragment extends Fragment {
     private boolean handleContent(String content) {
         Log.i("List of Matches", "Handle Content");
         boolean success = false;
+        matchList.clear();
+        matches.clear();
         ArrayList<JSONObject> list = ScoresJsonParser.parseListOfMatches(content);
         if (list.size() > 0) {
-            matches.clear();
+
             if (UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET) && UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_FOOTBALL)) {
                 matches.addAll(list);
             } else {
@@ -226,8 +234,64 @@ public class MatchListFragment extends Fragment {
                 }
             }
             success = true;
+            // added By Ashish For grouping
+            String day = null;
+            long epochTime= 0l;
+            Map<String, MatchListWrapperDTO> daysMap = new HashMap<>();
+
+            for(int i = 0; i<matches.size();i++){
+                try{
+                   JSONObject object = matches.get(i);
+                   if(!object.isNull("match_datetime_epoch")){
+                       epochTime = object.getLong("match_datetime_epoch");
+                        day=  DateUtil.getDayFromEpochTime(epochTime*1000, getContext());
+
+                   } else if(!object.isNull("match_date_epoch")){
+                        epochTime = object.getLong("match_date_epoch");
+                        day=  DateUtil.getDayFromEpochTime(epochTime*1000, getContext());
+
+                     }
+                    if(daysMap.containsKey(day)){
+                        MatchListWrapperDTO dayGroupDto =    daysMap.get(day);
+                        ArrayList<JSONObject> dayGroupList = dayGroupDto.getList();
+                        dayGroupList.add(object);
+                        dayGroupDto.setList(dayGroupList);
+                        dayGroupDto.setDay(day);
+                        dayGroupDto.setEpochTime(epochTime);
+                        daysMap.put(day, dayGroupDto);
+
+                    }else{
+                        MatchListWrapperDTO dayGroupDto =   new MatchListWrapperDTO();
+                        ArrayList<JSONObject> dayGroupList = new ArrayList<>();
+                        dayGroupList.add(object);
+                        dayGroupDto.setList(dayGroupList);
+                        dayGroupDto.setDay(day);
+                        dayGroupDto.setEpochTime(epochTime);
+                        daysMap.put(day,dayGroupDto);
+
+                    }
+
+             }catch (Exception  e)
+                {
+                    e.printStackTrace();
+                }
+           }
+            matchList.clear();
+            Log.i("Data Map", "handleContent: " + daysMap.keySet());
+            Set<String> keySet = daysMap.keySet();
+            for (String key :keySet ){
+
+                int s = daysMap.get(key).getList().size();
+                Log.i("List Size", "handleContent: "+s );
+                if(s>0){
+                    matchList.add(daysMap.get(key));
+                }
+
+            }
+            Collections.sort(matchList);
+            Log.i("Data Map", "handleContent: " + matchList);
             matchListWrapperAdapter.notifyDataSetChanged();
-        } else {
+       } else {
             //nothing
         }
         return success;

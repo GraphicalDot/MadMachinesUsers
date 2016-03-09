@@ -190,7 +190,7 @@
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:paddingBottom="@dimen/vertical_padding_very_very_small"
-                        android:text="yutyutuy"
+                        android:text=""
                         android:textColor="@color/gray1"
                         android:textSize="@dimen/font_size_small_medium"
                         />

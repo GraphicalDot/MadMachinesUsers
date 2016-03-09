@@ -57,7 +57,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
     };
 
-    public MatchListAdapter(ArrayList<JSONObject> list, Activity activity) {
+    public MatchListAdapter(List<JSONObject> list, Activity activity) {
         this.list = list;
         this.activity = activity;
     }
@@ -546,4 +546,11 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         this.notifyDataSetChanged();
     }
 
+    public List<JSONObject> getList() {
+        return list;
+    }
+
+    public void setList(List<JSONObject> list) {
+        this.list = list;
+    }
 }
