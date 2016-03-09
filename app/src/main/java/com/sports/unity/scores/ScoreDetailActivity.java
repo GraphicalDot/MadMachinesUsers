@@ -483,6 +483,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         if( list.size() > 0 ){
             commentaries.clear();
             commentaries.addAll(list);
+            
             success = true;
             Fragment fragment= null;
             if(sportsType.equals(ScoresJsonParser.CRICKET)) {

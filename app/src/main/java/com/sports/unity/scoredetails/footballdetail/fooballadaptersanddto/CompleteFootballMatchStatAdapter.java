@@ -56,24 +56,16 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
 
             TextDrawable drawable = null;
             holder.dto = mValues.get(position);
-            String value = getLabelValue(holder.dto.getTvLable());
-            holder.tvLable.setText(getLabelValue(holder.dto.getTvLable()));
+            String value = holder.dto.getTvLable();
+            holder.tvLable.setText(value);
             drawable = getTextDrawable(holder.dto.getIvLeftStatus());
             holder.ivLeftStatus.setImageDrawable(drawable);
             drawable = getTextDrawable(holder.dto.getIvRightStatus());
             holder.ivRightStatus.setImageDrawable(drawable);
-            holder.ivCenterStatus.setImageDrawable(getCentralImageResource(holder.dto.getTvLable()));
-            try{
-                int radius=  context.getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
+            holder.ivCenterStatus.setImageDrawable(getCentralImageResource(value));
+                holder.redView.getLayoutParams().width = holder.dto.getLeftGraphValue();
+                holder.blueView.getLayoutParams().width = holder.dto.getRightGraphValue();
 
-
-                int redValue= Integer.parseInt(holder.dto.getIvLeftStatus());
-                int blueValue= Integer.parseInt(holder.dto.getIvRightStatus());
-                holder.redView.getLayoutParams().width = 400*redValue/(redValue+blueValue);
-                holder.blueView.getLayoutParams().width = 400*blueValue/(redValue+blueValue);
-
-
-            }catch (Exception e){e.printStackTrace();}
         }catch (Exception e){e.printStackTrace();}
     }
 
@@ -112,22 +104,22 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
         Resources.Theme theme = context.getTheme();
         int drwableId =R.drawable.ic_shots;
         switch (tvLable){
-            case "possestiontimetotal":
+            case "POSSESION (%)":
                 drwableId = R.drawable.ic_possession;
                 break;
-            case "shotstotal":
+            case "SHOTS":
                 drwableId = R.drawable.ic_shots;
                 break;
-            case "shotsongoal":
+            case "SHOTS ON TARGET":
                 drwableId = R.drawable.ic_shots_on_target;
                 break;
-            case "cornerstotal":
+            case "CORNERS":
                 drwableId = R.drawable.ic_corner;
                 break;
-            case "foulstotal":
+            case "FOULS":
                 drwableId = R.drawable.ic_fouls;
                 break;
-            case "offsidestotal":
+            case "OFFSIDES":
                 drwableId = R.drawable.ic_offsides;
                 break;
         }
@@ -140,7 +132,7 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
         return  drawable;
     }
 
-    private String getLabelValue(String tvLable) {
+   /* private String getLabelValue(String tvLable) {
         String lableValue = null;
 
         switch (tvLable){
@@ -168,7 +160,7 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
 
         return lableValue;
     }
-
+*/
     @Override
     public int getItemCount() {
         return mValues.size();
@@ -196,6 +188,7 @@ public class CompleteFootballMatchStatAdapter  extends RecyclerView.Adapter<Comp
             ivCenterStatus = (ImageView) view.findViewById(R.id.iv_center_status);
             redView =view.findViewById(R.id.vw_red);
             blueView =view.findViewById(R.id.vw_blue);
+
 
         }
     }

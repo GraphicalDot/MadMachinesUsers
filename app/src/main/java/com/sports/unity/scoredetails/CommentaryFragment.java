@@ -78,7 +78,6 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
 
         mAdapter = new BroadcastListAdapter(sportsType, commentaries, getContext());
         mRecyclerView.setAdapter(mAdapter);
-
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.commentary_refresh);
