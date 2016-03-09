@@ -238,7 +238,6 @@ public class MatchListFragment extends Fragment {
             String day = null;
             long epochTime= 0l;
             String leagueName = "";
-            Map<String, MatchListWrapperDTO> leagueMap = new HashMap<>();
             Map<String, Map<String, MatchListWrapperDTO>> daysMap = new HashMap<>();
             String sportsType= "";
             for(int i = 0; i<matches.size();i++){
@@ -263,6 +262,7 @@ public class MatchListFragment extends Fragment {
                        Log.i("Day Name", "handleContent: "+day);
                        Map<String, MatchListWrapperDTO> leagueMapTemp = daysMap.get(day);
                         if(leagueMapTemp.containsKey(leagueName)){
+
                             MatchListWrapperDTO dayGroupDto =    leagueMapTemp.get(leagueName);
                             ArrayList<JSONObject> dayGroupList = dayGroupDto.getList();
                             dayGroupList.add(object);
@@ -275,7 +275,7 @@ public class MatchListFragment extends Fragment {
                             daysMap.put(day,leagueMapTemp);
                         } else{
                             MatchListWrapperDTO dayGroupDto =   new MatchListWrapperDTO();
-                            leagueMapTemp = new HashMap<>();
+                            Map<String, MatchListWrapperDTO> leagueMapTempleagueNew = new HashMap<>();
                             ArrayList<JSONObject> dayGroupList = new ArrayList<>();
                             dayGroupList.add(object);
                             dayGroupDto.setList(dayGroupList);
@@ -283,7 +283,7 @@ public class MatchListFragment extends Fragment {
                             dayGroupDto.setEpochTime(epochTime);
                             dayGroupDto.setSportsType(sportsType);
                             dayGroupDto.setLeagueName(leagueName);
-                            leagueMapTemp.put(leagueName, dayGroupDto);
+                            leagueMapTempleagueNew.put(leagueName, dayGroupDto);
                             daysMap.put(day,leagueMapTemp);
                         }
                     }else{
@@ -297,8 +297,8 @@ public class MatchListFragment extends Fragment {
                         dayGroupDto.setEpochTime(epochTime);
                         dayGroupDto.setSportsType(sportsType);
                         dayGroupDto.setLeagueName(leagueName);
-                       leagueMapTemp.put(leagueName, dayGroupDto);
-                        daysMap.put(day,leagueMap);
+                        leagueMapTemp.put(leagueName, dayGroupDto);
+                        daysMap.put(day,leagueMapTemp);
                     }
 
 
@@ -366,7 +366,7 @@ public class MatchListFragment extends Fragment {
                 }
             }
             matchList.clear();
-            Log.i("Data Map", "handleContent: " + leagueMap.keySet());
+            Log.i("Data Map", "handleContent: " + daysMap.keySet());
 
             Set<String> daySet = daysMap.keySet();
 
