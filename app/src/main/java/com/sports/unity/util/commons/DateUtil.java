@@ -3,6 +3,7 @@ package com.sports.unity.util.commons;
 import android.content.Context;
 
 import com.sports.unity.R;
+import com.sports.unity.common.model.Match;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -100,4 +101,36 @@ public class DateUtil {
         with.setTimeInMillis(l);
         return TIME_FORMAT.format(with.getTime());
     }
+
+
+    public static String getDayFromEpochTime(long l,Context context) {
+        String days = "";
+
+        Calendar with = Calendar.getInstance();
+        with.setTimeInMillis(l);
+        Calendar to = Calendar.getInstance();
+        to.set(Calendar.YEAR, with.get(Calendar.YEAR));
+        int withDAY = with.get(Calendar.DAY_OF_YEAR);
+        int toDAY = to.get(Calendar.DAY_OF_YEAR);
+
+        int diffDay =  withDAY-toDAY   ;
+        if(diffDay == 0){
+            days = context.getString(R.string.today);
+        } else if (diffDay == 1)
+        {
+            days = context.getString(R.string.tomorrow);
+        } else {
+               if(diffDay<0){
+                   days=   String.format(context.getString(R.string.daysago),String.valueOf(Math.abs(diffDay)));
+               }else{
+                   days=   String.format(context.getString(R.string.days),String.valueOf(diffDay));
+               }
+
+
+        }
+
+        return days;
+    }
+
+
 }
