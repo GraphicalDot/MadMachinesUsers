@@ -103,7 +103,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
         rcRecyclerViewTeamSecond.setNestedScrollingEnabled(false);
         upCommingFootballMatchSquadAdapterFirst = new UpCommingFootballMatchSquadAdapter(listTeamFirst,getContext());
         rcRecyclerViewTeamFirst.setAdapter(upCommingFootballMatchSquadAdapterFirst);
-        upCommingFootballMatchSquadAdapterSecond = new UpCommingFootballMatchSquadAdapter(listTeamFirst,getContext());
+        upCommingFootballMatchSquadAdapterSecond = new UpCommingFootballMatchSquadAdapter(listTeamSecond,getContext());
         rcRecyclerViewTeamSecond.setAdapter(upCommingFootballMatchSquadAdapterSecond);
         squadParnetLinearLayout = (LinearLayout) view.findViewById(R.id.squad_parent_linearlayout);
         squadParnetLinearLayout.setVisibility(View.GONE);
