@@ -257,8 +257,10 @@ public class MatchListFragment extends Fragment {
                             leagueName = object.getString("league_name");
                         }
                     }
-                    Log.i("League Name", "handleContent: "+leagueName);
+                    //Log.i("League Name", "handleContent: "+leagueName);
                    if(daysMap.containsKey(day)){
+                       Log.i("League Name", "handleContent: "+leagueName);
+                       Log.i("Day Name", "handleContent: "+day);
                        Map<String, MatchListWrapperDTO> leagueMapTemp = daysMap.get(day);
                         if(leagueMapTemp.containsKey(leagueName)){
                             MatchListWrapperDTO dayGroupDto =    leagueMapTemp.get(leagueName);
@@ -273,7 +275,7 @@ public class MatchListFragment extends Fragment {
                             daysMap.put(day,leagueMapTemp);
                         } else{
                             MatchListWrapperDTO dayGroupDto =   new MatchListWrapperDTO();
-                             leagueMapTemp = new HashMap<>();
+                            leagueMapTemp = new HashMap<>();
                             ArrayList<JSONObject> dayGroupList = new ArrayList<>();
                             dayGroupList.add(object);
                             dayGroupDto.setList(dayGroupList);
@@ -285,6 +287,7 @@ public class MatchListFragment extends Fragment {
                             daysMap.put(day,leagueMapTemp);
                         }
                     }else{
+
                         MatchListWrapperDTO dayGroupDto =   new MatchListWrapperDTO();
                         Map<String, MatchListWrapperDTO> leagueMapTemp = new HashMap<>();
                         ArrayList<JSONObject> dayGroupList = new ArrayList<>();
@@ -368,13 +371,13 @@ public class MatchListFragment extends Fragment {
             Set<String> daySet = daysMap.keySet();
 
                   for(String dayKey :daySet) {
-                      Map<String, MatchListWrapperDTO > dayMapObject = daysMap.get(dayKey);
-                      Set<String> keySet = dayMapObject.keySet();
+                      Map<String, MatchListWrapperDTO > leagueMaps = daysMap.get(dayKey);
+                      Set<String> keySet = leagueMaps.keySet();
                       for (String key : keySet) {
-                         int s = dayMapObject.get(key).getList().size();
+                         int s = leagueMaps.get(key).getList().size();
                           Log.i("List Size", "handleContent: " + s);
                           if (s > 0) {
-                              matchList.add(dayMapObject.get(key));
+                              matchList.add(leagueMaps.get(key));
                           }
 
                       }
