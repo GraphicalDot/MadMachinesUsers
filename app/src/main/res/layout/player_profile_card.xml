@@ -26,6 +26,7 @@
             android:scrollHorizontally="true"
             app:layout_widthPercent="23%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
+            android:paddingLeft="@dimen/vertical_padding_very_very_small"
             android:id="@+id/team_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
