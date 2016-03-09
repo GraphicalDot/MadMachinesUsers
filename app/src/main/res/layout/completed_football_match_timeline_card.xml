@@ -32,7 +32,7 @@
             android:layout_width="0dp"
             android:layout_centerVertical="true"
             app:layout_widthPercent="10%"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:gravity="center"
             android:textColor="@color/news_static"
             android:text=""
@@ -48,7 +48,7 @@
             android:layout_centerVertical="true"
             android:padding="@dimen/vertical_padding_very_very_small"
 
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:background="@drawable/white_rht"
             android:orientation="vertical"
             >
@@ -111,7 +111,7 @@
             android:id="@+id/ll_second_player_info"
             android:layout_width="0dp"
             android:padding="@dimen/vertical_padding_very_very_small"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_centerVertical="true"
             android:background="@drawable/ic_white_lft"
             android:orientation="vertical">
@@ -139,7 +139,7 @@
             android:layout_width="0dp"
             android:layout_centerVertical="true"
             app:layout_widthPercent="10%"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:gravity="center"
             android:textColor="@color/news_static"
             android:text=""
