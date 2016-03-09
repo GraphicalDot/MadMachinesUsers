@@ -48,11 +48,11 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     public void onBindViewHolder(ViewHolder holder, int position) {
        try{
                MatchListWrapperDTO dto = matchDay.get(position);
-
-               List<JSONObject>  list = holder.mAdapter.getList();
+              List<JSONObject>  list = holder.mAdapter.getList();
                list.clear();
                list.addAll(dto.getList());
                holder.tvDayName.setText(dto.getDay());
+               holder.tvLeagueName.setText(dto.getLeagueName());
                holder.mAdapter.notifyDataSetChanged();
            }catch (Exception  e){e.printStackTrace();}
 
@@ -68,6 +68,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     {
         public final View mView;
         private TextView tvDayName;
+        private TextView tvLeagueName;
         private RecyclerView rvChild;
         private MatchListAdapter mAdapter;
 
@@ -78,6 +79,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             super(view);
             mView = view;
             tvDayName = (TextView) view.findViewById(R.id.id_day_name);
+            tvLeagueName = (TextView) view.findViewById(R.id.league_name);
             rvChild = (RecyclerView) view.findViewById(R.id.child_rv);
             mAdapter = new MatchListAdapter(new ArrayList<JSONObject>() ,activity);
             rvChild.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));

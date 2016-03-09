@@ -10,6 +10,7 @@ import java.util.List;
  */
 public class MatchListWrapperDTO  implements  Comparable<MatchListWrapperDTO>{
     private String day;
+    private String leagueName;
     private ArrayList<JSONObject> list;
     private Long epochTime;
     public String getDay() {
@@ -34,6 +35,14 @@ public class MatchListWrapperDTO  implements  Comparable<MatchListWrapperDTO>{
 
     public void setEpochTime(Long epochTime) {
         this.epochTime = epochTime;
+    }
+
+    public String getLeagueName() {
+        return leagueName;
+    }
+
+    public void setLeagueName(String leagueName) {
+        this.leagueName = leagueName;
     }
 
     @Override

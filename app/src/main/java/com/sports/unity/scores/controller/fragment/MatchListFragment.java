@@ -237,6 +237,7 @@ public class MatchListFragment extends Fragment {
             // added By Ashish For grouping
             String day = null;
             long epochTime= 0l;
+            String leagueName = "";
             Map<String, MatchListWrapperDTO> daysMap = new HashMap<>();
 
             for(int i = 0; i<matches.size();i++){
@@ -244,13 +245,15 @@ public class MatchListFragment extends Fragment {
                    JSONObject object = matches.get(i);
                    if(!object.isNull("match_datetime_epoch")){
                        epochTime = object.getLong("match_datetime_epoch");
-                        day=  DateUtil.getDayFromEpochTime(epochTime*1000, getContext());
-
+                        day=  DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
+                        leagueName = object.getString("league_name");
                    } else if(!object.isNull("match_date_epoch")){
                         epochTime = object.getLong("match_date_epoch");
                         day=  DateUtil.getDayFromEpochTime(epochTime*1000, getContext());
-
-                     }
+                       if(!object.isNull("league_name")){
+                           leagueName = object.getString("league_name");
+                       }
+                    }
                     if(daysMap.containsKey(day)){
                         MatchListWrapperDTO dayGroupDto =    daysMap.get(day);
                         ArrayList<JSONObject> dayGroupList = dayGroupDto.getList();
@@ -258,6 +261,7 @@ public class MatchListFragment extends Fragment {
                         dayGroupDto.setList(dayGroupList);
                         dayGroupDto.setDay(day);
                         dayGroupDto.setEpochTime(epochTime);
+                        dayGroupDto.setLeagueName(leagueName);
                         daysMap.put(day, dayGroupDto);
 
                     }else{
@@ -267,11 +271,10 @@ public class MatchListFragment extends Fragment {
                         dayGroupDto.setList(dayGroupList);
                         dayGroupDto.setDay(day);
                         dayGroupDto.setEpochTime(epochTime);
+                        dayGroupDto.setLeagueName(leagueName);
                         daysMap.put(day,dayGroupDto);
-
                     }
-
-             }catch (Exception  e)
+            }catch (Exception  e)
                 {
                     e.printStackTrace();
                 }
