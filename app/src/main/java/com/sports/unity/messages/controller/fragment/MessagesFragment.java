@@ -19,6 +19,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -29,12 +30,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.MainActivity;
+import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.messages.controller.activity.CreateGroup;
@@ -249,6 +252,17 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
 
     private SearchView searchView;
 
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        if (item.getItemId() == R.id.sync_contacts) {
+            ContactsHandler.getInstance().addCallToSyncContacts(getActivity().getApplicationContext());
+            Toast.makeText(getActivity().getApplicationContext(), "Syncing contacts", Toast.LENGTH_SHORT).show();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_messages_menu, menu);
@@ -283,6 +297,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
                 }
             }
         });
+
     }
 
     private void updateSearchViewUI() {

@@ -292,7 +292,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
                 String phoneNumber = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USERNAME);
                 String jid = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USER_JID);
 
-                Contacts contacts = new Contacts(userName, jid, phoneNumber, byteArray, -1, getResources().getString(R.string.default_status));
+                Contacts contacts = new Contacts(userName, jid, phoneNumber, byteArray, -1, getResources().getString(R.string.default_status), Contacts.AVAILABLE_NOT);
                 UserProfileHandler.getInstance().submitUserProfile( ProfileCreationActivity.this, contacts, LISTENER_KEY);
             } else {
                 ProfileCreationActivity.this.runOnUiThread(new Runnable() {

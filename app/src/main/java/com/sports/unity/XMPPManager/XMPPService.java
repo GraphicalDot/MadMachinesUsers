@@ -819,9 +819,9 @@ public class XMPPService extends Service {
             String nickname = card.getNickName();
 
             if (nearByChat) {
-                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, SportsUnityDBHelper.AVAILABLE_BY_PEOPLE_AROUND_ME);
+                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
             } else {
-                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, SportsUnityDBHelper.AVAILABLE_BY_OTHER_CONTACTS);
+                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_OTHER_CONTACTS);
             }
             SportsUnityDBHelper.getInstance(context).updateContacts(jid, image, status);
 
@@ -832,58 +832,7 @@ public class XMPPService extends Service {
         return success;
     }
 
-//    public void DisplayNotification(String message, String from, long chatId, boolean isGroupChat, String groupServerId) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
-//
-////        String number = message.getFrom().substring(0, message.getFrom().indexOf("@"));
-//
-//        final  String GROUP_KEY_CHATS = "group_key_chats";
-//        if (sportsUnityDBHelper.isMute(chatId)) {
-//            //nothing
-//        } else {
-//            String name = sportsUnityDBHelper.getUserNameByJid(from);
-//
-//            Contacts contact = sportsUnityDBHelper.getContact(from);
-//
-//            Intent notificationIntent = new Intent(this, ChatScreenActivity.class);
-//            notificationIntent.putExtra("name", name);
-//            notificationIntent.putExtra("number", from);
-//            notificationIntent.putExtra("chatId", chatId);
-//            notificationIntent.putExtra("contactId", contact.id);
-//            notificationIntent.putExtra("groupServerId", groupServerId);
-//            notificationIntent.putExtra("userpicture", contact.image);
-//
-//            Intent backIntent = new Intent(this, MainActivity.class);
-//            backIntent.putExtra("tab_index", 2);
-//            backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//
-//
-//            UserUtil.init(this);
-//
-//            PendingIntent pendingIntent = PendingIntent.getActivities(this, NotificationHandler.NOTIFICATION_ID, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
-//            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
-//            builder.setSmallIcon(R.drawable.ic_stat_notification);
-//            if (isGroupChat) {
-//                builder.setContentText(name + " sent a Message");
-//                builder.setContentTitle(sportsUnityDBHelper.getGroupSubject(groupServerId));
-//            } else {
-//                builder.setContentText(message);
-//                builder.setContentTitle(name);
-//            }
-//
-//
-//            builder.setContentIntent(pendingIntent);
-//            builder.setPriority(Notification.PRIORITY_HIGH);
-//            builder.setDefaults(Notification.DEFAULT_ALL);
-//            builder.setAutoCancel(true);
-//
-//            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//            notificationManager.notify(NotificationHandler.NOTIFICATION_ID, builder.build());
-//
-//        }
-//
-//    }
-
-    public void DisplayNotification(String message, String from, String mimeType, long chatId, boolean isGroupChat, String groupServerId, byte[] image) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+    private void DisplayNotification(String message, String from, String mimeType, long chatId, boolean isGroupChat, String groupServerId, byte[] image) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
         if (sportsUnityDBHelper.isMute(chatId)) {
             //nothing
         } else {
@@ -905,7 +854,7 @@ public class XMPPService extends Service {
                 pendingIntent = getPendingIntentForMainActivity();
             } else if (chatCount == 1) {
                 Contacts contact = sportsUnityDBHelper.getContactByJid(from);
-                pendingIntent = getPendingIntentForChatActivity(name, from, chatId, contact.id, groupServerId, contact.image);
+                pendingIntent = getPendingIntentForChatActivity(name, from, chatId, contact.id, groupServerId, contact.image, contact.isOthers());
             }
 
             notificationHandler.showNotification(getApplicationContext(), pendingIntent);
@@ -922,16 +871,10 @@ public class XMPPService extends Service {
         return pendingIntent;
     }
 
-    private PendingIntent getPendingIntentForChatActivity(String name, String from, long chatId, long contactId, String groupServerId, byte[] contactImage) {
+    private PendingIntent getPendingIntentForChatActivity(String name, String from, long chatId, long contactId, String groupServerId, byte[] contactImage, boolean isOtherChat) {
         Intent notificationIntent;
-//        notificationIntent.putExtra("name", name);
-//        notificationIntent.putExtra("number", from);
-//        notificationIntent.putExtra("chatId", chatId);
-//        notificationIntent.putExtra("contactId", contactId);
-//        notificationIntent.putExtra("groupServerId", groupServerId);
-//        notificationIntent.putExtra("userpicture", contactImage);
 
-        notificationIntent = ChatScreenActivity.createChatScreenIntent(getApplicationContext(), from, name, contactId, chatId, groupServerId, contactImage, false);
+        notificationIntent = ChatScreenActivity.createChatScreenIntent(getApplicationContext(), from, name, contactId, chatId, groupServerId, contactImage, false, isOtherChat);
 
         Intent backIntent = new Intent(this, MainActivity.class);
         backIntent.putExtra("tab_index", 2);
@@ -940,20 +883,5 @@ public class XMPPService extends Service {
         PendingIntent pendingIntent = PendingIntent.getActivities(this, NotificationHandler.NOTIFICATION_ID, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
         return pendingIntent;
     }
-
-//    private class UpdateUserDetails extends Thread {
-//
-//        @Override
-//        public void run() {
-//            try {
-//                Log.i("VCard Update", "Started");
-//                ContactsHandler.getInstance().updateRegisteredUsers(XMPPService.this);
-//                Log.i("VCard Update", "Ended");
-//            } catch (XMPPException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//
-//    }
 
 }

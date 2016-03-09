@@ -59,7 +59,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                moveToNextActivity(position, ChatScreenActivity.class);
+                moveToNextActivity(position);
             }
 
         });
@@ -67,9 +67,16 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
         otherChatListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                int tag = (Integer) view.getTag();
                 ArrayList<Chats> chatList = ((ChatListAdapter) otherChatListView.getAdapter()).getChatArrayList();
                 Chats chatObject = chatList.get(position);
+
+                int tag = 0;
+                if (chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+                    tag = 0;
+                } else {
+                    tag = 1;
+                }
+
                 showDialogWindow(position, tag, chatObject);
                 return true;
             }
@@ -172,15 +179,13 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
         }
     }
 
-    private void moveToNextActivity(int position, Class<?> cls) {
+    private void moveToNextActivity(int position) {
         ArrayList<Chats> chatList = ((ChatListAdapter) otherChatListView.getAdapter()).getChatArrayList();
         Chats chatObject = chatList.get(position);
-        moveToNextActivity(chatObject, cls);
+        moveToNextActivity(chatObject);
     }
 
-    private void moveToNextActivity(Chats chatObject, Class<?> cls) {
-        Intent intent = new Intent(getActivity(), cls);
-
+    private void moveToNextActivity(Chats chatObject) {
         String groupSeverId = chatObject.groupServerId;
         long contactId = chatObject.contactId;
         Contacts contact = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
@@ -191,15 +196,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
         long chatId = chatObject.chatid;
         byte[] userpicture = chatObject.userImage;
 
-        intent.putExtra("jid", jid);
-        intent.putExtra("name", name);
-        intent.putExtra("contactId", contactId);
-        intent.putExtra("chatId", chatId);
-        intent.putExtra("groupServerId", groupSeverId);
-        intent.putExtra("userpicture", userpicture);
-        intent.putExtra("blockStatus", blockStatus);
-        intent.putExtra("otherChat", true);
-
+        Intent intent = ChatScreenActivity.createChatScreenIntent(getActivity(), jid, name, contactId, chatId, groupSeverId, userpicture, blockStatus, true);
         startActivity(intent);
     }
 

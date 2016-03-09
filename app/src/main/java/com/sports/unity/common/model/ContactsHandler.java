@@ -9,6 +9,7 @@ import android.util.Log;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
@@ -205,7 +206,7 @@ public class ContactsHandler {
 
                         if ( isValidPhoneNumber(phoneNumber) ) {
                             SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
-                            long rowId = SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, null, defaultStatus, null, SportsUnityDBHelper.AVAILABLE_BY_MY_CONTACTS);
+                            long rowId = SportsUnityDBHelper.getInstance(context).addToContacts(name, phoneNumber, null, defaultStatus, null, Contacts.AVAILABLE_BY_MY_CONTACTS);
                             if( rowId == -1 ){
                                 if ( ! name.isEmpty() ) {
                                     sportsUnityDBHelper.updateUserContactFromPhoneContactDetails(phoneNumber, name);

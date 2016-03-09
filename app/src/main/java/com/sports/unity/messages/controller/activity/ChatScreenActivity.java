@@ -93,7 +93,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         return null;
     }
 
-    public static Intent createChatScreenIntent(Context context, String jid, String name, long contactId, long chatId, String groupSeverId, byte[] userpicture, Boolean blockStatus) {
+    public static Intent createChatScreenIntent(Context context, String jid, String name, long contactId, long chatId, String groupSeverId, byte[] userpicture, Boolean blockStatus, boolean othersChat) {
         Intent intent = new Intent(context, ChatScreenActivity.class);
         intent.putExtra(INTENT_KEY_JID, jid);
         intent.putExtra(INTENT_KEY_NAME, name);
@@ -102,7 +102,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         intent.putExtra(INTENT_KEY_GROUP_SERVER_ID, groupSeverId);
         intent.putExtra(INTENT_KEY_IMAGE, userpicture);
         intent.putExtra(INTENT_KEY_BLOCK_STATUS, blockStatus);
-
+        intent.putExtra(INTENT_KEY_NEARBY_CHAT, othersChat);
         return intent;
     }
 
