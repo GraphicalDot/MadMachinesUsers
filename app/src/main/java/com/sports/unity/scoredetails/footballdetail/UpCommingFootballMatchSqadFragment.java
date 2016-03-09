@@ -199,6 +199,9 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     }
 
     private void getSquadDetails(UpCommingFootballMatchSquadDTO dto, JSONObject playerObject) throws JSONException {
+        if(!playerObject.isNull("short_name_id")){
+            dto.setId(playerObject.getString("short_name_id"));
+        }
         if(!playerObject.isNull("name")){
             dto.setTvPlayerName(playerObject.getString("name"));
         }
