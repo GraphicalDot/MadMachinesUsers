@@ -237,14 +237,15 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
 
 
     @Override
-    public void handleContent(JSONObject jsonObject) {
+    public void handleContent(String content) {
         {
             try {
-                boolean success = jsonObject.getBoolean("success");
+                JSONObject object = new JSONObject(content);
+                boolean success = object.getBoolean("success");
 
                 if( success ) {
 
-                    renderDisplay(jsonObject);
+                    renderDisplay(object);
 
                 } else {
                     Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();
@@ -277,6 +278,8 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         teamBBattingCardList.clear();
         teamBBowlingCardList.clear();
         teamBFallOfWicketCardList.clear();
+        JSONArray jsonArray = jsonObject.getJSONArray("data");
+        final JSONObject dataObject = jsonArray.getJSONObject(0);
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
@@ -284,8 +287,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                 public void run() {
                     try {
 
-                        JSONArray jsonArray = jsonObject.getJSONArray("data");
-                        JSONObject dataObject = jsonArray.getJSONObject(0);
+
                         tvFirstTeamInning.setText(dataObject.getString("team_a") + " Innings");
                         tvSecondTeamInning.setText(dataObject.getString("team_b") + " Innings");
                         JSONObject scoreCard = dataObject.getJSONObject("scorecard");

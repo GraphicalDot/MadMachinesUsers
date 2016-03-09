@@ -70,6 +70,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
         toss = i.getStringExtra(INTENT_KEY_TOSS);
         date = i.getStringExtra(INTENT_KEY_DATE);
+        this.context = context;
         getFootballmatchTimeLine();
 
     }
@@ -246,7 +247,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
         if("yellowcards".equalsIgnoreCase(event)){
             drwableId = R.drawable.ic_yellow_card;
         }else if("goals".equalsIgnoreCase(event)){
-            drwableId = R.drawable.ic_football;
+            drwableId = R.drawable.ic_goal_blue;
         }
         else if("redcards".equalsIgnoreCase(event)){
             drwableId = R.drawable.ic_red_card;

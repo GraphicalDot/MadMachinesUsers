@@ -123,7 +123,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             if( matchJsonCaller.getType().equals(ScoresJsonParser.CRICKET) ) {
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
 
-
+                holder.matchMinutes.setText("");
                 Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000)));
                 String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
                 String day = (String) android.text.format.DateFormat.format("dd", date);
@@ -210,14 +210,14 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     stringBuilder.append("/");
                     stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
                     holder.t1score.setText(stringBuilder.toString());
-                    holder.team1Overs.setText(cricketMatchJsonCaller.getOvers(score));
+                    holder.team1Overs.setText(cricketMatchJsonCaller.getOvers(score)+"ovs");
                     score = cricketMatchJsonCaller.getTeam2Score();
                     stringBuilder = new StringBuilder("");
                     stringBuilder.append(cricketMatchJsonCaller.getScore(score));
                     stringBuilder.append("/");
                     stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
                     holder.t2score.setText(stringBuilder.toString());
-                   holder.team2Overs.setText(cricketMatchJsonCaller.getOvers(score));
+                    holder.team2Overs.setText(cricketMatchJsonCaller.getOvers(score)+"ovs");
 
                 }
 
@@ -263,7 +263,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     holder.t2score.setText( "");
                 } else {
                     if( footballMatchJsonCaller.isLive() ){
-                        holder.matchMinutes.setText(footballMatchJsonCaller.getMatchMinute());
+                        holder.matchMinutes.setText(footballMatchJsonCaller.getMatchStatus());
                         holder.liveText.setVisibility(View.VISIBLE);
 
                     } else {

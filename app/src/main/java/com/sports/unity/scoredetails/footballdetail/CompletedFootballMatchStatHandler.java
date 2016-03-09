@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONObject;
 
@@ -81,13 +82,9 @@ public class CompletedFootballMatchStatHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
-        String response = "{\"success\": false, \"error\": true}";
         try{
-
             Log.i("Score Card", "handleResponse: ");
-
-            mContentListener.handleContent(response);
-
+            mContentListener.handleContent(Constants.ERRORRESPONSE);
         } catch (Exception e) {
             e.printStackTrace();
         }

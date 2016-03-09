@@ -234,10 +234,11 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
     }
     @Override
-    public void handleContent(JSONObject object) {
+    public void handleContent(String content) {
         {
             showProgress();
               try {
+                  JSONObject object = new JSONObject(content);
                boolean success = object.getBoolean("success");
                 boolean error = object.getBoolean("error");
 

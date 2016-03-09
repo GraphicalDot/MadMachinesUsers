@@ -78,11 +78,11 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
         progressBar.setVisibility(View.GONE);
     }
     @Override
-    public void handleContent(JSONObject object) {
+    public void handleContent(String content) {
         {
             showProgressBar();
             try {
-
+                JSONObject object = new JSONObject(content);
                 boolean success = object.getBoolean("success");
                 boolean error = object.getBoolean("error");
                  if( success ) {

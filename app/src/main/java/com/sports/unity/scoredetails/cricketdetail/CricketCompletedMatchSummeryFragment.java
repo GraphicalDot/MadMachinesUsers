@@ -98,17 +98,18 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
 
     }
     @Override
-    public void handleContent(JSONObject object) {
+    public void handleContent(String content) {
         {
 
             try {
                 showProgress();
-                boolean success = object.getBoolean("success");
-                boolean error = object.getBoolean("error");
+                JSONObject jsonObject = new JSONObject(content);
+                boolean success = jsonObject.getBoolean("success");
+                boolean error = jsonObject.getBoolean("error");
 
                 if( success ) {
 
-                    renderDisplay(object);
+                    renderDisplay(jsonObject);
 
                 } else {
                     Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();

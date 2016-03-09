@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONObject;
 
@@ -38,7 +39,7 @@ public class CricketUpcomingMatchSummaryHandler {
     }
     public interface CricketUpcomingMatchSummaryContentListener {
 
-        void handleContent(JSONObject object);
+        void handleContent(String object);
        }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
 
@@ -66,8 +67,7 @@ public class CricketUpcomingMatchSummaryHandler {
     }
     private void handleResponse(String response) {
         try{
-            JSONObject object = new JSONObject(response);
-             mcontentListener.handleContent(object);
+             mcontentListener.handleContent(response);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -77,12 +77,11 @@ public class CricketUpcomingMatchSummaryHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         try{
-        Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
-        if(mcontentListener != null) {
-            Log.i("handleErrorResponse: ",volleyError.getMessage() );
+            Log.i("Score Card", "handleResponse: ");
+            mcontentListener.handleContent(Constants.ERRORRESPONSE);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        }catch (Exception e){e.printStackTrace();}
     }
     public void addListener(CricketUpcomingMatchSummaryContentListener contentListener) {
         mcontentListener = contentListener;
