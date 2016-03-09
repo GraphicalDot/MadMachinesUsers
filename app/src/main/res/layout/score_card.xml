@@ -71,28 +71,32 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
                                 android:layout_centerInParent="true"
-                                android:paddingRight="@dimen/vertical_padding_large"
+                                android:paddingRight="@dimen/horizontal_padding_very_very_small"
                                 android:text=""
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
                                 />
-                            <TextView
-                                android:id="@+id/t1over"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:layout_centerInParent="true"
-                                android:paddingRight="@dimen/vertical_padding_very_very_small"
-                                android:text=""
-                                android:textColor="@android:color/black"
-                                android:textSize="@dimen/font_size_small_large"
-                                />
+
 
                         </RelativeLayout>
 
 
                     </LinearLayout>
-
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <TextView
+                            android:id="@+id/t1over"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true"
+                            android:paddingRight="@dimen/horizontal_padding_very_very_small"
+                            android:text=""
+                            android:textColor="@color/score_light_grey"
+                            android:textSize="@dimen/font_size_very_small"
+                            />
+                    </RelativeLayout>
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -122,17 +126,6 @@
                                 android:textSize="@dimen/font_size_small_large"
                                 />
                             <TextView
-                                android:id="@+id/t2over"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:layout_centerInParent="true"
-                                android:paddingRight="@dimen/vertical_padding_very_very_small"
-                                android:text=""
-                                android:textColor="@android:color/black"
-                                android:textSize="@dimen/font_size_small_large"
-                                />
-                            <TextView
                                 android:id="@+id/team2"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -145,18 +138,28 @@
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
                                 />
-
                         </RelativeLayout>
-
-
                     </LinearLayout>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+                        <TextView
+                            android:id="@+id/t2over"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentRight="true"
+                            android:layout_centerInParent="true"
+                            android:paddingRight="@dimen/horizontal_padding_very_very_small"
+                            android:text=""
+                            android:textColor="@android:color/black"
+                            android:textSize="@dimen/font_size_small_large"
+                            />
+                    </RelativeLayout>
                 </LinearLayout>
-
                 <View
                     android:layout_width="1dp"
                     android:layout_height="fill_parent"
                     android:background="@color/gray3" />
-
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
@@ -211,7 +214,6 @@
                         />
                 </LinearLayout>
             </LinearLayout>
-
             <android.support.percent.PercentRelativeLayout
                 android:id="@+id/footer"
                 android:layout_width="match_parent"
