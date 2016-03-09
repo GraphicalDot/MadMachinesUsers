@@ -210,7 +210,7 @@ public class MatchListFragment extends Fragment {
         ArrayList<JSONObject> list = ScoresJsonParser.parseListOfMatches(content);
         if (list.size() > 0) {
 
-            if (UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET) && UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_FOOTBALL)) {
+            if (UserUtil.getFilterSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET) && UserUtil.getFilterSportsSelected().contains(Constants.SPORTS_TYPE_FOOTBALL)) {
                 matches.addAll(list);
             } else {
                 ArrayList<JSONObject> cricket = new ArrayList<>();
