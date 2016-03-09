@@ -21,9 +21,9 @@
             android:textSize="@dimen/font_size_small_medium"
             android:ellipsize="end"
             android:singleLine="true"
-            android:maxLength="10"
+            android:maxLength="8"
             android:scrollHorizontally="true"
-            app:layout_widthPercent="21%" />
+            app:layout_widthPercent="23%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/team_name"
             android:layout_width="0dp"
@@ -33,9 +33,9 @@
             android:textSize="@dimen/font_size_small_medium"
             android:ellipsize="end"
             android:singleLine="true"
-            android:maxLength="10"
+            android:maxLength="8"
             android:scrollHorizontally="true"
-            app:layout_widthPercent="21%" />
+            app:layout_widthPercent="23%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/game_count"
             android:layout_width="0dp"
@@ -44,7 +44,7 @@
             android:text=""
             android:gravity="center"
             android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="14%" />
+            app:layout_widthPercent="10%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/goals_count"
             android:layout_width="0dp"
