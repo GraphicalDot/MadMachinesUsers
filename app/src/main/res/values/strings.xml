@@ -397,4 +397,5 @@ Carrier SMS charges may apply.</string>
     <string name="days">%s Days</string>
     <string name="full_time">Full Time</string>
     <string name="daysago">%s Days Ago</string>
+    <string name="mins">MINS</string>
 </resources>
