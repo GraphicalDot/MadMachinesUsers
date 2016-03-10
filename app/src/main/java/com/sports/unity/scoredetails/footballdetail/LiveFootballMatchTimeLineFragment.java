@@ -260,8 +260,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
         }
         return drawable;
     }
-
-    private void enableAutoRefreshContent(){
+       private void enableAutoRefreshContent(){
         timerToRefreshContent = new Timer();
         timerToRefreshContent.schedule(new TimerTask() {
             @Override

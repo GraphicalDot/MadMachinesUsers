@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -111,6 +112,7 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
 
     @Override
     public int getItemCount() {
+        Log.i("count", "getItemCount: "+mValues.size());
         return mValues.size();
     }
 

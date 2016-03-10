@@ -14,7 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.amulyakhare.textdrawable.TextDrawable;
+
 import com.sports.unity.R;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballLineUpAdapter;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballLineUpDTO;
@@ -98,17 +98,13 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
         tvlineup=(TextView)view.findViewById(R.id.tv_line_up);
         tvsubstitutes=(TextView)view.findViewById(R.id.tv_substitutes);
         rvLineup = (RecyclerView) view.findViewById(R.id.rv_lineup);
-        rvLineup.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        rvLineup.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
         rvSubstitutes = (RecyclerView) view.findViewById(R.id.rv_substitutes);
-        rvSubstitutes.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
-        rvSubstitutes.setNestedScrollingEnabled(false);
+        rvSubstitutes.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
         completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(lineUpList ,getContext());
         rvLineup.setAdapter(completeFootballLineUpAdapter);
-        rvLineup.setNestedScrollingEnabled(false);
         completeFootballSubstituteUpAdapter = new CompleteFootballLineUpAdapter(substitutesList ,getContext());
         rvSubstitutes.setAdapter(completeFootballSubstituteUpAdapter);
-
-
         managerView = view.findViewById(R.id.manager_root);
         lineupView = view.findViewById(R.id.layout_line_up);
         subsView = view.findViewById(R.id.layout_substitutes);
@@ -188,7 +184,7 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
                         for (int i = 0; i < length/2; i++) {
                             try {
                                 JSONObject teamFirstObject = subsArray.getJSONObject(i);
-                                JSONObject teamSecondObject = subsArray.getJSONObject(tempLength-1);
+                                JSONObject teamSecondObject = subsArray.getJSONObject(tempLength);
                                 completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
                                 setPlayerDetails(completeFootballLineUpDTO, teamFirstObject, substitutionsArray, matchEventsArray);
                                 setSecondTeamDetails(completeFootballLineUpDTO, teamSecondObject, matchEventsArray, substitutionsArray);
@@ -202,7 +198,7 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
                         for (int i = 0; i < length/2; i++) {
                             try{
                                 JSONObject teamFirstObject = teamsObjectArray.getJSONObject(i);
-                                JSONObject teamSecondObject = teamsObjectArray.getJSONObject(tempLength-1);
+                                JSONObject teamSecondObject = teamsObjectArray.getJSONObject(tempLength);
                                 completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
                                 setTeamFirstLineUps(completeFootballLineUpDTO, teamFirstObject, matchEventsArray, substitutionsArray);
                                 setTeamSecondLineDetails(completeFootballLineUpDTO, teamSecondObject, matchEventsArray, substitutionsArray);

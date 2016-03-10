@@ -92,9 +92,9 @@ public class CompleteFootballTimeLineDTO implements  Comparable<CompleteFootball
     @Override
     public int compareTo(CompleteFootballTimeLineDTO another) {
         if (this.tvTeamFirstTime == null) {
-            return -1;
+            return 1;
         } else if (another.tvTeamFirstTime == null) {
-            return -1;
+            return 1;
         }
         return this.tvTeamFirstTime.compareTo(another.tvTeamFirstTime);
     }

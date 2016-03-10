@@ -2,29 +2,18 @@ package com.sports.unity.scoredetails.footballdetail;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
-import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.GridLayout;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.amulyakhare.textdrawable.TextDrawable;
 import com.sports.unity.R;
-import com.sports.unity.scoredetails.cricketdetail.CompletedMatchScoreCardHandler;
-import com.sports.unity.scoredetails.cricketdetail.CricketUpcomingMatchSummaryHandler;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballLineUpAdapter;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballLineUpDTO;
 import com.sports.unity.scores.ScoreDetailActivity;
@@ -35,11 +24,9 @@ import org.json.JSONObject;
 import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
@@ -110,9 +97,9 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         tvlineup=(TextView)view.findViewById(R.id.tv_line_up);
         tvsubstitutes=(TextView)view.findViewById(R.id.tv_substitutes);
         rvLineup = (RecyclerView) view.findViewById(R.id.rv_lineup);
-        rvLineup.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        rvLineup.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
         rvSubstitutes = (RecyclerView) view.findViewById(R.id.rv_substitutes);
-        rvSubstitutes.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        rvSubstitutes.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
         rvSubstitutes.setNestedScrollingEnabled(false);
         completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(lineUpList ,getContext());
         rvLineup.setAdapter(completeFootballLineUpAdapter);
@@ -195,8 +182,8 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                     public void run() {
                         try {
 
-                            tvCaptainFirst.setText("NA");
-                            tvCaptainSecond.setText("NA");
+                            tvCaptainFirst.setText("N/A");
+                            tvCaptainSecond.setText("N/A");
 
                             CompleteFootballLineUpDTO completeFootballLineUpDTO = null;
                             int length = subsArray.length();
