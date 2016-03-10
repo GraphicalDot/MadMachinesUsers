@@ -7,7 +7,7 @@
     android:paddingLeft="@dimen/vertical_padding_very_very_small"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="layout.Timeline">
-    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
         android:id="@+id/tv_time_interval"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,7 +16,7 @@
         android:textSize="@dimen/font_size_small_medium"
         android:paddingBottom="@dimen/vertical_padding_very_small"
         android:visibility="gone"
-        android:textColor="@color/news_static"/>
+        android:textColor="@color/gray2"/>
     <ImageView
         android:id="@+id/iv_dot_upper"
         android:layout_width="wrap_content"
@@ -52,13 +52,15 @@
             android:background="@drawable/white_rht"
             android:orientation="vertical"
             >
-            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+            <com.sports.unity.common.view.CustomRobotoMediumTextView
                 android:id="@+id/tv_team_first_on"
                 android:paddingLeft="@dimen/horizontal_padding_very_very_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/news_static"
                 android:text=""
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textSize="@dimen/font_size_small_medium"
 
                 />
@@ -67,7 +69,7 @@
                 android:paddingLeft="@dimen/horizontal_padding_very_very_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gray1"
+                android:textColor="@color/gray2"
                 android:textSize="@dimen/font_size_small_medium"
                 android:text=""
                 android:ellipsize="end"
@@ -94,8 +96,6 @@
                 android:id="@+id/iv_time_line_image"
                 android:layout_width="@dimen/layout_center_img"
                 android:layout_height="@dimen/layout_center_img"
-                app:civ_border_color="@color/gray1"
-                app:civ_border_width="1dp"
                 android:layout_centerHorizontal="true"
                 />
             <View
@@ -117,13 +117,15 @@
             android:layout_centerVertical="true"
             android:background="@drawable/ic_white_lft"
             android:orientation="vertical">
-            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+            <com.sports.unity.common.view.CustomRobotoMediumTextView
                 android:id="@+id/tv_team_second_on"
                 android:paddingLeft="@dimen/vertical_padding_very_very_small"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
                 android:textColor="@color/news_static"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:textSize="@dimen/font_size_small_medium"/>
             <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                 android:paddingLeft="@dimen/vertical_padding_very_very_small"
@@ -157,8 +159,6 @@
         android:layout_height="24dp"
         android:layout_gravity="center"
         android:visibility="gone"
-        app:civ_border_color="@color/gray1"
-        app:civ_border_width="1dp"
         android:src="@drawable/ic_in_active_player"/>
 
 </LinearLayout>

@@ -230,14 +230,14 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
 
     private Drawable getDrwableResource(String event) {
         Resources.Theme theme = getActivity().getTheme();
-        int drwableId = R.drawable.ic_red_green_arrow;
+        int drwableId = R.drawable.ic_subsitute_circle;
         if("yellowcards".equalsIgnoreCase(event)){
-           drwableId = R.drawable.ic_yellow_card;
+           drwableId = R.drawable.ic_yellow_card_circle;
         }else if("goals".equalsIgnoreCase(event)){
-            drwableId = R.drawable.ic_goal_blue;
+            drwableId = R.drawable.ic_goal_circle;
         }
         else if("redcards".equalsIgnoreCase(event)){
-            drwableId = R.drawable.ic_red_card;
+            drwableId = R.drawable.ic_red_card_circle;
         }
         Drawable drawable = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {

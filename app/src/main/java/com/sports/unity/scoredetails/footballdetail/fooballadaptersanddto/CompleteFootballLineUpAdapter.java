@@ -3,6 +3,7 @@ package com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.sports.unity.R;
+import com.sports.unity.common.model.FontTypeface;
 
 import java.util.List;
 
@@ -270,8 +272,7 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
                     .textColor(textColor)
                     .withBorder(border)
                     .width(radius)
-                    .height(radius)
-                    .bold()
+                    .height(radius).useFont(FontTypeface.getInstance(context).getRobotoCondensedRegular())
                     .endConfig()
                     .buildRound(value, color);
         }

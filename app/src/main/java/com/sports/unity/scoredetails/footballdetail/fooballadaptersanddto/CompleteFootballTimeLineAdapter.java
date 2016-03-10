@@ -59,7 +59,7 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
 
             if(getItemCount()-1== position){
                 holder.gameStartImage.setVisibility(View.VISIBLE);
-                holder.gameStartImage.setImageResource(R.drawable.ic_match_start);
+                holder.gameStartImage.setImageResource(R.drawable.ic_match_start_circle);
             }else {
                 holder.gameStartImage.setVisibility(View.GONE);
             }

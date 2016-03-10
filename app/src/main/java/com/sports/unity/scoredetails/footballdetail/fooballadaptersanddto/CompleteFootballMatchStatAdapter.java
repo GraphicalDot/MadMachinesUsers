@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.sports.unity.R;
+import com.sports.unity.common.model.FontTypeface;
 
 import java.util.List;
 
@@ -84,11 +85,11 @@ public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<Compl
         int radius = context.getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
         TextDrawable drawable;
         drawable = TextDrawable.builder()
-                .beginConfig().textColor(Color.BLACK)
+                .beginConfig().textColor(context.getResources().getColor(R.color.news_headline_mini))
+                .useFont(FontTypeface.getInstance(context).getRobotoCondensedBold())
                 .withBorder(radius)
                 .width(radius)
                 .height(radius)
-                .useFont(Typeface.DEFAULT_BOLD)
                 .bold()
                 .endConfig()
                 .buildRound(strRightStatus, (Color.WHITE));
