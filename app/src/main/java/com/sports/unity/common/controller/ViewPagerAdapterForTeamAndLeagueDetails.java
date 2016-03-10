@@ -57,48 +57,43 @@ public class ViewPagerAdapterForTeamAndLeagueDetails extends FragmentStatePagerA
 
     @Override
     public Fragment getItem(int position) {
-
+  Fragment fragment = null;
         if (position == 0) // if the position is 0 we are returning the First tab
         {
             if(type.equals(Constants.FILTER_TYPE_LEAGUE)) {
-                MatchListFragment matchesFragment = new MatchListFragment();
-                return matchesFragment;
+               fragment = new UpCommingFootballMatchTableFargment();
+
 
             } else {
-                NewsFragment newsFragment = new NewsFragment();
+               fragment= new NewsFragment();
                 Bundle bundle = new Bundle();
                 bundle.putBoolean(Constants.INTENT_KEY_SEARCH_ON, true);
                 bundle.putString("search_keyword", name);
-                newsFragment.setArguments(bundle);
-                return newsFragment;
+                fragment.setArguments(bundle);
             }
 
         } else if (position == 1) {
-                MatchListFragment matchesFragment = new MatchListFragment();
-                return matchesFragment;
+               fragment = new MatchListFragment();
 
         } else if (position == 2) {
             if(type.equals(Constants.FILTER_TYPE_LEAGUE)) {
-                NewsFragment newsFragment = new NewsFragment();
+               fragment = new NewsFragment();
                 Bundle bundle = new Bundle();
                 bundle.putBoolean(Constants.INTENT_KEY_SEARCH_ON, true);
                 bundle.putString("search_keyword", name);
-                newsFragment.setArguments(bundle);
-                return newsFragment;
+                fragment.setArguments(bundle);
 
             } else {
-                MatchListFragment matchesFragment = new MatchListFragment();
-                return matchesFragment;
+               fragment = new UpCommingFootballMatchTableFargment();
 
             }
 
         } else if (position == 3) {
 
-            MatchListFragment matchesFragment = new MatchListFragment();
-            return matchesFragment;
+            fragment= new UpCommingFootballMatchSqadFragment();
 
         }
-        return null;
+        return fragment;
 
 
 //            if (position == 0) {
