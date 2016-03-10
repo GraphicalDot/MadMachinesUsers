@@ -17,18 +17,19 @@ import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by cfeindia on 26/2/16.
  */
 public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<CompleteFootballMatchStatAdapter.ViewHolder> {
 
-    private final List<CompleteFootballMatchStatDTO> mValues;
+    private final Map<String,CompleteFootballMatchStatDTO> map;
     private Context context;
 
 
-    public CompleteFootballMatchStatAdapter(List<CompleteFootballMatchStatDTO> mValues, Context context) {
-        this.mValues = mValues;
+    public CompleteFootballMatchStatAdapter(Map<String,CompleteFootballMatchStatDTO> map, Context context) {
+        this.map = map;
         this.context = context;
 
     }
@@ -51,7 +52,7 @@ public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<Compl
 
             TextDrawable drawable = null;
             holder.setIsRecyclable(false);
-            holder.dto = mValues.get(position);
+            holder.dto = map.get(getKeyForPostions(position));
             String value = holder.dto.getTvLable();
             holder.tvLable.setText(value);
             drawable = getTextDrawable(holder.dto.getIvLeftStatus());
@@ -64,6 +65,31 @@ public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<Compl
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private String getKeyForPostions(int position) {
+        String key = null;
+        switch (position) {
+            case 0:
+                key = "POSSESION (%)";
+                break;
+            case 1:
+                key ="SHOTS";
+                break;
+            case 2:
+                key = "SHOTS ON TARGET";
+                break;
+            case 3:
+                key = "CORNERS";
+                break;
+            case 4 :
+                key = "FOULS";
+                break;
+            case 5:
+                key = "OFFSIDES";
+                break;
+        }
+       return  key;
     }
 
     private Drawable getBackgroundDrawable(int width, int color) {
@@ -160,7 +186,7 @@ public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<Compl
  */
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return map.size();
     }
 
 

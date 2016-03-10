@@ -51,6 +51,13 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
 
             if(position==0){
                 holder.tvTimeInterval.setVisibility(View.VISIBLE);
+                if(holder.dto.getMatchStatus().equalsIgnoreCase("FT")){
+                    holder.tvTimeInterval.setText(R.string.full_time);
+                }else if(holder.dto.getMatchStatus().equalsIgnoreCase("HT")){
+                    holder.tvTimeInterval.setText(R.string.half_time);
+                } else {
+                    holder.tvTimeInterval.setText(R.string.on_going);
+                }
                 holder.upperDotView.setVisibility(View.VISIBLE);
             }else {
                 holder.tvTimeInterval.setVisibility(View.GONE);

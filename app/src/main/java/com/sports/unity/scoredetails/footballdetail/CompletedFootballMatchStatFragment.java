@@ -25,8 +25,10 @@ import org.json.JSONObject;
 import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import static com.sports.unity.util.Constants.INTENT_KEY_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
@@ -43,7 +45,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
     private RecyclerView rvFootballMatchStat;
     private TextView nocomments;
     private CompleteFootballMatchStatAdapter completeFootballMatchStatAdapter;
-    private List<CompleteFootballMatchStatDTO> list = new ArrayList<>();
+    private Map<String,CompleteFootballMatchStatDTO> map = new HashMap<>();
     private int baseWidth;
 
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -87,7 +89,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
             //rvFootballMatchStat.setHasFixedSize(true);
             rvFootballMatchStat.setNestedScrollingEnabled(false);
             rvFootballMatchStat.setLayoutManager(new LinearLayoutManager(getContext()));
-            completeFootballMatchStatAdapter = new CompleteFootballMatchStatAdapter(list, getContext());
+            completeFootballMatchStatAdapter = new CompleteFootballMatchStatAdapter(map, getContext());
             rvFootballMatchStat.setAdapter(completeFootballMatchStatAdapter);
             progressBar = (ProgressBar) view.findViewById(R.id.progress);
             progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
@@ -160,7 +162,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-        list.clear();
+        map.clear();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (!jsonObject.isNull("data")) {
             final JSONArray dataArray = jsonObject.getJSONArray("data");
@@ -191,7 +193,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
                                             completeFootballMatchStatDTO.setLeftGraphValue((baseWidth * red) / (red + blue));
                                             completeFootballMatchStatDTO.setRightGraphValue((baseWidth * blue) / (red + blue));
                                             //Log.i("MatchStatFragment: ", completeFootballMatchStatDTO.toString());
-                                            list.add(completeFootballMatchStatDTO);
+                                            map.put(getLabelValue(key), completeFootballMatchStatDTO);
                                         }
                                     }
                                 } catch (JSONException e) {

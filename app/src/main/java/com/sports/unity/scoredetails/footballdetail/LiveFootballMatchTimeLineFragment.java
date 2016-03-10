@@ -49,6 +49,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
     String matchName="";
     String date = "";
     private String matchId;
+    private String matchStatus;
     private SwipeRefreshLayout swTimeLineRefresh;
     private TextView nocomments;
     private ProgressBar progressBar;
@@ -70,6 +71,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
         toss = i.getStringExtra(INTENT_KEY_TOSS);
         date = i.getStringExtra(INTENT_KEY_DATE);
+        matchStatus = i.getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
         this.context = context;
         getFootballmatchTimeLine();
 
@@ -79,7 +81,6 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_football_match_timeline, container, false);
         initView(view);
-        showProgressBar();
         return view;
     }
     private void initView(View view) {
@@ -112,7 +113,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
     @Override
     public void handleContent(String object) {
         {
-            hideProgressBar();
+            showProgressBar();
 
             try {
                 JSONObject jsonObject = new JSONObject(object);
@@ -128,7 +129,6 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
-                Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
                 showErrorLayout(getView());
             }
         }
@@ -167,6 +167,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
 
                             for (int i = 0; i < dataArray.length(); i++) {
                                 completeFootballTimeLineDTO = new CompleteFootballTimeLineDTO();
+                                completeFootballTimeLineDTO.setMatchStatus(matchStatus);
                                 JSONObject dataObject = dataArray.getJSONObject(i);
                                 if (!dataObject.isNull("team")) {
                                     completeFootballTimeLineDTO.setTeamName(dataObject.getString("team"));

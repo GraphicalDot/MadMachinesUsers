@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -124,9 +125,9 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
 
             try {
                 JSONObject jsonObject = new JSONObject(object);
-                JSONObject data = jsonObject.getJSONObject("data");
-                boolean success = data.getBoolean("success");
-                boolean error = data.getBoolean("error");
+
+                boolean success = jsonObject.getBoolean("success");
+                boolean error = jsonObject.getBoolean("error");
 
                 if( success ) {
 
@@ -224,6 +225,7 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
         completeFootballLineUpDTO.setPlayerNameSecond(teamSecondObject.getString("name"));
         completeFootballLineUpDTO.setPlayerPostionNumberSecond(teamSecondObject.getString("jersey_number"));
         String event = getMatchEventNumber(matchEventsArray, teamSecondObject.getString("name"));
+        Log.i("Events", "setTeamSecondLineDetails: "+event);
         if (event != null) {
             if ("goals".equalsIgnoreCase(event)) {
                 completeFootballLineUpDTO.setGoal(event);
@@ -290,6 +292,7 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
         completeFootballLineUpDTO.setPlayerPostionNumber(teamFirstObject.getString("jersey_number"));
         completeFootballLineUpDTO.setEnterExitImage(getOnOffPlayer(substitutionsArray, teamFirstObject.getString("player_name")));
         String event = getMatchEventNumber(matchEventsArray, teamFirstObject.getString("player_name"));
+
         if (event != null) {
             if ("goals".equalsIgnoreCase(event)) {
                 completeFootballLineUpDTO.setGoal(event);

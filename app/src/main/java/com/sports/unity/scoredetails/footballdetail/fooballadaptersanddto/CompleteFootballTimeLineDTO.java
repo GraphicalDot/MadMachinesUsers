@@ -15,6 +15,7 @@ public class CompleteFootballTimeLineDTO implements  Comparable<CompleteFootball
     private String tvTeamFirstOffPlayer;
     private String tvTeamSecondOffPlayer;
     private Drawable drwDrawable;
+    private String matchStatus;
 
     public int getMinute() {
         return minute;
@@ -88,6 +89,13 @@ public class CompleteFootballTimeLineDTO implements  Comparable<CompleteFootball
         this.teamName = teamName;
     }
 
+    public String getMatchStatus() {
+        return matchStatus;
+    }
+
+    public void setMatchStatus(String matchStatus) {
+        this.matchStatus = matchStatus;
+    }
 
     @Override
     public int compareTo(CompleteFootballTimeLineDTO another) {
