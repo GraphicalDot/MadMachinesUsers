@@ -1,8 +1,5 @@
 package com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto;
 
-import android.widget.ImageView;
-import android.widget.TextView;
-
 /**
  * Created by cfeindia on 26/2/16.
  */
@@ -70,6 +67,8 @@ public class CompleteFootballMatchStatDTO {
                 ", ivLeftStatus='" + ivLeftStatus + '\'' +
                 ", ivRightStatus='" + ivRightStatus + '\'' +
                 ", ivCenterStatus='" + ivCenterStatus + '\'' +
+                ", rightGraphValue='" + rightGraphValue + '\'' +
+                ", leftGraphValue='" + leftGraphValue + '\'' +
                 '}';
     }
 }

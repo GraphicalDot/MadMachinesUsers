@@ -16,24 +16,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sports.unity.R;
+import com.sports.unity.common.model.FontTypeface;
 
 
 public class SlidingTabLayout extends HorizontalScrollView {
 
-    /**
-     * Allows complete control over the colors drawn in the tab layout. Set with
-     * {@link #setCustomTabColorizer(TabColorizer)}.
-     */
-    public interface TabColorizer {
-
-        int getIndicatorColor(int position);
-
-    }
-
     private static final int TITLE_OFFSET_DIPS = 24;
     private static final int TAB_VIEW_PADDING_DIPS = 16;
     private static final int TAB_VIEW_TEXT_SIZE_SP = 14;
-
+    private final SlidingTabStrip mTabStrip;
     private int mTitleOffset;
 
     private int mTabViewLayoutId;
@@ -43,9 +34,6 @@ public class SlidingTabLayout extends HorizontalScrollView {
     private ViewPager mViewPager;
     private SparseArray<String> mContentDescriptions = new SparseArray<String>();
     private ViewPager.OnPageChangeListener mViewPagerPageChangeListener;
-
-    private final SlidingTabStrip mTabStrip;
-
     private int colorSelectorId = com.sports.unity.R.color.selector;
 
     public SlidingTabLayout(Context context) {
@@ -141,7 +129,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
         TextView textView = new TextView(context);
         textView.setGravity(Gravity.CENTER);
         textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, TAB_VIEW_TEXT_SIZE_SP);
-        textView.setTypeface(Typeface.DEFAULT_BOLD);
+        textView.setTypeface(FontTypeface.getInstance(getContext()).getRobotoCondensedRegular());
         textView.setLayoutParams(new LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -248,6 +236,20 @@ public class SlidingTabLayout extends HorizontalScrollView {
         }
     }
 
+    public SlidingTabStrip getTabStrip() {
+        return mTabStrip;
+    }
+
+    /**
+     * Allows complete control over the colors drawn in the tab layout. Set with
+     * {@link #setCustomTabColorizer(TabColorizer)}.
+     */
+    public interface TabColorizer {
+
+        int getIndicatorColor(int position);
+
+    }
+
     private class InternalViewPagerListener implements ViewPager.OnPageChangeListener {
         private int mScrollState;
 
@@ -307,9 +309,5 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 }
             }
         }
-    }
-
-    public SlidingTabStrip getTabStrip() {
-        return mTabStrip;
     }
 }
