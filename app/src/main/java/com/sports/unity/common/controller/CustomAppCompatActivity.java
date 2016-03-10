@@ -25,14 +25,14 @@ public class CustomAppCompatActivity extends AppCompatActivity implements Global
         super.onStart();
         activityCounter++;
         if (activityCounter == 1) {
-            if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+            /*if (XMPPClient.getInstance().isConnectionAuthenticated()) {
                 pingManager = PingManager.getInstanceFor(XMPPClient.getConnection());
                 pingManager.setPingInterval(10);
                 pingManager.pingServerIfNecessary();
                 isPingRequired = true;
             } else {
                 isPingRequired = false;
-            }
+            }*/
             GlobalEventHandler.getInstance().addGlobalEventListener(NETWORK_STATE_ACTIVITY_TAG, this);
             PersonalMessaging.getInstance(this).sendOnlinePresence();
         }
@@ -45,13 +45,13 @@ public class CustomAppCompatActivity extends AppCompatActivity implements Global
         if (activityCounter == 0) {
             PersonalMessaging.getInstance(this).sendOfflinePresence();
             GlobalEventHandler.getInstance().removeGlobalEventListener(NETWORK_STATE_ACTIVITY_TAG);
-            if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+            /*if (XMPPClient.getInstance().isConnectionAuthenticated()) {
                 if (isPingRequired) {
                     pingManager = PingManager.getInstanceFor(XMPPClient.getConnection());
                     pingManager.setPingInterval(-10);
                     isPingRequired=false;
                 }
-            }
+            }*/
         }
     }
 
@@ -73,21 +73,21 @@ public class CustomAppCompatActivity extends AppCompatActivity implements Global
         if (connected) {
             if (activityCounter == 1) {
                 PersonalMessaging.getInstance(this).sendOnlinePresence();
-                if (!isPingRequired) {
+                /*if (!isPingRequired) {
                     pingManager = PingManager.getInstanceFor(XMPPClient.getConnection());
                     pingManager.setPingInterval(10);
                     pingManager.pingServerIfNecessary();
                     isPingRequired = true;
-                }
+                }*/
 
             } else if (activityCounter == 0) {
                 PersonalMessaging.getInstance(this).sendOfflinePresence();
-                if (isPingRequired) {
+                /*if (isPingRequired) {
                     if (pingManager != null) {
                         pingManager.setPingInterval(-10);
                         isPingRequired = false;
                     }
-                }
+                }*/
             }
         } else {
             //nothing
