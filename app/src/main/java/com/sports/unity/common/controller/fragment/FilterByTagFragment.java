@@ -42,8 +42,6 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     private TextView messageView;
     private final String errorMessage = "Something went wrong";
     private final String noResultMessage = "No result found";
-    private boolean isFilterCompleted;
-    private boolean isFromNav;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,8 +52,6 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
 
         SPORTS_FILTER_TYPE = bundle.getString(Constants.SPORTS_FILTER_TYPE);
         SPORTS_TYPE = bundle.getString(Constants.SPORTS_TYPE);
-        isFilterCompleted = UserUtil.isFilterCompleted();
-        isFromNav = ((AdvancedFilterActivity) getActivity()).isFromNav;
     }
 
     @Override

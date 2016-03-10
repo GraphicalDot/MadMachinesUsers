@@ -116,14 +116,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             intent.putExtra("jid", jid);
             intent.putExtra("status", "available");
             intent.putExtra("otherChat", otherChat);
-            activity.startActivity(intent);
+            activity.startActivityForResult(intent, Constants.REQUEST_CODE_VIEW_PROFILE);
         } else {
             Intent intent = new Intent(activity, GroupInfoActivity.class);
             intent.putExtra("name", name);
             intent.putExtra("profilePicture", profilePicture);
             intent.putExtra("groupServerId", groupServerId);
             intent.putExtra("chatID", chatId);
-            activity.startActivity(intent);
+            activity.startActivityForResult(intent, Constants.REQUEST_CODE_VIEW_PROFILE);
         }
     }
 
@@ -707,7 +707,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         user.setText(JABBERNAME);
         user.setTypeface(FontTypeface.getInstance(this).getRobotoRegular());
 
-        userPic = (CircleImageView) findViewById(R.id.user_picture);
+        userPic = (CircleImageView) toolbar.findViewById(R.id.user_picture);
         if (isGroupChat) {
             if (userImageBytes == null) {
                 userPic.setImageResource(R.drawable.ic_group);
@@ -945,10 +945,25 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 333) {
-            //TODO handle forward
-        } else {
-            //nothing
+        if (RESULT_OK == resultCode) {
+            if (requestCode == 333) {
+                //TODO handle forward
+            } else if(requestCode==Constants.REQUEST_CODE_VIEW_PROFILE){
+                //nothing
+                userImageBytes=data.getByteArrayExtra(ChatScreenActivity.INTENT_KEY_IMAGE);
+                if (isGroupChat) {
+                    if (userImageBytes == null) {
+                        userPic.setImageResource(R.drawable.ic_group);
+                    } else {
+                        userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
+                    }
+
+                } else if (userImageBytes != null) {
+                    userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
+                }else {
+                    userPic.setImageResource(R.drawable.ic_user);
+                }
+            }
         }
     }
 

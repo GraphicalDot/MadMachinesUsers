@@ -60,13 +60,8 @@ public class AdvancedFilterFragment extends Fragment {
         ViewPager pager = (ViewPager) view.findViewById(R.id.pager);
         pager.setOffscreenPageLimit(2);
         pager.setAdapter(filterPagerAdapter);
-        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                super.onPageSelected(position);
-                ((AdvancedFilterActivity) getActivity()).closeSearch();
-            }
-        });
+        ((AdvancedFilterActivity)getActivity()).setUpViewPager(pager);
+
         SlidingTabLayout tabs = (SlidingTabLayout) view.findViewById(R.id.tabs);
         tabs.setDistributeEvenly(true);
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
