@@ -216,7 +216,7 @@ public class SettingsActivity extends CustomAppCompatActivity {
         manager.setType(RingtoneManager.TYPE_NOTIFICATION);
 
         ArrayList<ToneItem> toneItems = new ArrayList<>();
-        toneItems.add(new ToneItem( "None", "/"));
+        toneItems.add(new ToneItem("None", "/"));
         Cursor cursor = manager.getCursor();
         if (cursor != null) {
             while (cursor.moveToNext()) {
@@ -224,7 +224,7 @@ public class SettingsActivity extends CustomAppCompatActivity {
                 String title = cursor.getString(RingtoneManager.TITLE_COLUMN_INDEX);
                 String uri = cursor.getString(RingtoneManager.URI_COLUMN_INDEX);
 
-                ToneItem toneItem = new ToneItem( title, uri + "/" + id);
+                ToneItem toneItem = new ToneItem(title, uri + "/" + id);
                 toneItems.add(toneItem);
             }
         } else {
@@ -238,6 +238,8 @@ public class SettingsActivity extends CustomAppCompatActivity {
         ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getApplicationContext()).getChatList(false);
         for (Chats chatObject : chatList) {
             SportsUnityDBHelper.getInstance(getApplicationContext()).clearChat(getApplicationContext(), chatObject.chatid, chatObject.groupServerId);
+            SportsUnityDBHelper.getInstance(getApplicationContext()).clearUnreadCount(chatObject.chatid, chatObject.groupServerId);
+            NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid), false);
         }
     }
 
@@ -246,7 +248,8 @@ public class SettingsActivity extends CustomAppCompatActivity {
         for (Chats chatObject : chatList) {
             SportsUnityDBHelper.getInstance(getApplicationContext()).clearChat(this, chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
             SportsUnityDBHelper.getInstance(this).clearChatEntry(chatObject.chatid);
-            NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid));
+            // TODO have to get the status if the chatOBject is of nearby chat or of normal chat by default is given false while clearing notifications
+            NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid), false);
         }
     }
 
@@ -267,7 +270,6 @@ public class SettingsActivity extends CustomAppCompatActivity {
                         ToneItem selectedTone = toneItems.get(which);
                         itemEventListener.onSoundSelection(itemId, selectedTone.title, selectedTone.uri);
                     }
-
                 });
 
         builder.create().show();

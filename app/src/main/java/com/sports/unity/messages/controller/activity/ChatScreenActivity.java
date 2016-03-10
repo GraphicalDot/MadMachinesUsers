@@ -156,7 +156,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     private SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
     private PersonalMessaging personalMessaging = PersonalMessaging.getInstance(this);
-    private PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance(this);
+    //    private PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance(this);
     private BlockUnblockUserHelper blockUnblockUserHelper = null;
 
     private Menu menu = null;
@@ -364,7 +364,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         ChatScreenApplication.activityResumed();
 
         NotificationHandler.dismissNotification(getBaseContext());
-        NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatID));
+        NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatID), otherChat);
 
         //TODO update message list
 //        activityActionListener.handleAction(0);
@@ -542,7 +542,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             }
         } else {
             isGroupChat = true;
-            pubSubMessaging.updateLeadNode(groupServerId);
+//            pubSubMessaging.updateLeadNode(groupServerId);
 //            MultiUserChatManager manager = MultiUserChatManager.getInstanceFor(con);
 //            multiUserChat = manager.getMultiUserChat(groupServerId + "@conference.mm.io");
         }
@@ -824,7 +824,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
             if (isGroupChat) {
 //                groupMessaging.sendMessageToGroup(messageText.getText().toString(), multiUserChat, chatID, groupServerId, TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME));
-                pubSubMessaging.publishMessage(message, chatID, groupServerId, this);
+//                pubSubMessaging.publishMessage(message, chatID, groupServerId, this);
             } else {
                 personalMessaging.sendTextMessage(message, chat, JABBERID, chatID, otherChat);
                 personalMessaging.sendStatus(ChatState.paused, chat);

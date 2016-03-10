@@ -533,8 +533,8 @@ public class ChatKeyboardHelper {
     private void showGalleryView(Activity activity, RecyclerView recyclerView) {
         ArrayList<String> path = getAllShownImagesPath(activity);
 
-        for (int i=0; i<path.size(); i++) {
-            Log.d("List of images/video   ",path.get(i));
+        for (int i = 0; i < path.size(); i++) {
+            Log.d("List of images/video   ", path.get(i));
         }
 
         RecyclerView.Adapter mAdapter = new ImageAdapterForGallery(activity, recyclerView, path, keyboardHeight);
@@ -575,7 +575,8 @@ public class ChatKeyboardHelper {
                 MediaStore.Files.FileColumns.DATE_ADDED,
                 MediaStore.Files.FileColumns.MEDIA_TYPE,
                 MediaStore.Files.FileColumns.MIME_TYPE,
-                MediaStore.Files.FileColumns.TITLE
+                MediaStore.Files.FileColumns.TITLE,
+                MediaStore.Files.FileColumns.SIZE
         };
 
 // Return only video and image metadata.
@@ -583,7 +584,9 @@ public class ChatKeyboardHelper {
                 + MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
                 + " OR "
                 + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
-                + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO;
+                + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO
+                + " AND "
+                + MediaStore.Files.FileColumns.SIZE + " <= 10048576";
 
         Uri queryUri = MediaStore.Files.getContentUri("external");
 
@@ -599,7 +602,7 @@ public class ChatKeyboardHelper {
         cursor = cursorLoader.loadInBackground();
 
 
-        if( cursor != null ) {
+        if (cursor != null) {
             column_index_data = cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.DATA);
 
             while (cursor.moveToNext()) {

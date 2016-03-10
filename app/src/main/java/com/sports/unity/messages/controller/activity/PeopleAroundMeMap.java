@@ -230,7 +230,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 sportSelection = SPORT_SELECTION_FOOTBALL;
                 football.setTextColor(Color.WHITE);
                 cricket.setTextColor(getResources().getColor(R.color.app_theme_blue));
-                plotMarkers(peoplesNearMe.getPersons(), sportSelection);
+                if (peoplesNearMe != null) {
+                    plotMarkers(peoplesNearMe.getPersons(), sportSelection);
+                }
             }
         });
 
@@ -243,7 +245,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 sportSelection = SPORT_SELECTION_CRICKET;
                 cricket.setTextColor(Color.WHITE);
                 football.setTextColor(getResources().getColor(R.color.app_theme_blue));
-                plotMarkers(peoplesNearMe.getPersons(), sportSelection);
+                if (peoplesNearMe != null) {
+                    plotMarkers(peoplesNearMe.getPersons(), sportSelection);
+                }
             }
         });
     }

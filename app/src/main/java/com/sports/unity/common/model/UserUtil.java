@@ -94,12 +94,14 @@ public class UserUtil {
         TinyDB tinyDB = TinyDB.getInstance(context);
         tinyDB.putListString(TinyDB.KEY_SPORTS_SELECTED, sportsSelected);
     }
+
     public static void setFilterSportsSelected(Context context, ArrayList<String> filterSportsSelected) {
         FILTER_SPORTS_SELECTED = filterSportsSelected;
 
         TinyDB tinyDB = TinyDB.getInstance(context);
         tinyDB.putListString(TinyDB.KEY_FILTER_SPORTS_SELECTED, filterSportsSelected);
     }
+
     public static void setOtpSent(Context context, boolean otpSent) {
         OTP_SENT = otpSent;
 
@@ -126,6 +128,7 @@ public class UserUtil {
     public static ArrayList<String> getSportsSelected() {
         return SPORTS_SELECTED;
     }
+
     public static ArrayList<String> getFilterSportsSelected() {
         return FILTER_SPORTS_SELECTED;
     }
@@ -330,40 +333,40 @@ public class UserUtil {
         tinyDB.putBoolean(TinyDB.SAVE_IN_APP_MEDIA_CAPTURE, saveInAppCaptureMediaToGallery);
     }
 
-    public static void setMediaUsingMobileData(Context context, int value){
+    public static void setMediaUsingMobileData(Context context, int value) {
         MEDIA_USING_MOBILE_DATA = value;
 
         TinyDB tinyDB = TinyDB.getInstance(context);
         tinyDB.putInt(TinyDB.MEDIA_MOBILE_DATA, MEDIA_USING_MOBILE_DATA);
     }
 
-    public static boolean isMediaEnabledUsingMobileData(int media){
+    public static boolean isMediaEnabledUsingMobileData(int media) {
         boolean enabled = false;
-        if( MEDIA_USING_MOBILE_DATA % media == 0 ){
+        if (MEDIA_USING_MOBILE_DATA % media == 0) {
             enabled = true;
         }
         return enabled;
     }
 
-    public static void setMediaUsingWIFI(Context context, int value){
+    public static void setMediaUsingWIFI(Context context, int value) {
         MEDIA_USING_WIFI = value;
 
         TinyDB tinyDB = TinyDB.getInstance(context);
         tinyDB.putInt(TinyDB.MEDIA_USING_WIFI, MEDIA_USING_WIFI);
     }
 
-    public static boolean isMediaEnabledUsingWIFI(int media){
+    public static boolean isMediaEnabledUsingWIFI(int media) {
         boolean enabled = false;
-        if( MEDIA_USING_WIFI % media == 0 ){
+        if (MEDIA_USING_WIFI % media == 0) {
             enabled = true;
         }
         return enabled;
     }
 
-    public static boolean isMediaAutoDownloadEnabled(Context context, int media){
+    public static boolean isMediaAutoDownloadEnabled(Context context, int media) {
         boolean enabled = false;
-        if( CommonUtil.isConnectedWifi(context) ) {
-            if( MEDIA_USING_WIFI % media == 0 ){
+        if (CommonUtil.isConnectedWifi(context)) {
+            if (MEDIA_USING_WIFI % media == 0) {
                 enabled = true;
             }
         } else {
@@ -429,20 +432,20 @@ public class UserUtil {
         tinyDB.putString(TinyDB.KEY_COUNTRY_CODE, countryCode);
     }
 
-    private static void loadBasicPreferences(TinyDB tinyDB, Context context){
+    private static void loadBasicPreferences(TinyDB tinyDB, Context context) {
         USER_REGISTERED = tinyDB.getBoolean(TinyDB.KEY_REGISTERED, false);
         PROFILE_CREATED = tinyDB.getBoolean(TinyDB.KEY_PROFILE_CREATED, false);
         OTP_SENT = tinyDB.getBoolean(TinyDB.KEY_OTP_SENT, false);
         COUNTRY_CODE = tinyDB.getString(TinyDB.KEY_COUNTRY_CODE);
 
-        if( COUNTRY_CODE.isEmpty() ){
+        if (COUNTRY_CODE.isEmpty()) {
             COUNTRY_CODE = CommonUtil.getDefaultCountyCode(context);
         }
     }
 
-    private static void loadFavoritePreferences(TinyDB tinyDB){
+    private static void loadFavoritePreferences(TinyDB tinyDB) {
         SPORTS_SELECTED = tinyDB.getListString(TinyDB.KEY_SPORTS_SELECTED);
-        FILTER_SPORTS_SELECTED=tinyDB.getListString(TinyDB.KEY_FILTER_SPORTS_SELECTED);
+        FILTER_SPORTS_SELECTED = tinyDB.getListString(TinyDB.KEY_FILTER_SPORTS_SELECTED);
         favFilterList = tinyDB.getString(TinyDB.FAVOURITE_FILTERS);
 
         leagueSelected = tinyDB.getBoolean(TinyDB.LEAGUE_SELECTION, false);
@@ -452,7 +455,7 @@ public class UserUtil {
         isFavouriteVcardUpdated = tinyDB.getBoolean(TinyDB.VCARD_UPDATED, false);
     }
 
-    private static void loadSettingPreferences(TinyDB tinyDB){
+    private static void loadSettingPreferences(TinyDB tinyDB) {
         NOTIFICATION_AND_SOUND = tinyDB.getBoolean(TinyDB.NOTIFICATION_AND_SOUND_OPTIONS, NOTIFICATION_AND_SOUND);
         NOTIFICATION_PREVIEWS = tinyDB.getBoolean(TinyDB.NOTIFICATION_PREVIEW, NOTIFICATION_PREVIEWS);
         CONVERSATION_TONES = tinyDB.getBoolean(TinyDB.CONVERSATION_TONES, CONVERSATION_TONES);
@@ -461,7 +464,7 @@ public class UserUtil {
 
         NOTIFICATION_SOUND_TITLE = tinyDB.getString(TinyDB.NOTIFICATION_SOUND_TITLE);
         NOTIFICATION_SOUND_URI = tinyDB.getString(TinyDB.NOTIFICATION_SOUND_URI);
-        if(NOTIFICATION_SOUND_URI.isEmpty()){
+        if (NOTIFICATION_SOUND_URI.isEmpty()) {
             NOTIFICATION_SOUND_URI = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION).toString();
             NOTIFICATION_SOUND_TITLE = "Default";
         }

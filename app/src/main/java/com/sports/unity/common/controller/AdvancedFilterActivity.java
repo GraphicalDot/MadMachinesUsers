@@ -24,6 +24,7 @@ import com.sports.unity.common.model.FavouriteContentHandler;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -90,6 +91,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                enableNotificationsWhenSettingUpFirstTime();
                 UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
                 FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).invalidate(AdvancedFilterActivity.this);
                 if (isResultRequired) {
@@ -131,7 +133,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             titleText.setText(CommonUtil.capitalize(sportsSelected.get(fragmentNum)));
             fragmentNum++;
         } else if (fragmentNum == sportsSelected.size()) {
+//            enableNotificationsWhenSettingUpFirstTime();
             UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
+
             ContactsHandler.getInstance().addCallToUpdateUserFavorites(getApplicationContext());
             if (isResultRequired) {
                 setResult(RESULT_OK, getIntent());
@@ -143,6 +147,24 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         closeSearch();
 
     }
+
+//    private void enableNotificationsWhenSettingUpFirstTime() {
+//
+//        /**
+//         *  When we are setting up the app first time notifications needs to be disabled
+//         *  before entering the main page so its does not hinder the registration process
+//         */
+//
+//        if (UserUtil.isFilterCompleted()) {
+//            //do nothing
+//        } else {
+//            UserUtil.setNotificationAndSound(getApplicationContext(), true);
+//            UserUtil.setNotificationPreviews(getApplicationContext(), true);
+//            UserUtil.setConversationVibrate(getApplicationContext(), true);
+//            UserUtil.setConversationTones(getApplicationContext(), true);
+//            UserUtil.setNotificationLight(getApplicationContext(), true);
+//        }
+//    }
 
 
     private void setUpToolBar() {
