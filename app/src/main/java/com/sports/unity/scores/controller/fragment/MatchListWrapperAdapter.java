@@ -49,11 +49,24 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         try{
+            MatchListWrapperDTO previousDTO = null;
+            if(position == 0 || position == 1){
+                previousDTO = matchDay.get(position);
+            }else {
+                previousDTO = matchDay.get(position-1);
+            }
+
             MatchListWrapperDTO dto = matchDay.get(position);
             List<JSONObject>  list = holder.mAdapter.getList();
             list.clear();
             list.addAll(dto.getList());
-            holder.tvDayName.setText(dto.getDay());
+            if(previousDTO.getDay().equalsIgnoreCase(dto.getDay()) && position!=0){
+                holder.tvDayName.setVisibility(View.GONE);
+            }else{
+                holder.tvDayName.setVisibility(View.VISIBLE);
+                holder.tvDayName.setText(dto.getDay());
+            }
+
             holder.tvLeagueName.setText(dto.getLeagueName());
             if(dto.getSportsType().equals(Constants.SPORTS_TYPE_CRICKET)){
                 holder.ivSportsIcon.setImageResource(R.drawable.ic_cricket_group);

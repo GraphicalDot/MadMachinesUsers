@@ -59,4 +59,14 @@ public class MatchListWrapperDTO  implements  Comparable<MatchListWrapperDTO>{
         return this.epochTime.compareTo(another.epochTime);
     }
 
+    @Override
+    public String toString() {
+        return "MatchListWrapperDTO{" +
+                "day='" + day + '\'' +
+                ", leagueName='" + leagueName + '\'' +
+                ", list=" + list +
+                ", epochTime=" + epochTime +
+                ", sportsType='" + sportsType + '\'' +
+                '}';
+    }
 }

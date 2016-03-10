@@ -256,108 +256,41 @@ public class MatchListFragment extends Fragment {
                             leagueName = object.getString("league_name");
                         }
                     }
-                    //Log.i("League Name", "handleContent: "+leagueName);
-                   if(daysMap.containsKey(day)){
-                       Log.i("League Name", "handleContent: "+leagueName);
-                       Log.i("Day Name", "handleContent: "+day);
-                        Map<String, MatchListWrapperDTO> leagueMapTemp = daysMap.get(day);
-                        if(leagueMapTemp.containsKey(leagueName)){
+                    MatchListWrapperDTO dayGroupDto =    null;
+                    ArrayList<JSONObject> dayGroupList = null;
+                    Map<String, MatchListWrapperDTO> leagueMapTemp = null;
+                    if(daysMap.containsKey(day)){
+                        Log.i("League Name", "handleContent: " + leagueName);
+                        Log.i("Day Name", "handleContent: " + day);
+                        leagueMapTemp = daysMap.get(day);
 
-                            MatchListWrapperDTO dayGroupDto =    leagueMapTemp.get(leagueName);
-                            ArrayList<JSONObject> dayGroupList = dayGroupDto.getList();
-                            dayGroupList.add(object);
-                            dayGroupDto.setList(dayGroupList);
-                            dayGroupDto.setDay(day);
-                            dayGroupDto.setEpochTime(epochTime);
-                            dayGroupDto.setSportsType(sportsType);
-                            dayGroupDto.setLeagueName(leagueName);
-                            //leagueMapTemp.put(leagueName, dayGroupDto);
-                           /* daysMap.put(day,leagueMapTemp);*/
+                        if(leagueMapTemp.containsKey(leagueName)){
+                            dayGroupDto =    leagueMapTemp.get(leagueName);
+                            dayGroupList = dayGroupDto.getList();
                         } else{
-                            MatchListWrapperDTO dayGroupDto =   new MatchListWrapperDTO();
-                            ArrayList<JSONObject> dayGroupList = new ArrayList<>();
-                            dayGroupList.add(object);
-                            dayGroupDto.setList(dayGroupList);
-                            dayGroupDto.setDay(day);
-                            dayGroupDto.setEpochTime(epochTime);
-                            dayGroupDto.setSportsType(sportsType);
-                            dayGroupDto.setLeagueName(leagueName);
-                            leagueMapTemp.put(leagueName, dayGroupDto);
-                           /* daysMap.put(day,leagueMapTemp);*/
-                        }
+                            dayGroupDto =   new MatchListWrapperDTO();
+                            dayGroupList = new ArrayList<>();
+
+                       }
+
+
                     }else{
 
-                        MatchListWrapperDTO dayGroupDto =   new MatchListWrapperDTO();
-                        Map<String, MatchListWrapperDTO> leagueMapTemp = new HashMap<>();
-                        ArrayList<JSONObject> dayGroupList = new ArrayList<>();
-                        dayGroupList.add(object);
-                        dayGroupDto.setList(dayGroupList);
-                        dayGroupDto.setDay(day);
-                        dayGroupDto.setEpochTime(epochTime);
-                        dayGroupDto.setSportsType(sportsType);
-                        dayGroupDto.setLeagueName(leagueName);
-                        leagueMapTemp.put(leagueName, dayGroupDto);
-                        daysMap.put(day,leagueMapTemp);
-                    }
 
+                        leagueMapTemp = new HashMap<>();
+                        dayGroupDto =   new MatchListWrapperDTO();
+                        dayGroupList = new ArrayList<>();
 
-
-
-
-
-
-/*
-
-                    if(daysMap.containsKey(day)){
-                        if(leagueMap.containsKey(leagueName)){
-                            MatchListWrapperDTO dayGroupDto =    daysMap.get(day);
-                            if(dayGroupDto.getLeagueName().equals(leagueName)){
-                                ArrayList<JSONObject> dayGroupList = dayGroupDto.getList();
-                                dayGroupList.add(object);
-                                dayGroupDto.setList(dayGroupList);
-                                dayGroupDto.setDay(day);
-                                dayGroupDto.setEpochTime(epochTime);
-                                dayGroupDto.setSportsType(sportsType);
-                                dayGroupDto.setLeagueName(leagueName);
-                                daysMap.put(day, dayGroupDto);
-                                leagueMap.put(leagueName,daysMap);
-                            }
-                        }else{
-
-
-
-                            MatchListWrapperDTO dayGroupDto =   new MatchListWrapperDTO();
-
-                            ArrayList<JSONObject> dayGroupList = new ArrayList<>();
-                            dayGroupList.add(object);
-                            dayGroupDto.setList(dayGroupList);
-                            dayGroupDto.setDay(day);
-                            dayGroupDto.setEpochTime(epochTime);
-                            dayGroupDto.setSportsType(sportsType);
-                            dayGroupDto.setLeagueName(leagueName);
-                            daysMap.put(day, dayGroupDto);
-                            leagueMap.put(leagueName,daysMap);
-                        }
-                    } else{
-                        Map<String, MatchListWrapperDTO> daysMapTemp = new HashMap<>();
-
-                        MatchListWrapperDTO dayGroupDto =   new MatchListWrapperDTO();
-
-                        ArrayList<JSONObject> dayGroupList = new ArrayList<>();
-                        dayGroupList.add(object);
-                        dayGroupDto.setList(dayGroupList);
-                        dayGroupDto.setDay(day);
-                        dayGroupDto.setEpochTime(epochTime);
-                        dayGroupDto.setSportsType(sportsType);
-                        dayGroupDto.setLeagueName(leagueName);
-                        daysMap.put(day,dayGroupDto);
-                        leagueMap.put(leagueName,daysMap);
 
                     }
-*/
-
-
-
+                    dayGroupList.add(object);
+                    dayGroupDto.setList(dayGroupList);
+                    dayGroupDto.setDay(day);
+                    dayGroupDto.setEpochTime(epochTime);
+                    dayGroupDto.setSportsType(sportsType);
+                    dayGroupDto.setLeagueName(leagueName);
+                    leagueMapTemp.put(leagueName, dayGroupDto);
+                    daysMap.put(day,leagueMapTemp);
 
                 }catch (Exception  e)
                 {
@@ -365,24 +298,25 @@ public class MatchListFragment extends Fragment {
                 }
             }
             matchList.clear();
-            Log.i("Data Map", "handleContent: " + daysMap.keySet());
+            Log.i("Data Map", "handleContent: " + daysMap);
 
             Set<String> daySet = daysMap.keySet();
 
-                  for(String dayKey :daySet) {
-                      Map<String, MatchListWrapperDTO > leagueMaps = daysMap.get(dayKey);
-                      Set<String> keySet = leagueMaps.keySet();
-                      for (String key : keySet) {
-                         int s = leagueMaps.get(key).getList().size();
-                          Log.i("List Size", "handleContent: " + s);
-                          if (s > 0) {
-                              matchList.add(leagueMaps.get(key));
-                          }
+            for(String dayKey :daySet) {
+                Map<String, MatchListWrapperDTO > leagueMaps = daysMap.get(dayKey);
+                Set<String> keySet = leagueMaps.keySet();
+                Log.i("League Set", "handleContent: " + keySet);
+                for (String key : keySet) {
+                    int s = leagueMaps.get(key).getList().size();
+                    Log.i("List Size", "handleContent: " + s);
+                    if (s > 0) {
+                        matchList.add(leagueMaps.get(key));
+                    }
 
-                      }
-                  }
+                }
+            }
             Collections.sort(matchList);
-            Log.i("Data Map", "handleContent: " + matchList);
+            Log.i("Match List Size", "handleContent: " + matchList);
             matchListWrapperAdapter.notifyDataSetChanged();
         } else {
             //nothing

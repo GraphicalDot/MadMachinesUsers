@@ -26,7 +26,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/news_background"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                >
 
                 <com.sports.unity.common.view.CustomRobotoSlabRegularTextView
                     android:padding="@dimen/vertical_padding_very_very_small"
@@ -36,7 +37,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:text=""
-                    android:textAppearance="?attr/textAppearanceListItem"/>
+                    android:textAppearance="?attr/textAppearanceListItem"
+                    />
             </LinearLayout>
 
             <LinearLayout
