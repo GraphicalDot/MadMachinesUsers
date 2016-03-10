@@ -187,7 +187,7 @@
                             android:textSize="@dimen/font_size_small_large"
                             android:visibility="visible"
                             />
-                        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                        <com.sports.unity.common.view.CustomRobotoMediumTextView
                             android:id="@+id/ll_minutes"
                             android:layout_marginTop="@dimen/layout_minutes"
                             android:layout_width="wrap_content"
@@ -206,7 +206,7 @@
                         android:textColor="@color/app_theme_blue"
                         android:textSize="@dimen/font_size_small_large"
                         />
-                    <TextView
+                    <com.sports.unity.common.view.CustomRobotoMediumTextView
                         android:id="@+id/matchDay"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -218,7 +218,7 @@
                         android:textSize="@dimen/font_size_small_medium"
                         />
 
-                    <TextView
+                    <com.sports.unity.common.view.CustomRobotoRegularTextView
 
                         android:id="@+id/show_odds"
                         android:layout_width="wrap_content"
@@ -252,8 +252,10 @@
                         android:layout_marginLeft="@dimen/horizontal_padding_small"
                         android:layout_marginTop="@dimen/vertical_padding_very_very_small"
                         android:text="San Siro"
+                        android:ellipsize="end"
+                        android:singleLine="true"
                         android:textColor="@color/score_dark_grey"
-                        android:textSize="@dimen/font_size_small_medium"
+                        android:textSize="@dimen/font_size_very_small"
                         />
                     <TextView
                         android:id="@+id/date"
@@ -263,7 +265,7 @@
                         android:layout_marginLeft="@dimen/horizontal_padding_small"
                         android:text="Friday, January 01, 00:00 (IST)"
                         android:textColor="@color/score_light_grey"
-                        android:textSize="@dimen/font_size_small_medium"
+                        android:textSize="@dimen/font_size_very_small"
                         />
                 </LinearLayout>
                 <ImageView
