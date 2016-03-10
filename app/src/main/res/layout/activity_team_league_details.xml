@@ -1,0 +1,40 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".MainActivity">
+
+        <include
+            android:id="@+id/tool_bar"
+            layout="@layout/tool_bar_filter"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:minHeight="?android:attr/actionBarSize" />
+
+        <View
+            android:id="@+id/seprator"
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/tab_seperator" />
+
+        <com.sports.unity.common.view.SlidingTabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/ColorPrimary"
+            android:elevation="@dimen/toolbar_elevation" />
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/app_theme_blue" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" />
+
+
+    </LinearLayout>
