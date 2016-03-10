@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
+import com.sports.unity.BuildConfig;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.VolleyRequestHandler;
@@ -49,7 +50,7 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_NEWS_IMAGE_DPI = "image_size";
     private static final String URL_PARAMS_NEWS_ID = "news_id";
 
-    private static final String SCORES_BASE_URL = "http://52.74.75.79:8080/";
+    private static final String SCORES_BASE_URL = BuildConfig.SCORES_BASE_URL;
     private static final String URL_PARAMS_FOR_LIST_OF_MATCHES = "get_all_matches_list";
     private static final String URL_PARAMS_FOR_FOOTBALL_MATCH_DETAIL = "get_football_match_scores?match_id=";
     private static final String URL_PARAMS_FOR_CRICKET_MATCH_DETAIL = "get_cricket_match_scores?match_key=";
