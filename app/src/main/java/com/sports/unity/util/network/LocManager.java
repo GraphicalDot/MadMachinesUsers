@@ -15,7 +15,6 @@ import com.sports.unity.common.model.TinyDB;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.Locale;
@@ -27,25 +26,22 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     private static String base_url = "http://" + XMPPClient.SERVER_HOST + "/set_location?user=";
     private static LocManager locManager = null;
-
+    boolean dataSent = false;
     private Thread uploadLocation = null;
     private Thread getLocation = null;
     private String url = "";
-    boolean dataSent = false;
+    private Context context;
+    private Location mLastLocation;
+    private GoogleApiClient mGoogleApiClient;
+    public LocManager(Context context) {
+        this.context = context;
+    }
 
     synchronized public static LocManager getInstance(Context context) {
         if (locManager == null) {
             locManager = new LocManager(context);
         }
         return locManager;
-    }
-
-    private Context context;
-    private Location mLastLocation;
-    private GoogleApiClient mGoogleApiClient;
-
-    public LocManager(Context context) {
-        this.context = context;
     }
 
     public synchronized void buildApiClient() {
@@ -72,7 +68,11 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                 getLocation = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                        try {
+                            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                        } catch (SecurityException ex) {
+                            ex.printStackTrace();
+                        }
                         if (mLastLocation != null) {
                             saveLocation(mLastLocation);
                         }
