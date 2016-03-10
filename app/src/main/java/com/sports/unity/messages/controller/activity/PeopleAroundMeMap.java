@@ -36,13 +36,16 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.ui.IconGenerator;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -73,6 +76,8 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static android.widget.Toast.LENGTH_LONG;
 import static android.widget.Toast.makeText;
+import static com.sports.unity.common.model.TinyDB.KEY_CURRENT_LATITUDE;
+import static com.sports.unity.common.model.TinyDB.KEY_CURRENT_LONGITUDE;
 import static com.sports.unity.common.model.TinyDB.KEY_PASSWORD;
 import static com.sports.unity.common.model.TinyDB.KEY_USER_JID;
 import static com.sports.unity.common.model.TinyDB.getInstance;
@@ -93,7 +98,8 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
     private static final String REQUEST_TAG = "nearby_tag";
     private static final String SPORT_SELECTION_FOOTBALL = "football";
     private static final String SPORT_SELECTION_CRICKET = "cricket";
-
+    private IconGenerator clusterIconGenerator;
+    private ImageView icon;
     private Dialog aDialog = null;
 
     private NearByUserJsonCaller nearByUserJsonCaller = new NearByUserJsonCaller();
@@ -105,7 +111,8 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
     private Toolbar toolbar;
     private TextView titleAddress;
     private TextView titleCity;
-
+    private boolean customLocation;
+    private LocManager locManager;
     private int radius = 1000;
 
     private int stepRange = 25;
@@ -120,6 +127,12 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
         @Override
         public void handleContent(String tag, String content, int responseCode) {
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLong);
+            icon.setImageResource(R.drawable.ic_marker_my_location);
+            clusterIconGenerator.setBackground(icon.getDrawable());
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(clusterIconGenerator.makeIcon("")));
+            map.addMarker(markerOptions);
             if (tag.equals(REQUEST_TAG)) {
                 if (responseCode == 200) {
                     if (dialog.isShowing()) {
@@ -164,10 +177,15 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_people_around_me_map);
-
+        this.customLocation = false;
         aDialog = new Dialog(PeopleAroundMeMap.this);
         aDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-
+        this.clusterIconGenerator = new IconGenerator(getApplicationContext());
+        View view = getLayoutInflater().inflate(R.layout.cluster_view, null);
+        icon = (ImageView) view.findViewById(R.id.cluster_icon);
+        this.clusterIconGenerator.setContentView(view);
+        locManager = LocManager.getInstance(getApplicationContext());
+        locManager.buildApiClient();
         hideSoftKeyboard();
         initToolbar();
         // openMap();
@@ -175,6 +193,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         setsportSelectionButtons();
         setCustomButtonsForNavigationAndUsers();
         bindAutoComplete();
+
     }
 
     private void bindAutoComplete() {
@@ -183,12 +202,18 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         fragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
+                customLocation = true;
                 findViewById(R.id.fl_custom_location).setVisibility(GONE);
+                getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LATITUDE, place.getLatLng().latitude);
+                getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LONGITUDE, place.getLatLng().longitude);
+                titleAddress.setText(place.getAddress());
+                titleCity.setText(place.getName());
                 //getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
             }
 
             @Override
             public void onError(Status status) {
+                customLocation = false;
                 findViewById(R.id.fl_custom_location).setVisibility(GONE);
                 Toast.makeText(getApplicationContext(), getText(R.string.oops_try_again), LENGTH_LONG).show();
             }
@@ -201,6 +226,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         myLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                customLocation = false;
                 boolean success = checkIfGPSEnabled();
                 if (success) {
                     getLocation();
@@ -230,7 +256,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 sportSelection = SPORT_SELECTION_FOOTBALL;
                 football.setTextColor(Color.WHITE);
                 cricket.setTextColor(getResources().getColor(R.color.app_theme_blue));
-                plotMarkers(peoplesNearMe.getPersons(), sportSelection);
+                if (peoplesNearMe != null) {
+                    plotMarkers(peoplesNearMe.getPersons(), sportSelection);
+                }
             }
         });
 
@@ -243,7 +271,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 sportSelection = SPORT_SELECTION_CRICKET;
                 cricket.setTextColor(Color.WHITE);
                 football.setTextColor(getResources().getColor(R.color.app_theme_blue));
-                plotMarkers(peoplesNearMe.getPersons(), sportSelection);
+                if (peoplesNearMe != null) {
+                    plotMarkers(peoplesNearMe.getPersons(), sportSelection);
+                }
             }
         });
     }
@@ -462,7 +492,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         });
         map.getUiSettings().setZoomGesturesEnabled(true);
         try {
-            map.setMyLocationEnabled(true);
+            map.setMyLocationEnabled(false);
         } catch (SecurityException ex) {
 
         }
@@ -473,8 +503,8 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         mClusterManager.setOnClusterItemClickListener(this);
         hideLocationbutton();
         map.setTrafficEnabled(false);
-        double latitude = getInstance(getApplicationContext()).getDouble(TinyDB.KEY_CURRENT_LATITUDE, 0.0);
-        double longitude = getInstance(getApplicationContext()).getDouble(TinyDB.KEY_CURRENT_LONGITUDE, 0.0);
+        double latitude = getInstance(getApplicationContext()).getDouble(KEY_CURRENT_LATITUDE, 0.0);
+        double longitude = getInstance(getApplicationContext()).getDouble(KEY_CURRENT_LONGITUDE, 0.0);
         latLong = new LatLng(latitude, longitude);
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, calculateZoomLevel(radius)));
         if (checkIfGPSEnabled()) {
@@ -499,7 +529,6 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         dialog = ProgressDialog.show(PeopleAroundMeMap.this, "",
                 "fetching...", true);
         dialog.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
-
         ScoresContentHandler.getInstance().addResponseListener(contentListener, REQUEST_LISTENER_KEY);
 
         HashMap<String, String> parameters = new HashMap<>();
@@ -740,11 +769,11 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
     private void getLocation() {
         Log.i("gettingLocation", "true");
-        Location location = map.getMyLocation();
+        Location location = locManager.getLocation();
         if (location != null) {
             LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location, true);
-            getInstance(getApplicationContext()).putDouble(TinyDB.KEY_CURRENT_LATITUDE, location.getLatitude());
-            getInstance(getApplicationContext()).putDouble(TinyDB.KEY_CURRENT_LONGITUDE, location.getLongitude());
+            getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LATITUDE, location.getLatitude());
+            getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LONGITUDE, location.getLongitude());
             latLong = new LatLng(location.getLatitude(), location.getLongitude());
             map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
             new FetchAndDisplayCurrentAddress(location).execute();
@@ -816,6 +845,12 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
     @Override
     public boolean onClusterItemClick(Person person) {
         return showProfile(person);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        locManager.connect();
     }
 
     class FetchAndDisplayCurrentAddress extends AsyncTask<Void, Void, Void> {

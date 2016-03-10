@@ -53,7 +53,7 @@ public class CustomClusterRenderer extends DefaultClusterRenderer<Person> {
             icon.setImageResource(R.drawable.ic_marker_ppl_with_same_int);
 //            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_ppl_with_same_int));
         } else if (item.getUsername().equalsIgnoreCase(username)) {
-            //Set Marker for self user
+            icon.setImageResource(R.drawable.ic_marker_my_location);
         } else {
             icon.setImageResource(R.drawable.ic_marker_su_users);
 //            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_su_users));

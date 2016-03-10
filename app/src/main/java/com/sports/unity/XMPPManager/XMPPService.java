@@ -1,12 +1,15 @@
 package com.sports.unity.XMPPManager;
 
 import android.app.ActivityManager;
+import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.SystemClock;
 import android.provider.ContactsContract;
 import android.util.Base64;
 import android.util.Log;
@@ -90,6 +93,7 @@ public class XMPPService extends Service {
             Intent serviceIntent = new Intent(context, XMPPService.class);
             context.startService(serviceIntent);
         } else {
+            Log.i("service", "running");
             Thread thread = new Thread(new Runnable() {
 
                 @Override
@@ -130,6 +134,24 @@ public class XMPPService extends Service {
     }
 
     @Override
+    public void onTaskRemoved(Intent rootIntent) {
+        super.onTaskRemoved(rootIntent);
+//        startService(getApplicationContext());
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        if (currentapiVersion == Build.VERSION_CODES.KITKAT) {
+            Intent restartService = new Intent(getApplicationContext(),
+                    XMPPService.class);
+            restartService.setPackage(getPackageName());
+            PendingIntent restartServicePI = PendingIntent.getService(
+                    getApplicationContext(), 1, restartService,
+                    PendingIntent.FLAG_ONE_SHOT);
+            AlarmManager alarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+            alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, restartServicePI);
+        }
+
+    }
+
+    @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
         Log.i("Service", "started");
 
@@ -139,7 +161,8 @@ public class XMPPService extends Service {
             public void run() {
 
                 sportsUnityDBHelper = SportsUnityDBHelper.getInstance(XMPPService.this);
-                SportsUnityDBHelper.getInstance(getApplicationContext()).addDummyMessageIfNotExist();
+
+                sportsUnityDBHelper.addDummyMessageIfNotExist();
 
                 UserUtil.init(getApplicationContext());
 
@@ -401,10 +424,9 @@ public class XMPPService extends Service {
             try {
                 Log.i("XMPP Connection", "authenticated");
 
-                PersonalMessaging.getInstance(XMPPService.this).updateBlockList(XMPPService.this);
-
                 attachChatRelatedListeners((XMPPTCPConnection) connection);
-//                getForms((XMPPTCPConnection) connection);
+
+                PersonalMessaging.getInstance(XMPPService.this).updateBlockList(XMPPService.this);
 
                 GlobalEventHandler.getInstance().xmppServerConnected(true);
             } catch (Exception ex) {
@@ -649,7 +671,7 @@ public class XMPPService extends Service {
         if (success == true && chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
 
             boolean eventDispatched = ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, fromId);
-            if( eventDispatched ){
+            if (eventDispatched) {
                 //nothing
             } else {
                 try {
@@ -660,7 +682,7 @@ public class XMPPService extends Service {
                         ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
                     }
                     byte[] image = sportsUnityDBHelper.getUserProfileImage(fromId);
-                    DisplayNotification(message.getBody(), messageFrom, mimeType, chatId, isGroupChat, groupServerId, image);
+                    DisplayNotification(message.getBody(), messageFrom, mimeType, chatId, isGroupChat, groupServerId, image, nearByChat);
                 } catch (XMPPException.XMPPErrorException e) {
                     e.printStackTrace();
                 } catch (SmackException.NoResponseException e) {
@@ -832,34 +854,34 @@ public class XMPPService extends Service {
         return success;
     }
 
-    private void DisplayNotification(String message, String from, String mimeType, long chatId, boolean isGroupChat, String groupServerId, byte[] image) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
-        if (sportsUnityDBHelper.isMute(chatId)) {
-            //nothing
+    private void DisplayNotification(String message, String from, String mimeType, long chatId, boolean isGroupChat, String groupServerId, byte[] image, boolean nearByChat) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+//        if (sportsUnityDBHelper.isMute(chatId)) {
+//            //nothing
+//        } else {
+        UserUtil.init(this);
+
+        String name = sportsUnityDBHelper.getUserNameByJid(from);
+        if (isGroupChat) {
+            name = name + "@" + sportsUnityDBHelper.getGroupSubject(groupServerId);
         } else {
-            UserUtil.init(this);
-
-            String name = sportsUnityDBHelper.getUserNameByJid(from);
-            if (isGroupChat) {
-                name = name + "@" + sportsUnityDBHelper.getGroupSubject(groupServerId);
-            } else {
-                //nothing
-            }
-
-            NotificationHandler notificationHandler = NotificationHandler.getInstance(getApplicationContext());
-            notificationHandler.addNotificationMessage(chatId, name, message, mimeType, image);
-
-            int chatCount = notificationHandler.getNotificationChatCount();
-            PendingIntent pendingIntent = null;
-            if (chatCount > 1) {
-                pendingIntent = getPendingIntentForMainActivity();
-            } else if (chatCount == 1) {
-                Contacts contact = sportsUnityDBHelper.getContactByJid(from);
-                pendingIntent = getPendingIntentForChatActivity(name, from, chatId, contact.id, groupServerId, contact.image, contact.isOthers());
-            }
-
-            notificationHandler.showNotification(getApplicationContext(), pendingIntent);
-            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.UNREAD_COUNT_KEY);
+            //nothing
         }
+
+        NotificationHandler notificationHandler = NotificationHandler.getInstance(getApplicationContext());
+        notificationHandler.addNotificationMessage(chatId, name, message, mimeType, image, nearByChat);
+
+        int chatCount = notificationHandler.getNotificationChatCount();
+        PendingIntent pendingIntent = null;
+        if (chatCount > 1) {
+            pendingIntent = getPendingIntentForMainActivity();
+        } else if (chatCount == 1) {
+            Contacts contact = sportsUnityDBHelper.getContactByJid(from);
+            pendingIntent = getPendingIntentForChatActivity(name, from, chatId, contact.id, groupServerId, contact.image, contact.isOthers());
+        }
+
+        notificationHandler.showNotification(getApplicationContext(), pendingIntent);
+        ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.UNREAD_COUNT_KEY);
+//        }
     }
 
     private PendingIntent getPendingIntentForMainActivity() {
