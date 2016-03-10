@@ -50,7 +50,8 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
             broadcast = (TextView) v.findViewById(R.id.broadcast);
             commentTime = (TextView) v.findViewById(R.id.comment_time);
 
-            commentTime.setTypeface(FontTypeface.getInstance(view.getContext()).getRobotoCondensedBold());
+            /*commentTime.setTypeface(FontTypeface.getInstance(view.getContext()).getRobotoCondensedBold());
+            broadcast.setTypeface(FontTypeface.getInstance(view.getContext()).getRobotoMedium());*/
         }
     }
 

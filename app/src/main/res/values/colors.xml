@@ -95,5 +95,6 @@
     <color name="loose">#ff6666</color>
 
     <color name="draw">#ffba00</color>
+    <color name="gray5">#424242</color>
 
 </resources>
