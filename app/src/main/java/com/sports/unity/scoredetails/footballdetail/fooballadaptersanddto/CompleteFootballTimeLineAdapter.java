@@ -112,7 +112,6 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
 
     @Override
     public int getItemCount() {
-        Log.i("count", "getItemCount: "+mValues.size());
         return mValues.size();
     }
 

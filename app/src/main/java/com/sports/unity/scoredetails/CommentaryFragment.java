@@ -53,6 +53,7 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
             dataServiceContract = (DataServiceContract)context;
             dataServiceContract.requestData(0);
         }
+       dataChanged();
     }
 
     @Override
@@ -65,6 +66,7 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
         matchId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
         commentaries = b.getParcelableArrayList("commentries");
         initView(view);
+        dataChanged();
         return view;
     }
 
@@ -98,9 +100,14 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
 
     @Override
     public void dataChanged() {
-       /* mRecyclerView.postInvalidate();
-        mAdapter.notifyDataSetChanged();
-        swipeRefreshLayout.setRefreshing(false);*/
+        try{
+            if(mRecyclerView !=null) {
+                mRecyclerView.postInvalidate();
+                mAdapter.notifyDataSetChanged();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }catch (Exception e){e.printStackTrace();}
+
 
     }
 
