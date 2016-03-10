@@ -289,8 +289,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-
-
                 ImageView flag1 = (ImageView)findViewById(R.id.team1_image);
                 ImageView flag2 = (ImageView)findViewById(R.id.team2_image);
 

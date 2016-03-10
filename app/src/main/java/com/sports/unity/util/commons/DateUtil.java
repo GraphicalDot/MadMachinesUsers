@@ -123,7 +123,6 @@ public class DateUtil {
             Date utilDate = with.getTime();
             days =   DATE_FORMAT.format(utilDate);
 
-
         }
 
         return days;

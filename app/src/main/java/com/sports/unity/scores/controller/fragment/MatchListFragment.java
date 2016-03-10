@@ -260,7 +260,7 @@ public class MatchListFragment extends Fragment {
                    if(daysMap.containsKey(day)){
                        Log.i("League Name", "handleContent: "+leagueName);
                        Log.i("Day Name", "handleContent: "+day);
-                       Map<String, MatchListWrapperDTO> leagueMapTemp = daysMap.get(day);
+                        Map<String, MatchListWrapperDTO> leagueMapTemp = daysMap.get(day);
                         if(leagueMapTemp.containsKey(leagueName)){
 
                             MatchListWrapperDTO dayGroupDto =    leagueMapTemp.get(leagueName);
@@ -271,11 +271,10 @@ public class MatchListFragment extends Fragment {
                             dayGroupDto.setEpochTime(epochTime);
                             dayGroupDto.setSportsType(sportsType);
                             dayGroupDto.setLeagueName(leagueName);
-                            leagueMapTemp.put(leagueName, dayGroupDto);
-                            daysMap.put(day,leagueMapTemp);
+                            //leagueMapTemp.put(leagueName, dayGroupDto);
+                           /* daysMap.put(day,leagueMapTemp);*/
                         } else{
                             MatchListWrapperDTO dayGroupDto =   new MatchListWrapperDTO();
-                            Map<String, MatchListWrapperDTO> leagueMapTempleagueNew = new HashMap<>();
                             ArrayList<JSONObject> dayGroupList = new ArrayList<>();
                             dayGroupList.add(object);
                             dayGroupDto.setList(dayGroupList);
@@ -283,8 +282,8 @@ public class MatchListFragment extends Fragment {
                             dayGroupDto.setEpochTime(epochTime);
                             dayGroupDto.setSportsType(sportsType);
                             dayGroupDto.setLeagueName(leagueName);
-                            leagueMapTempleagueNew.put(leagueName, dayGroupDto);
-                            daysMap.put(day,leagueMapTemp);
+                            leagueMapTemp.put(leagueName, dayGroupDto);
+                           /* daysMap.put(day,leagueMapTemp);*/
                         }
                     }else{
 
