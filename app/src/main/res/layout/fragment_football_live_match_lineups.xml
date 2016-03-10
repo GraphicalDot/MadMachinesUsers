@@ -7,11 +7,12 @@
         android:id="@+id/parent_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        >
 
 
         <LinearLayout
-            android:id="@+id/rootLayout"
+            android:id="@+id/manager_root"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
@@ -90,9 +91,10 @@
                 android:id="@+id/rv_lineup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingBottom="@dimen/horizontal_padding_very_very_small"
                 >
             </android.support.v7.widget.RecyclerView>
+
+
         </LinearLayout>
 
         <LinearLayout
@@ -124,21 +126,23 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_substitutes"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                >
             </android.support.v7.widget.RecyclerView>
 
         </LinearLayout>
-    <include
-        android:id="@+id/error"
-        layout="@layout/error_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center" />
+        <include
+            android:id="@+id/error"
+            layout="@layout/error_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
 
     </LinearLayout>
 

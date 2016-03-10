@@ -5,7 +5,6 @@
     android:background="@color/ColorPrimary"
     android:orientation="vertical"
     tools:context="com.sports.unity.scores.ScoreDetailActivity">
-
         <include
             android:id="@+id/tool_bar"
             layout="@layout/toolbar_score_details"
@@ -33,7 +32,7 @@
                     android:layout_marginTop="@dimen/vertical_padding_very_very_small"
                     android:text=""
                     android:textColor="@color/score_dark_grey"
-                    android:textSize="@dimen/font_size_small_medium"
+                    android:textSize="@dimen/font_size_very_small"
                     />
 
                 <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
@@ -44,7 +43,7 @@
                     android:layout_marginLeft="@dimen/horizontal_padding_small"
                     android:text=""
                     android:textColor="@color/score_light_grey"
-                    android:textSize="@dimen/font_size_small_medium"
+                    android:textSize="@dimen/font_size_very_small"
                     />
 
             </LinearLayout>
@@ -138,7 +137,7 @@
                     android:maxLength="30"
                     android:singleLine="true"
                     android:text=""
-                    android:textColor="@color/news_headline_mini"
+                    android:textColor="@color/gray5"
                     />
             </LinearLayout>
             <LinearLayout
@@ -153,13 +152,13 @@
                     android:orientation="horizontal"
                     android:layout_gravity="left"
                     android:gravity="center">
-                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                         android:id="@+id/tv_match_time"
                         android:paddingTop="@dimen/horizontal_padding_very_very_small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:textColor="@color/news_headline_mini"
+                        android:textColor="@color/gray5"
                         android:textSize="@dimen/font_size_large"
                         android:text=""
                         />
@@ -210,7 +209,7 @@
                         android:paddingLeft="@dimen/vertical_padding_very_very_small"
                         android:layout_height="wrap_content"
                         android:text=""
-                        android:textColor="@color/gray2"
+                        android:textColor="@color/gray1"
                         android:textSize="@dimen/font_size_small_large" />
                 </LinearLayout>
 
@@ -222,7 +221,7 @@
                     android:maxLength="30"
                     android:singleLine="true"
                     android:text=""
-                    android:textColor="@color/news_headline_mini"
+                    android:textColor="@color/gray5"
                     />
 
             </LinearLayout>
@@ -242,6 +241,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text=""
+            android:textColor="@color/gray1"
             android:textSize="@dimen/font_size_small_medium"/>
 
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView

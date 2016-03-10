@@ -72,6 +72,7 @@ public class Constants {
     public static final int REQUEST_CODE_EDIT_SPORT = 1496;
     public static final int REQUEST_CODE_ADD_SPORT = 1595;
     public static final int REQUEST_CODE_PROFILE = 1199;
+    public static final int REQUEST_CODE_VIEW_PROFILE = 1299;
     public static final int REQUEST_CODE_CAMERA_EXTERNAL_STORAGE_PERMISSION = 101;
     public static final int REQUEST_CODE_CONTACT_PERMISSION = 102;
     public static final int REQUEST_CODE_PHONE_STATE_PERMISSION = 103;
@@ -91,4 +92,5 @@ public class Constants {
     public static final String INTENT_KEY_TEAM1_NAME = "team1";
     public static final String INTENT_KEY_TEAM2_NAME = "team2";
     public static final long TIMEINMILISECOND = 600;
+    public static final String ERRORRESPONSE ="{\"success\":false,\"error\":true}";
 }

@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -78,6 +79,8 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
     private ProgressBar progressBar;
    private  CompletedMatchScoreCardHandler completedMatchScoreCardHandler;
     private String matchId;
+    private RelativeLayout team1ScoreDetails;
+    private RelativeLayout team2ScoreDetails;
     public CompletedMatchScoreCardFragment() {
         // Required empty public constructor
     }
@@ -155,39 +158,68 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         teamBFallOfWicketRecycler.setAdapter(teamBFallOfWicketAdapter);
         teamBFallOfWicketRecycler.setNestedScrollingEnabled(false);
         initErrorLayout(view);
+
+        team1ScoreDetails = (RelativeLayout) view.findViewById(R.id.team1_scroll_details);
+        team2ScoreDetails = (RelativeLayout) view.findViewById(R.id.team2_scroll_details);
         ivDwn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (firstBattingLinearLayout.getVisibility() == View.GONE) {
-                    firstBattingLinearLayout.setVisibility(View.VISIBLE);
-                    firstBowlingLinearLayout.setVisibility(View.VISIBLE);
-                    firstFallofWicketsLinearLayout.setVisibility(View.VISIBLE);
-                     ivDwn.setImageResource(R.drawable.ic_down_arrow_gray);
-                } else {
-                    firstBattingLinearLayout.setVisibility(View.GONE);
-                    firstBowlingLinearLayout.setVisibility(View.GONE);
-                    firstFallofWicketsLinearLayout.setVisibility(View.GONE);
-                    ivDwn.setImageResource(R.drawable.ic_up_arrow_gray);
-                }
+                ShowHideTeamFirstScoreCard();
             }
         });
         ivDwnSecond.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (secondBattingLinearLayout.getVisibility() == View.GONE) {
-                    secondBattingLinearLayout.setVisibility(View.VISIBLE);
-                    secondBowlingLinearLayout.setVisibility(View.VISIBLE);
-                    secondFallofWicketsLinearLayout.setVisibility(View.VISIBLE);
-                    ivDwnSecond.setImageResource(R.drawable.ic_down_arrow_gray);
-                } else {
-                    secondBattingLinearLayout.setVisibility(View.GONE);
-                    secondBowlingLinearLayout.setVisibility(View.GONE);
-                    secondFallofWicketsLinearLayout.setVisibility(View.GONE);
-                    ivDwnSecond.setImageResource(R.drawable.ic_up_arrow_gray);
+                showhideTeamSecondScoreCard();
+            }
+        });
+
+        team1ScoreDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                {
+                    ShowHideTeamFirstScoreCard();
                 }
             }
         });
+
+        team2ScoreDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showhideTeamSecondScoreCard();
+            }
+        });
+
   }
+
+    private void showhideTeamSecondScoreCard() {
+        if (secondBattingLinearLayout.getVisibility() == View.GONE) {
+            secondBattingLinearLayout.setVisibility(View.VISIBLE);
+            secondBowlingLinearLayout.setVisibility(View.VISIBLE);
+            secondFallofWicketsLinearLayout.setVisibility(View.VISIBLE);
+            ivDwnSecond.setImageResource(R.drawable.ic_down_arrow_gray);
+        } else {
+            secondBattingLinearLayout.setVisibility(View.GONE);
+            secondBowlingLinearLayout.setVisibility(View.GONE);
+            secondFallofWicketsLinearLayout.setVisibility(View.GONE);
+            ivDwnSecond.setImageResource(R.drawable.ic_up_arrow_gray);
+        }
+    }
+
+    private void ShowHideTeamFirstScoreCard() {
+        if (firstBattingLinearLayout.getVisibility() == View.GONE) {
+            firstBattingLinearLayout.setVisibility(View.VISIBLE);
+            firstBowlingLinearLayout.setVisibility(View.VISIBLE);
+            firstFallofWicketsLinearLayout.setVisibility(View.VISIBLE);
+             ivDwn.setImageResource(R.drawable.ic_down_arrow_gray);
+        } else {
+            firstBattingLinearLayout.setVisibility(View.GONE);
+            firstBowlingLinearLayout.setVisibility(View.GONE);
+            firstFallofWicketsLinearLayout.setVisibility(View.GONE);
+            ivDwn.setImageResource(R.drawable.ic_up_arrow_gray);
+        }
+    }
+
     private void initProgress(View view) {
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
@@ -202,10 +234,11 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
     }
     @Override
-    public void handleContent(JSONObject object) {
+    public void handleContent(String content) {
         {
             showProgress();
               try {
+                  JSONObject object = new JSONObject(content);
                boolean success = object.getBoolean("success");
                 boolean error = object.getBoolean("error");
 
@@ -248,14 +281,13 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         teamBBowlingCardList.clear();
         teamBFallOfWicketCardList.clear();
         linearLayout.setVisibility(View.VISIBLE);
+        JSONArray jsonArray = jsonObject.getJSONArray("data");
+        final JSONObject dataObject = jsonArray.getJSONObject(0);
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-
-                            JSONArray jsonArray = jsonObject.getJSONArray("data");
-                            JSONObject dataObject = jsonArray.getJSONObject(0);
                             tvFirstTeamInning.setText(dataObject.getString("team_a") + " Innings");
                             tvSecondTeamInning.setText(dataObject.getString("team_b") + " Innings");
                             JSONObject scoreCard = dataObject.getJSONObject("scorecard");
@@ -353,6 +385,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                                     liveAndCompletedCricketBattingCardDTO.setTvFourGainByPlayer(battingObject.getString("4s"));
                                     liveAndCompletedCricketBattingCardDTO.setTvSixGainByPlayer(battingObject.getString("6s"));
                                     liveAndCompletedCricketBattingCardDTO.setTvPlayerRun(battingObject.getString("R"));
+                                    liveAndCompletedCricketBattingCardDTO.setTvWicketBy(battingObject.getString("player_status"));
                                     teamBBattingCardList.add(liveAndCompletedCricketBattingCardDTO);
                                 }
                                 for (int j= 0 ; j<teamBBowlingArray.length();j++){

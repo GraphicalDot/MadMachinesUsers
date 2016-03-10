@@ -84,6 +84,8 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     private TextView tvlossmatchofsecondteam;
     private View secondview;
     private TextView tvsecondpremieradivision;
+    private View parentView;
+    private LinearLayout errorLayout;
 
     public UpCommingFootballMatchFromFragment() {
         // Required empty public constructor
@@ -108,7 +110,6 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_football_upcoming_match_form_v2, container, false);
         initView(view);
-        showProgressBar();
         return view;
     }
     private void initView(View view) {
@@ -147,7 +148,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         tvwinmatchofsecondteam=(TextView)view.findViewById(R.id.tv_win_match_of_second_team);
         tvdrawmatchofsecondteam=(TextView)view.findViewById(R.id.tv_draw_match_of_second_team);
         tvlossmatchofsecondteam=(TextView)view.findViewById(R.id.tv_loss_match_of_second_team);
-
+        parentView = view.findViewById(R.id.root_layout);
         commentaryrefresh=(SwipeRefreshLayout)view.findViewById(R.id.commentary_refresh);
 
     }
@@ -177,22 +178,22 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
-                Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
                 showErrorLayout(getView());
             }
         }
     }
     private void initErrorLayout(View view) {
         try {
-            LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+            errorLayout = (LinearLayout) view.findViewById(R.id.error);
             errorLayout.setVisibility(View.GONE);
         }catch (Exception e){e.printStackTrace();}
     }
 
     private void showErrorLayout(View view) {
 
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        parentView.setVisibility(View.GONE);
         errorLayout.setVisibility(View.VISIBLE);
+
 
     }
 
@@ -200,7 +201,6 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         hideProgressBar();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         final JSONArray dataArray = jsonObject.getJSONArray("data");
-
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -213,16 +213,14 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                     tvnamefirstteam.setText(teamFromObject.getString("team_name"));
                                     if(!teamFromObject.isNull("recent_form")){
                                         String recentForm = teamFromObject.getString("recent_form");
-                                        ivfirstmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(0), getBallColor(recentForm.charAt(0))));
+                                        if(recentForm !=null && recentForm.length()<1){
+                                            initializeTeamForms(recentForm);
+                                        }else{
+                                            showErrorLayout(getView());
+                                        }
 
-                                        ivsecondmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(1), getBallColor(recentForm.charAt(1))));
-
-                                        ivthirdmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(2), getBallColor(recentForm.charAt(2))));
-
-                                        ivforthmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(3), getBallColor(recentForm.charAt(3))));
-
-                                        ivfifthmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(4), getBallColor(recentForm.charAt(4))));
                                        }
+
                                     if(!teamFromObject.isNull("team_points")){
                                         tvpointoffirstteam.setText(teamFromObject.getString("team_points"));}
                                     if(!teamFromObject.isNull("games_won")) {
@@ -236,15 +234,12 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                     tvnamesecondteam.setText(teamFromObject.getString("team_name"));
                                     if(!teamFromObject.isNull("recent_form")) {
                                         String recentForm = teamFromObject.getString("recent_form");
-                                        tvfirstmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(0), getBallColor(recentForm.charAt(0))));
+                                        if(recentForm !=null && recentForm.length()<1){
+                                            initFromDataTeamSecond(recentForm);
+                                        }else{
+                                            showErrorLayout(getView());
+                                        }
 
-                                        tvsecondmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(1), getBallColor(recentForm.charAt(1))));
-
-                                        tvthirdmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(2), getBallColor(recentForm.charAt(2))));
-
-                                        tvforthmatchteamsecond.setImageDrawable(getBallColor(""+recentForm.charAt(3),getBallColor(recentForm.charAt(3))));
-
-                                        tvfifthmatchteamsecond.setImageDrawable(getBallColor(""+recentForm.charAt(4),getBallColor(recentForm.charAt(4))));
 
                                     } if(!teamFromObject.isNull("team_points")){
                                         tvpointofsecondteam.setText(teamFromObject.getString("team_points"));}
@@ -256,6 +251,8 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                     if(!teamFromObject.isNull("games_lost")){
                                         tvlossmatchofsecondteam.setText(teamFromObject.getString("games_lost"));}
 
+                                }else{
+                                    showErrorLayout(getView());
                                 }
 
                             }
@@ -271,6 +268,30 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
             });
         }
 
+    }
+
+    private void initFromDataTeamSecond(String recentForm) {
+        tvfirstmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(0), getBallColor(recentForm.charAt(0))));
+
+        tvsecondmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(1), getBallColor(recentForm.charAt(1))));
+
+        tvthirdmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(2), getBallColor(recentForm.charAt(2))));
+
+        tvforthmatchteamsecond.setImageDrawable(getBallColor(""+recentForm.charAt(3),getBallColor(recentForm.charAt(3))));
+
+        tvfifthmatchteamsecond.setImageDrawable(getBallColor(""+recentForm.charAt(4),getBallColor(recentForm.charAt(4))));
+    }
+
+    private void initializeTeamForms(String recentForm) {
+        ivfirstmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(0), getBallColor(recentForm.charAt(0))));
+
+        ivsecondmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(1), getBallColor(recentForm.charAt(1))));
+
+        ivthirdmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(2), getBallColor(recentForm.charAt(2))));
+
+        ivforthmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(3), getBallColor(recentForm.charAt(3))));
+
+        ivfifthmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(4), getBallColor(recentForm.charAt(4))));
     }
 
 

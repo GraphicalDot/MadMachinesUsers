@@ -455,7 +455,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                     ContactsEntry.COLUMN_AVAILABLE_STATUS
             };
 
-            String selection = ContactsEntry.COLUMN_AVAILABLE_STATUS + " != " + Contacts.AVAILABLE_NOT;
+            String selection = ContactsEntry.COLUMN_AVAILABLE_STATUS + " = " + Contacts.AVAILABLE_BY_MY_CONTACTS;
             String[] selectionArgs = null;
             String sortOrder = ContactsEntry.COLUMN_NAME + " COLLATE NOCASE ASC ";
 
@@ -504,7 +504,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             registerCondition = " is NULL ";
         }
 
-        String selection = ContactsEntry.COLUMN_JID + registerCondition + " and " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " != " + Contacts.AVAILABLE_NOT;
+        String selection = ContactsEntry.COLUMN_JID + registerCondition + " and " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " != " + Contacts.AVAILABLE_NOT +
+                " AND " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " = " + Contacts.AVAILABLE_BY_MY_CONTACTS;
         String[] selectionArgs = null;
         String sortOrder = ContactsEntry.COLUMN_NAME + " COLLATE NOCASE ASC ";
 
@@ -1596,7 +1597,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         );
 
         if (c.moveToFirst()) {
-            value = c.getInt(0) >= Contacts.AVAILABLE_BY_OTHER_CONTACTS ;
+            value = c.getInt(0) >= Contacts.AVAILABLE_BY_OTHER_CONTACTS;
         }
         return value;
     }

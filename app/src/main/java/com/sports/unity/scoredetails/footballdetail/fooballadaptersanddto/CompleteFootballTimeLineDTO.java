@@ -5,7 +5,8 @@ import android.graphics.drawable.Drawable;
 /**
  * Created by cfeindia on 28/2/16.
  */
-public class CompleteFootballTimeLineDTO {
+public class CompleteFootballTimeLineDTO implements  Comparable<CompleteFootballTimeLineDTO>{
+    private int minute;
     private String teamName;
     private String tvTeamFirstTime;
     private String tvTeamSecondTime;
@@ -14,6 +15,15 @@ public class CompleteFootballTimeLineDTO {
     private String tvTeamFirstOffPlayer;
     private String tvTeamSecondOffPlayer;
     private Drawable drwDrawable;
+    private String matchStatus;
+
+    public int getMinute() {
+        return minute;
+    }
+
+    public void setMinute(int minute) {
+        this.minute = minute;
+    }
 
     public String getTvTeamFirstTime() {
         return tvTeamFirstTime;
@@ -79,6 +89,21 @@ public class CompleteFootballTimeLineDTO {
         this.teamName = teamName;
     }
 
+    public String getMatchStatus() {
+        return matchStatus;
+    }
 
+    public void setMatchStatus(String matchStatus) {
+        this.matchStatus = matchStatus;
+    }
 
+    @Override
+    public int compareTo(CompleteFootballTimeLineDTO another) {
+        if (this.tvTeamFirstTime == null) {
+            return 1;
+        } else if (another.tvTeamFirstTime == null) {
+            return 1;
+        }
+        return this.tvTeamFirstTime.compareTo(another.tvTeamFirstTime);
+    }
 }

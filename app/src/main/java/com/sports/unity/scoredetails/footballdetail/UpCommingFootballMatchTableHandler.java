@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONObject;
 
@@ -59,6 +60,7 @@ public class UpCommingFootballMatchTableHandler {
         Log.i("Score Detail", "Request Score Details");
 
         String url = BASEURL+leagueId;
+        Log.i("Get football table data",url);
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
@@ -68,11 +70,8 @@ public class UpCommingFootballMatchTableHandler {
     }
     private void handleResponse(String response) {
         try{
-            JSONObject jsonObject = new JSONObject(response);
             Log.i("Score Card", "handleResponse: ");
-            if(jsonObject.getBoolean("success")){
                 mContentListener.handleContent(response);
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -82,6 +81,12 @@ public class UpCommingFootballMatchTableHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
+        try{
+            Log.i("Score Card", "handleResponse: ");
+            mContentListener.handleContent(Constants.ERRORRESPONSE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         }
 
     public void addListener(UpCommingFootballMatchTableContentListener contentListener) {

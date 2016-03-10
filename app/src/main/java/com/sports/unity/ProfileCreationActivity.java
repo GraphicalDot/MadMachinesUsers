@@ -146,11 +146,9 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.progress_light), android.graphics.PorterDuff.Mode.MULTIPLY);
 
-
         addFacebookCallback();
         addListenerToContinueButton();
         addListnerToProfilePicture();
-
 
         {
             if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
@@ -228,7 +226,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     }
 
     private void onUnSuccessfulLogin() {
-        if( CommonUtil.isInternetConnectionAvailable(ProfileCreationActivity.this) ){
+        if (CommonUtil.isInternetConnectionAvailable(ProfileCreationActivity.this)) {
             Toast.makeText(ProfileCreationActivity.this, R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(ProfileCreationActivity.this, R.string.message_login_failed, Toast.LENGTH_SHORT).show();
@@ -236,7 +234,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     }
 
     private void onUnSuccessfulVCardSubmit() {
-        if( CommonUtil.isInternetConnectionAvailable(ProfileCreationActivity.this) ){
+        if (CommonUtil.isInternetConnectionAvailable(ProfileCreationActivity.this)) {
             Toast.makeText(ProfileCreationActivity.this, R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(ProfileCreationActivity.this, R.string.message_submit_vcard_failed, Toast.LENGTH_SHORT).show();
@@ -285,15 +283,15 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
     @Override
     public void handleContent(String requestTag, Object content) {
 
-        if( requestTag.equals(UserProfileHandler.CONNECT_XMPP_SERVER_TAG) ){
-            Boolean success = (Boolean)content;
+        if (requestTag.equals(UserProfileHandler.CONNECT_XMPP_SERVER_TAG)) {
+            Boolean success = (Boolean) content;
 
-            if( success == true ) {
+            if (success == true) {
                 String phoneNumber = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USERNAME);
                 String jid = TinyDB.getInstance(ProfileCreationActivity.this).getString(TinyDB.KEY_USER_JID);
 
                 Contacts contacts = new Contacts(userName, jid, phoneNumber, byteArray, -1, getResources().getString(R.string.default_status), Contacts.AVAILABLE_NOT);
-                UserProfileHandler.getInstance().submitUserProfile( ProfileCreationActivity.this, contacts, LISTENER_KEY);
+                UserProfileHandler.getInstance().submitUserProfile(ProfileCreationActivity.this, contacts, LISTENER_KEY);
             } else {
                 ProfileCreationActivity.this.runOnUiThread(new Runnable() {
                     @Override
@@ -303,7 +301,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
                     }
                 });
             }
-        } else if ( requestTag.equals(UserProfileHandler.FB_REQUEST_TAG) && content != null) {
+        } else if (requestTag.equals(UserProfileHandler.FB_REQUEST_TAG) && content != null) {
             final UserProfileHandler.ProfileDetail profileDetail = (UserProfileHandler.ProfileDetail) content;
 
             if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -316,7 +314,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
                     }
                 });
             }
-        } else if ( requestTag.equals(UserProfileHandler.SUBMIT_PROFILE_REQUEST_TAG) && content != null) {
+        } else if (requestTag.equals(UserProfileHandler.SUBMIT_PROFILE_REQUEST_TAG) && content != null) {
 
             final boolean success = (boolean) content;
 

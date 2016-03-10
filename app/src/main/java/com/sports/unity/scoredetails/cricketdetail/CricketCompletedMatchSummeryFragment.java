@@ -19,6 +19,7 @@ import com.sports.unity.R;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -97,17 +98,18 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
 
     }
     @Override
-    public void handleContent(JSONObject object) {
+    public void handleContent(String content) {
         {
 
             try {
                 showProgress();
-                boolean success = object.getBoolean("success");
-                boolean error = object.getBoolean("error");
+                JSONObject jsonObject = new JSONObject(content);
+                boolean success = jsonObject.getBoolean("success");
+                boolean error = jsonObject.getBoolean("error");
 
                 if( success ) {
 
-                    renderDisplay(object);
+                    renderDisplay(jsonObject);
 
                 } else {
                     Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();
@@ -154,7 +156,7 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
             JSONObject battingData = null;
 
               final JSONArray statsArray= manOftheMatch.getJSONArray("stats");
- final JSONObject statObject = statsArray.getJSONObject(0);
+          final JSONObject statObject = statsArray.getJSONObject(0);
 
 
 
@@ -188,7 +190,7 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
                                 tvPlayerStrike_Rate.setText(statObject.getString("strike_rate"));}else{
                                 tvPlayerStrike_Rate.setText("N/A");
                             }
-                            tvMatchDate.setText(date);
+                            tvMatchDate.setText(DateUtil.getFormattedDate(date));
                             tvTossWinTeam.setText(toss);
                             tvSeriesName.setText(matchName);
                             tvUmpiresName.setText("N/A");

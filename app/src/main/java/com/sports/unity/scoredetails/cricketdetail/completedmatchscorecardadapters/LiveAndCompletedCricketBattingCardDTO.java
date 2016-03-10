@@ -6,6 +6,7 @@ import android.widget.TextView;
  * Created by madmachines on 18/2/16.
  */
 public class LiveAndCompletedCricketBattingCardDTO {
+    private String playerId;
     private String tvPlayerName;
     private String tvPlayerRun;
     private String tvBallPlayByPlayer;
@@ -13,6 +14,15 @@ public class LiveAndCompletedCricketBattingCardDTO {
     private String tvSixGainByPlayer;
     private String tvWicketBy;
     private String tvSrRateOfPlayer;
+
+
+    public String getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(String playerId) {
+        this.playerId = playerId;
+    }
 
     public String getTvPlayerName() {
         return tvPlayerName;

@@ -76,7 +76,7 @@
 
     <dimen name="keyboard_tab_height">35dp</dimen>
     <dimen name="invite_button_height">25dp</dimen>
-    <!-- ends -->
+    <!-- ends -->-5dp
 
     <!-- filter related  -->
     <dimen name="filter_next_size">20sp</dimen>
@@ -133,7 +133,7 @@
     <dimen name="layout_height_card_divider">1dp</dimen>
     <!-- ends -->
 
-    <!--  player current match summery-->
+    <!--  player current match summery-->-5dp
     <dimen name="margin_divider">60dp</dimen>
     <!-- ends -->
 
@@ -157,4 +157,16 @@
     <dimen name="people_nearme_custom_location_height">60dp</dimen>
 
 
+    <dimen name="football_match_stats_width">32dp</dimen>
+    <dimen name="football_match_stats_height">32dp</dimen>
+<!--football player information-->
+
+    <dimen name="icon_football_info">16dp</dimen>
+    <!--score card-->
+
+    <dimen name="layout_minutes">-5dp</dimen>
+    <!--football match completed lineup-->
+
+    <dimen name="layout_height">50dp</dimen>
+    <dimen name="layout_center_img">16dp</dimen>
 </resources>

@@ -3,6 +3,7 @@ package com.sports.unity.scoredetails.footballdetail;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.percent.PercentRelativeLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
@@ -120,12 +121,17 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
                     renderDisplay(jsonObject);
 
                 } else {
+                    llTeamSummary.setVisibility(View.VISIBLE);
+                    hideProgressBar();
                     showErrorLayout(getView());
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
+               llTeamSummary.setVisibility(View.VISIBLE);
+               hideProgressBar();
                 showErrorLayout(getView());
             }
+
         }
     }
 
@@ -137,10 +143,10 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
     }
 
     private void showErrorLayout(View view) {
-
+        PercentRelativeLayout percentRelativeLayout=(PercentRelativeLayout)view.findViewById(R.id.pl_team_table);
+        percentRelativeLayout.setVisibility(View.INVISIBLE);
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.VISIBLE);
-
     }
     private void  showProgressBar(){
         progressBar.setVisibility(View.VISIBLE);

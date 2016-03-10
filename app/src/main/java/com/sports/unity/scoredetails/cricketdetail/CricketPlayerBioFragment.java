@@ -16,12 +16,14 @@ import android.widget.Toast;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -37,6 +39,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     private TextView tvPlayerBowingStyle;
     private TextView tvPlayerMajorTeam;
     private ProgressBar progressBar;
+    private LinearLayout linearLayoutBio;
     public CricketPlayerBioFragment() {
         super();
     }
@@ -60,6 +63,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
         return view;
     }
     private void initView(View view) {
+        linearLayoutBio = (LinearLayout) view.findViewById(R.id.ll_bio_layout);
         tvPlayerDateOfBirth = (TextView) view.findViewById(R.id.tv_player_date_of_birth);
         tvPlayerbattingStyle = (TextView) view.findViewById(R.id.tv_player_batting_style);
         tvPlayerBowingStyle = (TextView) view.findViewById(R.id.tv_player_bowing_style);
@@ -80,15 +84,17 @@ showProgress();
             boolean error = jsonObject.getBoolean("error");
 
             if( success ) {
-
+                linearLayoutBio.setVisibility(View.VISIBLE);
                 renderDisplay(jsonObject);
 
             } else {
+                linearLayoutBio.setVisibility(View.GONE);
                 showErrorLayout(getView());
                 Toast.makeText(getActivity(), R.string.player_details_not_exists, Toast.LENGTH_SHORT).show();
 
             }
         }catch (Exception ex){
+            linearLayoutBio.setVisibility(View.GONE);
             ex.printStackTrace();
             showErrorLayout(getView());
             Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
@@ -134,7 +140,12 @@ showProgress();
                     try {
 
                       if (!playerInfo.isNull("Born")) {
-                            tvPlayerDateOfBirth.setText(playerInfo.getString("Born"));
+                          try{
+                              tvPlayerDateOfBirth.setText(DateUtil.getFormattedDate(playerInfo.getString("Born")));
+                          }catch (Exception e){
+                              tvPlayerDateOfBirth.setText(playerInfo.getString("Born"));
+                          }
+
                         }
                         if (!playerInfo.isNull("Batting style")) {
                             tvPlayerbattingStyle.setText(playerInfo.getString("Batting style"));
@@ -150,7 +161,7 @@ showProgress();
                             JSONArray array = data.getJSONArray("teams_played_for");
                             for (int i = 0; i < array.length(); i++) {
 
-                                tvPlayerMajorTeam.setText(array.get(i).toString()+"\n");
+                                tvPlayerMajorTeam.setText(array.get(i).toString()+"\n\n");
                             }
 
                         }

@@ -3,6 +3,7 @@ package com.sports.unity.common.controller;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
@@ -24,6 +25,7 @@ import com.sports.unity.common.model.FavouriteContentHandler;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -49,11 +51,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private EditText searchText;
     public boolean isSearchEdit;
     public String searchString;
-    public boolean isFromNav;
     private boolean isResultRequired;
-    private int listSize = 0;
-    int fragmentNum = 0;
-    JSONObject jsonObject = null;
+    public int fragmentNum = 0;
+    public ViewPager pager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,7 +64,6 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         sportsSelected = UserUtil.getSportsSelected();
         bundle = getIntent().getExtras();
         try {
-            isFromNav = true;
             isResultRequired = getIntent().getExtras().getBoolean(Constants.RESULT_REQUIRED);
         } catch (NullPointerException booleanNull) {
 
@@ -82,14 +81,10 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         Button skip = (Button) findViewById(R.id.skip);
         skip.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
         skip.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
-        if (!UserUtil.isFilterCompleted() || isFromNav) {
-            skip.setVisibility(View.VISIBLE);
-        } else {
-            skip.setVisibility(View.INVISIBLE);
-        }
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+//                enableNotificationsWhenSettingUpFirstTime();
                 UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
                 FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).invalidate(AdvancedFilterActivity.this);
                 if (isResultRequired) {
@@ -107,11 +102,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         Button next = (Button) findViewById(R.id.next);
         next.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         next.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
-        if (!UserUtil.isFilterCompleted() || isFromNav) {
-            next.setVisibility(View.VISIBLE);
-        } else {
-            next.setVisibility(View.INVISIBLE);
-        }
+        next.setVisibility(View.VISIBLE);
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -120,29 +111,93 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         });
     }
 
+    public void setUpViewPager(ViewPager pager) {
+        this.pager = pager;
+        pager.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                closeSearch();
+            }
+        });
+    }
+
     private void handleNextClick() {
         FavouriteItemWrapper.getInstance(this).saveList(this, favList);
-
-        if (UserUtil.isFilterCompleted() && !isFromNav) {
-            finish();
-        } else if (fragmentNum < sportsSelected.size()) {
-            bundle.putString(Constants.SPORTS_TYPE, sportsSelected.get(fragmentNum));
-            replaceFragment(bundle);
-            titleText.setText(CommonUtil.capitalize(sportsSelected.get(fragmentNum)));
-            fragmentNum++;
-        } else if (fragmentNum == sportsSelected.size()) {
-            UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
-            ContactsHandler.getInstance().addCallToUpdateUserFavorites(getApplicationContext());
-            if (isResultRequired) {
-                setResult(RESULT_OK, getIntent());
-                finish();
+        if (fragmentNum < sportsSelected.size()) {
+            if (pager.getCurrentItem() < pager.getAdapter().getCount() - 1) {
+                pager.setCurrentItem(pager.getCurrentItem() + 1);
             } else {
-                moveToNextActivity(MainActivity.class);
+                bundle.putString(Constants.SPORTS_TYPE, sportsSelected.get(fragmentNum));
+                replaceFragment(bundle);
+                titleText.setText(CommonUtil.capitalize(sportsSelected.get(fragmentNum)));
+                fragmentNum++;
+            }
+        } else if (fragmentNum == sportsSelected.size()) {
+//            enableNotificationsWhenSettingUpFirstTime();
+            if (pager.getCurrentItem() < pager.getAdapter().getCount() - 1) {
+                pager.setCurrentItem(pager.getCurrentItem() + 1);
+            } else {
+                UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
+
+                ContactsHandler.getInstance().addCallToUpdateUserFavorites(getApplicationContext());
+                if (isResultRequired) {
+                    setResult(RESULT_OK, getIntent());
+                    finish();
+                } else {
+                    moveToNextActivity(MainActivity.class);
+                }
             }
         }
         closeSearch();
 
     }
+
+    private void onBack() {
+        if (isSearchEdit) {
+            closeSearch();
+        } else {
+            FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).invalidate(AdvancedFilterActivity.this);
+            if (pager.getCurrentItem() != 0) {
+                pager.setCurrentItem(pager.getCurrentItem() - 1);
+            } else {
+                fragmentNum--;
+                if (fragmentNum != 0) {
+                    bundle.putString(Constants.SPORTS_TYPE, sportsSelected.get(fragmentNum - 1));
+                    replaceFragment(bundle);
+                    titleText.setText(CommonUtil.capitalize(UserUtil.getSportsSelected().get(fragmentNum - 1)));
+                } else if (fragmentNum == 0) {
+                    if (!isResultRequired) {
+                        moveToNextActivity(SelectSportsActivity.class);
+                    } else {
+                        if (isResultRequired) {
+                            setResult(RESULT_CANCELED);
+                            finish();
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+//    private void enableNotificationsWhenSettingUpFirstTime() {
+//
+//        /**
+//         *  When we are setting up the app first time notifications needs to be disabled
+//         *  before entering the main page so its does not hinder the registration process
+//         */
+//
+//        if (UserUtil.isFilterCompleted()) {
+//            //do nothing
+//        } else {
+//            UserUtil.setNotificationAndSound(getApplicationContext(), true);
+//            UserUtil.setNotificationPreviews(getApplicationContext(), true);
+//            UserUtil.setConversationVibrate(getApplicationContext(), true);
+//            UserUtil.setConversationTones(getApplicationContext(), true);
+//            UserUtil.setNotificationLight(getApplicationContext(), true);
+//        }
+//    }
 
 
     private void setUpToolBar() {
@@ -288,34 +343,6 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             }
         } else {
             //nothing
-        }
-    }
-
-    private void onBack() {
-        if (isSearchEdit) {
-            closeSearch();
-        } else {
-            FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).invalidate(AdvancedFilterActivity.this);
-            fragmentNum--;
-            if (UserUtil.isFilterCompleted() && !isFromNav) {
-                if (isResultRequired) {
-                    setResult(RESULT_CANCELED);
-                }
-                finish();
-            } else if (fragmentNum != 0) {
-                bundle.putString(Constants.SPORTS_TYPE, sportsSelected.get(fragmentNum - 1));
-                replaceFragment(bundle);
-                titleText.setText(CommonUtil.capitalize(UserUtil.getSportsSelected().get(fragmentNum - 1)));
-            } else if (fragmentNum == 0) {
-                if (!isResultRequired) {
-                    moveToNextActivity(SelectSportsActivity.class);
-                } else {
-                    if (isResultRequired) {
-                        setResult(RESULT_CANCELED);
-                        finish();
-                    }
-                }
-            }
         }
     }
 

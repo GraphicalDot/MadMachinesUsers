@@ -7,6 +7,7 @@ import android.widget.TextView;
  * Created by cfeindia on 27/2/16.
  */
 public class UpCommingFootballMatchSquadDTO {
+    private String id;
     private String tvPlayerName;
     private String tvPlayerAge;
     private String tvP;
@@ -14,6 +15,14 @@ public class UpCommingFootballMatchSquadDTO {
     private String tvgol;
     private String tvyellowcard;
     private String tvredcard;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getTvPlayerName() {
         return tvPlayerName;

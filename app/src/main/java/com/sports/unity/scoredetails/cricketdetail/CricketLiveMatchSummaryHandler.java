@@ -9,6 +9,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.sports.unity.util.Constants;
+
 import org.json.JSONObject;
 
 import java.util.HashSet;
@@ -20,7 +22,8 @@ public class CricketLiveMatchSummaryHandler {
 
     private static final String REQUEST_TAG = "LIVE_SUMMARY_TAG";
     private static Context mContext;
-    private String BASEURL = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
+    private String BASEURL = "http://52.74.75.79:8080/cricket match" +
+            "?match_key=";
 
     private LiveCricketMatchSummaryContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -82,6 +85,12 @@ public class CricketLiveMatchSummaryHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
+        try{
+            Log.i("Score Card", "handleResponse: ");
+            mContentListener.handleContent(Constants.ERRORRESPONSE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
     public void addListener(LiveCricketMatchSummaryContentListener contentListener) {

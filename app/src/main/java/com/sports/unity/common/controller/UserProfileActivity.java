@@ -51,6 +51,7 @@ import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserProfileHandler;
 import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.player.view.PlayerProfileView;
 import com.sports.unity.scoredetails.cricketdetail.PlayerCricketBioDataActivity;
@@ -98,6 +99,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private LinearLayout favDetails;
     private FrameLayout fbButton;
     private byte[] byteArray;
+    private byte[] imageArray;
     private ProgressBar progressBar;
     private TextView currentStatus;
     private boolean ownProfile;
@@ -481,10 +483,10 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
         try {
             String userStatus = card.getMiddleName();
-            byte[] imageArray = card.getAvatar();
+            imageArray = card.getAvatar();
             String nickname = card.getNickName();
 
-            if( imageArray != null ) {
+            if (imageArray != null) {
                 profileImage.setImageBitmap(BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length));
             }
 
@@ -691,12 +693,12 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 textView.setText(favouriteItem.getName());
                 textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
                 playerList.addView(linearLayout);
-                 textView.setOnClickListener(new View.OnClickListener() {
-                     @Override
-                     public void onClick(View v) {
-                         playerProfile(favouriteItem.getName(),favouriteItem.getId(),favouriteItem.getSportsType());
-                     }
-                 });
+                textView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        playerProfile(favouriteItem.getName(), favouriteItem.getId(), favouriteItem.getSportsType());
+                    }
+                });
 
             }
         } else {
@@ -743,6 +745,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             AlertDialog dialog = build.create();
             dialog.show();
         } else {
+            Intent i = new Intent();
+            i.putExtra(ChatScreenActivity.INTENT_KEY_IMAGE, imageArray);
+            setResult(RESULT_OK, i);
             finish();
         }
     }
@@ -775,13 +780,14 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         }
         setInitDataOwn();
     }
-    private  void playerProfile(String playerName, String playerId, String sportsType) {
 
-        if(Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)){
+    private void playerProfile(String playerName, String playerId, String sportsType) {
+
+        if (Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)) {
             Intent intent = new Intent(UserProfileActivity.this, PlayerProfileView.class);
             intent.putExtra(Constants.INTENT_KEY_ID, playerId);
             startActivity(intent);
-        }else {
+        } else {
             Intent intent = new Intent(UserProfileActivity.this, PlayerCricketBioDataActivity.class);
             intent.putExtra(Constants.INTENT_KEY_ID, playerId);
             startActivity(intent);

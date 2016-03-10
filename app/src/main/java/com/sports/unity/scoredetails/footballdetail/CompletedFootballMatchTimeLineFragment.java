@@ -28,6 +28,7 @@ import org.json.JSONObject;
 import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
@@ -135,10 +136,8 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
 
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.VISIBLE);
-
-    }
-
-    private void renderDisplay(final JSONObject jsonObject) throws JSONException {
+   }
+   private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         list.clear();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         hideProgressBar();
@@ -168,6 +167,7 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
                             }
                             list.add(completeFootballTimeLineDTO);
                         }
+                        Collections.sort(list);
                         completeFootballTimeLineAdapter.notifyDataSetChanged();
                     } catch (Exception ex) {
                         ex.printStackTrace();
@@ -230,14 +230,14 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
 
     private Drawable getDrwableResource(String event) {
         Resources.Theme theme = getActivity().getTheme();
-        int drwableId = R.drawable.ic_red_green_arrow;
+        int drwableId = R.drawable.ic_subsitute_circle;
         if("yellowcards".equalsIgnoreCase(event)){
-           drwableId = R.drawable.ic_yellow_card;
+           drwableId = R.drawable.ic_yellow_card_circle;
         }else if("goals".equalsIgnoreCase(event)){
-            drwableId = R.drawable.ic_football;
+            drwableId = R.drawable.ic_goal_circle;
         }
         else if("redcards".equalsIgnoreCase(event)){
-            drwableId = R.drawable.ic_red_card;
+            drwableId = R.drawable.ic_red_card_circle;
         }
         Drawable drawable = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {

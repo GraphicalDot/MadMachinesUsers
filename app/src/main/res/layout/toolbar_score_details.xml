@@ -32,7 +32,7 @@
             android:scaleType="center"
             android:src="@drawable/ic_refresh_white" />
 
-        <TextView
+        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
             android:id="@+id/toolbar_title"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

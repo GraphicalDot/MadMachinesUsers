@@ -30,7 +30,7 @@ import java.io.IOException;
 public class XMPPClient {
 
     public static String SERVER_HOST = "52.74.142.219"; //staging server
-//    public static String SERVER_HOST = "54.169.217.88"; //production server
+    //    public static String SERVER_HOST = "54.169.217.88"; //production server
 //    public static String SERVER_HOST = "192.168.1.143"; //local server
     public static int SERVER_PORT = 5222;
     public static String SERVICE_NAME = "mm.io";
@@ -86,32 +86,36 @@ public class XMPPClient {
     synchronized public boolean reconnectConnection(ConnectionListener connectionListener) {
         boolean success = false;
 
-        if (connection == null) {
-            success = openConnection(connectionListener);
-        } else {
-            if (!connection.isConnected()) {
-                try {
-                    connection.connect();
-
-                    success = true;
-                } catch (SmackException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (XMPPException e) {
-                    e.printStackTrace();
-                }
+        if (connectionListener != null) {
+            if (connection == null) {
+                success = openConnection(connectionListener);
             } else {
-                success = true;
+                if (!connection.isConnected()) {
+                    try {
+                        connection.connect();
+
+                        success = true;
+                    } catch (SmackException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } catch (XMPPException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    success = true;
+                }
             }
-        }
 
-        addCustomExtensions();
+            addCustomExtensions();
 
-        if (success) {
-            ReadReceiptManager.getInstanceFor(connection);
+            if (success) {
+                ReadReceiptManager.getInstanceFor(connection);
+            } else {
+
+            }
         } else {
-
+            //nothing
         }
 
         return success;
