@@ -298,17 +298,15 @@ public class MatchListFragment extends Fragment {
                 }
             }
             matchList.clear();
-            Log.i("Data Map", "handleContent: " + daysMap);
-
             Set<String> daySet = daysMap.keySet();
 
             for(String dayKey :daySet) {
                 Map<String, MatchListWrapperDTO > leagueMaps = daysMap.get(dayKey);
                 Set<String> keySet = leagueMaps.keySet();
-                Log.i("League Set", "handleContent: " + keySet);
+
                 for (String key : keySet) {
                     int s = leagueMaps.get(key).getList().size();
-                    Log.i("List Size", "handleContent: " + s);
+
                     if (s > 0) {
                         matchList.add(leagueMaps.get(key));
                     }
@@ -316,10 +314,8 @@ public class MatchListFragment extends Fragment {
                 }
             }
             Collections.sort(matchList);
-            Log.i("Match List Size", "handleContent: " + matchList);
+
             matchListWrapperAdapter.notifyDataSetChanged();
-        } else {
-            //nothing
         }
         return success;
     }
