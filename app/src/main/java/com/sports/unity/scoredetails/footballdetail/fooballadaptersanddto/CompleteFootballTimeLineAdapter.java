@@ -64,44 +64,49 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
             }
 
             if(holder.dto.getTeamName().equalsIgnoreCase(context.getString(R.string.home_team_name))) {
-                if(holder.dto.getTvTeamFirstOffPlayer()!=null){
 
-                }
-                holder.tvTeamFirstTime.setText(holder.dto.getTvTeamFirstTime());
-
-                holder.tvTeamFirstOnPlayer.setText(holder.dto.getTvTeamFirstOnPlayer());
-                if(holder.dto.getTvTeamFirstOffPlayer()!=null){
-                    holder.tvTeamFirstOffPlayer.setText(holder.dto.getTvTeamFirstOffPlayer());
-                }else {
-                    holder.tvTeamFirstOffPlayer.setVisibility(View.GONE);
-                }
-
-                holder.tvTeamFirstTime.setVisibility(View.VISIBLE);
-                holder.tvTeamFirstOnPlayer.setVisibility(View.VISIBLE);
-                holder.tvTeamFirstOffPlayer.setVisibility(View.VISIBLE);
-                holder.teamFirstView.setVisibility(View.VISIBLE);
-                holder.tvTeamSecondTime.setVisibility(View.INVISIBLE);
-                holder.teamSecondView.setVisibility(View.INVISIBLE);
+                setLocalTeamTimeLine(holder);
             }else if(holder.dto.getTeamName().equalsIgnoreCase(context.getString(R.string.away_team_name)))
             {
-                holder.tvTeamSecondTime.setText(holder.dto.getTvTeamSecondTime());
-                holder.tvTeamSecondOnPlayer.setText(holder.dto.getTvTeamSecondOnPlayer());
-                if(holder.dto.getTvTeamSecondOffPlayer()!=null){
-                    holder.tvTeamSecondOffPlayer.setText(holder.dto.getTvTeamSecondOffPlayer());
-                }else{
-                    holder.tvTeamSecondOffPlayer.setVisibility(View.GONE);
-                }
-
-                holder.tvTeamSecondTime.setVisibility(View.VISIBLE);
-                holder.tvTeamSecondOnPlayer.setVisibility(View.VISIBLE);
-                holder.tvTeamSecondOffPlayer.setVisibility(View.VISIBLE);
-                holder.teamSecondView.setVisibility(View.VISIBLE);
-                holder.teamFirstView.setVisibility(View.INVISIBLE);
-                holder.tvTeamFirstTime.setVisibility(View.INVISIBLE);
+                setVisitorTeamTimeLine(holder);
             }
             holder.centralCircularImage.setImageDrawable(holder.dto.getDrwDrawable());
 
         }catch (Exception e){e.printStackTrace();}
+    }
+
+    private void setVisitorTeamTimeLine(ViewHolder holder) {
+        holder.tvTeamSecondTime.setText(holder.dto.getTvTeamSecondTime());
+        holder.tvTeamSecondOnPlayer.setText(holder.dto.getTvTeamSecondOnPlayer());
+        if(holder.dto.getTvTeamSecondOffPlayer()!=null){
+            holder.tvTeamSecondOffPlayer.setText(holder.dto.getTvTeamSecondOffPlayer());
+        }else{
+            holder.tvTeamSecondOffPlayer.setVisibility(View.GONE);
+        }
+
+        holder.tvTeamSecondTime.setVisibility(View.VISIBLE);
+        holder.tvTeamSecondOnPlayer.setVisibility(View.VISIBLE);
+       /* holder.tvTeamSecondOffPlayer.setVisibility(View.VISIBLE);*/
+        holder.teamSecondView.setVisibility(View.VISIBLE);
+        holder.teamFirstView.setVisibility(View.INVISIBLE);
+        holder.tvTeamFirstTime.setVisibility(View.INVISIBLE);
+    }
+
+    private void setLocalTeamTimeLine(ViewHolder holder) {
+        holder.tvTeamFirstTime.setText(holder.dto.getTvTeamFirstTime());
+
+        holder.tvTeamFirstOnPlayer.setText(holder.dto.getTvTeamFirstOnPlayer());
+        if(holder.dto.getTvTeamFirstOffPlayer()!=null){
+            holder.tvTeamFirstOffPlayer.setText(holder.dto.getTvTeamFirstOffPlayer());
+        }else {
+            holder.tvTeamFirstOffPlayer.setVisibility(View.GONE);
+        }
+        holder.tvTeamFirstTime.setVisibility(View.VISIBLE);
+        holder.tvTeamFirstOnPlayer.setVisibility(View.VISIBLE);
+        /*holder.tvTeamFirstOffPlayer.setVisibility(View.VISIBLE);*/
+        holder.teamFirstView.setVisibility(View.VISIBLE);
+        holder.tvTeamSecondTime.setVisibility(View.INVISIBLE);
+        holder.teamSecondView.setVisibility(View.INVISIBLE);
     }
 
     @Override

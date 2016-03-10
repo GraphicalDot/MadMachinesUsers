@@ -35,6 +35,7 @@ import org.json.JSONObject;
 import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
@@ -203,8 +204,9 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                             for (int i = 0; i < length/2; i++) {
                                 try {
                                     JSONObject teamFirstObject = subsArray.getJSONObject(i);
-                                    JSONObject teamSecondObject = subsArray.getJSONObject(tempLength-1);
+                                    JSONObject teamSecondObject = subsArray.getJSONObject(tempLength);
                                     completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
+
                                     setPlayerDetails(completeFootballLineUpDTO, teamFirstObject, substitutionsArray, matchEventsArray);
                                     setSecondTeamDetails(completeFootballLineUpDTO, teamSecondObject, matchEventsArray, substitutionsArray);
                                     substitutesList.add(completeFootballLineUpDTO);
@@ -217,7 +219,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                             for (int i = 0; i < length/2; i++) {
                                 try{
                                     JSONObject teamFirstObject = teamsObjectArray.getJSONObject(i);
-                                    JSONObject teamSecondObject = teamsObjectArray.getJSONObject(tempLength-1);
+                                    JSONObject teamSecondObject = teamsObjectArray.getJSONObject(tempLength);
                                     completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
                                     setTeamFirstLineUps(completeFootballLineUpDTO, teamFirstObject, matchEventsArray, substitutionsArray);
                                     setTeamSecondLineDetails(completeFootballLineUpDTO, teamSecondObject, matchEventsArray, substitutionsArray);
@@ -334,7 +336,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
             for(int i = 0;i<substitutionsArray.length();i++){
                 JSONObject substitutesObject = substitutionsArray.getJSONObject(i);
                 if(!substitutesObject.isNull("player_off")){
-                    if(playerName.equalsIgnoreCase(substitutesObject.getString("player_off"))){
+                    if(playerName.equals(substitutesObject.getString("player_off"))){
                         if(!substitutesObject.isNull("player_on")){
                             playerOn = substitutesObject.getString("player_on");
                         }
@@ -355,7 +357,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                 for(int i = 0;i<matchEventsArray.length();i++){
                     JSONObject eventObject = matchEventsArray.getJSONObject(i);
                     if(!eventObject.isNull("player_name")) {
-                        if (playerName.equalsIgnoreCase(eventObject.getString("player_name"))) {
+                        if (playerName.equals(eventObject.getString("player_name"))) {
                             if (!eventObject.isNull("event")) {
                                 event = eventObject.getString("event");
                             }
