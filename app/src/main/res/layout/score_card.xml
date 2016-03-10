@@ -30,7 +30,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="2.5"
+                    android:layout_weight="2.8"
                     android:orientation="vertical">
 
                     <LinearLayout
@@ -41,6 +41,7 @@
 
                         <ImageView
                             android:id="@+id/t1flag"
+                            android:layout_marginLeft="@dimen/horizontal_padding_small"
                             android:layout_width="@dimen/flag_size_small"
                             android:layout_height="@dimen/flag_size_small"
                             />
@@ -104,6 +105,7 @@
 
                         <ImageView
                             android:id="@+id/t2flag"
+                            android:layout_marginLeft="@dimen/horizontal_padding_small"
                             android:layout_width="@dimen/flag_size_small"
                             android:layout_height="@dimen/flag_size_small"
                             />
@@ -169,7 +171,7 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1.5"
+                    android:layout_weight="1.2"
                     android:gravity="center"
                     android:paddingBottom="@dimen/horizontal_padding_very_very_small"
                     android:orientation="vertical"
@@ -222,6 +224,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+                        android:paddingRight="@dimen/horizontal_padding_very_very_small"
                         android:background="@drawable/round_edge_box_blue"
                         android:gravity="center"
                         android:text="@string/show_odds"
