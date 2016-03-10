@@ -64,7 +64,7 @@ public class FavouriteItemWrapper {
                 item.setFilterType(filterType);
 
                 try {
-               if(flag!=null){
+               if(!object.isNull(this.flag)){
                    item.setFlagImageUrl(object.getString(this.flag));
                }
 

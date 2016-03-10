@@ -44,6 +44,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     String toss = "";
     String matchName="";
     String date = "";
+    private String matchId;
     private ProgressBar progressBar;
     private String teamFirstName;
     private String teamSecondName;
@@ -58,7 +59,8 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     private TextView tvTeamFirst;
     private TextView tvTeamSecond;
     private LinearLayout squadParnetLinearLayout;
-
+    private UpCommingFootballMatchSqadHandler liveFootballMatchTimeLineHandler;
+    private LinearLayout errorLayout;
 
 
     public UpCommingFootballMatchSqadFragment() {
@@ -69,7 +71,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     public void onAttach(Context context) {
         super.onAttach(context);
         Intent i = getActivity().getIntent();
-        String matchId =  i.getStringExtra(INTENT_KEY_ID);
+        matchId =  i.getStringExtra(INTENT_KEY_ID);
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
         toss = i.getStringExtra(INTENT_KEY_TOSS);
         date = i.getStringExtra(INTENT_KEY_DATE);
@@ -78,16 +80,15 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
         teamFirstName = i.getStringExtra(INTENT_KEY_TEAM1_NAME);
         teamSecondName = i.getStringExtra(INTENT_KEY_TEAM2_NAME);
 
-        UpCommingFootballMatchSqadHandler liveFootballMatchTimeLineHandler = UpCommingFootballMatchSqadHandler.getInstance(context);
+        liveFootballMatchTimeLineHandler = UpCommingFootballMatchSqadHandler.getInstance(context);
         liveFootballMatchTimeLineHandler.addListener(this);
         liveFootballMatchTimeLineHandler.requestUpCommingMatchSquad(teamFirstId,teamSecondId);
-        }
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_upcoming_football_match_squard_wrapper, container, false);
         initView(view);
-        showProgressBar();
         return view;
     }
     private void initView(View view) {
@@ -108,13 +109,17 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
         squadParnetLinearLayout = (LinearLayout) view.findViewById(R.id.squad_parent_linearlayout);
         squadParnetLinearLayout.setVisibility(View.GONE);
         initErrorLayout(view);
-
+        progressBar.setVisibility(View.VISIBLE);
     }
     private void  showProgressBar(){
+        errorLayout.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
+
+
     }
     private void  hideProgressBar(){
         progressBar.setVisibility(View.GONE);
+
     }
     @Override
     public void handleContent(String object) {
@@ -132,40 +137,38 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
                     renderDisplay(jsonObject);
 
                 } else {
-                    showErrorLayout(getView());
+                    showErrorLayout();
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
-                Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-                showErrorLayout(getView());
+                showErrorLayout();
             }
         }
     }
     private void initErrorLayout(View view) {
         try {
-            LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+            errorLayout = (LinearLayout) view.findViewById(R.id.error);
             errorLayout.setVisibility(View.GONE);
         }catch (Exception e){e.printStackTrace();}
     }
 
-    private void showErrorLayout(View view) {
-
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+    private void showErrorLayout() {
         errorLayout.setVisibility(View.VISIBLE);
+        squadParnetLinearLayout.setVisibility(View.GONE);
+        progressBar.setVisibility(View.GONE);
 
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         listTeamFirst.clear();
         listTeamSecond.clear();
-
-        squadParnetLinearLayout.setVisibility(View.VISIBLE);
-        hideProgressBar();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-         JSONObject dataObject = jsonObject.getJSONObject("data");
-         final JSONArray teamFirstSquadArray = dataObject.getJSONArray("team_1_squad");
-         final JSONArray teamSecondSquadArray = dataObject.getJSONArray("team_2_squad");
-           if (activity != null) {
+        JSONObject dataObject = jsonObject.getJSONObject("data");
+        final JSONArray teamFirstSquadArray = dataObject.getJSONArray("team_1_squad");
+        final JSONArray teamSecondSquadArray = dataObject.getJSONArray("team_2_squad");
+        hideProgressBar();
+        squadParnetLinearLayout.setVisibility(View.VISIBLE);
+        if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -174,12 +177,12 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
                         tvTeamSecond.setText(teamSecondName);
                         UpCommingFootballMatchSquadDTO dto;
 
-                     for (int i = 0; i< teamFirstSquadArray.length();i++){
-                          JSONObject playerObject = teamFirstSquadArray.getJSONObject(i);
-                          dto = new UpCommingFootballMatchSquadDTO();
-                          getSquadDetails(dto, playerObject);
-                          listTeamFirst.add(dto);
-                      }
+                        for (int i = 0; i< teamFirstSquadArray.length();i++){
+                            JSONObject playerObject = teamFirstSquadArray.getJSONObject(i);
+                            dto = new UpCommingFootballMatchSquadDTO();
+                            getSquadDetails(dto, playerObject);
+                            listTeamFirst.add(dto);
+                        }
                         for (int i = 0; i< teamSecondSquadArray.length();i++){
                             JSONObject playerObject = teamSecondSquadArray.getJSONObject(i);
                             dto = new UpCommingFootballMatchSquadDTO();
@@ -188,9 +191,10 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
                         }
                         upCommingFootballMatchSquadAdapterFirst.notifyDataSetChanged();
                         upCommingFootballMatchSquadAdapterSecond.notifyDataSetChanged();
+
                     } catch (Exception ex) {
                         ex.printStackTrace();
-                        showErrorLayout(getView());
+                        showErrorLayout();
                     }
                 }
             });

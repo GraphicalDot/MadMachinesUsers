@@ -227,7 +227,7 @@ public class MatchListFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
-                if (UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET)) {
+                if (UserUtil.getFilterSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET)) {
                     matches.addAll(cricket);
                 } else {
                     matches.addAll(football);

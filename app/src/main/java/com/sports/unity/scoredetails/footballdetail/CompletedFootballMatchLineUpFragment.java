@@ -68,8 +68,14 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     private List<CompleteFootballLineUpDTO> lineUpList = new ArrayList<>();
     private CompleteFootballLineUpAdapter completeFootballSubstituteUpAdapter;
     private List<CompleteFootballLineUpDTO> substitutesList = new ArrayList<>();
-    private View llParentLayout;
+
     private CompletedFootballMatchLineUpHandler cricketUpcomingMatchSummaryHandler;
+
+    private View manageRootView;
+    private View layoutLineUpView;
+    private View layoutSubstitutesView;
+
+
     public CompletedFootballMatchLineUpFragment() {
         // Required empty public constructor
     }
@@ -112,8 +118,14 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         rvLineup.setNestedScrollingEnabled(false);
         completeFootballSubstituteUpAdapter = new CompleteFootballLineUpAdapter(substitutesList ,getContext());
         rvSubstitutes.setAdapter(completeFootballSubstituteUpAdapter);
-        llParentLayout = view.findViewById(R.id.parent_layout);
-        llParentLayout.setVisibility(View.GONE);
+        manageRootView = view.findViewById(R.id.manager_root);
+        manageRootView.setVisibility(View.GONE);
+        layoutLineUpView  = view.findViewById(R.id.layout_line_up);
+        layoutLineUpView.setVisibility(View.GONE);
+        layoutSubstitutesView = view.findViewById(R.id.layout_substitutes);
+        layoutSubstitutesView.setVisibility(View.GONE);
+
+
    }
     private void  showProgressBar(){
         progressBar.setVisibility(View.VISIBLE);
@@ -140,7 +152,6 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
-                Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
                 showErrorLayout(getView());
             }
         }
@@ -155,14 +166,21 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
 
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.VISIBLE);
+        manageRootView.setVisibility(View.GONE);
+        layoutLineUpView.setVisibility(View.GONE);
+        layoutSubstitutesView.setVisibility(View.GONE);
+        hideProgressBar();
 
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-        hideProgressBar();
+
         lineUpList.clear();
         substitutesList.clear();
-        llParentLayout.setVisibility(View.VISIBLE);
+        manageRootView.setVisibility(View.VISIBLE);
+        layoutLineUpView.setVisibility(View.VISIBLE);
+        layoutSubstitutesView.setVisibility(View.VISIBLE);
+        hideProgressBar();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if(!jsonObject.isNull("data")) {
             final JSONObject dataObject = jsonObject.getJSONObject("data");
@@ -179,7 +197,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                             tvCaptainFirst.setText("NA");
                             tvCaptainSecond.setText("NA");
 
-                            CompleteFootballLineUpDTO completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
+                            CompleteFootballLineUpDTO completeFootballLineUpDTO = null;
                             int length = subsArray.length();
                             int tempLength = length/2;
                             for (int i = 0; i < length/2; i++) {
@@ -196,7 +214,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                             }
                             length = teamsObjectArray.length();
                             tempLength = length/2;
-                            for (int i = 0; i < teamsObjectArray.length(); i++) {
+                            for (int i = 0; i < length/2; i++) {
                                 try{
                                     JSONObject teamFirstObject = teamsObjectArray.getJSONObject(i);
                                     JSONObject teamSecondObject = teamsObjectArray.getJSONObject(tempLength-1);

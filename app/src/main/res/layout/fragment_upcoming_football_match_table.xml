@@ -108,6 +108,24 @@
                     app:layout_widthPercent="15%"
                     />
             </android.support.percent.PercentRelativeLayout>
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_football_match_table"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/gray3"
+                tools:listitem="@layout/upcoming_football_match_table_card"
+                />
+
+
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone"/>
+
             <include
                 android:id="@+id/error"
                 layout="@layout/error_layout"
@@ -124,19 +142,7 @@
                 android:textSize="@dimen/font_size_large"
                 android:visibility="gone"
                 />
-            <ProgressBar
-                android:id="@+id/progress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:visibility="gone"/>
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_football_match_table"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/gray3"
-                tools:listitem="@layout/upcoming_football_match_table_card"
-                />
+
         </LinearLayout>
     </ScrollView>
 
