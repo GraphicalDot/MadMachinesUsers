@@ -61,6 +61,7 @@ public class NewsSearchActivity extends CustomAppCompatActivity {
         ImageView back = (ImageView) toolbar.findViewById(R.id.img_back);
         back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
         final ImageView clear_search = (ImageView) toolbar.findViewById(R.id.search_clear);
+        clear_search.setVisibility(View.INVISIBLE);
         FrameLayout fragment_container = (FrameLayout) findViewById(R.id.fragment_container);
 
         FragmentTransaction fragTransaction = getSupportFragmentManager().beginTransaction();

@@ -1,5 +1,6 @@
 package com.sports.unity.news.controller.fragment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -182,7 +183,29 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
             if (success) {
                 showProgress(v);
             }
+        } else {
+            String keyword = getArguments().getString("search_keyword");
+            String searchKeyword = null;
+            if(keyword != null) {
+
+                if (keyword.contains(",")) {
+                    searchKeyword = keyword.split(",")[0];
+                } else {
+                    searchKeyword = keyword;
+                }
+            } else {
+                //nothing
+            }
+
+            newsContentHandler.setSearchKeyword(searchKeyword);
+
+            if (newsContentHandler.getSearchKeyword() != null && newsContentHandler.getSearchKeyword().length() > 0) {
+                newsContentHandler.clearContent();
+                newsContentHandler.refreshNews(true);
+            }
         }
+
+
     mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
@@ -462,34 +485,41 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
         ShowcaseConfig config = new ShowcaseConfig();
         config.setDelay(500); // half second between each showcase view
         final MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity(), Showcase_News_Id);
         final ViewTreeObserver viewTreeObserver = getActivity().getWindow().getDecorView().getViewTreeObserver();
         viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+
             @Override
             public void onGlobalLayout() {
-                View menuButton = getActivity().findViewById(R.id.action_filter);
-                View menuButton1 = getActivity().findViewById(R.id.action_search);
-                View menuButton2 = getActivity().findViewById(R.id.mini_cards);
-                if (menuButton != null) {
-                    sequence.addSequenceItem(menuButton, getActivity().getResources().getString(R.string.showcase_filter_heading), getActivity().getResources().getString(R.string.showcase_filter_message), getActivity().getResources().getString(R.string.got_it));
-                    if (viewTreeObserver.isAlive())
-                        viewTreeObserver.removeOnGlobalLayoutListener(this);
-                }
-                if (menuButton1 != null) {
-                    sequence.addSequenceItem(menuButton1, getActivity().getResources().getString(R.string.showcase_search_heading), getActivity().getResources().getString(R.string.showcase_search_message), getActivity().getResources().getString(R.string.got_it));
-                    if (viewTreeObserver.isAlive())
-                        viewTreeObserver.removeOnGlobalLayoutListener(this);
-                }
-                if (menuButton2 != null) {
-                    sequence.addSequenceItem(menuButton2, getActivity().getResources().getString(R.string.showcase_mini_card_heading), getActivity().getResources().getString(R.string.showcase_mini_card_message), getActivity().getResources().getString(R.string.got_it));
-                    sequence.start();
-                    if (viewTreeObserver.isAlive())
-                        viewTreeObserver.removeOnGlobalLayoutListener(this);
+                Activity activity = getActivity();
+                if (activity != null) {
+                    View menuButton = getActivity().findViewById(R.id.action_filter);
+                    View menuButton1 = getActivity().findViewById(R.id.action_search);
+                    View menuButton2 = getActivity().findViewById(R.id.mini_cards);
+                    if (menuButton != null) {
+                        sequence.addSequenceItem(menuButton, getActivity().getResources().getString(R.string.showcase_filter_heading), getActivity().getResources().getString(R.string.showcase_filter_message), getActivity().getResources().getString(R.string.got_it));
+                        if (viewTreeObserver.isAlive())
+                            viewTreeObserver.removeOnGlobalLayoutListener(this);
+                    }
+                    if (menuButton1 != null) {
+                        sequence.addSequenceItem(menuButton1, getActivity().getResources().getString(R.string.showcase_search_heading), getActivity().getResources().getString(R.string.showcase_search_message), getActivity().getResources().getString(R.string.got_it));
+                        if (viewTreeObserver.isAlive())
+                            viewTreeObserver.removeOnGlobalLayoutListener(this);
+                    }
+                    if (menuButton2 != null) {
+                        sequence.addSequenceItem(menuButton2, getActivity().getResources().getString(R.string.showcase_mini_card_heading), getActivity().getResources().getString(R.string.showcase_mini_card_message), getActivity().getResources().getString(R.string.got_it));
+                        sequence.start();
+                        if (viewTreeObserver.isAlive())
+                            viewTreeObserver.removeOnGlobalLayoutListener(this);
+                    }
                 }
             }
+
         });
+
     }
 
     @Override

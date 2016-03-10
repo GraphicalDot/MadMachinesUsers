@@ -67,6 +67,7 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+
         final String playerName = mData.get(position).getName();
         final String playerId = mData.get(position).getId();
         final String sportsType = mData.get(position).getSportsType();

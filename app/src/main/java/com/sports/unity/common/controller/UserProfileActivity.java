@@ -629,6 +629,14 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 textView.setText(leagues.get(i).getName());
                 textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
                 leagueList.addView(linearLayout);
+                final FavouriteItem favouriteItem = leagues.get(i);
+                textView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        teamAndLeagueDetails(favouriteItem.getId(), favouriteItem.getName(), favouriteItem.getFilterType());
+                    }
+                });
+
             }
         } else {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
@@ -651,6 +659,14 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 textView.setText(teams.get(i).getName());
                 textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
                 teamList.addView(linearLayout);
+                final FavouriteItem favouriteItem = teams.get(i);
+                textView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        teamAndLeagueDetails(favouriteItem.getId(), favouriteItem.getName(), favouriteItem.getFilterType());
+                    }
+                });
+
             }
         } else {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
@@ -772,5 +788,12 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         }
     }
 
+    private void teamAndLeagueDetails(String id, String name, String type) {
+        Intent intent = new Intent(this, TeamLeagueDetails.class);
+        intent.putExtra("Id", id);
+        intent.putExtra("Name", name);
+        intent.putExtra("Type", type);
+        startActivity(intent);
+    }
 
 }

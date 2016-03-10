@@ -2,8 +2,8 @@
     <string name="app_name">Sports Unity</string>
 
     <string name="facebook_app_id">1641376076109497</string>
-    <string name="link_of_terms_of_use">http://www.sportsunity.co/terms/</string>
-    <string name="link_of_privacy_policy">http://www.sportsunity.co/privacy-policy/</string>
+    <string name="link_of_terms_of_use">http://www.sportsunity.co/terms.html</string>
+    <string name="link_of_privacy_policy">http://www.sportsunity.co/privacy-policy.html</string>
 
     <string name="link_of_sportsunity_co">http://www.sportsunity.co</string>
 
@@ -104,6 +104,7 @@
     <string name="keep_one_sport_selected">Keep at least one sport selected.</string>
 
     <string name="scores">Scores</string>
+    <string name="fixture">Fixture</string>
     <string name="news">News</string>
     <string name="messages">Messages</string>
     <string name="title_activity_camera">CameraActivity</string>
@@ -397,5 +398,6 @@ Carrier SMS charges may apply.</string>
 
     <string name="days">%s Days</string>
     <string name="full_time">Full TIme</string>
+    <string name="title_activity_team_league_details">TeamLeagueDetails</string>
 
 </resources>

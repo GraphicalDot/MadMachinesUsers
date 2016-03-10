@@ -4,6 +4,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ExpandableListActivity;
 import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -35,6 +36,7 @@ import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.NavListAdapter;
 import com.sports.unity.common.controller.SelectSportsActivity;
 import com.sports.unity.common.controller.SettingsActivity;
+import com.sports.unity.common.controller.TeamLeagueDetails;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
@@ -329,18 +331,29 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
         switch (parent.getId()) {
             case R.id.fav_team:
                 if (teamChildItems.size() > 0) {
-                    Toast.makeText(getActivity(), teamChildItems.get(childPosition).getName(), Toast.LENGTH_SHORT).show();
+                    FavouriteItem favouriteItem = teamChildItems.get(childPosition);
+                    onClickListnerForTeamAndLeague(favouriteItem.getId(), favouriteItem.getName(), favouriteItem.getFilterType());
                 }
                 break;
             case R.id.complist:
                 if (competeChildItems.size() > 0) {
-                    Toast.makeText(getActivity(), competeChildItems.get(childPosition).getName(), Toast.LENGTH_SHORT).show();
+                    FavouriteItem favouriteItem = competeChildItems.get(childPosition);
+                    onClickListnerForTeamAndLeague(favouriteItem.getId(), favouriteItem.getName(), favouriteItem.getFilterType());
                 }
                 break;
         }
 
 
         return false;
+    }
+
+    private void onClickListnerForTeamAndLeague(String id, String name, String type) {
+        Intent intent = new Intent(getContext(), TeamLeagueDetails.class);
+        intent.putExtra("Id", id);
+        intent.putExtra("Name", name);
+        intent.putExtra("Type", type);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     private void initItemList() {

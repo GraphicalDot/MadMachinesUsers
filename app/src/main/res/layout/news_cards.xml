@@ -28,9 +28,6 @@
                 android:paddingRight="@dimen/horizontal_padding_very_very_small"
                 android:paddingTop="@dimen/vertical_padding_very_very_small">
 
-                //android:layout_width="@dimen/news_fav_icon_large_width"
-                //android:layout_height="@dimen/news_fav_icon_height"
-
                 <ImageView
                     android:id="@+id/fab_icon"
                     android:layout_width="@dimen/news_fav_icon_large_width"

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.SelectSportsActivity;
+import com.sports.unity.common.controller.TeamLeagueDetails;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.util.Constants;
@@ -78,7 +79,11 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 FavouriteItem f=favList.get(position);
-                Toast.makeText(getActivity(),f.getId(),Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), TeamLeagueDetails.class);
+                intent.putExtra("Id", f.getId());
+                intent.putExtra("Name", f.getName());
+                intent.putExtra("Type", f.getFilterType());
+                startActivity(intent);
             }
         });
     }

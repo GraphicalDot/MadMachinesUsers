@@ -6,20 +6,22 @@
     <dimen name="activity_vertical_margin_small">8dp</dimen>
     <dimen name="activity_vertical_margin_large">24dp</dimen>
 
-    <dimen name="horizontal_padding_very_very_small">4dp</dimen>
-    <dimen name="horizontal_padding_very_small">10dp</dimen>
-    <dimen name="horizontal_padding_small">16dp</dimen>
-    <dimen name="horizontal_padding_medium">50dp</dimen>
-    <dimen name="horizontal_padding_large">45dp</dimen>
 
-    <dimen name="padding">30dp</dimen>
+    <dimen name="horizontal_padding_very_very_small">4dp</dimen>
+    <dimen name="horizontal_padding_very_small">15dp</dimen>
+    <dimen name="horizontal_padding_small">24dp</dimen>
+    <dimen name="horizontal_padding_medium">40dp</dimen>
+    <dimen name="horizontal_padding_large">65dp</dimen>
+
 
     <dimen name="vertical_padding_very_very_small">5dp</dimen>
-    <dimen name="vertical_padding_very_small">20dp</dimen>
-    <dimen name="vertical_padding_small">50dp</dimen>
-    <dimen name="vertical_padding_medium">80dp</dimen>
+    <dimen name="vertical_padding_very_small">10dp</dimen>
+    <dimen name="vertical_padding_medium_small">13dp</dimen>
+    <dimen name="vertical_padding_small">16dp</dimen>
+    <dimen name="vertical_padding_medium">30dp</dimen>
     <dimen name="vertical_padding_large">45dp</dimen>
 
+    <dimen name="padding">30dp</dimen>
 
     <dimen name="font_size_very_very_small">10sp</dimen>
     <dimen name="font_size_very_small">12sp</dimen>

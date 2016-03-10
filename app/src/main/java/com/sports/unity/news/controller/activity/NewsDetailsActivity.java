@@ -89,35 +89,6 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
         onComponentPause();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        this.menu = menu;
-        getMenuInflater().inflate(R.menu.menu_news_details, menu);
-
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            case R.id.action_share:
-                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
-                sharingIntent.setType("text/plain");
-                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, title);
-                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
-                startActivity(Intent.createChooser(sharingIntent, "Share via"));
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-
-    }
-
     private void initView(){
         id = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
 
@@ -127,7 +98,7 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
         initViews();
     }
 
-    private void setToolBar(String title) {
+    private void setToolBar(final String title) {
         Toolbar toolbar = (Toolbar) findViewById(com.sports.unity.R.id.tool_bar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -135,10 +106,8 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
         TextView tv = (TextView) toolbar.findViewById(R.id.toolbar_title);
         tv.setText(title);
         tv.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
-    }
 
-    private void initViews() {
-        ImageView img = (ImageView) findViewById(R.id.img);
+        ImageView img = (ImageView) toolbar.findViewById(R.id.img);
         img.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         img.setOnClickListener(new View.OnClickListener() {
 
@@ -147,6 +116,25 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
             }
 
         });
+
+        ImageView share = (ImageView) toolbar.findViewById(R.id.share);
+        share.setVisibility(View.GONE);
+        share.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
+        share.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, title);
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
+                startActivity(Intent.createChooser(sharingIntent, "Share via"));
+            }
+
+        });
+    }
+
+    private void initViews() {
+
     }
 
     private void initErrorLayout(LinearLayout errorLayout){
@@ -253,7 +241,11 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
         }
 
         if ( success ) {
-            menu.findItem(R.id.action_share).setVisible(true);
+            Toolbar toolbar = (Toolbar) findViewById(com.sports.unity.R.id.tool_bar);
+            ImageView share = (ImageView) toolbar.findViewById(R.id.share);
+            share.setVisibility(View.VISIBLE);
+           // menu.findItem(R.id.action_share).setVisible(true);
+
         }
         return success;
     }
