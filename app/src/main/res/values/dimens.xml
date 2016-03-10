@@ -165,5 +165,8 @@
     <!--score card-->
 
     <dimen name="layout_minutes">-5dp</dimen>
+    <!--football match completed lineup-->
 
+    <dimen name="layout_height">50dp</dimen>
+    <dimen name="layout_center_img">16dp</dimen>
 </resources>
