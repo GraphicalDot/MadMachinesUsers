@@ -199,7 +199,7 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
                         }
                         length = teamsObjectArray.length();
                         tempLength = length/2;
-                        for (int i = 0; i < teamsObjectArray.length(); i++) {
+                        for (int i = 0; i < length/2; i++) {
                             try{
                                 JSONObject teamFirstObject = teamsObjectArray.getJSONObject(i);
                                 JSONObject teamSecondObject = teamsObjectArray.getJSONObject(tempLength-1);
