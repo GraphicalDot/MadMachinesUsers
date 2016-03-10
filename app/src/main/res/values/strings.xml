@@ -352,14 +352,13 @@ Carrier SMS charges may apply.</string>
     <string name="fall_of_wicket">FALL OF WICKETS</string>
     <string name="total">Total:</string>
     <string name="run_rate">RR:</string>
-    <string name="league">League</string>
-    <string name="team">Team</string>
-    <string name="geam">Geam</string>
-    <string name="games">Games</string>
-    <string name="goals">Goals</string>
-    <string name="assists">Assists</string>
-    <string name="rc">Rc</string>
-    <string name="yc">Yc</string>
+    <string name="league">LEAGUE</string>
+    <string name="team">TEAM</string>
+    <string name="games">GAMES</string>
+    <string name="goals">GOALS</string>
+    <string name="assists">ASSISTS</string>
+    <string name="rc">RC</string>
+    <string name="yc">YC</string>
     <string name="age">AGE</string>
     <string name="position">POSITION</string>
     <string name="scored">SQUAD NO.</string>
@@ -396,6 +395,9 @@ Carrier SMS charges may apply.</string>
     <string name="tomorrow">Tomorrow</string>
 
     <string name="days">%s Days</string>
-    <string name="full_time">Full TIme</string>
-
+    <string name="full_time">Full Time</string>
+    <string name="daysago">%s Days Ago</string>
+    <string name="mins">MINS</string>
+    <string name="on_going">On Going</string>
+    <string name="half_time">Half Time</string>
 </resources>

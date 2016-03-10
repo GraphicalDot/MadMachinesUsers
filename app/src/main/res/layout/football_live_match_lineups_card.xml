@@ -3,12 +3,12 @@
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
+    android:padding="@dimen/horizontal_padding_very_small"
     android:layout_height="wrap_content">
     <android.support.percent.PercentRelativeLayout
         android:id="@+id/rootLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/horizontal_padding_very_small">
+        android:layout_height="wrap_content">
         <LinearLayout
             android:id="@+id/ll_lineup_team_left"
             android:layout_width="0dp"
@@ -25,7 +25,7 @@
                     android:layout_centerVertical="true"
                     android:gravity="center"
                     />
-                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                <com.sports.unity.common.view.CustomRobotoRegularTextView
                     android:layout_toRightOf="@id/tv_player_number_or_replace"
                     android:paddingLeft="@dimen/vertical_padding_very_very_small"
                     android:id="@+id/tv_player_name"
@@ -35,6 +35,8 @@
                     android:layout_centerVertical="true"
                     android:gravity="center_vertical"
                     android:textSize="@dimen/font_size_small_medium"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:text=""/>
                 <ImageView
                     android:layout_toRightOf="@id/tv_player_name"
@@ -95,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     />
-                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                <com.sports.unity.common.view.CustomRobotoRegularTextView
                     android:layout_toRightOf="@id/tv_player_number_or_replace_second"
                     android:id="@+id/tv_player_name_second"
                     android:paddingLeft="@dimen/vertical_padding_very_very_small"
@@ -105,6 +107,8 @@
                     android:gravity="left"
                     android:layout_centerVertical="true"
                     android:textSize="@dimen/font_size_small_medium"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:text=""/>
                 <ImageView
                     android:layout_toRightOf="@id/tv_player_name_second"
@@ -141,14 +145,10 @@
             </android.support.percent.PercentRelativeLayout>
         </LinearLayout>
     </android.support.percent.PercentRelativeLayout>
-
-
-
     <android.support.percent.PercentRelativeLayout
         android:id="@+id/rootLayout_off_player"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/horizontal_padding_very_small">
+        android:layout_height="wrap_content">
         <LinearLayout
             android:id="@+id/ll_off_lineup_team_left"
             android:layout_width="0dp"
@@ -166,7 +166,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     />
-                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                <com.sports.unity.common.view.CustomRobotoRegularTextView
                     android:id="@+id/tv_off_player_name"
                     android:layout_toRightOf="@id/tv_off_player_number_or_replace"
                     android:paddingLeft="@dimen/vertical_padding_very_very_small"
@@ -176,6 +176,8 @@
                     android:gravity="left"
                     android:layout_centerVertical="true"
                     android:textSize="@dimen/font_size_small_medium"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:text=""/>
                 <ImageView
                     android:layout_toRightOf="@id/tv_off_player_name"
@@ -237,7 +239,7 @@
                     android:layout_height="wrap_content"
 
                     android:gravity="center" />
-                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                <com.sports.unity.common.view.CustomRobotoRegularTextView
                     android:layout_toRightOf="@id/tv_off_player_number_or_replace_second"
                     android:id="@+id/tv_off_player_name_second"
                     android:layout_width="0dp"
@@ -246,6 +248,8 @@
                     android:gravity="left"
                     android:layout_centerVertical="true"
                     android:textSize="@dimen/font_size_small_medium"
+                    android:ellipsize="end"
+                    android:maxLines="1"
                     android:paddingLeft="@dimen/vertical_padding_very_very_small"
                     android:text=""/>
                 <ImageView

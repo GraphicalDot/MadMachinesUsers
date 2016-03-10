@@ -10,7 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-
+import com.sports.unity.util.Constants;
 
 
 import org.json.JSONObject;
@@ -39,7 +39,7 @@ public class LivedMatchScoreCardHandler {
     }
     public interface LiveMatchContentListener {
 
-        void handleContent(JSONObject jsonObject);
+        void handleContent(String content);
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -71,11 +71,11 @@ public class LivedMatchScoreCardHandler {
     private void handleResponse(String response) {
 
         try{
-            JSONObject jsonObject = new JSONObject(response);
+
             Log.i("Score Card", "handleResponse: ");
-            if(jsonObject.getBoolean("success")){
-                mContentListener.handleContent(jsonObject);
-            }
+
+                mContentListener.handleContent(response);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -85,6 +85,15 @@ public class LivedMatchScoreCardHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
+
+        try{
+            Log.i("Score Card", "handleResponse: ");
+            mContentListener.handleContent(Constants.ERRORRESPONSE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
          }
 
     public void addListener(LiveMatchContentListener contentListener) {

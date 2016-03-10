@@ -3,9 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:padding="@dimen/horizontal_padding_very_very_small"
-    app:cardCornerRadius="@dimen/card_edge_curve_radius">
+    android:orientation="vertical">
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -13,38 +12,47 @@
     <android.support.percent.PercentRelativeLayout
         android:id="@+id/rootLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/ColorPrimary">
+        android:padding="@dimen/horizontal_padding_very_very_small"
+        android:layout_height="wrap_content">
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/league_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="league"
+            android:text=""
             android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="22%" />
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:gravity="left"
+            android:scrollHorizontally="true"
+            app:layout_widthPercent="23%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
+            android:paddingLeft="@dimen/vertical_padding_very_very_small"
             android:id="@+id/team_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/league_name"
-            android:text="tem"
+            android:text=""
+            android:gravity="left"
             android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="22%" />
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            app:layout_widthPercent="23%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/game_count"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/team_name"
-            android:text="1"
+            android:text=""
             android:gravity="center"
             android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="14%" />
+            app:layout_widthPercent="10%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/goals_count"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/game_count"
-            android:text="3"
+            android:text=""
             android:gravity="center"
             android:textSize="@dimen/font_size_small_medium"
             app:layout_widthPercent="12%" />
@@ -53,7 +61,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/goals_count"
-            android:text="6"
+            android:text=""
             android:gravity="center"
             android:textSize="@dimen/font_size_small_medium"
             app:layout_widthPercent="12%" />
@@ -62,7 +70,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/assist"
-            android:text="2"
+            android:text=""
             android:textSize="@dimen/font_size_small_medium"
             android:gravity="center"
             app:layout_widthPercent="10%" />
@@ -71,7 +79,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/yc"
-            android:text="8"
+            android:text=""
             android:gravity="center"
             android:textSize="@dimen/font_size_small_medium"
             app:layout_widthPercent="10%" />

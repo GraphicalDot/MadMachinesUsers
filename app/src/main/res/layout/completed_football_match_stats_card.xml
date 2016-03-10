@@ -3,92 +3,99 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/vertical_padding_medium_small"
     android:background="@color/ColorPrimary"
-    android:layout_height="match_parent">
-    <LinearLayout
-        android:id="@+id/ll_title"
+    android:orientation="vertical">
+
+    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+        android:id="@+id/tv_lable"
         android:layout_width="match_parent"
-        android:layout_marginTop="@dimen/activity_vertical_margin_small"
-        android:orientation="vertical"
-        android:background="@color/ColorPrimary"
-        android:layout_height="wrap_content">
-        <TextView
-            android:id="@+id/tv_lable"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textColor="@color/gray2"
+        android:text=""
+        android:textSize="@dimen/font_size_very_small" />
+
+    <LinearLayout
+        android:id="@+id/rootLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="@dimen/vertical_padding_very_very_small"
+        android:paddingRight="@dimen/vertical_padding_very_very_small"
+        android:paddingTop="@dimen/vertical_padding_very_very_small">
+
+        <android.support.percent.PercentRelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="@dimen/font_size_very_small"
-            android:text=""/>
-        <LinearLayout
-            android:id="@+id/rootLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingRight="@dimen/vertical_padding_very_very_small"
-            android:paddingLeft="@dimen/vertical_padding_very_very_small"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            android:layout_height="30dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="@dimen/activity_horizontal_margin"
+            android:layout_marginStart="@dimen/activity_horizontal_margin"
+            android:background="@drawable/shape"
+            android:orientation="horizontal">
 
+            <View
+                android:id="@+id/v_dummy"
+                android:layout_width=".1dp"
+                android:layout_height=".1dp"
+                android:layout_centerInParent="true" />
 
-            <RelativeLayout
-                android:background="@drawable/shape"
-                android:layout_centerHorizontal="true"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <View
-                    android:id="@+id/v_dummy"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    android:layout_centerInParent="true"
+            <FrameLayout
+                android:id="@+id/fl_red"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_toLeftOf="@+id/v_dummy"
+                app:layout_widthPercent="40%">
 
-                    >
-                </View>
                 <View
                     android:id="@+id/vw_red"
-                    android:layout_toLeftOf="@+id/v_dummy"
-                    android:layout_width="0dp"
-                    android:orientation="horizontal"
-                    android:layout_height="24dp"
+                    android:layout_width=".1dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
                     android:background="@color/brick_red"
-   />
+                    android:orientation="horizontal" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:id="@+id/fl_blue"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/v_dummy"
+                app:layout_widthPercent="40%">
+
                 <View
                     android:id="@+id/vw_blue"
-                    android:layout_toRightOf="@+id/v_dummy"
-                    android:layout_width="0dp"
-                    android:orientation="horizontal"
-                    android:layout_height="24dp"
+                    android:layout_width=".1dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="left"
                     android:background="@color/app_theme_blue"
-                    />
-                <ImageView
-                    android:id="@+id/iv_center_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    />
-               <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/iv_left_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                   android:layout_gravity="left"
-                   app:civ_border_color="@color/gray3"
-                   app:civ_border_width="1dp"
-                   />
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/iv_right_status"
-                    android:layout_alignParentRight="true"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:civ_border_color="@color/gray3"
-                    app:civ_border_width="1dp"
-                    />
+                    android:orientation="horizontal" />
+            </FrameLayout>
 
-            </RelativeLayout>
+            <ImageView
+                android:id="@+id/iv_center_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true" />
 
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_left_status"
+                android:layout_width="@dimen/football_match_stats_width"
+                android:layout_height="@dimen/football_match_stats_width"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                app:civ_border_color="@color/gray3"
+                app:civ_border_width="1dp" />
 
-
-        </LinearLayout>
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/iv_right_status"
+                android:layout_width="@dimen/football_match_stats_width"
+                android:layout_height="@dimen/football_match_stats_width"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                app:civ_border_color="@color/gray3"
+                app:civ_border_width="1dp" />
+        </android.support.percent.PercentRelativeLayout>
     </LinearLayout>
 </LinearLayout>

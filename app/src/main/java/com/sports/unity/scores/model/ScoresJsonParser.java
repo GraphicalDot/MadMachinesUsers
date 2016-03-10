@@ -118,6 +118,9 @@ public class ScoresJsonParser {
                         if(!object.isNull("overs")){
                             commentriesModel.setOver(object.getString("overs"));
                         }
+                        if(!object.isNull("minute")){
+                            commentriesModel.setMinute(object.getString("minute"));
+                        }
                         list.add(commentriesModel);
                     }
 

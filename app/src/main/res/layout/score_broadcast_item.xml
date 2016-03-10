@@ -26,23 +26,25 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/grey_ring"
                 />
-            <TextView
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/comment_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textSize="@dimen/font_size_very_small"
                 android:text="0"
+                android:textColor="@color/news_headline_mini"
                 />
         </FrameLayout>
 
 
-        <TextView
+        <com.sports.unity.common.view.CustomRobotoMediumTextView
             android:id="@+id/broadcast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/horizontal_padding_medium"
             android:textSize="@dimen/font_size_small_medium"
+            android:textColor="@color/news_headline_mini"
             android:text=""/>
     </LinearLayout>
 

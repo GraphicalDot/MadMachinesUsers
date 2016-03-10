@@ -4,6 +4,7 @@ package com.sports.unity.scoredetails;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,7 +38,7 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
 
     private String sportsType;
     private String matchId;
-
+    Handler h = new Handler();
 
     private BroadcastListAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -53,6 +54,7 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
             dataServiceContract = (DataServiceContract)context;
             dataServiceContract.requestData(0);
         }
+       dataChanged();
     }
 
     @Override
@@ -65,6 +67,7 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
         matchId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
         commentaries = b.getParcelableArrayList("commentries");
         initView(view);
+        dataChanged();
         return view;
     }
 
@@ -78,7 +81,6 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
 
         mAdapter = new BroadcastListAdapter(sportsType, commentaries, getContext());
         mRecyclerView.setAdapter(mAdapter);
-
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(mLayoutManager);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.commentary_refresh);
@@ -99,9 +101,26 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
 
     @Override
     public void dataChanged() {
-       /* mRecyclerView.postInvalidate();
-        mAdapter.notifyDataSetChanged();
-        swipeRefreshLayout.setRefreshing(false);*/
+        try{
+            if(mRecyclerView !=null) {
+                h.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        mRecyclerView.postInvalidate();
+                        mAdapter.notifyDataSetChanged();
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                },1000);
+//                getActivity().runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                    }
+//                });
+
+            }
+        }catch (Exception e){e.printStackTrace();}
+
 
     }
 

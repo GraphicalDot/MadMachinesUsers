@@ -9,6 +9,7 @@ android {
         targetSdkVersion 23
         versionCode 4
         versionName "1.0"
+        setProperty("archivesBaseName", "SportsUnity-$versionName.$versionCode")
     }
     buildTypes {
         release {
@@ -17,6 +18,14 @@ android {
         }
     }
     productFlavors {
+        dev {
+            buildConfigField "String", "SCORES_BASE_URL", "\"http://52.74.75.79:8080/\""
+            resValue "string", "GOOGLE_API_KEY", "AIzaSyBMgH-fvm8hDbybIhgufC-XCAc9k1i_V9A"
+        }
+        prod {
+            buildConfigField "String", "SCORES_BASE_URL", "\"http://52.74.75.79:8080/\""
+            resValue "string", "GOOGLE_API_KEY", "AIzaSyBsvw-Xbw84WZL_pCiSQvW4KCSTMirKKik"
+        }
     }
     packagingOptions {
         exclude 'META-INF/LICENSE.txt'

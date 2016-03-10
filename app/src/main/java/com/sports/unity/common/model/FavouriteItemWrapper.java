@@ -64,7 +64,10 @@ public class FavouriteItemWrapper {
                 item.setFilterType(filterType);
 
                 try {
-                    item.setFlagImageUrl(object.getString(this.flag));
+               if(!object.isNull(this.flag)){
+                   item.setFlagImageUrl(object.getString(this.flag));
+               }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

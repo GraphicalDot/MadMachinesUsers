@@ -3,6 +3,7 @@ package com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.sports.unity.R;
+import com.sports.unity.common.model.FontTypeface;
 
 import java.util.List;
 
@@ -70,7 +72,7 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
                 holder.ivEnterExit.setVisibility(View.GONE);
                 holder.ivOffCardType.setVisibility(View.GONE);
                 holder.ivOffPlayerPosition.setVisibility(View.GONE);
-                holder.prOffLeftPercentRelativeLayout.setVisibility(View.GONE);
+                holder.prOffLeftPercentRelativeLayout.setVisibility(View.INVISIBLE);
             }
 
             // right side player postion
@@ -93,7 +95,6 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
             }else{
                 holder.ivBallPassSecond.setVisibility(View.GONE);
             }
-
             if(holder.dto.getOffPlayerNameSecond()!= null) {
                 holder.tvOffPlayerNameSecond.setText(holder.dto.getOffPlayerNameSecond());
                 holder.ivEnterExitSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_red));
@@ -104,7 +105,7 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
                 holder.ivEnterExitSecond.setVisibility(View.GONE);
                 holder.ivOffCardTypeSecond.setVisibility(View.GONE);
                 holder.ivOffPlayerPositionSecond.setVisibility(View.GONE);
-                holder.proffRightPercentRelativeLayout.setVisibility(View.GONE);
+                holder.proffRightPercentRelativeLayout.setVisibility(View.INVISIBLE);
             }
             /*if(holder.dto.getOffPlayerName()!=null) {
                 drawable = context.getResources().getDrawable(R.drawable.ic_substitue);
@@ -271,8 +272,7 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
                     .textColor(textColor)
                     .withBorder(border)
                     .width(radius)
-                    .height(radius)
-                    .bold()
+                    .height(radius).useFont(FontTypeface.getInstance(context).getRobotoCondensedRegular())
                     .endConfig()
                     .buildRound(value, color);
         }

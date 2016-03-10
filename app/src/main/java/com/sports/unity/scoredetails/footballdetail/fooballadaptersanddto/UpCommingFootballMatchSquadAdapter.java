@@ -1,6 +1,7 @@
 package com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,13 +11,15 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
+import com.sports.unity.player.view.PlayerProfileView;
+import com.sports.unity.util.Constants;
 
 import java.util.List;
 
 /**
  * Created by cfeindia on 27/2/16.
  */
-public class UpCommingFootballMatchSquadAdapter  extends RecyclerView.Adapter<UpCommingFootballMatchSquadAdapter.ViewHolder> {
+public class UpCommingFootballMatchSquadAdapter  extends RecyclerView.Adapter<UpCommingFootballMatchSquadAdapter.ViewHolder>{
 
     private final List<UpCommingFootballMatchSquadDTO> mValues;
     private Context context;
@@ -41,6 +44,16 @@ public class UpCommingFootballMatchSquadAdapter  extends RecyclerView.Adapter<Up
         try{
             holder.dto = mValues.get(position);
             holder.tvPlayerName.setText(holder.dto.getTvPlayerName());
+            final  String id = holder.dto.getId();
+            holder.tvPlayerName.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent i=new Intent(context, PlayerProfileView.class);
+                    i.putExtra(Constants.INTENT_KEY_ID,id);
+                    context.startActivity(i);
+                }
+            });
+
             holder.tvPlayerAge.setText(holder.dto.getTvPlayerAge());
             holder.tvP.setText(holder.dto.getTvP());
             holder.tvpl.setText(holder.dto.getTvpl());

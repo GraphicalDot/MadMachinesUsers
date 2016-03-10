@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONObject;
 
@@ -58,6 +59,7 @@ public class LiveFootballMatchLineUpHandler {
         Log.i("Score Detail", "Request Score Details");
 
         String url = BASEURL+matchId;
+        Log.i("Football Line ups", "Request Score Details"+url);
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
@@ -81,6 +83,12 @@ public class LiveFootballMatchLineUpHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
+        try{
+            Log.i("Score Card", "handleResponse: ");
+            mContentListener.handleContent(Constants.ERRORRESPONSE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void addListener(LiveMatchContentListener contentListener) {

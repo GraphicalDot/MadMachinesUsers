@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.sports.unity.util.Constants;
 
 import java.util.HashSet;
 
@@ -75,9 +76,11 @@ public class CricketPlayerbioHandler {
         }
    }
     private void handleErrorResponse(VolleyError volleyError) {
-        //Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
-        if(mContentListener != null) {
-            //Log.i("handleErrorResponse: ",volleyError.getMessage() );
+        try{
+            Log.i("Score Card", "handleResponse: ");
+            mContentListener.handleContent(Constants.ERRORRESPONSE);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

@@ -27,12 +27,19 @@ import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 /**
  * Created by Edwin on 15/02/2015.
@@ -44,16 +51,21 @@ public class MatchListFragment extends Fragment {
     private static final String LIST_LISTENER_KEY = "list_listener";
     private static final String LIST_OF_MATCHES_REQUEST_TAG = "list_request_tag";
 
-    private RecyclerView mRecyclerView;
+    //private RecyclerView mRecyclerView;
+     /*private MatchListAdapter mAdapter;*/
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private ArrayList<JSONObject> matches = new ArrayList<>();
 
     private ScoresContentListener contentListener = new ScoresContentListener();
 
-    private MatchListAdapter mAdapter;
+
     private int sportsSelectedNum = 0;
     private ArrayList<String> sportSelected;
+    private MatchListWrapperAdapter matchListWrapperAdapter;
+    private RecyclerView mWraperRecyclerView;
+    private List<MatchListWrapperDTO> matchList = new ArrayList<>();
+
 
 
     @Override
@@ -120,7 +132,7 @@ public class MatchListFragment extends Fragment {
     }
 
     private void initView(View view) {
-
+/*
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_scores);
         mRecyclerView.setHasFixedSize(true);
 
@@ -128,7 +140,14 @@ public class MatchListFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
 
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mRecyclerView.setLayoutManager(mLayoutManager);*/
+
+        mWraperRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_scores);
+        mWraperRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getContext(), VERTICAL, false));
+
+        matchListWrapperAdapter = new MatchListWrapperAdapter(matchList,getActivity(),getContext());
+        mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
+
 
         initErrorLayout(view);
         hideErrorLayout(view);
@@ -180,16 +199,18 @@ public class MatchListFragment extends Fragment {
     private void renderContent() {
         Log.i("List of Matches", "Render Content");
 
-        mRecyclerView.getAdapter().notifyDataSetChanged();
+        matchListWrapperAdapter.notifyDataSetChanged();
     }
 
     private boolean handleContent(String content) {
         Log.i("List of Matches", "Handle Content");
         boolean success = false;
+        matchList.clear();
+        matches.clear();
         ArrayList<JSONObject> list = ScoresJsonParser.parseListOfMatches(content);
         if (list.size() > 0) {
-            matches.clear();
-            if (UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET) && UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_FOOTBALL)) {
+
+            if (UserUtil.getFilterSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET) && UserUtil.getFilterSportsSelected().contains(Constants.SPORTS_TYPE_FOOTBALL)) {
                 matches.addAll(list);
             } else {
                 ArrayList<JSONObject> cricket = new ArrayList<>();
@@ -206,16 +227,95 @@ public class MatchListFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
-                if (UserUtil.getSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET)) {
+                if (UserUtil.getFilterSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET)) {
                     matches.addAll(cricket);
                 } else {
                     matches.addAll(football);
                 }
             }
             success = true;
-            mAdapter.updateChild(matches);
-        } else {
-            //nothing
+            // added By Ashish For grouping
+            String day = null;
+            long epochTime= 0l;
+            String leagueName = "";
+            Map<String, Map<String, MatchListWrapperDTO>> daysMap = new HashMap<>();
+            String sportsType= "";
+            for(int i = 0; i<matches.size();i++){
+                try{
+                    JSONObject object = matches.get(i);
+                    if(!object.isNull("match_datetime_epoch")){
+                        epochTime = object.getLong("match_datetime_epoch");
+                        day=  DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
+                        leagueName = object.getString("league_name");
+                        sportsType = object.getString("type");
+                    } else if(!object.isNull("match_date_epoch")){
+                        epochTime = object.getLong("match_date_epoch");
+                        sportsType = object.getString("type");
+                        day=  DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
+                        if(!object.isNull("league_name")){
+                            leagueName = object.getString("league_name");
+                        }
+                    }
+                    MatchListWrapperDTO dayGroupDto =    null;
+                    ArrayList<JSONObject> dayGroupList = null;
+                    Map<String, MatchListWrapperDTO> leagueMapTemp = null;
+                    if(daysMap.containsKey(day)){
+                        Log.i("League Name", "handleContent: " + leagueName);
+                        Log.i("Day Name", "handleContent: " + day);
+                        leagueMapTemp = daysMap.get(day);
+
+                        if(leagueMapTemp.containsKey(leagueName)){
+                            dayGroupDto =    leagueMapTemp.get(leagueName);
+                            dayGroupList = dayGroupDto.getList();
+                        } else{
+                            dayGroupDto =   new MatchListWrapperDTO();
+                            dayGroupList = new ArrayList<>();
+
+                       }
+
+
+                    }else{
+
+
+                        leagueMapTemp = new HashMap<>();
+                        dayGroupDto =   new MatchListWrapperDTO();
+                        dayGroupList = new ArrayList<>();
+
+
+                    }
+                    dayGroupList.add(object);
+                    dayGroupDto.setList(dayGroupList);
+                    dayGroupDto.setDay(day);
+                    dayGroupDto.setEpochTime(epochTime);
+                    dayGroupDto.setSportsType(sportsType);
+                    dayGroupDto.setLeagueName(leagueName);
+                    leagueMapTemp.put(leagueName, dayGroupDto);
+                    daysMap.put(day,leagueMapTemp);
+
+                }catch (Exception  e)
+                {
+                    e.printStackTrace();
+                }
+            }
+            matchList.clear();
+            Set<String> daySet = daysMap.keySet();
+
+            for(String dayKey :daySet) {
+                Map<String, MatchListWrapperDTO > leagueMaps = daysMap.get(dayKey);
+                Set<String> keySet = leagueMaps.keySet();
+
+                for (String key : keySet) {
+                    int s = leagueMaps.get(key).getList().size();
+
+                    if (s > 0) {
+                        matchList.add(leagueMaps.get(key));
+                    }
+
+                }
+            }
+            Collections.sort(matchList);
+
+            matchListWrapperAdapter.notifyDataSetChanged();
         }
         return success;
     }

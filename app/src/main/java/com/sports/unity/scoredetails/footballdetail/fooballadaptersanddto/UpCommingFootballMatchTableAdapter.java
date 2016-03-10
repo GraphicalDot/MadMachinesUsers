@@ -45,7 +45,7 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
 
         holder.dto = mValues.get(position);
 
-            if(team1.equals(holder.dto.getTvTeamName()) || team2.equals(holder.dto.getTvTeamName())){
+            if(team1.equalsIgnoreCase(holder.dto.getTvTeamName()) || team2.equalsIgnoreCase(holder.dto.getTvTeamName())){
                 holder.tvSerialNumber.setText(String.valueOf(position+1));
                 holder.tvTeamName.setText(holder.dto.getTvTeamName());
                 holder.tvP.setText(holder.dto.getTvP());
@@ -71,6 +71,14 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
                 holder.tvD.setText(holder.dto.getTvD());
                 holder.tvL.setText(holder.dto.getTvL());
                 holder.tvPts.setText(holder.dto.getTvPts());
+                holder.tvSerialNumber.setTextColor(context.getResources().getColor(R.color.news_static));
+                holder.tvTeamName.setTextColor(context.getResources().getColor(R.color.news_static));
+                holder.tvP.setTextColor(context.getResources().getColor(R.color.news_static));
+                holder.tvW.setTextColor(context.getResources().getColor(R.color.news_static));
+                holder.tvD.setTextColor(context.getResources().getColor(R.color.news_static));
+                holder.tvL.setTextColor(context.getResources().getColor(R.color.news_static));
+                holder.tvPts.setTextColor(context.getResources().getColor(R.color.news_static));
+                holder.llLiveTeam.setVisibility(View.INVISIBLE);
                 Glide.with(context).load(holder.dto.getIvTeamProfileImage()).placeholder(R.drawable.ic_no_img).into(holder.ivTeamProfileImage);
             }
 

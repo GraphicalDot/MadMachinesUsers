@@ -3,6 +3,7 @@ package com.sports.unity.util.commons;
 import android.content.Context;
 
 import com.sports.unity.R;
+import com.sports.unity.common.model.Match;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -18,7 +19,7 @@ public class DateUtil {
     private static final SimpleDateFormat DATE_FORMAT =  new SimpleDateFormat("dd MMMM yyyy");
     private static final SimpleDateFormat TIME_FORMAT =  new SimpleDateFormat("HH:mm");
     public  static String getDaysDiffrence(String oldDate,Context context){
-      String days;
+        String days;
         Calendar with = getCalendar(oldDate);
         Calendar to = Calendar.getInstance();
         to.set(Calendar.YEAR, with.get(Calendar.YEAR));
@@ -40,23 +41,23 @@ public class DateUtil {
     }
 
 
-     public static Calendar getCalendar(String date){
+    public static Calendar getCalendar(String date){
 
-         try {
-             Date aDate = formatter.parse(date);
-             Calendar with = Calendar.getInstance();
-             with.setTime(aDate);
-             return  with;
-         } catch (ParseException e) {
-             e.printStackTrace();
-         }
-         return Calendar.getInstance();
+        try {
+            Date aDate = formatter.parse(date);
+            Calendar with = Calendar.getInstance();
+            with.setTime(aDate);
+            return  with;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return Calendar.getInstance();
 
-     }
+    }
 
     public static String getFormattedDate(String oldDate){
 
-       String date = "";
+        String date = "";
         try
         {
             Date date1 = formatter.parse(oldDate);
@@ -100,4 +101,32 @@ public class DateUtil {
         with.setTimeInMillis(l);
         return TIME_FORMAT.format(with.getTime());
     }
+
+
+    public static String getDayFromEpochTime(long l,Context context) {
+        String days = "";
+
+        Calendar with = Calendar.getInstance();
+        with.setTimeInMillis(l);
+        Calendar to = Calendar.getInstance();
+        to.set(Calendar.YEAR, with.get(Calendar.YEAR));
+        int withDAY = with.get(Calendar.DAY_OF_YEAR);
+        int toDAY = to.get(Calendar.DAY_OF_YEAR);
+
+        int diffDay =  withDAY-toDAY   ;
+        if(diffDay == 0){
+            days = context.getString(R.string.today);
+        } else if (diffDay == 1)
+        {
+            days = context.getString(R.string.tomorrow);
+        } else {
+            Date utilDate = with.getTime();
+            days =   DATE_FORMAT.format(utilDate);
+
+        }
+
+        return days;
+    }
+
+
 }
