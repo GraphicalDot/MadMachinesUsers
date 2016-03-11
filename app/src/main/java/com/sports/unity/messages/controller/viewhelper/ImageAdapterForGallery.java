@@ -235,18 +235,7 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
 
                 @Override
                 public Object process() {
-
-                    FileInputStream fileInputStream = null;
-                    try {
-                        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-                        Log.d("Image Adapter", "" + filePath.get(position));
-                        fileInputStream = new FileInputStream(filePath.get(position));
-
-                        retriever.setDataSource(fileInputStream.getFD());
-                        hasVideoContent = isVideoFile(filePath.get(position));
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+                    hasVideoContent = isVideoFile(filePath.get(position));
 
                     String fileName = null;
                     try {
