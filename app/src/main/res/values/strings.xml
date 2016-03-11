@@ -403,4 +403,5 @@ Carrier SMS charges may apply.</string>
     <string name="mins">MINS</string>
     <string name="on_going">On Going</string>
     <string name="half_time">Half Time</string>
+    <string name="yesterday">Yesterday</string>
 </resources>

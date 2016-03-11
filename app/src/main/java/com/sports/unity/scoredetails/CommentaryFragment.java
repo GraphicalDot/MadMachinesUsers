@@ -1,7 +1,6 @@
 package com.sports.unity.scoredetails;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,21 +12,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.sports.unity.R;
-import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.scores.DataServiceContract;
 import com.sports.unity.scores.ErrorContract;
-import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.scores.controller.fragment.BroadcastListAdapter;
 import com.sports.unity.util.Constants;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 
 /**
  * A simple {@link Fragment} subclass.
