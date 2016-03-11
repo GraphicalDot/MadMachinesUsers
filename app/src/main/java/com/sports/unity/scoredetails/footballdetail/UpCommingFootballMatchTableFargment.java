@@ -1,5 +1,6 @@
 package com.sports.unity.scoredetails.footballdetail;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -155,7 +156,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         progressBar.setVisibility(View.GONE);
     }
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-        ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
+        Activity activity =  getActivity();
         final JSONArray dataArray = jsonObject.getJSONArray("data");
         if(swipeRefreshLayout.isRefreshing()){
             swipeRefreshLayout.setRefreshing(false);
@@ -185,8 +186,8 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
                                 upCommngFootbalMatchTableDTO.setTvD(teamObject.getString("games_drawn"));
                             if(!teamObject.isNull("games_lost"))
                                 upCommngFootbalMatchTableDTO.setTvL(teamObject.getString("games_lost"));
-                            if(!teamObject.isNull("team_points"))
-                                upCommngFootbalMatchTableDTO.setTvP(teamObject.getString("team_points"));
+                            if(!teamObject.isNull("games_played"))
+                                upCommngFootbalMatchTableDTO.setTvP(teamObject.getString("games_played"));
                             if(!teamObject.isNull("games_won"))
                                 upCommngFootbalMatchTableDTO.setTvW(teamObject.getString("games_won"));
                             if(!teamObject.isNull("team_points"))

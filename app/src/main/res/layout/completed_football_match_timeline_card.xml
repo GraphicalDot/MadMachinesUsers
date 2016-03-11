@@ -26,7 +26,9 @@
         android:src="@drawable/ic_in_active_player"/>
     <android.support.percent.PercentRelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:id="@id/card_view"
+        >
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:id="@+id/tv_team_first_time"
             android:layout_width="0dp"

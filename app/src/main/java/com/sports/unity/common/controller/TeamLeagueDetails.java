@@ -18,9 +18,9 @@ import com.sports.unity.util.Constants;
 
 public class TeamLeagueDetails extends CustomAppCompatActivity {
 
-    private String id = null;
-    private String name = null;
-    private String type = null;
+    private String id ;
+    private String name ;
+    private String type ;
 
 
     @Override

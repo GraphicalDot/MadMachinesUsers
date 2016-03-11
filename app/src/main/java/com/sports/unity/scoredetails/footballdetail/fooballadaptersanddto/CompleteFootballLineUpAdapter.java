@@ -46,6 +46,7 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
    @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         try{
+            holder.setIsRecyclable(false);
             int color = context.getResources().getColor(R.color.app_theme_blue);
             Drawable drawable = null;
             holder.dto = mValues.get(position);
