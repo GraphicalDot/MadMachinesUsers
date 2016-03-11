@@ -299,7 +299,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             itemListener = contactItemListener;
 
             contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList_AvailableOnly(true);
-            ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(false);
+            ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(Contacts.AVAILABLE_BY_MY_CONTACTS);
             {
                 /**
                  * Frequent Contacts + default contact list

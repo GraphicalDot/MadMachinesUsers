@@ -7,17 +7,15 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
 import android.graphics.Path;
 import android.net.Uri;
-import android.provider.Settings;
 import android.support.v7.app.NotificationCompat;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.messages.controller.model.Contacts;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,7 +31,7 @@ public class NotificationHandler {
 
     public static final String OTHERS_COUNT = "others_count";
     public static final String CHAT_MESSAGE_COUNT_SET = "chat_message_count_set";
-    public static final String NEARBY_CHAT_MESSAGE_COUNT_SET = "nearby_chat_message_count_set";
+    public static final String OTHERS_CHAT_MESSAGE_COUNT_SET = "nearby_chat_message_count_set";
 
     public static final int NOTIFICATION_ID = 1;
     public static final int MESSAGE_LIMIT = 5;
@@ -55,7 +53,7 @@ public class NotificationHandler {
     private Context context;
     private ArrayList<NotificationMessage> notificationMessageList = new ArrayList<>();
     private HashMap<String, Integer> chatIdAndMessageCountMap = new HashMap<>();
-    private HashMap<String, Integer> nearByChatIdAndMessageCountMap = new HashMap<>();
+    private HashMap<String, Integer> othersChatIdAndMessageCountMap = new HashMap<>();
 
     private int unreadMessageCount = 0;
     private int friendsChatCount = 0;
@@ -66,11 +64,11 @@ public class NotificationHandler {
         initUnreadCountData(context);
     }
 
-    synchronized public void addNotificationMessage(long chatId, String from, String message, String mimeType, byte[] image, boolean nearByChat) {
-        NotificationMessage notificationMessage = new NotificationMessage(chatId, from, message, mimeType, image, nearByChat);
+    synchronized public void addNotificationMessage(long chatId, String from, String message, String mimeType, byte[] image, int availibilityStatus) {
+        NotificationMessage notificationMessage = new NotificationMessage(chatId, from, message, mimeType, image, availibilityStatus);
         notificationMessageList.add(notificationMessage);
 
-        updateUnreadCountBasedOnNewMessageArrived(String.valueOf(chatId), nearByChat);
+        updateUnreadCountBasedOnNewMessageArrived(String.valueOf(chatId), availibilityStatus);
 //        updateUnreadCount(chatIdSet.size(), 0, notificationMessageList.size());
 
         if (notificationMessageList.size() > MESSAGE_LIMIT) {
@@ -83,7 +81,7 @@ public class NotificationHandler {
     }
 
     public int getNotificationChatCount() {
-        return chatIdAndMessageCountMap.size() + nearByChatIdAndMessageCountMap.size();
+        return chatIdAndMessageCountMap.size() + othersChatIdAndMessageCountMap.size();
     }
 
     public int getNotificationMessagesCount() {
@@ -105,27 +103,18 @@ public class NotificationHandler {
         }
     }
 
-    synchronized public void clearNotificationMessages(String chatId, boolean nearByChat) {
-        if (nearByChat) {
-            int messageCount = 0;
-            if (nearByChatIdAndMessageCountMap.containsKey(chatId)) {
-                messageCount = nearByChatIdAndMessageCountMap.get(chatId);
-            }
-
-            nearByChatIdAndMessageCountMap.remove(chatId);
-
-            updateUnreadCountBasedOnChatViewed(messageCount);
-
-        } else {
-            int messageCount = 0;
-            if (chatIdAndMessageCountMap.containsKey(chatId)) {
-                messageCount = chatIdAndMessageCountMap.get(chatId);
-            }
+    synchronized public void clearNotificationMessages(String chatId) {
+        int messageCount = 0;
+        if (othersChatIdAndMessageCountMap.containsKey(chatId)) {
+            messageCount = othersChatIdAndMessageCountMap.get(chatId);
+            othersChatIdAndMessageCountMap.remove(chatId);
+        } else if (chatIdAndMessageCountMap.containsKey(chatId)) {
+            messageCount = chatIdAndMessageCountMap.get(chatId);
             chatIdAndMessageCountMap.remove(chatId);
-
-            updateUnreadCountBasedOnChatViewed(messageCount);
-
         }
+
+        updateUnreadCountBasedOnChatViewed(messageCount);
+
 
         for (int index = 0; index < notificationMessageList.size(); index++) {
             if (notificationMessageList.get(index).chatId == Long.parseLong(chatId)) {
@@ -152,20 +141,20 @@ public class NotificationHandler {
         return jsonData;
     }
 
-    private void updateUnreadCountBasedOnNewMessageArrived(String chatId, boolean nearByChat) {
+    private void updateUnreadCountBasedOnNewMessageArrived(String chatId, int availibilityStatus) {
         unreadMessageCount++;
-        if (nearByChat) {
+        if (availibilityStatus == Contacts.AVAILABLE_BY_OTHER_CONTACTS || availibilityStatus == Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME) {
 
             int messageCount = 0;
-            if (nearByChatIdAndMessageCountMap.containsKey(chatId)) {
-                messageCount = nearByChatIdAndMessageCountMap.get(chatId);
+            if (othersChatIdAndMessageCountMap.containsKey(chatId)) {
+                messageCount = othersChatIdAndMessageCountMap.get(chatId);
             }
             messageCount++;
 
-            nearByChatIdAndMessageCountMap.put(chatId, messageCount);
-            othersChatCount = nearByChatIdAndMessageCountMap.size();
+            othersChatIdAndMessageCountMap.put(chatId, messageCount);
+            othersChatCount = othersChatIdAndMessageCountMap.size();
 
-        } else {
+        } else if (availibilityStatus == Contacts.AVAILABLE_BY_MY_CONTACTS) {
 
             int messageCount = 0;
             if (chatIdAndMessageCountMap.containsKey(chatId)) {
@@ -185,7 +174,7 @@ public class NotificationHandler {
     private void updateUnreadCountBasedOnChatViewed(int messageCount) {
         unreadMessageCount -= messageCount;
         friendsChatCount = chatIdAndMessageCountMap.size();
-        othersChatCount = nearByChatIdAndMessageCountMap.size();
+        othersChatCount = othersChatIdAndMessageCountMap.size();
 
         String data = createUnreadCountJson();
         setUnreadCountData(data, context);
@@ -200,15 +189,15 @@ public class NotificationHandler {
         JSONObject jsonObject = new JSONObject();
         try {
 
-            JSONObject nearByChatMessageCount = new JSONObject();
-            Iterator<String> nearByChatIterator = nearByChatIdAndMessageCountMap.keySet().iterator();
-            while (nearByChatIterator.hasNext()) {
-                String chatId = nearByChatIterator.next();
-                Integer messageCount = nearByChatIdAndMessageCountMap.get(chatId);
-                nearByChatMessageCount.put(chatId, messageCount);
+            JSONObject othersChatMessageCount = new JSONObject();
+            Iterator<String> othersChatIterator = othersChatIdAndMessageCountMap.keySet().iterator();
+            while (othersChatIterator.hasNext()) {
+                String chatId = othersChatIterator.next();
+                Integer messageCount = othersChatIdAndMessageCountMap.get(chatId);
+                othersChatMessageCount.put(chatId, messageCount);
             }
 
-            jsonObject.put(NEARBY_CHAT_MESSAGE_COUNT_SET, nearByChatMessageCount);
+            jsonObject.put(OTHERS_CHAT_MESSAGE_COUNT_SET, othersChatMessageCount);
 //            jsonObject.put(OTHERS_COUNT, othersChatCount);
 
             JSONObject chatMessageCount = new JSONObject();
@@ -233,13 +222,13 @@ public class NotificationHandler {
                 JSONObject jsonObject = new JSONObject(data);
 //                othersChatCount = jsonObject.getInt(OTHERS_COUNT);
 
-                JSONObject nearByChatMessageCount = jsonObject.getJSONObject(NEARBY_CHAT_MESSAGE_COUNT_SET);
-                Iterator<String> nearByChatkeys = nearByChatMessageCount.keys();
+                JSONObject othersChatMessageCount = jsonObject.getJSONObject(OTHERS_CHAT_MESSAGE_COUNT_SET);
+                Iterator<String> nearByChatkeys = othersChatMessageCount.keys();
                 while (nearByChatkeys.hasNext()) {
                     String key = nearByChatkeys.next();
 
-                    Integer count = nearByChatMessageCount.getInt(key);
-                    nearByChatIdAndMessageCountMap.put(key, count);
+                    Integer count = othersChatMessageCount.getInt(key);
+                    othersChatIdAndMessageCountMap.put(key, count);
 
                     unreadMessageCount += count;
 
@@ -257,7 +246,7 @@ public class NotificationHandler {
                 }
 
                 friendsChatCount = chatIdAndMessageCountMap.size();
-                othersChatCount = nearByChatIdAndMessageCountMap.size();
+                othersChatCount = othersChatIdAndMessageCountMap.size();
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -462,15 +451,15 @@ public class NotificationHandler {
         private String message;
         private String mimeType;
         private byte[] image;
-        private boolean nearByChat;
+        private int availibilityStatus;
 
-        NotificationMessage(long chatId, String from, String message, String mimeType, byte[] image, boolean nearByChat) {
+        NotificationMessage(long chatId, String from, String message, String mimeType, byte[] image, int availibilityStatus) {
             this.chatId = chatId;
             this.from = from;
             this.message = message;
             this.mimeType = mimeType;
             this.image = image;
-            this.nearByChat = nearByChat;
+            this.availibilityStatus = availibilityStatus;
         }
 
         private Bitmap getProfileImage() {

@@ -27,6 +27,7 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.SettingsHelper;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.model.Chats;
+import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.NotificationHandler;
@@ -235,21 +236,20 @@ public class SettingsActivity extends CustomAppCompatActivity {
     }
 
     private void clearAllChat() {
-        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getApplicationContext()).getChatList(false);
+        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getApplicationContext()).getChatList(SportsUnityDBHelper.DEFAULT_GET_ALL_CHAT_LIST);
         for (Chats chatObject : chatList) {
             SportsUnityDBHelper.getInstance(getApplicationContext()).clearChat(getApplicationContext(), chatObject.chatid, chatObject.groupServerId);
             SportsUnityDBHelper.getInstance(getApplicationContext()).clearUnreadCount(chatObject.chatid, chatObject.groupServerId);
-            NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid), false);
+            NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid));
         }
     }
 
     private void deleteAllChat() {
-        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getApplicationContext()).getChatList(false);
+        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getApplicationContext()).getChatList(SportsUnityDBHelper.DEFAULT_GET_ALL_CHAT_LIST);
         for (Chats chatObject : chatList) {
             SportsUnityDBHelper.getInstance(getApplicationContext()).clearChat(this, chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
             SportsUnityDBHelper.getInstance(this).clearChatEntry(chatObject.chatid);
-            // TODO have to get the status if the chatOBject is of nearby chat or of normal chat by default is given false while clearing notifications
-            NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid), false);
+            NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid));
         }
     }
 

@@ -39,6 +39,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     public static final String MIME_TYPE_VIDEO = "v";
     public static final String MIME_TYPE_AUDIO = "a";
 
+    public static final int DEFAULT_GET_ALL_CHAT_LIST = -1;
+
     public static final int DATABASE_VERSION = 1;
     public static final String DATABASE_NAME = "spu.db";
 
@@ -1151,11 +1153,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return id;
     }
 
-    public ArrayList<Chats> getChatList(boolean nearByChat) {
-        return getChatList(null, nearByChat);
+    public ArrayList<Chats> getChatList(int availability) {
+        return getChatList(null, availability);
     }
 
-    public ArrayList<Chats> getChatList(String searchKeyword, boolean nearByChat) {
+    public ArrayList<Chats> getChatList(String searchKeyword, int availability) {
         SQLiteDatabase db = this.getReadableDatabase();
 
         ArrayList<Chats> list = new ArrayList<>();
@@ -1184,14 +1186,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             subQuery.append(" FROM " + ChatEntry.TABLE_NAME + " A INNER JOIN " + MessagesEntry.TABLE_NAME + " B ");
             subQuery.append("ON " + ChatEntry.COLUMN_LAST_MESSAGE_ID + " = " + MessagesEntry.COLUMN_ID);
 
-            String[] selectionArg = null;
-            if (nearByChat) {
-                selectionArg = new String[]{"1"};
-                subQuery.append(" WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " LIKE ? ");
-            } else {
-                selectionArg = new String[]{"0"};
-                subQuery.append(" WHERE " + ChatEntry.COLUMN_PEOPLE_AROUND_ME + " LIKE ? ");
-            }
 
             if (searchKeyword != null && searchKeyword.length() > 0) {
                 subQuery.append(" and " + ChatEntry.COLUMN_NAME + " LIKE '%" + searchKeyword + "%'");
@@ -1208,6 +1202,20 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             selectQuery.append(subQuery.toString());
             selectQuery.append(" B  ON ");
             selectQuery.append("A." + ContactsEntry.COLUMN_CONTACT_ID + " = B." + ChatEntry.COLUMN_CONTACT_ID);
+
+            String[] selectionArg = null;
+            if (availability == DEFAULT_GET_ALL_CHAT_LIST) {
+                selectionArg = new String[]{String.valueOf(Contacts.AVAILABLE_NOT)};
+                selectQuery.append(" WHERE " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " NOT LIKE ? ");
+            } else if (availability == Contacts.AVAILABLE_BY_MY_CONTACTS) {
+                selectionArg = new String[]{String.valueOf(availability)};
+                selectQuery.append(" WHERE " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " LIKE ? ");
+            } else {
+                selectionArg = new String[]{String.valueOf(Contacts.AVAILABLE_BY_OTHER_CONTACTS), String.valueOf(Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME)};
+                selectQuery.append(" WHERE " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " LIKE ? OR " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " LIKE ? ");
+            }
+
+
             selectQuery.append(" order by " + ChatEntry.COLUMN_LAST_USED + " DESC");
 
             Log.d("Chat Fragment", selectQuery.toString());
@@ -1600,6 +1608,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             value = c.getInt(0) >= Contacts.AVAILABLE_BY_OTHER_CONTACTS;
         }
         return value;
+    }
+
+    public void updateContactAvailibility(String jid) {
+        //TODO
     }
 
     public static class GroupParticipants {
