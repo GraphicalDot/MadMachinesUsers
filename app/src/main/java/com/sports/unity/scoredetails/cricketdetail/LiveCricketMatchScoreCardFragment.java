@@ -248,7 +248,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                     renderDisplay(object);
 
                 } else {
-                    Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();
+
                     showErrorLayout(getView());
                 }
             }catch (Exception ex){

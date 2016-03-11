@@ -161,6 +161,10 @@
     <dimen name="football_match_stats_height">32dp</dimen>
 <!--football player information-->
 
+    <dimen name="football_timeline_images_width">24dp</dimen>
+    <dimen name="football_timeline_images_height">24dp</dimen>
+<!--football timeline images-->
+
     <dimen name="icon_football_info">16dp</dimen>
     <!--score card-->
 
@@ -173,4 +177,10 @@
     <!--Contact Sync progress bar in toolbar padding-->
     <dimen name="menu_spinner_padding">15dp</dimen>
 
+    <!--score details card-->
+
+    <dimen name="timer_layout_margin_top">-32dp</dimen>
+    <dimen name="timer_width_height">48dp</dimen>
+    <dimen name="timer_stock">3dp</dimen>
+    <dimen name="venus_layout_width">150dp</dimen>
 </resources>

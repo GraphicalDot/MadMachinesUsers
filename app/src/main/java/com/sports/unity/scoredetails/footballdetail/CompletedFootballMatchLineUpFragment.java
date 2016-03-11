@@ -1,5 +1,6 @@
 package com.sports.unity.scoredetails.footballdetail;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -169,7 +170,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         layoutLineUpView.setVisibility(View.VISIBLE);
         layoutSubstitutesView.setVisibility(View.VISIBLE);
         hideProgressBar();
-        ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
+        Activity activity =  getActivity();
         if(!jsonObject.isNull("data")) {
             final JSONObject dataObject = jsonObject.getJSONObject("data");
             final JSONArray subsArray = dataObject.getJSONArray("subs");
@@ -237,9 +238,9 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         String event = getMatchEventNumber(matchEventsArray, teamSecondObject.getString("name"));
         if (event != null) {
             if ("goals".equalsIgnoreCase(event)) {
-                completeFootballLineUpDTO.setGoal(event);
+                completeFootballLineUpDTO.setGoalSecond((event));
             } else {
-                completeFootballLineUpDTO.setCardType(event);
+                completeFootballLineUpDTO.setCardTypeSecond(event);
             }
 
         }
@@ -279,9 +280,9 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         String event = getMatchEventNumber(matchEventsArray, teamSecondObject.getString("player_name"));
         if (event != null) {
             if ("goals".equalsIgnoreCase(event)) {
-                completeFootballLineUpDTO.setGoal(event);
+                completeFootballLineUpDTO.setGoalSecond(event);
             } else {
-                completeFootballLineUpDTO.setCardType(event);
+                completeFootballLineUpDTO.setCardTypeSecond(event);
             }
 
         }

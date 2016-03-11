@@ -57,7 +57,7 @@ public class ViewPagerAdapterForTeamAndLeagueDetails extends FragmentStatePagerA
 
     @Override
     public Fragment getItem(int position) {
-  Fragment fragment = null;
+        Fragment fragment = null;
         if (position == 0) // if the position is 0 we are returning the First tab
         {
             if(type.equals(Constants.FILTER_TYPE_LEAGUE)) {

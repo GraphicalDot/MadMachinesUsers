@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * Created by madmachines on 29/2/16.
@@ -105,10 +106,11 @@ public class DateUtil {
 
     public static String getDayFromEpochTime(long l,Context context) {
         String days = "";
-
-        Calendar with = Calendar.getInstance();
-        with.setTimeInMillis(l);
         Calendar to = Calendar.getInstance();
+        TimeZone tz = to.getTimeZone();
+        Calendar with = Calendar.getInstance();
+        with.setTimeZone(tz);
+        with.setTimeInMillis(l);
         to.set(Calendar.YEAR, with.get(Calendar.YEAR));
         int withDAY = with.get(Calendar.DAY_OF_YEAR);
         int toDAY = to.get(Calendar.DAY_OF_YEAR);
@@ -119,7 +121,9 @@ public class DateUtil {
         } else if (diffDay == 1)
         {
             days = context.getString(R.string.tomorrow);
-        } else {
+        }else  if(diffDay == -1){
+            days = context.getString(R.string.yesterday);
+        }else {
             Date utilDate = with.getTime();
             days =   DATE_FORMAT.format(utilDate);
 

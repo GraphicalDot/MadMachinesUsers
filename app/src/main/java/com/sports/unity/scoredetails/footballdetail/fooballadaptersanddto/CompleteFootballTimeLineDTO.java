@@ -6,7 +6,7 @@ import android.graphics.drawable.Drawable;
  * Created by cfeindia on 28/2/16.
  */
 public class CompleteFootballTimeLineDTO implements  Comparable<CompleteFootballTimeLineDTO>{
-    private int minute;
+    private String minute;
     private String teamName;
     private String tvTeamFirstTime;
     private String tvTeamSecondTime;
@@ -17,11 +17,11 @@ public class CompleteFootballTimeLineDTO implements  Comparable<CompleteFootball
     private Drawable drwDrawable;
     private String matchStatus;
 
-    public int getMinute() {
+    public String getMinute() {
         return minute;
     }
 
-    public void setMinute(int minute) {
+    public void setMinute(String minute) {
         this.minute = minute;
     }
 
@@ -99,11 +99,9 @@ public class CompleteFootballTimeLineDTO implements  Comparable<CompleteFootball
 
     @Override
     public int compareTo(CompleteFootballTimeLineDTO another) {
-        if (this.tvTeamFirstTime == null) {
-            return 1;
-        } else if (another.tvTeamFirstTime == null) {
+        if (this.minute == null || another.minute == null) {
             return 1;
         }
-        return this.tvTeamFirstTime.compareTo(another.tvTeamFirstTime);
+        return (this.minute.compareTo(another.minute));
     }
 }
