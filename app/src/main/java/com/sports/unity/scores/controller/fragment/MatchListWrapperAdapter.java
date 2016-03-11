@@ -105,6 +105,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             rvChild = (RecyclerView) view.findViewById(R.id.child_rv);
             mAdapter = new MatchListAdapter(new ArrayList<JSONObject>() ,activity);
             rvChild.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
+            rvChild.setNestedScrollingEnabled(false);
             rvChild.setAdapter(mAdapter);
 
         }

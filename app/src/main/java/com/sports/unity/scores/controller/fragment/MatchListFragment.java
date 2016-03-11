@@ -144,7 +144,7 @@ public class MatchListFragment extends Fragment {
 
         mWraperRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_scores);
         mWraperRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getContext(), VERTICAL, false));
-
+        mWraperRecyclerView.setNestedScrollingEnabled(false);
         matchListWrapperAdapter = new MatchListWrapperAdapter(matchList,getActivity(),getContext());
         mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
 
