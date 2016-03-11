@@ -101,7 +101,7 @@ public class CompleteFootballTimeLineDTO implements  Comparable<CompleteFootball
     public int compareTo(CompleteFootballTimeLineDTO another) {
         if (this.minute == null || another.minute == null) {
             return 1;
-        } 
+        }
         return (this.minute.compareTo(another.minute));
     }
 }
