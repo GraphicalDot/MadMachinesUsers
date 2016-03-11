@@ -79,7 +79,6 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
         teamSecondId=i.getStringExtra(INTENT_KEY_TEAM2_ID);
         teamFirstName = i.getStringExtra(INTENT_KEY_TEAM1_NAME);
         teamSecondName = i.getStringExtra(INTENT_KEY_TEAM2_NAME);
-
         liveFootballMatchTimeLineHandler = UpCommingFootballMatchSqadHandler.getInstance(context);
         liveFootballMatchTimeLineHandler.addListener(this);
         liveFootballMatchTimeLineHandler.requestUpCommingMatchSquad(teamFirstId,teamSecondId);

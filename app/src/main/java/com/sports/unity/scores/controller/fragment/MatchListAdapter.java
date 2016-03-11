@@ -256,12 +256,22 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).placeholder(R.drawable.ic_no_img).into(holder.t2flag);
 
                 if ("?".equals(footballMatchJsonCaller.getAwayTeamScore())) {
-                    holder.matchDay.setText("Upcoming");
-                    holder.liveText.setVisibility(View.GONE);
+                    if("Postp.".equalsIgnoreCase(footballMatchJsonCaller.getMatchStatus())){
+                        holder.matchDay.setText("PostPond");
+                        holder.liveText.setVisibility(View.GONE);
+                    }else{
+                        holder.matchDay.setText("Upcoming");
+                        holder.liveText.setVisibility(View.GONE);
+                    }
+
 
                     holder.t1score.setText( "");
                     holder.t2score.setText( "");
-                } else {
+                }
+
+
+
+                else {
                     if( footballMatchJsonCaller.isLive() ){
                         holder.matchMinutes.setText(footballMatchJsonCaller.getMatchStatus());
                         holder.liveText.setVisibility(View.VISIBLE);

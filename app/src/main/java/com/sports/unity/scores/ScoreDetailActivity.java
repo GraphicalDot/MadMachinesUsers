@@ -167,7 +167,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 mViewPager.setAdapter(cricketScoreDetailAdapter);
                 tab_index = getIntent().getIntExtra("tab_index", 1);
             } else {
-                if(matchStatus.equals(matchTime) && !isLive){
+                if(matchStatus.equals(matchTime) || "Postp.".equalsIgnoreCase(matchStatus) && !isLive){
                     footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitlesupcommingTitles, footballMatchtitlesupcommingTitles.length, commentaries,matchStatus,matchTime,isLive);
                     mViewPager.setAdapter(footballScoreDetailAdapter);
                     tab_index = getIntent().getIntExtra("tab_index", 0);
@@ -383,12 +383,15 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 if(footballMatchJsonCaller.getMatchTime().equals(footballMatchJsonCaller.getMatchStatus()) && !footballMatchJsonCaller.isLive()){
                     tvMatchTime.setText(DateUtil.getMatchTime(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000));
                     getTvMatchDay.setText(DateUtil.getMatchDays(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000, this));
-                    llMatchDetailLinear.setVisibility(View.GONE);
+
                 }
                 if(!footballMatchJsonCaller.isLive() && footballMatchJsonCaller.getMatchStatus().equalsIgnoreCase("FT")){
                     getTvMatchDay.setText(R.string.full_time);
-                    llMatchDetailLinear.setVisibility(View.GONE);
+
+                } else if(!footballMatchJsonCaller.isLive() && "Postp.".equalsIgnoreCase(footballMatchJsonCaller.getMatchStatus())){
+                    getTvMatchDay.setText(R.string.post_pond);
                 }
+                llMatchDetailLinear.setVisibility(View.GONE);
                 Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000)));
                 String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
                 String day = (String) android.text.format.DateFormat.format("dd", date);
@@ -419,6 +422,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 if(footballMatchJsonCaller.getResult() != null && footballMatchJsonCaller.getResult().equalsIgnoreCase("home_team ")) {
                     tvNeededRun.setText(footballMatchJsonCaller.getHomeTeam());
                 }
+
                 tvCurrentScore.setText(footballMatchJsonCaller.getMatchStatus());
                 if ("?".equals(footballMatchJsonCaller.getAwayTeamScore())) {
                     showNoCommentaries();

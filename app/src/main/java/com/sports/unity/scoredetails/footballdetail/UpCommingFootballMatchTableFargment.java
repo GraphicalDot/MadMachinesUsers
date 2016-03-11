@@ -185,8 +185,8 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
                                 upCommngFootbalMatchTableDTO.setTvD(teamObject.getString("games_drawn"));
                             if(!teamObject.isNull("games_lost"))
                                 upCommngFootbalMatchTableDTO.setTvL(teamObject.getString("games_lost"));
-                            if(!teamObject.isNull("team_points"))
-                                upCommngFootbalMatchTableDTO.setTvP(teamObject.getString("team_points"));
+                            if(!teamObject.isNull("games_played"))
+                                upCommngFootbalMatchTableDTO.setTvP(teamObject.getString("games_played"));
                             if(!teamObject.isNull("games_won"))
                                 upCommngFootbalMatchTableDTO.setTvW(teamObject.getString("games_won"));
                             if(!teamObject.isNull("team_points"))
