@@ -237,9 +237,9 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         String event = getMatchEventNumber(matchEventsArray, teamSecondObject.getString("name"));
         if (event != null) {
             if ("goals".equalsIgnoreCase(event)) {
-                completeFootballLineUpDTO.setGoal(event);
+                completeFootballLineUpDTO.setGoalSecond((event));
             } else {
-                completeFootballLineUpDTO.setCardType(event);
+                completeFootballLineUpDTO.setCardTypeSecond(event);
             }
 
         }
@@ -279,9 +279,9 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         String event = getMatchEventNumber(matchEventsArray, teamSecondObject.getString("player_name"));
         if (event != null) {
             if ("goals".equalsIgnoreCase(event)) {
-                completeFootballLineUpDTO.setGoal(event);
+                completeFootballLineUpDTO.setGoalSecond(event);
             } else {
-                completeFootballLineUpDTO.setCardType(event);
+                completeFootballLineUpDTO.setCardTypeSecond(event);
             }
 
         }

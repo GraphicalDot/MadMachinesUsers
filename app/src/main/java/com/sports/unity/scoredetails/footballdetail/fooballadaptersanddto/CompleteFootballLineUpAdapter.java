@@ -58,11 +58,18 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
             }else {
                 holder.ivCardType.setVisibility(View.GONE);
             }
+
+            if(holder.dto.getCardTypeSecond()!=null) {
+                holder.ivCardTypeSecond.setImageDrawable(getDrwableResource(holder.dto.getCardTypeSecond()));
+            }else {
+                holder.ivCardTypeSecond.setVisibility(View.GONE);
+            }
             if(holder.dto.getGoal()!=null) {
                 holder.ivBallPass.setImageDrawable(getDrwableResource(holder.dto.getGoal()));
             }else {
                 holder.ivBallPass.setVisibility(View.GONE);
             }
+
             if(holder.dto.getOffPlayerName()!= null) {
                 holder.tvOffPlayerName.setText(holder.dto.getOffPlayerName());
                 holder.ivEnterExit.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_red));
