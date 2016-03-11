@@ -169,4 +169,8 @@
 
     <dimen name="layout_height">50dp</dimen>
     <dimen name="layout_center_img">16dp</dimen>
+
+    <!--Contact Sync progress bar in toolbar padding-->
+    <dimen name="menu_spinner_padding">15dp</dimen>
+
 </resources>

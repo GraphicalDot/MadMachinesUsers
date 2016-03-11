@@ -49,7 +49,7 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 /**
  * Created by madmachines on 24/8/15.
  */
-public class ContactsFragment extends Fragment implements OnSearchViewQueryListener, MainActivity.PermissionResultHandler {
+public class ContactsFragment extends Fragment implements OnSearchViewQueryListener, MainActivity.PermissionResultHandler, MainActivity.ContactSyncListener {
 
     public static int USAGE_FOR_CONTACTS = 0;
     public static int USAGE_FOR_MEMBERS = 1;
@@ -344,6 +344,17 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
         contacts.setOnItemClickListener(itemListener);
     }
 
+    private void refreshContactList() {
+        Log.d("max", "Refreshing contacts");
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+
+                ArrayList<Contacts> contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList_AvailableOnly(true);
+                ((ContactListAdapter) contacts.getAdapter()).updateContacts(contactList);
+            }
+        });
+    }
 //    private void addListenerToHandleContactCopyPostCall() {
 //        listeningCopyFinishPostCall = true;
 //        copyContactCallInitiated = true;
@@ -373,11 +384,13 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     @Override
     public void onResume() {
         super.onResume();
+        Activity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) getActivity()).addContactSyncListener(this);
+        }
         if (PermissionUtil.getInstance().isRuntimePermissionRequired()) {
 
             //TODO need to handle it cleanly.
-
-            Activity activity = getActivity();
             if (activity instanceof MainActivity) {
                 ((MainActivity) getActivity()).addContactResultListener(this);
             } else {
@@ -400,6 +413,10 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     @Override
     public void onPause() {
         super.onPause();
+        Activity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) getActivity()).removeContactSyncListener();
+        }
 //        removeListenerToHandleContactCopyPostCall();
     }
 
@@ -427,6 +444,11 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onSyncComplete() {
+        refreshContactList();
     }
 }
 

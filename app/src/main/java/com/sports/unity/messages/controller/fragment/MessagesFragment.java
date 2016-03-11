@@ -59,7 +59,7 @@ import java.util.Arrays;
 /**
  * Created by Agupta on 8/13/2015.
  */
-public class MessagesFragment extends Fragment implements View.OnClickListener, MainActivity.PermissionResultHandler {
+public class MessagesFragment extends Fragment implements View.OnClickListener, MainActivity.PermissionResultHandler, ContactsHandler.ContactCopyCompletedListener {
 
     private OnSearchViewQueryListener mListener = null;
 
@@ -75,7 +75,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     TextView friendsUnreadCount;
     TextView othersUnreadCount;
     View backgroundDimmer;
-
+    MenuItem syncProgress;
 
     @Override
     public void onAttach(Activity activity) {
@@ -258,6 +258,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
 
         if (item.getItemId() == R.id.sync_contacts) {
             ContactsHandler.getInstance().addCallToSyncContacts(getActivity().getApplicationContext());
+            showSyncProgress();
             Toast.makeText(getActivity().getApplicationContext(), "Syncing contacts", Toast.LENGTH_SHORT).show();
         }
         return super.onOptionsItemSelected(item);
@@ -267,7 +268,12 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_messages_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        syncProgress = menu.findItem(R.id.menu_progress);
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        if (ContactsHandler.getInstance().isInProcess()) {
+            Log.d("max", "in progress");
+            showSyncProgress();
+        }
         ((MainActivity) getActivity()).setSearchView(searchView, menu.findItem(R.id.action_search));
         int searchImgId = android.support.v7.appcompat.R.id.search_button;
         ImageView v = (ImageView) searchView.findViewById(searchImgId);
@@ -298,6 +304,19 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
             }
         });
 
+    }
+
+    private void showSyncProgress() {
+        syncProgress.setActionView(R.layout.menu_progress);
+    }
+
+    private void hideSyncProgress() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                syncProgress.setActionView(null);
+            }
+        });
     }
 
     private void updateSearchViewUI() {
@@ -364,6 +383,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onResume() {
         super.onResume();
+        ContactsHandler.getInstance().addCopyCompleteListener(MessagesFragment.this);
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.UNREAD_COUNT_KEY, activityActionListener);
         getAndSetUnreadCount();
         mListener = (OnSearchViewQueryListener) currentFragment;
@@ -375,6 +395,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onPause() {
         super.onPause();
+       ContactsHandler.getInstance().removeCopyCompleteListener();
         ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.UNREAD_COUNT_KEY);
     }
 
@@ -394,5 +415,15 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     public void onDestroy() {
         super.onDestroy();
         ((MainActivity) getActivity()).removeLocationResultListener();
+    }
+
+    @Override
+    public void onComplete(boolean success) {
+        hideSyncProgress();
+        notifyToContactFragment();
+    }
+
+    public void notifyToContactFragment() {
+        ((MainActivity) getActivity()).notifyToContactFragment();
     }
 }
