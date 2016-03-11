@@ -7,7 +7,7 @@ android {
         applicationId 'com.sports.unity'
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 4
+        versionCode 5
         versionName "1.0"
         setProperty("archivesBaseName", "SportsUnity-$versionName.$versionCode")
     }
@@ -20,10 +20,12 @@ android {
     productFlavors {
         dev {
             buildConfigField "String", "SCORES_BASE_URL", "\"http://52.74.75.79:8080/\""
+            buildConfigField "String", "CRITTERCISM_API_KEY", "\"564059fcd224ac0a00ed42a3\""
             resValue "string", "GOOGLE_API_KEY", "AIzaSyBMgH-fvm8hDbybIhgufC-XCAc9k1i_V9A"
         }
         prod {
             buildConfigField "String", "SCORES_BASE_URL", "\"http://52.74.75.79:8080/\""
+            buildConfigField "String", "CRITTERCISM_API_KEY", "\"b2c2518e6fe34bd88c7ac1e31deb7dd200555300\""
             resValue "string", "GOOGLE_API_KEY", "AIzaSyBsvw-Xbw84WZL_pCiSQvW4KCSTMirKKik"
         }
     }
