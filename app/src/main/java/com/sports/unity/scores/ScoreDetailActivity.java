@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.ViewPagerCricketScoreDetailAdapter;
 import com.sports.unity.common.controller.ViewPagerFootballScoreDetailAdapter;
@@ -79,6 +80,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private TextView teamSecondOvers;
     private TextView tvMatchTime;
     private TextView getTvMatchDay;
+    private DonutProgress donutProgress;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -149,9 +151,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             String footballMatchtitles[] = {getString(R.string.commentary), getString(R.string.matchstats), getString(R.string.timeline), getString(R.string.lineup)};
             int numberOfFootballTabs = footballMatchtitles.length;
             String footballMatchtitlesupcommingTitles[] = {getString(R.string.table), getString(R.string.form), getString(R.string.squad)};
-
-
-//
+/*
+           donutProgress = (DonutProgress) findViewById(R.id.donut_progress);
+            donutProgress.setProgress(donutProgress.getProgress() + 1);
+//*/
 //<<<<<<< HEAD
 //    private void initToolbar() {
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
