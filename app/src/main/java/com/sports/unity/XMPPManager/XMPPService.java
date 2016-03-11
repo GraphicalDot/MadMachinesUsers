@@ -205,61 +205,61 @@ public class XMPPService extends Service {
             /**
              * Attach a group invitation listener to connection variable to listen for incoming connections
              */
-            MultiUserChatManager.getInstanceFor(connection).addInvitationListener(new InvitationListener() {
-
-                @Override
-                public void invitationReceived(XMPPConnection conn, MultiUserChat multiUserChat, String inviter, String reason, String password, Message message) {
-                    String subject = "";
-                    /*Log.i("Group Chat", "new invitation from server");
-
-                    String groupServerId = multiUserChat.getRoom().substring(0, multiUserChat.getRoom().indexOf("@conference.mm.io"));
-                    String ownerPhoneNumber = inviter.substring(0, inviter.indexOf("@mm.io"));
-                    String subject = multiUserChat.getSubject();
-
-                    SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(getApplicationContext());
-
-                    Contacts owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
-                    if (owner == null) {
-                        createContact(ownerPhoneNumber);
-                        owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
-                    }
-
-                    long chatId = sportsUnityDBHelper.createGroupChatEntry(subject, owner.id, null, groupServerId);
-                    sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupServerId);
-
-                    String currentUserPhoneNumber = TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME);
-                    GroupMessaging.getInstance(getApplicationContext()).joinGroup(groupServerId, currentUserPhoneNumber);*/
-
-                    String ownerJID = inviter.substring(0, inviter.indexOf("@mm.io"));
-
-                    Contacts owner = sportsUnityDBHelper.getContactByJid(ownerJID);
-                    if (owner == null) {
-                        createContact(ownerJID, getApplicationContext(), true);
-                        owner = sportsUnityDBHelper.getContactByJid(ownerJID);
-                    }
-
-                    String groupServerId = multiUserChat.getRoom().substring(0, multiUserChat.getRoom().indexOf("@"));
-
-                    Log.i("group invitation ", "received");
-                    PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
-                    try {
-                        LeafNode node = pubSubManager.getNode(groupServerId);
-                        Log.i("subscribing to node ", "true");
-                        node.subscribe(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USER_JID) + "@mm.io");
-                    } catch (SmackException.NoResponseException e) {
-                        e.printStackTrace();
-                    } catch (XMPPException.XMPPErrorException e) {
-                        e.printStackTrace();
-                    } catch (SmackException.NotConnectedException e) {
-                        e.printStackTrace();
-                    }
-                    subject = groupServerId.substring(groupServerId.indexOf("%") + 1, groupServerId.indexOf("%%"));
-                    long chatId = sportsUnityDBHelper.createGroupChatEntry(subject, owner.id, null, groupServerId);
-                    sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupServerId);
-                    ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
-                }
-
-            });
+//            MultiUserChatManager.getInstanceFor(connection).addInvitationListener(new InvitationListener() {
+//
+//                @Override
+//                public void invitationReceived(XMPPConnection conn, MultiUserChat multiUserChat, String inviter, String reason, String password, Message message) {
+//                    String subject = "";
+//                    /*Log.i("Group Chat", "new invitation from server");
+//
+//                    String groupServerId = multiUserChat.getRoom().substring(0, multiUserChat.getRoom().indexOf("@conference.mm.io"));
+//                    String ownerPhoneNumber = inviter.substring(0, inviter.indexOf("@mm.io"));
+//                    String subject = multiUserChat.getSubject();
+//
+//                    SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(getApplicationContext());
+//
+//                    Contacts owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
+//                    if (owner == null) {
+//                        createContact(ownerPhoneNumber);
+//                        owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
+//                    }
+//
+//                    long chatId = sportsUnityDBHelper.createGroupChatEntry(subject, owner.id, null, groupServerId);
+//                    sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupServerId);
+//
+//                    String currentUserPhoneNumber = TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME);
+//                    GroupMessaging.getInstance(getApplicationContext()).joinGroup(groupServerId, currentUserPhoneNumber);*/
+//
+//                    String ownerJID = inviter.substring(0, inviter.indexOf("@mm.io"));
+//
+//                    Contacts owner = sportsUnityDBHelper.getContactByJid(ownerJID);
+//                    if (owner == null) {
+//                        createContact(ownerJID, getApplicationContext(), true);
+//                        owner = sportsUnityDBHelper.getContactByJid(ownerJID);
+//                    }
+//
+//                    String groupServerId = multiUserChat.getRoom().substring(0, multiUserChat.getRoom().indexOf("@"));
+//
+//                    Log.i("group invitation ", "received");
+//                    PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
+//                    try {
+//                        LeafNode node = pubSubManager.getNode(groupServerId);
+//                        Log.i("subscribing to node ", "true");
+//                        node.subscribe(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USER_JID) + "@mm.io");
+//                    } catch (SmackException.NoResponseException e) {
+//                        e.printStackTrace();
+//                    } catch (XMPPException.XMPPErrorException e) {
+//                        e.printStackTrace();
+//                    } catch (SmackException.NotConnectedException e) {
+//                        e.printStackTrace();
+//                    }
+//                    subject = groupServerId.substring(groupServerId.indexOf("%") + 1, groupServerId.indexOf("%%"));
+//                    long chatId = sportsUnityDBHelper.createGroupChatEntry(subject, owner.id, null, groupServerId);
+//                    sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupServerId);
+//                    ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
+//                }
+//
+//            });
 
 
             /**
@@ -674,15 +674,16 @@ public class XMPPService extends Service {
             if (eventDispatched) {
                 //nothing
             } else {
+                Contacts contact = sportsUnityDBHelper.getContactByJid(fromId);
                 try {
                     sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
-                    if (nearByChat) {
+                    if (contact.availableStatus != Contacts.AVAILABLE_BY_MY_CONTACTS) {
                         ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_OTHERS_LIST_KEY);
                     } else {
                         ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
                     }
                     byte[] image = sportsUnityDBHelper.getUserProfileImage(fromId);
-                    DisplayNotification(message.getBody(), messageFrom, mimeType, chatId, isGroupChat, groupServerId, image, nearByChat);
+                    DisplayNotification(message.getBody(), messageFrom, mimeType, chatId, isGroupChat, groupServerId, image, contact.availableStatus);
                 } catch (XMPPException.XMPPErrorException e) {
                     e.printStackTrace();
                 } catch (SmackException.NoResponseException e) {
@@ -854,7 +855,7 @@ public class XMPPService extends Service {
         return success;
     }
 
-    private void DisplayNotification(String message, String from, String mimeType, long chatId, boolean isGroupChat, String groupServerId, byte[] image, boolean nearByChat) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+    private void DisplayNotification(String message, String from, String mimeType, long chatId, boolean isGroupChat, String groupServerId, byte[] image, int availibilityStatus) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
 //        if (sportsUnityDBHelper.isMute(chatId)) {
 //            //nothing
 //        } else {
@@ -868,7 +869,7 @@ public class XMPPService extends Service {
         }
 
         NotificationHandler notificationHandler = NotificationHandler.getInstance(getApplicationContext());
-        notificationHandler.addNotificationMessage(chatId, name, message, mimeType, image, nearByChat);
+        notificationHandler.addNotificationMessage(chatId, name, message, mimeType, image, availibilityStatus);
 
         int chatCount = notificationHandler.getNotificationChatCount();
         PendingIntent pendingIntent = null;

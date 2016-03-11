@@ -364,7 +364,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         ChatScreenApplication.activityResumed();
 
         NotificationHandler.dismissNotification(getBaseContext());
-        NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatID), otherChat);
+        NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatID));
 
         //TODO update message list
 //        activityActionListener.handleAction(0);

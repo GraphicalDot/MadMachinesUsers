@@ -209,7 +209,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
         SportsUnityDBHelper.getInstance(getActivity()).clearChat(getActivity(), chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
         SportsUnityDBHelper.getInstance(getActivity()).clearChatEntry(chatObject.chatid);
 
-        NotificationHandler.getInstance(getActivity().getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid), false);
+        NotificationHandler.getInstance(getActivity().getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid));
 
         updateContent();
     }
@@ -227,7 +227,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
                 @Override
                 public void run() {
                     if (chatListView != null) {
-                        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(false);
+                        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(Contacts.AVAILABLE_BY_MY_CONTACTS);
                         ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
                         adapter.updateList(chatList);
                         chatListView.setAdapter(adapter);
@@ -250,7 +250,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
 
 
     private void updateContent() {
-        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(false);
+        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(Contacts.AVAILABLE_BY_MY_CONTACTS);
         if (chatList != null) {
             ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
             adapter.updateList(chatList);
@@ -301,12 +301,12 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
         ArrayList<Chats> chatArrayList = null;
         ChatListAdapter adapter = (ChatListAdapter) chatListView.getAdapter();
         if (filterText.length() > 0) {
-            chatArrayList = SportsUnityDBHelper.getInstance(getActivity()).getChatList(filterText, false);
+            chatArrayList = SportsUnityDBHelper.getInstance(getActivity()).getChatList(filterText, Contacts.AVAILABLE_BY_MY_CONTACTS);
 
             ArrayList<Chats> searchedBasedOnMessage = SportsUnityDBHelper.getInstance(getActivity()).getChatsBasedOnSearchedMessage(filterText, false);
             adapter.updateSearch(chatArrayList, searchedBasedOnMessage);
         } else {
-            chatArrayList = SportsUnityDBHelper.getInstance(getActivity()).getChatList(false);
+            chatArrayList = SportsUnityDBHelper.getInstance(getActivity()).getChatList(Contacts.AVAILABLE_BY_MY_CONTACTS);
             adapter.updateList(chatArrayList);
         }
 

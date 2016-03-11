@@ -159,7 +159,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
         SportsUnityDBHelper.getInstance(getActivity()).clearChat(getActivity(), chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
         SportsUnityDBHelper.getInstance(getActivity()).clearChatEntry(chatObject.chatid);
 
-        NotificationHandler.getInstance(getActivity().getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid), true);
+        NotificationHandler.getInstance(getActivity().getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid));
 
         deleteContact(contactId);
 
@@ -171,7 +171,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
     }
 
     private void updateContent() {
-        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(true);
+        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(Contacts.AVAILABLE_BY_OTHER_CONTACTS);
         if (chatList != null) {
             ChatListAdapter adapter = (ChatListAdapter) otherChatListView.getAdapter();
             adapter.updateList(chatList);
@@ -230,7 +230,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
                 @Override
                 public void run() {
                     if (otherChatListView != null) {
-                        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(true);
+                        ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(Contacts.AVAILABLE_BY_OTHER_CONTACTS);
                         ChatListAdapter adapter = (ChatListAdapter) otherChatListView.getAdapter();
                         adapter.updateList(chatList);
                         otherChatListView.setAdapter(adapter);
