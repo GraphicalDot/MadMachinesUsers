@@ -1,5 +1,6 @@
 package com.sports.unity.scoredetails.footballdetail;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -155,7 +156,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         progressBar.setVisibility(View.GONE);
     }
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-        ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
+        Activity activity =  getActivity();
         final JSONArray dataArray = jsonObject.getJSONArray("data");
         if(swipeRefreshLayout.isRefreshing()){
             swipeRefreshLayout.setRefreshing(false);

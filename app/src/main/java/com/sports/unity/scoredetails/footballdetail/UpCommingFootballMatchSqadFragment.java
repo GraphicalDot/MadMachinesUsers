@@ -1,5 +1,6 @@
 package com.sports.unity.scoredetails.footballdetail;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -161,7 +162,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         listTeamFirst.clear();
         listTeamSecond.clear();
-        ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
+        Activity activity = getActivity();
         JSONObject dataObject = jsonObject.getJSONObject("data");
         final JSONArray teamFirstSquadArray = dataObject.getJSONArray("team_1_squad");
         final JSONArray teamSecondSquadArray = dataObject.getJSONArray("team_2_squad");
