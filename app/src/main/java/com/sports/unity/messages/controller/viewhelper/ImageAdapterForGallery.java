@@ -45,8 +45,6 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
 
     private View selectedViewForSend = null;
 
-    private MediaMetadataRetriever retriever = new MediaMetadataRetriever();
-
     private View.OnClickListener sendClickListener = new View.OnClickListener() {
 
         @Override
@@ -119,22 +117,25 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
             holder.textView.setVisibility(View.VISIBLE);
 
             durationAsString = getVideoDuration(filePath.get(position));
-            Log.i("duration", durationAsString);
 
             long timeInmillisec = Long.parseLong(durationAsString);
-            long duration = timeInmillisec / 1000;
-            long hours = duration / 3600;
-            long minutes = (duration - hours * 3600) / 60;
+            if (timeInmillisec == 0) {
+                holder.textView.setVisibility(View.GONE);
+            } else {
+                long duration = timeInmillisec / 1000;
+                long hours = duration / 3600;
+                long minutes = (duration - hours * 3600) / 60;
 
-            long seconds = duration - (hours * 3600 + minutes * 60);
+                long seconds = duration - (hours * 3600 + minutes * 60);
 
-            StringBuilder stringBuilder = new StringBuilder("");
+                StringBuilder stringBuilder = new StringBuilder("");
 
-            stringBuilder.append(minutes);
-            stringBuilder.append(":");
-            stringBuilder.append(seconds);
+                stringBuilder.append(minutes);
+                stringBuilder.append(":");
+                stringBuilder.append(seconds);
 
-            holder.textView.setText(stringBuilder.toString());
+                holder.textView.setText(stringBuilder.toString());
+            }
 
             Glide.with(activity)
                     .load(filePath.get(position))
@@ -149,9 +150,22 @@ public class ImageAdapterForGallery extends RecyclerView.Adapter<ImageAdapterFor
     }
 
     private String getVideoDuration(String path) {
-        retriever.setDataSource(path);
-        String duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
-        return String.valueOf(duration);
+        MediaMetadataRetriever retriever = new MediaMetadataRetriever();
+        String duration = null;
+        try {
+            retriever.setDataSource(path);
+            duration = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            retriever.release();
+        }
+
+        if (duration == null) {
+            return "0";
+        } else {
+            return duration;
+        }
     }
 
     public boolean isVideoFile(String path) {
