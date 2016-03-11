@@ -208,7 +208,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="right"
-                                android:text="233"
+                                android:text=""
                                 android:textColor="@color/score_light_grey"
                                 android:textSize="@dimen/font_size_small_medium" />
                         </LinearLayout>
@@ -229,7 +229,7 @@
                                 android:id="@+id/tv_run_rate_first_team"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="44"
+                                android:text=""
                                 android:textColor="@color/score_light_grey"
                                 android:textSize="@dimen/font_size_small_medium" />
                         </LinearLayout>
@@ -454,7 +454,7 @@
                                 android:gravity="left"
                                 android:text=""
                                 android:textColor="@color/gray1"
-                                android:textSize="@dimen/font_size_small_large" />
+                                android:textSize="@dimen/font_size_small_medium" />
                         </LinearLayout>
 
                         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView

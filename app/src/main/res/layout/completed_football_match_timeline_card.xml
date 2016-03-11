@@ -94,8 +94,8 @@
             <de.hdodenhof.circleimageview.CircleImageView
                 android:layout_below="@id/iv_upper"
                 android:id="@+id/iv_time_line_image"
-                android:layout_width="@dimen/layout_center_img"
-                android:layout_height="@dimen/layout_center_img"
+                android:layout_width="@dimen/football_timeline_images_width"
+                android:layout_height="@dimen/football_timeline_images_height"
                 android:layout_centerHorizontal="true"
                 />
             <View
@@ -155,8 +155,8 @@
     </android.support.percent.PercentRelativeLayout>
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/iv_centre_image"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="@dimen/football_timeline_images_width"
+        android:layout_height="@dimen/football_timeline_images_height"
         android:layout_gravity="center"
         android:visibility="gone"
         android:src="@drawable/ic_in_active_player"/>
