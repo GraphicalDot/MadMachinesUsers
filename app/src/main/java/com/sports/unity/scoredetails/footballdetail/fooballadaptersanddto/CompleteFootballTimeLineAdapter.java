@@ -50,7 +50,7 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
             holder.dto = mValues.get(position);
             holder.setIsRecyclable(false);
             if(position==0){
-                holder.cardView.setVisibility(View.GONE);
+               /* holder.cardView.setVisibility(View.GONE);*/
                 holder.tvTimeInterval.setVisibility(View.VISIBLE);
                 holder.upperDotView.setVisibility(View.VISIBLE);
                 if("FT".equalsIgnoreCase(holder.dto.getMatchStatus())){
