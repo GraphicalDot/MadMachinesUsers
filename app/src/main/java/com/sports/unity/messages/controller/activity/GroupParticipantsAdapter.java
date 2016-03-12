@@ -20,14 +20,23 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Mad on 2/22/2016.
  */
 public class GroupParticipantsAdapter extends BaseAdapter {
-    LayoutInflater inflater;
-    Context context;
-    ArrayList<Contacts> dataSet;
 
-    public GroupParticipantsAdapter(Context context, LayoutInflater inflater, ArrayList<Contacts> dataSet) {
-        this.inflater = inflater;
+    private Context context;
+    private ArrayList<Contacts> dataSet;
+    private boolean isAdmin = false;
+
+    public GroupParticipantsAdapter(Context context, ArrayList<Contacts> dataSet, boolean isAdmin) {
         this.context = context;
         this.dataSet = dataSet;
+        this.isAdmin = isAdmin;
+
+        if( isAdmin ){
+            this.dataSet = new ArrayList<>();
+            this.dataSet.add( new Contacts( "", "", "", null, -1, null, 0));
+            this.dataSet.addAll(dataSet);
+        } else {
+            this.dataSet = dataSet;
+        }
     }
 
     @Override
@@ -49,7 +58,7 @@ public class GroupParticipantsAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
 
         if (convertView == null) {
-            convertView = inflater.inflate(R.layout.groupinfoitem, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.groupinfoitem, null);
         }
 
         CircleImageView userImage = (CircleImageView) convertView.findViewById(R.id.user_image);
@@ -63,7 +72,7 @@ public class GroupParticipantsAdapter extends BaseAdapter {
         admin.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
         userStatus.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
 
-        if (position == 0) {
+        if ( isAdmin && position == 0) {
 
             userImage.setImageResource(R.drawable.ic_add_contact);
             userImage.setBorderColor(context.getResources().getColor(R.color.app_theme_blue));
@@ -73,7 +82,7 @@ public class GroupParticipantsAdapter extends BaseAdapter {
 
             admin.setVisibility(View.GONE);
         } else {
-            Contacts c = dataSet.get(position-1);
+            Contacts c = dataSet.get(position);
             if (c.image != null) {
                 userImage.setImageBitmap(BitmapFactory.decodeByteArray(c.image, 0, c.image.length));
             } else {
@@ -88,4 +97,5 @@ public class GroupParticipantsAdapter extends BaseAdapter {
         }
         return convertView;
     }
+
 }

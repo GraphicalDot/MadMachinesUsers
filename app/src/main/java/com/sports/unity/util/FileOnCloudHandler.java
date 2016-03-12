@@ -194,7 +194,7 @@ public class FileOnCloudHandler {
             if (!isGroupChat) {
                 PersonalMessaging.getInstance(context).sendMediaMessage(checksum, request.thumbnailImage, (Chat) request.extra, request.messageId, request.mimeType, nearByChat);
             } else {
-                PubSubMessaging.getInstance(context).sendMediaMessage(checksum, request.thumbnailImage, request.mimeType, groupServerId);
+                PubSubMessaging.getInstance().sendMediaMessage(context, checksum, request.thumbnailImage, request.messageId, request.mimeType, groupServerId);
             }
 
             ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, request.jid);

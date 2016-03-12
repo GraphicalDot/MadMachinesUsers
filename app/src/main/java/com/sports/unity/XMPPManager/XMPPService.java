@@ -111,6 +111,82 @@ public class XMPPService extends Service {
         }
     }
 
+    public static void displayNotification( Context context, String message, String from, String mimeType, long chatId, boolean isGroupChat, String groupServerId, byte[] image, int availibilityStatus) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+        SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
+        UserUtil.init(context);
+
+        String name = sportsUnityDBHelper.getUserNameByJid(from);
+        if (isGroupChat) {
+            name = name + "@" + sportsUnityDBHelper.getGroupSubject(groupServerId);
+        } else {
+            //nothing
+        }
+
+        NotificationHandler notificationHandler = NotificationHandler.getInstance(context);
+        notificationHandler.addNotificationMessage(chatId, name, message, mimeType, image, availibilityStatus);
+
+        int chatCount = notificationHandler.getNotificationChatCount();
+        PendingIntent pendingIntent = null;
+        if (chatCount > 1) {
+            pendingIntent = getPendingIntentForMainActivity(context);
+        } else if (chatCount == 1) {
+            Contacts contact = sportsUnityDBHelper.getContactByJid(from);
+            pendingIntent = getPendingIntentForChatActivity(context, name, from, chatId, contact.id, groupServerId, contact.image, contact.isOthers());
+        }
+
+        notificationHandler.showNotification( context, pendingIntent);
+        ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.UNREAD_COUNT_KEY);
+    }
+
+    public static long getChatIdOrCreateIfNotExist(Context context, boolean isGroupChat, String from, String fromGroup, boolean nearByChat) {
+        SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
+        long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
+
+        if (!isGroupChat) {
+            Contacts contact = sportsUnityDBHelper.getContactByJid(from);
+            if (contact == null) {
+                createContact(from, context, nearByChat);
+                contact = sportsUnityDBHelper.getContactByJid(from);
+            }
+
+            chatId = sportsUnityDBHelper.getChatEntryID(contact.id, fromGroup);
+            if (chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
+                //nothing
+            } else {
+                chatId = sportsUnityDBHelper.createChatEntry(contact.name, contact.id, nearByChat);
+                Log.i("ChatEntry : ", "chat entry made from server " + chatId + " , " + contact.id);
+            }
+
+        } else {
+            chatId = sportsUnityDBHelper.getChatEntryID(fromGroup);
+        }
+        return chatId;
+    }
+
+    public static boolean createContact(String jid, Context context, boolean nearByChat) {
+        boolean success = false;
+        try {
+            XMPPTCPConnection connection = XMPPClient.getInstance().getConnection();
+            VCard card = new VCard();
+            card.load(connection, jid + "@mm.io");
+            String status = card.getMiddleName();
+            byte[] image = card.getAvatar();
+            String nickname = card.getNickName();
+
+            if (nearByChat) {
+                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
+            } else {
+                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_OTHER_CONTACTS);
+            }
+            SportsUnityDBHelper.getInstance(context).updateContacts(jid, image, status);
+
+            success = true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return success;
+    }
+
     private static boolean isMyServiceRunning(Class<?> serviceClass, Context context) {
         ActivityManager manager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -119,6 +195,28 @@ public class XMPPService extends Service {
             }
         }
         return false;
+    }
+
+    private static PendingIntent getPendingIntentForMainActivity(Context context) {
+        Intent mainIntent = new Intent(context, MainActivity.class);
+        mainIntent.putExtra("tab_index", 2);
+        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivities(context, NotificationHandler.NOTIFICATION_ID, new Intent[]{mainIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
+        return pendingIntent;
+    }
+
+    private static PendingIntent getPendingIntentForChatActivity(Context context, String name, String from, long chatId, long contactId, String groupServerId, byte[] contactImage, boolean isOtherChat) {
+        Intent notificationIntent;
+
+        notificationIntent = ChatScreenActivity.createChatScreenIntent(context, from, name, contactId, chatId, groupServerId, contactImage, false, isOtherChat);
+
+        Intent backIntent = new Intent(context, MainActivity.class);
+        backIntent.putExtra("tab_index", 2);
+        backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivities(context, NotificationHandler.NOTIFICATION_ID, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
+        return pendingIntent;
     }
 
     private SportsUnityDBHelper sportsUnityDBHelper = null;
@@ -193,74 +291,12 @@ public class XMPPService extends Service {
 
             Log.i("XMPP Connection", "attaching chat related listeners");
 
-            /**
-             * Make a filter for message packets
-             */
-            StanzaFilter filter = new StanzaTypeFilter(Message.class);
+
             /**
              * attach a packet listener to listen for incoming messages packets and status packet(active,typing etc)
              */
+            StanzaFilter filter = new StanzaTypeFilter(Message.class);
             connection.addSyncStanzaListener(new ChatMessageListener(), filter);
-
-            /**
-             * Attach a group invitation listener to connection variable to listen for incoming connections
-             */
-//            MultiUserChatManager.getInstanceFor(connection).addInvitationListener(new InvitationListener() {
-//
-//                @Override
-//                public void invitationReceived(XMPPConnection conn, MultiUserChat multiUserChat, String inviter, String reason, String password, Message message) {
-//                    String subject = "";
-//                    /*Log.i("Group Chat", "new invitation from server");
-//
-//                    String groupServerId = multiUserChat.getRoom().substring(0, multiUserChat.getRoom().indexOf("@conference.mm.io"));
-//                    String ownerPhoneNumber = inviter.substring(0, inviter.indexOf("@mm.io"));
-//                    String subject = multiUserChat.getSubject();
-//
-//                    SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(getApplicationContext());
-//
-//                    Contacts owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
-//                    if (owner == null) {
-//                        createContact(ownerPhoneNumber);
-//                        owner = sportsUnityDBHelper.getContact(ownerPhoneNumber);
-//                    }
-//
-//                    long chatId = sportsUnityDBHelper.createGroupChatEntry(subject, owner.id, null, groupServerId);
-//                    sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupServerId);
-//
-//                    String currentUserPhoneNumber = TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME);
-//                    GroupMessaging.getInstance(getApplicationContext()).joinGroup(groupServerId, currentUserPhoneNumber);*/
-//
-//                    String ownerJID = inviter.substring(0, inviter.indexOf("@mm.io"));
-//
-//                    Contacts owner = sportsUnityDBHelper.getContactByJid(ownerJID);
-//                    if (owner == null) {
-//                        createContact(ownerJID, getApplicationContext(), true);
-//                        owner = sportsUnityDBHelper.getContactByJid(ownerJID);
-//                    }
-//
-//                    String groupServerId = multiUserChat.getRoom().substring(0, multiUserChat.getRoom().indexOf("@"));
-//
-//                    Log.i("group invitation ", "received");
-//                    PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
-//                    try {
-//                        LeafNode node = pubSubManager.getNode(groupServerId);
-//                        Log.i("subscribing to node ", "true");
-//                        node.subscribe(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USER_JID) + "@mm.io");
-//                    } catch (SmackException.NoResponseException e) {
-//                        e.printStackTrace();
-//                    } catch (XMPPException.XMPPErrorException e) {
-//                        e.printStackTrace();
-//                    } catch (SmackException.NotConnectedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    subject = groupServerId.substring(groupServerId.indexOf("%") + 1, groupServerId.indexOf("%%"));
-//                    long chatId = sportsUnityDBHelper.createGroupChatEntry(subject, owner.id, null, groupServerId);
-//                    sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupServerId);
-//                    ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
-//                }
-//
-//            });
-
 
             /**
              * Listener for acknowledging received receipts
@@ -303,27 +339,26 @@ public class XMPPService extends Service {
                     }
                 }
             }, new StanzaTypeFilter(Presence.class));
+
             /**
              *  packet filter to see if messages are published to the node or not
              */
-
             connection.addAsyncStanzaListener(new StanzaListener() {
 
                 @Override
                 public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
-                    if (packet.getFrom().equals("pubsub.mm.io")) {
-                        Log.i("pubsub message", "published  :   " + packet.getStanzaId());
-                        PubSubMessaging.getInstance(getApplicationContext()).updatePublishedReceipt(packet.getFrom(), packet.getStanzaId());
-                        ;
+                    if ( packet.getFrom().equals("pubsub.mm.io") ) {
+                        PubSubMessaging.getInstance().updatePublishedReceipt( getApplicationContext(), packet.getStanzaId());
+                    } else {
+                        //nothing
                     }
                 }
+
             }, IQTypeFilter.RESULT);
 
             /**
              * Listen for subscription packets to read status
              */
-
-
             connection.addSyncStanzaListener(new StanzaListener() {
 
                 @Override
@@ -360,29 +395,10 @@ public class XMPPService extends Service {
                 }
             }, new StanzaTypeFilter(Presence.class));
 
-        } else
-
-        {
+        } else {
             //nothing
         }
     }
-
-//    private void getForms(XMPPTCPConnection con) {
-//        searchManager = new UserSearchManager(con);
-//        try {
-//            searchForm = searchManager.getSearchForm("vjud.mm.io");
-//        } catch (SmackException.NoResponseException e) {
-//            e.printStackTrace();
-//        } catch (XMPPException.XMPPErrorException e) {
-//            e.printStackTrace();
-//        } catch (SmackException.NotConnectedException e) {
-//            e.printStackTrace();
-//        }
-//        answerForm = searchForm.createAnswerForm();
-//        if (answerForm != null) {
-//            new UpdateUserDetails().start();
-//        }
-//    }
 
     private class XmppConnectionListener implements ConnectionListener {
 
@@ -438,14 +454,14 @@ public class XMPPService extends Service {
         public void connectionClosed() {
             Log.i("connection", "closed");
 
-            GlobalEventHandler.getInstance().internetStateChanged(false);
+            GlobalEventHandler.getInstance().xmppServerConnected(false);
         }
 
         @Override
         public void connectionClosedOnError(Exception e) {
             Log.i("connection", "closed on error");
 
-            GlobalEventHandler.getInstance().internetStateChanged(false);
+            GlobalEventHandler.getInstance().xmppServerConnected(false);
         }
 
         @Override
@@ -471,15 +487,12 @@ public class XMPPService extends Service {
         public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
             Message message = (Message) packet;
             if (message.getFrom().equals("pubsub.mm.io")) {
-                handlePubSubMessage(message);
-            }
-            if (message.getType().equals(Message.Type.chat)) {
-
+                PubSubMessaging.getInstance().handlePubSubMessage( XMPPService.this.getApplicationContext(), message);
+            } else if (message.getType().equals(Message.Type.chat)) {
                 if (message.getBody() == null) {
-                    handleStatus(message);
+                    PersonalMessaging.getInstance(getApplicationContext()).handleStatus(message);
                 } else {
-                    Log.i("Single Chat", "received");
-                    handleChatMessage(message, false);
+                    PersonalMessaging.getInstance(getApplicationContext()).handleChatMessage(getApplicationContext(), message, false);
                 }
 
             } else if (message.getType().equals(Message.Type.headline)) {
@@ -513,398 +526,15 @@ public class XMPPService extends Service {
 
             } else if (message.getType().equals(Message.Type.groupchat)) {
                 if (message.getBody() == null) {
-                    handleStatus(message);
+//                    PersonalMessaging.getInstance(getApplicationContext()).handleStatus(message);
                 } else {
-                    Log.i("Group Chat", "received");
-                    handleChatMessage(message, true);
+//                    PersonalMessaging.getInstance(getApplicationContext()).handleChatMessage(getApplicationContext(), message, true);
                 }
             } else if (((Message) packet).getType().equals(Presence.Type.subscribe)) {
-
-            }
-        }
-
-    }
-
-    private void handlePubSubMessage(Message message) {
-
-        String messageXML = message.toString();
-        String data = messageXML.substring(messageXML.indexOf("!@#$") + 4, messageXML.indexOf("$#@!"));
-        String from = "";
-        String decodedData = "";
-        JSONObject payLoad = null;
-        try {
-            decodedData = URLDecoder.decode(data, "utf-8");
-            payLoad = new JSONObject(decodedData);
-            from = payLoad.getString(PubSubMessaging.MESSAGE_FROM);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        if (from.equals(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USER_JID))) {
-            //Do nothing
-        } else {
-            String groupServerId = null;
-            long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
-            String time = null;
-            String text = null;
-            String nodeid = null;
-            try {
-                time = payLoad.getString(PubSubMessaging.MESSAGE_TIME);
-                text = payLoad.getString(PubSubMessaging.MESSAGE_TEXT_DATA);
-                nodeid = payLoad.getString(PubSubMessaging.GROUP_SERVER_ID);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            groupServerId = nodeid;
-            chatId = getChatIdOrCreateIfNotExist(true, from, groupServerId, false);
-            handlePubSubMessageType(payLoad, chatId, from, text, time, message.getStanzaId(), groupServerId);
-            if (ChatScreenApplication.isActivityVisible()) {
-                if (nodeid.equals(ChatScreenActivity.getGroupServerId())) {
-                    ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, from);
-                } else {
-                    sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
-                    ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
-                }
-            } else {
-                sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
-                ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
-            }
-        }
-
-    }
-
-    private void handlePubSubMessageType(JSONObject payLoad, long chatId, String from, String text, String time, String stanzaId, String nodeid) {
-        String mimeType = null;
-        try {
-            mimeType = payLoad.getString(Constants.PARAM_MIME_TYPE);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
-            String checksum = PersonalMessaging.getChecksumOutOfMessageBody(text);
-            String thumbnail = PersonalMessaging.getEncodedImageOutOfImage(text);
-
-            byte[] bytesOfThumbnail = null;
-            if (thumbnail != null) {
-                bytesOfThumbnail = Base64.decode(thumbnail, Base64.DEFAULT);
-            }
-
-            long messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
-                    time, stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, bytesOfThumbnail);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, nodeid);
-
-            ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, from, mimeType, checksum, Long.valueOf(messageId));
-        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
-            long messageId = sportsUnityDBHelper.addMessage(text.toString(), mimeType, from, false,
-                    time, stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, nodeid);
-        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
-            String checksum = text;
-
-            long messageId = sportsUnityDBHelper.addMessage(text.toString(), mimeType, from, false,
-                    time, stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, nodeid);
-
-            ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, from, mimeType, checksum, Long.valueOf(messageId));
-        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
-            String checksum = PersonalMessaging.getChecksumOutOfMessageBody(text);
-            String thumbnail = PersonalMessaging.getEncodedImageOutOfImage(text);
-
-            byte[] bytesOfThumbnail = null;
-            if (thumbnail != null) {
-                bytesOfThumbnail = Base64.decode(thumbnail, Base64.DEFAULT);
-            }
-
-            long messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
-                    time, stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, bytesOfThumbnail);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, nodeid);
-
-            ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, from, mimeType, checksum, Long.valueOf(messageId));
-        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
-            long messageId = sportsUnityDBHelper.addMessage(text.toString(), mimeType, from, false,
-                    time, stanzaId, null, null,
-                    chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, nodeid);
-        }
-    }
-
-    private void handleChatMessage(Message message, boolean isGroupChat) {
-
-        Object value = JivePropertiesManager.getProperty(message, Constants.PARAM_TIME);
-        String fromId = message.getFrom().substring(0, message.getFrom().indexOf("@"));
-        String to = message.getTo().substring(0, message.getTo().indexOf("@"));
-        String mimeType = (String) JivePropertiesManager.getProperty(message, Constants.PARAM_MIME_TYPE);
-        boolean nearByChat = false;
-        Object object = JivePropertiesManager.getProperty(message, Constants.PARAM_CHAT_TYPE_OTHERS);
-        if (object != null) {
-            nearByChat = (boolean) object;
-        }
-
-        boolean success = true;
-        long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
-
-        String groupServerId = null;
-        String messageFrom = null;
-        if (isGroupChat) {
-            groupServerId = fromId;
-            messageFrom = message.getFrom().substring(message.getFrom().indexOf("/") + 1);
-
-            if (!to.equals(messageFrom)) {
-                chatId = getChatIdOrCreateIfNotExist(isGroupChat, messageFrom, groupServerId, false);
-                handleMessage(message, value, chatId, messageFrom, groupServerId, false);
-            } else {
-                success = false;
-            }
-        } else {
-            groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
-            messageFrom = fromId;
-
-            chatId = getChatIdOrCreateIfNotExist(isGroupChat, fromId, groupServerId, nearByChat);
-            handleMessage(message, value, chatId, fromId, groupServerId, nearByChat);
-        }
-
-
-        if (success == true && chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
-
-            boolean eventDispatched = ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, fromId);
-            if (eventDispatched) {
                 //nothing
-            } else {
-                Contacts contact = sportsUnityDBHelper.getContactByJid(fromId);
-                try {
-                    sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
-                    if (contact.availableStatus != Contacts.AVAILABLE_BY_MY_CONTACTS) {
-                        ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_OTHERS_LIST_KEY);
-                    } else {
-                        ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
-                    }
-                    byte[] image = sportsUnityDBHelper.getUserProfileImage(fromId);
-                    DisplayNotification(message.getBody(), messageFrom, mimeType, chatId, isGroupChat, groupServerId, image, contact.availableStatus);
-                } catch (XMPPException.XMPPErrorException e) {
-                    e.printStackTrace();
-                } catch (SmackException.NoResponseException e) {
-                    e.printStackTrace();
-                } catch (SmackException.NotConnectedException e) {
-                    e.printStackTrace();
-                }
             }
-
-//            if (ChatScreenApplication.isActivityVisible()) {
-//                if (ChatScreenActivity.getJABBERID().equals(fromId)) {
-//                    ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, fromId);
-//                } else {
-//                    try {
-//                        sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
-//                        if (nearByChat) {
-//                            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_OTHERS_LIST_KEY);
-//                        } else {
-//                            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
-//                        }
-//                        byte[] image = sportsUnityDBHelper.getUserProfileImage(fromId);
-//                        DisplayNotification(message.getBody(), messageFrom, mimeType, chatId, isGroupChat, groupServerId, image);
-//                    } catch (XMPPException.XMPPErrorException e) {
-//                        e.printStackTrace();
-//                    } catch (SmackException.NoResponseException e) {
-//                        e.printStackTrace();
-//                    } catch (SmackException.NotConnectedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            } else {
-//                try {
-//                    sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
-//                    if (nearByChat) {
-//                        ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_OTHERS_LIST_KEY);
-//                    } else {
-//                        ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
-//                    }
-//                    byte[] image = sportsUnityDBHelper.getUserProfileImage(fromId);
-//                    DisplayNotification(message.getBody(), messageFrom, mimeType, chatId, isGroupChat, groupServerId, image);
-//                } catch (XMPPException.XMPPErrorException e) {
-//                    e.printStackTrace();
-//                } catch (SmackException.NoResponseException e) {
-//                    e.printStackTrace();
-//                } catch (SmackException.NotConnectedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-
-        }
-    }
-
-    private void handleStatus(Message message) {
-        String jid = message.getFrom().substring(0, message.getFrom().indexOf("@mm.io"));
-        Log.i("handle status :", "");
-        if (message.hasExtension(ChatState.composing.toString(), ChatStateExtension.NAMESPACE)) {
-            Log.i("status :", "composing");
-            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, jid, ChatState.composing.toString());
-        } else if (message.hasExtension(ChatState.active.toString(), ChatStateExtension.NAMESPACE)) {
-            Log.i("status :", "active");
-        } else if (message.hasExtension(ChatState.gone.toString(), ChatStateExtension.NAMESPACE)) {
-            Log.i("status :", "gone");
-        } else if (message.hasExtension(ChatState.paused.toString(), ChatStateExtension.NAMESPACE)) {
-            Log.i("status :", "paused");
-            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, jid, ChatState.paused.toString());
-        } else if (message.hasExtension(ChatState.inactive.toString(), ChatStateExtension.NAMESPACE)) {
-            Log.i("status :", "inactive");
-        }
-    }
-
-    private long getChatIdOrCreateIfNotExist(boolean isGroupChat, String from, String fromGroup, boolean nearByChat) {
-        long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
-
-        if (!isGroupChat) {
-            Contacts contact = sportsUnityDBHelper.getContactByJid(from);
-            if (contact == null) {
-                createContact(from, getApplicationContext(), nearByChat);
-                contact = sportsUnityDBHelper.getContactByJid(from);
-            }
-
-            chatId = sportsUnityDBHelper.getChatEntryID(contact.id, fromGroup);
-            if (chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
-                //nothing
-            } else {
-                chatId = sportsUnityDBHelper.createChatEntry(contact.name, contact.id, nearByChat);
-                Log.i("ChatEntry : ", "chat entry made from server " + chatId + " , " + contact.id);
-            }
-
-        } else {
-            chatId = sportsUnityDBHelper.getChatEntryID(fromGroup);
-        }
-        return chatId;
-    }
-
-    public void handleMessage(Message message, Object value, long chatId, String from, String fromGroup, boolean nearByChat) {
-        String mimeType = (String) JivePropertiesManager.getProperty(message, Constants.PARAM_MIME_TYPE);
-
-        if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
-            String checksum = PersonalMessaging.getChecksumOutOfMessageBody(message.getBody());
-            String thumbnail = PersonalMessaging.getEncodedImageOutOfImage(message.getBody());
-
-            byte[] bytesOfThumbnail = null;
-            if (thumbnail != null) {
-                bytesOfThumbnail = Base64.decode(thumbnail, Base64.DEFAULT);
-            }
-
-            long messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
-                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, bytesOfThumbnail);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
-
-            ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, from, mimeType, checksum, Long.valueOf(messageId));
-        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
-            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
-                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
-        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
-            String checksum = message.getBody();
-
-            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
-                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
-
-            ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, from, mimeType, checksum, Long.valueOf(messageId));
-        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
-            String checksum = PersonalMessaging.getChecksumOutOfMessageBody(message.getBody());
-            String thumbnail = PersonalMessaging.getEncodedImageOutOfImage(message.getBody());
-
-            byte[] bytesOfThumbnail = null;
-            if (thumbnail != null) {
-                bytesOfThumbnail = Base64.decode(thumbnail, Base64.DEFAULT);
-            }
-
-//            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
-//                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-            long messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
-                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, bytesOfThumbnail);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
-
-            ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, from, mimeType, checksum, Long.valueOf(messageId));
-        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
-            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
-                    value.toString(), message.getStanzaId(), null, null,
-                    chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
-        }
-    }
-
-    public static boolean createContact(String jid, Context context, boolean nearByChat) {
-        boolean success = false;
-        try {
-            XMPPTCPConnection connection = XMPPClient.getInstance().getConnection();
-            VCard card = new VCard();
-            card.load(connection, jid + "@mm.io");
-            String status = card.getMiddleName();
-            byte[] image = card.getAvatar();
-            String nickname = card.getNickName();
-
-            if (nearByChat) {
-                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
-            } else {
-                SportsUnityDBHelper.getInstance(context).addToContacts(nickname, null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_OTHER_CONTACTS);
-            }
-            SportsUnityDBHelper.getInstance(context).updateContacts(jid, image, status);
-
-            success = true;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return success;
-    }
-
-    private void DisplayNotification(String message, String from, String mimeType, long chatId, boolean isGroupChat, String groupServerId, byte[] image, int availibilityStatus) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
-//        if (sportsUnityDBHelper.isMute(chatId)) {
-//            //nothing
-//        } else {
-        UserUtil.init(this);
-
-        String name = sportsUnityDBHelper.getUserNameByJid(from);
-        if (isGroupChat) {
-            name = name + "@" + sportsUnityDBHelper.getGroupSubject(groupServerId);
-        } else {
-            //nothing
         }
 
-        NotificationHandler notificationHandler = NotificationHandler.getInstance(getApplicationContext());
-        notificationHandler.addNotificationMessage(chatId, name, message, mimeType, image, availibilityStatus);
-
-        int chatCount = notificationHandler.getNotificationChatCount();
-        PendingIntent pendingIntent = null;
-        if (chatCount > 1) {
-            pendingIntent = getPendingIntentForMainActivity();
-        } else if (chatCount == 1) {
-            Contacts contact = sportsUnityDBHelper.getContactByJid(from);
-            pendingIntent = getPendingIntentForChatActivity(name, from, chatId, contact.id, groupServerId, contact.image, contact.isOthers());
-        }
-
-        notificationHandler.showNotification(getApplicationContext(), pendingIntent);
-        ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.UNREAD_COUNT_KEY);
-//        }
-    }
-
-    private PendingIntent getPendingIntentForMainActivity() {
-        Intent mainIntent = new Intent(this, MainActivity.class);
-        mainIntent.putExtra("tab_index", 2);
-        mainIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        PendingIntent pendingIntent = PendingIntent.getActivities(this, NotificationHandler.NOTIFICATION_ID, new Intent[]{mainIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
-        return pendingIntent;
-    }
-
-    private PendingIntent getPendingIntentForChatActivity(String name, String from, long chatId, long contactId, String groupServerId, byte[] contactImage, boolean isOtherChat) {
-        Intent notificationIntent;
-
-        notificationIntent = ChatScreenActivity.createChatScreenIntent(getApplicationContext(), from, name, contactId, chatId, groupServerId, contactImage, false, isOtherChat);
-
-        Intent backIntent = new Intent(this, MainActivity.class);
-        backIntent.putExtra("tab_index", 2);
-        backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-        PendingIntent pendingIntent = PendingIntent.getActivities(this, NotificationHandler.NOTIFICATION_ID, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
-        return pendingIntent;
     }
 
 }

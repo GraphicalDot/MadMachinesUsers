@@ -16,6 +16,8 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.model.Contacts;
 
 import java.util.ArrayList;
@@ -27,65 +29,50 @@ import de.hdodenhof.circleimageview.CircleImageView;
  */
 public class GroupInfoActivity extends CustomAppCompatActivity {
 
-
-    private TextView delete;
-
-    private CircleImageView groupImage;
-    private TextView groupName;
-    private TextView groupInfo;
-    private TextView groupCount;
-
-    private TextView toolbarEdit;
-    private ImageView toolbarBack;
-
     private ListView participantsList;
 
+    private long chatID;
+    private String groupJID;
     private String name;
     private byte[] byteArray;
-    private String groupServerId;
-    private long chatID;
-    ArrayList<Contacts> groupParticipants;
+
+    private SportsUnityDBHelper.GroupParticipants groupParticipants = null;
+    private boolean isAdmin = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.group_info_activity);
+
         getIntentExtras();
+
+        SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
+        groupParticipants = sportsUnityDBHelper.getGroupParticipants(chatID);
+        String currentUserJid = TinyDB.getInstance(this).getString(TinyDB.KEY_USER_JID);
+        isAdmin = groupParticipants.adminJids.contains(currentUserJid);
+
+        initToolbar();
         initViews();
     }
 
+    private void getIntentExtras() {
+        Bundle bundle = getIntent().getExtras();
+        name = bundle.getString("name");
+        byteArray = bundle.getByteArray("profilePicture");
+        groupJID = bundle.getString("groupServerId");
+        chatID = bundle.getLong("chatID");
+    }
+
     private void initViews() {
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_group_info);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        toolbarEdit = (TextView) toolbar.findViewById(R.id.toolbar_edit);
-        toolbarBack = (ImageView) toolbar.findViewById(R.id.toolbar_back);
-
-        groupImage = (CircleImageView) findViewById(R.id.group_image);
-
-        groupName = (TextView) findViewById(R.id.group_name);
-        groupInfo = (TextView) findViewById(R.id.group_info);
-        groupCount = (TextView) findViewById(R.id.part_count);
-        participantsList = (ListView) findViewById(R.id.participants_list);
-
-        delete = (TextView) findViewById(R.id.delete_group);
-
-        SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
-        SportsUnityDBHelper.GroupParticipants participants = sportsUnityDBHelper.getGroupParticipants(chatID);
-        groupParticipants = participants.usersInGroup;
-        String partCount = getResources().getString(R.string.participant_count);
-        partCount = String.format(partCount, groupParticipants.size());
-
-        groupCount.setText(partCount);
-
-        participantsList.setAdapter(new GroupParticipantsAdapter(this, LayoutInflater.from(this), groupParticipants));
+        CircleImageView groupImage = (CircleImageView) findViewById(R.id.group_image);
+        TextView groupName = (TextView) findViewById(R.id.group_name);
+        TextView groupInfo = (TextView) findViewById(R.id.group_info);
+        TextView groupCount = (TextView) findViewById(R.id.part_count);
+        TextView delete = (TextView) findViewById(R.id.delete_group);
 
         groupName.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
         groupInfo.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
-        toolbarEdit.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         delete.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
-        setListViewHeightBasedOnItems(participantsList);
 
         groupName.setText(name);
         if (byteArray != null) {
@@ -94,6 +81,23 @@ public class GroupInfoActivity extends CustomAppCompatActivity {
             groupImage.setImageResource(R.drawable.ic_group);
         }
 
+        String partCount = getResources().getString(R.string.participant_count);
+        partCount = String.format(partCount, groupParticipants.usersInGroup.size());
+        groupCount.setText(partCount);
+
+        participantsList = (ListView) findViewById(R.id.participants_list);
+        participantsList.setAdapter(new GroupParticipantsAdapter(this, groupParticipants.usersInGroup, isAdmin));
+        setListViewHeightBasedOnItems(participantsList);
+    }
+
+    private void initToolbar(){
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_group_info);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        TextView toolbarEdit = (TextView) toolbar.findViewById(R.id.toolbar_edit);
+        toolbarEdit.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+        toolbarEdit.setVisibility( isAdmin ? View.VISIBLE : View.GONE );
     }
 
     private void setListViewHeightBasedOnItems(ListView listView) {
@@ -118,13 +122,4 @@ public class GroupInfoActivity extends CustomAppCompatActivity {
         listView.requestLayout();
     }
 
-    private void getIntentExtras() {
-
-        Bundle bundle = getIntent().getExtras();
-
-        name = bundle.getString("name");
-        byteArray = bundle.getByteArray("profilePicture");
-        groupServerId = bundle.getString("groupServerId");
-        chatID = bundle.getLong("chatID");
-    }
 }

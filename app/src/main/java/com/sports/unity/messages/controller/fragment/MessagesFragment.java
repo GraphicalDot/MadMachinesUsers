@@ -168,8 +168,8 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
             public void onClick(View v) {
                 fabMenu.toggle(true);
                 backgroundDimmer.setVisibility(View.GONE);
-//                Intent intent = new Intent(getActivity(), CreateGroup.class);
-//                startActivity(intent);
+                Intent intent = new Intent(getActivity(), CreateGroup.class);
+                startActivity(intent);
             }
         });
 

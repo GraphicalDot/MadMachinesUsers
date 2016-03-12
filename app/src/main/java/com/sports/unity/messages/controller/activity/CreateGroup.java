@@ -149,53 +149,38 @@ public class CreateGroup extends CustomAppCompatActivity {
     }
 
     private void createGroup(ArrayList<Contacts> selectedMembers) {
-        GroupMessaging groupMessaging = GroupMessaging.getInstance(this);
-        String roomName = currentUserJID + "" + System.currentTimeMillis();
-        roomName = roomName + "%" + groupName + "%%";
+        String groupJID = currentUserJID + "" + System.currentTimeMillis();
+        groupJID = groupJID + "%" + groupName + "%%";
         String subject = groupName;
 
-        boolean success = groupMessaging.createGroup(roomName, currentUserJID, subject);
         Contacts owner = SportsUnityDBHelper.getInstance(this).getContactByJid(currentUserJID);
-        if (success) {
-            groupMessaging.setGroupConfigDetail(roomName, groupName, groupDescription);
-            groupMessaging.joinGroup(roomName, currentUserJID);
 
-            /*long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry(subject, owner.id, null, roomName);
-            SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, roomName);
+        ArrayList<String> membersJid = new ArrayList<>();
+        for (Contacts contacts : selectedMembers) {
+            membersJid.add(contacts.jid + "@mm.io");
+        }
+
+        PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance();
+        boolean success = pubSubMessaging.createNode(groupJID, membersJid, this);
+        if (success) {
+
+            long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry(subject, owner.id, groupImageArray, groupJID);
+            SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupJID);
 
             ArrayList<Long> members = new ArrayList<>();
-            for (Contacts c :
-                    selectedMembers) {
+            members.add(owner.id);
+            for (Contacts c : selectedMembers) {
                 members.add(c.id);
             }
-            SportsUnityDBHelper.getInstance(getApplicationContext()).createGroupUserEntry(chatId, members);*/
 
-            PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance(this);
-            boolean nodesuccess = pubSubMessaging.createNode(roomName, this);
-            if (nodesuccess) {
+            SportsUnityDBHelper.getInstance(getApplicationContext()).createGroupUserEntry(chatId, members);
+            SportsUnityDBHelper.getInstance(getApplicationContext()).updateAdmin( owner.id, chatId);
 
-                long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry(subject, owner.id, groupImageArray, roomName);
-                SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, roomName);
-
-                String groupmembersnumbers = "";
-                ArrayList<Long> members = new ArrayList<>();
-                for (Contacts c :
-                        selectedMembers) {
-                    members.add(c.id);
-                    groupmembersnumbers += c.id + ",";
-                }
-                SportsUnityDBHelper.getInstance(getApplicationContext()).createGroupUserEntry(chatId, members);
-                SportsUnityDBHelper.getInstance(getApplicationContext()).updateAdmin(TinyDB.getInstance(getApplicationContext()).KEY_USER_JID, roomName);
-                Log.i("send Invites for group", "true");
-                groupMessaging.inviteMembers(roomName, selectedMembers, "");
-                finish();
-            } else {
-//                Toast.makeText(this, R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-            }
-
+            finish();
         } else {
-//            Toast.makeText(this, R.string.group_message_try_again, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.oops_try_again, Toast.LENGTH_SHORT).show();
         }
+
     }
 
 }

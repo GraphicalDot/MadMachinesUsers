@@ -144,7 +144,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
             ContentValues values = new ContentValues();
             values.put(GroupUserEntry.COLUMN_CHAT_ID, chatId);
-            values.put(GroupUserEntry.COLUMN_CONTACT_ID, String.valueOf(id));
+            values.put(GroupUserEntry.COLUMN_CONTACT_ID, id);
             values.put(GroupUserEntry.COLUMN_ADMIN, 0);
 
             db.insert(GroupUserEntry.TABLE_NAME, null, values);
@@ -619,7 +619,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String selectQuery = "SELECT " + ContactsEntry.COLUMN_NAME + ", " + ContactsEntry.COLUMN_JID + ", " + ContactsEntry.COLUMN_PHONE_NUMBER + ", " +
-                ContactsEntry.COLUMN_USER_IMAGE + ", A." + ContactsEntry.COLUMN_CONTACT_ID + ", " + ContactsEntry.COLUMN_STATUS + ", " + ContactsEntry.COLUMN_AVAILABLE_STATUS +
+                ContactsEntry.COLUMN_USER_IMAGE + ", A." + ContactsEntry.COLUMN_CONTACT_ID + ", " + ContactsEntry.COLUMN_STATUS + ", " + ContactsEntry.COLUMN_AVAILABLE_STATUS + ", " + GroupUserEntry.COLUMN_ADMIN +
                 " FROM " + ContactsEntry.TABLE_NAME + " A INNER JOIN " + GroupUserEntry.TABLE_NAME + " B ON A." + ContactsEntry.COLUMN_CONTACT_ID + " = B." + GroupUserEntry.COLUMN_CONTACT_ID +
                 " WHERE B." + GroupUserEntry.COLUMN_CHAT_ID + " LIKE ?";
         String[] selectionArgs = {String.valueOf(chatId)};
@@ -627,14 +627,21 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, selectionArgs);
 
         ArrayList<Contacts> users = new ArrayList<>();
+        ArrayList<String> admins = new ArrayList<>();
         if (cursor.moveToFirst()) {
             do {
+                int isAdmin = cursor.getInt(7);
+
+                if( isAdmin == 1 ){
+                    admins.add(cursor.getString(1));
+                }
+
                 users.add(new Contacts(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getBlob(3), cursor.getInt(4), cursor.getString(5), cursor.getInt(6)));
             } while (cursor.moveToNext());
         }
         cursor.close();
 
-        GroupParticipants groupParticipants = new GroupParticipants(chatId, users);
+        GroupParticipants groupParticipants = new GroupParticipants(chatId, users, admins);
         return groupParticipants;
     }
 
@@ -1094,6 +1101,34 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return DEFAULT_ENTRY_ID;
     }
 
+    public long getContactAssociatedToChat(long chatId){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String projection[] = {
+                ChatEntry.COLUMN_CONTACT_ID
+        };
+
+        String selection = ChatEntry.COLUMN_CHAT_ID + " = ? ";
+        String[] selectionArgs = { String.valueOf(chatId) };
+
+        Cursor c = db.query(
+                ChatEntry.TABLE_NAME,  // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                // The sort order
+        );
+
+        if (c.moveToFirst()) {
+            return c.getInt(0);
+        }
+
+        c.close();
+        return DEFAULT_ENTRY_ID;
+    }
+
     public long createChatEntry(String name, long contactId, boolean others) {
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1206,7 +1241,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             String[] selectionArg = null;
             if (availability == DEFAULT_GET_ALL_CHAT_LIST) {
                 selectionArg = new String[]{String.valueOf(Contacts.AVAILABLE_NOT)};
-                selectQuery.append(" WHERE " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " NOT LIKE ? ");
+                selectQuery.append(" WHERE " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " NOT LIKE ?");
             } else if (availability == Contacts.AVAILABLE_BY_MY_CONTACTS) {
                 selectionArg = new String[]{String.valueOf(availability)};
                 selectQuery.append(" WHERE " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " LIKE ? ");
@@ -1497,15 +1532,20 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    public void updateAdmin(String user, String groupname) {
+    public void updateAdmin(ArrayList<Long> selectedMembers, long chatId) {
+        for (Long id : selectedMembers) {
+            updateAdmin( id, chatId);
+        }
+    }
 
+    public void updateAdmin( long contactId, long chatId) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(GroupUserEntry.COLUMN_ADMIN, 1);
 
-        String selection = GroupUserEntry.COLUMN_CONTACT_ID + " = ? and " + GroupUserEntry.COLUMN_CHAT_ID + " LIKE ? ";
-        String[] selectionArgs = {user, String.valueOf(getChatEntryID(groupname))};
+        String selection = GroupUserEntry.COLUMN_CONTACT_ID + " = ? and " + GroupUserEntry.COLUMN_CHAT_ID + " = ? ";
+        String[] selectionArgs = { String.valueOf(contactId), String.valueOf(chatId)};
 
         int update = db.update(GroupUserEntry.TABLE_NAME,
                 values,
@@ -1618,10 +1658,12 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         public long chatId;
         public ArrayList<Contacts> usersInGroup;
+        public ArrayList<String> adminJids;
 
-        public GroupParticipants(long chatId, ArrayList<Contacts> usersInGroup) {
+        public GroupParticipants(long chatId, ArrayList<Contacts> usersInGroup, ArrayList<String> adminJids) {
             this.chatId = chatId;
             this.usersInGroup = usersInGroup;
+            this.adminJids = adminJids;
         }
 
     }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.ThumbnailUtils;
 import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 
 import com.sports.unity.Database.DBUtil;
@@ -16,11 +17,10 @@ import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
 
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
-import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smack.roster.RosterEntry;
 import org.jivesoftware.smackx.chatstates.ChatState;
 import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
 import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
@@ -45,13 +45,13 @@ public class PersonalMessaging {
 
     private static final String PRIVACY_LIST_NAME = "spuBlockedList";
 
-    private static PersonalMessaging pmessaging = null;
+    private static PersonalMessaging PERSONAL_MESSAGING = null;
 
     synchronized public static PersonalMessaging getInstance(Context context) {
-        if (pmessaging == null) {
-            pmessaging = new PersonalMessaging(context);
+        if (PERSONAL_MESSAGING == null) {
+            PERSONAL_MESSAGING = new PersonalMessaging(context);
         }
-        return pmessaging;
+        return PERSONAL_MESSAGING;
     }
 
     private final Map<Chat, ChatState> chatStates = new WeakHashMap<Chat, ChatState>();
@@ -62,26 +62,26 @@ public class PersonalMessaging {
         sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
     }
 
-    public void sendTextMessage(String msg, Chat chat, String number, long chatId, boolean otherChat) {
+    public void sendTextMessage(String msg, Chat chat, String fromJID, long chatId, boolean otherChat) {
         Message message = new Message();
         message.setBody(msg);
 
         String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
         String stanzaId = sendMessage(message, chat, time, SportsUnityDBHelper.MIME_TYPE_TEXT, otherChat);
 
-        long messageId = sportsUnityDBHelper.addMessage(message.getBody(), SportsUnityDBHelper.MIME_TYPE_TEXT, number, true, time,
+        long messageId = sportsUnityDBHelper.addMessage(message.getBody(), SportsUnityDBHelper.MIME_TYPE_TEXT, fromJID, true, time,
                 stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
         sportsUnityDBHelper.updateChatEntry(messageId, chatId, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
     }
 
-    public void sendStickerMessage(String msg, Chat chat, String number, long chatId, boolean otherChat) {
+    public void sendStickerMessage(String msg, Chat chat, String fromJID, long chatId, boolean otherChat) {
         Message message = new Message();
         message.setBody(msg);
 
         String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
         String stanzaId = sendMessage(message, chat, time, SportsUnityDBHelper.MIME_TYPE_STICKER, otherChat);
 
-        long messageId = sportsUnityDBHelper.addMessage(message.getBody(), SportsUnityDBHelper.MIME_TYPE_STICKER, number, true, time,
+        long messageId = sportsUnityDBHelper.addMessage(message.getBody(), SportsUnityDBHelper.MIME_TYPE_STICKER, fromJID, true, time,
                 stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
         sportsUnityDBHelper.updateChatEntry(messageId, chatId, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
     }
@@ -221,10 +221,9 @@ public class PersonalMessaging {
             ArrayList<String> blockedUserList = SportsUnityDBHelper.getInstance(context).getUserBlockedList();
             if (blockedUserList.size() != 0) {
                 privacyItems = new ArrayList<>();
-                for (String phoneNumber : blockedUserList) {
-                    phoneNumber += "@mm.io";
-                    privacyItems.add(new PrivacyItem(PrivacyItem.Type.jid, phoneNumber, false, 1));
-                    Log.i("Privacy", phoneNumber);
+                for (String jid : blockedUserList) {
+                    jid += "@mm.io";
+                    privacyItems.add(new PrivacyItem(PrivacyItem.Type.jid, jid, false, 1));
                 }
                 sendPrivacyList(privacyItems);
             } else {
@@ -390,6 +389,139 @@ public class PersonalMessaging {
          */
 
         ActivityActionHandler.getInstance().dispatchReceiptEvent(ActivityActionHandler.CHAT_SCREEN_KEY, receiptKind);
+    }
+
+    public void handleChatMessage(Context context, Message message, boolean isGroupChat) {
+        Object value = JivePropertiesManager.getProperty(message, Constants.PARAM_TIME);
+        String fromId = message.getFrom().substring(0, message.getFrom().indexOf("@"));
+        String to = message.getTo().substring(0, message.getTo().indexOf("@"));
+        String mimeType = (String) JivePropertiesManager.getProperty(message, Constants.PARAM_MIME_TYPE);
+        boolean nearByChat = false;
+        Object object = JivePropertiesManager.getProperty(message, Constants.PARAM_CHAT_TYPE_OTHERS);
+        if (object != null) {
+            nearByChat = (boolean) object;
+        }
+
+        boolean success = true;
+        long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
+
+        String groupServerId = null;
+        String messageFrom = null;
+        if (isGroupChat) {
+            groupServerId = fromId;
+            messageFrom = message.getFrom().substring(message.getFrom().indexOf("/") + 1);
+
+            if (!to.equals(messageFrom)) {
+                chatId = XMPPService.getChatIdOrCreateIfNotExist( context, isGroupChat, messageFrom, groupServerId, false);
+                handleMessage(message, value, chatId, messageFrom, groupServerId, false);
+            } else {
+                success = false;
+            }
+        } else {
+            groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
+            messageFrom = fromId;
+
+            chatId = XMPPService.getChatIdOrCreateIfNotExist( context, isGroupChat, fromId, groupServerId, nearByChat);
+            handleMessage(message, value, chatId, fromId, groupServerId, nearByChat);
+        }
+
+
+        if (success == true && chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
+
+            boolean eventDispatched = ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_SCREEN_KEY, fromId);
+            if (eventDispatched) {
+                //nothing
+            } else {
+                Contacts contact = sportsUnityDBHelper.getContactByJid(fromId);
+                try {
+                    sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
+                    if (contact.availableStatus != Contacts.AVAILABLE_BY_MY_CONTACTS) {
+                        ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_OTHERS_LIST_KEY);
+                    } else {
+                        ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
+                    }
+                    byte[] image = contact.image;
+                    XMPPService.displayNotification(context, message.getBody(), messageFrom, mimeType, chatId, isGroupChat, groupServerId, image, contact.availableStatus);
+                } catch (XMPPException.XMPPErrorException e) {
+                    e.printStackTrace();
+                } catch (SmackException.NoResponseException e) {
+                    e.printStackTrace();
+                } catch (SmackException.NotConnectedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void handleMessage(Message message, Object value, long chatId, String from, String fromGroup, boolean nearByChat) {
+        String mimeType = (String) JivePropertiesManager.getProperty(message, Constants.PARAM_MIME_TYPE);
+
+        if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
+            String checksum = PersonalMessaging.getChecksumOutOfMessageBody(message.getBody());
+            String thumbnail = PersonalMessaging.getEncodedImageOutOfImage(message.getBody());
+
+            byte[] bytesOfThumbnail = null;
+            if (thumbnail != null) {
+                bytesOfThumbnail = Base64.decode(thumbnail, Base64.DEFAULT);
+            }
+
+            long messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
+                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, bytesOfThumbnail);
+            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
+
+            ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, from, mimeType, checksum, Long.valueOf(messageId));
+        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
+            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
+                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
+        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
+            String checksum = message.getBody();
+
+            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
+                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
+
+            ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, from, mimeType, checksum, Long.valueOf(messageId));
+        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
+            String checksum = PersonalMessaging.getChecksumOutOfMessageBody(message.getBody());
+            String thumbnail = PersonalMessaging.getEncodedImageOutOfImage(message.getBody());
+
+            byte[] bytesOfThumbnail = null;
+            if (thumbnail != null) {
+                bytesOfThumbnail = Base64.decode(thumbnail, Base64.DEFAULT);
+            }
+
+//            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
+//                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+            long messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
+                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, bytesOfThumbnail);
+            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
+
+            ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, from, mimeType, checksum, Long.valueOf(messageId));
+        } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
+            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
+                    value.toString(), message.getStanzaId(), null, null,
+                    chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
+        }
+    }
+
+    public void handleStatus(Message message) {
+        String jid = message.getFrom().substring(0, message.getFrom().indexOf("@mm.io"));
+        Log.i("handle status :", "");
+        if (message.hasExtension(ChatState.composing.toString(), ChatStateExtension.NAMESPACE)) {
+            Log.i("status :", "composing");
+            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, jid, ChatState.composing.toString());
+        } else if (message.hasExtension(ChatState.active.toString(), ChatStateExtension.NAMESPACE)) {
+            Log.i("status :", "active");
+        } else if (message.hasExtension(ChatState.gone.toString(), ChatStateExtension.NAMESPACE)) {
+            Log.i("status :", "gone");
+        } else if (message.hasExtension(ChatState.paused.toString(), ChatStateExtension.NAMESPACE)) {
+            Log.i("status :", "paused");
+            ActivityActionHandler.getInstance().dispatchUserStatusOnChat(ActivityActionHandler.CHAT_SCREEN_KEY, jid, ChatState.paused.toString());
+        } else if (message.hasExtension(ChatState.inactive.toString(), ChatStateExtension.NAMESPACE)) {
+            Log.i("status :", "inactive");
+        }
     }
 
 }

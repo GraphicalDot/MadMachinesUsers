@@ -17,8 +17,9 @@ public class CustomAppCompatActivity extends AppCompatActivity implements Global
 
     private static int activityCounter = 0;
     private String NETWORK_STATE_ACTIVITY_TAG = "network_state_activity_tag";
-    private PingManager pingManager;
-    private boolean isPingRequired;
+
+//    private PingManager pingManager;
+//    private boolean isPingRequired;
 
     @Override
     protected void onStart() {
