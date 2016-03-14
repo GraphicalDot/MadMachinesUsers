@@ -129,9 +129,21 @@ public class DBUtil {
     }
 
     public static void writeContentToExternalFileStorage( Context context, String fileName, byte[] content, String mimeType){
-        if( PermissionUtil.getInstance().isPermissionGranted(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ) {
+        boolean isVisibleInGallery = isExternalFile(fileName);
+
+        boolean canWrite = false;
+        if( isVisibleInGallery ){
+            if( PermissionUtil.getInstance().isPermissionGranted(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ){
+                canWrite = true;
+            } else {
+                canWrite = false;
+            }
+        } else {
+            canWrite = true;
+        }
+
+        if( canWrite ) {
             Log.d("File I/O", "start writing");
-            boolean isVisibleInGallery = isExternalFile(fileName);
 
             File file = new File(getFilePath(context, mimeType, fileName));
             FileOutputStream out = null;
@@ -161,9 +173,21 @@ public class DBUtil {
     }
 
     public static void writeContentToExternalFileStorage( Context context, String sourceFileName, String destinationFileName, String mimeType){
-        if( PermissionUtil.getInstance().isPermissionGranted(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ) {
+        boolean isVisibleInGallery = isExternalFile(destinationFileName);
+
+        boolean canWrite = false;
+        if( isVisibleInGallery ){
+            if( PermissionUtil.getInstance().isPermissionGranted(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ){
+                canWrite = true;
+            } else {
+                canWrite = false;
+            }
+        } else {
+            canWrite = true;
+        }
+
+        if( canWrite ) {
             Log.d("File I/O", "start writing");
-            boolean isVisibleInGallery = isExternalFile(destinationFileName);
 
             File file = new File(getFilePath(context, mimeType, destinationFileName));
             FileOutputStream out = null;

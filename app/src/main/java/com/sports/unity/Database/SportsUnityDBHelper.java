@@ -172,7 +172,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return rowId;
     }
 
-    public ArrayList getAllPhoneNumbers(boolean registered) {
+    public ArrayList getAllPhoneNumbers() {
         SQLiteDatabase db = this.getReadableDatabase();
 
         ArrayList<String> numbers = new ArrayList<>();
@@ -180,14 +180,14 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactsEntry.COLUMN_PHONE_NUMBER
         };
 
-        String registerCondition = null;
-        if (registered) {
-            registerCondition = " is not NULL ";
-        } else {
-            registerCondition = " is NULL ";
-        }
+//        String registerCondition = null;
+//        if (registered) {
+//            registerCondition = " is not NULL ";
+//        } else {
+//            registerCondition = " is NULL ";
+//        }
 
-        String selection = ContactsEntry.COLUMN_JID + registerCondition + " and " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " != " + Contacts.AVAILABLE_NOT;
+        String selection = ContactsEntry.COLUMN_AVAILABLE_STATUS + " == " + Contacts.AVAILABLE_BY_MY_CONTACTS;
         String[] selectionArgs = null;
 
         Cursor c = db.query(

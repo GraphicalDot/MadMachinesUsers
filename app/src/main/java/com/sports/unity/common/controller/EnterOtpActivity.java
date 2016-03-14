@@ -133,7 +133,6 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
             Bundle bundle = intent.getExtras();
             try {
                 if (bundle != null) {
-                    otpWaitingDialog.cancel();
 
                     final Object[] pdusObj = (Object[]) bundle.get("pdus");
                     for (int i = 0; i < pdusObj.length; i++) {
@@ -144,6 +143,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
                         try {
                             if (senderNum.contains("SPOUNI") || senderNum.contains("INFINI")) {
+                                otpWaitingDialog.cancel();
                                 String str = message.replaceAll("\\D+", "");
                                 otpEditText.setText(str);
                                 createUser();

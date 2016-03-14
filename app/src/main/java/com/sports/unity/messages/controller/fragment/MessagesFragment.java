@@ -59,7 +59,7 @@ import java.util.Arrays;
 /**
  * Created by Agupta on 8/13/2015.
  */
-public class MessagesFragment extends Fragment implements View.OnClickListener, MainActivity.PermissionResultHandler {
+public class MessagesFragment extends Fragment implements View.OnClickListener, MainActivity.PermissionResultHandler, ContactsHandler.ContactCopyCompletedListener {
 
     private OnSearchViewQueryListener mListener = null;
 
@@ -75,7 +75,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     TextView friendsUnreadCount;
     TextView othersUnreadCount;
     View backgroundDimmer;
-
+    MenuItem syncProgress;
 
     @Override
     public void onAttach(Activity activity) {
@@ -257,8 +257,14 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if (item.getItemId() == R.id.sync_contacts) {
-            ContactsHandler.getInstance().addCallToSyncContacts(getActivity().getApplicationContext());
-            Toast.makeText(getActivity().getApplicationContext(), "Syncing contacts", Toast.LENGTH_SHORT).show();
+            if (PermissionUtil.getInstance().requestPermission(getActivity(), new ArrayList<String>(Arrays.asList(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)))) {
+
+                ContactsHandler.getInstance().addCallToSyncContacts(getActivity().getApplicationContext());
+                showSyncProgress();
+                Toast.makeText(getActivity().getApplicationContext(), "Syncing contacts", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getActivity().getApplicationContext(), "Contact permission is denied by you.", Toast.LENGTH_SHORT).show();
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -267,8 +273,15 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fragment_messages_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
+        syncProgress = menu.findItem(R.id.menu_progress);
         searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
-        ((MainActivity) getActivity()).setSearchView(searchView, menu.findItem(R.id.action_search));
+        if (ContactsHandler.getInstance().isInProcess()) {
+            showSyncProgress();
+        }
+        Activity act = getActivity();
+        if (act != null && act instanceof MainActivity) {
+            ((MainActivity) act).setSearchView(searchView, menu.findItem(R.id.action_search));
+        }
         int searchImgId = android.support.v7.appcompat.R.id.search_button;
         ImageView v = (ImageView) searchView.findViewById(searchImgId);
         v.setImageResource(R.drawable.ic_menu_search);
@@ -298,6 +311,21 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
             }
         });
 
+    }
+
+    public void showSyncProgress() {
+        syncProgress.setActionView(R.layout.menu_progress);
+    }
+
+    private void hideSyncProgress() {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (syncProgress != null) {
+                    syncProgress.setActionView(null);
+                }
+            }
+        });
     }
 
     private void updateSearchViewUI() {
@@ -364,17 +392,22 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onResume() {
         super.onResume();
+        ContactsHandler.getInstance().addCopyCompleteListener(MessagesFragment.this);
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.UNREAD_COUNT_KEY, activityActionListener);
         getAndSetUnreadCount();
         mListener = (OnSearchViewQueryListener) currentFragment;
-        if (PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-            ((MainActivity) getActivity()).addLocationResultListener(this);
+        Activity act = getActivity();
+        if (act != null && act instanceof MainActivity) {
+            if (PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+                ((MainActivity) getActivity()).addLocationResultListener(this);
+            }
         }
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        ContactsHandler.getInstance().removeCopyCompleteListener();
         ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.UNREAD_COUNT_KEY);
     }
 
@@ -393,6 +426,22 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        ((MainActivity) getActivity()).removeLocationResultListener();
+        Activity act = getActivity();
+        if (act != null && act instanceof MainActivity) {
+            ((MainActivity) getActivity()).removeLocationResultListener();
+        }
+    }
+
+    @Override
+    public void onComplete(boolean success) {
+        hideSyncProgress();
+        notifyToContactFragment();
+    }
+
+    public void notifyToContactFragment() {
+        Activity activity = getActivity();
+        if (activity != null && activity instanceof MainActivity) {
+            ((MainActivity) activity).notifyToContactFragment();
+        }
     }
 }

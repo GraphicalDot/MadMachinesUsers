@@ -6,7 +6,6 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -17,6 +16,8 @@ import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 
+import static com.sports.unity.BuildConfig.CRITTERCISM_API_KEY;
+
 public class SplashScreenActivity extends AppCompatActivity {
 
     @Override
@@ -24,7 +25,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(com.sports.unity.R.layout.activity_splash);
 
-        Crittercism.initialize(getApplicationContext(), "564059fcd224ac0a00ed42a3");
+        Crittercism.initialize(getApplicationContext(), CRITTERCISM_API_KEY);
 
         UserUtil.init(this);
 
