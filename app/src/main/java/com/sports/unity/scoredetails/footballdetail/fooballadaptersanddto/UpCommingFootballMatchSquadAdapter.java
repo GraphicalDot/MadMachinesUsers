@@ -6,12 +6,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.sports.unity.R;
-import com.sports.unity.player.view.PlayerProfileView;
+
+import com.sports.unity.playerprofile.football.PlayerProfileView;
 import com.sports.unity.util.Constants;
 
 import java.util.List;

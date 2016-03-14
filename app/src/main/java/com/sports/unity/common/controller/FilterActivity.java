@@ -13,7 +13,7 @@ import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
-import com.sports.unity.player.view.PlayerProfileView;
+import com.sports.unity.playerprofile.football.PlayerProfileView;
 import com.sports.unity.scoredetails.cricketdetail.PlayerCricketBioDataActivity;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;

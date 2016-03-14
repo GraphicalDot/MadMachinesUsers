@@ -1,4 +1,4 @@
-package com.sports.unity.scoredetails.cricketdetail;
+package com.sports.unity.playerprofile.cricket;
 
 import android.content.Context;
 import android.util.Log;

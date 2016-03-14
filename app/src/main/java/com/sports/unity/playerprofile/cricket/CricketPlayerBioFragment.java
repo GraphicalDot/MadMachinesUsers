@@ -1,32 +1,24 @@
-package com.sports.unity.scoredetails.cricketdetail;
+package com.sports.unity.playerprofile.cricket;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
-import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.scoredetails.cricketdetail.PlayerCricketBioDataActivity;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by madmachines on 15/2/16.
