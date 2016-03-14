@@ -158,6 +158,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
 
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.GONE);
 
     }
 
@@ -192,7 +193,6 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
                                             int blue = Integer.parseInt(teamSecondStatsObject.getString(key));
                                             completeFootballMatchStatDTO.setLeftGraphValue((baseWidth * red) / (red + blue));
                                             completeFootballMatchStatDTO.setRightGraphValue((baseWidth * blue) / (red + blue));
-                                            //Log.i("MatchStatFragment: ", completeFootballMatchStatDTO.toString());
                                             map.put(getLabelValue(key), completeFootballMatchStatDTO);
                                         }
                                     }

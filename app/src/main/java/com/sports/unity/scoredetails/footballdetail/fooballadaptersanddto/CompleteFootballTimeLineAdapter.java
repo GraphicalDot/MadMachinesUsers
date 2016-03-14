@@ -44,16 +44,13 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         try{
-            // context.getResources().getDimensionPixelSize(R.dimen.);
-
             TextDrawable drawable = null;
             holder.dto = mValues.get(position);
             holder.setIsRecyclable(false);
             if(position==0){
-               /* holder.cardView.setVisibility(View.GONE);*/
                 holder.tvTimeInterval.setVisibility(View.VISIBLE);
                 holder.upperDotView.setVisibility(View.VISIBLE);
-                if("FT".equalsIgnoreCase(holder.dto.getMatchStatus())){
+                if("FT".equalsIgnoreCase(holder.dto.getMatchStatus()) || holder.dto.getMatchStatus()==null){
                     holder.tvTimeInterval.setText(R.string.full_time);
                 }else if("HT".equalsIgnoreCase(holder.dto.getMatchStatus())){
                     holder.tvTimeInterval.setText(R.string.half_time);
@@ -66,8 +63,7 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
                 holder.upperDotView.setVisibility(View.GONE);
                 holder.upperDotView.setVisibility(View.INVISIBLE);
             }
-
-            if(getItemCount()-1== position){
+           if(getItemCount()-1== position){
                 holder.gameStartImage.setVisibility(View.VISIBLE);
                 holder.gameStartImage.setImageResource(R.drawable.ic_match_start_circle);
             }else {
@@ -99,28 +95,13 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
             holder.tvTeamSecondOffPlayer.setVisibility(View.GONE);
             holder.tvTeamSecondOnPlayer.setGravity(Gravity.CENTER);
             holder.tvTeamSecondOnPlayer.setPadding(0,paddingDp,0,0);
-
-            /*android:layout_gravity="center"
-            android:paddingTop="@dimen/horizontal_padding_very_small"*/
-
-
-        }
+       }
 
         holder.tvTeamSecondTime.setVisibility(View.VISIBLE);
         holder.tvTeamSecondOnPlayer.setVisibility(View.VISIBLE);
-       /* holder.tvTeamSecondOffPlayer.setVisibility(View.VISIBLE);*/
         holder.teamSecondView.setVisibility(View.VISIBLE);
         holder.teamFirstView.setVisibility(View.INVISIBLE);
         holder.tvTeamFirstTime.setVisibility(View.INVISIBLE);
-
-       /* holder.teamFirstView.setVisibility(View.INVISIBLE);
-        holder.tvTeamSecondTime.setVisibility(View.VISIBLE);
-        holder.teamSecondView.setVisibility(View.VISIBLE);
-
-
-        holder.tvTeamFirstTime.setVisibility(View.INVISIBLE);
-        holder.tvTeamFirstOnPlayer.setVisibility(View.INVISIBLE);*/
-
     }
 
     private void setLocalTeamTimeLine(ViewHolder holder) {
@@ -141,20 +122,10 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
         }
         holder.tvTeamFirstTime.setVisibility(View.VISIBLE);
         holder.tvTeamFirstOnPlayer.setVisibility(View.VISIBLE);
-        /*holder.tvTeamFirstOffPlayer.setVisibility(View.VISIBLE);*/
         holder.teamFirstView.setVisibility(View.VISIBLE);
         holder.tvTeamSecondTime.setVisibility(View.INVISIBLE);
         holder.teamSecondView.setVisibility(View.INVISIBLE);
-
-        /*holder.teamSecondView.setVisibility(View.INVISIBLE);
-        holder.teamFirstView.setVisibility(View.VISIBLE);
-        holder.tvTeamFirstTime.setVisibility(View.VISIBLE);
-
-        holder.tvTeamSecondTime.setVisibility(View.INVISIBLE);
-        holder.tvTeamSecondOnPlayer.setVisibility(View.INVISIBLE);*/
-
-
-    }
+   }
 
     @Override
     public int getItemCount() {
@@ -172,16 +143,13 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
         private TextView tvTeamSecondOnPlayer;
         private TextView tvTeamFirstOffPlayer;
         private TextView tvTeamSecondOffPlayer;
-        private ImageView keyImage;
         private View teamFirstView;
         private View teamSecondView;
-        private View centralLineImage;
         private ImageView centralCircularImage;
         private ImageView gameStartImage;
         private TextView tvTimeInterval;
         private View upperDotView;
         public CompleteFootballTimeLineDTO dto;
-        private View cardView;
 
         public ViewHolder(View view) {
             super(view);
@@ -192,15 +160,12 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
             tvTeamSecondOnPlayer = (TextView) view.findViewById(R.id.tv_team_second_on);
             tvTeamFirstOffPlayer = (TextView) view.findViewById(R.id.tv_team_first_off);
             tvTeamSecondOffPlayer = (TextView) view.findViewById(R.id.tv_team_second_off);
-            keyImage = (ImageView) view.findViewById(R.id.iv_time_line_image);
             teamFirstView = view.findViewById(R.id.ll_first_player_info);
             teamSecondView = view.findViewById(R.id.ll_second_player_info);
-            centralLineImage = view.findViewById(R.id.ll_imv_center);
             centralCircularImage = (ImageView) view.findViewById(R.id.iv_time_line_image);
             gameStartImage = (ImageView) view.findViewById(R.id.iv_centre_image);
             tvTimeInterval = (TextView) view.findViewById(R.id.tv_time_interval);
             upperDotView = view.findViewById(R.id.iv_dot_upper);
-            cardView = view.findViewById(R.id.card_view);
         }
     }
 }
