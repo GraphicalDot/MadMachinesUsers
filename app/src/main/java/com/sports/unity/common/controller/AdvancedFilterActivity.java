@@ -157,10 +157,10 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         if (isSearchEdit) {
             closeSearch();
         } else {
-            FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).invalidate(AdvancedFilterActivity.this);
             if (pager.getCurrentItem() != 0) {
                 pager.setCurrentItem(pager.getCurrentItem() - 1);
             } else {
+                FavouriteContentHandler.getInstance(AdvancedFilterActivity.this).invalidate(AdvancedFilterActivity.this);
                 fragmentNum--;
                 if (fragmentNum != 0) {
                     bundle.putString(Constants.SPORTS_TYPE, sportsSelected.get(fragmentNum - 1));
