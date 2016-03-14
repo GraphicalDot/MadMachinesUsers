@@ -254,6 +254,7 @@ public class CustomVolleyCallerActivity extends CustomAppCompatActivity {
         }
 
         protected void showProgress(){
+
             if( progressBar != null ) {
                 progressBar.setVisibility(View.VISIBLE);
             }
