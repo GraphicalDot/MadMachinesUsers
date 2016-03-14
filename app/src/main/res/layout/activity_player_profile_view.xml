@@ -15,23 +15,27 @@
         android:layout_centerInParent="true"
         android:layout_gravity="center" />
     <include
+        android:id="@+id/error"
+        layout="@layout/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"/>
+
+    <include
         android:id="@+id/tool_bar"
         layout="@layout/toolbar_score_userprofile"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:minHeight="?android:attr/actionBarSize" />
-    <include
-        android:id="@+id/error"
-        layout="@layout/error_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
 
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/tool_bar">
+        android:layout_below="@+id/tool_bar"
+        android:visibility="visible"
+        android:id="@+id/root_scroll_bar"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -39,6 +43,10 @@
             android:layout_below="@+id/tool_bar"
             android:background="@color/gray3"
             android:orientation="vertical">
+
+
+
+
             <LinearLayout
                 android:id="@+id/profile_info"
                 android:layout_width="fill_parent"
@@ -201,185 +209,6 @@
                     </TableLayout>
                 </LinearLayout>
             </LinearLayout>
-
-            <!--     <LinearLayout
-                     android:id="@+id/id_team_summery"
-                     android:layout_width="match_parent"
-                     android:layout_height="wrap_content"
-                     android:layout_below="@+id/status"
-                     android:layout_gravity="center"
-                     android:layout_marginBottom="@dimen/horizontal_padding_small"
-                     android:layout_marginLeft="@dimen/horizontal_padding_small"
-                     android:layout_marginRight="@dimen/horizontal_padding_small"
-                     android:background="@color/ColorPrimary">
-
-                     <LinearLayout
-                         android:layout_width="match_parent"
-                         android:layout_height="wrap_content"
-                         android:orientation="vertical">
-
-                         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                             android:id="@+id/id_season"
-                             android:layout_width="fill_parent"
-                             android:layout_height="wrap_content"
-                             android:padding="@dimen/horizontal_padding_very_small"
-                             android:text="Season 2015-16"
-                             android:textColor="@color/dark_blue"
-                             android:textSize="@dimen/font_size_small_large" />
-
-                         <View
-                             android:layout_width="fill_parent"
-                             android:layout_height="@dimen/layout_height_card_divider"
-                             android:background="@color/gray3" />
-
-                         <TableLayout
-                             android:layout_width="match_parent"
-                             android:layout_height="wrap_content"
-                             android:padding="@dimen/horizontal_padding_small">
-
-                             <TableRow android:padding="@dimen/horizontal_padding_small">
-
-                                 <ImageView
-                                     android:id="@+id/ic_match_played"
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:layout_gravity="center"
-                                     android:paddingRight="@dimen/horizontal_padding_medium"
-                                     android:src="@drawable/ic_match_played" />
-
-                                 <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                     android:id="@+id/tv_match_status"
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:layout_toRightOf="@id/ic_match_played"
-                                     android:gravity="left"
-                                     android:text="@string/match_played"
-                                     android:textSize="@dimen/font_size_small_large" />
-
-                                 <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                     android:id="@+id/tv_number_of_match"
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:layout_weight="1"
-                                     android:gravity="right"
-                                     android:text="0"
-                                     android:textSize="@dimen/font_size_small_large" />
-                             </TableRow>
-
-                             <TableRow android:padding="@dimen/horizontal_padding_small">
-
-                                 <ImageView
-                                     android:id="@+id/ic_goals_scored"
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:layout_gravity="center"
-                                     android:paddingRight="@dimen/horizontal_padding_medium"
-                                     android:src="@drawable/ic_goals_scored" />
-
-                                 <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                     android:id="@+id/tv_goals_scored"
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:gravity="left"
-                                     android:text="@string/goals_scored"
-                                     android:textSize="@dimen/font_size_small_large" />
-
-                                 <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                     android:id="@+id/tv_goals_scored_number"
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:layout_weight="1"
-                                     android:gravity="right"
-                                     android:text="0"
-                                     android:textSize="@dimen/font_size_small_large" />
-                             </TableRow>
-
-                             <TableRow android:padding="@dimen/horizontal_padding_small">
-
-                                 <ImageView
-                                     android:id="@+id/ic_assist"
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:layout_gravity="center"
-                                     android:paddingRight="@dimen/horizontal_padding_medium"
-                                     android:src="@drawable/ic_assist" />
-
-                                 <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                     android:id="@+id/tv_assist"
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:gravity="left"
-                                     android:text="@string/assists"
-                                     android:textSize="@dimen/font_size_small_large" />
-
-                                 <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                     android:id="@+id/tv_number_of_assist"
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:layout_weight="1"
-                                     android:gravity="right"
-                                     android:text="0"
-                                     android:textSize="@dimen/font_size_small_large" />
-                             </TableRow>
-
-                             <TableRow android:padding="@dimen/horizontal_padding_small">
-
-                                 <ImageView
-                                     android:id="@+id/ic_yellow_card"
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:layout_gravity="center"
-                                     android:paddingRight="@dimen/horizontal_padding_medium"
-                                     android:src="@drawable/ic_yellow_card" />
-
-                                 <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                     android:id="@+id/tv_yellow_card_status"
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:gravity="left"
-                                     android:text="@string/yellow_card"
-                                     android:textSize="@dimen/font_size_small_large" />
-
-                                 <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                     android:id="@+id/tv_number_of_yellow_card"
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:layout_weight="1"
-                                     android:gravity="right"
-                                     android:text="0"
-                                     android:textSize="@dimen/font_size_small_large" />
-                             </TableRow>
-
-                             <TableRow android:padding="@dimen/horizontal_padding_small">
-
-                                 <ImageView
-                                     android:id="@+id/ic_red_card"
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:layout_gravity="center"
-                                     android:paddingRight="@dimen/horizontal_padding_medium"
-                                     android:src="@drawable/ic_red_card" />
-
-                                 <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                     android:id="@+id/tv_red_card_status"
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:gravity="left"
-                                     android:text="@string/red_card"
-                                     android:textSize="@dimen/font_size_small_large" />
-
-                                 <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                     android:id="@+id/tv_number_of_red_card"
-                                     android:layout_width="wrap_content"
-                                     android:layout_height="wrap_content"
-                                     android:layout_weight="1"
-                                     android:gravity="right"
-                                     android:text="0"
-                                     android:textSize="@dimen/font_size_small_large"/>
-                             </TableRow>
-                         </TableLayout>
-                     </LinearLayout>
-                 </LinearLayout>-->
             <LinearLayout
                 android:id="@+id/current_season"
                 android:layout_width="match_parent"
@@ -682,7 +511,12 @@
                     </LinearLayout>
                 </android.support.v7.widget.CardView>
             </LinearLayout>
-        </LinearLayout>
+
+      </LinearLayout>
+
+
+
+
     </ScrollView>
 </RelativeLayout>
 

@@ -586,7 +586,7 @@ public class ChatKeyboardHelper {
                 + MediaStore.Files.FileColumns.MEDIA_TYPE + "="
                 + MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO
                 + " AND "
-                + MediaStore.Files.FileColumns.SIZE + " <= 10048576";
+                + MediaStore.Files.FileColumns.SIZE + " BETWEEN 51200 AND 10485760";
 
         Uri queryUri = MediaStore.Files.getContentUri("external");
 

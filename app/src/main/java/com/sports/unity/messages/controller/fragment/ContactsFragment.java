@@ -43,13 +43,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Arrays;
+import java.util.List;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 /**
  * Created by madmachines on 24/8/15.
  */
-public class ContactsFragment extends Fragment implements OnSearchViewQueryListener, MainActivity.PermissionResultHandler {
+public class ContactsFragment extends Fragment implements OnSearchViewQueryListener, MainActivity.PermissionResultHandler, MainActivity.ContactSyncListener {
 
     public static int USAGE_FOR_CONTACTS = 0;
     public static int USAGE_FOR_MEMBERS = 1;
@@ -137,7 +138,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
             ContactListAdapter contactListAdapter = (ContactListAdapter) contacts.getAdapter();
-            final Contacts contact = contactListAdapter.getInUseContactListForAdapter().get(position);
+            final Contacts contact = contactListAdapter.getUsedContact().get(position);
 
             AlertDialog.Builder build = new AlertDialog.Builder(
                     getActivity());
@@ -243,15 +244,16 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
         ArrayList<Contacts> contactList = null;
         AdapterView.OnItemClickListener itemListener = null;
         final SearchView searchView = (SearchView) v.findViewById(R.id.searchView);
+        int searchSrcTextId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+        EditText editText = (EditText) searchView.findViewById(searchSrcTextId);
+        editText.setTextColor(Color.BLACK);
+        editText.setHint("Type contact name...");
         if (usageIn == USAGE_FOR_MEMBERS) {
+            searchView.setVisibility(View.VISIBLE);
             resource = R.layout.list_item_members;
             itemListener = memberItemListener;
 
 
-            int searchSrcTextId = searchView.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
-            EditText editText = (EditText) searchView.findViewById(searchSrcTextId);
-            editText.setTextColor(Color.BLACK);
-            editText.setHint("Type contact name...");
 //            editText.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
 
             contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true);
@@ -295,6 +297,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
             multipleSelection = true;
         } else if (usageIn == USAGE_FOR_CONTACTS) {
+            searchView.setVisibility(View.GONE);
             resource = R.layout.list_contact_msgs;
             itemListener = contactItemListener;
 
@@ -328,7 +331,6 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
                 contactList.addAll(frequentContacts);
                 contactList.addAll(allContacts);
             }
-            searchView.setVisibility(View.GONE);
         } else if (usageIn == USAGE_FOR_FORWARD) {
             resource = R.layout.list_item_members;
             itemListener = forwardToContactMemberListener;
@@ -336,7 +338,23 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true);
 
             multipleSelection = false;
-            searchView.setVisibility(View.GONE);
+            searchView.setVisibility(View.VISIBLE);
+            searchView.onActionViewExpanded();
+
+            searchView.clearFocus();
+
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    filterResults(newText);
+                    return true;
+                }
+            });
         }
 
         ContactListAdapter adapter = new ContactListAdapter(getActivity(), resource, contactList, multipleSelection, frequentContactCount, selectedMembersList);
@@ -364,22 +382,30 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     @Override
     public void onSearchQuery(String filterText) {
         if (filterText.length() > 0) {
-            filterResults(filterText);
+            if (contacts != null && contacts.getAdapter() != null) {
+                filterResults(filterText);
+            } else {
+                Toast.makeText(getActivity().getApplicationContext(), "Contact permission is denied by you.", Toast.LENGTH_SHORT).show();
+            }
         } else {
-            ((ContactListAdapter) contacts.getAdapter()).refreshContacts();
+            if (contacts != null && contacts.getAdapter() != null) {
+                ((ContactListAdapter) contacts.getAdapter()).refreshContacts();
+            }
         }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        Activity activity = getActivity();
+        if (activity instanceof MainActivity) {
+            ((MainActivity) activity).addContactSyncListener(this);
+        }
         if (PermissionUtil.getInstance().isRuntimePermissionRequired()) {
 
             //TODO need to handle it cleanly.
-
-            Activity activity = getActivity();
             if (activity instanceof MainActivity) {
-                ((MainActivity) getActivity()).addContactResultListener(this);
+                ((MainActivity) activity).addContactResultListener(this);
             } else {
                 //TODO to handle permission on forward activity.
             }
@@ -400,6 +426,10 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     @Override
     public void onPause() {
         super.onPause();
+        Activity act = getActivity();
+        if (act != null && act instanceof MainActivity) {
+            ((MainActivity) act).removeContactSyncListener();
+        }
 //        removeListenerToHandleContactCopyPostCall();
     }
 
@@ -407,6 +437,13 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     public void onPermissionResult(int requestCode, int[] grantResults) {
         if (requestCode == Constants.REQUEST_CODE_CONTACT_PERMISSION) {
             if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
+                List<Fragment> list = getActivity().getSupportFragmentManager().getFragments();
+                for (Fragment f : list) {
+                    if (f != null && f instanceof MessagesFragment) {
+                        ((MessagesFragment) f).showSyncProgress();
+                    }
+                }
+
                 ContactsHandler.getInstance().addCallToSyncContacts(getContext());
             } else {
                 PermissionUtil.getInstance().showSnackBar(getActivity(), getString(R.string.permission_denied));
@@ -427,6 +464,13 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     @Override
     public void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    public void onSyncComplete() {
+        if (PermissionUtil.getInstance().requestPermission(getActivity(), new ArrayList<String>(Arrays.asList(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)))) {
+            handleContacts();
+        }
     }
 }
 
