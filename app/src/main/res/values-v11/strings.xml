@@ -5,4 +5,5 @@
     <string name="on_going">On Going</string>
     <string name="half_time">Half Time</string>
     <string name="yesterday">Yesterday</string>
+    <string name="game_details">Game Details</string>
 </resources>

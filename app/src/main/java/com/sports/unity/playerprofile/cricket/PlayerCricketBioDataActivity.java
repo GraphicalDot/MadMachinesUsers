@@ -1,4 +1,4 @@
-package com.sports.unity.scoredetails.cricketdetail;
+package com.sports.unity.playerprofile.cricket;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
-import com.sports.unity.common.controller.CricketPlayerProfileAdapter;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.util.Constants;
@@ -63,7 +62,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             mViewPager = (ViewPager) findViewById(R.id.cricket_player_pager);
             String cricketMatchPlayer[] = {getString(R.string.PLAYER_BIO), getString(R.string.PLAYER_STATS)};
             int numberOfplayerProfileTabs = cricketMatchPlayer.length;
-            SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
+            SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
             tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
             // Setting Custom Color for the Scroll bar indicator of the Tab View
             tabs.setTabTextColor(R.color.filter_tab_selector);

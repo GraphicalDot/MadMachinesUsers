@@ -230,7 +230,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
                                     nationality.setText(profileData.getString("nationality"));
                                 }
                                 if(!dataObject.isNull("player_image")){
-                                    Glide.with(PlayerProfileView.this).load(dataObject.getString("player_image")).placeholder(R.drawable.ic_no_img).into(playerProfileImage);
+                                    Glide.with(PlayerProfileView.this).load(dataObject.getString("player_image")).placeholder(R.drawable.ic_user).into(playerProfileImage);
                                 }
 //                 /*   playerTagImage.setImageResource(R.drawable.ic_no_img);*/
                    /* if(!dataObject.isNull("player_image")){

@@ -257,9 +257,9 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
                 if ("?".equals(footballMatchJsonCaller.getAwayTeamScore())) {
                     if("Postp.".equalsIgnoreCase(footballMatchJsonCaller.getMatchStatus())){
-                        holder.matchDay.setText("PostPond");
+                        holder.matchDay.setText(R.string.post_pond);
                         holder.liveText.setVisibility(View.GONE);
-                    }else{
+                    }else {
                         holder.matchDay.setText("Upcoming");
                         holder.liveText.setVisibility(View.GONE);
                     }
@@ -268,13 +268,13 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     holder.t1score.setText( "");
                     holder.t2score.setText( "");
                 }
-
-
-
-                else {
+               else {
                     if( footballMatchJsonCaller.isLive() ){
-                        holder.matchMinutes.setText(footballMatchJsonCaller.getMatchStatus());
+                        //holder.matchMinutes.setText(footballMatchJsonCaller.getMatchStatus());
                         holder.liveText.setVisibility(View.VISIBLE);
+                        holder.matchDay.setVisibility(View.GONE);
+                        holder.matchMinutes.setVisibility(View.GONE);
+                        holder.liveText.setText(footballMatchJsonCaller.getMatchStatus());
 
                     } else {
                         holder.matchDay.setText("Completed");

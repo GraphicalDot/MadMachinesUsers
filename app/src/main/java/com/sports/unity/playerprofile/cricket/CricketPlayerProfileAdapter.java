@@ -1,11 +1,8 @@
-package com.sports.unity.common.controller;
+package com.sports.unity.playerprofile.cricket;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-
-import com.sports.unity.playerprofile.cricket.CricketPlayerBioFragment;
-import com.sports.unity.playerprofile.cricket.CricketPlayerMachStatFragment;
 
 /**
  * Created by madmachines on 17/2/16.

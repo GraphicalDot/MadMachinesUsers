@@ -143,14 +143,7 @@
         <activity
             android:name=".common.controller.About"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".player.view.PlayerProfileView"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"></activity>
-        <activity
-            android:name=".scoredetails.cricketdetail.PlayerCricketBioDataActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+
         <activity
             android:name=".scoredetails.footballdetail.FootballDetailsActivity"
             android:screenOrientation="portrait"
@@ -163,6 +156,10 @@
             android:name=".common.controller.TeamLeagueDetails"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".playerprofile.cricket.PlayerCricketBioDataActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.sports.unity.R;
-import com.sports.unity.scoredetails.cricketdetail.PlayerCricketBioDataActivity;
 import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
