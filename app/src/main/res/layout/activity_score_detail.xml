@@ -102,7 +102,7 @@
             custom:donut_max="120"
             custom:donut_progress="10"
             custom:donut_circle_starting_degree="-90"
-
+            android:visibility="gone"
             />
     </RelativeLayout>
 
