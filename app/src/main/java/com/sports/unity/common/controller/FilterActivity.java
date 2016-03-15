@@ -13,8 +13,8 @@ import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.playerprofile.cricket.PlayerCricketBioDataActivity;
 import com.sports.unity.playerprofile.football.PlayerProfileView;
-import com.sports.unity.scoredetails.cricketdetail.PlayerCricketBioDataActivity;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
@@ -259,22 +259,7 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
 
     }
 
-    //    @Override
-//<<<<<<< HEAD
-//    public void playerProfile(String playerName, String playerId, String sportsType, String FilterType) {
-//        if (Constants.FILTER_TYPE_PLAYER.equals(FilterType)) {
-//            if (Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)) {
-//                Intent intent = new Intent(FilterActivity.this, PlayerProfileView.class);
-//                intent.putExtra(Constants.INTENT_KEY_ID, playerName);
-//                startActivity(intent);
-//            } else {
-//                Intent intent = new Intent(FilterActivity.this, PlayerCricketBioDataActivity.class);
-//                intent.putExtra(Constants.INTENT_KEY_ID, playerId);
-//                startActivity(intent);
-//            }
-//        }
-//    }
-//=======
+
     @Override
     public void playerProfile(String playerName, String playerId, String sportsType, String FilterType) {
         if (Constants.FILTER_TYPE_PLAYER.equals(FilterType)) {

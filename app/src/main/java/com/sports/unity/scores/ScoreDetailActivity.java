@@ -227,10 +227,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                             .detach(fragment)
                             .attach(fragment)
                             .commit();
-
-
-
-                }
+               }
             });
 
             llMatchDetailLinear = findViewById(R.id.ll_match_detail_linear);
@@ -277,7 +274,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 /*stringBuilder.append(footballMatchJsonCaller.getHomeTeam());
                 stringBuilder.append(" vs ");
                 stringBuilder.append(footballMatchJsonCaller.getAwayTeam());*/
-                title_text.setText("Game Details");
+                title_text.setText(R.string.game_details);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -373,9 +370,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                         enableAutoRefreshContent();
                     }
 
-
-
-                    requestCommentaries = true;
+                  requestCommentaries = true;
                 }
 
             }catch (Exception ex){
