@@ -78,11 +78,20 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:background="@color/gray3" />
-        <com.github.lzyzsd.circleprogress.DonutProgress
-            android:layout_marginTop="@dimen/timer_layout_margin_top"
+    <RelativeLayout
+        android:layout_marginTop="@dimen/timer_layout_margin_top"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_centerInParent="true"
+            android:layout_height="40dp"
+            android:src="@drawable/white_circle"/>
+        <com.sports.unity.common.view.DonutProgress
             android:id="@+id/donut_progress"
+            android:layout_centerInParent="true"
             android:layout_width="@dimen/timer_width_height"
-            android:layout_gravity="center"
             android:layout_height="@dimen/timer_width_height"
             custom:donut_suffix_text="'"
             custom:donut_finished_stroke_width="@dimen/timer_stock"
@@ -90,10 +99,13 @@
             custom:donut_unfinished_color="@color/score_light_grey"
             custom:donut_text_color="@color/app_theme_blue"
             custom:donut_finished_color="@color/app_theme_blue"
-            android:visibility="gone"
-            custom:donut_progress="0"
+            custom:donut_max="120"
+            custom:donut_progress="10"
+            custom:donut_circle_starting_degree="-90"
 
             />
+    </RelativeLayout>
+
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,8 +114,7 @@
             android:orientation="horizontal"
             android:paddingBottom="@dimen/vertical_padding_very_very_small"
             android:layout_marginLeft="@dimen/vertical_padding_small"
-            android:layout_marginRight="@dimen/vertical_padding_small"
-            android:paddingTop="@dimen/vertical_padding_very_small">
+            android:layout_marginRight="@dimen/vertical_padding_small">
 
             <LinearLayout
                 android:layout_width="wrap_content"
