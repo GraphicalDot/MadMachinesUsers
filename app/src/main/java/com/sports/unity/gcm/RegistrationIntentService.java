@@ -50,7 +50,7 @@ public class RegistrationIntentService extends IntentService
 
     private void registerToken(String token)
     {
-       // setPushNotificationIntegration(getApplicationContext(), PUSH_PROVIDER_APPTENTIVE, token);
+        setPushNotificationIntegration(getApplicationContext(), PUSH_PROVIDER_APPTENTIVE, token);
     }
 
     private void subscribeTopics(String token) throws IOException
@@ -58,7 +58,7 @@ public class RegistrationIntentService extends IntentService
         GcmPubSub pubSub = GcmPubSub.getInstance(this);
         for (String topic : TOPICS)
         {
-            //pubSub.subscribe(token, "/topics/" + topic, null);
+            pubSub.subscribe(token, "/topics/" + topic, null);
         }
     }
 
