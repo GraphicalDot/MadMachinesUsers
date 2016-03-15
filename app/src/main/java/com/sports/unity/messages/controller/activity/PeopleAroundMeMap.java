@@ -50,15 +50,19 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
+import com.sports.unity.common.controller.SettingsActivity;
+import com.sports.unity.common.controller.TeamLeagueDetails;
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.NearByUserJsonCaller;
 import com.sports.unity.messages.controller.model.PeoplesNearMe;
 import com.sports.unity.messages.controller.model.Person;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
+import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.LocManager;
 
 import org.jivesoftware.smack.SmackException;
@@ -98,6 +102,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
     private static final String REQUEST_TAG = "nearby_tag";
     private static final String SPORT_SELECTION_FOOTBALL = "football";
     private static final String SPORT_SELECTION_CRICKET = "cricket";
+
     private IconGenerator clusterIconGenerator;
     private ImageView icon;
     private Dialog aDialog = null;
@@ -122,7 +127,6 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
     private PeoplesNearMe peoplesNearMe;
     private ClusterManager<Person> mClusterManager;
-
     private ScoresContentHandler.ContentListener contentListener = new ScoresContentHandler.ContentListener() {
 
         @Override
@@ -301,34 +305,39 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                     seekBar.setProgress(0);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_01));
                     radius = 1000;
-//                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+
+                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
+
                 } else if (progress >= 0 * stepRange + stepRange / 2 && progress <= 0 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(1 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_05));
                     radius = 5000;
-//                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else if (progress >= 1 * stepRange + stepRange / 2 && progress <= 1 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(2 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_20));
                     radius = 20000;
-//                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else if (progress >= 2 * stepRange + stepRange / 2 && progress <= 2 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(3 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_30));
                     radius = 30000;
-//                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else {
                     seekBar.setProgress(4 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_40));
                     radius = 40000;
-//                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+
+                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 }
+
             }
+
         });
     }
 
@@ -445,7 +454,17 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         toolbar.findViewById(R.id.privacy_icon).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                makeText(getApplicationContext(), "Privacy Policy work in progress", LENGTH_LONG).show();
+                Intent i = getIntent();
+
+
+              //  makeText(getApplicationContext(), "Privacy Policy work in progress", LENGTH_LONG).show();
+
+
+                    checkAndEnableLocation();
+
+
+
+
             }
         });
         toolbar.findViewById(R.id.myaddress).setOnClickListener(new View.OnClickListener() {
@@ -457,6 +476,21 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
     }
 
+    private void checkAndEnableLocation() {
+        Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+        intent.putExtra(Constants.ENABLE_LOCATION, Constants.CHECK_LOCATION);
+        startActivity(intent);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        Log.d("After Permission" + intent, "onActivityResult: " + requestCode);
+        if (requestCode == Constants.REQUEST_CODE_LOCATION_PERMISSION) {
+            if (resultCode == RESULT_OK) {
+                Log.d("After Permission", "onActivityResult: ");
+            }
+        }
+    }
     private void setCurrentAddressOnToolbar(TextView titleAddress, TextView titleCity) {
         titleAddress.setText(getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_LOCATION));
         titleCity.setText(getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_STATE));
@@ -466,7 +500,11 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(GoogleMap googleMap) {
-                openMap(googleMap);
+
+
+                    openMap(googleMap);
+
+
             }
         });
     }

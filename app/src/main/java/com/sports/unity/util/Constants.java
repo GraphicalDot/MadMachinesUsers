@@ -93,4 +93,7 @@ public class Constants {
     public static final String INTENT_KEY_TEAM2_NAME = "team2";
     public static final long TIMEINMILISECOND = 600;
     public static final String ERRORRESPONSE ="{\"success\":false,\"error\":true}";
+    public static final String LEAGUE_NAME = "leaague_name";
+    public static final String ENABLE_LOCATION = "enable_location";
+    public static final String CHECK_LOCATION = "location";
 }

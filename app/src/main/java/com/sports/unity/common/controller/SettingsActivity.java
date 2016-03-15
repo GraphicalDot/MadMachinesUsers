@@ -2,6 +2,7 @@ package com.sports.unity.common.controller;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -36,12 +37,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SettingsActivity extends CustomAppCompatActivity {
-
     private HashMap<Integer, int[]> drillDownItemsMap = new HashMap<>();
     private int currentItemId = SettingsHelper.SETTINGS_MAIN_ID;
-
     private ItemEventListener itemEventListener = new ItemEventListener();
-
+    private String myLocation;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,14 +50,21 @@ public class SettingsActivity extends CustomAppCompatActivity {
         SettingsHelper.initDrillDownMap(drillDownItemsMap);
 
         initToolbar();
+        Intent i = getIntent();
+         myLocation = i.getStringExtra(Constants.ENABLE_LOCATION);
+        if(Constants.CHECK_LOCATION.equalsIgnoreCase(myLocation)){
+            currentItemId = 10;
+        }
         renderDrillDownItems(currentItemId);
     }
 
     @Override
     public void onBackPressed() {
-        if (currentItemId == SettingsHelper.SETTINGS_MAIN_ID) {
+        if (currentItemId == SettingsHelper.SETTINGS_MAIN_ID || Constants.CHECK_LOCATION.equalsIgnoreCase(myLocation)  ) {
             super.onBackPressed();
-        } else {
+        }
+
+        else {
             renderDrillDownItems(SettingsHelper.SETTINGS_MAIN_ID);
         }
     }
@@ -121,7 +127,6 @@ public class SettingsActivity extends CustomAppCompatActivity {
             title.setVisibility(View.VISIBLE);
             title.setGravity(Gravity.CENTER);
             title.setTextColor(getResources().getColor(android.R.color.white));
-
             switcher.setVisibility(View.GONE);
             subTitle.setVisibility(View.GONE);
         } else if (currentItemId == SettingsHelper.NOTIFICATIONS_AND_SOUND_ITEM_ID || currentItemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID) {
@@ -455,7 +460,6 @@ public class SettingsActivity extends CustomAppCompatActivity {
             } else {
                 //nothing
             }
-
             TextView titleTextView = (TextView) clickableLayout.findViewById(R.id.title);
             titleTextView.setText(title);
             if (currentItemId == SettingsHelper.SETTINGS_MAIN_ID) {

@@ -2,4 +2,5 @@
 <resources>
 
     <string name="full_time">Full Time</string>
+    <string name="request_code">1</string>
 </resources>
