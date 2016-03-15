@@ -1,4 +1,5 @@
 package com.sports.unity.scores;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-
 import com.sports.unity.R;
 import com.sports.unity.common.controller.ViewPagerCricketScoreDetailAdapter;
 import com.sports.unity.common.controller.ViewPagerFootballScoreDetailAdapter;
@@ -39,6 +39,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -212,6 +213,20 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             });
             refreshImage = (ImageView) findViewById(R.id.refresh);
 
+            refreshImage.setOnClickListener(new View.OnClickListener(){
+
+                @Override
+                public void onClick(View v) {
+                    int index = mViewPager.getCurrentItem();
+                    List<Fragment> fargmentList = getSupportFragmentManager().getFragments();
+                    Fragment fragment=  fargmentList.get(index);
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .detach(fragment)
+                            .attach(fragment)
+                            .commit();
+                }
+            });
 
             llMatchDetailLinear = findViewById(R.id.ll_match_detail_linear);
             tvMatchTime = (TextView) findViewById(R.id.tv_match_time);
@@ -257,7 +272,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 /*stringBuilder.append(footballMatchJsonCaller.getHomeTeam());
                 stringBuilder.append(" vs ");
                 stringBuilder.append(footballMatchJsonCaller.getAwayTeam());*/
-                title_text.setText("Game Details");
+                title_text.setText(R.string.game_details);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -320,7 +335,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     textView.setText(cricketMatchJsonCaller.getTeam2());
                     if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("completed") ) {
                         tvCurrentScore.setText(cricketMatchJsonCaller.getWinnerTeam(cricketMatchJsonCaller.getResult())+" Won The Match");
-                         refreshImage.setVisibility(View.GONE);
+                        refreshImage.setVisibility(View.GONE);
                         {
                             JSONObject scoreJsonObject = cricketMatchJsonCaller.getTeam1Score();
                             StringBuilder stringBuilder = new StringBuilder("");
@@ -353,8 +368,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                         enableAutoRefreshContent();
                     }
 
-
-
                     requestCommentaries = true;
                 }
 
@@ -363,7 +376,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             }
         } else if ( sportsType.equals(ScoresJsonParser.FOOTBALL) ) {
             footballMatchJsonCaller.setJsonObject(matchScoreDetails);
-           {
+            {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.FILL_PARENT);
                 params.gravity = Gravity.CENTER;
                 ((ViewGroup) findViewById(R.id.flag1_parent_layout)).setLayoutParams(params);
