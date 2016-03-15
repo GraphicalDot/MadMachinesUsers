@@ -167,8 +167,9 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (!jsonObject.isNull("data")) {
             final JSONArray dataArray = jsonObject.getJSONArray("data");
-            final JSONObject teamFirstStatsObject = dataArray.getJSONObject(0);
-            final JSONObject teamSecondStatsObject = dataArray.getJSONObject(1);
+            final JSONObject teamSecondStatsObject = dataArray.getJSONObject(0);
+            final JSONObject teamFirstStatsObject = dataArray.getJSONObject(1);
+
             final Iterator<String> keysSetItr = teamFirstStatsObject.keys();
             hideProgressBar();
             swipeRefreshLayout.setRefreshing(false);

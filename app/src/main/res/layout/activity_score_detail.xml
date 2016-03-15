@@ -91,7 +91,9 @@
             custom:donut_text_color="@color/app_theme_blue"
             custom:donut_finished_color="@color/app_theme_blue"
             android:visibility="gone"
-            custom:donut_progress="0"/>
+            custom:donut_progress="0"
+
+            />
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

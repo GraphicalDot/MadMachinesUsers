@@ -80,6 +80,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private TextView tvMatchTime;
     private TextView getTvMatchDay;
     private DonutProgress donutProgress;
+    private ImageView refreshImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -154,6 +155,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             donutProgress = (DonutProgress) findViewById(R.id.donut_progress);
 
 
+
+
 //<<<<<<< HEAD
 //    private void initToolbar() {
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
@@ -208,13 +211,9 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     finish();
                 }
             });
-            ImageView refreshImage = (ImageView) findViewById(R.id.refresh);
-            /*refreshImage.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
+            refreshImage = (ImageView) findViewById(R.id.refresh);
 
-                }
-            });
-*/
+
             llMatchDetailLinear = findViewById(R.id.ll_match_detail_linear);
             tvMatchTime = (TextView) findViewById(R.id.tv_match_time);
             getTvMatchDay = (TextView) findViewById(R.id.tv_game_day);
@@ -322,6 +321,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     textView.setText(cricketMatchJsonCaller.getTeam2());
                     if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("completed") ) {
                         tvCurrentScore.setText(cricketMatchJsonCaller.getWinnerTeam(cricketMatchJsonCaller.getResult())+" Won The Match");
+                         refreshImage.setVisibility(View.GONE);
                         {
                             JSONObject scoreJsonObject = cricketMatchJsonCaller.getTeam1Score();
                             StringBuilder stringBuilder = new StringBuilder("");
@@ -364,12 +364,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             }
         } else if ( sportsType.equals(ScoresJsonParser.FOOTBALL) ) {
             footballMatchJsonCaller.setJsonObject(matchScoreDetails);
-
-
-
-
-
-            {
+           {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.FILL_PARENT);
                 params.gravity = Gravity.CENTER;
                 ((ViewGroup) findViewById(R.id.flag1_parent_layout)).setLayoutParams(params);
@@ -388,10 +383,14 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                 }
                 if(!footballMatchJsonCaller.isLive() && footballMatchJsonCaller.getMatchStatus().equalsIgnoreCase("FT")){
+                    refreshImage.setVisibility(View.GONE);
                     getTvMatchDay.setText(R.string.full_time);
 
+
                 } else if(!footballMatchJsonCaller.isLive() && "Postp.".equalsIgnoreCase(footballMatchJsonCaller.getMatchStatus())){
+                    refreshImage.setVisibility(View.GONE);
                     getTvMatchDay.setText(R.string.post_pond);
+
                 }
                 llMatchDetailLinear.setVisibility(View.GONE);
                 Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000)));
@@ -433,7 +432,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                         donutProgress.setVisibility(View.VISIBLE);
                         Integer minute = 0;
                         try{
-                            minute = Integer.parseInt(footballMatchJsonCaller.getMatchMinute());
+                            minute = Integer.parseInt(footballMatchJsonCaller.getMatchStatus());
                         }catch (Exception e ){
                             e.printStackTrace();
                         }

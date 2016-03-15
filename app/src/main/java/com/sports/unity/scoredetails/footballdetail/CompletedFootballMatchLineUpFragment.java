@@ -238,7 +238,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     private void setTeamSecondLineDetails(CompleteFootballLineUpDTO completeFootballLineUpDTO, JSONObject teamSecondObject, JSONArray matchEventsArray, JSONArray substitutionsArray) throws JSONException {
         completeFootballLineUpDTO.setPlayerNameSecond(teamSecondObject.getString("name"));
         completeFootballLineUpDTO.setPlayerPostionNumberSecond(teamSecondObject.getString("jersey_number"));
-        getMatchEventsSecond(matchEventsArray, teamSecondObject.getString("name"), completeFootballLineUpDTO);
+        //getMatchEventsSecond(matchEventsArray, teamSecondObject.getString("name"), completeFootballLineUpDTO);
 
         completeFootballLineUpDTO.setEnterExitImageSecond(getOnOffPlayer(substitutionsArray, teamSecondObject.getString("name")));
         String playerOnName = getOnOffPlayer(substitutionsArray, teamSecondObject.getString("name"));
@@ -252,7 +252,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     private void setTeamFirstLineUps(CompleteFootballLineUpDTO completeFootballLineUpDTO, JSONObject teamFirstObject, JSONArray matchEventsArray, JSONArray substitutionsArray) throws JSONException {
         completeFootballLineUpDTO.setPlayerName(teamFirstObject.getString("name"));
         completeFootballLineUpDTO.setPlayerPostionNumber(teamFirstObject.getString("jersey_number"));
-        getMatchEventsFirst(matchEventsArray, teamFirstObject.getString("name"), completeFootballLineUpDTO);
+//        getMatchEventsFirst(matchEventsArray, teamFirstObject.getString("name"), completeFootballLineUpDTO);
 
         String playerOnName = getOnOffPlayer(substitutionsArray, teamFirstObject.getString("name"));
         if (playerOnName != null) {
@@ -266,7 +266,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
 
         completeFootballLineUpDTO.setPlayerNameSecond(teamSecondObject.getString("player_name"));
         completeFootballLineUpDTO.setPlayerPostionNumberSecond(teamSecondObject.getString("jersey_number"));
-        getMatchEventsSecond(matchEventsArray, teamSecondObject.getString("player_name"), completeFootballLineUpDTO);
+        //getMatchEventsSecond(matchEventsArray, teamSecondObject.getString("player_name"), completeFootballLineUpDTO);
 
         completeFootballLineUpDTO.setEnterExitImageSecond(getOnOffPlayer(substitutionsArray, teamSecondObject.getString("player_name")));
         String playerOnName = getOnOffPlayer(substitutionsArray, teamSecondObject.getString("player_name"));
@@ -283,7 +283,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         completeFootballLineUpDTO.setPlayerName(teamFirstObject.getString("player_name"));
         completeFootballLineUpDTO.setPlayerPostionNumber(teamFirstObject.getString("jersey_number"));
         completeFootballLineUpDTO.setEnterExitImage(getOnOffPlayer(substitutionsArray, teamFirstObject.getString("player_name")));
-        getMatchEventsFirst(matchEventsArray, teamFirstObject.getString("player_name"), completeFootballLineUpDTO);
+        //getMatchEventsFirst(matchEventsArray, teamFirstObject.getString("player_name"), completeFootballLineUpDTO);
         String playerOnName = getOnOffPlayer(substitutionsArray, teamFirstObject.getString("player_name"));
         if (playerOnName != null) {
             completeFootballLineUpDTO.setEnterExitImage("OFF");
@@ -334,7 +334,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                                         completeFootballLineUpDTO.setCardType(event);
                                     }
 
-                                    if("redcard".equalsIgnoreCase(event)) {
+                                    if("redcards".equalsIgnoreCase(event)) {
                                         completeFootballLineUpDTO.setCardType(event);
                                     }
 
@@ -373,7 +373,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                                         completeFootballLineUpDTO.setCardTypeSecond(event);
                                     }
 
-                                    if("redcard".equalsIgnoreCase(event)) {
+                                    if("redcards".equalsIgnoreCase(event)) {
                                         completeFootballLineUpDTO.setCardTypeSecond(event);
                                     }
 

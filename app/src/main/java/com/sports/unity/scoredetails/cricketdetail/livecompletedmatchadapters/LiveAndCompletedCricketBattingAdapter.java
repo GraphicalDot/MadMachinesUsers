@@ -7,7 +7,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sports.unity.R;
-import com.sports.unity.scoredetails.cricketdetail.CricketPlayerMatchStatDTO;
+import com.sports.unity.playerprofile.cricket.CricketPlayerMatchStatDTO;
 
 import java.util.List;
 
