@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.scoredetails.cricketdetail.CompletedMatchScoreCardHandler;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
 
@@ -31,6 +32,9 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     private TextView tvPlayerMajorTeam;
     private ProgressBar progressBar;
     private LinearLayout linearLayoutBio;
+    private  CricketPlayerbioHandler cricketPlayerbioHandler;
+    private  String playerId;
+    private Context context;
     public CricketPlayerBioFragment() {
         super();
     }
@@ -38,9 +42,9 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        String playerId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-       /* playerId = "6f65e8cd45ae14c916cf2c1c69b6102c";*/
-        CricketPlayerbioHandler cricketPlayerbioHandler = CricketPlayerbioHandler.getInstance(context);
+        this.context = context;
+        playerId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        cricketPlayerbioHandler = CricketPlayerbioHandler.getInstance(context);
         cricketPlayerbioHandler.addListener(this);
         cricketPlayerbioHandler.requestData(playerId);
 
@@ -68,7 +72,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     @Override
     public void handleContent(String content) {
         try {
-showProgress();
+            showProgress();
             JSONObject jsonObject = new JSONObject(content);
 
             boolean success = jsonObject.getBoolean("success");
@@ -165,5 +169,28 @@ showProgress();
             });
         }
 
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(cricketPlayerbioHandler != null){
+            cricketPlayerbioHandler.addListener(null);
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showProgress();
+        if(cricketPlayerbioHandler != null){
+            cricketPlayerbioHandler.addListener(this);
+
+        }else {
+            cricketPlayerbioHandler= CricketPlayerbioHandler.getInstance(context);
+        }
+        cricketPlayerbioHandler.requestData(playerId);
     }
 }

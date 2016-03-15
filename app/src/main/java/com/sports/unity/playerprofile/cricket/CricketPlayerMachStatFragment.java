@@ -57,6 +57,9 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     private RelativeLayout relativeLayoutBolling;
     private LinearLayout linearLayoutBatting;
     private LinearLayout linearLayoutBolling;
+    private String playerId;
+    private Context context;
+
     public CricketPlayerMachStatFragment() {
         super();
     }
@@ -64,8 +67,8 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        String playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-
+         playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+         this.context = context;
         cricketPlayerMatchStatHandler = CricketPlayerMatchStatHandler.getInstance(context);
         cricketPlayerMatchStatHandler.addListener(this);
         cricketPlayerMatchStatHandler.requestData(playerId);
@@ -360,5 +363,25 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         cricketPlayerMatchBowlingStatAdapter.notifyDataSetChanged();
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(cricketPlayerMatchStatHandler != null){
+            cricketPlayerMatchStatHandler.addListener(null);
+        }
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showProgress();
+        if(cricketPlayerMatchStatHandler != null){
+            cricketPlayerMatchStatHandler.addListener(this);
+
+        }else {
+            cricketPlayerMatchStatHandler= CricketPlayerMatchStatHandler.getInstance(context);
+        }
+        cricketPlayerMatchStatHandler.requestData(playerId);
+    }
 }

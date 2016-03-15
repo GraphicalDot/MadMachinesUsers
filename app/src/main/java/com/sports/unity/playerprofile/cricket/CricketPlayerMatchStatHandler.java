@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.sports.unity.util.Constants;
 
 import java.util.HashSet;
 
@@ -74,10 +75,10 @@ public class CricketPlayerMatchStatHandler {
         }
     }
     private void handleErrorResponse(VolleyError volleyError) {
-        String response = "data{"+"success"+":"+"false"+","+"error"+":"+"true"+"}";
+
         try{
-            Log.i("Score Card", "handleResponse: "+response.toString());
-            mContentListener.handleContent(response);
+            Log.i("Score Card", "handleResponse: " + Constants.ERRORRESPONSE);
+            mContentListener.handleContent(Constants.ERRORRESPONSE);
 
         } catch (Exception e) {
             e.printStackTrace();
