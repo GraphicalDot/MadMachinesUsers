@@ -1,6 +1,7 @@
 package com.sports.unity.scores;
 
 import android.app.Activity;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -40,6 +41,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -213,6 +215,23 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             });
             refreshImage = (ImageView) findViewById(R.id.refresh);
 
+            refreshImage.setOnClickListener(new View.OnClickListener(){
+
+                @Override
+                public void onClick(View v) {
+                    int index = mViewPager.getCurrentItem();
+                    List<Fragment> fargmentList = getSupportFragmentManager().getFragments();
+                    Fragment fragment=  fargmentList.get(index);
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .detach(fragment)
+                            .attach(fragment)
+                            .commit();
+
+
+
+                }
+            });
 
             llMatchDetailLinear = findViewById(R.id.ll_match_detail_linear);
             tvMatchTime = (TextView) findViewById(R.id.tv_match_time);

@@ -273,8 +273,11 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
                 else {
                     if( footballMatchJsonCaller.isLive() ){
-                        holder.matchMinutes.setText(footballMatchJsonCaller.getMatchStatus());
+                        //holder.matchMinutes.setText(footballMatchJsonCaller.getMatchStatus());
                         holder.liveText.setVisibility(View.VISIBLE);
+
+                        holder.matchMinutes.setVisibility(View.GONE);
+                        holder.liveText.setText(footballMatchJsonCaller.getMatchStatus());
 
                     } else {
                         holder.matchDay.setText("Completed");

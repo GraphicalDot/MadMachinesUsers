@@ -71,6 +71,9 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
                 fragment = new CompletedMatchScoreCardFragment();
             }
         }
+
+
+
         return fragment;
     }
 

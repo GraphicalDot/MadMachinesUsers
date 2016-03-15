@@ -256,9 +256,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                 }
 
                             }
-
-
-                        }
+                      }
 
                     } catch (Exception ex) {
                         ex.printStackTrace();
