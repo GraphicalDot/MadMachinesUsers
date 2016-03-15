@@ -82,6 +82,7 @@
         android:layout_marginTop="@dimen/timer_layout_margin_top"
         android:layout_width="wrap_content"
         android:layout_gravity="center"
+        android:visibility="gone"
         android:layout_height="wrap_content">
         <ImageView
             android:layout_width="40dp"
@@ -99,10 +100,9 @@
             custom:donut_unfinished_color="@color/score_light_grey"
             custom:donut_text_color="@color/app_theme_blue"
             custom:donut_finished_color="@color/app_theme_blue"
-            custom:donut_max="120"
-            custom:donut_progress="10"
+            custom:donut_max="100"
+            custom:donut_progress="0"
             custom:donut_circle_starting_degree="-90"
-            android:visibility="gone"
             />
     </RelativeLayout>
 
