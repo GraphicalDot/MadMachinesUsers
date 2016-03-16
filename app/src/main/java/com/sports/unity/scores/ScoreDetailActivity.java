@@ -335,9 +335,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                     textView = (TextView) findViewById(R.id.team2_name);
                     textView.setText(cricketMatchJsonCaller.getTeam2());
-                    if(cricketMatchJsonCaller.getStatus().equals("started")){
-                        tvCurrentScore.setText(R.string.live);
-                    }
+
                     if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("completed") ) {
                         tvCurrentScore.setText(cricketMatchJsonCaller.getWinnerTeam(cricketMatchJsonCaller.getResult())+" Won The Match");
                         refreshImage.setVisibility(View.GONE);
@@ -368,7 +366,41 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                             textView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
                         }
 
-                    } else {
+                    }if(cricketMatchJsonCaller.getStatus().equals("started")){
+                        refreshImage.setVisibility(View.GONE);
+                        tvCurrentScore.setText(R.string.live);
+                        {
+                            JSONObject scoreJsonObject = cricketMatchJsonCaller.getTeam1Score();
+                            StringBuilder stringBuilder = new StringBuilder("");
+                            stringBuilder.append(cricketMatchJsonCaller.getScore(scoreJsonObject));
+                            stringBuilder.append("/");
+                            stringBuilder.append(cricketMatchJsonCaller.getWickets(scoreJsonObject));
+
+                            teamFirstOvers.setText("("+cricketMatchJsonCaller.getOvers(scoreJsonObject)+")");
+
+                            textView = (TextView) findViewById(R.id.team1_score);
+                            textView.setText(stringBuilder.toString());
+
+                            textView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+                        }
+
+                        {
+                            JSONObject scoreJsonObject = cricketMatchJsonCaller.getTeam2Score();
+                            StringBuilder stringBuilder = new StringBuilder("");
+                            stringBuilder.append(cricketMatchJsonCaller.getScore(scoreJsonObject));
+                            stringBuilder.append("/");
+                            stringBuilder.append(cricketMatchJsonCaller.getWickets(scoreJsonObject));
+                            teamSecondOvers.setText("("+cricketMatchJsonCaller.getOvers(scoreJsonObject)+")");
+                            textView = (TextView) findViewById(R.id.team2_score);
+                            textView.setText(stringBuilder.toString());
+                            textView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+                        }
+
+                    }
+
+
+
+                    else {
 
                         enableAutoRefreshContent();
                     }

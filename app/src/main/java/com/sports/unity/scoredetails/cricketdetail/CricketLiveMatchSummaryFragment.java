@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +67,8 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     private Context context;
     private CricketLiveMatchSummaryHandler cricketLiveMatchSummaryHandler;
     private Timer timerToRefreshContent;
+    private SwipeRefreshLayout swLivSummary;
+    private boolean autRefreshEnabled;
     public CricketLiveMatchSummaryFragment() {
         // Required empty public constructor
     }
@@ -119,6 +122,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             tvBowlerEcon = (TextView) view.findViewById(R.id.tv_bowler_econ);
             tvBowlerOver = (TextView) view.findViewById(R.id.tv_bowler_over);
             tvBowlerWr = (TextView) view.findViewById(R.id.tv_bowler_wr);
+            swLivSummary = (SwipeRefreshLayout) view.findViewById(R.id.live_summary);
             initProgress(view);
             initErrorLayout(view);
         } catch (Exception e) {
@@ -130,7 +134,10 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
         cricketLiveMatchSummaryHandler = CricketLiveMatchSummaryHandler.getInstance(context);
         cricketLiveMatchSummaryHandler.addListener(this);
         cricketLiveMatchSummaryHandler.requestLiveMatchSummary(matchId);
-       // enableAutoRefreshContent();
+        if(!autRefreshEnabled){
+            enableAutoRefreshContent();
+        }
+
     }
 
 
@@ -211,19 +218,23 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                 public void run() {
                     try {
                         BallDetail defb = new BallDetail();
-                        BallDetail[] balls = new BallDetail[]{defb, defb, defb, defb, defb, defb, defb};
+                        BallDetail[] balls = new BallDetail[]{defb, defb, defb, defb, defb, defb,defb};
                         int ballIndex = 6;
                         Drawable drawable = null;
                         for (int i = 0; i < recentOverArray.length(); i++) {
                             JSONArray ballsArray = recentOverArray.getJSONArray(i);
                             JSONArray over = ballsArray.getJSONArray(1);
-                            for (int j = over.length() - 1; j >= 0; j--) {
+                            for (int j = over.length()-1; j >= 0; j--) {
                                 if (ballIndex < 0) {
                                     break;
                                 }
                                 balls[ballIndex] = getResolveBall(over.getString(j));
                                 ballIndex--;
                             }
+                            if (ballIndex < 0) {
+                                break;
+                            }
+                       }
                             if (!balls[0].getValue().equals("0")) {
                                 drawable = getTextDrawable(balls[0].getValue(), balls[0].getFontColor(), balls[0].getBackGroundColor());
                                 ivFirstBall.setImageDrawable(drawable);
@@ -261,7 +272,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                             } else {
                                 ivSixthBall.setImageResource(R.drawable.recent_dot_balls);
                             }
-                        }
+
                         //TextDrawable  playerNameDraw = null;
 
 
@@ -370,22 +381,22 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             case "r0":
                 ballDetail.setValue("0");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
-                ballDetail.setBackGroundColor(getBallColor(R.color.font_color_wide_no));
+                ballDetail.setBackGroundColor(getBallColor(R.color.grayBorder));
                 break;
             case "r1":
                 ballDetail.setValue("1");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
-                ballDetail.setBackGroundColor(getBallColor(R.color.font_color_wide_no));
+                ballDetail.setBackGroundColor(getBallColor(R.color.grayBorder));
                 break;
             case "r2":
                 ballDetail.setValue("2");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
-                ballDetail.setBackGroundColor(getBallColor(R.color.font_color_wide_no));
+                ballDetail.setBackGroundColor(getBallColor(R.color.grayBorder));
                 break;
             case "r3":
                 ballDetail.setValue("3");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
-                ballDetail.setBackGroundColor(getBallColor(R.color.font_color_wide_no));
+                ballDetail.setBackGroundColor(getBallColor(R.color.grayBorder));
                 break;
             case "b4":
                 ballDetail.setValue("4");
@@ -415,12 +426,12 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             case "e1,lb":
                 ballDetail.setValue("LB");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
-                ballDetail.setBackGroundColor(getBallColor(R.color.white_translucent));
+                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
                 break;
             case  "e1,nb":
                 ballDetail.setValue("NB");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary_no));
-                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary_no));
+                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
                 break;
 
             case "w":

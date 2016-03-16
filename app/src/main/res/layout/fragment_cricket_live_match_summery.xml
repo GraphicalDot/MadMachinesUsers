@@ -4,7 +4,10 @@
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
     android:orientation="vertical">
-
+     <android.support.v4.widget.SwipeRefreshLayout
+         android:layout_width="wrap_content"
+         android:layout_height="match_parent"
+         android:id="@+id/live_summary">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -545,7 +548,7 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
-
+     </android.support.v4.widget.SwipeRefreshLayout>
     <include
         android:id="@+id/error"
         layout="@layout/error_layout"
