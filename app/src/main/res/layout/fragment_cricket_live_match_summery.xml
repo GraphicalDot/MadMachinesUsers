@@ -50,7 +50,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="@dimen/horizontal_padding_very_very_small"
+                        android:padding="@dimen/horizontal_padding_very_small"
                         android:weightSum="6">
 
                         <ImageView
@@ -229,7 +229,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignTop="@id/v_divider"
                                 android:layout_gravity="right"
-                                android:text="hhh"
+                                android:text=""
                                 android:textColor="@color/score_light_grey"
                                 android:textSize="@dimen/font_size_very_small" />
                         </LinearLayout>
