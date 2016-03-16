@@ -266,7 +266,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
   /*              stringBuilder.append(cricketMatchJsonCaller.getTeam1());
                 stringBuilder.append(" vs ");
                 stringBuilder.append(cricketMatchJsonCaller.getTeam2());*/
-                title_text.setText(cricketMatchJsonCaller.getShortName());
+                title_text.setText(LeagueName);
             } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
                 footballMatchJsonCaller.setJsonObject(matchScoreDetails);
 
