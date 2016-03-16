@@ -23,11 +23,12 @@
             <LinearLayout
                 android:id="@+id/ScoreLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/card_height"
                 android:orientation="horizontal"
                 android:weightSum="4">
 
                 <LinearLayout
+                    android:paddingTop="@dimen/horizontal_padding_very_small"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="2.8"
@@ -37,6 +38,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/horizontal_padding_very_very_small"
+
                         android:orientation="horizontal">
 
                         <ImageView
