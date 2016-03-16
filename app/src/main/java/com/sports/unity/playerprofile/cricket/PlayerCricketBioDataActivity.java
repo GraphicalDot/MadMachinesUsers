@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -27,6 +28,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
     private TextView playerNationName;
     private ViewPager mViewPager;
     private CricketPlayerProfileAdapter cricketPlayerProfileAdapter;
+    //private ScrollView scrollView;
 
 
     @Override
@@ -60,6 +62,8 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             playerName = (TextView) findViewById(R.id.tv_player_name);
             playerNationName = (TextView) findViewById(R.id.tv_player_nation_name);
             mViewPager = (ViewPager) findViewById(R.id.cricket_player_pager);
+           // scrollView = (ScrollView) findViewById(R.id.scroll_view);
+
             String cricketMatchPlayer[] = {getString(R.string.PLAYER_BIO), getString(R.string.PLAYER_STATS)};
             int numberOfplayerProfileTabs = cricketMatchPlayer.length;
             SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
@@ -78,6 +82,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             cricketPlayerProfileAdapter = new CricketPlayerProfileAdapter(getSupportFragmentManager(), cricketMatchPlayer, numberOfplayerProfileTabs);
             mViewPager.setAdapter(cricketPlayerProfileAdapter);
             tabs.setViewPager(mViewPager);
+
             int tab_index = getIntent().getIntExtra("tab_index", 0);
             mViewPager.setCurrentItem(tab_index);
             ImageView img = (ImageView) findViewById(R.id.back_img);
@@ -120,7 +125,6 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             @Override
             public void run() {
                 try {
-
                     final JSONObject playerInfo = (JSONObject) object.get("info");
                     if (object != null) {
                         if (!object.isNull("image")) {

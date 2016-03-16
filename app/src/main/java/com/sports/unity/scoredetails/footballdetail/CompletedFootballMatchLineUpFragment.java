@@ -90,7 +90,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         return view;
     }
     private void initView(View view) {
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar = (ProgressBar)view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         initErrorLayout(view);
         tvCaptainFirst=(TextView)view.findViewById(R.id.tv_team_first_captain);

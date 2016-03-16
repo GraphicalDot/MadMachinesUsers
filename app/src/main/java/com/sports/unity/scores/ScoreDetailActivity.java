@@ -67,6 +67,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private String matchStatus;
     private  String matchTime;
     private Boolean isLive;
+    private String LeagueName;
     private View llMatchDetailLinear;
 
     private Timer timerToRefreshContent = null;
@@ -90,8 +91,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         matchId = i.getStringExtra(Constants.INTENT_KEY_ID);
         matchStatus= i.getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
         matchTime = i.getStringExtra(Constants.INTENT_KEY_MATCH_TIME);
-        isLive = i.getBooleanExtra(Constants.INTENT_KEY_MATCH_LIVE,false);
-
+        isLive = i.getBooleanExtra(Constants.INTENT_KEY_MATCH_LIVE, false);
+        LeagueName= i.getStringExtra(Constants.LEAGUE_NAME);
         initView();
         setToolbar();
 
@@ -265,14 +266,14 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
   /*              stringBuilder.append(cricketMatchJsonCaller.getTeam1());
                 stringBuilder.append(" vs ");
                 stringBuilder.append(cricketMatchJsonCaller.getTeam2());*/
-                title_text.setText(cricketMatchJsonCaller.getShortName());
+                title_text.setText(LeagueName);
             } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
                 footballMatchJsonCaller.setJsonObject(matchScoreDetails);
 
                 /*stringBuilder.append(footballMatchJsonCaller.getHomeTeam());
                 stringBuilder.append(" vs ");
                 stringBuilder.append(footballMatchJsonCaller.getAwayTeam());*/
-                title_text.setText(R.string.game_details);
+                title_text.setText(LeagueName);
             }
         } catch (Exception ex) {
             ex.printStackTrace();

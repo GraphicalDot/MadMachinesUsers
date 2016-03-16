@@ -215,9 +215,9 @@
                         android:layout_gravity="center"
                         android:gravity="center"
                         android:paddingBottom="@dimen/vertical_padding_very_very_small"
-                        android:text=""
+                        android:text="AAAAA"
                         android:textColor="@color/gray1"
-                        android:textSize="@dimen/font_size_small_medium"
+                        android:textSize="@dimen/font_size_very_small"
                         />
 
                     <com.sports.unity.common.view.CustomRobotoRegularTextView
@@ -233,6 +233,7 @@
                         android:text="@string/show_odds"
                         android:textColor="@color/ColorPrimary"
                         android:textSize="@dimen/font_size_very_very_small"
+
                         />
                 </LinearLayout>
             </LinearLayout>

@@ -134,7 +134,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }
-
                 holder.team1.setText(cricketMatchJsonCaller.getTeam1());
                 holder.team2.setText(cricketMatchJsonCaller.getTeam2());
 
@@ -369,6 +368,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             String matchName="";
             String date = "";
             String matchTime = "";
+            String leagueName = "";
             Intent intent = new Intent( activity, ScoreDetailActivity.class);
             if( type.equalsIgnoreCase(ScoresJsonParser.CRICKET) ){
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
@@ -377,11 +377,13 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 toss = cricketMatchJsonCaller.getToss();
                 matchName = cricketMatchJsonCaller.getMatchNumber()+", " +cricketMatchJsonCaller.getTeam1()+" v "+cricketMatchJsonCaller.getTeam2();
                 date = cricketMatchJsonCaller.getMatchDate();
+                leagueName  =cricketMatchJsonCaller.getLeagueName();
             } else if( type.equalsIgnoreCase(ScoresJsonParser.FOOTBALL) ){
                 footballMatchJsonCaller.setJsonObject(matchJsonObject);
                 matchId = String.valueOf(footballMatchJsonCaller.getMatchId());
                 matchStatus = footballMatchJsonCaller.getMatchStatus();
                 matchTime = footballMatchJsonCaller.getMatchTime();
+                leagueName  =footballMatchJsonCaller.getLeagueName();
                 intent.putExtra(Constants.INTENT_KEY_MATCH_TIME, matchTime);
                 intent.putExtra(Constants.INTENT_KEY_MATCH_LIVE,footballMatchJsonCaller.isLive());
                 intent.putExtra(Constants.INTENT_KEY_TEAM1_ID,footballMatchJsonCaller.getTeam1Id());
@@ -390,8 +392,9 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 intent.putExtra(Constants.INTENT_KEY_TEAM1_NAME,footballMatchJsonCaller.getHomeTeam());
                 intent.putExtra(Constants.INTENT_KEY_TEAM2_NAME,footballMatchJsonCaller.getAwayTeam());
 
-            }
 
+            }
+            intent.putExtra(Constants.LEAGUE_NAME,leagueName);
             intent.putExtra(Constants.INTENT_KEY_TYPE, type);
             intent.putExtra(Constants.INTENT_KEY_ID, matchId);
             intent.putExtra(Constants.INTENT_KEY_MATCH_STATUS,matchStatus);

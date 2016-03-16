@@ -55,4 +55,18 @@ public class MatchJsonCaller extends JsonObjectCaller {
         return odds;
     }
 
+    public String getLeagueName(){
+
+            try {
+                if (!jsonObject.isNull("league_name")){
+                return  jsonObject.getString("league_name");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+    return  "";
+    }
+
+
 }
