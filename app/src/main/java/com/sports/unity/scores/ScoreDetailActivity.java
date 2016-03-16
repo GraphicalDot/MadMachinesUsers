@@ -327,15 +327,17 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     text1Score.setText(cricketMatchJsonCaller.getTeam1());
                     team2Score.setText(cricketMatchJsonCaller.getTeam2());
 
-                } else if(cricketMatchJsonCaller.getStatus().equals("started")){
-                    tvCurrentScore.setText(cricketMatchJsonCaller.getStatus());
-                }else {
+                } else {
+
 
                     TextView textView = (TextView) findViewById(R.id.team1_name);
                     textView.setText(cricketMatchJsonCaller.getTeam1());
 
                     textView = (TextView) findViewById(R.id.team2_name);
                     textView.setText(cricketMatchJsonCaller.getTeam2());
+                    if(cricketMatchJsonCaller.getStatus().equals("started")){
+                        tvCurrentScore.setText(R.string.live);
+                    }
                     if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("completed") ) {
                         tvCurrentScore.setText(cricketMatchJsonCaller.getWinnerTeam(cricketMatchJsonCaller.getResult())+" Won The Match");
                         refreshImage.setVisibility(View.GONE);

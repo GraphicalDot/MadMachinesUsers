@@ -184,5 +184,5 @@
     <dimen name="timer_stock">4dp</dimen>
     <dimen name="venus_layout_width">150dp</dimen>
     <!--score  card-->
-    <dimen name="card_height">100dp</dimen>
+    <dimen name="card_height">125dp</dimen>
 </resources>
