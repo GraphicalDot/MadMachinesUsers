@@ -213,7 +213,8 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LONGITUDE, place.getLatLng().longitude);
                 titleAddress.setText(place.getAddress());
                 titleCity.setText(place.getName());
-                //getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
+
+               // getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
             }
 
             @Override
