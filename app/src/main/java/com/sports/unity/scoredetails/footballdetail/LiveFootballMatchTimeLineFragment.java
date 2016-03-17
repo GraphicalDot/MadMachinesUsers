@@ -282,4 +282,30 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
 
     }
 
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(liveFootballMatchTimeLineHandler != null){
+            liveFootballMatchTimeLineHandler.addListener(null);
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showProgressBar();
+        if(liveFootballMatchTimeLineHandler != null){
+            liveFootballMatchTimeLineHandler.addListener(this);
+
+        }else {
+            liveFootballMatchTimeLineHandler = LiveFootballMatchTimeLineHandler.getInstance(context);
+
+        }
+        liveFootballMatchTimeLineHandler.requestLiveMatchTimeLine(matchId);
+    }
+
+
 }

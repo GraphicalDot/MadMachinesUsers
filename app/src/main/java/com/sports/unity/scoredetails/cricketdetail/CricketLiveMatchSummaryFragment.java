@@ -466,4 +466,28 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
     }
 
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(cricketLiveMatchSummaryHandler != null){
+            cricketLiveMatchSummaryHandler.addListener(null);
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+       showProgress();
+        if(cricketLiveMatchSummaryHandler != null){
+            cricketLiveMatchSummaryHandler.addListener(this);
+
+        }else {
+            cricketLiveMatchSummaryHandler= CricketLiveMatchSummaryHandler.getInstance(getContext());
+        }
+        cricketLiveMatchSummaryHandler.requestLiveMatchSummary(matchId);
+    }
+
 }

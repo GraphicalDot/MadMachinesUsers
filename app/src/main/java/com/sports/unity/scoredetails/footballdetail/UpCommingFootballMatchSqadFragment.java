@@ -62,6 +62,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     private LinearLayout squadParnetLinearLayout;
     private UpCommingFootballMatchSqadHandler liveFootballMatchTimeLineHandler;
     private LinearLayout errorLayout;
+    private Context context;
 
 
     public UpCommingFootballMatchSqadFragment() {
@@ -71,6 +72,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         Intent i = getActivity().getIntent();
         matchId =  i.getStringExtra(INTENT_KEY_ID);
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
@@ -80,6 +82,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
         teamSecondId=i.getStringExtra(INTENT_KEY_TEAM2_ID);
         teamFirstName = i.getStringExtra(INTENT_KEY_TEAM1_NAME);
         teamSecondName = i.getStringExtra(INTENT_KEY_TEAM2_NAME);
+
         liveFootballMatchTimeLineHandler = UpCommingFootballMatchSqadHandler.getInstance(context);
         liveFootballMatchTimeLineHandler.addListener(this);
         liveFootballMatchTimeLineHandler.requestUpCommingMatchSquad(teamFirstId, teamSecondId);
@@ -233,5 +236,26 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
             dto.setTvyellowcard(playerObject.getString("yellow_cards"));
         }
     }
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(liveFootballMatchTimeLineHandler != null){
+            liveFootballMatchTimeLineHandler.addListener(null);
+        }
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showProgressBar();
+        if(liveFootballMatchTimeLineHandler != null){
+            liveFootballMatchTimeLineHandler.addListener(this);
+
+        }else {
+            liveFootballMatchTimeLineHandler = UpCommingFootballMatchSqadHandler.getInstance(context);
+
+        }
+        liveFootballMatchTimeLineHandler.requestUpCommingMatchSquad(teamFirstId, teamSecondId);
+    }
 }

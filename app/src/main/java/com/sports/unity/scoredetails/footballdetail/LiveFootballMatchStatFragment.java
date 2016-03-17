@@ -100,7 +100,7 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
                 public void onRefresh() {
                     if (completedFootballMatchStatHandler != null) {
                         completedFootballMatchStatHandler.requestCompledFootabllMatchStat(matchId);
-                        swipeRefreshLayout.setRefreshing(false);
+                        swipeRefreshLayout.setRefreshing(true);
                     }
                 }
             });
@@ -261,6 +261,7 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
             completedFootballMatchStatHandler = CompletedFootballMatchStatHandler.getInstance(getContext());
             completedFootballMatchStatHandler.addListener(this);
         }
+        completedFootballMatchStatHandler.requestCompledFootabllMatchStat(matchId);
     }
 
     @Override

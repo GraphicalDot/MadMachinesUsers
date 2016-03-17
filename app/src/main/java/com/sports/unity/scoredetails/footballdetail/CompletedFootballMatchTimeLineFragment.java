@@ -54,6 +54,7 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
     private CompleteFootballTimeLineAdapter completeFootballTimeLineAdapter;
     private List<CompleteFootballTimeLineDTO> list = new ArrayList<>();
     private CompletedFootballMatchTimeLineHandler completedFootballMatchTimeLineHandler;
+    private Context context;
 
     public CompletedFootballMatchTimeLineFragment() {
         // Required empty public constructor
@@ -62,6 +63,7 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         Intent i = getActivity().getIntent();
         matchId =  i.getStringExtra(INTENT_KEY_ID);
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
@@ -259,4 +261,26 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
     private void  hideProgressBar(){
         progressBar.setVisibility(View.GONE);
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (completedFootballMatchTimeLineHandler != null) {
+            completedFootballMatchTimeLineHandler.addListener(this);
+        } else {
+            completedFootballMatchTimeLineHandler =CompletedFootballMatchTimeLineHandler.getInstance(context);
+            completedFootballMatchTimeLineHandler.addListener(this);
+        }
+        completedFootballMatchTimeLineHandler.requestCompletedMatchTimeLine(matchId);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (completedFootballMatchTimeLineHandler != null)
+            completedFootballMatchTimeLineHandler = null;
+
+    }
+
 }
