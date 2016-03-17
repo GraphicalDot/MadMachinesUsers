@@ -1,14 +1,12 @@
 package com.sports.unity.common.controller;
 
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
-import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.util.GlobalEventHandler;
 import com.sports.unity.util.GlobalEventListener;
 
-import org.jivesoftware.smackx.ping.PingManager;
+import org.jivesoftware.smack.XMPPConnection;
 
 /**
  * Created by madmachines on 3/11/15.
@@ -70,7 +68,7 @@ public class CustomAppCompatActivity extends AppCompatActivity implements Global
     }
 
     @Override
-    public void onXMPPServiceAuthenticated(boolean connected) {
+    public void onXMPPServiceAuthenticated(boolean connected, XMPPConnection connection) {
         if (connected) {
             if (activityCounter == 1) {
                 PersonalMessaging.getInstance(this).sendOnlinePresence();
@@ -93,5 +91,10 @@ public class CustomAppCompatActivity extends AppCompatActivity implements Global
         } else {
             //nothing
         }
+    }
+
+    @Override
+    public void onReconnecting(int seconds) {
+
     }
 }

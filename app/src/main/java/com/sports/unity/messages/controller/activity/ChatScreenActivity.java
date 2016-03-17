@@ -34,11 +34,12 @@ import com.sports.unity.ChatScreenApplication;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.XMPPManager.XMPPConnectionListener;
+import com.sports.unity.XMPPManager.XMPPConnectionUtil;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.UserProfileActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
-import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.BlockUnblockUserHelper;
 import com.sports.unity.messages.controller.model.Contacts;
@@ -58,10 +59,12 @@ import com.sports.unity.util.GlobalEventListener;
 import com.sports.unity.util.NotificationHandler;
 
 import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.chatstates.ChatState;
 
 import java.util.ArrayList;
@@ -69,7 +72,7 @@ import java.util.Arrays;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChatScreenActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class ChatScreenActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, XMPPConnectionListener {
 
     public static final String INTENT_KEY_JID = "jid";
     public static final String INTENT_KEY_NAME = "name";
@@ -79,6 +82,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     public static final String INTENT_KEY_IMAGE = "image";
     public static final String INTENT_KEY_BLOCK_STATUS = "blockStatus";
     public static final String INTENT_KEY_NEARBY_CHAT = "nearbyChat";
+
+    private boolean isChatInitialized;
 
     public static Intent createChatScreenIntent(Context context, String jid, String name, long contactId, long chatId, String groupSeverId, byte[] userpicture, Boolean blockStatus, boolean othersChat) {
         Intent intent = new Intent(context, ChatScreenActivity.class);
@@ -141,6 +146,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     private CircleImageView userPic;
     private Button mSend;
 
+    private final String XMPP_CONNECTION_KEY = "xmpp_connection_key";
+
     private Menu menu = null;
 
     private SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
@@ -158,10 +165,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         }
 
         @Override
-        public void onXMPPServiceAuthenticated(boolean connected) {
-            ChatScreenActivity.this.onXMPPServiceAuthenticated(connected);
+        public void onXMPPServiceAuthenticated(boolean connected, XMPPConnection connection) {
+            ChatScreenActivity.this.onXMPPServiceAuthenticated(connected, connection);
         }
 
+        @Override
+        public void onReconnecting(int seconds) {
+            ChatScreenActivity.this.onReconnecting(seconds);
+        }
     };
 
     private ActivityActionListener activityActionListener = new ActivityActionListener() {
@@ -283,7 +294,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     protected void onDestroy() {
         ChatScreenApplication.activityDestroyed();
         AudioRecordingHelper.cleanUp();
-
+        XMPPConnectionUtil.getInstance().removeConnectionListener(XMPP_CONNECTION_KEY);
         super.onDestroy();
     }
 
@@ -291,7 +302,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     protected void onPause() {
         ChatScreenApplication.activityPaused();
         AudioRecordingHelper.getInstance(this).stopAndReleaseMediaPlayer();
-
         super.onPause();
     }
 
@@ -347,7 +357,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, jabberId, activityActionListener);
         GlobalEventHandler.getInstance().addGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY, globalEventListener);
         ChatScreenApplication.activityResumed();
-
+        XMPPConnectionUtil.getInstance().addConnectionListener(XMPP_CONNECTION_KEY, this);
         NotificationHandler.dismissNotification(getBaseContext());
         NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatID));
 
@@ -409,7 +419,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         mSend = (Button) findViewById(R.id.send);
         mSend.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
 
-        getChatThread();
+        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+
+            Log.d("dmax","Already Connected CHat");
+            isChatInitialized = true;
+            getChatThread();
+        } else {
+            isChatInitialized = false;
+            XMPPConnectionUtil.getInstance().requestConnection();
+        }
 
         populateMessagesOnScreen();
         setEventListeners(mHandler);
@@ -439,7 +457,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
         @Override
         public void run() {
-            if ( !isGroupChat && chat != null) {
+            if (!isGroupChat && chat != null) {
                 personalMessaging.sendStatus(ChatState.paused, chat);
             }
         }
@@ -918,8 +936,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         if (RESULT_OK == resultCode) {
             if (requestCode == 333) {
                 //TODO handle forward
-            } else if(requestCode==Constants.REQUEST_CODE_VIEW_PROFILE){
-                userImageBytes=data.getByteArrayExtra(ChatScreenActivity.INTENT_KEY_IMAGE);
+            } else if (requestCode == Constants.REQUEST_CODE_VIEW_PROFILE) {
+                userImageBytes = data.getByteArrayExtra(ChatScreenActivity.INTENT_KEY_IMAGE);
                 if (isGroupChat) {
                     if (userImageBytes == null) {
                         userPic.setImageResource(R.drawable.ic_group);
@@ -929,7 +947,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
                 } else if (userImageBytes != null) {
                     userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
-                }else {
+                } else {
                     userPic.setImageResource(R.drawable.ic_user);
                 }
             }
@@ -1096,7 +1114,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 //    }
 
     private void sendReadStatus() {
-        if( !isGroupChat ) {
+        if (!isGroupChat) {
             for (Message message : messageList) {
                 if (!(message.iAmSender || message.messagesRead)) {
                     personalMessaging.sendReadStatus(message.number, message.messageStanzaId);
@@ -1113,9 +1131,9 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     }
 
-    public void onXMPPServiceAuthenticated(boolean connected) {
+    public void onXMPPServiceAuthenticated(boolean connected, XMPPConnection connection) {
         if (connected) {
-            if( !isGroupChat ) {
+            if (!isGroupChat) {
                 if (isLastTimeRequired) {
                     personalMessaging.getLastTime(jabberId);
                     isLastTimeRequired = false;
@@ -1132,6 +1150,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                 //TODO
             }
         }
+    }
+
+    public void onReconnecting(int seconds) {
+        Log.d("dmax", "reconnecting in" + seconds);
     }
 
     @Override
@@ -1158,4 +1180,17 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         }
     }
 
+    @Override
+    public void onSuccessfulConnection(XMPPTCPConnection connection) {
+        if (!isChatInitialized) {
+            Log.d("dmax","on reconnect Connected CHat");
+            isChatInitialized = true;
+            getChatThread();
+        }
+    }
+
+    @Override
+    public void onConnectionLost() {
+        isChatInitialized = false;
+    }
 }

@@ -30,6 +30,7 @@ import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.GlobalEventHandler;
+import com.sports.unity.util.GlobalEventListener;
 import com.sports.unity.util.NotificationHandler;
 
 import org.jivesoftware.smack.ConnectionListener;
@@ -111,7 +112,7 @@ public class XMPPService extends Service {
         }
     }
 
-    public static void displayNotification( Context context, String message, String from, String mimeType, long chatId, boolean isGroupChat, String groupServerId, byte[] image, int availibilityStatus) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+    public static void displayNotification(Context context, String message, String from, String mimeType, long chatId, boolean isGroupChat, String groupServerId, byte[] image, int availibilityStatus) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         UserUtil.init(context);
 
@@ -134,7 +135,7 @@ public class XMPPService extends Service {
             pendingIntent = getPendingIntentForChatActivity(context, name, from, chatId, contact.id, groupServerId, contact.image, contact.isOthers());
         }
 
-        notificationHandler.showNotification( context, pendingIntent);
+        notificationHandler.showNotification(context, pendingIntent);
         ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.UNREAD_COUNT_KEY);
     }
 
@@ -347,8 +348,8 @@ public class XMPPService extends Service {
 
                 @Override
                 public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
-                    if ( packet.getFrom().equals("pubsub.mm.io") ) {
-                        PubSubMessaging.getInstance().updatePublishedReceipt( getApplicationContext(), packet.getStanzaId());
+                    if (packet.getFrom().equals("pubsub.mm.io")) {
+                        PubSubMessaging.getInstance().updatePublishedReceipt(getApplicationContext(), packet.getStanzaId());
                     } else {
                         //nothing
                     }
@@ -444,7 +445,7 @@ public class XMPPService extends Service {
 
                 PersonalMessaging.getInstance(XMPPService.this).updateBlockList(XMPPService.this);
 
-                GlobalEventHandler.getInstance().xmppServerConnected(true);
+                GlobalEventHandler.getInstance().xmppServerConnected(true,connection);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -454,14 +455,14 @@ public class XMPPService extends Service {
         public void connectionClosed() {
             Log.i("connection", "closed");
 
-            GlobalEventHandler.getInstance().xmppServerConnected(false);
+            GlobalEventHandler.getInstance().xmppServerConnected(false,null);
         }
 
         @Override
         public void connectionClosedOnError(Exception e) {
             Log.i("connection", "closed on error");
 
-            GlobalEventHandler.getInstance().xmppServerConnected(false);
+            GlobalEventHandler.getInstance().xmppServerConnected(false,null);
         }
 
         @Override
@@ -472,6 +473,8 @@ public class XMPPService extends Service {
 
         @Override
         public void reconnectingIn(int seconds) {
+
+            GlobalEventHandler.getInstance().onReconnecting(seconds);
         }
 
         @Override
@@ -487,7 +490,7 @@ public class XMPPService extends Service {
         public void processPacket(Stanza packet) throws SmackException.NotConnectedException {
             Message message = (Message) packet;
             if (message.getFrom().equals("pubsub.mm.io")) {
-                PubSubMessaging.getInstance().handlePubSubMessage( XMPPService.this.getApplicationContext(), message);
+                PubSubMessaging.getInstance().handlePubSubMessage(XMPPService.this.getApplicationContext(), message);
             } else if (message.getType().equals(Message.Type.chat)) {
                 if (message.getBody() == null) {
                     PersonalMessaging.getInstance(getApplicationContext()).handleStatus(message);
