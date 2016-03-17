@@ -136,6 +136,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
         cricketLiveMatchSummaryHandler.requestLiveMatchSummary(matchId);
         if(!autRefreshEnabled){
             enableAutoRefreshContent();
+            autRefreshEnabled = true;
         }
 
     }
@@ -225,11 +226,12 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                             JSONArray ballsArray = recentOverArray.getJSONArray(i);
                             JSONArray over = ballsArray.getJSONArray(1);
                             for (int j = over.length()-1; j >= 0; j--) {
+
+                                balls[ballIndex] = getResolveBall(over.getString(j));
+                                ballIndex--;
                                 if (ballIndex < 0) {
                                     break;
                                 }
-                                balls[ballIndex] = getResolveBall(over.getString(j));
-                                ballIndex--;
                             }
                             if (ballIndex < 0) {
                                 break;
@@ -415,13 +417,13 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                 break;
             case "e1,wd":
                 ballDetail.setValue("WD");
-                ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
-                ballDetail.setBackGroundColor(getBallColor(R.color.font_color_boundary));
+                ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
+                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
                 break;
             case "e1,by":
                 ballDetail.setValue("B");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
-                ballDetail.setBackGroundColor(getBallColor(R.color.font_color_boundary));
+                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
                 break;
             case "e1,lb":
                 ballDetail.setValue("LB");
@@ -462,6 +464,30 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             }*/
         return getContext().getResources().getColor(id);
 
+    }
+
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(cricketLiveMatchSummaryHandler != null){
+            cricketLiveMatchSummaryHandler.addListener(null);
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+       showProgress();
+        if(cricketLiveMatchSummaryHandler != null){
+            cricketLiveMatchSummaryHandler.addListener(this);
+
+        }else {
+            cricketLiveMatchSummaryHandler= CricketLiveMatchSummaryHandler.getInstance(getContext());
+        }
+        cricketLiveMatchSummaryHandler.requestLiveMatchSummary(matchId);
     }
 
 }

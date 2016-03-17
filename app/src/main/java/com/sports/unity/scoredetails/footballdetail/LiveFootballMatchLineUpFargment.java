@@ -332,5 +332,23 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (liveFootballMatchLineUpHandler != null) {
+            liveFootballMatchLineUpHandler.addListener(this);
+        } else {
+            liveFootballMatchLineUpHandler = LiveFootballMatchLineUpHandler.getInstance(context);
+            liveFootballMatchLineUpHandler.addListener(this);
+        }
+        liveFootballMatchLineUpHandler.requestLiveMatchLineUp(matchId);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (liveFootballMatchLineUpHandler != null)
+            liveFootballMatchLineUpHandler = null;
+
+    }
 }

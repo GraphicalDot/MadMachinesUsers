@@ -255,6 +255,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
             completedFootballMatchStatHandler = CompletedFootballMatchStatHandler.getInstance(getContext());
             completedFootballMatchStatHandler.addListener(this);
         }
+        completedFootballMatchStatHandler.requestCompledFootabllMatchStat(matchId);
     }
 
     @Override

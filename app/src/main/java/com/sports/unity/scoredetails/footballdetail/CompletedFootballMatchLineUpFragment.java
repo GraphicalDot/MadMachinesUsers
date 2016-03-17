@@ -63,6 +63,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     private View manageRootView;
     private View layoutLineUpView;
     private View layoutSubstitutesView;
+    private Context context;
 
 
     public CompletedFootballMatchLineUpFragment() {
@@ -71,7 +72,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
 
     @Override
     public void onAttach(Context context) {
-        super.onAttach(context);
+        super.onAttach(context);this.context= context;
         Intent i = getActivity().getIntent();
         matchId =  i.getStringExtra(INTENT_KEY_ID);
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
@@ -391,7 +392,25 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (cricketUpcomingMatchSummaryHandler != null) {
+            cricketUpcomingMatchSummaryHandler.addListener(this);
+        } else {
+            cricketUpcomingMatchSummaryHandler = CompletedFootballMatchLineUpHandler.getInstance(context);
+            cricketUpcomingMatchSummaryHandler.addListener(this);
+        }
+        cricketUpcomingMatchSummaryHandler.requestCompletdMatchLineUps(matchId);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (cricketUpcomingMatchSummaryHandler != null)
+            cricketUpcomingMatchSummaryHandler = null;
+
+    }
 
 
 }
