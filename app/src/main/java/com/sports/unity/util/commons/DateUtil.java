@@ -129,4 +129,8 @@ public class DateUtil {
     }
 
 
+    public static String getCurrentTime() {
+        Calendar with = Calendar.getInstance();
+        return TIME_FORMAT.format(with.getTime());
+    }
 }

@@ -39,7 +39,7 @@ public class CompletedMatchScoreCardHandler {
     public interface CompletedMatchContentListener {
 
         void handleContent(String object);
-        void handleError();
+       // void handleError();
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {

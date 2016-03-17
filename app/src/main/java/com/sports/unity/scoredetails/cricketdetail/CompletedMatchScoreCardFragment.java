@@ -453,8 +453,8 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         }
         completedMatchScoreCardHandler.requestCompletdMatchScoreCard(matchId);
     }
-    public void handleError(){
+    /*public void handleError(){
         showErrorLayout(getView());
     }
-
+*/
 }
