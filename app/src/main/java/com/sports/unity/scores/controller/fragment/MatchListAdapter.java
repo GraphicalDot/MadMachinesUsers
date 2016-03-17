@@ -216,7 +216,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     stringBuilder.append("/");
                     stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
                     holder.t2score.setText(stringBuilder.toString());
-                    holder.team2Overs.setText(cricketMatchJsonCaller.getOvers(score)+"ovs");
+                    holder.team2Overs.setText(cricketMatchJsonCaller.getOvers(score)+"  ovs");
 
                 }
 
