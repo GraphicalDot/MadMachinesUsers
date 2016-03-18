@@ -123,6 +123,17 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             tvBowlerOver = (TextView) view.findViewById(R.id.tv_bowler_over);
             tvBowlerWr = (TextView) view.findViewById(R.id.tv_bowler_wr);
             swLivSummary = (SwipeRefreshLayout) view.findViewById(R.id.live_summary);
+
+            swLivSummary.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+
+                    matchSummary();
+                    swLivSummary.setRefreshing(true);
+                }
+            });
+
+
             initProgress(view);
             initErrorLayout(view);
         } catch (Exception e) {
@@ -201,7 +212,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
     }
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-
+        swLivSummary.setRefreshing(false);
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (!jsonObject.isNull("data")) {
         JSONArray dataArray = jsonObject.getJSONArray("data");
@@ -213,6 +224,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
         final JSONArray bowlerStatsArray = currentBowlerObject.getJSONArray("stats");
         final JSONObject currentBowlerStatObject = bowlerStatsArray.getJSONObject(0);
         hideProgress();
+
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override

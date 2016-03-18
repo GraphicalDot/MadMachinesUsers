@@ -22,12 +22,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/activity_vertical_margin"
+                android:orientation="vertical"
                 android:background="@drawable/round_edge_black_box">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -100,19 +98,17 @@
                             android:src="@drawable/recent_balls" />
                     </LinearLayout>
 
-                </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/activity_vertical_margin"
+                android:orientation="vertical"
                 android:background="@drawable/round_edge_black_box">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+
 
                     <LinearLayout
                         android:id="@+id/lo_batting"
@@ -279,19 +275,17 @@
 
                     </RelativeLayout>
 
-                </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/activity_vertical_margin">
+                android:layout_margin="@dimen/activity_vertical_margin"
+                android:background="@drawable/round_edge_black_box"
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/round_edge_black_box"
-                    android:orientation="vertical">
+
 
                     <LinearLayout
                         android:id="@+id/lo_child_layout"
@@ -416,7 +410,7 @@
                                 android:textSize="@dimen/font_size_very_small" />
                         </LinearLayout>
                     </RelativeLayout>
-                </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout

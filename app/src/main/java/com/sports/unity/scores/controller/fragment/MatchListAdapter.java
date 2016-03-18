@@ -154,6 +154,11 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
                 boolean isLive = false;
                 if ( cricketMatchJsonCaller.getStatus().equals("completed") ) {
+
+                    holder.team1Overs.setVisibility(View.GONE);
+                    holder.team2Overs.setVisibility(View.GONE);
+                    holder.t1score.setVisibility(View.VISIBLE);
+                    holder.t2score.setVisibility(View.VISIBLE);
                     holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
                     holder.liveText.setVisibility(View.GONE);
 
@@ -195,9 +200,15 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
                     holder.liveText.setVisibility(View.GONE);
 
-                    holder.t1score.setText( "");
-                    holder.t2score.setText( "");
+                    holder.t1score.setVisibility(View.GONE);
+                    holder.t2score.setVisibility(View.GONE);
+                    holder.team1Overs.setVisibility(View.GONE);
+                    holder.team2Overs.setVisibility(View.GONE);
                 } else {
+                    holder.team1Overs.setVisibility(View.VISIBLE);
+                    holder.team2Overs.setVisibility(View.VISIBLE);
+                    holder.t1score.setVisibility(View.VISIBLE);
+                    holder.t2score.setVisibility(View.VISIBLE);
                     isLive = true;
                     holder.liveText.setVisibility(View.VISIBLE);
                     holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
@@ -209,14 +220,14 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     stringBuilder.append("/");
                     stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
                     holder.t1score.setText(stringBuilder.toString());
-                    holder.team1Overs.setText(cricketMatchJsonCaller.getOvers(score)+"ovs");
+                    holder.team1Overs.setText(cricketMatchJsonCaller.getOvers(score)+" ovs");
                     score = cricketMatchJsonCaller.getTeam2Score();
                     stringBuilder = new StringBuilder("");
                     stringBuilder.append(cricketMatchJsonCaller.getScore(score));
                     stringBuilder.append("/");
                     stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
                     holder.t2score.setText(stringBuilder.toString());
-                    holder.team2Overs.setText(cricketMatchJsonCaller.getOvers(score)+"ovs");
+                    holder.team2Overs.setText(cricketMatchJsonCaller.getOvers(score)+" ovs");
 
                 }
 
@@ -232,8 +243,9 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 }
 
             } else if( matchJsonCaller.getType().equals(ScoresJsonParser.FOOTBALL) ) {
+                holder.team1Overs.setVisibility(View.GONE);
+                holder.team2Overs.setVisibility(View.GONE);
                 footballMatchJsonCaller.setJsonObject(matchJsonObject);
-
                 Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000)));
                 String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
                 String day = (String) android.text.format.DateFormat.format("dd", date);
@@ -281,6 +293,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     }
                     holder.t1score.setText(footballMatchJsonCaller.getHomeTeamScore());
                     holder.t2score.setText(footballMatchJsonCaller.getAwayTeamScore());
+
                 }
 
                 if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {
