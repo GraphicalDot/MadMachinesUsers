@@ -484,6 +484,45 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return allContacts;
     }
 
+    public ArrayList<Contacts> getBlockedContactList() {
+
+        ArrayList<Contacts> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                ContactsEntry.COLUMN_NAME,
+                ContactsEntry.COLUMN_JID,
+                ContactsEntry.COLUMN_PHONE_NUMBER,
+                ContactsEntry.COLUMN_USER_IMAGE,
+                ContactsEntry.COLUMN_CONTACT_ID,
+                ContactsEntry.COLUMN_STATUS,
+                ContactsEntry.COLUMN_BLOCK_USER,
+                ContactsEntry.COLUMN_AVAILABLE_STATUS
+        };
+
+        String selection = ContactsEntry.COLUMN_BLOCK_USER + " != " + "0";
+        String[] selectionArgs = null;
+        String sortOrder = ContactsEntry.COLUMN_NAME + " COLLATE NOCASE ASC ";
+
+        Cursor c = db.query(
+                ContactsEntry.TABLE_NAME,  // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+        if (c.moveToFirst()) {
+            do {
+                list.add(new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5), c.getInt(6)));
+            } while (c.moveToNext());
+        }
+        c.close();
+        return list;
+
+    }
+
     public ArrayList<Contacts> getContactList(boolean registeredOnly) {
 
         ArrayList<Contacts> list = new ArrayList<>();

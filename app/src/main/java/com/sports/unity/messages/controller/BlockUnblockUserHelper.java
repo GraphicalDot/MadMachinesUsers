@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,7 @@ public class BlockUnblockUserHelper {
     private boolean blockStatus = false;
     private Activity activity = null;
     private TextView lastSeenText;
+    private BlockUnblockListener blockUnblockListener;
 
     public BlockUnblockUserHelper(boolean blockStatus, Activity activity, TextView lastSeenText) {
         this.blockStatus = blockStatus;
@@ -86,16 +88,29 @@ public class BlockUnblockUserHelper {
     }
 
     private void postActionOnBlockOrUnblock(boolean status, Menu menu) {
-        MenuItem item = menu.findItem(R.id.action_block_user);
-
+        MenuItem item = null;
         blockStatus = status;
-        ChatKeyboardHelper.getInstance(false).disableOrEnableKeyboardAndMediaButtons(blockStatus, activity);
+
+        if (null != menu) {
+            ChatKeyboardHelper.getInstance(false).disableOrEnableKeyboardAndMediaButtons(blockStatus, activity);
+            item = menu.findItem(R.id.action_block_user);
+        }
         if (blockStatus == true) {
-            item.setTitle("Unblock User");
-            lastSeenText.setVisibility(View.GONE);
+            if (null != blockUnblockListener) {
+                blockUnblockListener.onBlock(true);
+            }
+            if (item != null) {
+                item.setTitle("Unblock User");
+                lastSeenText.setVisibility(View.GONE);
+            }
         } else {
-            item.setTitle("Block User");
-            lastSeenText.setVisibility(View.VISIBLE);
+            if (null != blockUnblockListener) {
+                blockUnblockListener.onUnblock(true);
+            }
+            if (item != null) {
+                item.setTitle("Block User");
+                lastSeenText.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -146,12 +161,34 @@ public class BlockUnblockUserHelper {
             if (success == true) {
                 postActionOnBlockOrUnblock(status, menu);
             } else {
+                if (null != blockUnblockListener) {
+                    if (blockStatus) {
+                        blockUnblockListener.onUnblock(false);
+                    } else {
+                        blockUnblockListener.onBlock(false);
+                    }
+                }
                 Toast.makeText(activity.getApplicationContext(), "failed !!", Toast.LENGTH_SHORT).show();
             }
 
             progressDialog.dismiss();
         }
 
+    }
+
+    public void addBlockUnblockListener(BlockUnblockListener listener) {
+        blockUnblockListener = listener;
+    }
+
+    public void removeBlockUnblockListener() {
+        blockUnblockListener = null;
+    }
+
+    public interface BlockUnblockListener {
+
+        public void onBlock(boolean success);
+
+        public void onUnblock(boolean success);
     }
 
 }

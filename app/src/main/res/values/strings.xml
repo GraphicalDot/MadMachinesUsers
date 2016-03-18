@@ -35,6 +35,8 @@
     <string name="closeDrawer">closeDrawer</string>
     <string name="title_activity_create_group">CreateGroup</string>
     <string name="start_messaging">To start messaging contacts who have Sports Unity, tap on contacts and get started</string>
+
+
     <string name="start_messaging_others">To start messaging contacts who have Sports Unity, people around me and get started</string>
     <string name="btn_invite">invite</string>
     <string name="activeStatus">Active_status</string>
@@ -203,7 +205,6 @@ Carrier SMS charges may apply.</string>
     <string name="work">At Work</string>
 
     <string name="player_message">Showing top players, to add more click on search and add your favourite players</string>
-
 
     <!--Setting Screen related strings-->
     <string name="notification_and_sound_options">Notifications &amp; Sounds</string>
@@ -405,4 +406,12 @@ Carrier SMS charges may apply.</string>
     <string name="half_time">Half Time</string>
     <string name="yesterday">Yesterday</string>
     <string name="post_pond">Match Post Pond</string>
+
+    <string name="no_block_user_message">There is no one in your block list.</string>
+
+    <plurals
+        name="block_count_message">
+        <item quantity="one">There is %d contact in your block list.</item>
+        <item quantity="other">There are %d contacts in your block list.</item>
+    </plurals>
 </resources>

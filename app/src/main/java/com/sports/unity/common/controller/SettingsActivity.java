@@ -3,16 +3,16 @@ package com.sports.unity.common.controller;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.database.Cursor;
-import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -20,12 +20,15 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.SettingsHelper;
 import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.messages.controller.BlockUnblockUserHelper;
+import com.sports.unity.messages.controller.fragment.ContactListAdapter;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.CommonUtil;
@@ -35,12 +38,16 @@ import com.sports.unity.util.NotificationHandler;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class SettingsActivity extends CustomAppCompatActivity {
+public class SettingsActivity extends CustomAppCompatActivity implements BlockUnblockUserHelper.BlockUnblockListener {
 
     private HashMap<Integer, int[]> drillDownItemsMap = new HashMap<>();
     private int currentItemId = SettingsHelper.SETTINGS_MAIN_ID;
 
     private ItemEventListener itemEventListener = new ItemEventListener();
+    private BlockUnblockUserHelper blockUnblockUserHelper;
+    private ArrayList<Contacts> blockList;
+    private ListView blockedListView;
+    private TextView blockCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +65,9 @@ public class SettingsActivity extends CustomAppCompatActivity {
     public void onBackPressed() {
         if (currentItemId == SettingsHelper.SETTINGS_MAIN_ID) {
             super.onBackPressed();
+        } else if (currentItemId == SettingsHelper.BLOCKED_CONTACTS_ITEM_ID) {
+            findViewById(R.id.block_view).setVisibility(View.GONE);
+            renderDrillDownItems(SettingsHelper.PRIVACY_ITEM_ID);
         } else {
             renderDrillDownItems(SettingsHelper.SETTINGS_MAIN_ID);
         }
@@ -96,11 +106,77 @@ public class SettingsActivity extends CustomAppCompatActivity {
         LinearLayout itemsContainer = (LinearLayout) findViewById(R.id.items_container);
         itemsContainer.removeAllViews();
 
-        int[] items = drillDownItemsMap.get(itemId);
-        SettingsItem settingsItem = null;
-        for (int index = 0; index < items.length; index++) {
-            settingsItem = new SettingsItem(items[index]);
-            itemsContainer.addView(settingsItem.getItemLayout());
+        if (currentItemId != SettingsHelper.BLOCKED_CONTACTS_ITEM_ID) {
+
+            int[] items = drillDownItemsMap.get(itemId);
+            SettingsItem settingsItem = null;
+            for (int index = 0; index < items.length; index++) {
+                settingsItem = new SettingsItem(items[index]);
+                itemsContainer.addView(settingsItem.getItemLayout());
+            }
+        } else {
+            renderBlockedList();
+        }
+    }
+
+    private void renderBlockedList() {
+        blockList = SportsUnityDBHelper.getInstance(this).getBlockedContactList();
+        LinearLayout blockLayout = (LinearLayout) findViewById(R.id.block_view);
+        blockLayout.setVisibility(View.VISIBLE);
+        blockedListView = (ListView) blockLayout.findViewById(R.id.block_list);
+        TextView tv = (TextView) blockLayout.findViewById(R.id.empty);
+        blockCount = (TextView) blockLayout.findViewById(R.id.text);
+        if (blockList.size() != 0) {
+            String count = getResources().getQuantityString(R.plurals.block_count_message, blockList.size(), blockList.size());
+            blockCount.setText(count);
+        } else {
+            blockCount.setVisibility(View.GONE);
+        }
+        blockedListView.setEmptyView(tv);
+        ContactListAdapter adapter = new ContactListAdapter(this, R.layout.list_contact_msgs, blockList, false, 0, null);
+        blockedListView.setAdapter(adapter);
+        blockedListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                blockUnblockUserHelper = new BlockUnblockUserHelper(true, SettingsActivity.this, null);
+                final Contacts contacts = blockList.get(position);
+                AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+                builder.setItems(new String[]{"unblock"}, new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        blockUnblockUserHelper.addBlockUnblockListener(SettingsActivity.this);
+                        blockUnblockUserHelper.onMenuItemSelected(SettingsActivity.this, contacts.id, contacts.jid, null);
+                        renderDrillDownItems(SettingsHelper.BLOCKED_CONTACTS_ITEM_ID);
+                    }
+
+                });
+
+                builder.create().show();
+
+                return false;
+            }
+        });
+    }
+
+
+    @Override
+    public void onBlock(boolean success) {
+
+    }
+
+    @Override
+    public void onUnblock(boolean success) {
+        blockUnblockUserHelper.removeBlockUnblockListener();
+        if (success) {
+            blockList = SportsUnityDBHelper.getInstance(this).getBlockedContactList();
+            if (blockList.size() != 0) {
+                String count = getResources().getQuantityString(R.plurals.block_count_message, blockList.size(), blockList.size());
+                blockCount.setText(count);
+            } else {
+                blockCount.setVisibility(View.GONE);
+            }
+            ContactListAdapter adapter = (ContactListAdapter) blockedListView.getAdapter();
+            adapter.updateContacts(blockList);
         }
     }
 
@@ -137,6 +213,16 @@ public class SettingsActivity extends CustomAppCompatActivity {
 
             title.setVisibility(View.GONE);
             subTitle.setVisibility(View.GONE);
+        } else if (currentItemId == SettingsHelper.BLOCKED_CONTACTS_ITEM_ID) {
+            toolbar.setBackgroundColor(getResources().getColor(android.R.color.white));
+            back.setImageResource(R.drawable.ic_menu_back_blk);
+            back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
+
+            subTitle.setText(SettingsHelper.getTitle(currentItemId, this));
+            subTitle.setVisibility(View.VISIBLE);
+
+            switcher.setVisibility(View.GONE);
+            title.setVisibility(View.GONE);
         } else {
             toolbar.setBackgroundColor(getResources().getColor(android.R.color.white));
             back.setImageResource(R.drawable.ic_menu_back_blk);
@@ -324,6 +410,7 @@ public class SettingsActivity extends CustomAppCompatActivity {
                     confirmationAlertDialog.show();
                 } else if (itemId == SettingsHelper.BLOCKED_CONTACTS_ITEM_ID) {
                     //TODO
+                    renderDrillDownItems(SettingsHelper.BLOCKED_CONTACTS_ITEM_ID);
                 }
             } else if (itemType == SettingsHelper.ITEM_TYPE_POPUP) {
                 if (itemId == SettingsHelper.NOTIFICATIONS_SOUND_ITEM_ID) {
