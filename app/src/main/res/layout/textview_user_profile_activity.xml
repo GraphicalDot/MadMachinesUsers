@@ -2,15 +2,28 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/transparent">
+    android:background="@android:color/transparent"
+    android:paddingLeft="@dimen/horizontal_padding_small"
+    android:paddingRight="@dimen/horizontal_padding_small">
+
+    <ImageView
+        android:id="@+id/flag"
+        android:layout_width="@dimen/drawer_flag_height"
+        android:layout_height="@dimen/drawer_flag_height"
+        android:layout_gravity="center_vertical"
+        android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+        android:paddingRight="@dimen/horizontal_padding_very_very_small"
+        />
 
     <TextView
         android:id="@+id/list_item"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:clickable="true"
-        android:paddingBottom="@dimen/vertical_padding_small"
-        android:paddingLeft="@dimen/horizontal_padding_small"
-        android:paddingRight="@dimen/horizontal_padding_small"
-        android:paddingTop="@dimen/vertical_padding_small" />
+        android:layout_height="@dimen/drawer_item_height"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:layout_marginLeft="@dimen/nav_item_margin"
+        android:gravity="center_vertical"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/font_size_small_medium" />
+
 </LinearLayout>
