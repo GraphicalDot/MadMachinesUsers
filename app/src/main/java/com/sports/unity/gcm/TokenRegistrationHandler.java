@@ -22,7 +22,7 @@ import java.util.Map;
 public class TokenRegistrationHandler {
     private static final String REQUEST_TAG = "TOKEN_TAG";
     private static Context mContext;
-
+   private String BASE_URL = "http://52.74.142.219/";
     private String SET_ANDROID_TOKEN = "set_android_token";
     private String REMOVE_ANDROID_TOKEN ="remove_android_token";
     private static final  String  USER_REGISTER_MATCH ="user_register_match";
@@ -66,8 +66,9 @@ public class TokenRegistrationHandler {
         Log.i("Register Token", "Register Token");
         String url = getGeneratedUrl(SET_ANDROID_TOKEN);
         RequestQueue queue = Volley.newRequestQueue(mContext);
+        Log.i("registrerToken: ",url);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, responseListener_ForLoadContent,responseListener_ForLoadContent){
-            protected Map<String, String> getParams() throws com.android.volley.AuthFailureError {
+            protected Map<String, String> getParams() {
             Map<String, String> params = new HashMap<>();
                 params.put("username", username);
                 params.put("password", password);
@@ -81,8 +82,8 @@ public class TokenRegistrationHandler {
         requestInProcess.add(REQUEST_TAG);
     }
 
-    public void removeToken(String requestTag,final String username, final String password, final String udid) {
-        Log.i("Register Token", "Register Token");
+    public void removeToken(final String username, final String password, final String udid) {
+        Log.i("Remove Token", "Remove Token");
         String url = getGeneratedUrl(REMOVE_ANDROID_TOKEN);
         RequestQueue queue = Volley.newRequestQueue(mContext);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, responseListener_ForLoadContent,responseListener_ForLoadContent){
@@ -99,9 +100,53 @@ public class TokenRegistrationHandler {
         requestInProcess.add(REQUEST_TAG);
     }
 
+
+    public void registrerMatchUser(final String username, final String password, final String token, final String uuid,final String matchId) {
+        Log.i("Register Token", "Register Token");
+        String url = getGeneratedUrl(USER_REGISTER_MATCH);
+        RequestQueue queue = Volley.newRequestQueue(mContext);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, responseListener_ForLoadContent,responseListener_ForLoadContent){
+            protected Map<String, String> getParams() throws com.android.volley.AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put("username", username);
+                params.put("password", password);
+                params.put("token", token);
+                params.put("apk_version", BuildConfig.VERSION_NAME);
+                params.put("udid", uuid);
+                params.put("match_id ",matchId);
+                return params;
+            };
+        };
+        queue.add(stringRequest);
+        requestInProcess.add(REQUEST_TAG);
+    }
+
+    public void removeMatchUser(final String username, final String password, final String udid,final String matchId) {
+        Log.i("Remove Token", "Remove Token");
+        String url = getGeneratedUrl(USER_UNREGISTER_MATCH);
+        RequestQueue queue = Volley.newRequestQueue(mContext);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, responseListener_ForLoadContent,responseListener_ForLoadContent){
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<>();
+                params.put("username", username);
+                params.put("password", password);
+                params.put("apk_version", BuildConfig.VERSION_NAME);
+                params.put("udid", udid);
+                params.put("match_id ",matchId);
+                return params;
+            };
+        };
+        queue.add(stringRequest);
+        requestInProcess.add(REQUEST_TAG);
+    }
+
+
+
+
+
  private String getGeneratedUrl(String requestEndPoint) {
 
-        return BuildConfig.SCORES_BASE_URL+requestEndPoint;
+        return BASE_URL+requestEndPoint;
     }
 
     private void handleResponse(String response) {

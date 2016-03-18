@@ -3,11 +3,13 @@ package com.sports.unity.common.controller;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -37,6 +39,7 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.gcm.RegistrationIntentService;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
@@ -77,6 +80,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
     private TextView unreadCount;
     private boolean messagesFragmentInFront = false;
+    private SharedPreferences preferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,7 +101,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         locManager.buildApiClient();
 
         {
-            //TODO temporary snippet, will remove it.
+
             if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
                 ContactsHandler.getInstance().addCallToProcessPendingActions(this);
             } else {
@@ -106,7 +110,18 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                 }
             }
         }
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(preferences!=null){
+            boolean sentToken= preferences.getBoolean(Constants.SENT_TOKEN_TO_SERVER,false);
+            if(!sentToken){
+                Intent intent = new Intent(this, RegistrationIntentService.class);
+                startService(intent);
+            }
+        }
+        Intent intent = new Intent(this, RegistrationIntentService.class);
+        startService(intent);
     }
+
 
     public void setNavigationProfile() {
 
