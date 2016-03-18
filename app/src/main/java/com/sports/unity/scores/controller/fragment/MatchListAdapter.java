@@ -246,6 +246,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 holder.team1Overs.setVisibility(View.GONE);
                 holder.team2Overs.setVisibility(View.GONE);
                 footballMatchJsonCaller.setJsonObject(matchJsonObject);
+
                 Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000)));
                 String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
                 String day = (String) android.text.format.DateFormat.format("dd", date);
@@ -293,7 +294,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     }
                     holder.t1score.setText(footballMatchJsonCaller.getHomeTeamScore());
                     holder.t2score.setText(footballMatchJsonCaller.getAwayTeamScore());
-
                 }
 
                 if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {
