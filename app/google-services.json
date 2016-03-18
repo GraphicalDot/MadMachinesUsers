@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_id": "sportsunity-1253",
-    "project_number": "212349292089",
-    "name": "sportsunity"
+    "project_id": "sports-unity",
+    "project_number": "214045685372",
+    "name": "Sports Unity"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:212349292089:android:56ef08c653c0b380",
+        "mobilesdk_app_id": "1:214045685372:android:56ef08c653c0b380",
         "client_id": "android:com.sports.unity",
         "client_type": 1,
         "android_client_info": {
@@ -15,11 +15,23 @@
           "certificate_hash": []
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "214045685372-5eh0hceafl8115k6828srbkpmm3h9r7i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sports.unity",
+            "certificate_hash": "7E362F2FE37F6CC7695E415FC7455B144A696DB3"
+          }
+        }
+      ],
       "api_key": [],
       "services": {
         "analytics_service": {
-          "status": 1
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-75305921-1"
+          }
         },
         "cloud_messaging_service": {
           "status": 2,
