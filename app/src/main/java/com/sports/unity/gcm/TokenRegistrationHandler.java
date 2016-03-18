@@ -62,7 +62,7 @@ public class TokenRegistrationHandler {
         }
     };
 
-    public void registrerToken(final String username, final String password, final String token, final String udid) {
+    public void registrerToken(final String username, final String password, final String token, final String uuid) {
         Log.i("Register Token", "Register Token");
         String url = getGeneratedUrl(SET_ANDROID_TOKEN);
         RequestQueue queue = Volley.newRequestQueue(mContext);
@@ -73,7 +73,7 @@ public class TokenRegistrationHandler {
                 params.put("password", password);
                 params.put("token", token);
                 params.put("apk_version", BuildConfig.VERSION_NAME);
-                params.put("udid", udid);
+                params.put("udid", uuid);
           return params;
         };
         };
@@ -127,7 +127,6 @@ public class TokenRegistrationHandler {
         }
 
     }
-
     public void addListener(TokenRegistrationContentListener contentListener) {
         mContentListener = contentListener;
     }

@@ -1,10 +1,12 @@
 package com.sports.unity.gcm;
 
 import android.app.IntentService;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.telephony.TelephonyManager;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
@@ -56,12 +58,14 @@ public class RegistrationIntentService extends IntentService implements TokenReg
      */
     public void registerToken(String token)
     {
+        TelephonyManager tManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        String uuid = tManager.getDeviceId();
         String userName = null;
         String password = null;
-        String udid = null;
+
         tokenRegistrationHandler = TokenRegistrationHandler.getInstance(getApplicationContext());
         tokenRegistrationHandler.addListener(this);
-        tokenRegistrationHandler.registrerToken(userName,password,token,udid);
+        tokenRegistrationHandler.registrerToken(userName,password,token,uuid);
     }
 
 
