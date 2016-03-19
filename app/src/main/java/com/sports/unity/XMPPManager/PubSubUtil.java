@@ -27,13 +27,11 @@ import java.util.List;
  */
 public class PubSubUtil {
 
-    static{
-        initialSetup();
-    }
-
     public static void initialSetup(){
         ProviderManager.addExtensionProvider( "affiliations", PubSubNamespace.OWNER.getXmlns(), new SPUAffiliationsProvider());
         ProviderManager.addExtensionProvider( "affiliation", PubSubNamespace.OWNER.getXmlns(), new SPUAffiliationProvider());
+        ProviderManager.addExtensionProvider( "pubsub", PubSubNamespace.BASIC.getXmlns(), new PubSubExtensionProvider());
+//        ProviderManager.addExtensionProvider( "subscription", "", new SubscriptionProvider());
     }
 
     public static List<SPUAffiliation> getAffiliations(LeafNode node) throws SmackException.NoResponseException, XMPPException.XMPPErrorException, SmackException.NotConnectedException {
@@ -75,7 +73,9 @@ public class PubSubUtil {
         PubSub pubSub = new PubSub( "pubsub.mm.io", IQ.Type.set, PubSubNamespace.OWNER);
 
         List<SPUAffiliation> affiliationList = new ArrayList<>();
-        affiliationList.add(new SPUAffiliation(ownerJID, SPUAffiliation.Type.owner));
+        if(ownerJID != null) {
+            affiliationList.add(new SPUAffiliation(ownerJID, SPUAffiliation.Type.owner));
+        }
         for(String jid : listOfMembers) {
             affiliationList.add(new SPUAffiliation(jid, SPUAffiliation.Type.publisher));
         }
@@ -98,7 +98,9 @@ public class PubSubUtil {
         PubSub pubSub = new PubSub( "pubsub.mm.io", IQ.Type.set, PubSubNamespace.OWNER);
 
         List<Subscription> subscriptionList = new ArrayList<>();
-        subscriptionList.add(new Subscription(ownerJid, node.getId(), null, Subscription.State.subscribed));
+        if(ownerJid != null) {
+            subscriptionList.add(new Subscription(ownerJid, node.getId(), null, Subscription.State.subscribed));
+        }
         for(String jid : listOfSubscribers) {
             subscriptionList.add(new Subscription(jid, node.getId(), null, Subscription.State.subscribed));
         }

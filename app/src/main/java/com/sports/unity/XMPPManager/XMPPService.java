@@ -119,6 +119,7 @@ public class XMPPService extends Service {
         String name = sportsUnityDBHelper.getUserNameByJid(from);
         if (isGroupChat) {
             name = name + "@" + sportsUnityDBHelper.getGroupSubject(groupServerId);
+            availibilityStatus = Contacts.AVAILABLE_BY_MY_CONTACTS;
         } else {
             //nothing
         }
@@ -131,8 +132,13 @@ public class XMPPService extends Service {
         if (chatCount > 1) {
             pendingIntent = getPendingIntentForMainActivity(context);
         } else if (chatCount == 1) {
-            Contacts contact = sportsUnityDBHelper.getContactByJid(from);
-            pendingIntent = getPendingIntentForChatActivity(context, name, from, chatId, contact.id, groupServerId, contact.image, contact.isOthers());
+            if( isGroupChat ){
+                String groupName = groupServerId.substring(groupServerId.indexOf("%") + 1, groupServerId.indexOf("%%"));
+                pendingIntent = getPendingIntentForChatActivity(context, groupName, groupServerId, chatId, SportsUnityDBHelper.getDummyContactRowId(), groupServerId, null, false);
+            } else {
+                Contacts contact = sportsUnityDBHelper.getContactByJid(from);
+                pendingIntent = getPendingIntentForChatActivity(context, name, groupServerId, chatId, contact.id, groupServerId, contact.image, contact.isOthers());
+            }
         }
 
         notificationHandler.showNotification(context, pendingIntent);
@@ -262,6 +268,7 @@ public class XMPPService extends Service {
                 sportsUnityDBHelper = SportsUnityDBHelper.getInstance(XMPPService.this);
 
                 sportsUnityDBHelper.addDummyMessageIfNotExist();
+                sportsUnityDBHelper.addDummyContactIfNotExist();
 
                 UserUtil.init(getApplicationContext());
 
@@ -441,6 +448,7 @@ public class XMPPService extends Service {
             try {
                 Log.i("XMPP Connection", "authenticated");
 
+                PubSubUtil.initialSetup();
                 attachChatRelatedListeners((XMPPTCPConnection) connection);
 
                 PersonalMessaging.getInstance(XMPPService.this).updateBlockList(XMPPService.this);

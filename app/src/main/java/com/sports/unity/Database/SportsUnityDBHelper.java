@@ -31,6 +31,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     public static final long DEFAULT_ENTRY_ID = -1;
     public static final boolean DEFAULT_READ_STATUS = false;
 
+    public static final String DUMMY_JID = "DUMMY_JID";
     public static final String DEFAULT_GROUP_SERVER_ID = "NOT_GROUP_CHAT";
 
     public static final String MIME_TYPE_TEXT = "t";
@@ -45,7 +46,9 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "spu.db";
 
     private static final String COMMA_SEP = ",";
+
     private static long DUMMY_MESSAGE_ROW_ID = -1;
+    private static long DUMMY_CONTACT_ROW_ID = -1;
 
     private static final String CREATE_CONTACTS_TABLE = "CREATE TABLE IF NOT EXISTS " +
             ContactsEntry.TABLE_NAME + "( " +
@@ -127,6 +130,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     public static long getDummyMessageRowId() {
         return DUMMY_MESSAGE_ROW_ID;
+    }
+
+    public static long getDummyContactRowId() {
+        return DUMMY_CONTACT_ROW_ID;
     }
 
     private ArrayList<Contacts> allContacts = null;
@@ -1240,11 +1247,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
             String[] selectionArg = null;
             if (availability == DEFAULT_GET_ALL_CHAT_LIST) {
-                selectionArg = new String[]{String.valueOf(Contacts.AVAILABLE_NOT)};
-                selectQuery.append(" WHERE " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " NOT LIKE ?");
+                selectionArg = new String[]{ SportsUnityDBHelper.DUMMY_JID, String.valueOf(Contacts.AVAILABLE_NOT)};
+                selectQuery.append(" WHERE " + ContactsEntry.COLUMN_JID + " = ? OR " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " NOT LIKE ?");
             } else if (availability == Contacts.AVAILABLE_BY_MY_CONTACTS) {
-                selectionArg = new String[]{String.valueOf(availability)};
-                selectQuery.append(" WHERE " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " LIKE ? ");
+                selectionArg = new String[]{ SportsUnityDBHelper.DUMMY_JID, String.valueOf(availability)};
+                selectQuery.append(" WHERE " + ContactsEntry.COLUMN_JID + " = ? OR " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " LIKE ? ");
             } else {
                 selectionArg = new String[]{String.valueOf(Contacts.AVAILABLE_BY_OTHER_CONTACTS), String.valueOf(Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME)};
                 selectQuery.append(" WHERE " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " LIKE ? OR " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " LIKE ? ");
@@ -1704,6 +1711,44 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             }
         }
     }
+
+    public void addDummyContactIfNotExist() {
+        if (DUMMY_CONTACT_ROW_ID == DEFAULT_ENTRY_ID) {
+            SQLiteDatabase db = getReadableDatabase();
+            String[] projection = {
+                    ContactsEntry.COLUMN_CONTACT_ID
+            };
+
+            String selection = ContactsEntry.COLUMN_JID + " = ? ";
+            String[] selectionArgs = { DUMMY_JID };
+
+            Cursor c = db.query(
+                    ContactsEntry.TABLE_NAME,                 // The table to query
+                    projection,                               // The columns to return
+                    selection,                                // The columns for the WHERE clause
+                    selectionArgs,                            // The values for the WHERE clause
+                    null,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    null                                      // The sort order
+            );
+
+            boolean exist = false;
+            if (c.moveToFirst()) {
+                exist = true;
+                DUMMY_CONTACT_ROW_ID = c.getInt(0);
+            } else {
+                //nothing
+            }
+            c.close();
+
+            if (!exist) {
+                DUMMY_CONTACT_ROW_ID = addToContacts("", "", DUMMY_JID, "", null, Contacts.AVAILABLE_NOT);
+            } else {
+                //nothing
+            }
+        }
+    }
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {

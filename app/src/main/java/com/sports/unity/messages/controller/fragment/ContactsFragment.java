@@ -56,7 +56,6 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     public static int USAGE_FOR_FORWARD = 2;
 
     private int frequentContactCount = 0;
-
     private int usageIn = 0;
 
     private ArrayList<Contacts> selectedMembersList = new ArrayList<>();
@@ -105,28 +104,33 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 //            EditText searchContacts = (EditText) view.findViewById(R.id.search_contacts_edittext);
 //            searchContacts.getBackground().setColorFilter(getResources().getColor(R.color.app_theme_blue), PorterDuff.Mode.SRC_IN);
 
-            CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
-            Boolean flag = (Boolean) checkBox.getTag();
+            Boolean isClickableFlag = (Boolean)view.getTag();
+            if( isClickableFlag == null || isClickableFlag == true ) {
+                CheckBox checkBox = (CheckBox) view.findViewById(R.id.checkbox);
+                boolean flag = checkBox.isChecked();
 
-            ContactListAdapter contactListAdapter = (ContactListAdapter) contacts.getAdapter();
-            Contacts contacts = contactListAdapter.getUsedContact().get(position);
+                ContactListAdapter contactListAdapter = (ContactListAdapter) contacts.getAdapter();
+                Contacts contacts = contactListAdapter.getUsedContact().get(position);
 
-            if (flag == null || flag == false) {
-                checkBox.setTag(true);
-                checkBox.setChecked(true);
+                if (flag == false) {
+                    checkBox.setChecked(true);
 
-                selectedMembersList.add(contacts);
+                    selectedMembersList.add(contacts);
+                } else {
+                    checkBox.setChecked(false);
+
+                    selectedMembersList.remove(contacts);
+                }
+
+                int count = contactListAdapter.getPreviouslySelectedMembersList().size() + selectedMembersList.size();
+
+                TextView textView = (TextView) titleLayout.findViewById(R.id.members_count);
+                textView.setText( count + "/50");
+
+                contactListAdapter.refreshSelectedMembers(selectedMembersList);
             } else {
-                checkBox.setTag(false);
-                checkBox.setChecked(false);
-
-                selectedMembersList.remove(contacts);
+                //nothing
             }
-
-            TextView textView = (TextView) titleLayout.findViewById(R.id.members_count);
-            textView.setText(selectedMembersList.size() + "/100");
-
-            contactListAdapter.refreshSelectedMembers(selectedMembersList);
         }
 
     };
@@ -196,7 +200,6 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         usageIn = getArguments().getInt(Constants.INTENT_KEY_CONTACT_FRAGMENT_USAGE);
 
         v = inflater.inflate(com.sports.unity.R.layout.fragment_contacts, container, false);
@@ -340,6 +343,15 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
         }
 
         ContactListAdapter adapter = new ContactListAdapter(getActivity(), resource, contactList, multipleSelection, frequentContactCount, selectedMembersList);
+        if (usageIn == USAGE_FOR_MEMBERS) {
+            ArrayList<String> previouslySelectedMembersList = getArguments().getStringArrayList(Constants.INTENT_KEY_ADDED_MEMBERS);
+            adapter.setPreviouslySelectedMembersList(previouslySelectedMembersList);
+
+            TextView textView = (TextView) titleLayout.findViewById(R.id.members_count);
+            textView.setText(previouslySelectedMembersList.size()+ "/50");
+        } else {
+            //nothing
+        }
         contacts.setAdapter(adapter);
         contacts.setOnItemClickListener(itemListener);
     }

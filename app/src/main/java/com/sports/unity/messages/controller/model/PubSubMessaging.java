@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.sports.unity.ChatScreenApplication;
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.XMPPManager.PubSubExtension;
 import com.sports.unity.XMPPManager.PubSubUtil;
 import com.sports.unity.XMPPManager.SPUAffiliation;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -19,12 +20,18 @@ import com.sports.unity.util.Constants;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.packet.DefaultExtensionElement;
+import org.jivesoftware.smack.packet.ExtensionElement;
 import org.jivesoftware.smackx.pubsub.AccessModel;
+import org.jivesoftware.smackx.pubsub.EventElement;
+import org.jivesoftware.smackx.pubsub.ItemsExtension;
 import org.jivesoftware.smackx.pubsub.LeafNode;
 import org.jivesoftware.smackx.pubsub.PayloadItem;
+import org.jivesoftware.smackx.pubsub.PubSubElementType;
 import org.jivesoftware.smackx.pubsub.PubSubManager;
 import org.jivesoftware.smackx.pubsub.PublishModel;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
+import org.jivesoftware.smackx.pubsub.Subscription;
 import org.jivesoftware.smackx.pubsub.packet.PubSub;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
@@ -111,12 +118,7 @@ public class PubSubMessaging {
             PubSubUtil.updateAffiliations(leaf, ownerJID, membersJid);
             PubSubUtil.updateSubscriptions(leaf, ownerJID, membersJid);
 
-            boolean invitationSent = sendGroupInvitation(context, groupJid);
-            if( invitationSent ){
-                success = true;
-            } else {
-                //nothing
-            }
+            success = true;
         } catch (Exception ex) {
             ex.printStackTrace();
             handleConnectionException(ex);
@@ -125,35 +127,26 @@ public class PubSubMessaging {
         return success;
     }
 
-    public LeafNode getLeafNode(String nodeId) throws SmackException.NoResponseException, XMPPException.XMPPErrorException, SmackException.NotConnectedException {
-        PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
-        LeafNode leafNode = pubSubManager.getNode(nodeId);
-        return leafNode;
-    }
-
-    public boolean sendGroupInvitation(Context context, String groupJid){
+    public boolean addMembers(String groupJid, ArrayList<String> membersJid, Context context) {
         boolean success = false;
         try {
-            LeafNode node = getLeafNode(groupJid);
+            LeafNode leaf = getLeafNode(groupJid);
 
-            TinyDB tinyDB = TinyDB.getInstance(context);
-            SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
+            PubSubUtil.updateAffiliations(leaf, null, membersJid);
+            PubSubUtil.updateSubscriptions(leaf, null, membersJid);
 
-            String from = tinyDB.getString(TinyDB.KEY_USER_JID);
-            String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
-
-            String payLoad = encodeGroupInvitationMessagePayload(from, groupJid, time);
-            SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message",
-                    "<message xmlns='pubsub:text:message'>" + "!@#$" + payLoad + "$#@!" + "</message>");
-            PayloadItem item = new PayloadItem(from, simplePayload);
-
-            publishItem(node, item);
             success = true;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             handleConnectionException(ex);
         }
         return success;
+    }
+
+    public LeafNode getLeafNode(String nodeId) throws SmackException.NoResponseException, XMPPException.XMPPErrorException, SmackException.NotConnectedException {
+        PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
+        LeafNode leafNode = pubSubManager.getNode(nodeId);
+        return leafNode;
     }
 
     public void updatePublishedReceipt(Context context, String packetId) {
@@ -181,7 +174,7 @@ public class PubSubMessaging {
             String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
 
             String payLoad = encodeSimpleMessagePayload(message, from, groupJid, time, SportsUnityDBHelper.MIME_TYPE_TEXT);
-            SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + "!@#$" + payLoad + "$#@!" + "</message>");
+            SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
             PayloadItem item = new PayloadItem(from, simplePayload);
 
             String stanzaId = publishItem( currentNode, item);
@@ -213,7 +206,7 @@ public class PubSubMessaging {
             }
 
             String payLoad = encodeSimpleMessagePayload(messageBody, from, groupServerId, time, mimeType);
-            SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + "!@#$" + payLoad + "$#@!" + "</message>");
+            SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
             PayloadItem item = new PayloadItem(from, simplePayload);
 
             String stanzaId = publishItem(node, item);
@@ -236,7 +229,7 @@ public class PubSubMessaging {
             String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
 
             String payLoad = encodeSimpleMessagePayload(stickerAssetPath, from, groupServerId, time, SportsUnityDBHelper.MIME_TYPE_STICKER);
-            SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + "!@#$" + payLoad + "$#@!" + "</message>");
+            SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
             PayloadItem item = new PayloadItem(from, simplePayload);
 
             String stanzaId = publishItem( node, item);
@@ -262,28 +255,54 @@ public class PubSubMessaging {
 
         JSONObject messageJsonObject = null;
         try {
-            String messageXML = message.toString();
-            String data = messageXML.substring(messageXML.indexOf("!@#$") + 4, messageXML.indexOf("$#@!"));
+            if( message.hasExtension("pubsub", "http://jabber.org/protocol/pubsub") ){
+                PubSubExtension pubSubExtension = message.getExtension("pubsub", "http://jabber.org/protocol/pubsub");
+                if( pubSubExtension.getExtensions().size() > 0 ){
+                    Subscription subscription = (Subscription) pubSubExtension.getExtensions().get(0);
+                    if( subscription.getState().equals(Subscription.State.subscribed)){
+                        handleGroupInvitation(context, subscription.getNode());
+                    } else {
+                        //nothing
+                    }
+                } else {
+                    //nothing
+                }
+            } else if( message.hasExtension("event", "http://jabber.org/protocol/pubsub#event") ) {
+                EventElement eventElement = message.getExtension("event", "http://jabber.org/protocol/pubsub#event");
+                List<ExtensionElement> extensionElementList = eventElement.getExtensions();
+                if (extensionElementList.size() > 0) {
+                    ItemsExtension itemsExtension = (ItemsExtension) extensionElementList.get(0);
+                    List<ExtensionElement> items = (List<ExtensionElement>) itemsExtension.getItems();
+                    if (items.size() > 0) {
+                        PayloadItem payloadItem = (PayloadItem) items.get(0);
+                        SimplePayload simplePayload = (SimplePayload) payloadItem.getPayload();
 
-            String decodedData = URLDecoder.decode(data, "utf-8");
-            messageJsonObject = new JSONObject(decodedData);
+                        String messageXML = String.valueOf(simplePayload.toXML());
+                        String data = messageXML.substring(messageXML.indexOf(">") + 1, messageXML.indexOf("</message>"));
 
-            from = messageJsonObject.getString(MESSAGE_FROM);
-            messageType = messageJsonObject.getString(MESSAGE_TYPE);
-            time = messageJsonObject.getString(MESSAGE_TIME);
-            text = messageJsonObject.getString(MESSAGE_TEXT_DATA);
-            mimeType = messageJsonObject.getString(Constants.PARAM_MIME_TYPE);
-            groupJID = messageJsonObject.getString(GROUP_SERVER_ID);
+                        String decodedData = URLDecoder.decode(data, "utf-8");
+                        messageJsonObject = new JSONObject(decodedData);
+
+                        from = messageJsonObject.getString(MESSAGE_FROM);
+//                        messageType = messageJsonObject.getString(MESSAGE_TYPE);
+                        time = messageJsonObject.getString(MESSAGE_TIME);
+                        text = messageJsonObject.getString(MESSAGE_TEXT_DATA);
+                        mimeType = messageJsonObject.getString(Constants.PARAM_MIME_TYPE);
+                        groupJID = messageJsonObject.getString(GROUP_SERVER_ID);
+
+                        handleUserPubSubMessage(context, from, mimeType, text, time, groupJID, stanzaId);
+                    } else {
+
+                    }
+                } else {
+
+                }
+            }
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-
-        if( messageType.equals(GROUP_INVITATION_MESSAGE_TYPE) ) {
-            handleGroupInvitation(context, from, mimeType, text, time, groupJID, stanzaId);
-        } else if( messageType.equals(USER_MESSAGE_TYPE) ) {
-            handleUserPubSubMessage(context, from, mimeType, text, time, groupJID, stanzaId);
         }
     }
 
@@ -316,7 +335,7 @@ public class PubSubMessaging {
 
                 Contacts contacts = sportsUnityDBHelper.getContactByJid(jid);
                 if (contacts == null) {
-                    contactId = sportsUnityDBHelper.addToContacts("Unknown", "", jid, "", null, Contacts.AVAILABLE_BY_OTHER_CONTACTS);
+                    contactId = sportsUnityDBHelper.addToContacts("Unknown", null, jid, "", null, Contacts.AVAILABLE_BY_OTHER_CONTACTS);
                 } else {
                     contactId = contacts.id;
                 }
@@ -373,21 +392,12 @@ public class PubSubMessaging {
         }
     }
 
-    private void handleGroupInvitation(Context context, String from, String mimeType, String text, String time, String groupJID, String stanzaId){
-        TinyDB tinyDB = TinyDB.getInstance(context);
-        if ( from.equals(tinyDB.getString(TinyDB.KEY_USER_JID)) ) {
-            //Do nothing
-        } else {
-            SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
-
-            Contacts owner = sportsUnityDBHelper.getContactByJid(from);
-            if (owner == null) {
-                XMPPService.createContact(from, context, true);
-                owner = sportsUnityDBHelper.getContactByJid(from);
-            }
-
-            String subject = groupJID.substring(groupJID.indexOf("%") + 1, groupJID.indexOf("%%"));
-            long chatId = sportsUnityDBHelper.createGroupChatEntry(subject, owner.id, null, groupJID);
+    private void handleGroupInvitation(Context context, String groupJID){
+        SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
+        String subject = groupJID.substring(groupJID.indexOf("%") + 1, groupJID.indexOf("%%"));
+        long chatId = sportsUnityDBHelper.getChatEntryID(groupJID);
+        if( chatId == SportsUnityDBHelper.DEFAULT_ENTRY_ID ) {
+            chatId = sportsUnityDBHelper.createGroupChatEntry(subject, SportsUnityDBHelper.getDummyContactRowId(), null, groupJID);
             sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupJID);
 
             ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);

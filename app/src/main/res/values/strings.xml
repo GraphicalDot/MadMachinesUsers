@@ -11,7 +11,8 @@
     <string name="common_message_internet_not_available">Internet Unavailable</string>
 
     <string name="next">Next</string>
-    <string name="done">create group</string>
+    <string name="create_group">Create Group</string>
+    <string name="done">Done</string>
     <string name="allow">Allow</string>
     <string name="skip">Skip</string>
     <string name="search_dots">Search...</string>
@@ -125,7 +126,6 @@
     <string name="group_title_create">Create Group</string>
     <string name="group_title_add_members">Add Members</string>
     <string name="group_title_add_group_participanats">ADD GROUP PARTICIPANTS</string>
-    <string name="group_title_members_limit">0/100</string>
     <string name="enter_phone_number_text">Enter Your Phone Number</string>
     <string name="enter_phone_number_text_details">Sports Unity will send a one time SMS
 message to verify your phone number.

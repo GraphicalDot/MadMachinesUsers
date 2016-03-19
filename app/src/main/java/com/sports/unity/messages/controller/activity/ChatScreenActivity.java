@@ -110,7 +110,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             intent.putExtra("otherChat", otherChat);
             activity.startActivityForResult(intent, Constants.REQUEST_CODE_VIEW_PROFILE);
         } else {
-            Intent intent = new Intent(activity, GroupInfoActivity.class);
+            Intent intent = new Intent(activity, GroupDetailActivity.class);
             intent.putExtra("name", name);
             intent.putExtra("profilePicture", profilePicture);
             intent.putExtra("groupServerId", groupServerId);
@@ -963,11 +963,22 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-
         getMenuInflater().inflate(R.menu.menu_chat_screen, menu);
-
         this.menu = menu;
+
+        if( isGroupChat ) {
+            MenuItem viewGroupItem = menu.findItem(R.id.action_view_group);
+            viewGroupItem.setVisible(true);
+
+            MenuItem viewContactItem = menu.findItem(R.id.action_view_contact);
+            viewContactItem.setVisible(false);
+
+            MenuItem blockUserItem = menu.findItem(R.id.action_block_user);
+            blockUserItem.setVisible(false);
+        } else {
+            //nothing
+        }
+
 
         MenuItem deleteMessage = menu.findItem(R.id.delete);
         deleteMessage.setVisible(false);
@@ -1013,7 +1024,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_view_contact) {
+        if (id == R.id.action_view_contact || id == R.id.action_view_group) {
             viewProfile(ChatScreenActivity.this, chatID, userImageBytes, jabberName, groupServerId, jabberId, otherChat);
             return true;
         } else if (id == R.id.action_block_user) {
