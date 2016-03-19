@@ -137,7 +137,7 @@ public class XMPPService extends Service {
                 pendingIntent = getPendingIntentForChatActivity(context, groupName, groupServerId, chatId, SportsUnityDBHelper.getDummyContactRowId(), groupServerId, null, false);
             } else {
                 Contacts contact = sportsUnityDBHelper.getContactByJid(from);
-                pendingIntent = getPendingIntentForChatActivity(context, name, groupServerId, chatId, contact.id, groupServerId, contact.image, contact.isOthers());
+                pendingIntent = getPendingIntentForChatActivity(context, name, from, chatId, contact.id, groupServerId, contact.image, contact.isOthers());
             }
         }
 
@@ -503,7 +503,7 @@ public class XMPPService extends Service {
                 if (message.getBody() == null) {
                     PersonalMessaging.getInstance(getApplicationContext()).handleStatus(message);
                 } else {
-                    PersonalMessaging.getInstance(getApplicationContext()).handleChatMessage(getApplicationContext(), message, false);
+                    PersonalMessaging.getInstance(getApplicationContext()).handleChatMessage(getApplicationContext(), message);
                 }
 
             } else if (message.getType().equals(Message.Type.headline)) {

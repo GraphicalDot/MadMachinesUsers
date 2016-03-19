@@ -391,7 +391,7 @@ public class PersonalMessaging {
         ActivityActionHandler.getInstance().dispatchReceiptEvent(ActivityActionHandler.CHAT_SCREEN_KEY, receiptKind);
     }
 
-    public void handleChatMessage(Context context, Message message, boolean isGroupChat) {
+    public void handleChatMessage(Context context, Message message) {
         Object value = JivePropertiesManager.getProperty(message, Constants.PARAM_TIME);
         String fromId = message.getFrom().substring(0, message.getFrom().indexOf("@"));
         String to = message.getTo().substring(0, message.getTo().indexOf("@"));
@@ -407,23 +407,23 @@ public class PersonalMessaging {
 
         String groupServerId = null;
         String messageFrom = null;
-        if (isGroupChat) {
-            groupServerId = fromId;
-            messageFrom = message.getFrom().substring(message.getFrom().indexOf("/") + 1);
-
-            if (!to.equals(messageFrom)) {
-                chatId = XMPPService.getChatIdOrCreateIfNotExist( context, isGroupChat, messageFrom, groupServerId, false);
-                handleMessage(message, value, chatId, messageFrom, groupServerId, false);
-            } else {
-                success = false;
-            }
-        } else {
+//        if (isGroupChat) {
+//            groupServerId = fromId;
+//            messageFrom = message.getFrom().substring(message.getFrom().indexOf("/") + 1);
+//
+//            if (!to.equals(messageFrom)) {
+//                chatId = XMPPService.getChatIdOrCreateIfNotExist( context, isGroupChat, messageFrom, groupServerId, false);
+//                handleMessage(message, value, chatId, messageFrom, groupServerId, false);
+//            } else {
+//                success = false;
+//            }
+//        } else {
             groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
             messageFrom = fromId;
 
-            chatId = XMPPService.getChatIdOrCreateIfNotExist( context, isGroupChat, fromId, groupServerId, nearByChat);
+            chatId = XMPPService.getChatIdOrCreateIfNotExist( context, false, fromId, groupServerId, nearByChat);
             handleMessage(message, value, chatId, fromId, groupServerId, nearByChat);
-        }
+//        }
 
 
         if (success == true && chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
@@ -441,7 +441,7 @@ public class PersonalMessaging {
                         ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
                     }
                     byte[] image = contact.image;
-                    XMPPService.displayNotification(context, message.getBody(), messageFrom, mimeType, chatId, isGroupChat, groupServerId, image, contact.availableStatus);
+                    XMPPService.displayNotification(context, message.getBody(), messageFrom, mimeType, chatId, false, groupServerId, image, contact.availableStatus);
                 } catch (XMPPException.XMPPErrorException e) {
                     e.printStackTrace();
                 } catch (SmackException.NoResponseException e) {
