@@ -76,7 +76,7 @@ import java.util.Arrays;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class ChatScreenActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, XMPPConnectionListener {
+public class ChatScreenActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     public static final String INTENT_KEY_JID = "jid";
     public static final String INTENT_KEY_NAME = "name";
@@ -86,8 +86,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     public static final String INTENT_KEY_IMAGE = "image";
     public static final String INTENT_KEY_BLOCK_STATUS = "blockStatus";
     public static final String INTENT_KEY_NEARBY_CHAT = "nearbyChat";
-
-    private boolean isChatInitialized;
 
     public static Intent createChatScreenIntent(Context context, String jid, String name, long contactId, long chatId, String groupSeverId, byte[] userpicture, Boolean blockStatus, boolean othersChat) {
         Intent intent = new Intent(context, ChatScreenActivity.class);
@@ -160,24 +158,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     private PersonalMessaging personalMessaging = PersonalMessaging.getInstance(this);
     private PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance();
-
-    private GlobalEventListener globalEventListener = new GlobalEventListener() {
-
-        @Override
-        public void onInternetStateChanged(boolean connected) {
-            ChatScreenActivity.this.onInternetStateChanged(connected);
-        }
-
-        @Override
-        public void onXMPPServiceAuthenticated(boolean connected, XMPPConnection connection) {
-            ChatScreenActivity.this.onXMPPServiceAuthenticated(connected, connection);
-        }
-
-        @Override
-        public void onReconnecting(int seconds) {
-            ChatScreenActivity.this.onReconnecting(seconds);
-        }
-    };
 
     private ActivityActionListener activityActionListener = new ActivityActionListener() {
 
@@ -298,24 +278,26 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     protected void onDestroy() {
         ChatScreenApplication.activityDestroyed();
         AudioRecordingHelper.cleanUp();
-        XMPPConnectionUtil.getInstance().removeConnectionListener(XMPP_CONNECTION_KEY);
+//        XMPPConnectionUtil.getInstance().removeConnectionListener(XMPP_CONNECTION_KEY);
         super.onDestroy();
     }
 
     @Override
     protected void onPause() {
+        super.onPause();
+
         ChatScreenApplication.activityPaused();
         AudioRecordingHelper.getInstance(this).stopAndReleaseMediaPlayer();
-        super.onPause();
     }
 
     @Override
     public void onStop() {
+        super.onStop();
 
         ChatScreenApplication.activityStopped();
         ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, jabberId);
         GlobalEventHandler.getInstance().removeGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY);
-        super.onStop();
+
         /*if (XMPPClient.getInstance().isConnectionAuthenticated()) {
             try {
 
@@ -359,9 +341,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         super.onResume();
 
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, jabberId, activityActionListener);
-        GlobalEventHandler.getInstance().addGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY, globalEventListener);
+//        GlobalEventHandler.getInstance().addGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY, this);
         ChatScreenApplication.activityResumed();
-        XMPPConnectionUtil.getInstance().addConnectionListener(XMPP_CONNECTION_KEY, this);
+
+//        XMPPConnectionUtil.getInstance().addConnectionListener(XMPP_CONNECTION_KEY, this);
+
         NotificationHandler.dismissNotification(getBaseContext());
         NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatID));
 
@@ -372,6 +356,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     @Override
     protected void onStart() {
         super.onStart();
+
+        XMPPConnectionUtil.getInstance().requestConnection(getApplicationContext());
     }
 
     @Override
@@ -423,15 +409,20 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         mSend = (Button) findViewById(R.id.send);
         mSend.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
 
-        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
-
-            Log.d("dmax", "Already Connected CHat");
-            isChatInitialized = true;
-            getChatThread();
+        if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+            isGroupChat = false;
         } else {
-            isChatInitialized = false;
-            XMPPConnectionUtil.getInstance().requestConnection();
+            isGroupChat = true;
         }
+
+//        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+//            Log.d("dmax", "Already Connected CHat");
+//            isChatInitialized = true;
+//            getChatThread();
+//        } else {
+//            isChatInitialized = false;
+//            XMPPConnectionUtil.getInstance().requestConnection();
+//        }
 
         populateMessagesOnScreen();
         setEventListeners(mHandler);
@@ -545,14 +536,13 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void getChatThread() {
-        if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+        if ( isGroupChat == false ) {
             ChatManager chatManager = ChatManager.getInstanceFor(XMPPClient.getConnection());
             chat = chatManager.getThreadChat(jabberId + "@mm.io");
             if (chat == null) {
                 chat = chatManager.createChat(jabberId + "@mm.io");
             }
         } else {
-            isGroupChat = true;
             pubSubMessaging.initGroupChat(jabberId);
         }
     }
@@ -1146,35 +1136,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         }
     }
 
-    public void onInternetStateChanged(boolean connected) {
-
-    }
-
-    public void onXMPPServiceAuthenticated(boolean connected, XMPPConnection connection) {
-        if (connected) {
-            if (!isGroupChat) {
-                if (isLastTimeRequired) {
-                    personalMessaging.getLastTime(jabberId);
-                    isLastTimeRequired = false;
-                } else {
-                    //nothing
-                }
-                if (isRoasterEntryRequired) {
-                    createRosterEntry();
-                    isRoasterEntryRequired = false;
-                } else {
-                    //nothing;
-                }
-            } else {
-                //TODO
-            }
-        }
-    }
-
-    public void onReconnecting(int seconds) {
-        Log.d("dmax", "reconnecting in" + seconds);
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -1200,16 +1161,37 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     @Override
-    public void onSuccessfulConnection(XMPPTCPConnection connection) {
-        if (!isChatInitialized) {
-            Log.d("dmax", "on reconnect Connected CHat");
-            isChatInitialized = true;
-            getChatThread();
-        }
+    public void onReconnecting(int seconds) {
+        super.onReconnecting(seconds);
     }
 
     @Override
-    public void onConnectionLost() {
-        isChatInitialized = false;
+    public void onInternetStateChanged(boolean connected) {
+
     }
+
+    @Override
+    public void onXMPPServiceAuthenticated(boolean connected, XMPPConnection connection) {
+        if (connected) {
+            getChatThread();
+
+            if (!isGroupChat) {
+                if (isLastTimeRequired) {
+                    personalMessaging.getLastTime(jabberId);
+                    isLastTimeRequired = false;
+                } else {
+                    //nothing
+                }
+                if (isRoasterEntryRequired) {
+                    createRosterEntry();
+                    isRoasterEntryRequired = false;
+                } else {
+                    //nothing;
+                }
+            } else {
+                //TODO
+            }
+        }
+    }
+
 }

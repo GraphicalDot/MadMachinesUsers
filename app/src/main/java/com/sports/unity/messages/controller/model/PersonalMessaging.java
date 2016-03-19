@@ -126,17 +126,18 @@ public class PersonalMessaging {
     }
 
     private String sendMessage(Message message, Chat chat, String currentTime, String mimeType, boolean otherChat) {
-        JivePropertiesManager.addProperty(message, Constants.PARAM_TIME, currentTime);
-        JivePropertiesManager.addProperty(message, Constants.PARAM_MIME_TYPE, mimeType);
-        if (otherChat) {
-            JivePropertiesManager.addProperty(message, Constants.PARAM_CHAT_TYPE_OTHERS, otherChat);
-        }
-
-        DeliveryReceiptRequest.addTo(message);
-        String id = message.getStanzaId();
+        String id = null;
         try {
+            JivePropertiesManager.addProperty(message, Constants.PARAM_TIME, currentTime);
+            JivePropertiesManager.addProperty(message, Constants.PARAM_MIME_TYPE, mimeType);
+            if (otherChat) {
+                JivePropertiesManager.addProperty(message, Constants.PARAM_CHAT_TYPE_OTHERS, otherChat);
+            }
+
+            DeliveryReceiptRequest.addTo(message);
+            id = message.getStanzaId();
             chat.sendMessage(message);
-        } catch (SmackException.NotConnectedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return id;
@@ -144,22 +145,24 @@ public class PersonalMessaging {
 
     public void sendStatus(ChatState newState, Chat chat) {
 
-        if (chat == null || newState == null) {
-            throw new IllegalArgumentException("Arguments cannot be null.");
-        }
+//        if (chat == null || newState == null) {
+//            throw new IllegalArgumentException("Arguments cannot be null.");
+//        }
 
-        if (!updateChatState(chat, newState)) {
-            return;
-        }
-
-        Message message = new Message();
-        long time = CommonUtil.getCurrentGMTTimeInEpoch();
-        JivePropertiesManager.addProperty(message, Constants.PARAM_TIME, time);
-        ChatStateExtension extension = new ChatStateExtension(newState);
-        message.addExtension(extension);
         try {
+
+            if (!updateChatState(chat, newState)) {
+                return;
+            }
+
+            Message message = new Message();
+            long time = CommonUtil.getCurrentGMTTimeInEpoch();
+            JivePropertiesManager.addProperty(message, Constants.PARAM_TIME, time);
+            ChatStateExtension extension = new ChatStateExtension(newState);
+            message.addExtension(extension);
+
             chat.sendMessage(message);
-        } catch (SmackException.NotConnectedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

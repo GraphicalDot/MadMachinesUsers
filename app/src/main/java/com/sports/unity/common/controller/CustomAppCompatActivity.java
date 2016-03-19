@@ -22,6 +22,9 @@ public class CustomAppCompatActivity extends AppCompatActivity implements Global
     @Override
     protected void onStart() {
         super.onStart();
+
+        GlobalEventHandler.getInstance().addGlobalEventListener(NETWORK_STATE_ACTIVITY_TAG, this);
+
         activityCounter++;
         if (activityCounter == 1) {
             /*if (XMPPClient.getInstance().isConnectionAuthenticated()) {
@@ -32,7 +35,6 @@ public class CustomAppCompatActivity extends AppCompatActivity implements Global
             } else {
                 isPingRequired = false;
             }*/
-            GlobalEventHandler.getInstance().addGlobalEventListener(NETWORK_STATE_ACTIVITY_TAG, this);
             PersonalMessaging.getInstance(this).sendOnlinePresence();
         }
     }
@@ -97,4 +99,5 @@ public class CustomAppCompatActivity extends AppCompatActivity implements Global
     public void onReconnecting(int seconds) {
 
     }
+
 }
