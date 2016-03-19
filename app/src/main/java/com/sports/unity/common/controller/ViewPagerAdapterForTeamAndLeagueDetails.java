@@ -27,9 +27,9 @@ public class ViewPagerAdapterForTeamAndLeagueDetails extends FragmentStatePagerA
     private int numberOfTabs;
     private boolean enabled = true;
 
-    private String id = null;
-    private String name = null;
-    private String type = null;
+    private String id;
+    private String name;
+    private String type;
 
     String titlesLeague[] = {"Table","Fixture","News"};
     String titlesTeam[] = {"News","Fixture","Table","Squad"};

@@ -161,6 +161,9 @@
             android:name=".playerprofile.cricket.PlayerCricketBioDataActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
+        <activity android:name=".playerprofile.football.PlayerProfileView"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme" />
     </application>
 
 </manifest>
