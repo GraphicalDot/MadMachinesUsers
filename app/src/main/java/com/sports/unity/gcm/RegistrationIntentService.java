@@ -4,10 +4,12 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -49,10 +51,10 @@ public class RegistrationIntentService extends IntentService implements TokenReg
             String uuid = getUUID();
             Log.i("Token", "onHandleIntent: " + token);
             if(preferences!=null){
-                    registerToken(token,uuid);
-                 }
+                registerToken(token,uuid);
+            }
 
-      }
+        }
         catch (IOException e)
         {
             preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
@@ -138,25 +140,33 @@ public class RegistrationIntentService extends IntentService implements TokenReg
 
     private void sendNotification(String message) {
 
-        String ns = Context.NOTIFICATION_SERVICE;
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(this)
+                        .setSmallIcon(R.drawable.ic_blank_img)
+                        .setContentTitle("My notification")
+                        .setContentText("Hello World!");
+// Creates an explicit intent for an Activity in your app
+        Intent resultIntent = new Intent(this, ScoreDetailActivity.class);
 
-        int icon = R.drawable.tour_icon;
-        long when = System.currentTimeMillis();
-        Notification notification = new Notification(icon, message, when);
-        mNotificationManager = (NotificationManager) getSystemService(ns);
-        RemoteViews contentView = new RemoteViews(getPackageName(), R.layout.push_notification_layout);
-        contentView.setImageViewResource(R.id.iv_player, R.drawable.ic_cricket);
-        contentView.setTextViewText(R.id.tv_notification_subject, message);
-        contentView.setTextViewText(R.id.tv_notification_content, message);
-        contentView.setTextViewText(R.id.tv_current_time, DateUtil.getCurrentTime());
-        contentView.setImageViewResource(R.id.iv_notification_icon, R.drawable.ic_cricket);
-        notification.contentView = contentView;
-        Intent notificationIntent = new Intent(this, ScoreDetailActivity.class);
-        notificationIntent.putExtra(Constants.INTENT_KEY_ID,1);
-        PendingIntent contentIntent = PendingIntent.getActivity(this,0, notificationIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-        notification.contentIntent = contentIntent;
-        mNotificationManager.notify(0, notification);
-
+// The stack builder object will contain an artificial back stack for the
+// started Activity.
+// This ensures that navigating backward from the Activity leads out of
+// your application to the Home screen.
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+// Adds the back stack for the Intent (but not the Intent itself)
+        stackBuilder.addParentStack(ScoreDetailActivity.class);
+// Adds the Intent that starts the Activity to the top of the stack
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent resultPendingIntent =
+                stackBuilder.getPendingIntent(
+                        0,
+                        PendingIntent.FLAG_UPDATE_CURRENT
+                );
+        mBuilder.setContentIntent(resultPendingIntent);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+// mId allows you to update the notification later on.
+        mNotificationManager.notify(0, mBuilder.build());
 
 
 
