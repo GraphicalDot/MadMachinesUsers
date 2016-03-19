@@ -94,4 +94,5 @@ public class Constants {
     public static final long TIMEINMILISECOND = 600;
     public static final String ERRORRESPONSE ="{\"success\":false,\"error\":true}";
     public static final String SENT_TOKEN_TO_SERVER ="sent_token_to_server" ;
+    public static final String TOKEN_PARAM ="token" ;
 }

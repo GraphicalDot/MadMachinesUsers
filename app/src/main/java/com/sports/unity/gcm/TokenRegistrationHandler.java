@@ -10,11 +10,23 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.sports.unity.BuildConfig;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.util.Constants;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+
+import static com.sports.unity.common.model.TinyDB.KEY_PASSWORD;
+import static com.sports.unity.common.model.TinyDB.KEY_USER_JID;
+import static com.sports.unity.common.model.TinyDB.getInstance;
+import static com.sports.unity.scores.model.ScoresContentHandler.PARAM_PASSWORD;
+import static com.sports.unity.scores.model.ScoresContentHandler.PARAM_USERNAME;
+import static com.sports.unity.util.CommonUtil.getBuildConfig;
+import static com.sports.unity.util.CommonUtil.getDeviceId;
+import static com.sports.unity.util.Constants.REQUEST_PARAMETER_KEY_APK_VERSION;
+import static com.sports.unity.util.Constants.REQUEST_PARAMETER_KEY_UDID;
+import static com.sports.unity.util.Constants.TOKEN_PARAM;
 
 /**
  * Created by madmachines on 17/3/16.
@@ -62,7 +74,7 @@ public class TokenRegistrationHandler {
         }
     };
 
-    public void registrerToken(final String username, final String password, final String token, final String uuid) {
+    public void registrerToken(final String token) {
         Log.i("Register Token", "Register Token");
         String url = getGeneratedUrl(SET_ANDROID_TOKEN);
         RequestQueue queue = Volley.newRequestQueue(mContext);
@@ -70,11 +82,11 @@ public class TokenRegistrationHandler {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, responseListener_ForLoadContent,responseListener_ForLoadContent){
             protected Map<String, String> getParams() {
             Map<String, String> params = new HashMap<>();
-                params.put("username", username);
-                params.put("password", password);
-                params.put("token", token);
-                params.put("apk_version", BuildConfig.VERSION_NAME);
-                params.put("udid", uuid);
+                params.put(PARAM_USERNAME, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
+                params.put(PARAM_PASSWORD, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
+                params.put(TOKEN_PARAM, token);
+                params.put(REQUEST_PARAMETER_KEY_APK_VERSION, getBuildConfig());
+                params.put(REQUEST_PARAMETER_KEY_UDID, getDeviceId(mContext));
           return params;
         };
         };
@@ -82,17 +94,17 @@ public class TokenRegistrationHandler {
         requestInProcess.add(REQUEST_TAG);
     }
 
-    public void removeToken(final String username, final String password, final String udid) {
+    public void removeToken() {
         Log.i("Remove Token", "Remove Token");
         String url = getGeneratedUrl(REMOVE_ANDROID_TOKEN);
         RequestQueue queue = Volley.newRequestQueue(mContext);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, responseListener_ForLoadContent,responseListener_ForLoadContent){
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put("username", username);
-                params.put("password", password);
-                params.put("apk_version", BuildConfig.VERSION_NAME);
-                params.put("udid", udid);
+                params.put(PARAM_USERNAME, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
+                params.put(PARAM_PASSWORD, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
+                params.put(REQUEST_PARAMETER_KEY_APK_VERSION, getBuildConfig());
+                params.put(REQUEST_PARAMETER_KEY_UDID, getDeviceId(mContext));
                 return params;
             };
         };

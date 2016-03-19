@@ -12,12 +12,15 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.View;
 import android.widget.RemoteViews;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
+import com.sports.unity.BuildConfig;
 import com.sports.unity.R;
 import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
 
@@ -25,6 +28,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+
+import static com.sports.unity.util.Constants.INTENT_KEY_TYPE;
 
 /**
  * Created by madmachines on 17/3/16.
@@ -48,10 +53,9 @@ public class RegistrationIntentService extends IntentService implements TokenReg
         try
         {
             String token = getToken();
-            String uuid = getUUID();
             Log.i("Token", "onHandleIntent: " + token);
             if(preferences!=null){
-                registerToken(token,uuid);
+                registerToken(token);
             }
 
         }
@@ -61,10 +65,7 @@ public class RegistrationIntentService extends IntentService implements TokenReg
         }
     }
 
-    private String getUUID() {
-        TelephonyManager tManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-        return tManager.getDeviceId();
-    }
+
 
     private String getToken() throws IOException {
         InstanceID instanceID = InstanceID.getInstance(this);
@@ -75,12 +76,12 @@ public class RegistrationIntentService extends IntentService implements TokenReg
      * @param token
      * @return
      */
-    public void registerToken(String token,String uuid)
+    public void registerToken(String token)
     {
 
         tokenRegistrationHandler = TokenRegistrationHandler.getInstance(getApplicationContext());
         tokenRegistrationHandler.addListener(this);
-        tokenRegistrationHandler.registrerToken(userName, password, token, uuid);
+        tokenRegistrationHandler.registrerToken(token);
     }
 
 
@@ -89,34 +90,9 @@ public class RegistrationIntentService extends IntentService implements TokenReg
 
         tokenRegistrationHandler = TokenRegistrationHandler.getInstance(getApplicationContext());
         tokenRegistrationHandler.addListener(this);
-        tokenRegistrationHandler.removeToken(userName, password, uuid);
+        tokenRegistrationHandler.removeToken();
     }
-
-
-
-    /*@Override
-    public void onDestroy() {
-        super.onDestroy();
-        try
-        {
-
-            String uuid = getUUID();
-            Log.i("Token", "onHandleIntent: " + uuid);
-            if(preferences!=null){
-                boolean sentToken= preferences.getBoolean(Constants.SENT_TOKEN_TO_SERVER,false);
-                if(sentToken){
-                    removeToken(uuid);
-                }
-            }
-
-        }
-        catch (Exception e)
-        {
-            preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
-        }
-    }
-*/
-    @Override
+   @Override
     public void handleContent(String content) {
         try {
             JSONObject object = new JSONObject(content);
@@ -124,6 +100,7 @@ public class RegistrationIntentService extends IntentService implements TokenReg
                 if("success".equalsIgnoreCase(object.getString("info"))) {
                     preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, true).apply();
                     sendNotification("Notification");
+
                 }else{
                     preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
                 }
@@ -138,34 +115,39 @@ public class RegistrationIntentService extends IntentService implements TokenReg
         }
     }
 
-    private void sendNotification(String message) {
 
+
+
+private void sendNotification(String message) {
+    RemoteViews contentView = new RemoteViews(getPackageName(),
+            R.layout.push_notification_layout);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_blank_img)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
-// Creates an explicit intent for an Activity in your app
-        Intent resultIntent = new Intent(this, ScoreDetailActivity.class);
-
-// The stack builder object will contain an artificial back stack for the
-// started Activity.
-// This ensures that navigating backward from the Activity leads out of
-// your application to the Home screen.
+                        .setSmallIcon(R.drawable.ic_selected_sports)
+                        .setContentTitle(getString(R.string.app_name))
+                        .setContentText(getString(R.string.app_name));
+        Intent i = new Intent(this, ScoreDetailActivity.class);
+        i.putExtra(INTENT_KEY_TYPE, Constants.SPORTS_TYPE_CRICKET);
+        i.putExtra(Constants.INTENT_KEY_ID, "icc_wc_t20_2016_g19");
+        i.putExtra(Constants.INTENT_KEY_MATCH_STATUS, "notstarted");
+        i.putExtra(Constants.INTENT_KEY_MATCH_LIVE, false);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-// Adds the back stack for the Intent (but not the Intent itself)
         stackBuilder.addParentStack(ScoreDetailActivity.class);
-// Adds the Intent that starts the Activity to the top of the stack
-        stackBuilder.addNextIntent(resultIntent);
+        stackBuilder.addNextIntent(i);
         PendingIntent resultPendingIntent =
                 stackBuilder.getPendingIntent(
                         0,
                         PendingIntent.FLAG_UPDATE_CURRENT
                 );
-        mBuilder.setContentIntent(resultPendingIntent);
+            mBuilder.setContentIntent(resultPendingIntent);
+           // mBuilder.setContent(contentView);
+            contentView.setImageViewResource(R.id.iv_player, R.drawable.ic_cricket);
+            contentView.setTextViewText(R.id.tv_notification_subject, message);
+            contentView.setTextViewText(R.id.tv_notification_content, message);
+            contentView.setTextViewText(R.id.tv_current_time, DateUtil.getCurrentTime());
+            contentView.setImageViewResource(R.id.iv_notification_icon, R.drawable.ic_flash_on);
         NotificationManager mNotificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-// mId allows you to update the notification later on.
         mNotificationManager.notify(0, mBuilder.build());
 
 

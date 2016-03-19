@@ -208,7 +208,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LONGITUDE, place.getLatLng().longitude);
                 titleAddress.setText(place.getAddress());
                 titleCity.setText(place.getName());
+                latLong = place.getLatLng();
                 //getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
+                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
             }
 
             @Override
@@ -301,31 +303,32 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                     seekBar.setProgress(0);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_01));
                     radius = 1000;
-//                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+
+                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else if (progress >= 0 * stepRange + stepRange / 2 && progress <= 0 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(1 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_05));
                     radius = 5000;
-//                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else if (progress >= 1 * stepRange + stepRange / 2 && progress <= 1 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(2 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_20));
                     radius = 20000;
-//                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else if (progress >= 2 * stepRange + stepRange / 2 && progress <= 2 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(3 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_30));
                     radius = 30000;
-//                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else {
                     seekBar.setProgress(4 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_40));
                     radius = 40000;
-//                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 }
             }
@@ -351,7 +354,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
     private void plotMarkers(List<Person> persons, String sportSelection) {
         ArrayList<Marker> markers = new ArrayList<>();
-        Log.i("plottingmarkers", "true");
+        Log.i("plotting markers", "true");
         mClusterManager.clearItems();
         mClusterManager.addItems(persons);
         mClusterManager.cluster();
@@ -766,6 +769,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         goToLocationSettings.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
     }
+
+
+
 
     private void getLocation() {
         Log.i("gettingLocation", "true");
