@@ -17,6 +17,7 @@ public class Constants {
     public static final String INTENT_KEY_PHONE_NUMBER = "PHONE_NUMBER";
     public static final String INTENT_KEY_ROOM_NAME = "ROOM_NAME";
     public static final String INTENT_KEY_CONTACT_FRAGMENT_USAGE = "CONTACT_FRAGMENT_USAGE";
+    public static final String INTENT_KEY_FRIENDS_FRAGMENT_USAGE = "FRIENDS_FRAGMENT_USAGE";
     public static final String INTENT_KEY_SEARCH_ON = "SEARCH_ON";
     public static final String INTENT_FORWARD_SELECTED_IDS = "get_the _selected_ids";
     public static final String INTENT_KEY_ADDED_MEMBERS = "added_members";
@@ -81,11 +82,11 @@ public class Constants {
     public static final int REQUEST_CODE_GALLERY_STORAGE_PERMISSION = 105;
     public static final int REQUEST_CODE_RECORD_AUDIO_PERMISSION = 106;
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 107;
-    public static final String PLAYER_NAME ="player_name" ;
+    public static final String PLAYER_NAME = "player_name";
     public static final String INTENT_KEY_TOSS = "toss";
     public static final String INTENT_KEY_MATCH_NAME = "match_name";
     public static final String INTENT_KEY_DATE = "date";
-    public static final String INTENT_KEY_MATCH_TIME ="match_time" ;
+    public static final String INTENT_KEY_MATCH_TIME = "match_time";
     public static final String INTENT_KEY_MATCH_LIVE = "isLive";
     public static final String INTENT_KEY_TEAM1_ID = "team1_id";
     public static final String INTENT_KEY_TEAM2_ID = "team2_id";
@@ -93,5 +94,5 @@ public class Constants {
     public static final String INTENT_KEY_TEAM1_NAME = "team1";
     public static final String INTENT_KEY_TEAM2_NAME = "team2";
     public static final long TIMEINMILISECOND = 600;
-    public static final String ERRORRESPONSE ="{\"success\":false,\"error\":true}";
+    public static final String ERRORRESPONSE = "{\"success\":false,\"error\":true}";
 }

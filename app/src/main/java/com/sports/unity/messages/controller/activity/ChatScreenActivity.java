@@ -11,6 +11,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -29,8 +30,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sports.unity.ChatScreenApplication;
+import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -46,6 +49,7 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
+import com.sports.unity.messages.controller.model.ShareableData;
 import com.sports.unity.messages.controller.model.ToolbarActionsForChatScreen;
 import com.sports.unity.messages.controller.viewhelper.AudioRecordingHelper;
 import com.sports.unity.messages.controller.viewhelper.ChatKeyboardHelper;
@@ -421,7 +425,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
         if (XMPPClient.getInstance().isConnectionAuthenticated()) {
 
-            Log.d("dmax","Already Connected CHat");
+            Log.d("dmax", "Already Connected CHat");
             isChatInitialized = true;
             getChatThread();
         } else {
@@ -447,9 +451,9 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void checkForwardMessageQueue() {
-        ArrayList<Integer> selectedMessageIds = getIntent().getIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS);
-        if (selectedMessageIds != null) {
-            ForwardMessages(selectedMessageIds);
+        ArrayList<ShareableData> messageList = getIntent().getParcelableArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS);
+        if (messageList != null) {
+            ForwardMessages(messageList);
         }
     }
 
@@ -620,28 +624,32 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
 
-    private void ForwardMessages(ArrayList<Integer> intArrayExtra) {
-        ArrayList<Message> listOfMessages = new ArrayList<>();
-        for (int id : intArrayExtra) {
-            Message message = sportsUnityDBHelper.getMessage(id);
-            listOfMessages.add(message);
-        }
+    private void ForwardMessages(ArrayList<ShareableData> messageList) {
 
-        for (Message message : listOfMessages) {
-            if (message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
-                sendMessage(message.textData);
-            } else if (message.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_STICKER)) {
-                handleSendingMediaContent(message.mimeType, message.textData, null, null);
-            } else {
-                String thumbnailImage = null;
-                if (message.media != null) {
-                    thumbnailImage = Base64.encodeToString(message.media, Base64.DEFAULT);
+        for (ShareableData parcelableData : messageList) {
+            if (parcelableData.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_TEXT)) {
+                sendMessage(parcelableData.textData);
+            } else if (parcelableData.mimeType.equals(sportsUnityDBHelper.MIME_TYPE_STICKER)) {
+                handleSendingMediaContent(parcelableData.mimeType, parcelableData.textData, null, null);
+            } else if (parcelableData.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
+                if (parcelableData.pathOrFileNameForMedia != null) {
+                    handleSendingMediaContent(parcelableData.mimeType, parcelableData.pathOrFileNameForMedia, null, null);
                 }
-
-                handleSendingMediaContent(message.mimeType, message.mediaFileName, null, thumbnailImage);
+            } else {
+                if (parcelableData.pathOrFileNameForMedia != null) {
+                    String thumbnailImage = null;
+                    thumbnailImage = PersonalMessaging.createThumbnailImageAsBase64(getApplicationContext(),
+                            parcelableData.mimeType, parcelableData.pathOrFileNameForMedia);
+                    handleSendingMediaContent(parcelableData.mimeType, parcelableData.pathOrFileNameForMedia, null, thumbnailImage);
+                }
             }
         }
+        updateMessageList();
 
+        int filesNotSent = getIntent().getIntExtra(ForwardSelectedItems.KEY_FILES_NOT_SENT, 0);
+        if (filesNotSent > 0) {
+            Toast.makeText(getApplicationContext(), getResources().getQuantityString(R.plurals.file_count, filesNotSent, filesNotSent), Toast.LENGTH_LONG).show();
+        }
     }
 
     private void populateMessagesOnScreen() {
@@ -1194,7 +1202,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     @Override
     public void onSuccessfulConnection(XMPPTCPConnection connection) {
         if (!isChatInitialized) {
-            Log.d("dmax","on reconnect Connected CHat");
+            Log.d("dmax", "on reconnect Connected CHat");
             isChatInitialized = true;
             getChatThread();
         }

@@ -34,8 +34,8 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
     private ArrayList<String> previouslySelectedMembersList = new ArrayList<>();
     private ArrayList<Contacts> selectedMemberList;
     private ArrayList<Contacts> inUseContactListForAdapter;
-
-    private int frequentContactCount = 0;
+    private Button invite;
+    int registeredContactCount = 0;
 
     private int itemLayoutId = 0;
     private boolean multipleSelection = false;
@@ -44,14 +44,14 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
     private ArrayList<Contacts> finalContact;
     private ArrayList<Contacts> usedContact;
 
-    public ContactListAdapter(Activity context, int resource, ArrayList<Contacts> list, boolean multipleSelection, int frequentContactCount, ArrayList<Contacts> selectedMembersList) {
+    public ContactListAdapter(Activity context, int resource, ArrayList<Contacts> list, boolean multipleSelection, int registeredContactCount, ArrayList<Contacts> selectedMembersList) {
         super(context, resource, list);
         this.context = context;
         this.inUseContactListForAdapter = list;
         itemLayoutId = resource;
         this.multipleSelection = multipleSelection;
         inflater = context.getLayoutInflater();
-        this.frequentContactCount = frequentContactCount;
+        this.registeredContactCount = registeredContactCount;
         this.selectedMemberList = selectedMembersList;
         contactFilter = new ItemFilter();
         usedContact = finalContact = list;
@@ -183,8 +183,8 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
             holder = (HeaderViewHolder) convertView.getTag();
         }
         if (usedContact.size() == finalContact.size()) {
-            if (position < frequentContactCount) {
-                headerText = "Recents";
+            if (position >= registeredContactCount) {
+                headerText = "Invite People to Sports Unity";
             } else {
                 headerText = "" + getHeader(position);
             }
@@ -198,7 +198,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
     @Override
     public long getHeaderId(int position) {
         if (usedContact.size() == finalContact.size()) {
-            if (position < frequentContactCount) {
+            if (position >= registeredContactCount) {
                 return (long) 0.0;
             } else {
                 return getHeader(position);
@@ -275,8 +275,9 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
         }
 
     }
-    public void refreshContacts(){
-        usedContact=finalContact;
+
+    public void refreshContacts() {
+        usedContact = finalContact;
         this.notifyDataSetChanged();
     }
 }

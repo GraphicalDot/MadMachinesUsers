@@ -35,6 +35,7 @@
     <string name="openDrawer">openDrawer</string>
     <string name="closeDrawer">closeDrawer</string>
     <string name="title_activity_create_group">CreateGroup</string>
+    <string name="contacts_empty">Your contact list is empty, please add some contacts</string>
     <string name="start_messaging">To start messaging contacts who have Sports Unity, tap on contacts and get started</string>
     <string name="start_messaging_others">To start messaging contacts who have Sports Unity, people around me and get started</string>
     <string name="btn_invite">invite</string>
@@ -403,4 +404,8 @@ Carrier SMS charges may apply.</string>
     <string name="mins">MINS</string>
     <string name="on_going">On Going</string>
     <string name="half_time">Half Time</string>
+    <plurals name="file_count">
+        <item quantity="one">%d file was not sent, file size was too large</item>
+        <item quantity="other">%d files were not sent, file sizes were too large</item>
+    </plurals>
 </resources>

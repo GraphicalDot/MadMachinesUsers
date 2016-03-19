@@ -5,22 +5,16 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,17 +25,15 @@ import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
-import com.sports.unity.messages.controller.model.Chats;
+import com.sports.unity.messages.controller.activity.ForwardSelectedItems;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.messages.controller.model.ShareableData;
 import com.sports.unity.messages.controller.model.ToolbarActionsForChatScreen;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Arrays;
 
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
@@ -55,7 +47,8 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
     public static int USAGE_FOR_MEMBERS = 1;
     public static int USAGE_FOR_FORWARD = 2;
 
-    private int frequentContactCount = 0;
+    private int registeredContactCount = 0;
+
     private int usageIn = 0;
 
     private ArrayList<Contacts> selectedMembersList = new ArrayList<>();
@@ -146,7 +139,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             AlertDialog.Builder build = new AlertDialog.Builder(
                     getActivity());
             build.setMessage(
-                    "Forward to " + contact.name + " ?");
+                    "Send to " + contact.name + " ?");
             build.setPositiveButton("ok",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -183,8 +176,9 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             } else {
                 Intent chatScreenIntent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, userPicture, blockStatus, contact.isOthers());
 
-                ArrayList<Integer> selectedIds = getArguments().getIntegerArrayList(Constants.INTENT_FORWARD_SELECTED_IDS);
-                chatScreenIntent.putIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS, selectedIds);
+                ArrayList<ShareableData> dataArrayList = getArguments().getParcelableArrayList(Constants.INTENT_FORWARD_SELECTED_IDS);
+                chatScreenIntent.putParcelableArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS, dataArrayList);
+                chatScreenIntent.putExtra(ForwardSelectedItems.KEY_FILES_NOT_SENT, getArguments().getInt(ForwardSelectedItems.KEY_FILES_NOT_SENT));
 
                 chatScreenIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(chatScreenIntent);
@@ -296,40 +290,43 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             titleLayout = (ViewGroup) v.findViewById(R.id.title_layout_for_members_list);
             titleLayout.setVisibility(View.VISIBLE);
 
+            registeredContactCount = contactList.size();
             multipleSelection = true;
         } else if (usageIn == USAGE_FOR_CONTACTS) {
             resource = R.layout.list_contact_msgs;
             itemListener = contactItemListener;
 
-            contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList_AvailableOnly(true);
-            ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(Contacts.AVAILABLE_BY_MY_CONTACTS);
+//            contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList_AvailableOnly(true);
+//            ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatList(Contacts.AVAILABLE_BY_MY_CONTACTS);
+            contactList = SportsUnityDBHelper.getInstance(getActivity()).getContactList(true);
+            ArrayList<Contacts> unregisteredContacts = SportsUnityDBHelper.getInstance(getActivity()).getContactList(false);
             {
                 /**
                  * Frequent Contacts + default contact list
                  */
-                ArrayList<Contacts> frequentContacts = new ArrayList<>();
+                ArrayList<Contacts> registeredContacts = new ArrayList<>();
                 ArrayList<Contacts> allContacts = new ArrayList<>();
 
                 allContacts.addAll(contactList);
 
-                frequentContactCount = 0;
+                registeredContactCount = contactList.size();
 
-                for (int i = 0; i < chatList.size(); i++) {
-                    if (chatList.get(i).groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
-                        if (frequentContactCount == 10) {
-                            break;
-                        } else {
-                            frequentContacts.add(SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatList.get(i).contactId));
-                            ++frequentContactCount;
-                        }
-                    } else {
-                        // nothing
-                    }
-                }
+//                for (int i = 0; i < chatList.size(); i++) {
+//                    if (chatList.get(i).groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+//                        if (registeredContactCount == 10) {
+//                            break;
+//                        } else {
+//                            frequentContacts.add(SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatList.get(i).contactId));
+//                            ++registeredContactCount;
+//                        }
+//                    } else {
+//                        // nothing
+//                    }
+//                }
 
-                contactList.clear();
-                contactList.addAll(frequentContacts);
-                contactList.addAll(allContacts);
+//                contactList.clear();
+//                contactList.addAll(contactList);
+                contactList.addAll(unregisteredContacts);
             }
             searchView.setVisibility(View.GONE);
         } else if (usageIn == USAGE_FOR_FORWARD) {
@@ -340,9 +337,11 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
             multipleSelection = false;
             searchView.setVisibility(View.GONE);
+
+            registeredContactCount = contactList.size();
         }
 
-        ContactListAdapter adapter = new ContactListAdapter(getActivity(), resource, contactList, multipleSelection, frequentContactCount, selectedMembersList);
+        ContactListAdapter adapter = new ContactListAdapter(getActivity(), resource, contactList, multipleSelection, registeredContactCount, selectedMembersList);
         if (usageIn == USAGE_FOR_MEMBERS) {
             ArrayList<String> previouslySelectedMembersList = getArguments().getStringArrayList(Constants.INTENT_KEY_ADDED_MEMBERS);
             adapter.setPreviouslySelectedMembersList(previouslySelectedMembersList);
@@ -353,6 +352,8 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             //nothing
         }
         contacts.setAdapter(adapter);
+        contacts.setEmptyView(v.findViewById(R.id.contact_empty));
+
         contacts.setOnItemClickListener(itemListener);
     }
 

@@ -1,5 +1,6 @@
 package com.sports.unity.messages.controller.fragment;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -11,17 +12,21 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
+import com.sports.unity.messages.controller.activity.ForwardSelectedItems;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.messages.controller.model.ShareableData;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
+import com.sports.unity.util.Constants;
 import com.sports.unity.util.NotificationHandler;
 
 import org.jivesoftware.smack.SmackException;
@@ -40,47 +45,111 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
     private View view;
     private ChatFragmentDialogListAdapter chatFragmentDialogListAdapter;
 
+    public static int USAGE_FOR_CHAT = 0;
+    public static int USAGE_FOR_SHARE_OR_FORWARD = 1;
+
+    private int usageFor = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_others, container, false);
+        if (getArguments() != null) {
+            usageFor = getArguments().getInt(Constants.INTENT_KEY_FRIENDS_FRAGMENT_USAGE);
+        }
         initContent(view);
         return view;
     }
 
+    private AdapterView.OnItemLongClickListener openContactOptions = new AdapterView.OnItemLongClickListener() {
+
+        @Override
+        public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+            ArrayList<Chats> chatList = ((ChatListAdapter) otherChatListView.getAdapter()).getChatArrayList();
+            Chats chatObject = chatList.get(position);
+
+            int tag = 0;
+            if (chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+                tag = 0;
+            } else {
+                tag = 1;
+            }
+
+            showDialogWindow(position, tag, chatObject);
+            return true;
+        }
+
+    };
+
+    private AdapterView.OnItemClickListener openchat = new AdapterView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            moveToNextActivity(position, null);
+        }
+
+    };
+
+    private AdapterView.OnItemClickListener openChatAndShareContent = new AdapterView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+
+            ArrayList<Chats> chatList = ((ChatListAdapter) otherChatListView.getAdapter()).getChatArrayList();
+            Chats chatObject = chatList.get(position);
+
+            AlertDialog.Builder build = new AlertDialog.Builder(
+                    getActivity());
+            build.setMessage(
+                    "Send to " + chatObject.name + " ?");
+            build.setPositiveButton("ok",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            ShareContent(position);
+                        }
+                    });
+            build.setNegativeButton("Cancel",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            // Do nothing
+                        }
+                    });
+            AlertDialog dialog = build.create();
+            dialog.show();
+        }
+
+    };
+
+    private void ShareContent(int position) {
+        if (getArguments() != null) {
+            ArrayList<ShareableData> messageList = getArguments().getParcelableArrayList(Constants.INTENT_FORWARD_SELECTED_IDS);
+            moveToNextActivity(position, messageList);
+        }
+    }
+
     private void initContent(View view) {
+
+        AdapterView.OnItemClickListener itemClickListener = null;
+        AdapterView.OnItemLongClickListener itemLongClickListener = null;
+
+        if (usageFor == USAGE_FOR_CHAT) {
+            itemClickListener = openchat;
+            itemLongClickListener = openContactOptions;
+        } else {
+            itemClickListener = openChatAndShareContent;
+            itemLongClickListener = null;
+            TextView emptyText = (TextView) view.findViewById(R.id.empty_others);
+            emptyText.setText("No recents chats from people around me");
+        }
+
         otherChatListView = (ListView) view.findViewById(R.id.people_around_me_chat);
 
         ChatListAdapter chatListAdapter = new ChatListAdapter(getActivity(), 0, new ArrayList<Chats>());
         otherChatListView.setAdapter(chatListAdapter);
         otherChatListView.setEmptyView(view.findViewById(R.id.empty_others));
 
-        otherChatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        otherChatListView.setOnItemClickListener(itemClickListener);
 
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                moveToNextActivity(position);
-            }
-
-        });
-
-        otherChatListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                ArrayList<Chats> chatList = ((ChatListAdapter) otherChatListView.getAdapter()).getChatArrayList();
-                Chats chatObject = chatList.get(position);
-
-                int tag = 0;
-                if (chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
-                    tag = 0;
-                } else {
-                    tag = 1;
-                }
-
-                showDialogWindow(position, tag, chatObject);
-                return true;
-            }
-        });
+        otherChatListView.setOnItemLongClickListener(itemLongClickListener);
     }
 
     private void showDialogWindow(int position, int tag, final Chats chatObject) {
@@ -179,13 +248,13 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
         }
     }
 
-    private void moveToNextActivity(int position) {
+    private void moveToNextActivity(int position, ArrayList<ShareableData> dataList) {
         ArrayList<Chats> chatList = ((ChatListAdapter) otherChatListView.getAdapter()).getChatArrayList();
         Chats chatObject = chatList.get(position);
-        moveToNextActivity(chatObject);
+        moveToNextActivity(chatObject, dataList);
     }
 
-    private void moveToNextActivity(Chats chatObject) {
+    private void moveToNextActivity(Chats chatObject, ArrayList<ShareableData> dataList) {
         String groupSeverId = chatObject.groupServerId;
         long contactId = chatObject.contactId;
         Contacts contact = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
@@ -197,7 +266,19 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
         byte[] userpicture = chatObject.userImage;
 
         Intent intent = ChatScreenActivity.createChatScreenIntent(getActivity(), jid, name, contactId, chatId, groupSeverId, userpicture, blockStatus, true);
+
+        if (dataList != null) {
+            ArrayList<ShareableData> dataArrayList = getArguments().getParcelableArrayList(Constants.INTENT_FORWARD_SELECTED_IDS);
+            intent.putParcelableArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS, dataArrayList);
+            intent.putExtra(ForwardSelectedItems.KEY_FILES_NOT_SENT, getArguments().getInt(ForwardSelectedItems.KEY_FILES_NOT_SENT));
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        }
+
         startActivity(intent);
+        if (usageFor == USAGE_FOR_SHARE_OR_FORWARD) {
+            getActivity().finish();
+        }
     }
 
     @Override
