@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -373,7 +374,11 @@ public class ChatKeyboardHelper {
 
     public void disableOrEnableKeyboardAndMediaButtons(boolean blockStatus, Activity activity) {
 
+        EditText text= (EditText) activity.findViewById(R.id.msg);
+        Button btn= (Button) activity.findViewById(R.id.msgbtn);
         if (blockStatus) {
+            text.setVisibility(View.GONE);
+            btn.setVisibility(View.VISIBLE);
             LinearLayout compose = (LinearLayout) activity.findViewById(R.id.send_message_layout);
             for (int i = 0; i < compose.getChildCount(); i++) {
                 View view = compose.getChildAt(i);
@@ -401,6 +406,9 @@ public class ChatKeyboardHelper {
                 view.setEnabled(true);
                 view.setClickable(true);
             }
+
+            text.setVisibility(View.VISIBLE);
+            btn.setVisibility(View.GONE);
         }
 
     }

@@ -12,7 +12,16 @@
         android:layout_height="?android:attr/actionBarSize"
         android:minHeight="?android:attr/actionBarSize" />
 
+    <include
+        android:id="@+id/block_view"
+        layout="@layout/block_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:minHeight="?android:attr/actionBarSize" />
+
     <ScrollView
+
+
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

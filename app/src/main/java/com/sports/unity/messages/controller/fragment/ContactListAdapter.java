@@ -254,5 +254,12 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
         usedContact = finalContact;
         this.notifyDataSetChanged();
     }
+
+    public void updateContacts(ArrayList<Contacts> list) {
+        this.inUseContactListForAdapter = list;
+        contactFilter = new ItemFilter();
+        usedContact = finalContact = list;
+        this.notifyDataSetChanged();
+    }
 }
 

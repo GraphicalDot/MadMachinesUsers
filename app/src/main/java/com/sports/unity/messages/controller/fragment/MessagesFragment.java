@@ -314,7 +314,10 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     }
 
     public void showSyncProgress() {
-        syncProgress.setActionView(R.layout.menu_progress);
+
+        if (syncProgress != null) {
+            syncProgress.setActionView(R.layout.menu_progress);
+        }
     }
 
     private void hideSyncProgress() {
