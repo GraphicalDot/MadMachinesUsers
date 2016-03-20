@@ -179,7 +179,7 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
                         tvCaptainFirst.setText("NA");
                         tvCaptainSecond.setText("NA");
 
-                        CompleteFootballLineUpDTO completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
+                        CompleteFootballLineUpDTO completeFootballLineUpDTO = null;
                         int length = subsArray.length();
                         int tempLength = length/2;
                         for (int i = 0; i < length/2; i++) {
@@ -224,16 +224,6 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
     private void setTeamSecondLineDetails(CompleteFootballLineUpDTO completeFootballLineUpDTO, JSONObject teamSecondObject, JSONArray matchEventsArray, JSONArray substitutionsArray) throws JSONException {
         completeFootballLineUpDTO.setPlayerNameSecond(teamSecondObject.getString("name"));
         completeFootballLineUpDTO.setPlayerPostionNumberSecond(teamSecondObject.getString("jersey_number"));
-        String event = getMatchEventNumber(matchEventsArray, teamSecondObject.getString("name"));
-        Log.i("Events", "setTeamSecondLineDetails: "+event);
-        if (event != null) {
-            if ("goals".equalsIgnoreCase(event)) {
-                completeFootballLineUpDTO.setGoal(event);
-            } else {
-                completeFootballLineUpDTO.setCardType(event);
-            }
-
-        }
         completeFootballLineUpDTO.setEnterExitImageSecond(getOnOffPlayer(substitutionsArray, teamSecondObject.getString("name")));
         String playerOnName = getOnOffPlayer(substitutionsArray, teamSecondObject.getString("name"));
         if (playerOnName != null) {
@@ -246,15 +236,6 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
     private void setTeamFirstLineUps(CompleteFootballLineUpDTO completeFootballLineUpDTO, JSONObject teamFirstObject, JSONArray matchEventsArray, JSONArray substitutionsArray) throws JSONException {
         completeFootballLineUpDTO.setPlayerName(teamFirstObject.getString("name"));
         completeFootballLineUpDTO.setPlayerPostionNumber(teamFirstObject.getString("jersey_number"));
-        String event = getMatchEventNumber(matchEventsArray, teamFirstObject.getString("name"));
-        if (event != null) {
-            if ("goals".equalsIgnoreCase(event)) {
-                completeFootballLineUpDTO.setGoal(event);
-            } else {
-                completeFootballLineUpDTO.setCardType(event);
-            }
-
-        }
         String playerOnName = getOnOffPlayer(substitutionsArray, teamFirstObject.getString("name"));
         if (playerOnName != null) {
             completeFootballLineUpDTO.setEnterExitImage("OFF");
@@ -267,15 +248,7 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
 
         completeFootballLineUpDTO.setPlayerNameSecond(teamSecondObject.getString("player_name"));
         completeFootballLineUpDTO.setPlayerPostionNumberSecond(teamSecondObject.getString("jersey_number"));
-        String event = getMatchEventNumber(matchEventsArray, teamSecondObject.getString("player_name"));
-        if (event != null) {
-            if ("goals".equalsIgnoreCase(event)) {
-                completeFootballLineUpDTO.setGoal(event);
-            } else {
-                completeFootballLineUpDTO.setCardType(event);
-            }
 
-        }
         completeFootballLineUpDTO.setEnterExitImageSecond(getOnOffPlayer(substitutionsArray, teamSecondObject.getString("player_name")));
         String playerOnName = getOnOffPlayer(substitutionsArray, teamSecondObject.getString("player_name"));
         if (playerOnName != null) {
@@ -283,24 +256,13 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
             completeFootballLineUpDTO.setOffEnterExitImage("ON");
             completeFootballLineUpDTO.setOffPlayerName(playerOnName);
         }
-
-
-    }
+   }
 
     private void setPlayerDetails(CompleteFootballLineUpDTO completeFootballLineUpDTO, JSONObject teamFirstObject, JSONArray substitutionsArray, JSONArray matchEventsArray) throws JSONException {
         completeFootballLineUpDTO.setPlayerName(teamFirstObject.getString("player_name"));
         completeFootballLineUpDTO.setPlayerPostionNumber(teamFirstObject.getString("jersey_number"));
         completeFootballLineUpDTO.setEnterExitImage(getOnOffPlayer(substitutionsArray, teamFirstObject.getString("player_name")));
-        String event = getMatchEventNumber(matchEventsArray, teamFirstObject.getString("player_name"));
 
-        if (event != null) {
-            if ("goals".equalsIgnoreCase(event)) {
-                completeFootballLineUpDTO.setGoal(event);
-            } else {
-                completeFootballLineUpDTO.setCardType(event);
-            }
-
-        }
         String playerOnName = getOnOffPlayer(substitutionsArray, teamFirstObject.getString("player_name"));
         if (playerOnName != null) {
             completeFootballLineUpDTO.setEnterExitImage("OFF");
@@ -370,5 +332,23 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (liveFootballMatchLineUpHandler != null) {
+            liveFootballMatchLineUpHandler.addListener(this);
+        } else {
+            liveFootballMatchLineUpHandler = LiveFootballMatchLineUpHandler.getInstance(context);
+            liveFootballMatchLineUpHandler.addListener(this);
+        }
+        liveFootballMatchLineUpHandler.requestLiveMatchLineUp(matchId);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (liveFootballMatchLineUpHandler != null)
+            liveFootballMatchLineUpHandler = null;
+
+    }
 }

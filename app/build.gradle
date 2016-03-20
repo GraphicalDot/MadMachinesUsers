@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-
 android {
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
@@ -69,6 +68,6 @@ dependencies {
     compile 'com.android.support:percent:23.1.1'
     compile 'com.google.maps.android:android-maps-utils:0.4+'
     compile 'org.solovyev.android.views:linear-layout-manager:0.5@aar'
-    compile 'com.github.lzyzsd:circleprogress:1.1.0@aar'
+
     compile project(':library')
 }

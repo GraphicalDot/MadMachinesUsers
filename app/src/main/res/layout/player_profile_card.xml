@@ -24,7 +24,7 @@
             android:singleLine="true"
             android:gravity="left"
             android:scrollHorizontally="true"
-            app:layout_widthPercent="23%" />
+            app:layout_widthPercent="26%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:paddingLeft="@dimen/vertical_padding_very_very_small"
             android:id="@+id/team_name"
@@ -37,7 +37,7 @@
             android:ellipsize="end"
             android:singleLine="true"
             android:scrollHorizontally="true"
-            app:layout_widthPercent="23%" />
+            app:layout_widthPercent="26%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/game_count"
             android:layout_width="0dp"
@@ -55,7 +55,7 @@
             android:text=""
             android:gravity="center"
             android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="12%" />
+            app:layout_widthPercent="11%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/assist"
             android:layout_width="0dp"
@@ -64,7 +64,7 @@
             android:text=""
             android:gravity="center"
             android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="12%" />
+            app:layout_widthPercent="11%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/yc"
             android:layout_width="0dp"
@@ -73,7 +73,7 @@
             android:text=""
             android:textSize="@dimen/font_size_small_medium"
             android:gravity="center"
-            app:layout_widthPercent="10%" />
+            app:layout_widthPercent="8%" />
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/rc"
             android:layout_width="0dp"
@@ -82,7 +82,7 @@
             android:text=""
             android:gravity="center"
             android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="10%" />
+            app:layout_widthPercent="8%" />
     </android.support.percent.PercentRelativeLayout>
 
 </LinearLayout>

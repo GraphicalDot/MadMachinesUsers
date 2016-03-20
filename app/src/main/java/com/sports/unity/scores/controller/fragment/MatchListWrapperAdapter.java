@@ -30,7 +30,6 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapperAdapter.ViewHolder> {
 
     private List<MatchListWrapperDTO>  matchDay;
-    private ArrayList<JSONObject> matchList = new ArrayList<>();
     private Activity activity;
     private  Context context;
 

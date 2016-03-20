@@ -1,4 +1,4 @@
-package com.sports.unity.scoredetails.cricketdetail;
+package com.sports.unity.playerprofile.cricket;
 
 import android.content.Context;
 import android.util.Log;
@@ -16,25 +16,25 @@ import java.util.HashSet;
 /**
  * Created by madmachines on 16/2/16.
  */
-public class CricketPlayerbioHandler {
+public class CricketPlayerMatchStatHandler {
 
-    private static final String REQUEST_TAG = "CRICKET_PLAYER_BIO_TAG";
+    private static final String REQUEST_TAG = "CRICKET_PLAYER_STATS_TAG";
     private static Context mContext;
     private String BASEURL = "http://52.76.74.188:5400/get_player_stats?player_id=";
 
 
-    private CricketPlayerbioContentListener mContentListener = null;
+    private CricketPlayerMatchStatContentListener mContentListener = null;
     private HashSet<String> requestInProcess = new HashSet<>();
 
-    public static CricketPlayerbioHandler getInstance(Context context) {
+    public static CricketPlayerMatchStatHandler getInstance(Context context) {
         mContext = context;
-        CricketPlayerbioHandler handler = new CricketPlayerbioHandler();
+        CricketPlayerMatchStatHandler handler = new CricketPlayerMatchStatHandler();
         return handler;
     }
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
-    public interface CricketPlayerbioContentListener {
+    public interface CricketPlayerMatchStatContentListener {
 
         void handleContent(String content);
 
@@ -45,19 +45,18 @@ public class CricketPlayerbioHandler {
         @Override
         public void onResponse(String s) {
             requestInProcess.remove(REQUEST_TAG);
-            CricketPlayerbioHandler.this.handleResponse(s);
+            CricketPlayerMatchStatHandler.this.handleResponse(s);
         }
 
         @Override
         public void onErrorResponse(VolleyError volleyError) {
             requestInProcess.remove(REQUEST_TAG);
-            CricketPlayerbioHandler.this.handleErrorResponse(volleyError);
+            CricketPlayerMatchStatHandler.this.handleErrorResponse(volleyError);
         }
     };
     public void requestData(String playerId) {
         Log.i("Score Detail", "Request Score Details");
-        String url = BASEURL+playerId;
-
+        String url =  BASEURL+playerId;
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
@@ -74,17 +73,19 @@ public class CricketPlayerbioHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-   }
+    }
     private void handleErrorResponse(VolleyError volleyError) {
+
         try{
-            Log.i("Score Card", "handleResponse: ");
+            Log.i("Score Card", "handleResponse: " + Constants.ERRORRESPONSE);
             mContentListener.handleContent(Constants.ERRORRESPONSE);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void addListener(CricketPlayerbioContentListener contentListener) {
+    public void addListener(CricketPlayerMatchStatContentListener contentListener) {
         mContentListener = contentListener;
     }
 

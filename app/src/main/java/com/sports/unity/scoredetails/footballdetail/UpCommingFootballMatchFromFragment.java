@@ -86,6 +86,8 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     private TextView tvsecondpremieradivision;
     private View parentView;
     private LinearLayout errorLayout;
+    private UpCommingFootballMatchFromHandler upCommingFootballMatchFromHandler;
+    private Context context;
 
     public UpCommingFootballMatchFromFragment() {
         // Required empty public constructor
@@ -94,13 +96,14 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         Intent i = getActivity().getIntent();
         matchId = i.getStringExtra(INTENT_KEY_ID);
         leagueId = i.getStringExtra(INTENT_KEY_LEAGUE_ID);
         date = i.getStringExtra(INTENT_KEY_DATE);
         team1 = i.getStringExtra(INTENT_KEY_TEAM1_NAME);
         team2 = i.getStringExtra(INTENT_KEY_TEAM2_NAME);
-        UpCommingFootballMatchFromHandler upCommingFootballMatchFromHandler = UpCommingFootballMatchFromHandler.getInstance(context);
+        upCommingFootballMatchFromHandler = UpCommingFootballMatchFromHandler.getInstance(context);
         upCommingFootballMatchFromHandler.addListener(this);
         upCommingFootballMatchFromHandler.requestUpcommingMatchFrom(leagueId);
 
@@ -256,9 +259,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                 }
 
                             }
-
-
-                        }
+                      }
 
                     } catch (Exception ex) {
                         ex.printStackTrace();
@@ -277,9 +278,9 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
 
         tvthirdmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(2), getBallColor(recentForm.charAt(2))));
 
-        tvforthmatchteamsecond.setImageDrawable(getBallColor(""+recentForm.charAt(3),getBallColor(recentForm.charAt(3))));
+        tvforthmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(3), getBallColor(recentForm.charAt(3))));
 
-        tvfifthmatchteamsecond.setImageDrawable(getBallColor(""+recentForm.charAt(4),getBallColor(recentForm.charAt(4))));
+        tvfifthmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(4), getBallColor(recentForm.charAt(4))));
     }
 
     private void initializeTeamForms(String recentForm) {
@@ -296,7 +297,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
 
 
     private int getBallColor(char c){
-        Log.i("getBallColor: "," "+c);
+        Log.i("getBallColor: ", " " + c);
         int color= 0;
         switch (c){
             case 'W':
@@ -331,5 +332,29 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                 .buildRound(text, color);
         return  drawable;
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(upCommingFootballMatchFromHandler != null){
+            upCommingFootballMatchFromHandler.addListener(null);
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showProgressBar();
+        if(upCommingFootballMatchFromHandler != null){
+            upCommingFootballMatchFromHandler.addListener(this);
+
+        }else {
+            upCommingFootballMatchFromHandler = UpCommingFootballMatchFromHandler.getInstance(context);
+
+        }
+        upCommingFootballMatchFromHandler.requestUpcommingMatchFrom(leagueId);
+    }
+
 
 }

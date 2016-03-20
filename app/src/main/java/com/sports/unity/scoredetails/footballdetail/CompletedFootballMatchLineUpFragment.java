@@ -63,6 +63,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     private View manageRootView;
     private View layoutLineUpView;
     private View layoutSubstitutesView;
+    private Context context;
 
 
     public CompletedFootballMatchLineUpFragment() {
@@ -71,7 +72,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
 
     @Override
     public void onAttach(Context context) {
-        super.onAttach(context);
+        super.onAttach(context);this.context= context;
         Intent i = getActivity().getIntent();
         matchId =  i.getStringExtra(INTENT_KEY_ID);
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
@@ -90,7 +91,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         return view;
     }
     private void initView(View view) {
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar = (ProgressBar)view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         initErrorLayout(view);
         tvCaptainFirst=(TextView)view.findViewById(R.id.tv_team_first_captain);
@@ -118,6 +119,9 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
    }
     private void  showProgressBar(){
         progressBar.setVisibility(View.VISIBLE);
+        manageRootView.setVisibility(View.GONE);
+        layoutLineUpView.setVisibility(View.GONE);
+        layoutSubstitutesView.setVisibility(View.GONE);
     }
     private void  hideProgressBar(){
         progressBar.setVisibility(View.GONE);
@@ -166,10 +170,8 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
 
         lineUpList.clear();
         substitutesList.clear();
-        manageRootView.setVisibility(View.VISIBLE);
-        layoutLineUpView.setVisibility(View.VISIBLE);
-        layoutSubstitutesView.setVisibility(View.VISIBLE);
-        hideProgressBar();
+
+
         Activity activity =  getActivity();
         if(!jsonObject.isNull("data")) {
             final JSONObject dataObject = jsonObject.getJSONObject("data");
@@ -182,7 +184,10 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                     @Override
                     public void run() {
                         try {
-
+                            manageRootView.setVisibility(View.VISIBLE);
+                            layoutLineUpView.setVisibility(View.VISIBLE);
+                            layoutSubstitutesView.setVisibility(View.VISIBLE);
+                            hideProgressBar();
                             tvCaptainFirst.setText("N/A");
                             tvCaptainSecond.setText("N/A");
 
@@ -194,7 +199,6 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                                     JSONObject teamFirstObject = subsArray.getJSONObject(i);
                                     JSONObject teamSecondObject = subsArray.getJSONObject(tempLength);
                                     completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
-
                                     setPlayerDetails(completeFootballLineUpDTO, teamFirstObject, substitutionsArray, matchEventsArray);
                                     setSecondTeamDetails(completeFootballLineUpDTO, teamSecondObject, matchEventsArray, substitutionsArray);
                                     substitutesList.add(completeFootballLineUpDTO);
@@ -235,15 +239,8 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     private void setTeamSecondLineDetails(CompleteFootballLineUpDTO completeFootballLineUpDTO, JSONObject teamSecondObject, JSONArray matchEventsArray, JSONArray substitutionsArray) throws JSONException {
         completeFootballLineUpDTO.setPlayerNameSecond(teamSecondObject.getString("name"));
         completeFootballLineUpDTO.setPlayerPostionNumberSecond(teamSecondObject.getString("jersey_number"));
-        String event = getMatchEventNumber(matchEventsArray, teamSecondObject.getString("name"));
-        if (event != null) {
-            if ("goals".equalsIgnoreCase(event)) {
-                completeFootballLineUpDTO.setGoalSecond((event));
-            } else {
-                completeFootballLineUpDTO.setCardTypeSecond(event);
-            }
+        //getMatchEventsSecond(matchEventsArray, teamSecondObject.getString("name"), completeFootballLineUpDTO);
 
-        }
         completeFootballLineUpDTO.setEnterExitImageSecond(getOnOffPlayer(substitutionsArray, teamSecondObject.getString("name")));
         String playerOnName = getOnOffPlayer(substitutionsArray, teamSecondObject.getString("name"));
         if (playerOnName != null) {
@@ -256,15 +253,8 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
     private void setTeamFirstLineUps(CompleteFootballLineUpDTO completeFootballLineUpDTO, JSONObject teamFirstObject, JSONArray matchEventsArray, JSONArray substitutionsArray) throws JSONException {
         completeFootballLineUpDTO.setPlayerName(teamFirstObject.getString("name"));
         completeFootballLineUpDTO.setPlayerPostionNumber(teamFirstObject.getString("jersey_number"));
-        String event = getMatchEventNumber(matchEventsArray, teamFirstObject.getString("name"));
-        if (event != null) {
-            if ("goals".equalsIgnoreCase(event)) {
-                completeFootballLineUpDTO.setGoal(event);
-            } else {
-                completeFootballLineUpDTO.setCardType(event);
-            }
+//        getMatchEventsFirst(matchEventsArray, teamFirstObject.getString("name"), completeFootballLineUpDTO);
 
-        }
         String playerOnName = getOnOffPlayer(substitutionsArray, teamFirstObject.getString("name"));
         if (playerOnName != null) {
             completeFootballLineUpDTO.setEnterExitImage("OFF");
@@ -277,15 +267,8 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
 
         completeFootballLineUpDTO.setPlayerNameSecond(teamSecondObject.getString("player_name"));
         completeFootballLineUpDTO.setPlayerPostionNumberSecond(teamSecondObject.getString("jersey_number"));
-        String event = getMatchEventNumber(matchEventsArray, teamSecondObject.getString("player_name"));
-        if (event != null) {
-            if ("goals".equalsIgnoreCase(event)) {
-                completeFootballLineUpDTO.setGoalSecond(event);
-            } else {
-                completeFootballLineUpDTO.setCardTypeSecond(event);
-            }
+        //getMatchEventsSecond(matchEventsArray, teamSecondObject.getString("player_name"), completeFootballLineUpDTO);
 
-        }
         completeFootballLineUpDTO.setEnterExitImageSecond(getOnOffPlayer(substitutionsArray, teamSecondObject.getString("player_name")));
         String playerOnName = getOnOffPlayer(substitutionsArray, teamSecondObject.getString("player_name"));
         if (playerOnName != null) {
@@ -301,15 +284,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         completeFootballLineUpDTO.setPlayerName(teamFirstObject.getString("player_name"));
         completeFootballLineUpDTO.setPlayerPostionNumber(teamFirstObject.getString("jersey_number"));
         completeFootballLineUpDTO.setEnterExitImage(getOnOffPlayer(substitutionsArray, teamFirstObject.getString("player_name")));
-        String event = getMatchEventNumber(matchEventsArray, teamFirstObject.getString("player_name"));
-        if (event != null) {
-            if ("goals".equalsIgnoreCase(event)) {
-                completeFootballLineUpDTO.setGoal(event);
-            } else {
-                completeFootballLineUpDTO.setCardType(event);
-            }
-
-        }
+        //getMatchEventsFirst(matchEventsArray, teamFirstObject.getString("player_name"), completeFootballLineUpDTO);
         String playerOnName = getOnOffPlayer(substitutionsArray, teamFirstObject.getString("player_name"));
         if (playerOnName != null) {
             completeFootballLineUpDTO.setEnterExitImage("OFF");
@@ -338,7 +313,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         return playerOn;
     }
 
-    private String getMatchEventNumber(JSONArray matchEventsArray ,String playerName) {
+    private void getMatchEventsFirst(JSONArray matchEventsArray ,String playerName,CompleteFootballLineUpDTO completeFootballLineUpDTO) {
         String event = null;
         try{
             if(playerName != null){
@@ -347,7 +322,64 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                     if(!eventObject.isNull("player_name")) {
                         if (playerName.equals(eventObject.getString("player_name"))) {
                             if (!eventObject.isNull("event")) {
+
                                 event = eventObject.getString("event");
+
+                                if (event != null) {
+                                    if ("goals".equalsIgnoreCase(event)) {
+                                        completeFootballLineUpDTO.setGoal(event);
+                                    }
+
+
+                                    if("yellowcards".equalsIgnoreCase(event)) {
+                                        completeFootballLineUpDTO.setCardType(event);
+                                    }
+
+                                    if("redcards".equalsIgnoreCase(event)) {
+                                        completeFootballLineUpDTO.setCardType(event);
+                                    }
+
+
+                                }
+                          }
+                        }
+                    }
+                }
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+    private void getMatchEventsSecond(JSONArray matchEventsArray ,String playerName,CompleteFootballLineUpDTO completeFootballLineUpDTO) {
+        String event = null;
+        try{
+            if(playerName != null){
+                for(int i = 0;i<matchEventsArray.length();i++){
+                    JSONObject eventObject = matchEventsArray.getJSONObject(i);
+                    if(!eventObject.isNull("player_name")) {
+                        if (playerName.equals(eventObject.getString("player_name"))) {
+                            if (!eventObject.isNull("event")) {
+
+                                event = eventObject.getString("event");
+
+                                if (event != null) {
+                                    if ("goals".equalsIgnoreCase(event)) {
+                                        completeFootballLineUpDTO.setGoalSecond(event);
+                                    }
+
+
+                                    if("yellowcards".equalsIgnoreCase(event)) {
+                                        completeFootballLineUpDTO.setCardTypeSecond(event);
+                                    }
+
+                                    if("redcards".equalsIgnoreCase(event)) {
+                                        completeFootballLineUpDTO.setCardTypeSecond(event);
+                                    }
+
+
+                                }
                             }
                         }
                     }
@@ -357,11 +389,28 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         }catch (Exception e){
             e.printStackTrace();
         }
-        return event;
+
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (cricketUpcomingMatchSummaryHandler != null) {
+            cricketUpcomingMatchSummaryHandler.addListener(this);
+        } else {
+            cricketUpcomingMatchSummaryHandler = CompletedFootballMatchLineUpHandler.getInstance(context);
+            cricketUpcomingMatchSummaryHandler.addListener(this);
+        }
+        cricketUpcomingMatchSummaryHandler.requestCompletdMatchLineUps(matchId);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (cricketUpcomingMatchSummaryHandler != null)
+            cricketUpcomingMatchSummaryHandler = null;
 
+    }
 
 
 }

@@ -14,4 +14,10 @@
         android:orderInCategory="200"
         android:title="@string/search_title"
         app:showAsAction="ifRoom"></item>
+    <item
+        android:id="@+id/refresh"
+        android:icon="@drawable/ic_refresh_white"
+        android:orderInCategory="100"
+        android:title="Reload"
+        app:showAsAction="ifRoom"></item>
 </menu>

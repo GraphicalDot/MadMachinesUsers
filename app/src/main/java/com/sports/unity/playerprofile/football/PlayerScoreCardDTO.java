@@ -1,4 +1,4 @@
-package com.sports.unity.player.view;
+package com.sports.unity.playerprofile.football;
 
 /**
  * Created by madmachines on 9/2/16.

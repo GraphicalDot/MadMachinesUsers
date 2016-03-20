@@ -35,6 +35,7 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
         android:name=".ChatScreenApplication"
@@ -143,14 +144,7 @@
         <activity
             android:name=".common.controller.About"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".player.view.PlayerProfileView"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"></activity>
-        <activity
-            android:name=".scoredetails.cricketdetail.PlayerCricketBioDataActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+
         <activity
             android:name=".scoredetails.footballdetail.FootballDetailsActivity"
             android:screenOrientation="portrait"
@@ -163,6 +157,13 @@
             android:name=".common.controller.TeamLeagueDetails"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".playerprofile.cricket.PlayerCricketBioDataActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+        <activity android:name=".playerprofile.football.PlayerProfileView"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

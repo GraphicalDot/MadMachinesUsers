@@ -35,6 +35,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
     String toss = "";
     String matchName="";
     String date = "";
+    private  String matchId;
     private LinearLayout errorLayout;
     private CricketUpcomingMatchSummaryHandler cricketUpcomingMatchSummaryHandler;
     public CricketUpcomingMatchSummaryFragment() {
@@ -45,7 +46,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
     public void onAttach(Context context) {
         super.onAttach(context);
         Intent i = getActivity().getIntent();
-        String matchId =  i.getStringExtra(INTENT_KEY_ID);
+         matchId =  i.getStringExtra(INTENT_KEY_ID);
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
         toss = i.getStringExtra(INTENT_KEY_TOSS);
         date = i.getStringExtra(INTENT_KEY_DATE);
@@ -153,5 +154,25 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
         }
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(cricketUpcomingMatchSummaryHandler != null){
+            cricketUpcomingMatchSummaryHandler.addListener(null);
+        }
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+       showProgressBar();
+        if(cricketUpcomingMatchSummaryHandler != null){
+            cricketUpcomingMatchSummaryHandler.addListener(this);
+
+        }else {
+            cricketUpcomingMatchSummaryHandler= CricketUpcomingMatchSummaryHandler.getInstance(getContext());
+        }
+        cricketUpcomingMatchSummaryHandler.requestCricketUpcommingMatchSummary(matchId);
+    }
 }

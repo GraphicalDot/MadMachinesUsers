@@ -23,13 +23,14 @@
             <LinearLayout
                 android:id="@+id/ScoreLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="@dimen/card_height"
                 android:orientation="horizontal"
                 android:weightSum="4">
 
                 <LinearLayout
+                    android:paddingTop="@dimen/horizontal_padding_very_small"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="@dimen/card_height"
                     android:layout_weight="2.8"
                     android:orientation="vertical">
 
@@ -37,6 +38,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:padding="@dimen/horizontal_padding_very_very_small"
+
                         android:orientation="horizontal">
 
                         <ImageView
@@ -215,7 +217,7 @@
                         android:paddingBottom="@dimen/vertical_padding_very_very_small"
                         android:text=""
                         android:textColor="@color/gray1"
-                        android:textSize="@dimen/font_size_small_medium"
+                        android:textSize="@dimen/font_size_very_small"
                         />
 
                     <com.sports.unity.common.view.CustomRobotoRegularTextView
@@ -231,6 +233,7 @@
                         android:text="@string/show_odds"
                         android:textColor="@color/ColorPrimary"
                         android:textSize="@dimen/font_size_very_very_small"
+
                         />
                 </LinearLayout>
             </LinearLayout>

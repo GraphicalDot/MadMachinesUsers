@@ -100,7 +100,7 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
                 public void onRefresh() {
                     if (completedFootballMatchStatHandler != null) {
                         completedFootballMatchStatHandler.requestCompledFootabllMatchStat(matchId);
-                        swipeRefreshLayout.setRefreshing(false);
+                        swipeRefreshLayout.setRefreshing(true);
                     }
                 }
             });
@@ -187,8 +187,15 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
                                             completeFootballMatchStatDTO.setTvLable(getLabelValue(key));
                                             completeFootballMatchStatDTO.setIvLeftStatus(teamFirstStatsObject.getString(key));
                                             completeFootballMatchStatDTO.setIvRightStatus(teamSecondStatsObject.getString(key));
+
                                             int red = Integer.parseInt(teamFirstStatsObject.getString(key));
+                                            if(red==0){
+                                                red = 1;
+                                            }
                                             int blue = Integer.parseInt(teamSecondStatsObject.getString(key));
+                                            if(blue==0){
+                                                blue = 1;
+                                            }
                                             completeFootballMatchStatDTO.setLeftGraphValue((baseWidth * red) / (red + blue));
                                             completeFootballMatchStatDTO.setRightGraphValue((baseWidth * blue) / (red + blue));
                                             //Log.i("MatchStatFragment: ", completeFootballMatchStatDTO.toString());
@@ -254,6 +261,7 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
             completedFootballMatchStatHandler = CompletedFootballMatchStatHandler.getInstance(getContext());
             completedFootballMatchStatHandler.addListener(this);
         }
+        completedFootballMatchStatHandler.requestCompledFootabllMatchStat(matchId);
     }
 
     @Override
