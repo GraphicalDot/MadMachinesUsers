@@ -87,6 +87,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         setContentView(com.sports.unity.R.layout.activity_main);
 
         SportsUnityDBHelper.getInstance(this).addDummyMessageIfNotExist();
+        SportsUnityDBHelper.getInstance(this).addDummyContactIfNotExist();
         XMPPService.startService(MainActivity.this);
 
         initViews();

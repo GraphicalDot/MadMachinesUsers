@@ -24,5 +24,6 @@
         android:text="12"
         android:textColor="@color/app_theme_blue"
         android:textSize="@dimen/font_size_very_small"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:visibility="gone" />
 </LinearLayout>

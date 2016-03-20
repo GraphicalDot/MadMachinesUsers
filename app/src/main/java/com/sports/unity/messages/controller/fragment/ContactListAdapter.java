@@ -31,10 +31,11 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
     private final Activity context;
     private LayoutInflater inflater;
 
+    private ArrayList<String> previouslySelectedMembersList = new ArrayList<>();
     private ArrayList<Contacts> selectedMemberList;
     private ArrayList<Contacts> inUseContactListForAdapter;
     private Button invite;
-    int frequentContactCount = 0;
+    int registeredContactCount = 0;
 
     private int itemLayoutId = 0;
     private boolean multipleSelection = false;
@@ -43,18 +44,17 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
     private ArrayList<Contacts> finalContact;
     private ArrayList<Contacts> usedContact;
 
-    public ContactListAdapter(Activity context, int resource, ArrayList<Contacts> list, boolean multipleSelection, int frequentContactCount, ArrayList<Contacts> selectedMembersList) {
+    public ContactListAdapter(Activity context, int resource, ArrayList<Contacts> list, boolean multipleSelection, int registeredContactCount, ArrayList<Contacts> selectedMembersList) {
         super(context, resource, list);
         this.context = context;
         this.inUseContactListForAdapter = list;
         itemLayoutId = resource;
         this.multipleSelection = multipleSelection;
         inflater = context.getLayoutInflater();
-        this.frequentContactCount = frequentContactCount;
+        this.registeredContactCount = registeredContactCount;
         this.selectedMemberList = selectedMembersList;
         contactFilter = new ItemFilter();
         usedContact = finalContact = list;
-
     }
 
     public View getView(final int position, View view, ViewGroup parent) {
@@ -73,7 +73,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
             status.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoLight());
 
             if (itemLayoutId == R.layout.list_contact_msgs) {
-                invite = (Button) rowView.findViewById(R.id.btn_invite);
+                Button invite = (Button) rowView.findViewById(R.id.btn_invite);
                 invite.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
 
                 if (contacts.isRegistered()) {
@@ -89,10 +89,27 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
 
             txtTitle.setText(contacts.name);
             status.setText(contacts.status);
-            if (selectedMemberList != null && selectedMemberList.contains(contacts)) {
+
+            if (previouslySelectedMembersList.contains(contacts.jid)) {
                 CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.checkbox);
-                checkBox.setChecked(true);
-                checkBox.setTag(true);
+                if(checkBox != null) {
+                    checkBox.setChecked(true);
+                }
+
+                rowView.setTag(new Boolean(false));
+            } else {
+                if (selectedMemberList != null && selectedMemberList.contains(contacts)) {
+                    CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.checkbox);
+                    if(checkBox != null) {
+                        checkBox.setChecked(true);
+                    }
+                } else {
+                    CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.checkbox);
+                    if(checkBox != null) {
+                        checkBox.setChecked(false);
+                    }
+                }
+                rowView.setTag(new Boolean(true));
             }
 
             txtTitle.setText(contacts.name);
@@ -104,6 +121,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
             return rowView;
 
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -139,6 +157,14 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
         return inUseContactListForAdapter;
     }
 
+    public void setPreviouslySelectedMembersList(ArrayList<String> previouslySelectedMembersList) {
+        this.previouslySelectedMembersList = previouslySelectedMembersList;
+    }
+
+    public ArrayList<String> getPreviouslySelectedMembersList() {
+        return previouslySelectedMembersList;
+    }
+
     public ArrayList<Contacts> getUsedContact() {
         return usedContact;
     }
@@ -157,8 +183,8 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
             holder = (HeaderViewHolder) convertView.getTag();
         }
         if (usedContact.size() == finalContact.size()) {
-            if (position < frequentContactCount) {
-                headerText = "Recents";
+            if (position >= registeredContactCount) {
+                headerText = "Invite People to Sports Unity";
             } else {
                 headerText = "" + getHeader(position);
             }
@@ -172,7 +198,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
     @Override
     public long getHeaderId(int position) {
         if (usedContact.size() == finalContact.size()) {
-            if (position < frequentContactCount) {
+            if (position >= registeredContactCount) {
                 return (long) 0.0;
             } else {
                 return getHeader(position);
