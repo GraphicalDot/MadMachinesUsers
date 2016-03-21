@@ -18,6 +18,7 @@ import java.util.TimeZone;
 public class DateUtil {
     private static final SimpleDateFormat formatter =  new SimpleDateFormat("yyyy-MM-dd");
     private static final SimpleDateFormat DATE_FORMAT =  new SimpleDateFormat("dd MMMM yyyy");
+    private static final SimpleDateFormat formatter_DD_MM_YYYY =  new SimpleDateFormat("dd-MM-yyyy");
     private static final SimpleDateFormat TIME_FORMAT =  new SimpleDateFormat("HH:mm");
     public  static String getDaysDiffrence(String oldDate,Context context){
         String days;
@@ -132,5 +133,19 @@ public class DateUtil {
         return days;
     }
 
+    public static String getFormattedDateDDMMYYYY(String oldDate){
 
+        String date = "";
+        try
+        {
+            Date date1 = formatter_DD_MM_YYYY.parse(oldDate);
+            date = DATE_FORMAT.format(date1);
+
+        }
+        catch (Exception e)
+        {
+            date = oldDate;
+        }
+        return  date;
+    }
 }

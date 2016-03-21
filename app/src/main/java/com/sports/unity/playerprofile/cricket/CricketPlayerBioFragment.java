@@ -136,7 +136,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
 
                       if (!playerInfo.isNull("Born")) {
                           try{
-                              tvPlayerDateOfBirth.setText(DateUtil.getFormattedDate(playerInfo.getString("Born")));
+                              tvPlayerDateOfBirth.setText(DateUtil.getFormattedDateDDMMYYYY(playerInfo.getString("Born")));
                           }catch (Exception e){
                               tvPlayerDateOfBirth.setText(playerInfo.getString("Born"));
                           }
