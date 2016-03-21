@@ -17,6 +17,7 @@ import android.widget.TextView;
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.sports.unity.R;
 import com.sports.unity.scoredetails.BallDetail;
+import com.sports.unity.scoredetails.cricketdetail.JsonParsers.LiveCricketMatchSummaryParser;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.Constants;
 
@@ -196,13 +197,16 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (!jsonObject.isNull("data")) {
         JSONArray dataArray = jsonObject.getJSONArray("data");
-        JSONObject matchObject = dataArray.getJSONObject(0);
-        final JSONArray recentOverArray = matchObject.getJSONArray("recent_overs");
-        final JSONObject currentPartnershipDetails = matchObject.getJSONObject("current_partnership_details");
-        final JSONArray yetToBatting = matchObject.getJSONArray("yet_to_bat");
-        final JSONObject currentBowlerObject = matchObject.getJSONObject("current_bowler_details");
-        final JSONArray bowlerStatsArray = currentBowlerObject.getJSONArray("stats");
-        final JSONObject currentBowlerStatObject = bowlerStatsArray.getJSONObject(0);
+            JSONObject matchObject = dataArray.getJSONObject(0);
+            final LiveCricketMatchSummaryParser liveCricketMatchSummaryParser = new LiveCricketMatchSummaryParser();
+            liveCricketMatchSummaryParser.setJsonObject(matchObject);
+            liveCricketMatchSummaryParser.setCricketSummary(liveCricketMatchSummaryParser.getMatchSummary());
+        final JSONArray recentOverArray =liveCricketMatchSummaryParser.getRecentOver();
+        final JSONObject currentPartnershipDetails = liveCricketMatchSummaryParser.getCurrentPartnership();
+        final JSONArray yetToBatting = liveCricketMatchSummaryParser.getUpCommingBatsMan();
+        final JSONObject currentBowlerObject = liveCricketMatchSummaryParser.getCurentBowler();
+            liveCricketMatchSummaryParser.setCurrentBowler(currentBowlerObject);
+        final JSONObject currentBowlerStatObject = liveCricketMatchSummaryParser.getCurentBowler();
         hideProgress();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
@@ -286,7 +290,6 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                             tvSecondPlayerRunOnBall.setText(currentPartnershipDetails.getString("player_b_runs") + "(" + currentPartnershipDetails.getString("player_b_balls") + ")");
                         if (!currentPartnershipDetails.isNull("partnership_runs"))
                             tvPartnershipRecord.setText(currentPartnershipDetails.getString("partnership_runs") + "(" + currentPartnershipDetails.getString("partnership_balls") + ")");
-
                         if (yetToBatting.length() > 3) {
                             tvFirstUpComingPlayerName.setText(yetToBatting.getString(0));
                             /*playerNameDraw = getTextDrawable(yetToBatting.getString(0).substring(0,1),Color.WHITE,Color.BLUE);
@@ -316,20 +319,15 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                             tvSecondUpComingPlayerName.setText("N/A");
                             tvThirdUpComingPlayerName.setText("N/A");
                         }
-                        if (!currentBowlerObject.isNull("name")) {
-                            tvBowlerName.setText(currentBowlerObject.getString("name"));
-                            /*playerNameDraw = getTextDrawable(currentBowlerObject.getString("name").substring(0,1),Color.WHITE,Color.BLUE);
-                            ivBowlerProfile.setImageDrawable(playerNameDraw);*/
-                        }
 
-                        if (!currentBowlerStatObject.isNull("economy"))
-                            tvBowlerEcon.setText("ECON " + currentBowlerStatObject.getString("economy"));
-                        if (!currentBowlerStatObject.isNull("overs"))
-                            tvBowlerOver.setText(currentBowlerStatObject.getString("overs"));
-                       /* if(!currentBowlerStatObject.isNull("wickets"))
-                            tvBowlerWr.setText(currentBowlerStatObject.getString("wickets"));*/
-                        if (!currentBowlerStatObject.isNull("runs_conceded") && !currentBowlerStatObject.isNull("wickets"))
-                            tvBowlerWRun.setText(currentBowlerStatObject.getString("wickets") + "/" + currentBowlerStatObject.getString("runs_conceded"));
+                            tvBowlerName.setText(liveCricketMatchSummaryParser.getCurentBowlerName());
+
+                            tvBowlerEcon.setText("ECON " + liveCricketMatchSummaryParser.getCurentBowlerName());
+
+                            tvBowlerOver.setText(liveCricketMatchSummaryParser.getCurentBowlerOvers());
+
+
+                            tvBowlerWRun.setText(liveCricketMatchSummaryParser.getCurentBowlerWicket() + "/" + liveCricketMatchSummaryParser.getCurentBowlerRuns());
 
 
                     } catch (Exception ex) {
