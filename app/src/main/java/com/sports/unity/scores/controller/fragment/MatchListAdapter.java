@@ -296,6 +296,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                         holder.matchDay.setText("Completed");
                         holder.liveText.setVisibility(View.GONE);
                     }
+                    holder.t1score.setVisibility(View.VISIBLE);
+                    holder.t2score.setVisibility(View.VISIBLE);
                     holder.t1score.setText(footballMatchJsonCaller.getHomeTeamScore());
                     holder.t2score.setText(footballMatchJsonCaller.getAwayTeamScore());
                 }
