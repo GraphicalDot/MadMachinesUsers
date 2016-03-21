@@ -176,22 +176,21 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_vertical_margin"
+        android:layout_marginRight="@dimen/activity_vertical_margin"
         android:background="@drawable/round_edge_black_box"
-       android:layout_marginLeft="@dimen/horizontal_padding_small"
-        android:layout_marginRight="@dimen/horizontal_padding_small"
+        android:orientation="vertical"
         >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/round_edge_black_box"
-            android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="@dimen/horizontal_padding_very_small">
+                >
 
                 <com.sports.unity.common.view.CustomRobotoRegularTextView
+                    android:padding="@dimen/horizontal_padding_very_small"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/match_info"
@@ -331,8 +330,6 @@
                         android:textSize="@dimen/font_size_small_medium" />
                 </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-
     </LinearLayout>
       </LinearLayout>
     </ScrollView>
