@@ -9,7 +9,7 @@ import com.sports.unity.scoredetails.CommentaryFragment;
 import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scoredetails.UpcommingMatchCommentaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CompletedMatchScoreCardFragment;
-import com.sports.unity.scoredetails.cricketdetail.CricketCompletedMatchSummeryFragment;
+import com.sports.unity.scoredetails.cricketdetail.CricketCompletedMatchSummaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketLiveMatchSummaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketUpcomingMatchScoreCardFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketUpcomingMatchSummaryFragment;
@@ -49,7 +49,7 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
             }else if(matchStatus.equalsIgnoreCase("started")){
                 fragment = new CricketLiveMatchSummaryFragment();
             } else {
-                fragment = new CricketCompletedMatchSummeryFragment();
+                fragment = new CricketCompletedMatchSummaryFragment();
             }
            //fragment = new CricketLiveMatchSummaryFragment();
         } else if (position == 1) {

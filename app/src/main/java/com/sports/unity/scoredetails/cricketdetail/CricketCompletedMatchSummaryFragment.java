@@ -30,7 +30,7 @@ import static com.sports.unity.util.Constants.INTENT_KEY_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
 import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 
-public class CricketCompletedMatchSummeryFragment extends Fragment implements CricketCompletedMatchSummaryHandler.CricketCompletedMatchSummaryContentListener {
+public class CricketCompletedMatchSummaryFragment extends Fragment implements CricketCompletedMatchSummaryHandler.CricketCompletedMatchSummaryContentListener {
 
     private ImageView ivPlayerProfileView;
     private ImageView ivCountryImage;
@@ -51,7 +51,7 @@ public class CricketCompletedMatchSummeryFragment extends Fragment implements Cr
     private String matchId;
     private CricketMatchJsonCaller cricketMatchJsonCaller;
 
-    public CricketCompletedMatchSummeryFragment() {
+    public CricketCompletedMatchSummaryFragment() {
         // Required empty public constructor
     }
 

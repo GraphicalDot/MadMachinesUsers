@@ -28,8 +28,7 @@ public class CricketCompletedMatchSummaryHandler {
     private HashSet<String> requestInProcess = new HashSet<>();
 
     public static CricketCompletedMatchSummaryHandler getInstance(Context context) {
-        CricketCompletedMatchSummaryHandler cricketCompletedMatchSummaryHandler = null;
-        cricketCompletedMatchSummaryHandler = new CricketCompletedMatchSummaryHandler();
+        CricketCompletedMatchSummaryHandler cricketCompletedMatchSummaryHandler = new CricketCompletedMatchSummaryHandler();
         mContext = context;
         return cricketCompletedMatchSummaryHandler;
     }

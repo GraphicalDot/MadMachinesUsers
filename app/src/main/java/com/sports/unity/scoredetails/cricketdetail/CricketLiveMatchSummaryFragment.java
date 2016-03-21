@@ -147,7 +147,6 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
     @Override
     public void handleContent(String content) {
-     // content = "{\"error\":false,\"data\":[{\"recent_overs\":[[19,[\"r0\",\"r1\",\"r0\",\"b4\"]],[18,[\"b6\",\"b4\",\"b6\",\"r1\",\"r0\",\"b6\"]],[17,[\"b4\",\"b6\",\"r1\",\"r0\",\"r0\",\"r1\"]]],\"yet_to_bat\":[\"Sarfraz Ahmed\",\"Shahid Afridi\",\"Mohammad Sami\",\"Mohammad Amir\",\" Mohammad Irfan\",\"Mohammad Nawaz\"],\"current_partnership_details\":{\"player_b_balls\":4,\"player_a_balls\":5,\"player_b\":\"Umar Akmal\",\"player_a\":\"Shoaib Malik\",\"partnership_runrate\":\"0.67\",\"player_b_runs\":1,\"player_a_runs\":0,\"player_a_strikerate\":\"0.0\",\"player_b_strikerate\":\"25.0\",\"partnership_runs\":1,\"partnership_balls\":9},\"match_key\":\"asiacup_2016_g6\",\"current_bowler_details\":{\"stats\":[{\"economy\":7.64,\"inning\":\"1\",\"runs_conceded\":28,\"wickets\":0,\"overs\":\"3.4\"}],\"name\":\"Mohammad Naveed\"},\"match_id\":\"asiacup_2016_g6\"}],\"success\":true}";
         try {
             showProgress();
             JSONObject object = new JSONObject(content);
