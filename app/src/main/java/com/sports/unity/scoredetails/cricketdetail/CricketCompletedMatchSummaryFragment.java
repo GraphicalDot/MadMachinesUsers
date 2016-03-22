@@ -45,12 +45,13 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
     private TextView tvUmpiresName;
     private TextView tvMatchReferee;
     private ProgressBar progressBar;
-    String toss = "";
-    String matchName="";
-    String date = "";
-    CricketCompletedMatchSummaryHandler cricketCompletedMatchSummaryHandler;
+    private String toss = "";
+    private String matchName="";
+    private String date = "";
+    private CricketCompletedMatchSummaryHandler cricketCompletedMatchSummaryHandler;
     private String matchId;
-    private CricketMatchJsonCaller cricketMatchJsonCaller;
+    private LinearLayout errorLayout;
+    //private CricketMatchJsonCaller cricketMatchJsonCaller;
 
     public CricketCompletedMatchSummaryFragment() {
         // Required empty public constructor
@@ -112,8 +113,8 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
                     renderDisplay(jsonObject);
 
                 } else {
-                    Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();
-                    showErrorLayout(getView());
+                    //Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();
+                    showErrorLayout();
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
@@ -123,14 +124,13 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
     }
     private void initErrorLayout(View view) {
 
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.GONE);
    }
 
-    private void showErrorLayout(View view) {
+    private void showErrorLayout() {
 
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.VISIBLE);
+               errorLayout.setVisibility(View.VISIBLE);
 
     }
     private void initProgress(View view) {
@@ -183,13 +183,13 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
                             tvMatchReferee.setText(cricketMatchSummaryParser.getRefree());
                         } catch (Exception ex) {
                             ex.printStackTrace();
-                            showErrorLayout(getView());
+                            showErrorLayout();
                         }
                     }
                 });
             }
         } else {
-            showErrorLayout(getView());
+            showErrorLayout();
         }
     }
 
@@ -252,7 +252,7 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
         cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(matchId);
     }
     public void handleError(){
-        showErrorLayout(getView());
+        showErrorLayout();
     }
 
 }

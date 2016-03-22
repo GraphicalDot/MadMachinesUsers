@@ -1,4 +1,6 @@
 package com.sports.unity.scores.model;
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.sports.unity.common.model.MatchDay;
 import com.sports.unity.messages.controller.model.PeoplesNearMe;
@@ -55,7 +57,7 @@ public class ScoresJsonParser {
             ex.printStackTrace();
             list.clear();
         }
-
+        Log.d("Score List", "parseListOfMatches: "+list);
         return list;
     }
 

@@ -15,7 +15,7 @@ public class MatchJsonCaller extends JsonObjectCaller {
     }
 
     public String getMatchDate() throws JSONException {
-        return jsonObject.getString("match_date");
+        return jsonObject.getString("start_date");
     }
 
     public String getMatchTime() throws JSONException {

@@ -25,6 +25,7 @@ import com.sports.unity.scores.model.football.MatchJsonCaller;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.text.ParseException;
@@ -122,7 +123,11 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
             if( matchJsonCaller.getType().equals(ScoresJsonParser.CRICKET) ) {
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
-
+                JSONArray wigetTeamsArray = cricketMatchJsonCaller.getTeamsWiget();
+                if(wigetTeamsArray!=null){
+                    cricketMatchJsonCaller.setMatchWidgetHomeTeam(wigetTeamsArray.getJSONObject(0));
+                    cricketMatchJsonCaller.setMatchWidgetAwayTeam(wigetTeamsArray.getJSONObject(1));
+                }
                 holder.matchMinutes.setText("");
                 Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000)));
                 String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
@@ -154,7 +159,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
 
                 boolean isLive = false;
-                if ( cricketMatchJsonCaller.getStatus().equals("completed") ) {
+                if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("F") ) {
                     holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
                     holder.liveText.setVisibility(View.GONE);
 
@@ -192,7 +197,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     } else {
                        //nothing
                     }
-                } else if ( cricketMatchJsonCaller.getStatus().equals("notstarted") ) {
+                } else if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("N") ) {
                     holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
                     holder.liveText.setVisibility(View.GONE);
 
@@ -359,14 +364,21 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             String matchName="";
             String date = "";
             String matchTime = "";
+            String seriesId = "";
             Intent intent = new Intent( activity, ScoreDetailActivity.class);
             if( type.equalsIgnoreCase(ScoresJsonParser.CRICKET) ){
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
+                JSONArray wigetTeamsArray = cricketMatchJsonCaller.getTeamsWiget();
+                if(wigetTeamsArray!=null){
+                    cricketMatchJsonCaller.setMatchWidgetHomeTeam(wigetTeamsArray.getJSONObject(0));
+                    cricketMatchJsonCaller.setMatchWidgetAwayTeam(wigetTeamsArray.getJSONObject(1));
+                }
                 matchId = cricketMatchJsonCaller.getMatchId();
                 matchStatus = cricketMatchJsonCaller.getStatus();
                 toss = cricketMatchJsonCaller.getToss();
                 matchName = cricketMatchJsonCaller.getMatchNumber()+", " +cricketMatchJsonCaller.getTeam1()+" v "+cricketMatchJsonCaller.getTeam2();
                 date = cricketMatchJsonCaller.getMatchDate();
+                seriesId = cricketMatchJsonCaller.getSeriesId();
             } else if( type.equalsIgnoreCase(ScoresJsonParser.FOOTBALL) ){
                 footballMatchJsonCaller.setJsonObject(matchJsonObject);
                 matchId = String.valueOf(footballMatchJsonCaller.getMatchId());
@@ -381,7 +393,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 intent.putExtra(Constants.INTENT_KEY_TEAM2_NAME,footballMatchJsonCaller.getAwayTeam());
 
             }
-
+            intent.putExtra(Constants.INTENT_KEY_SERIES,seriesId);
             intent.putExtra(Constants.INTENT_KEY_TYPE, type);
             intent.putExtra(Constants.INTENT_KEY_ID, matchId);
             intent.putExtra(Constants.INTENT_KEY_MATCH_STATUS,matchStatus);
@@ -507,6 +519,12 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             try {
                 if (matchJsonCaller.getType().equals(ScoresJsonParser.CRICKET)) {
                     cricketMatchJsonCaller.setJsonObject(jsonObject);
+                    JSONArray wigetTeamsArray = cricketMatchJsonCaller.getTeamsWiget();
+                    if(wigetTeamsArray!=null){
+                        cricketMatchJsonCaller.setMatchWidgetHomeTeam(wigetTeamsArray.getJSONObject(0));
+                        cricketMatchJsonCaller.setMatchWidgetAwayTeam(wigetTeamsArray.getJSONObject(1));
+                    }
+
 
                     Glide.with(activity).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(flag1);
                     Glide.with(activity).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(flag2);

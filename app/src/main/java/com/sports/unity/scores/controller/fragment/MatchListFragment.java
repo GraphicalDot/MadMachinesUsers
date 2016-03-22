@@ -243,10 +243,10 @@ public class MatchListFragment extends Fragment {
             for(int i = 0; i<matches.size();i++){
                 try{
                     JSONObject object = matches.get(i);
-                    if(!object.isNull("match_datetime_epoch")){
-                        epochTime = object.getLong("match_datetime_epoch");
+                    if(!object.isNull("match_time")){
+                        epochTime = object.getLong("match_time");
                         day=  DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
-                        leagueName = object.getString("league_name");
+                        leagueName = object.getString("series_name");
                         sportsType = object.getString("type");
                     } else if(!object.isNull("match_date_epoch")){
                         epochTime = object.getLong("match_date_epoch");
