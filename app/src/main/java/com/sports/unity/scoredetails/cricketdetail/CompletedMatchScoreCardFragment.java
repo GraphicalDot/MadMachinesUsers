@@ -239,17 +239,407 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
     @Override
     public void handleContent(String content) {
         {
-            content = "";
+content = "{\n" +
+        "  \"data\": [\n" +
+        "    {\n" +
+        "      \"away_team\": \"South Africa\",\n" +
+        "      \"home_team\": \"Afghanistan\",\n" +
+        "      \"match_id\": \"20\",\n" +
+        "      \"match_name\": \"Match 20\",\n" +
+        "      \"match_time\": 1458466200,\n" +
+        "      \"result\": \"Live: AFG 4/132 (14.0) Fol. SAF 5/209 (20.0)\",\n" +
+        "      \"scorecard\": {\n" +
+        "        \"1\": {\n" +
+        "          \"1st Inn SAF\": {\n" +
+        "            \"batting\": [\n" +
+        "              {\n" +
+        "                \"balls\": \"31\",\n" +
+        "                \"batsman_id\": \"15092\",\n" +
+        "                \"batsman_name\": \"Q de Kock\",\n" +
+        "                \"four\": \"6\",\n" +
+        "                \"how_out\": \"c: Shahzad b: Hamza Hotak\",\n" +
+        "                \"runs\": \"45\",\n" +
+        "                \"six\": \"2\",\n" +
+        "                \"strike_rate\": \"145.16\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"balls\": \"5\",\n" +
+        "                \"batsman_id\": \"3340\",\n" +
+        "                \"batsman_name\": \"HM Amla\",\n" +
+        "                \"four\": \"1\",\n" +
+        "                \"how_out\": \"c: Stanikzai b: Zadran\",\n" +
+        "                \"runs\": \"5\",\n" +
+        "                \"six\": \"0\",\n" +
+        "                \"strike_rate\": \"100.00\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"balls\": \"27\",\n" +
+        "                \"batsman_id\": \"7531\",\n" +
+        "                \"batsman_name\": \"F du Plessis\",\n" +
+        "                \"four\": \"7\",\n" +
+        "                \"how_out\": \"run out (Nabi)\",\n" +
+        "                \"runs\": \"41\",\n" +
+        "                \"six\": \"1\",\n" +
+        "                \"strike_rate\": \"151.85\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"balls\": \"29\",\n" +
+        "                \"batsman_id\": \"3352\",\n" +
+        "                \"batsman_name\": \"AB de Villiers\",\n" +
+        "                \"four\": \"4\",\n" +
+        "                \"how_out\": \"c: Ali Zadran b: Nabi\",\n" +
+        "                \"runs\": \"64\",\n" +
+        "                \"six\": \"5\",\n" +
+        "                \"strike_rate\": \"220.69\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"balls\": \"20\",\n" +
+        "                \"batsman_id\": \"3314\",\n" +
+        "                \"batsman_name\": \"JP Duminy\",\n" +
+        "                \"four\": \"2\",\n" +
+        "                \"how_out\": \"not out\",\n" +
+        "                \"runs\": \"29\",\n" +
+        "                \"six\": \"1\",\n" +
+        "                \"strike_rate\": \"145.00\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"balls\": \"8\",\n" +
+        "                \"batsman_id\": \"7524\",\n" +
+        "                \"batsman_name\": \"DA Miller\",\n" +
+        "                \"four\": \"2\",\n" +
+        "                \"how_out\": \"c: Naib b: Zadran\",\n" +
+        "                \"runs\": \"19\",\n" +
+        "                \"six\": \"1\",\n" +
+        "                \"strike_rate\": \"237.50\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"balls\": \"0\",\n" +
+        "                \"batsman_id\": \"15239\",\n" +
+        "                \"batsman_name\": \"D Wiese\",\n" +
+        "                \"four\": \"0\",\n" +
+        "                \"how_out\": \"not out\",\n" +
+        "                \"runs\": \"0\",\n" +
+        "                \"six\": \"0\",\n" +
+        "                \"strike_rate\": \"\"\n" +
+        "              }\n" +
+        "            ],\n" +
+        "            \"bowling\": [\n" +
+        "              {\n" +
+        "                \"bowler_id\": \"14477\",\n" +
+        "                \"bowler_name\": \"Amir Hamza\",\n" +
+        "                \"economy\": \"8.33\",\n" +
+        "                \"maidens\": \"0\",\n" +
+        "                \"overs\": \"3.0\",\n" +
+        "                \"runs\": \"25\",\n" +
+        "                \"strike_rate\": \"18.0\",\n" +
+        "                \"wickets\": \"1\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"bowler_id\": \"14475\",\n" +
+        "                \"bowler_name\": \"Dawlat Zadran\",\n" +
+        "                \"economy\": \"15.33\",\n" +
+        "                \"maidens\": \"0\",\n" +
+        "                \"overs\": \"3.0\",\n" +
+        "                \"runs\": \"46\",\n" +
+        "                \"strike_rate\": \"18.0\",\n" +
+        "                \"wickets\": \"1\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"bowler_id\": \"7802\",\n" +
+        "                \"bowler_name\": \"Shapoor Zadran\",\n" +
+        "                \"economy\": \"9.33\",\n" +
+        "                \"maidens\": \"0\",\n" +
+        "                \"overs\": \"3.0\",\n" +
+        "                \"runs\": \"28\",\n" +
+        "                \"strike_rate\": \"18.0\",\n" +
+        "                \"wickets\": \"1\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"bowler_id\": \"7796\",\n" +
+        "                \"bowler_name\": \"Mohammad Nabi\",\n" +
+        "                \"economy\": \"8.75\",\n" +
+        "                \"maidens\": \"0\",\n" +
+        "                \"overs\": \"4.0\",\n" +
+        "                \"runs\": \"35\",\n" +
+        "                \"strike_rate\": \"24.0\",\n" +
+        "                \"wickets\": \"1\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"bowler_id\": \"16588\",\n" +
+        "                \"bowler_name\": \"Rashid Khan\",\n" +
+        "                \"economy\": \"12.75\",\n" +
+        "                \"maidens\": \"0\",\n" +
+        "                \"overs\": \"4.0\",\n" +
+        "                \"runs\": \"51\",\n" +
+        "                \"strike_rate\": \"\",\n" +
+        "                \"wickets\": \"0\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"bowler_id\": \"7800\",\n" +
+        "                \"bowler_name\": \"Samiullah Shenwari\",\n" +
+        "                \"economy\": \"7.33\",\n" +
+        "                \"maidens\": \"0\",\n" +
+        "                \"overs\": \"3.0\",\n" +
+        "                \"runs\": \"22\",\n" +
+        "                \"strike_rate\": \"\",\n" +
+        "                \"wickets\": \"0\"\n" +
+        "              }\n" +
+        "            ],\n" +
+        "            \"bye\": \"0\",\n" +
+        "            \"did_not_bat\": [\n" +
+        "              {\n" +
+        "                \"name\": \"CH Morris\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"name\": \"KJ Abbott\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"name\": \"K Rabada\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"name\": \"Imran Tahir\"\n" +
+        "              }\n" +
+        "            ],\n" +
+        "            \"extra\": \"6\",\n" +
+        "            \"fall_of_wickets\": [\n" +
+        "              {\n" +
+        "                \"fow_order\": 1,\n" +
+        "                \"fow_over\": \"2.4\",\n" +
+        "                \"fow_score\": \"1-25\",\n" +
+        "                \"name\": \"HM Amla\",\n" +
+        "                \"runs\": \"5\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"fow_order\": 2,\n" +
+        "                \"fow_over\": \"9.4\",\n" +
+        "                \"fow_score\": \"2-90\",\n" +
+        "                \"name\": \"F du Plessis\",\n" +
+        "                \"runs\": \"41\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"fow_order\": 3,\n" +
+        "                \"fow_over\": \"11.4\",\n" +
+        "                \"fow_score\": \"3-97\",\n" +
+        "                \"name\": \"Q de Kock\",\n" +
+        "                \"runs\": \"45\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"fow_order\": 4,\n" +
+        "                \"fow_over\": \"17.3\",\n" +
+        "                \"fow_score\": \"4-173\",\n" +
+        "                \"name\": \"AB de Villiers\",\n" +
+        "                \"runs\": \"64\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"fow_order\": 5,\n" +
+        "                \"fow_over\": \"19.5\",\n" +
+        "                \"fow_score\": \"5-203\",\n" +
+        "                \"name\": \"DA Miller\",\n" +
+        "                \"runs\": \"19\"\n" +
+        "              }\n" +
+        "            ],\n" +
+        "            \"legbye\": \"2\",\n" +
+        "            \"noball\": \"0\",\n" +
+        "            \"overs\": \"20.0\",\n" +
+        "            \"required_runrate\": \"\",\n" +
+        "            \"run_rate\": \"10.45\",\n" +
+        "            \"runs\": \"209\",\n" +
+        "            \"wickets\": \"5\",\n" +
+        "            \"wide\": \"4\"\n" +
+        "          }\n" +
+        "        },\n" +
+        "        \"2\": {\n" +
+        "          \"1st Inn AFG\": {\n" +
+        "            \"batting\": [\n" +
+        "              {\n" +
+        "                \"balls\": \"19\",\n" +
+        "                \"batsman_id\": \"8031\",\n" +
+        "                \"batsman_name\": \"Mohammad Shahzad\",\n" +
+        "                \"four\": \"3\",\n" +
+        "                \"how_out\": \"b: Morris\",\n" +
+        "                \"runs\": \"44\",\n" +
+        "                \"six\": \"5\",\n" +
+        "                \"strike_rate\": \"231.58\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"balls\": \"24\",\n" +
+        "                \"batsman_id\": \"7798\",\n" +
+        "                \"batsman_name\": \"Noor Ali Zadran\",\n" +
+        "                \"four\": \"1\",\n" +
+        "                \"how_out\": \"st: de Kock b: Tahir\",\n" +
+        "                \"runs\": \"25\",\n" +
+        "                \"six\": \"1\",\n" +
+        "                \"strike_rate\": \"104.17\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"balls\": \"6\",\n" +
+        "                \"batsman_id\": \"7790\",\n" +
+        "                \"batsman_name\": \"Asghar Stanikzai\",\n" +
+        "                \"four\": \"0\",\n" +
+        "                \"how_out\": \"c: de Kock b: Morris\",\n" +
+        "                \"runs\": \"7\",\n" +
+        "                \"six\": \"1\",\n" +
+        "                \"strike_rate\": \"116.67\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"balls\": \"18\",\n" +
+        "                \"batsman_id\": \"14476\",\n" +
+        "                \"batsman_name\": \"Gulbadin Naib\",\n" +
+        "                \"four\": \"3\",\n" +
+        "                \"how_out\": \"c: de Kock b: Abbott\",\n" +
+        "                \"runs\": \"26\",\n" +
+        "                \"six\": \"1\",\n" +
+        "                \"strike_rate\": \"144.44\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"balls\": \"11\",\n" +
+        "                \"batsman_id\": \"7796\",\n" +
+        "                \"batsman_name\": \"Mohammad Nabi\",\n" +
+        "                \"four\": \"1\",\n" +
+        "                \"how_out\": \"not out\",\n" +
+        "                \"runs\": \"10\",\n" +
+        "                \"six\": \"0\",\n" +
+        "                \"strike_rate\": \"90.91\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"balls\": \"9\",\n" +
+        "                \"batsman_id\": \"7800\",\n" +
+        "                \"batsman_name\": \"Samiullah Shenwari\",\n" +
+        "                \"four\": \"3\",\n" +
+        "                \"how_out\": \"not out\",\n" +
+        "                \"runs\": \"20\",\n" +
+        "                \"six\": \"0\",\n" +
+        "                \"strike_rate\": \"222.22\"\n" +
+        "              }\n" +
+        "            ],\n" +
+        "            \"bowling\": [\n" +
+        "              {\n" +
+        "                \"bowler_id\": \"15607\",\n" +
+        "                \"bowler_name\": \"K Rabada\",\n" +
+        "                \"economy\": \"12.00\",\n" +
+        "                \"maidens\": \"0\",\n" +
+        "                \"overs\": \"2.0\",\n" +
+        "                \"runs\": \"24\",\n" +
+        "                \"strike_rate\": \"\",\n" +
+        "                \"wickets\": \"0\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"bowler_id\": \"14455\",\n" +
+        "                \"bowler_name\": \"KJ Abbott\",\n" +
+        "                \"economy\": \"11.00\",\n" +
+        "                \"maidens\": \"0\",\n" +
+        "                \"overs\": \"3.0\",\n" +
+        "                \"runs\": \"33\",\n" +
+        "                \"strike_rate\": \"18.0\",\n" +
+        "                \"wickets\": \"1\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"bowler_id\": \"15003\",\n" +
+        "                \"bowler_name\": \"CH Morris\",\n" +
+        "                \"economy\": \"5.67\",\n" +
+        "                \"maidens\": \"0\",\n" +
+        "                \"overs\": \"3.0\",\n" +
+        "                \"runs\": \"17\",\n" +
+        "                \"strike_rate\": \"9.0\",\n" +
+        "                \"wickets\": \"2\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"bowler_id\": \"7532\",\n" +
+        "                \"bowler_name\": \"Imran Tahir\",\n" +
+        "                \"economy\": \"6.00\",\n" +
+        "                \"maidens\": \"0\",\n" +
+        "                \"overs\": \"3.0\",\n" +
+        "                \"runs\": \"18\",\n" +
+        "                \"strike_rate\": \"18.0\",\n" +
+        "                \"wickets\": \"1\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"bowler_id\": \"15239\",\n" +
+        "                \"bowler_name\": \"D Wiese\",\n" +
+        "                \"economy\": \"12.86\",\n" +
+        "                \"maidens\": \"0\",\n" +
+        "                \"overs\": \"3.3\",\n" +
+        "                \"runs\": \"45\",\n" +
+        "                \"strike_rate\": \"\",\n" +
+        "                \"wickets\": \"0\"\n" +
+        "              }\n" +
+        "            ],\n" +
+        "            \"bye\": \"0\",\n" +
+        "            \"did_not_bat\": [\n" +
+        "              {\n" +
+        "                \"name\": \"Najibullah Zadran\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"name\": \"Rashid Khan\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"name\": \"Amir Hamza\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"name\": \"Dawlat Zadran\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"name\": \"Shapoor Zadran\"\n" +
+        "              }\n" +
+        "            ],\n" +
+        "            \"extra\": \"6\",\n" +
+        "            \"fall_of_wickets\": [\n" +
+        "              {\n" +
+        "                \"fow_order\": 1,\n" +
+        "                \"fow_over\": \"3.6\",\n" +
+        "                \"fow_score\": \"1-52\",\n" +
+        "                \"name\": \"Mohammad Shahzad\",\n" +
+        "                \"runs\": \"44\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"fow_order\": 2,\n" +
+        "                \"fow_over\": \"5.2\",\n" +
+        "                \"fow_score\": \"2-60\",\n" +
+        "                \"name\": \"Asghar Stanikzai\",\n" +
+        "                \"runs\": \"7\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"fow_order\": 3,\n" +
+        "                \"fow_over\": \"10.3\",\n" +
+        "                \"fow_score\": \"3-105\",\n" +
+        "                \"name\": \"Gulbadin Naib\",\n" +
+        "                \"runs\": \"26\"\n" +
+        "              },\n" +
+        "              {\n" +
+        "                \"fow_order\": 4,\n" +
+        "                \"fow_over\": \"11.5\",\n" +
+        "                \"fow_score\": \"4-109\",\n" +
+        "                \"name\": \"Noor Ali Zadran\",\n" +
+        "                \"runs\": \"25\"\n" +
+        "              }\n" +
+        "            ],\n" +
+        "            \"legbye\": \"1\",\n" +
+        "            \"noball\": \"0\",\n" +
+        "            \"overs\": \"14.3\",\n" +
+        "            \"required_runrate\": \"13.09\",\n" +
+        "            \"run_rate\": \"9.52\",\n" +
+        "            \"runs\": \"138\",\n" +
+        "            \"wickets\": \"4\",\n" +
+        "            \"wide\": \"5\"\n" +
+        "          }\n" +
+        "        }\n" +
+        "      },\n" +
+        "      \"series_id\": \"5166\",\n" +
+        "      \"series_name\": \"T20I: World '16\",\n" +
+        "      \"status\": \"L\"\n" +
+        "    }\n" +
+        "  ],\n" +
+        "  \"error\": false,\n" +
+        "  \"success\": true\n" +
+        "}";
             showProgress();
               try {
-                  JSONObject object = new JSONObject(content);
-               boolean success = object.getBoolean("success");
-                boolean error = object.getBoolean("error");
+              JSONObject object = new JSONObject(content);
+              boolean success = object.getBoolean("success");
+              boolean error = object.getBoolean("error");
 
                 if( success ) {
-
                     renderDisplay(object);
-
                 } else {
 
                     showErrorLayout(getView());
@@ -275,12 +665,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-        JSONArray jsonArray = jsonObject.getJSONArray("data");
-        final JSONObject dataObject = jsonArray.getJSONObject(0);
-        final CricketMatchScoreJsonParser cricketMatchScoreJsonParser = new CricketMatchScoreJsonParser();
-        cricketMatchScoreJsonParser.setJsonObject(dataObject);
         hideProgress();
         teamABattingCardList.clear();
         teamABowlingCardList.clear();
@@ -289,24 +674,31 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         teamBBowlingCardList.clear();
         teamBFallOfWicketCardList.clear();
         linearLayout.setVisibility(View.VISIBLE);
+        if(!jsonObject.isNull("data")) {
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
+            final JSONObject dataObject = jsonArray.getJSONObject(0);
+            final CricketMatchScoreJsonParser cricketMatchScoreJsonParser = new CricketMatchScoreJsonParser();
+            cricketMatchScoreJsonParser.setJsonObject(dataObject);
 
-        if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        setScoreCardNew(cricketMatchScoreJsonParser);
-                        //setScoreCardOld(dataObject);
+            if (activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            setScoreCardNew(cricketMatchScoreJsonParser);
+                            //setScoreCardOld(dataObject);
 
 
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        showErrorLayout(getView());
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            showErrorLayout(getView());
+                        }
                     }
-                }
-            });
+                });
+            }
+        }else {
+            showErrorLayout(getView());
         }
-
     }
 
 

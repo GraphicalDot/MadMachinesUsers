@@ -96,17 +96,22 @@ public class RegistrationIntentService extends IntentService implements TokenReg
     public void handleContent(String content) {
         try {
             JSONObject object = new JSONObject(content);
-            if(200==object.getInt("status")){
-                if("success".equalsIgnoreCase(object.getString("info"))) {
-                    preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, true).apply();
-                    sendNotification("Notification");
+            if(object!=null){
+                if(200==object.getInt("status")){
+                    if("success".equalsIgnoreCase(object.getString("info"))) {
+                        preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, true).apply();
+                        sendNotification("Notification");
 
-                }else{
+                    }else{
+                        preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
+                    }
+                }else {
                     preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
                 }
-            }else {
+            }else{
                 preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
             }
+
 
 
         } catch (JSONException e) {

@@ -101,100 +101,6 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
     @Override
     public void handleContent(String content) {
         {
-            content = "{\n" +
-                    "  \"data\": [\n" +
-                    "    {\n" +
-                    "      \"away_team\": \"South Africa\",\n" +
-                    "      \"home_team\": \"Afghanistan\",\n" +
-                    "      \"match_id\": \"20\",\n" +
-                    "      \"match_time\": 1458466200,\n" +
-                    "      \"result\": \"Live: AFG 4/132 (14.0) Fol. SAF 5/209 (20.0)\",\n" +
-                    "      \"series_id\": \"5166\",\n" +
-                    "      \"series_name\": \"T20I: World '16\",\n" +
-                    "      \"start_date\": \"2016-03-20T20:30:00\",\n" +
-                    "      \"status\": \"L\",\n" +
-                    "      \"summary\": {\n" +
-                    "        \"current_bowler\": {\n" +
-                    "          \"name\": \"Wiese, D\",\n" +
-                    "          \"overs\": \"3.3\",\n" +
-                    "          \"player_id\": \"15239\",\n" +
-                    "          \"runs\": \"45\",\n" +
-                    "          \"wicket\": \"0\"\n" +
-                    "        },\n" +
-                    "        \"current_partnership\": [\n" +
-                    "          {\n" +
-                    "            \"player_1\": \"Mohammad Nabi\",\n" +
-                    "            \"player_1_balls\": \"7\",\n" +
-                    "            \"player_1_id\": \"7796\",\n" +
-                    "            \"player_1_index\": \"1\",\n" +
-                    "            \"player_1_runs\": \"7\",\n" +
-                    "            \"player_2\": \"Samiullah Shenwari\",\n" +
-                    "            \"player_2_balls\": \"11\",\n" +
-                    "            \"player_2_id\": \"7800\",\n" +
-                    "            \"player_2_index\": \"2\",\n" +
-                    "            \"player_2_runs\": \"22\"\n" +
-                    "          }\n" +
-                    "        ],\n" +
-                    "        \"last_wicket\": \"Noor Ali Zadran,25(ST de Kock, Q)\",\n" +
-                    "        \"man_of_the_match\": {},\n" +
-                    "        \"recent_over\": [\n" +
-                    "          {\n" +
-                    "            \"ball_id\": \"1\",\n" +
-                    "            \"over\": \"14\",\n" +
-                    "            \"runs\": \"4\",\n" +
-                    "            \"wicket\": \"false\"\n" +
-                    "          },\n" +
-                    "          {\n" +
-                    "            \"ball_id\": \"2\",\n" +
-                    "            \"over\": \"14\",\n" +
-                    "            \"runs\": \"0\",\n" +
-                    "            \"wicket\": \"false\"\n" +
-                    "          },\n" +
-                    "          {\n" +
-                    "            \"ball_id\": \"3\",\n" +
-                    "            \"over\": \"14\",\n" +
-                    "            \"runs\": \"1\",\n" +
-                    "            \"wicket\": \"false\"\n" +
-                    "          },\n" +
-                    "          {\n" +
-                    "            \"ball_id\": \"3\",\n" +
-                    "            \"over\": \"14\",\n" +
-                    "            \"runs\": \"1\",\n" +
-                    "            \"wicket\": \"false\"\n" +
-                    "          }\n" +
-                    "        ],\n" +
-                    "        \"toss\": \"South Africa won the toss and elected to bat\",\n" +
-                    "        \"umpires\": {\n" +
-                    "          \"first_umpire\": \"Gaffaney, CB (NZL)\",\n" +
-                    "          \"referee\": \"Boon, DC (AUS)\",\n" +
-                    "          \"second_umpire\": \"Reiffel, PR (AUS)\",\n" +
-                    "          \"third_umpire\": \"Ravi, S (IND)\"\n" +
-                    "        },\n" +
-                    "        \"upcoming_batsmen\": [\n" +
-                    "          {\n" +
-                    "            \"name\": \"Najibullah Zadran\"\n" +
-                    "          },\n" +
-                    "          {\n" +
-                    "            \"name\": \"Rashid Khan\"\n" +
-                    "          },\n" +
-                    "          {\n" +
-                    "            \"name\": \"Amir Hamza\"\n" +
-                    "          },\n" +
-                    "          {\n" +
-                    "            \"name\": \"Dawlat Zadran\"\n" +
-                    "          },\n" +
-                    "          {\n" +
-                    "            \"name\": \"Shapoor Zadran\"\n" +
-                    "          }\n" +
-                    "        ],\n" +
-                    "        \"venue\": \"Wankhede Stadium\"\n" +
-                    "      },\n" +
-                    "      \"venue\": \"Wankhede Stadium\"\n" +
-                    "    }\n" +
-                    "  ],\n" +
-                    "  \"error\": false,\n" +
-                    "  \"success\": true\n" +
-                    "}";
             try {
                 showProgress();
                 JSONObject jsonObject = new JSONObject(content);
@@ -247,12 +153,13 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
             final JSONObject matchObject = dataArray.getJSONObject(0);
             final CompletedCricketMatchSummaryParser cricketMatchSummaryParser = new CompletedCricketMatchSummaryParser();
             cricketMatchSummaryParser.setJsonObject(matchObject);
-            cricketMatchSummaryParser.setCricketSummary(cricketMatchSummaryParser.getMatchSummary());
-            final JSONObject manOftheMatch = cricketMatchSummaryParser.getManOfMatchDetails();
+            JSONObject matchSummary = cricketMatchSummaryParser.getMatchSummary();
+            cricketMatchSummaryParser.setCricketSummary(matchSummary);
+            JSONObject manOftheMatch = cricketMatchSummaryParser.getManOfMatchDetails();
             cricketMatchSummaryParser.setManOfTheMatch(manOftheMatch);
-            final JSONObject batting=cricketMatchSummaryParser.getbattingdetails();
-            cricketMatchSummaryParser.setbatting(batting);
-            final JSONObject umpire = cricketMatchSummaryParser.getUmpiredetails();
+            final JSONObject batting=cricketMatchSummaryParser.getBattingDetails();
+            cricketMatchSummaryParser.setBatting(batting);
+            final JSONObject umpire = cricketMatchSummaryParser.getUmpireDetails();
             cricketMatchSummaryParser.setUmpire(umpire);
              if (activity != null) {
 
@@ -261,19 +168,19 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
                     public void run() {
                         try {
                             Log.i("run: ", jsonObject.toString());
-                            if( manOftheMatch != null &&  !manOftheMatch.isNull("image")){
+                            /*if( manOftheMatch != null &&  !manOftheMatch.isNull("image")){
                                 Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivPlayerProfileView);
                                 Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivCountryImage);
-                            }
+                            }*/
                             playerName.setText(cricketMatchSummaryParser.getPlayerName());
                             tvPlayerRun.setText(cricketMatchSummaryParser.getruns());
-                            tvPlayerPlayedBall.setText(cricketMatchSummaryParser.getballs());
+                            tvPlayerPlayedBall.setText(cricketMatchSummaryParser.getBalls());
                             tvPlayerStrike_Rate.setText(cricketMatchSummaryParser.getstrikerate());
                             tvMatchDate.setText(DateUtil.getFormattedDate(date));
                             tvTossWinTeam.setText(toss);
                             tvSeriesName.setText(matchName);
-                            tvUmpiresName.setText(cricketMatchSummaryParser.getfirstumpire());
-                            tvMatchReferee.setText(cricketMatchSummaryParser.getreferee());
+                            tvUmpiresName.setText(cricketMatchSummaryParser.getFirstUmpire());
+                            tvMatchReferee.setText(cricketMatchSummaryParser.getRefree());
                         } catch (Exception ex) {
                             ex.printStackTrace();
                             showErrorLayout(getView());

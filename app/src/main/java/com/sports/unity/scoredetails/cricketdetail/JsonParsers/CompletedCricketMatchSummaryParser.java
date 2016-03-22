@@ -32,27 +32,27 @@ public class CompletedCricketMatchSummaryParser extends JsonObjectCaller {
             return manOfTheMatch.getString("name");
         }else{return  "";}
     }
-public JSONObject getbattingdetails()throws JSONException
-{
-    return manOfTheMatch.getJSONObject("batting");
-
-}
-
-public void setbatting(JSONObject batting)
-{
-    this.batting=batting;
-}
-
-public String getballs() throws JSONException{
-
-    if (!batting.isNull("balls")){
-        return batting.getString("balls");
-    }
-    else
+    public JSONObject getBattingDetails()throws JSONException
     {
-        return "";
+        return manOfTheMatch.getJSONObject("batting");
+
     }
-}
+
+    public void setBatting(JSONObject batting)
+    {
+        this.batting=batting;
+    }
+
+    public String getBalls() throws JSONException{
+
+        if (!batting.isNull("balls")){
+            return batting.getString("balls");
+        }
+        else
+        {
+            return "";
+        }
+    }
 
     public String getruns() throws JSONException{
 
@@ -87,7 +87,7 @@ public String getballs() throws JSONException{
         }
     }*/
 
-    public JSONObject getUmpiredetails() throws JSONException {
+    public JSONObject getUmpireDetails() throws JSONException {
 
         return cricketSummary.getJSONObject("umpires");
     }
@@ -96,15 +96,15 @@ public String getballs() throws JSONException{
         this.umpires = umpires;
     }
 
-    public String getfirstumpire() throws  JSONException{
+    public String getFirstUmpire() throws  JSONException{
         if(!umpires.isNull("first_umpire")){
             return umpires.getString("first_umpire");
         }else{return  "";}
     }
 
-    public String getreferee() throws  JSONException{
-        if(!umpires.isNull("name")){
-            return umpires.getString("name");
+    public String getRefree() throws  JSONException{
+        if(!umpires.isNull("referee")){
+            return umpires.getString("referee");
         }else{return  "";}
     }
 
