@@ -252,9 +252,6 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
 
               final JSONArray statsArray= manOftheMatch.getJSONArray("stats");
               final JSONObject statObject = statsArray.getJSONObject(0);
-
-
-
             if (activity != null) {
 
                 activity.runOnUiThread(new Runnable() {

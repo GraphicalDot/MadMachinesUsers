@@ -239,6 +239,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
     @Override
     public void handleContent(String content) {
         {
+            content = "";
             showProgress();
               try {
                   JSONObject object = new JSONObject(content);

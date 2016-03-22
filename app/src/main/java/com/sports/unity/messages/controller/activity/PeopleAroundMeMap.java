@@ -143,7 +143,8 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                     if (people.size() > 1) {
                         plotMarkers(people, sportSelection);
                     } else {
-                        map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                       // map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
                         LayoutInflater inflater = PeopleAroundMeMap.this.getLayoutInflater();
                         View view = inflater.inflate(R.layout.chat_other_profile_layout, null);
 //                        AlertDialog.Builder otherProfileBuilder = new AlertDialog.Builder(PeopleAroundMeMap.this);
