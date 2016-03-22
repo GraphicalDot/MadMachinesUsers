@@ -51,8 +51,12 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
             } else {
                 fragment = new CricketCompletedMatchSummaryFragment();
             }
+<<<<<<< HEAD
             fragment = new CricketCompletedMatchSummaryFragment();
            //fragment = new CricketLiveMatchSummaryFragment();
+=======
+            fragment = new CricketLiveMatchSummaryFragment();
+>>>>>>> 7c653ee8d550edd446a76f9606de7231dbf36a59
         } else if (position == 1) {
             if(matchStatus.equalsIgnoreCase("notstarted")){
                 fragment = new UpcommingMatchCommentaryFragment();
@@ -72,6 +76,7 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
                 fragment = new CompletedMatchScoreCardFragment();
             }
         }
+
         return fragment;
     }
 

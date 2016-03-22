@@ -12,6 +12,10 @@ import org.json.JSONObject;
 public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
     private JSONObject cricketSummary;
     private JSONObject currentBowler;
+    private JSONObject currentPartnership;
+    private  JSONArray yetToBat;
+    private  JSONArray recentOver;
+
     public JSONObject getMatchSummary() throws JSONException {
         return jsonObject.getJSONObject("summary");
     }
@@ -19,17 +23,27 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
         this.cricketSummary = cricketSummary;
     }
 
+    public void setCurrentPartnership(JSONObject currentPartnership) {
+        this.currentPartnership = currentPartnership;
+    }
+    public void setYetToBat(JSONArray yetToBat) {
+        this.yetToBat = yetToBat;
+    }
     public JSONObject getCurentBowler() throws JSONException {
 
         return cricketSummary.getJSONObject("current_bowler");
     }
-    public JSONObject getCurrentPartnership() throws JSONException {
-        return cricketSummary.getJSONObject("current_partnership");
+    public JSONArray getCurrentPartnership() throws JSONException {
+        return cricketSummary.getJSONArray("current_partnership");
     }
 
 
     public JSONArray getRecentOver() throws JSONException {
         return cricketSummary.getJSONArray("recent_over");
+    }
+
+    public void setRecentOver(JSONArray recentOver) throws JSONException {
+        this.recentOver = recentOver;
     }
 
     public JSONObject getUmpires() throws JSONException {
@@ -70,7 +84,61 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
         return currentBowler.getString("wicket");
     }
 
+    public String getPlayeFirstName() throws  JSONException{
+        if(!currentPartnership.isNull("player_1")){
+            return  currentPartnership.getString("player_1");
+        }else  {return  "";}
+    }
 
+    public Integer getPlayeFirstBalls() throws  JSONException{
+        if(!currentPartnership.isNull("player_1_balls")){
+            return  currentPartnership.getInt("player_1_balls");
+        }else  {return 0;}
+    }
+    public Integer getPlayeFirstRuns() throws  JSONException{
+        if(!currentPartnership.isNull("player_1_runs")){
+            return  currentPartnership.getInt("player_1_runs");
+        }else  {return  0;}
+    }
 
+    public String getPlayeSecondName() throws  JSONException{
+        if(!currentPartnership.isNull("player_2")){
+            return  currentPartnership.getString("player_2");
+        }else  {return  "";}
+    }
 
+    public Integer getPlayeSecondBalls() throws  JSONException{
+        if(!currentPartnership.isNull("player_2_balls")){
+            return  currentPartnership.getInt("player_2_balls");
+        }else  {return  0;}
+    }
+    public Integer getPlayeSecondRuns() throws  JSONException{
+        if(!currentPartnership.isNull("player_2_runs")){
+            return  currentPartnership.getInt("player_2_runs");
+        }else  {return  0;}
+    }
+    public String getYetToPlayerName(int index) throws JSONException{
+           if(yetToBat.get(index)!=null){
+               JSONObject nameObject = yetToBat.getJSONObject(index);
+               return  nameObject.getString("name");
+           }else {return  "";}
+    }
+    public String getRecentOver(int index) throws JSONException{
+        if(recentOver.get(index)!=null){
+            JSONObject nameObject = recentOver.getJSONObject(index);
+            return  nameObject.getString("over");
+        }else {return  "";}
+    }
+    public String getRecentRuns(int index) throws JSONException{
+        if(recentOver.get(index)!=null){
+            JSONObject nameObject = recentOver.getJSONObject(index);
+            return  nameObject.getString("runs");
+        }else {return  "";}
+    }
+    public Boolean getRecentWicket(int index) throws JSONException{
+        if(recentOver.get(index)!=null){
+            JSONObject nameObject = recentOver.getJSONObject(index);
+            return  nameObject.getBoolean("wicket");
+        }else {return  false;}
+    }
 }
