@@ -245,17 +245,16 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
         if(!jsonObject.isNull("data")){
             JSONArray dataArray= jsonObject.getJSONArray("data");
             final JSONObject matchObject = dataArray.getJSONObject(0);
-            CompletedCricketMatchSummaryParser cricketMatchSummaryParser = new CompletedCricketMatchSummaryParser();
+            final CompletedCricketMatchSummaryParser cricketMatchSummaryParser = new CompletedCricketMatchSummaryParser();
             cricketMatchSummaryParser.setJsonObject(matchObject);
             cricketMatchSummaryParser.setCricketSummary(cricketMatchSummaryParser.getMatchSummary());
             final JSONObject manOftheMatch = cricketMatchSummaryParser.getManOfMatchDetails();
-
-              final JSONArray statsArray= manOftheMatch.getJSONArray("stats");
-              final JSONObject statObject = statsArray.getJSONObject(0);
-
-
-
-            if (activity != null) {
+            cricketMatchSummaryParser.setManOfTheMatch(manOftheMatch);
+            final JSONObject batting=cricketMatchSummaryParser.getbattingdetails();
+            cricketMatchSummaryParser.setbatting(batting);
+            final JSONObject umpire = cricketMatchSummaryParser.getUmpiredetails();
+            cricketMatchSummaryParser.setUmpire(umpire);
+             if (activity != null) {
 
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -266,30 +265,15 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
                                 Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivPlayerProfileView);
                                 Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivCountryImage);
                             }
-                            if( manOftheMatch!= null && !manOftheMatch.isNull("name")){
-                                playerName.setText(manOftheMatch.getString("name"));
-                            }
-                            if(!statObject.isNull("runs")){
-                                tvPlayerRun.setText(statObject.getString("runs"));
-                            }else {
-                                tvPlayerRun.setText("N/A");
-                            }
-
-                            if(!statObject.isNull("balls")){
-                                tvPlayerPlayedBall.setText(statObject.getString("balls"));
-                            }   else {
-                                tvPlayerPlayedBall.setText("N/A");
-                            }
-
-                            if(!statObject.isNull("strike_rate")) {
-                                tvPlayerStrike_Rate.setText(statObject.getString("strike_rate"));}else{
-                                tvPlayerStrike_Rate.setText("N/A");
-                            }
+                            playerName.setText(cricketMatchSummaryParser.getPlayerName());
+                            tvPlayerRun.setText(cricketMatchSummaryParser.getruns());
+                            tvPlayerPlayedBall.setText(cricketMatchSummaryParser.getballs());
+                            tvPlayerStrike_Rate.setText(cricketMatchSummaryParser.getstrikerate());
                             tvMatchDate.setText(DateUtil.getFormattedDate(date));
                             tvTossWinTeam.setText(toss);
                             tvSeriesName.setText(matchName);
-                            tvUmpiresName.setText("N/A");
-                            tvMatchReferee.setText("N/A");
+                            tvUmpiresName.setText(cricketMatchSummaryParser.getfirstumpire());
+                            tvMatchReferee.setText(cricketMatchSummaryParser.getreferee());
                         } catch (Exception ex) {
                             ex.printStackTrace();
                             showErrorLayout(getView());
