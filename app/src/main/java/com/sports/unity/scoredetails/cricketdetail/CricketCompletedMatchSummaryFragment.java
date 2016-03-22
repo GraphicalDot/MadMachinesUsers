@@ -290,12 +290,6 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
                             tvSeriesName.setText(matchName);
                             tvUmpiresName.setText("N/A");
                             tvMatchReferee.setText("N/A");
-
-
-
-
-
-
                         } catch (Exception ex) {
                             ex.printStackTrace();
                             showErrorLayout(getView());
