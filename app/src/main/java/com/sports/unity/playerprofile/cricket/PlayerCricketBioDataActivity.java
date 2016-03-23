@@ -24,10 +24,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
     private String playerNameKey;
     private CircleImageView playerProfileImage;
-    private TextView playerName;
+    private TextView tvplayerName;
     private TextView playerNationName;
     private ViewPager mViewPager;
     private CricketPlayerProfileAdapter cricketPlayerProfileAdapter;
+    private String playerName;
     //private ScrollView scrollView;
 
 
@@ -42,7 +43,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             getIntentExtras();
             initView();
             setInitData();
-            setToolbar();
+           // setToolbar();
 
         } catch (Exception e) {
             Log.i("playerProfile", "Player is not Exists");
@@ -52,14 +53,14 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
 
     private void getIntentExtras() {
         playerNameKey = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-        //playerNameKey = "6f65e8cd45ae14c916cf2c1c69b6102c";
+        playerName = getIntent().getStringExtra(Constants.INTENT_KEY_PLAYER_NAME);
 
     }
 
     private void initView() {
         try {
             playerProfileImage = (CircleImageView) findViewById(R.id.iv_cricket_player_profile_image);
-            playerName = (TextView) findViewById(R.id.tv_player_name);
+            tvplayerName = (TextView) findViewById(R.id.tv_player_name);
             playerNationName = (TextView) findViewById(R.id.tv_player_nation_name);
             mViewPager = (ViewPager) findViewById(R.id.cricket_player_pager);
            // scrollView = (ScrollView) findViewById(R.id.scroll_view);
@@ -96,7 +97,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
         }
     }
 
-    private void setToolbar() {
+    /*private void setToolbar() {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         TextView title_text = (TextView) toolbar.findViewById(R.id.toolbar_title);
@@ -108,12 +109,10 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             }
         });
     }
-
+*/
     private void setInitData() {
         try {
-            HashMap<String, String> parameters = new HashMap<>();
-            parameters.put(Constants.PLAYER_NAME, playerNameKey);
-           /* ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_PLAYER_PROFILE, parameters, REQUEST_LISTENER_KEY, PLAYER_PROFILE_REQUEST_TAG);*/
+            tvplayerName.setText(playerName);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -132,7 +131,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
                             Glide.with(PlayerCricketBioDataActivity.this).load(object.getString("image")).placeholder(R.drawable.ic_no_img).into(playerProfileImage);
                         }
                         if (!playerInfo.isNull("Full Name")) {
-                            playerName.setText(playerInfo.getString("Full Name"));
+                            tvplayerName.setText(playerInfo.getString("Full Name"));
                         }
                         if (!playerInfo.isNull("Place of birth")) {
                             playerNationName.setText(playerInfo.getString("Place of birth").split(",")[2]);
