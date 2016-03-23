@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.sports.unity.R;
@@ -188,8 +189,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
                 teamFirstSquadArray = dataObject.getJSONArray("team_1_squad");
                 teamSecondSquadArray = dataObject.getJSONArray("team_2_squad");
             } else {
-                dataObject = jsonObject.getJSONObject("data");
-                teamFirstSquadArray = dataObject.getJSONArray("team_1_squad");
+                teamFirstSquadArray = jsonObject.getJSONArray("data");
                 tvTeamFirst.setText(favouriteItem.getName());
                 getView().findViewById(R.id.team2_layout).setVisibility(View.GONE);
             }
@@ -219,8 +219,13 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
                                     listTeamSecond.add(dto);
                                 }
                             }
-                            upCommingFootballMatchSquadAdapterFirst.notifyDataSetChanged();
-                            upCommingFootballMatchSquadAdapterSecond.notifyDataSetChanged();
+                            if (bundle == null) {
+                                upCommingFootballMatchSquadAdapterFirst.notifyDataSetChanged();
+                                upCommingFootballMatchSquadAdapterSecond.notifyDataSetChanged();
+                            }else{
+                                upCommingFootballMatchSquadAdapterFirst.notifyDataSetChanged();
+                                rcRecyclerViewTeamFirst.setFocusable(false);
+                            }
 
                         } catch (Exception ex) {
                             ex.printStackTrace();

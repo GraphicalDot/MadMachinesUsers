@@ -78,7 +78,6 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             if (!isIndividualFixture) {
                 holder.tvLeagueName.setText(dto.getLeagueName());
             } else {
-                Log.d("dmax", "Hiding views inside adapter");
                 holder.leagueLayout.setVisibility(View.GONE);
                 holder.sepTop.setVisibility(View.GONE);
                 holder.sepBottom.setVisibility(View.GONE);

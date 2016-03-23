@@ -60,7 +60,6 @@ public class UpCommingFootballMatchTableHandler {
         Log.i("Score Detail", "Request Score Details");
 
         String url = BASEURL+leagueId;
-        Log.i("max",url);
         StringRequest stringRequest = null;
         RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);

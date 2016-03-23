@@ -144,11 +144,9 @@ public class ScoresContentHandler {
             String scoreId = null;
             try {
                 scoreId = parameters.get(Constants.INTENT_KEY_ID);
-                Log.d("max","inscorecontent.> "+scoreId);
             } catch (Exception e) {
             }
 
-            Log.d("max","inscorecontent.> "+scoreId);
             if (scoreId == null) {
                 requestListOfMatches(requestListenerKey, requestTag);
             } else {
@@ -277,7 +275,6 @@ public class ScoresContentHandler {
     private void requestListOfMatches(String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             String url = generateURL(URL_PARAMS_FOR_LIST_OF_MATCHES);
-            Log.d("max", "Score url is-" + url);
             requestContent(requestTag, listenerKey, url);
         } else {
             //nothing
@@ -295,7 +292,6 @@ public class ScoresContentHandler {
             }else{
                 url=generateURL(URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES);
             }
-            Log.d("max", "Score url is-" + url +"  <TYPE> "+f.getSportsType()+" <filter> "+f.getFilterType());
             requestContent(requestTag, listenerKey, url);
         } else {
             //nothing
