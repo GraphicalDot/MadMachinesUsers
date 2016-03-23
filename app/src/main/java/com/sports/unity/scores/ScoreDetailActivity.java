@@ -83,17 +83,13 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private TextView getTvMatchDay;
     private DonutProgress donutProgress;
     private ImageView refreshImage;
+    private String seriesId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_score_detail);
-        Intent i = getIntent();
-        sportsType = i.getStringExtra(INTENT_KEY_TYPE);
-        matchId = i.getStringExtra(Constants.INTENT_KEY_ID);
-        matchStatus= i.getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
-        matchTime = i.getStringExtra(Constants.INTENT_KEY_MATCH_TIME);
-        isLive = i.getBooleanExtra(Constants.INTENT_KEY_MATCH_LIVE, false);
-        LeagueName= i.getStringExtra(Constants.LEAGUE_NAME);
+        getExtras();
         initView();
         setToolbar();
 
@@ -112,6 +108,17 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
             onComponentCreate(listeners, REQUEST_LISTENER_KEY);
         }
+    }
+
+    private void getExtras() {
+        Intent i = getIntent();
+        sportsType = i.getStringExtra(INTENT_KEY_TYPE);
+        matchId = i.getStringExtra(Constants.INTENT_KEY_ID);
+        matchStatus= i.getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
+        matchTime = i.getStringExtra(Constants.INTENT_KEY_MATCH_TIME);
+        isLive = i.getBooleanExtra(Constants.INTENT_KEY_MATCH_LIVE, false);
+        LeagueName= i.getStringExtra(Constants.LEAGUE_NAME);
+        seriesId = i.getStringExtra(Constants.INTENT_KEY_SERIES);
     }
 
     @Override
@@ -346,7 +353,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("F") ) {
                          tvCurrentScore.setText(cricketMatchJsonCaller.getWinnerTeam(cricketMatchJsonCaller.getResult())+" Won The Match");
                         {
-                            //JSONObject scoreJsonObject = cricketMatchJsonCaller.getTeam1Score();
                             StringBuilder stringBuilder = new StringBuilder("");
                             stringBuilder.append(cricketMatchJsonCaller.getTeam1Score());
                             stringBuilder.append("/");
@@ -361,9 +367,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                         }
 
                         {
-                            JSONObject scoreJsonObject = cricketMatchJsonCaller.getTeam2Score();
                             StringBuilder stringBuilder = new StringBuilder("");
-                            stringBuilder.append(cricketMatchJsonCaller.getScore(scoreJsonObject));
+                            stringBuilder.append(cricketMatchJsonCaller.getTeam2Score());
                             stringBuilder.append("/");
                             stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam2());
                             teamSecondOvers.setText("("+cricketMatchJsonCaller.getOversTeam2()+")");
@@ -566,6 +571,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(ScoresContentHandler.PARAM_SPORTS_TYPE, sportsType);
         parameters.put(ScoresContentHandler.PARAM_ID, matchId);
+        parameters.put(ScoresContentHandler.PARAM_SERIESID, seriesId);
         ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_COMMENTARIES, parameters, REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
     }
 

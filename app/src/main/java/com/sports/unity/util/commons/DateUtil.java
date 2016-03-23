@@ -20,7 +20,7 @@ public class DateUtil {
     private static final SimpleDateFormat DATE_FORMAT =  new SimpleDateFormat("dd MMMM yyyy");
     private static final SimpleDateFormat formatter_DD_MM_YYYY =  new SimpleDateFormat("dd-MM-yyyy");
     private static final SimpleDateFormat TIME_FORMAT =  new SimpleDateFormat("HH:mm");
-    private static final SimpleDateFormat DATE_TIME_FORMAT =  new SimpleDateFormat("EEE MMMM dd yyyy HH:mm");
+    private static final SimpleDateFormat DATE_TIME_FORMAT =  new SimpleDateFormat("EEE, MMMM dd yyyy HH:mm");
     public  static String getDaysDiffrence(String oldDate,Context context){
         String days;
         Calendar with = getCalendar(oldDate);
@@ -138,8 +138,9 @@ public class DateUtil {
         Calendar to = Calendar.getInstance();
         TimeZone tz = to.getTimeZone();
         Calendar with = Calendar.getInstance();
-        with.setTimeZone(tz);
         with.setTimeInMillis(l);
+        with.setTimeZone(tz);
+
         to.set(Calendar.YEAR, with.get(Calendar.YEAR));
         int withDAY = with.get(Calendar.DAY_OF_YEAR);
         int toDAY = to.get(Calendar.DAY_OF_YEAR);

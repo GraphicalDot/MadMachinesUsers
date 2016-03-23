@@ -59,10 +59,15 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
 
 
    public String getTeam1Flag() throws JSONException {
-       if(matchWidgetHomeTeam.isNull("team_image")){
-           return "";
+       if(matchWidgetHomeTeam!=null){
+           if(matchWidgetHomeTeam.isNull("team_image")){
+               return "";
+           }
+           return matchWidgetHomeTeam.getString("team_image");
+       }else{
+           return  "";
        }
-        return matchWidgetHomeTeam.getString("team_image");
+
     }
 
     public String getTeam2Flag() throws JSONException {
@@ -90,13 +95,13 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         return jsonObject.getString("match_format");
     }
 
-    public JSONObject getTeam1Score() throws JSONException {
-        return matchWidgetHomeTeam.getJSONObject("runs");
+    public String getTeam1Score() throws JSONException {
+        return matchWidgetHomeTeam.getString("runs");
 
     }
 
-    public JSONObject getTeam2Score() throws JSONException {
-        return matchWidgetAwayTeam.getJSONObject("runs");
+    public String getTeam2Score() throws JSONException {
+        return matchWidgetAwayTeam.getString("runs");
     }
 
     public String getScore(JSONObject jsonObject) throws JSONException {

@@ -149,7 +149,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     public void matchSummary(){
         cricketLiveMatchSummaryHandler = CricketLiveMatchSummaryHandler.getInstance(context);
         cricketLiveMatchSummaryHandler.addListener(this);
-        cricketLiveMatchSummaryHandler.requestLiveMatchSummary(seriesId,matchId);
+        cricketLiveMatchSummaryHandler.requestLiveMatchSummary(seriesId, matchId);
         if(!autRefreshEnabled){
             enableAutoRefreshContent();
             autRefreshEnabled = true;
@@ -160,14 +160,19 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
     private void enableAutoRefreshContent(){
         timerToRefreshContent = new Timer();
-        timerToRefreshContent.schedule(new TimerTask() {
+        if(autRefreshEnabled){
+            timerToRefreshContent.schedule(new TimerTask() {
 
-            @Override
-            public void run() {
-                matchSummary();
-            }
+                @Override
+                public void run() {
+                    matchSummary();
+                }
 
-        }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
+            }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
+        }else{
+            timerToRefreshContent.cancel();
+        }
+
     }
 
     @Override
@@ -438,6 +443,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     @Override
     public void onPause() {
         super.onPause();
+        autRefreshEnabled = false;
         if(cricketLiveMatchSummaryHandler != null){
             cricketLiveMatchSummaryHandler.addListener(null);
         }
@@ -455,6 +461,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             cricketLiveMatchSummaryHandler= CricketLiveMatchSummaryHandler.getInstance(getContext());
         }
         cricketLiveMatchSummaryHandler.requestLiveMatchSummary(seriesId,matchId);
+        autRefreshEnabled = true;
     }
 
 }

@@ -23,7 +23,7 @@ public class CricketLiveMatchSummaryHandler {
 
     private static final String REQUEST_TAG = "LIVE_SUMMARY_TAG";
     private static Context mContext;
-    private String BASEURL = "http://52.74.75.79:8080/v1/get_match_scorecard?season_key=%s&match_id=%s";
+    private String BASEURL = "http://52.74.75.79:8080/v1/get_cricket_match_summary?season_key=%s&match_id=%s";
 
     private LiveCricketMatchSummaryContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();

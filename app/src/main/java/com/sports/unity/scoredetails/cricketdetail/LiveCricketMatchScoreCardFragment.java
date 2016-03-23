@@ -90,6 +90,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     private Context context;
     private RelativeLayout team1ScoreDetails;
     private RelativeLayout team2ScoreDetails;
+    private String seriesId;
 
     public LiveCricketMatchScoreCardFragment() {
         super();
@@ -99,6 +100,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     public void onAttach(Context context) {
         super.onAttach(context);
         matchId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        seriesId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_SERIES);
         this.context = context;
         matchScoreCrad();
     }
@@ -234,7 +236,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     private void matchScoreCrad() {
         livedMatchScoreCardHandler = LivedMatchScoreCardHandler.getInstance(context);
         livedMatchScoreCardHandler.addListener(this);
-        livedMatchScoreCardHandler.requestMatchScoreCard(matchId);
+        livedMatchScoreCardHandler.requestMatchScoreCard(seriesId,matchId);
     }
 
 
@@ -382,7 +384,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                 tvExtraRunTeamSecond.setText("Extras " + cricketMatchScoreJsonParser.getExtra(teamSecondInnings[k]));
                 tvTotalRunSecondTeam.setText(cricketMatchScoreJsonParser.getTeamRuns(teamSecondInnings[k]));
                 tvRunRateSecondTeam.setText(cricketMatchScoreJsonParser.getTeamRunsRate(teamSecondInnings[k]));
-                tvTeamSecondNameAndScore.setText(cricketMatchScoreJsonParser.getHomeTeam() + " " + cricketMatchScoreJsonParser.getTeamRuns(teamSecondInnings[k]) + "/" + cricketMatchScoreJsonParser.getTeamWicket(teamSecondInnings[k]));
+                tvTeamSecondNameAndScore.setText(cricketMatchScoreJsonParser.getAwayTeam() + " " + cricketMatchScoreJsonParser.getTeamRuns(teamSecondInnings[k]) + "/" + cricketMatchScoreJsonParser.getTeamWicket(teamSecondInnings[k]));
             }
 
             for ( i = 0; i < teamBBattingArray.length(); i++) {
@@ -439,6 +441,6 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         }else {
             livedMatchScoreCardHandler= LivedMatchScoreCardHandler.getInstance(getContext());
         }
-        livedMatchScoreCardHandler.requestMatchScoreCard(matchId);
+        livedMatchScoreCardHandler.requestMatchScoreCard(seriesId,matchId);
     }
 }

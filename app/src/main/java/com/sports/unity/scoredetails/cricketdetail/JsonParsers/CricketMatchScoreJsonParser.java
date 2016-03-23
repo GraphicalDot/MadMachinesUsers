@@ -35,10 +35,10 @@ public class CricketMatchScoreJsonParser  extends JsonObjectCaller{
     }
 
     public JSONObject getTeamFirst(JSONObject scoreCard)throws JSONException{
-        return  scoreCard.getJSONObject("1");
+        return  scoreCard.getJSONObject("2");
     }
     public JSONObject getTeamSecond(JSONObject scoreCard)throws JSONException{
-        return  scoreCard.getJSONObject("2");
+        return  scoreCard.getJSONObject("1");
     }
 
     public JSONObject getTeamFirstInnings(final JSONObject teamFirstinnings,final String key)throws JSONException{

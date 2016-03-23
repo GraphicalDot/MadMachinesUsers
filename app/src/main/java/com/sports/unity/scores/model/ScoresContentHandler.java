@@ -33,7 +33,7 @@ public class ScoresContentHandler {
 
     public static final String PARAM_SPORTS_TYPE = "SPORTS_TYPE";
     public static final String PARAM_ID = "ID";
-
+    public static final String PARAM_SERIESID = "series_id";
     public static final String PARAM_USERNAME = "USERNAME";
     public static final String PARAM_PASSWORD = "PASSWORD";
     public static final String PARAM_LATITUDE = "LATITUDE";
@@ -54,7 +54,7 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_LIST_OF_MATCHES = "v1/get_all_matches_list";
     private static final String URL_PARAMS_FOR_FOOTBALL_MATCH_DETAIL = "get_football_match_scores?match_id=";
     private static final String URL_PARAMS_FOR_CRICKET_MATCH_DETAIL = "get_cricket_match_scores?match_key=";
-    private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "get_cricket_match_commentary?match_key=";
+    private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "v1/get_match_commentary?season_key=%s&match_id=%s";
     private static final String URL_PARAMS_FOR_FOOTBALL_COMMENTARY = "get_football_commentary?match_id=";
     private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = "http://52.76.74.188:5600/get_football_player_profile?player_id=";
 
@@ -86,6 +86,7 @@ public class ScoresContentHandler {
         }
 
     };
+
 
     private ScoresContentHandler() {
 
@@ -145,13 +146,14 @@ public class ScoresContentHandler {
             String sportsType = parameters.get(PARAM_SPORTS_TYPE);
             requestScoresOfMatch(sportsType, matchId, requestListenerKey, requestTag);
         } else if (callName.equals(CALL_NAME_MATCH_COMMENTARIES)) {
+            String seriesId = parameters.get(PARAM_SERIESID);
             String matchId = parameters.get(PARAM_ID);
 //<<<<<<< HEAD
             String sportsType = parameters.get(PARAM_SPORTS_TYPE);
 //            requestCommentaryOnMatch(sportsType, matchId, requestListenerKey, requestTag);
 //=======
 //            String sportsType = parameters.get(Constants.SPORTS_TYPE);
-            requestCommentaryOnMatch( sportsType, matchId, requestListenerKey, requestTag);
+            requestCommentaryOnMatch( sportsType, matchId,seriesId, requestListenerKey, requestTag);
         } else if(callName.equals(CALL_NAME_PLAYER_PROFILE)){
             String playerName = parameters.get(Constants.PLAYER_NAME);
             String sportsType = parameters.get(Constants.SPORTS_TYPE);
@@ -284,17 +286,21 @@ public class ScoresContentHandler {
         }
     }
 
-    private void requestCommentaryOnMatch(String sportType, String matchId, String listenerKey, String requestTag) {
+    private void requestCommentaryOnMatch(String sportType, String matchId, String seriesId,String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
 
             String baseUrl = null;
+            String url = null;
             if (sportType.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
                 baseUrl = URL_PARAMS_FOR_CRICKET_COMMENTARY;
+                baseUrl = generateURL(baseUrl + matchId);
+                url = String.format(baseUrl,seriesId,matchId);
             } else if (sportType.equalsIgnoreCase(ScoresJsonParser.FOOTBALL)) {
                 baseUrl = URL_PARAMS_FOR_FOOTBALL_COMMENTARY;
+                 url = generateURL(baseUrl + matchId);
             }
 
-            String url = generateURL(baseUrl + matchId);
+            Log.i("CRICKE", "requestCommentaryOnMatch: "+url);
             requestContent(requestTag, listenerKey, url);
         }
     }
