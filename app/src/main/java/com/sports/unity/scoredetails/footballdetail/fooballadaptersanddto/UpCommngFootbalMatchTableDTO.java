@@ -16,6 +16,15 @@ public class UpCommngFootbalMatchTableDTO  {
     private String tvL;
     private String tvPts;
 
+    public String getTeamId() {
+        return teamId;
+    }
+
+    public void setTeamId(String teamId) {
+        this.teamId = teamId;
+    }
+
+    private String teamId;
 
     public String getIvTeamProfileImage() {
         return ivTeamProfileImage;

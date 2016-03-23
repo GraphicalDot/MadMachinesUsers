@@ -68,7 +68,7 @@ public class Constants {
     public static final String COLOR_BLUE = "blue";
 
     public static final String IS_OWN_PROFILE = "is_own_profile";
-
+    public static final String INTENT_TEAM_LEAGUE_DETAIL_EXTRA = "team_league_detail_extra";
     public static final int REQUEST_CODE_SCORE = 1298;
     public static final int REQUEST_CODE_NEWS = 1397;
     public static final int REQUEST_CODE_EDIT_SPORT = 1496;

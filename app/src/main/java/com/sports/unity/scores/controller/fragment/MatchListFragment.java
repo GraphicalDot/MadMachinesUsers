@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
+import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.scores.model.ScoresContentHandler;
@@ -52,7 +54,7 @@ public class MatchListFragment extends Fragment {
     private static final String LIST_OF_MATCHES_REQUEST_TAG = "list_request_tag";
 
     //private RecyclerView mRecyclerView;
-     /*private MatchListAdapter mAdapter;*/
+    private MatchListAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
 
     private ArrayList<JSONObject> matches = new ArrayList<>();
@@ -66,7 +68,20 @@ public class MatchListFragment extends Fragment {
     private RecyclerView mWraperRecyclerView;
     private List<MatchListWrapperDTO> matchList = new ArrayList<>();
 
+    private Bundle bundle;
+    private String scoreDetailsId = "";
+    private FavouriteItem favouriteItem;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        bundle = getArguments();
+        if (bundle != null) {
+            scoreDetailsId = bundle.getString(Constants.INTENT_KEY_ID);
+            favouriteItem = new FavouriteItem(scoreDetailsId);
+            scoreDetailsId = favouriteItem.getId();
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -102,7 +117,7 @@ public class MatchListFragment extends Fragment {
             startActivityForResult(i, Constants.REQUEST_CODE_SCORE);
             return true;
         }
-        if(id== R.id.refresh){
+        if (id == R.id.refresh) {
             new Handler().post(new Runnable() {
 
                 @Override
@@ -158,7 +173,7 @@ public class MatchListFragment extends Fragment {
         mWraperRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_scores);
         mWraperRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getContext(), VERTICAL, false));
         mWraperRecyclerView.setNestedScrollingEnabled(false);
-        matchListWrapperAdapter = new MatchListWrapperAdapter(matchList,getActivity(),getContext());
+        matchListWrapperAdapter = new MatchListWrapperAdapter(matchList, getActivity(), getContext());
         mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
 
 
@@ -215,6 +230,100 @@ public class MatchListFragment extends Fragment {
         matchListWrapperAdapter.notifyDataSetChanged();
     }
 
+    private boolean handleContentForSquad(String content) {
+        boolean success = false;
+        matchList.clear();
+        matches.clear();
+        ArrayList<JSONObject> list = ScoresJsonParser.parseIndividualListOfMatches(content, favouriteItem.getSportsType());
+        if (list.size() > 0) {
+            matches.addAll(list);
+            success = true;
+            // added By Ashish For grouping
+            String day = null;
+            long epochTime = 0l;
+            String leagueName = "";
+            Map<String, Map<String, MatchListWrapperDTO>> daysMap = new HashMap<>();
+            String sportsType = "";
+            for (int i = 0; i < matches.size(); i++) {
+                try {
+                    JSONObject object = matches.get(i);
+                    if (!object.isNull("match_datetime_epoch")) {
+                        epochTime = object.getLong("match_datetime_epoch");
+                        day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
+                        leagueName = object.getString("league_name");
+                        sportsType = favouriteItem.getSportsType();
+                    } else if (!object.isNull("match_date_epoch")) {
+                        epochTime = object.getLong("match_date_epoch");
+                        sportsType = favouriteItem.getSportsType();
+                        day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
+                        if (!object.isNull("league_name")) {
+                            leagueName = object.getString("league_name");
+                        }
+                    }
+                    MatchListWrapperDTO dayGroupDto = null;
+                    ArrayList<JSONObject> dayGroupList = null;
+                    Map<String, MatchListWrapperDTO> leagueMapTemp = null;
+                    if (daysMap.containsKey(day)) {
+                        Log.i("League Name", "handleContent: " + leagueName);
+                        Log.i("Day Name", "handleContent: " + day);
+                        leagueMapTemp = daysMap.get(day);
+
+                        if (leagueMapTemp.containsKey(leagueName)) {
+                            dayGroupDto = leagueMapTemp.get(leagueName);
+                            dayGroupList = dayGroupDto.getList();
+                        } else {
+                            dayGroupDto = new MatchListWrapperDTO();
+                            dayGroupList = new ArrayList<>();
+
+                        }
+
+
+                    } else {
+
+                        leagueMapTemp = new HashMap<>();
+                        dayGroupDto = new MatchListWrapperDTO();
+                        dayGroupList = new ArrayList<>();
+
+
+                    }
+                    dayGroupList.add(object);
+                    dayGroupDto.setList(dayGroupList);
+                    dayGroupDto.setDay(day);
+                    dayGroupDto.setEpochTime(epochTime);
+                    dayGroupDto.setSportsType(sportsType);
+                    dayGroupDto.setLeagueName(leagueName);
+                    leagueMapTemp.put(leagueName, dayGroupDto);
+                    daysMap.put(day, leagueMapTemp);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            matchList.clear();
+            Set<String> daySet = daysMap.keySet();
+
+            for (String dayKey : daySet) {
+                Map<String, MatchListWrapperDTO> leagueMaps = daysMap.get(dayKey);
+                Set<String> keySet = leagueMaps.keySet();
+
+                for (String key : keySet) {
+                    int s = leagueMaps.get(key).getList().size();
+
+                    if (s > 0) {
+                        matchList.add(leagueMaps.get(key));
+                    }
+
+                }
+            }
+            Collections.sort(matchList);
+            if (favouriteItem.getFilterType().equalsIgnoreCase(Constants.FILTER_TYPE_LEAGUE)) {
+                matchListWrapperAdapter.setIsIndividualFixture();
+            }
+            matchListWrapperAdapter.notifyDataSetChanged();
+        }
+        return success;
+    }
+
     private boolean handleContent(String content) {
         Log.i("List of Matches", "Handle Content");
         boolean success = false;
@@ -249,48 +358,50 @@ public class MatchListFragment extends Fragment {
             success = true;
             // added By Ashish For grouping
             String day = null;
-            long epochTime= 0l;
+            long epochTime = 0l;
             String leagueName = "";
             Map<String, Map<String, MatchListWrapperDTO>> daysMap = new HashMap<>();
-            String sportsType= "";
-            for(int i = 0; i<matches.size();i++){
-                try{
+            String sportsType = "";
+            for (int i = 0; i < matches.size(); i++) {
+                try {
                     JSONObject object = matches.get(i);
-                    if(!object.isNull("match_datetime_epoch")){
+                    if (!object.isNull("match_datetime_epoch")) {
                         epochTime = object.getLong("match_datetime_epoch");
-                        day=  DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
+                        day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
                         leagueName = object.getString("league_name");
                         sportsType = object.getString("type");
-                    } else if(!object.isNull("match_date_epoch")){
+                    } else if (!object.isNull("match_date_epoch")) {
                         epochTime = object.getLong("match_date_epoch");
                         sportsType = object.getString("type");
-                        day=  DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
-                        if(!object.isNull("league_name")){
+                        day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
+                        if (!object.isNull("league_name")) {
                             leagueName = object.getString("league_name");
                         }
                     }
-                    MatchListWrapperDTO dayGroupDto =    null;
+                    MatchListWrapperDTO dayGroupDto = null;
                     ArrayList<JSONObject> dayGroupList = null;
                     Map<String, MatchListWrapperDTO> leagueMapTemp = null;
-                    if(daysMap.containsKey(day)){
+                    if (daysMap.containsKey(day)) {
                         Log.i("League Name", "handleContent: " + leagueName);
                         Log.i("Day Name", "handleContent: " + day);
                         leagueMapTemp = daysMap.get(day);
 
-                        if(leagueMapTemp.containsKey(leagueName)){
-                            dayGroupDto =    leagueMapTemp.get(leagueName);
+                        if (leagueMapTemp.containsKey(leagueName)) {
+                            Log.d("imax","setting daygroup");
+                            dayGroupDto = leagueMapTemp.get(leagueName);
                             dayGroupList = dayGroupDto.getList();
-                        } else{
-                            dayGroupDto =   new MatchListWrapperDTO();
+                        } else {
+                            Log.d("imax","resetting current daygroup");
+                            dayGroupDto = new MatchListWrapperDTO();
                             dayGroupList = new ArrayList<>();
 
-                       }
+                        }
 
 
-                    }else{
+                    } else {
 
                         leagueMapTemp = new HashMap<>();
-                        dayGroupDto =   new MatchListWrapperDTO();
+                        dayGroupDto = new MatchListWrapperDTO();
                         dayGroupList = new ArrayList<>();
 
 
@@ -302,18 +413,17 @@ public class MatchListFragment extends Fragment {
                     dayGroupDto.setSportsType(sportsType);
                     dayGroupDto.setLeagueName(leagueName);
                     leagueMapTemp.put(leagueName, dayGroupDto);
-                    daysMap.put(day,leagueMapTemp);
+                    daysMap.put(day, leagueMapTemp);
 
-                }catch (Exception  e)
-                {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
             matchList.clear();
             Set<String> daySet = daysMap.keySet();
 
-            for(String dayKey :daySet) {
-                Map<String, MatchListWrapperDTO > leagueMaps = daysMap.get(dayKey);
+            for (String dayKey : daySet) {
+                Map<String, MatchListWrapperDTO> leagueMaps = daysMap.get(dayKey);
                 Set<String> keySet = leagueMaps.keySet();
 
                 for (String key : keySet) {
@@ -326,7 +436,6 @@ public class MatchListFragment extends Fragment {
                 }
             }
             Collections.sort(matchList);
-
             matchListWrapperAdapter.notifyDataSetChanged();
         }
         return success;
@@ -384,8 +493,14 @@ public class MatchListFragment extends Fragment {
 
         hideErrorLayout(getView());
 
-        HashMap<String, String> parameters = new HashMap<>();
-        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCHES_LIST, parameters, LIST_LISTENER_KEY, LIST_OF_MATCHES_REQUEST_TAG);
+        if (TextUtils.isEmpty(scoreDetailsId)) {
+            HashMap<String, String> parameters = new HashMap<>();
+            ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCHES_LIST, parameters, LIST_LISTENER_KEY, LIST_OF_MATCHES_REQUEST_TAG);
+        } else {
+            HashMap<String, String> parameters = new HashMap<>();
+            parameters.put(Constants.INTENT_KEY_ID, favouriteItem.getJsonObject().toString());
+            ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCHES_LIST, parameters, LIST_LISTENER_KEY, LIST_OF_MATCHES_REQUEST_TAG);
+        }
 //        ScoresContentHandler.getInstance().requestListOfMatches(LIST_LISTENER_KEY, LIST_OF_MATCHES_REQUEST_TAG);
 
 //        Calendar c = Calendar.getInstance();
@@ -404,7 +519,11 @@ public class MatchListFragment extends Fragment {
             if (tag.equals(LIST_OF_MATCHES_REQUEST_TAG)) {
                 boolean success = false;
                 if (responseCode == 200) {
-                    success = MatchListFragment.this.handleContent(content);
+                    if (TextUtils.isEmpty(scoreDetailsId)) {
+                        success = MatchListFragment.this.handleContent(content);
+                    } else {
+                        success = MatchListFragment.this.handleContentForSquad(content);
+                    }
                     if (success) {
                         hideErrorLayout(MatchListFragment.this.getView());
                         MatchListFragment.this.renderContent();

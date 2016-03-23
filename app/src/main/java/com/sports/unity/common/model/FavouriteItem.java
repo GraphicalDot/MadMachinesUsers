@@ -9,7 +9,7 @@ import java.util.Objects;
 /**
  * Model class which contains all the info of single favourite item e.g. Name, ID, Flag Url, Sports Type and filter type.
  */
-public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<FavouriteItem>{
+public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<FavouriteItem> {
     private String name;
     private boolean isChecked;
     private String id;
@@ -25,7 +25,40 @@ public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<Favo
     }
 
     /**
+     * Public constructor to create favorite item
+     * from Json String.
+     * This Constructor helps to create the item
+     * directly when passing between activities.
+     *
+     * @param jsonObject String came within intent from origin activity.
+     */
+    public FavouriteItem(String jsonObject) {
+        JSONObject object = null;
+        try {
+            object = new JSONObject(jsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            this.setName(object.getString(FavouriteItemWrapper.name));
+            this.setSportsType(object.getString(FavouriteItemWrapper.sportsType));
+            this.setFilterType(object.getString(FavouriteItemWrapper.filterType));
+            if (!object.isNull(FavouriteItemWrapper.flag)) {
+                this.setFlagImageUrl(object.getString(FavouriteItemWrapper.flag));
+            }
+            if (!object.isNull(FavouriteItemWrapper.id)) {
+                this.setId(object.getString(FavouriteItemWrapper.id));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
      * Set name of the favourite.
+     *
      * @param name favourite name.
      */
     public void setName(String name) {
@@ -34,6 +67,7 @@ public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<Favo
 
     /**
      * Set the item as selected.
+     *
      * @param isChecked weather this item is already selected.
      */
     public void setChecked(boolean isChecked) {
@@ -42,6 +76,7 @@ public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<Favo
 
     /**
      * Set ID of the favourite.
+     *
      * @param id id of this item.
      */
     public void setId(String id) {
@@ -50,6 +85,7 @@ public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<Favo
 
     /**
      * Set the flag image uri of this item.
+     *
      * @param flagImageUrl
      */
     public void setFlagImageUrl(String flagImageUrl) {
@@ -58,6 +94,7 @@ public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<Favo
 
     /**
      * Set sports type of this item. e.g. Cricket or Football.
+     *
      * @param sportsType sports type of this item.
      */
     public void setSportsType(String sportsType) {
@@ -66,7 +103,8 @@ public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<Favo
 
     /**
      * Set filter type of this item e.g. League, Team, Player. See
-     *{@link com.sports.unity.util.Constants FILTER_TYPES}
+     * {@link com.sports.unity.util.Constants FILTER_TYPES}
+     *
      * @param filterType filter type of this item.
      */
     public void setFilterType(String filterType) {
@@ -75,13 +113,16 @@ public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<Favo
 
     /**
      * Get name of this favourite.
+     *
      * @return Name of favourite.
      */
     public String getName() {
         return name;
     }
+
     /**
      * Check if the item is already selected.
+     *
      * @return Weather item is already selected.
      */
     public boolean isChecked() {
@@ -90,6 +131,7 @@ public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<Favo
 
     /**
      * Get item id of favourite.
+     *
      * @return Id of item.
      */
     public String getId() {
@@ -98,6 +140,7 @@ public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<Favo
 
     /**
      * Get flag url of favourite item.
+     *
      * @return Flag url.
      */
     public String getFlagImageUrl() {
@@ -106,6 +149,7 @@ public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<Favo
 
     /**
      * Get sport type of favourite. e.g. Cricket or Football.
+     *
      * @return sports type.
      */
     public String getSportsType() {
@@ -115,6 +159,7 @@ public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<Favo
 
     /**
      * Get filter type of favourite item. e.g. League, Team or Player.
+     *
      * @return Filter type.
      */
     public String getFilterType() {
@@ -125,6 +170,7 @@ public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<Favo
      * Convert favorite item in to JSONObject.
      * See
      * {@link org.json.JSONObject}
+     *
      * @return JSONObject of favourite item.
      */
     public JSONObject getJsonObject() {
@@ -157,8 +203,8 @@ public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<Favo
 
     @Override
     public boolean equals(Object o) {
-        if(o instanceof FavouriteItem){
-            return this.getName().equals(((FavouriteItem)o).getName());
+        if (o instanceof FavouriteItem) {
+            return this.getName().equals(((FavouriteItem) o).getName());
         }
         return false;
     }

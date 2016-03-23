@@ -637,7 +637,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 linearLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        teamAndLeagueDetails(favouriteItem.getId(), favouriteItem.getName(), favouriteItem.getFilterType());
+                        teamAndLeagueDetails(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA,favouriteItem.getJsonObject().toString());
                     }
                 });
 
@@ -680,7 +680,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 linearLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        teamAndLeagueDetails(favouriteItem.getId(), favouriteItem.getName(), favouriteItem.getFilterType());
+                        teamAndLeagueDetails(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA,favouriteItem.getJsonObject().toString());
                     }
                 });
 
@@ -822,11 +822,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         }
     }
 
-    private void teamAndLeagueDetails(String id, String name, String type) {
+    private void teamAndLeagueDetails(String intentId, String jsonObject) {
         Intent intent = new Intent(this, TeamLeagueDetails.class);
-        intent.putExtra("Id", id);
-        intent.putExtra("Name", name);
-        intent.putExtra("Type", type);
+        intent.putExtra(intentId, jsonObject);
         startActivity(intent);
     }
 

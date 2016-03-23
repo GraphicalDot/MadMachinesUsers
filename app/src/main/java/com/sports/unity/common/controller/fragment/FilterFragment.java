@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 
-public class FilterFragment extends Fragment implements FilterActivity.OnResultReceivedListener{
+public class FilterFragment extends Fragment implements FilterActivity.OnResultReceivedListener {
 
     private StickyListHeadersListView mlistView;
     private Bundle bundle;
@@ -78,11 +78,9 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
         mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                FavouriteItem f=favList.get(position);
+                FavouriteItem f = favList.get(position);
                 Intent intent = new Intent(getContext(), TeamLeagueDetails.class);
-                intent.putExtra("Id", f.getId());
-                intent.putExtra("Name", f.getName());
-                intent.putExtra("Type", f.getFilterType());
+                intent.putExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, f.getJsonObject().toString());
                 startActivity(intent);
             }
         });
