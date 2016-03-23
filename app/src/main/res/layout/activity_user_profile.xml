@@ -158,7 +158,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:paddingLeft="@dimen/horizontal_padding_very_small"
-                    android:paddingRight="@dimen/horizontal_padding_very_small">
+                    android:paddingRight="@dimen/horizontal_padding_very_small"
+                    >
 
                     <TextView
                         android:id="@+id/fav"

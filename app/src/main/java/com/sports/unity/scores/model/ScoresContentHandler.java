@@ -186,7 +186,6 @@ public class ScoresContentHandler {
             urlBuilder.append(Constants.REQUEST_PARAMETER_KEY_UDID);
             urlBuilder.append("=");
             urlBuilder.append(udid);
-            Log.d("max", "Create user URI>>" + urlBuilder.toString());
             requestContent(requestTag, listenerKey, urlBuilder.toString());
         } else {
             //nothing

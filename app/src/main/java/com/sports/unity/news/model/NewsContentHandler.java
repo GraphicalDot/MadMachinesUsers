@@ -17,6 +17,7 @@ import com.sports.unity.R;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.VolleyRequestHandler;
 
 import org.json.JSONObject;
 
@@ -198,7 +199,7 @@ public class NewsContentHandler {
             Log.i("News Content Handler", "Request Content");
 
             StringRequest stringRequest = null;
-            RequestQueue queue = Volley.newRequestQueue(context);
+           // RequestQueue queue = Volley.newRequestQueue(context);
 
             String screen_type = getScreenSize(context);
             String url = generateUrl(timestampFirst,screen_type);
@@ -209,7 +210,7 @@ public class NewsContentHandler {
                 stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent, responseListener_ForLoadContent);
                 stringRequest.setRetryPolicy(new DefaultRetryPolicy( Constants.CONNECTION_READ_TIME_OUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-                queue.add(stringRequest);
+                VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
 
                 requestInProcess.add(REQUEST_CONTENT_TAG);
             }
@@ -221,7 +222,7 @@ public class NewsContentHandler {
         if( ! requestInProcess.contains(REQUEST_MORE_CONTENT_TAG) ) {
             Log.i("News Content Handler", "Request Load More Content");
 
-            RequestQueue queue = Volley.newRequestQueue(context);
+           // RequestQueue queue = Volley.newRequestQueue(context);
 
             StringRequest stringRequest = null;
             String screen_type = getScreenSize(context);
@@ -231,7 +232,7 @@ public class NewsContentHandler {
                 stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadMoreContent, responseListener_ForLoadMoreContent);
                 stringRequest.setRetryPolicy(new DefaultRetryPolicy( Constants.CONNECTION_READ_TIME_OUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-                queue.add(stringRequest);
+                VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
 
                 requestInProcess.add(REQUEST_MORE_CONTENT_TAG);
             }

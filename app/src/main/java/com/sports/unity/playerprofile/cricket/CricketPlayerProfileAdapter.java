@@ -1,20 +1,8 @@
-package com.sports.unity.common.controller;
+package com.sports.unity.playerprofile.cricket;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-
-import com.sports.unity.scoredetails.CommentaryFragment;
-import com.sports.unity.scoredetails.CommentriesModel;
-import com.sports.unity.scoredetails.cricketdetail.CricketLiveMatchSummaryFragment;
-import com.sports.unity.scoredetails.cricketdetail.CricketMatchSummaryFragment;
-import com.sports.unity.scoredetails.cricketdetail.CricketPlayerBioFragment;
-import com.sports.unity.scoredetails.cricketdetail.CricketPlayerMachStatFragment;
-import com.sports.unity.scores.model.ScoresJsonParser;
-import com.sports.unity.util.Constants;
-
-import java.util.ArrayList;
 
 /**
  * Created by madmachines on 17/2/16.

@@ -18,6 +18,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -78,6 +79,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     ImageView back;
     private MenuItem menuItem;
 
+    private ContactSyncListener contactSyncListener;
     private TextView unreadCount;
     private boolean messagesFragmentInFront = false;
     private SharedPreferences preferences;
@@ -89,6 +91,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         setContentView(com.sports.unity.R.layout.activity_main);
 
         SportsUnityDBHelper.getInstance(this).addDummyMessageIfNotExist();
+        SportsUnityDBHelper.getInstance(this).addDummyContactIfNotExist();
         XMPPService.startService(MainActivity.this);
 
         initViews();
@@ -439,9 +442,25 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         });
     }
 
+    public void notifyToContactFragment() {
+        if (this.contactSyncListener != null) {
+            contactSyncListener.onSyncComplete();
+        }
+    }
+
     public interface PermissionResultHandler {
         public void onPermissionResult(int requestCode, int[] grantResults);
     }
 
+    public void addContactSyncListener(ContactSyncListener listener) {
+        this.contactSyncListener = listener;
+    }
 
+    public void removeContactSyncListener() {
+        this.contactSyncListener = null;
+    }
+
+    public interface ContactSyncListener {
+        public void onSyncComplete();
+    }
 }

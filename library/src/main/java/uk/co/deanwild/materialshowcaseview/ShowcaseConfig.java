@@ -9,7 +9,7 @@ import uk.co.deanwild.materialshowcaseview.shape.Shape;
 public class ShowcaseConfig {
 
     public static final String DEFAULT_MASK_COLOUR = "#dd335075";
-    public static final long DEFAULT_FADE_TIME = 300;
+    public static final long DEFAULT_FADE_TIME = 800;
     public static final long DEFAULT_DELAY = 0;
     public static final Shape DEFAULT_SHAPE = new CircleShape();
     public static final int DEFAULT_SHAPE_PADDING = 20;

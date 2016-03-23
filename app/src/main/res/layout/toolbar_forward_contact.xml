@@ -3,7 +3,7 @@
 <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
-    android:background="@android:color/white"
+    android:background="@color/app_theme_blue"
     android:elevation="@dimen/toolbar_elevation"
     android:minHeight="?android:attr/actionBarSize"
     android:popupTheme="@style/PopupMenuListView"
@@ -23,13 +23,14 @@
             android:paddingRight="@dimen/horizontal_padding_small"
             android:paddingTop="@dimen/vertical_padding_small"
             android:scaleType="center"
-            android:src="@drawable/ic_menu_back_blk" />
+            android:src="@drawable/ic_menu_back" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Forward to"
+            android:text="Select Contact"
+            android:textColor="@android:color/white"
             android:textSize="@dimen/font_size_medium" />
     </LinearLayout>
 

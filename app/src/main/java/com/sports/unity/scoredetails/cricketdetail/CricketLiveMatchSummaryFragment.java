@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,6 +71,8 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     private boolean enableAutorefresh;
     private String seriesId;
 
+    private SwipeRefreshLayout swLivSummary;
+    private boolean autRefreshEnabled;
     public CricketLiveMatchSummaryFragment() {
         // Required empty public constructor
     }
@@ -124,6 +127,18 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             tvBowlerEcon = (TextView) view.findViewById(R.id.tv_bowler_econ);
             tvBowlerOver = (TextView) view.findViewById(R.id.tv_bowler_over);
             tvBowlerWr = (TextView) view.findViewById(R.id.tv_bowler_wr);
+            swLivSummary = (SwipeRefreshLayout) view.findViewById(R.id.live_summary);
+
+            swLivSummary.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+
+                    matchSummary();
+                    swLivSummary.setRefreshing(true);
+                }
+            });
+
+
             initProgress(view);
             initErrorLayout(view);
         } catch (Exception e) {
@@ -135,6 +150,11 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
         cricketLiveMatchSummaryHandler = CricketLiveMatchSummaryHandler.getInstance(context);
         cricketLiveMatchSummaryHandler.addListener(this);
         cricketLiveMatchSummaryHandler.requestLiveMatchSummary(seriesId,matchId);
+        if(!autRefreshEnabled){
+            enableAutoRefreshContent();
+            autRefreshEnabled = true;
+        }
+
     }
 
 
@@ -197,7 +217,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
     }
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-
+        swLivSummary.setRefreshing(false);
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (!jsonObject.isNull("data")) {
             JSONArray dataArray = jsonObject.getJSONArray("data");
@@ -330,22 +350,22 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             case "0":
                 ballDetail.setValue("0");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
-                ballDetail.setBackGroundColor(getBallColor(R.color.font_color_wide_no));
+                ballDetail.setBackGroundColor(getBallColor(R.color.grayBorder));
                 break;
             case "1":
                 ballDetail.setValue("1");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
-                ballDetail.setBackGroundColor(getBallColor(R.color.font_color_wide_no));
+                ballDetail.setBackGroundColor(getBallColor(R.color.grayBorder));
                 break;
             case "2":
                 ballDetail.setValue("2");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
-                ballDetail.setBackGroundColor(getBallColor(R.color.white_translucent));
+                ballDetail.setBackGroundColor(getBallColor(R.color.grayBorder));
                 break;
             case "3":
                 ballDetail.setValue("3");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
-                ballDetail.setBackGroundColor(getBallColor(R.color.font_color_wide_no));
+                ballDetail.setBackGroundColor(getBallColor(R.color.grayBorder));
                 break;
             case "4":
                 ballDetail.setValue("4");
@@ -411,6 +431,30 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             }*/
         return getContext().getResources().getColor(id);
 
+    }
+
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(cricketLiveMatchSummaryHandler != null){
+            cricketLiveMatchSummaryHandler.addListener(null);
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+       showProgress();
+        if(cricketLiveMatchSummaryHandler != null){
+            cricketLiveMatchSummaryHandler.addListener(this);
+
+        }else {
+            cricketLiveMatchSummaryHandler= CricketLiveMatchSummaryHandler.getInstance(getContext());
+        }
+        cricketLiveMatchSummaryHandler.requestLiveMatchSummary(seriesId,matchId);
     }
 
 }

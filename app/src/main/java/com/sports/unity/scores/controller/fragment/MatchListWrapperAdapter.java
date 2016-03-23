@@ -30,7 +30,6 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapperAdapter.ViewHolder> {
 
     private List<MatchListWrapperDTO>  matchDay;
-    private ArrayList<JSONObject> matchList = new ArrayList<>();
     private Activity activity;
     private  Context context;
 
@@ -105,6 +104,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             rvChild = (RecyclerView) view.findViewById(R.id.child_rv);
             mAdapter = new MatchListAdapter(new ArrayList<JSONObject>() ,activity);
             rvChild.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
+            rvChild.setNestedScrollingEnabled(false);
             rvChild.setAdapter(mAdapter);
 
         }

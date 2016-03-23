@@ -54,6 +54,7 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
     private CompleteFootballTimeLineAdapter completeFootballTimeLineAdapter;
     private List<CompleteFootballTimeLineDTO> list = new ArrayList<>();
     private CompletedFootballMatchTimeLineHandler completedFootballMatchTimeLineHandler;
+    private Context context;
 
     public CompletedFootballMatchTimeLineFragment() {
         // Required empty public constructor
@@ -62,6 +63,7 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         Intent i = getActivity().getIntent();
         matchId =  i.getStringExtra(INTENT_KEY_ID);
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
@@ -136,45 +138,50 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
 
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.VISIBLE);
-   }
-   private void renderDisplay(final JSONObject jsonObject) throws JSONException {
+        progressBar.setVisibility(View.GONE);
+    }
+    private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         list.clear();
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         hideProgressBar();
         swTimeLineRefresh.setRefreshing(false);
-        final JSONArray dataArray = jsonObject.getJSONArray("data");
-        list.clear();
-        if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        CompleteFootballTimeLineDTO completeFootballTimeLineDTO = null;
+        if(!jsonObject.isNull("data")){
+            final JSONArray dataArray = jsonObject.getJSONArray("data");
+            list.clear();
+            if (activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            CompleteFootballTimeLineDTO completeFootballTimeLineDTO = null;
 
-                        for (int i = 0; i < dataArray.length(); i++) {
-                            completeFootballTimeLineDTO = new CompleteFootballTimeLineDTO();
-                            JSONObject dataObject = dataArray.getJSONObject(i);
-                            if (!dataObject.isNull("team")) {
-                                completeFootballTimeLineDTO.setTeamName(dataObject.getString("team"));
-                                if (dataObject.getString("team").equalsIgnoreCase(getContext().getString(R.string.home_team_name))) {
+                            for (int i = 0; i < dataArray.length(); i++) {
+                                completeFootballTimeLineDTO = new CompleteFootballTimeLineDTO();
+                                JSONObject dataObject = dataArray.getJSONObject(i);
+                                if (!dataObject.isNull("team")) {
+                                    completeFootballTimeLineDTO.setTeamName(dataObject.getString("team"));
+                                    if (dataObject.getString("team").equalsIgnoreCase(getContext().getString(R.string.home_team_name))) {
 
-                                    setTeamFirstTimeDTO(completeFootballTimeLineDTO, dataObject);
+                                        setTeamFirstTimeDTO(completeFootballTimeLineDTO, dataObject);
 
-                                } else {
+                                    } else {
 
-                                    setTeamSecondTimeDTO(completeFootballTimeLineDTO, dataObject);
+                                        setTeamSecondTimeDTO(completeFootballTimeLineDTO, dataObject);
+                                    }
                                 }
+                                list.add(completeFootballTimeLineDTO);
                             }
-                            list.add(completeFootballTimeLineDTO);
+                            Collections.sort(list);
+                            completeFootballTimeLineAdapter.notifyDataSetChanged();
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            showErrorLayout(getView());
                         }
-                        Collections.sort(list);
-                        completeFootballTimeLineAdapter.notifyDataSetChanged();
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        showErrorLayout(getView());
                     }
-                }
-            });
+                });
+            }
+        }else{
+            showErrorLayout(getView());
         }
 
     }
@@ -232,7 +239,7 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
         Resources.Theme theme = getActivity().getTheme();
         int drwableId = R.drawable.ic_subsitute_circle;
         if("yellowcards".equalsIgnoreCase(event)){
-           drwableId = R.drawable.ic_yellow_card_circle;
+            drwableId = R.drawable.ic_yellow_card_circle;
         }else if("goals".equalsIgnoreCase(event)){
             drwableId = R.drawable.ic_goal_circle;
         }
@@ -254,4 +261,26 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
     private void  hideProgressBar(){
         progressBar.setVisibility(View.GONE);
     }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (completedFootballMatchTimeLineHandler != null) {
+            completedFootballMatchTimeLineHandler.addListener(this);
+        } else {
+            completedFootballMatchTimeLineHandler =CompletedFootballMatchTimeLineHandler.getInstance(context);
+            completedFootballMatchTimeLineHandler.addListener(this);
+        }
+        completedFootballMatchTimeLineHandler.requestCompletedMatchTimeLine(matchId);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (completedFootballMatchTimeLineHandler != null)
+            completedFootballMatchTimeLineHandler = null;
+
+    }
+
 }

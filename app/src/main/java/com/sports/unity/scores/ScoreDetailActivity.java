@@ -6,7 +6,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.format.Formatter;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -23,6 +22,7 @@ import com.sports.unity.common.controller.ViewPagerCricketScoreDetailAdapter;
 import com.sports.unity.common.controller.ViewPagerFootballScoreDetailAdapter;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
+import com.sports.unity.common.view.DonutProgress;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scores.controller.fragment.MatchListAdapter;
@@ -36,11 +36,11 @@ import com.sports.unity.util.commons.DateUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.text.Format;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -68,6 +68,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private String matchStatus;
     private  String matchTime;
     private Boolean isLive;
+    private String LeagueName;
     private View llMatchDetailLinear;
 
     private Timer timerToRefreshContent = null;
@@ -80,6 +81,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private TextView teamSecondOvers;
     private TextView tvMatchTime;
     private TextView getTvMatchDay;
+    private DonutProgress donutProgress;
+    private ImageView refreshImage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,8 +92,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         matchId = i.getStringExtra(Constants.INTENT_KEY_ID);
         matchStatus= i.getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
         matchTime = i.getStringExtra(Constants.INTENT_KEY_MATCH_TIME);
-        isLive = i.getBooleanExtra(Constants.INTENT_KEY_MATCH_LIVE,false);
-
+        isLive = i.getBooleanExtra(Constants.INTENT_KEY_MATCH_LIVE, false);
+        LeagueName= i.getStringExtra(Constants.LEAGUE_NAME);
         initView();
         setToolbar();
 
@@ -151,8 +154,11 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             int numberOfFootballTabs = footballMatchtitles.length;
             String footballMatchtitlesupcommingTitles[] = {getString(R.string.table), getString(R.string.form), getString(R.string.squad)};
 
+            donutProgress = (DonutProgress) findViewById(R.id.donut_progress);
 
-//
+
+
+
 //<<<<<<< HEAD
 //    private void initToolbar() {
 //        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
@@ -168,7 +174,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 mViewPager.setAdapter(cricketScoreDetailAdapter);
                 tab_index = getIntent().getIntExtra("tab_index", 1);
             } else {
-                if(matchStatus.equals(matchTime) && !isLive){
+                if(matchStatus.equals(matchTime) || "Postp.".equalsIgnoreCase(matchStatus) && !isLive){
                     footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitlesupcommingTitles, footballMatchtitlesupcommingTitles.length, commentaries,matchStatus,matchTime,isLive);
                     mViewPager.setAdapter(footballScoreDetailAdapter);
                     tab_index = getIntent().getIntExtra("tab_index", 0);
@@ -179,7 +185,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                 }
 
-  //>>>>>>> team2_dev_branch
+                //>>>>>>> team2_dev_branch
 
             }
             // Assiging the Sliding Tab Layout View
@@ -207,13 +213,23 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     finish();
                 }
             });
-            ImageView refreshImage = (ImageView) findViewById(R.id.refresh);
-            /*refreshImage.setOnClickListener(new View.OnClickListener() {
-                public void onClick(View v) {
+            refreshImage = (ImageView) findViewById(R.id.refresh);
 
+            refreshImage.setOnClickListener(new View.OnClickListener(){
+
+                @Override
+                public void onClick(View v) {
+                    int index = mViewPager.getCurrentItem();
+                    List<Fragment> fargmentList = getSupportFragmentManager().getFragments();
+                    Fragment fragment=  fargmentList.get(index);
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .detach(fragment)
+                            .attach(fragment)
+                            .commit();
                 }
             });
-*/
+
             llMatchDetailLinear = findViewById(R.id.ll_match_detail_linear);
             tvMatchTime = (TextView) findViewById(R.id.tv_match_time);
             getTvMatchDay = (TextView) findViewById(R.id.tv_game_day);
@@ -251,14 +267,14 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
   /*              stringBuilder.append(cricketMatchJsonCaller.getTeam1());
                 stringBuilder.append(" vs ");
                 stringBuilder.append(cricketMatchJsonCaller.getTeam2());*/
-                title_text.setText(cricketMatchJsonCaller.getShortName());
+                title_text.setText(LeagueName);
             } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
                 footballMatchJsonCaller.setJsonObject(matchScoreDetails);
 
                 /*stringBuilder.append(footballMatchJsonCaller.getHomeTeam());
                 stringBuilder.append(" vs ");
                 stringBuilder.append(footballMatchJsonCaller.getAwayTeam());*/
-                title_text.setText("Game Details");
+                title_text.setText(LeagueName);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -363,6 +379,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
 
 
+                   
+
                     requestCommentaries = true;
                 }
 
@@ -395,9 +413,16 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     llMatchDetailLinear.setVisibility(View.GONE);
                 }
                 if(!footballMatchJsonCaller.isLive() && footballMatchJsonCaller.getMatchStatus().equalsIgnoreCase("FT")){
+                    refreshImage.setVisibility(View.GONE);
                     getTvMatchDay.setText(R.string.full_time);
-                    llMatchDetailLinear.setVisibility(View.GONE);
+
+
+                } else if(!footballMatchJsonCaller.isLive() && "Postp.".equalsIgnoreCase(footballMatchJsonCaller.getMatchStatus())){
+                    refreshImage.setVisibility(View.GONE);
+                    getTvMatchDay.setText(R.string.post_pond);
+
                 }
+                llMatchDetailLinear.setVisibility(View.GONE);
                 Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000)));
                 String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
                 String day = (String) android.text.format.DateFormat.format("dd", date);
@@ -433,6 +458,14 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     showNoCommentaries();
                 } else {
                     if( footballMatchJsonCaller.isLive() ){
+                        donutProgress.setVisibility(View.VISIBLE);
+                        Integer minute = 0;
+                        try{
+                            minute = Integer.parseInt(footballMatchJsonCaller.getMatchStatus());
+                        }catch (Exception e ){
+                            e.printStackTrace();
+                        }
+                        donutProgress.setProgress(minute);
                         enableAutoRefreshContent();
                     }
 

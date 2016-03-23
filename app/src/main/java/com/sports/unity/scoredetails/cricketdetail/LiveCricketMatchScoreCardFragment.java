@@ -105,7 +105,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-       View view = inflater.inflate(R.layout.fragment_completed_match_score_card, container, false);
+        View view = inflater.inflate(R.layout.fragment_completed_match_score_card, container, false);
         initView(view);
         return view;
     }
@@ -236,6 +236,8 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         livedMatchScoreCardHandler.addListener(this);
         livedMatchScoreCardHandler.requestMatchScoreCard(matchId);
     }
+
+
     @Override
     public void handleContent(String content) {
         {
@@ -248,7 +250,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                     renderDisplay(object);
 
                 } else {
-                    Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();
+
                     showErrorLayout(getView());
                 }
             }catch (Exception ex){

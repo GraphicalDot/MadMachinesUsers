@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
@@ -22,8 +23,6 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -33,38 +32,28 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
-import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserProfileHandler;
-import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Contacts;
-import com.sports.unity.player.view.PlayerProfileView;
-import com.sports.unity.scoredetails.cricketdetail.PlayerCricketBioDataActivity;
+import com.sports.unity.playerprofile.cricket.PlayerCricketBioDataActivity;
+import com.sports.unity.playerprofile.football.PlayerProfileView;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
 
-import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -629,10 +618,23 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
                 textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
                 textView.setText(leagues.get(i).getName());
-                textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+                ImageView iv = (ImageView) linearLayout.findViewById(R.id.flag);
+                String uri = null;
+                try {
+                    uri = leagues.get(i).getFlagImageUrl();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+                if (uri != null) {
+                    Glide.with(this).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).into(iv);
+                } else {
+                    iv.setVisibility(View.VISIBLE);
+                    iv.setImageResource(R.drawable.ic_no_img);
+                }
+                linearLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
                 leagueList.addView(linearLayout);
                 final FavouriteItem favouriteItem = leagues.get(i);
-                textView.setOnClickListener(new View.OnClickListener() {
+                linearLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         teamAndLeagueDetails(favouriteItem.getId(), favouriteItem.getName(), favouriteItem.getFilterType());
@@ -659,10 +661,23 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
                 textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
                 textView.setText(teams.get(i).getName());
-                textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+                ImageView iv = (ImageView) linearLayout.findViewById(R.id.flag);
+                String uri = null;
+                try {
+                    uri = teams.get(i).getFlagImageUrl();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+                if (uri != null) {
+                    Glide.with(this).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).into(iv);
+                } else {
+                    iv.setVisibility(View.VISIBLE);
+                    iv.setImageResource(R.drawable.ic_no_img);
+                }
+                linearLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
                 teamList.addView(linearLayout);
                 final FavouriteItem favouriteItem = teams.get(i);
-                textView.setOnClickListener(new View.OnClickListener() {
+                linearLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         teamAndLeagueDetails(favouriteItem.getId(), favouriteItem.getName(), favouriteItem.getFilterType());
@@ -691,9 +706,22 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
                 final FavouriteItem favouriteItem = players.get(i);
                 textView.setText(favouriteItem.getName());
-                textView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+                ImageView iv = (ImageView) linearLayout.findViewById(R.id.flag);
+                String uri = null;
+                try {
+                    uri = players.get(i).getFlagImageUrl();
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
+                }
+                if (uri != null) {
+                    Glide.with(this).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).into(iv);
+                } else {
+                    iv.setVisibility(View.VISIBLE);
+                    iv.setImageResource(R.drawable.ic_no_img);
+                }
+                linearLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
                 playerList.addView(linearLayout);
-                textView.setOnClickListener(new View.OnClickListener() {
+                linearLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         playerProfile(favouriteItem.getName(), favouriteItem.getId(), favouriteItem.getSportsType());

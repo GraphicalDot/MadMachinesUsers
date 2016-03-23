@@ -161,6 +161,7 @@ public class DateUtil {
         days = DATE_TIME_FORMAT.format(utilDate);
         return days;
     }
+
     public static String getFormattedDateDDMMYYYY(String oldDate){
 
         String date = "";

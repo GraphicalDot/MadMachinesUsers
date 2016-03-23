@@ -105,6 +105,7 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
     @Override
     public void handleContent(String content) {
         {
+
             try {
                 showProgress();
                 JSONObject jsonObject = new JSONObject(content);

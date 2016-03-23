@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:background="@color/ColorPrimary"
     android:orientation="vertical"
     tools:context="com.sports.unity.scores.ScoreDetailActivity">
@@ -26,7 +27,7 @@
 
                 <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                     android:id="@+id/venue"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="@dimen/horizontal_padding_small"
                     android:layout_marginTop="@dimen/vertical_padding_very_very_small"
@@ -37,7 +38,7 @@
 
                 <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                     android:id="@+id/date"
-                    android:layout_width="match_parent"
+                    android:layout_width="@dimen/venus_layout_width"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="@dimen/vertical_padding_very_very_small"
                     android:layout_marginLeft="@dimen/horizontal_padding_small"
@@ -45,7 +46,6 @@
                     android:textColor="@color/score_light_grey"
                     android:textSize="@dimen/font_size_very_small"
                     />
-
             </LinearLayout>
             <!--  <LinearLayout
                   android:layout_width="wrap_content"
@@ -78,7 +78,33 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:background="@color/gray3" />
-
+    <RelativeLayout
+        android:layout_marginTop="@dimen/timer_layout_margin_top"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_centerInParent="true"
+            android:layout_height="40dp"
+            android:src="@drawable/white_circle"/>
+        <com.sports.unity.common.view.DonutProgress
+            android:id="@+id/donut_progress"
+            android:layout_centerInParent="true"
+            android:layout_width="@dimen/timer_width_height"
+            android:layout_height="@dimen/timer_width_height"
+            custom:donut_suffix_text="'"
+            custom:donut_finished_stroke_width="@dimen/timer_stock"
+            custom:donut_unfinished_stroke_width="@dimen/timer_stock"
+            custom:donut_unfinished_color="@color/score_light_grey"
+            custom:donut_text_color="@color/app_theme_blue"
+            custom:donut_finished_color="@color/app_theme_blue"
+            custom:donut_max="100"
+            custom:donut_progress="0"
+            custom:donut_circle_starting_degree="-90"
+            />
+    </RelativeLayout>
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -88,8 +114,7 @@
             android:orientation="horizontal"
             android:paddingBottom="@dimen/vertical_padding_very_very_small"
             android:layout_marginLeft="@dimen/vertical_padding_small"
-            android:layout_marginRight="@dimen/vertical_padding_small"
-            android:paddingTop="@dimen/vertical_padding_very_small">
+            android:layout_marginRight="@dimen/vertical_padding_small">
 
             <LinearLayout
                 android:layout_width="wrap_content"

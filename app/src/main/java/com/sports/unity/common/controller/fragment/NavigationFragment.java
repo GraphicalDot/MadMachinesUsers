@@ -1,20 +1,12 @@
 package com.sports.unity.common.controller.fragment;
 
-import android.app.ActionBar;
-import android.app.Activity;
-import android.app.ExpandableListActivity;
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,16 +14,11 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
-import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.controller.About;
-import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.NavListAdapter;
 import com.sports.unity.common.controller.SelectSportsActivity;
@@ -40,20 +27,10 @@ import com.sports.unity.common.controller.TeamLeagueDetails;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
-import com.sports.unity.common.model.TinyDB;
-import com.sports.unity.common.model.UserUtil;
-import com.sports.unity.messages.controller.activity.GroupInfoActivity;
-import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
-import org.jivesoftware.smack.tcp.XMPPTCPConnection;
-
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Mad on 1/4/2016.

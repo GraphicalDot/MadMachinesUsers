@@ -50,7 +50,7 @@ public class ViewPagerFootballScoreDetailAdapter extends FragmentStatePagerAdapt
     public Fragment getItem(int position) {
 
         Fragment fragment = null;
-        if(matchStatus.equals(matchTime) && !isLive){
+        if(matchStatus.equals(matchTime) || "Postp.".equalsIgnoreCase(matchStatus) && !isLive){
             if (position == 0) {
                 fragment = new UpCommingFootballMatchTableFargment();
             } else if (position == 1) {
@@ -58,7 +58,7 @@ public class ViewPagerFootballScoreDetailAdapter extends FragmentStatePagerAdapt
             } else if(position == 2) {
                 fragment = new UpCommingFootballMatchSqadFragment();
             }
-        } else {
+        }else {
             if (position == 0) {
                 fragment = new CommentaryFragment();
                 Bundle cmBundel = new Bundle();

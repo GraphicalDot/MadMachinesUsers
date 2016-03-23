@@ -1,5 +1,6 @@
 package com.sports.unity.scoredetails.footballdetail;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -61,6 +62,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     private LinearLayout squadParnetLinearLayout;
     private UpCommingFootballMatchSqadHandler liveFootballMatchTimeLineHandler;
     private LinearLayout errorLayout;
+    private Context context;
 
 
     public UpCommingFootballMatchSqadFragment() {
@@ -70,6 +72,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         Intent i = getActivity().getIntent();
         matchId =  i.getStringExtra(INTENT_KEY_ID);
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
@@ -82,7 +85,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
 
         liveFootballMatchTimeLineHandler = UpCommingFootballMatchSqadHandler.getInstance(context);
         liveFootballMatchTimeLineHandler.addListener(this);
-        liveFootballMatchTimeLineHandler.requestUpCommingMatchSquad(teamFirstId,teamSecondId);
+        liveFootballMatchTimeLineHandler.requestUpCommingMatchSquad(teamFirstId, teamSecondId);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -114,6 +117,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     private void  showProgressBar(){
         errorLayout.setVisibility(View.GONE);
         progressBar.setVisibility(View.VISIBLE);
+        squadParnetLinearLayout.setVisibility(View.GONE);
 
 
     }
@@ -162,44 +166,48 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         listTeamFirst.clear();
         listTeamSecond.clear();
-        ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-        JSONObject dataObject = jsonObject.getJSONObject("data");
-        final JSONArray teamFirstSquadArray = dataObject.getJSONArray("team_1_squad");
-        final JSONArray teamSecondSquadArray = dataObject.getJSONArray("team_2_squad");
+        Activity activity = getActivity();
         hideProgressBar();
-        squadParnetLinearLayout.setVisibility(View.VISIBLE);
-        if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        tvTeamFirst.setText(teamFirstName);
-                        tvTeamSecond.setText(teamSecondName);
-                        UpCommingFootballMatchSquadDTO dto;
+         if(!jsonObject.isNull("data")) {
+             JSONObject dataObject = jsonObject.getJSONObject("data");
+             final JSONArray teamFirstSquadArray = dataObject.getJSONArray("team_1_squad");
+             final JSONArray teamSecondSquadArray = dataObject.getJSONArray("team_2_squad");
 
-                        for (int i = 0; i< teamFirstSquadArray.length();i++){
-                            JSONObject playerObject = teamFirstSquadArray.getJSONObject(i);
-                            dto = new UpCommingFootballMatchSquadDTO();
-                            getSquadDetails(dto, playerObject);
-                            listTeamFirst.add(dto);
-                        }
-                        for (int i = 0; i< teamSecondSquadArray.length();i++){
-                            JSONObject playerObject = teamSecondSquadArray.getJSONObject(i);
-                            dto = new UpCommingFootballMatchSquadDTO();
-                            getSquadDetails(dto, playerObject);
-                            listTeamSecond.add(dto);
-                        }
-                        upCommingFootballMatchSquadAdapterFirst.notifyDataSetChanged();
-                        upCommingFootballMatchSquadAdapterSecond.notifyDataSetChanged();
+             squadParnetLinearLayout.setVisibility(View.VISIBLE);
+             if (activity != null) {
+                 activity.runOnUiThread(new Runnable() {
+                     @Override
+                     public void run() {
+                         try {
+                             tvTeamFirst.setText(teamFirstName);
+                             tvTeamSecond.setText(teamSecondName);
+                             UpCommingFootballMatchSquadDTO dto;
 
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        showErrorLayout();
-                    }
-                }
-            });
-        }
+                             for (int i = 0; i < teamFirstSquadArray.length(); i++) {
+                                 JSONObject playerObject = teamFirstSquadArray.getJSONObject(i);
+                                 dto = new UpCommingFootballMatchSquadDTO();
+                                 getSquadDetails(dto, playerObject);
+                                 listTeamFirst.add(dto);
+                             }
+                             for (int i = 0; i < teamSecondSquadArray.length(); i++) {
+                                 JSONObject playerObject = teamSecondSquadArray.getJSONObject(i);
+                                 dto = new UpCommingFootballMatchSquadDTO();
+                                 getSquadDetails(dto, playerObject);
+                                 listTeamSecond.add(dto);
+                             }
+                             upCommingFootballMatchSquadAdapterFirst.notifyDataSetChanged();
+                             upCommingFootballMatchSquadAdapterSecond.notifyDataSetChanged();
 
+                         } catch (Exception ex) {
+                             ex.printStackTrace();
+                             showErrorLayout();
+                         }
+                     }
+                 });
+             }
+         }else {
+             showErrorLayout();
+         }
     }
 
     private void getSquadDetails(UpCommingFootballMatchSquadDTO dto, JSONObject playerObject) throws JSONException {
@@ -228,5 +236,26 @@ public class UpCommingFootballMatchSqadFragment extends Fragment implements UpCo
             dto.setTvyellowcard(playerObject.getString("yellow_cards"));
         }
     }
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(liveFootballMatchTimeLineHandler != null){
+            liveFootballMatchTimeLineHandler.addListener(null);
+        }
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showProgressBar();
+        if(liveFootballMatchTimeLineHandler != null){
+            liveFootballMatchTimeLineHandler.addListener(this);
+
+        }else {
+            liveFootballMatchTimeLineHandler = UpCommingFootballMatchSqadHandler.getInstance(context);
+
+        }
+        liveFootballMatchTimeLineHandler.requestUpCommingMatchSquad(teamFirstId, teamSecondId);
+    }
 }

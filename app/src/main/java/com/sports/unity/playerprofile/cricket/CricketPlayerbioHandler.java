@@ -1,4 +1,4 @@
-package com.sports.unity.scoredetails.cricketdetail;
+package com.sports.unity.playerprofile.cricket;
 
 import android.content.Context;
 import android.util.Log;
@@ -9,31 +9,33 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.VolleyRequestHandler;
 
 import java.util.HashSet;
 
 /**
  * Created by madmachines on 16/2/16.
  */
-public class CricketPlayerMatchStatHandler {
+public class CricketPlayerbioHandler {
 
-    private static final String REQUEST_TAG = "CRICKET_PLAYER_STATS_TAG";
+    private static final String REQUEST_TAG = "CRICKET_PLAYER_BIO_TAG";
     private static Context mContext;
     private String BASEURL = "http://52.76.74.188:5400/get_player_stats?player_id=";
 
 
-    private CricketPlayerMatchStatContentListener mContentListener = null;
+    private CricketPlayerbioContentListener mContentListener = null;
     private HashSet<String> requestInProcess = new HashSet<>();
 
-    public static CricketPlayerMatchStatHandler getInstance(Context context) {
+    public static CricketPlayerbioHandler getInstance(Context context) {
         mContext = context;
-        CricketPlayerMatchStatHandler handler = new CricketPlayerMatchStatHandler();
+        CricketPlayerbioHandler handler = new CricketPlayerbioHandler();
         return handler;
     }
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
-    public interface CricketPlayerMatchStatContentListener {
+    public interface CricketPlayerbioContentListener {
 
         void handleContent(String content);
 
@@ -44,22 +46,23 @@ public class CricketPlayerMatchStatHandler {
         @Override
         public void onResponse(String s) {
             requestInProcess.remove(REQUEST_TAG);
-            CricketPlayerMatchStatHandler.this.handleResponse(s);
+            CricketPlayerbioHandler.this.handleResponse(s);
         }
 
         @Override
         public void onErrorResponse(VolleyError volleyError) {
             requestInProcess.remove(REQUEST_TAG);
-            CricketPlayerMatchStatHandler.this.handleErrorResponse(volleyError);
+            CricketPlayerbioHandler.this.handleErrorResponse(volleyError);
         }
     };
     public void requestData(String playerId) {
         Log.i("Score Detail", "Request Score Details");
-        String url =  BASEURL+playerId;
+        String url = BASEURL+playerId;
+
         StringRequest stringRequest = null;
-        RequestQueue queue = Volley.newRequestQueue(mContext);
+        //RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
-        queue.add(stringRequest);
+        VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
 
         requestInProcess.add(REQUEST_TAG);
 
@@ -72,19 +75,17 @@ public class CricketPlayerMatchStatHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
+   }
     private void handleErrorResponse(VolleyError volleyError) {
-        String response = "data{"+"success"+":"+"false"+","+"error"+":"+"true"+"}";
         try{
-            Log.i("Score Card", "handleResponse: "+response.toString());
-            mContentListener.handleContent(response);
-
+            Log.i("Score Card", "handleResponse: ");
+            mContentListener.handleContent(Constants.ERRORRESPONSE);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public void addListener(CricketPlayerMatchStatContentListener contentListener) {
+    public void addListener(CricketPlayerbioContentListener contentListener) {
         mContentListener = contentListener;
     }
 

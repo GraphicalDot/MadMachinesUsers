@@ -1,32 +1,24 @@
-package com.sports.unity.scoredetails.cricketdetail;
+package com.sports.unity.playerprofile.cricket;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
-import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.scoredetails.cricketdetail.CompletedMatchScoreCardHandler;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by madmachines on 15/2/16.
@@ -40,6 +32,9 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     private TextView tvPlayerMajorTeam;
     private ProgressBar progressBar;
     private LinearLayout linearLayoutBio;
+    private  CricketPlayerbioHandler cricketPlayerbioHandler;
+    private  String playerId;
+    private Context context;
     public CricketPlayerBioFragment() {
         super();
     }
@@ -47,9 +42,9 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        String playerId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-       /* playerId = "6f65e8cd45ae14c916cf2c1c69b6102c";*/
-        CricketPlayerbioHandler cricketPlayerbioHandler = CricketPlayerbioHandler.getInstance(context);
+        this.context = context;
+        playerId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        cricketPlayerbioHandler = CricketPlayerbioHandler.getInstance(context);
         cricketPlayerbioHandler.addListener(this);
         cricketPlayerbioHandler.requestData(playerId);
 
@@ -77,7 +72,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     @Override
     public void handleContent(String content) {
         try {
-showProgress();
+            showProgress();
             JSONObject jsonObject = new JSONObject(content);
 
             boolean success = jsonObject.getBoolean("success");
@@ -141,7 +136,7 @@ showProgress();
 
                       if (!playerInfo.isNull("Born")) {
                           try{
-                              tvPlayerDateOfBirth.setText(DateUtil.getFormattedDate(playerInfo.getString("Born")));
+                              tvPlayerDateOfBirth.setText(DateUtil.getFormattedDateDDMMYYYY(playerInfo.getString("Born")));
                           }catch (Exception e){
                               tvPlayerDateOfBirth.setText(playerInfo.getString("Born"));
                           }
@@ -174,5 +169,28 @@ showProgress();
             });
         }
 
+    }
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(cricketPlayerbioHandler != null){
+            cricketPlayerbioHandler.addListener(null);
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showProgress();
+        if(cricketPlayerbioHandler != null){
+            cricketPlayerbioHandler.addListener(this);
+
+        }else {
+            cricketPlayerbioHandler= CricketPlayerbioHandler.getInstance(context);
+        }
+        cricketPlayerbioHandler.requestData(playerId);
     }
 }

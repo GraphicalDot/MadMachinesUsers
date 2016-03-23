@@ -21,6 +21,7 @@ import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.activity.ChatScreenAdapter;
 import com.sports.unity.messages.controller.activity.ForwardSelectedItems;
 import com.sports.unity.util.CommonUtil;
@@ -90,12 +91,22 @@ public class ToolbarActionsForChatScreen {
 
     public void forwardSelectedMessages(ArrayList<Message> messageList) {
         Intent forwardIntent = new Intent(context, ForwardSelectedItems.class);
-        ArrayList<Integer> idList = new ArrayList<>();
+        ArrayList<ShareableData> dataList = new ArrayList<>();
         for (int selectedItemIds :
                 selectedItemsList) {
-            idList.add(messageList.get(selectedItemIds).id);
+            Message message = messageList.get(selectedItemIds);
+            if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
+                dataList.add(new ShareableData(message.mimeType, message.textData, ""));
+            } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
+                dataList.add(new ShareableData(message.mimeType, message.textData, ""));
+            } else if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
+                dataList.add(new ShareableData(message.mimeType, "", message.mediaFileName));
+            } else {
+                dataList.add(new ShareableData(message.mimeType, "", message.mediaFileName));
+            }
+
         }
-        forwardIntent.putIntegerArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS, idList);
+        forwardIntent.putParcelableArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS, dataList);
         forwardIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(forwardIntent);
     }

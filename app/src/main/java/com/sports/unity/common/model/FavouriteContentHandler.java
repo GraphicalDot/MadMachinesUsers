@@ -586,7 +586,6 @@ public class FavouriteContentHandler {
                             }
                         }
                     } else if (searchTag.equals(FOOTBALL_TEAM_REQUEST_TAG)) {
-                        //TODO
                         for (JSONObject obj : matches) {
                             try {
                                 FavouriteItem item = new FavouriteItem();

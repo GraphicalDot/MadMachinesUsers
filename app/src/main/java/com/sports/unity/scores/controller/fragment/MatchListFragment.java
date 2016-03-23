@@ -102,6 +102,19 @@ public class MatchListFragment extends Fragment {
             startActivityForResult(i, Constants.REQUEST_CODE_SCORE);
             return true;
         }
+        if(id== R.id.refresh){
+            new Handler().post(new Runnable() {
+
+                @Override
+                public void run() {
+                    Log.i("List of Matches", "Swipe Refresh Call");
+
+                    requestContent();
+                    mSwipeRefreshLayout.setRefreshing(true);
+                }
+
+            });
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -144,7 +157,7 @@ public class MatchListFragment extends Fragment {
 
         mWraperRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_scores);
         mWraperRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getContext(), VERTICAL, false));
-
+        mWraperRecyclerView.setNestedScrollingEnabled(false);
         matchListWrapperAdapter = new MatchListWrapperAdapter(matchList,getActivity(),getContext());
         mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
 
@@ -275,7 +288,6 @@ public class MatchListFragment extends Fragment {
 
 
                     }else{
-
 
                         leagueMapTemp = new HashMap<>();
                         dayGroupDto =   new MatchListWrapperDTO();

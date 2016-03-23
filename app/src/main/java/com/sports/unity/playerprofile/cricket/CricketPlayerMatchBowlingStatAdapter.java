@@ -1,4 +1,4 @@
-package com.sports.unity.scoredetails.cricketdetail;
+package com.sports.unity.playerprofile.cricket;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;

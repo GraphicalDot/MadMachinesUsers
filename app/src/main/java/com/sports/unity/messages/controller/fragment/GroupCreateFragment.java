@@ -3,7 +3,6 @@ package com.sports.unity.messages.controller.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,7 +20,7 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
-import com.sports.unity.messages.controller.activity.CreateGroup;
+import com.sports.unity.messages.controller.activity.GroupDetailActivity;
 import com.sports.unity.util.ImageUtil;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -30,11 +29,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by amandeep on 30/10/15.
  */
-public class GroupDetailFragment extends Fragment {
+public class GroupCreateFragment extends Fragment {
 
     static final int LOAD_IMAGE_GALLERY_CAMERA = 1;
+
     private CircleImageView groupAvatar;
-    private byte[] groupImageArray;
+    private byte[] groupImage;
 
     @Nullable
     @Override
@@ -112,7 +112,7 @@ public class GroupDetailFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == LOAD_IMAGE_GALLERY_CAMERA && resultCode == Activity.RESULT_OK) {
-            groupImageArray = ImageUtil.handleImageAndSetToView(data, groupAvatar, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
+            groupImage = ImageUtil.handleImageAndSetToView(data, groupAvatar, ImageUtil.SMALL_THUMB_IMAGE_SIZE, ImageUtil.SMALL_THUMB_IMAGE_SIZE);
         } else {
             //nothing
         }
@@ -127,10 +127,10 @@ public class GroupDetailFragment extends Fragment {
         if (groupName.isEmpty()) {
             Toast.makeText(getActivity(), R.string.group_message_provide_group_name, Toast.LENGTH_SHORT).show();
         } else {
-            CreateGroup createGroupActivity = ((CreateGroup) getActivity());
-            createGroupActivity.setGroupDetails(groupName, "", groupImageArray);
+            GroupDetailActivity groupDetailActivity = ((GroupDetailActivity) getActivity());
+            groupDetailActivity.setGroupDetails(groupName, "", groupImage);
 
-            createGroupActivity.moveToMembersListFragment();
+            groupDetailActivity.moveToMembersListFragment();
         }
     }
 

@@ -39,6 +39,7 @@
     <uses-permission
         android:name=".permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <application
         android:name=".ChatScreenApplication"
@@ -125,7 +126,7 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateAlwaysHidden" />
         <activity
-            android:name=".messages.controller.activity.CreateGroup"
+            android:name=".messages.controller.activity.GroupDetailActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".news.controller.activity.NewsDetailsActivity"
@@ -152,11 +153,51 @@
             android:name=".messages.controller.activity.ImageOrVideoViewActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".messages.controller.activity.GroupInfoActivity"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".messages.controller.activity.ForwardSelectedItems"
-            android:screenOrientation="portrait" />
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+                <data android:mimeType="image/*" />
+                <data android:mimeType="video/*" />
+                <data android:mimeType="audio/*" />
+            </intent-filter>
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.SEND" />-->
+            <!--<category android:name="android.intent.category.DEFAULT" />-->
+            <!--<data android:mimeType="image/*" />-->
+            <!--</intent-filter>-->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <data android:mimeType="image/*" />
+                <data android:mimeType="audio/*" />
+                <data android:mimeType="video/*" />
+            </intent-filter>
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.SEND" />-->
+            <!--<category android:name="android.intent.category.DEFAULT" />-->
+            <!--<data android:mimeType="audio/*" />-->
+            <!--</intent-filter>-->
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.SEND_MULTIPLE" />-->
+            <!--<category android:name="android.intent.category.DEFAULT" />-->
+            <!--<data android:mimeType="audio/*" />-->
+            <!--</intent-filter>-->
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.SEND" />-->
+            <!--<category android:name="android.intent.category.DEFAULT" />-->
+            <!--<data android:mimeType="video/*" />-->
+            <!--</intent-filter>-->
+            <!--<intent-filter>-->
+            <!--<action android:name="android.intent.action.SEND_MULTIPLE" />-->
+            <!--<category android:name="android.intent.category.DEFAULT" />-->
+            <!--<data android:mimeType="video/*" />-->
+            <!--</intent-filter>-->
+        </activity>
         <activity
             android:name=".scores.ScoreDetailActivity"
             android:screenOrientation="portrait" />
@@ -170,14 +211,9 @@
         <activity
             android:name=".common.controller.About"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".player.view.PlayerProfileView"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-        <activity
-            android:name=".scoredetails.cricketdetail.PlayerCricketBioDataActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+
+        
+        
         <activity
             android:name=".scoredetails.footballdetail.FootballDetailsActivity"
             android:screenOrientation="portrait"
@@ -189,8 +225,14 @@
         <activity
             android:name=".common.controller.TeamLeagueDetails"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"></activity>
+        <activity
+            android:name=".playerprofile.cricket.PlayerCricketBioDataActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-
+        <activity android:name=".playerprofile.football.PlayerProfileView"
+        android:screenOrientation="portrait"
+        android:theme="@style/AppTheme" />
     </application>
 
 </manifest>

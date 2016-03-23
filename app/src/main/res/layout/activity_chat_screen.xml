@@ -80,6 +80,23 @@
                     android:scrollbars="vertical"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/font_size_medium" />
+                <Button
+                    android:id="@+id/msgbtn"
+                    android:onClick="openCamera"
+                    style="?android:attr/buttonBarButtonStyle"
+                    android:layout_width="0dp"
+                    android:visibility="gone"
+                    android:gravity="center_vertical"
+                    android:layout_height="match_parent"
+                    android:layout_weight="4"
+                    android:background="@android:color/transparent"
+                    android:focusable="true"
+                    android:hint="Write a message"
+                    android:maxLength="2000"
+                    android:maxLines="5"
+                    android:paddingLeft="@dimen/horizontal_padding_small"
+                    android:scrollbars="vertical"
+                    android:textSize="@dimen/font_size_medium" />
 
                 <Button
                     android:id="@+id/send"

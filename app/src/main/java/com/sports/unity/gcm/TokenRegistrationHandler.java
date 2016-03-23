@@ -12,6 +12,7 @@ import com.android.volley.toolbox.Volley;
 import com.sports.unity.BuildConfig;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.VolleyRequestHandler;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -77,7 +78,7 @@ public class TokenRegistrationHandler {
     public void registrerToken(final String token) {
         Log.i("Register Token", "Register Token");
         String url = getGeneratedUrl(SET_ANDROID_TOKEN);
-        RequestQueue queue = Volley.newRequestQueue(mContext);
+        //RequestQueue queue = Volley.newRequestQueue(mContext);
         Log.i("registrerToken: ",url);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, responseListener_ForLoadContent,responseListener_ForLoadContent){
             protected Map<String, String> getParams() {
@@ -90,14 +91,14 @@ public class TokenRegistrationHandler {
           return params;
         };
         };
-        queue.add(stringRequest);
+        VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
         requestInProcess.add(REQUEST_TAG);
     }
 
     public void removeToken() {
         Log.i("Remove Token", "Remove Token");
         String url = getGeneratedUrl(REMOVE_ANDROID_TOKEN);
-        RequestQueue queue = Volley.newRequestQueue(mContext);
+        //RequestQueue queue = Volley.newRequestQueue(mContext);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, responseListener_ForLoadContent,responseListener_ForLoadContent){
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
@@ -108,7 +109,7 @@ public class TokenRegistrationHandler {
                 return params;
             };
         };
-        queue.add(stringRequest);
+        VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
         requestInProcess.add(REQUEST_TAG);
     }
 
@@ -116,7 +117,6 @@ public class TokenRegistrationHandler {
     public void registrerMatchUser(final String username, final String password, final String token, final String uuid,final String matchId) {
         Log.i("Register Token", "Register Token");
         String url = getGeneratedUrl(USER_REGISTER_MATCH);
-        RequestQueue queue = Volley.newRequestQueue(mContext);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, responseListener_ForLoadContent,responseListener_ForLoadContent){
             protected Map<String, String> getParams() throws com.android.volley.AuthFailureError {
                 Map<String, String> params = new HashMap<>();
@@ -129,14 +129,14 @@ public class TokenRegistrationHandler {
                 return params;
             };
         };
-        queue.add(stringRequest);
+        VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
         requestInProcess.add(REQUEST_TAG);
     }
 
     public void removeMatchUser(final String username, final String password, final String udid,final String matchId) {
         Log.i("Remove Token", "Remove Token");
         String url = getGeneratedUrl(USER_UNREGISTER_MATCH);
-        RequestQueue queue = Volley.newRequestQueue(mContext);
+       //RequestQueue queue = Volley.newRequestQueue(mContext);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, responseListener_ForLoadContent,responseListener_ForLoadContent){
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
@@ -148,7 +148,7 @@ public class TokenRegistrationHandler {
                 return params;
             };
         };
-        queue.add(stringRequest);
+        VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
         requestInProcess.add(REQUEST_TAG);
     }
 

@@ -46,6 +46,7 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
    @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         try{
+            holder.setIsRecyclable(false);
             int color = context.getResources().getColor(R.color.app_theme_blue);
             Drawable drawable = null;
             holder.dto = mValues.get(position);
@@ -57,11 +58,18 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
             }else {
                 holder.ivCardType.setVisibility(View.GONE);
             }
+
+            if(holder.dto.getCardTypeSecond()!=null) {
+                holder.ivCardTypeSecond.setImageDrawable(getDrwableResource(holder.dto.getCardTypeSecond()));
+            }else {
+                holder.ivCardTypeSecond.setVisibility(View.GONE);
+            }
             if(holder.dto.getGoal()!=null) {
                 holder.ivBallPass.setImageDrawable(getDrwableResource(holder.dto.getGoal()));
             }else {
                 holder.ivBallPass.setVisibility(View.GONE);
             }
+
             if(holder.dto.getOffPlayerName()!= null) {
                 holder.tvOffPlayerName.setText(holder.dto.getOffPlayerName());
                 holder.ivEnterExit.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_red));
@@ -107,63 +115,6 @@ public class CompleteFootballLineUpAdapter  extends RecyclerView.Adapter<Complet
                 holder.ivOffPlayerPositionSecond.setVisibility(View.GONE);
                 holder.proffRightPercentRelativeLayout.setVisibility(View.INVISIBLE);
             }
-            /*if(holder.dto.getOffPlayerName()!=null) {
-                drawable = context.getResources().getDrawable(R.drawable.ic_substitue);
-                holder.ivOffPlayerPosition.setImageDrawable(drawable);
-                holder.tvOffPlayerName.setText(holder.dto.getOffPlayerName());
-
-                if (holder.dto.getOffCardType() != null && !holder.dto.getOffCardType().equals("")) {
-                    holder.ivOffCardType.setImageDrawable(getDrwableResource(holder.dto.getOffCardType()));
-                } else {
-                    holder.ivOffCardType.setVisibility(View.GONE);
-                }
-                if (holder.dto.getOffEnterExitImage() != null) {
-
-
-                    if(holder.dto.getOffEnterExitImage().equalsIgnoreCase("OFF")){
-                        holder.ivOffEnterExit.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_red));
-                    }else {
-                        holder.ivOffEnterExit.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_green));
-                        holder.ivOffPlayerPositionSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_substitue));
-                    }
-                  } else {
-                    holder.ivOffEnterExit.setVisibility(View.GONE);
-                }
-            }{
-                holder.ivOffPlayerPosition.setVisibility(View.GONE);
-                holder.tvOffPlayerName.setVisibility(View.GONE);
-                holder.ivOffCardType.setVisibility(View.GONE);
-                holder.ivOffEnterExit.setVisibility(View.GONE);
-            }*/
-
-            /*if(holder.dto.getOffPlayerNameSecond()!=null){
-                drawable = context.getResources().getDrawable(R.drawable.ic_substitue);
-                holder.ivOffPlayerPositionSecond.setImageDrawable(drawable);
-                holder.tvOffPlayerNameSecond.setText(holder.dto.getOffPlayerNameSecond());
-                if (holder.dto.getOffCardTypeSecond() != null && !holder.dto.getOffCardTypeSecond().equals("")) {
-                    holder.ivOffCardTypeSecond.setImageDrawable(getDrwableResource(holder.dto.getOffCardTypeSecond()));
-                } else {
-                    holder.ivOffCardTypeSecond.setVisibility(View.GONE);
-                }
-                if (holder.dto.getOffEnterExitImageSecond() != null) {
-
-                    if(holder.dto.getOffEnterExitImageSecond().equalsIgnoreCase("OFF")){
-                        holder.ivOffEnterExitSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_red));
-                    }else {
-                        holder.ivOffEnterExitSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_arrow_green));
-                        holder.ivOffPlayerPositionSecond.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_substitue));
-                    }
-
-                } else {
-                    holder.ivOffEnterExitSecond.setVisibility(View.GONE);
-                }
-            }else {
-                holder.ivOffPlayerPositionSecond.setVisibility(View.GONE);
-                holder.tvOffPlayerNameSecond.setVisibility(View.GONE);
-                holder.ivOffCardTypeSecond.setVisibility(View.GONE);
-                holder.ivOffEnterExitSecond.setVisibility(View.GONE);
-            }*/
-
         }catch (Exception e){e.printStackTrace();}
     }
 

@@ -182,6 +182,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
                                 }
                                 list.add(completeFootballTimeLineDTO);
                             }
+                            Collections.sort(list);
                             completeFootballTimeLineAdapter.notifyDataSetChanged();
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -198,7 +199,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
         if(!dataObject.isNull("event_time")){
             completeFootballTimeLineDTO.setTvTeamFirstTime(dataObject.getString("event_time")+"'");
         }else if(!dataObject.isNull("minute")){
-            completeFootballTimeLineDTO.setTvTeamFirstTime(dataObject.getString("minute")+"'");
+            completeFootballTimeLineDTO.setTvTeamFirstTime(dataObject.getString("minute") + "'");
         }
 
         if(!dataObject.isNull("player_on")){
@@ -222,8 +223,9 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
         if(!dataObject.isNull("event_time")){
             completeFootballTimeLineDTO.setTvTeamSecondTime(dataObject.getString("event_time")+"'");
         }else if(!dataObject.isNull("minute")){
-            completeFootballTimeLineDTO.setTvTeamSecondTime(dataObject.getString("minute")+"'");
+            completeFootballTimeLineDTO.setTvTeamSecondTime(dataObject.getString("minute") + "'");
         }
+
 
         if(!dataObject.isNull("player_on")){
             completeFootballTimeLineDTO.setTvTeamSecondOnPlayer("ON:" + dataObject.getString("player_on"));
@@ -279,5 +281,31 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
 
 
     }
+
+
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(liveFootballMatchTimeLineHandler != null){
+            liveFootballMatchTimeLineHandler.addListener(null);
+        }
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        showProgressBar();
+        if(liveFootballMatchTimeLineHandler != null){
+            liveFootballMatchTimeLineHandler.addListener(this);
+
+        }else {
+            liveFootballMatchTimeLineHandler = LiveFootballMatchTimeLineHandler.getInstance(context);
+
+        }
+        liveFootballMatchTimeLineHandler.requestLiveMatchTimeLine(matchId);
+    }
+
 
 }

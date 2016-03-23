@@ -10,6 +10,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.VolleyRequestHandler;
 
 
 import org.json.JSONObject;
@@ -62,9 +63,9 @@ public class CompletedMatchScoreCardHandler {
         Log.i("Score Detail", "Request Score Details");
          String url = BASEURL+matchId;
         StringRequest stringRequest = null;
-        RequestQueue queue = Volley.newRequestQueue(mContext);
+       // RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
-        queue.add(stringRequest);
+        VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
 
         requestInProcess.add(REQUEST_TAG);
     }

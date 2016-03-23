@@ -182,11 +182,13 @@ public class PermissionUtil {
         Snackbar sb = Snackbar.make(activity.findViewById(android.R.id.content), message,
                 Snackbar.LENGTH_LONG);
         View v = sb.getView();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) v.getLayoutParams();
+        params.gravity = Gravity.TOP;
+        v.setLayoutParams(params);
         sb.setActionTextColor(activity.getResources().getColor(R.color.app_theme_blue));
         TextView textView = (TextView) v.findViewById(android.support.design.R.id.snackbar_text);
         textView.setTextColor(Color.WHITE);
         textView.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
-        activity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
         sb.show();
     }
 

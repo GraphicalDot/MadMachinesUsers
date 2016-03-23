@@ -12,10 +12,11 @@
         android:layout_height="wrap_content"
         android:background="@android:color/white"
         android:paddingBottom="@dimen/vertical_padding_very_small"
-        android:paddingTop="@dimen/vertical_padding_very_small"
         android:paddingLeft="@dimen/horizontal_padding_small"
         android:paddingRight="@dimen/horizontal_padding_small"
+        android:paddingTop="@dimen/vertical_padding_very_small"
         android:visibility="gone">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -23,12 +24,13 @@
             android:text="@string/group_title_add_group_participanats"
             android:textColor="@color/gray1"
             android:textSize="@dimen/font_size_very_small" />
+
         <TextView
             android:id="@+id/members_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:text="@string/group_title_members_limit"
+            android:text=""
             android:textColor="@color/gray1"
             android:textSize="@dimen/font_size_very_small" />
     </RelativeLayout>
@@ -43,13 +45,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:layout_margin="@dimen/horizontal_padding_very_small" />
+        android:layout_margin="@dimen/horizontal_padding_very_small"
+        android:visibility="gone"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@android:color/white"
         android:orientation="vertical">
+
         <se.emilsjolander.stickylistheaders.StickyListHeadersListView
             android:id="@+id/list_contacts"
             android:layout_width="match_parent"
@@ -57,6 +61,22 @@
             android:background="@android:color/white"
             android:divider="@drawable/list_divider"
             android:dividerHeight="1dp" />
-    </LinearLayout>
+
+        <TextView
+            android:id="@+id/contact_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:background="@android:color/white"
+            android:gravity="center"
+            android:paddingBottom="@dimen/vertical_padding_small"
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_small"
+            android:paddingTop="@dimen/vertical_padding_small"
+            android:text="@string/contacts_empty"
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/font_size_small_large" />
+
+    </RelativeLayout>
 
 </LinearLayout>

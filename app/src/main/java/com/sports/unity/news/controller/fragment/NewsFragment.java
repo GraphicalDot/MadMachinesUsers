@@ -68,7 +68,9 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
         View v = inflater.inflate(com.sports.unity.R.layout.news, container, false);
         initViews(v);
-        sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
+        if(UserUtil.getFilterSportsSelected()!=null){
+            sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
+        }
         sportSelected = UserUtil.getFilterSportsSelected();
         return v;
     }

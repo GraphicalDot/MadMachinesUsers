@@ -31,6 +31,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     public static final long DEFAULT_ENTRY_ID = -1;
     public static final boolean DEFAULT_READ_STATUS = false;
 
+    public static final String DUMMY_JID = "DUMMY_JID";
     public static final String DEFAULT_GROUP_SERVER_ID = "NOT_GROUP_CHAT";
 
     public static final String MIME_TYPE_TEXT = "t";
@@ -45,7 +46,9 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     public static final String DATABASE_NAME = "spu.db";
 
     private static final String COMMA_SEP = ",";
+
     private static long DUMMY_MESSAGE_ROW_ID = -1;
+    private static long DUMMY_CONTACT_ROW_ID = -1;
 
     private static final String CREATE_CONTACTS_TABLE = "CREATE TABLE IF NOT EXISTS " +
             ContactsEntry.TABLE_NAME + "( " +
@@ -129,6 +132,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return DUMMY_MESSAGE_ROW_ID;
     }
 
+    public static long getDummyContactRowId() {
+        return DUMMY_CONTACT_ROW_ID;
+    }
+
     private ArrayList<Contacts> allContacts = null;
 
     private SportsUnityDBHelper(Context context) {
@@ -144,7 +151,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
             ContentValues values = new ContentValues();
             values.put(GroupUserEntry.COLUMN_CHAT_ID, chatId);
-            values.put(GroupUserEntry.COLUMN_CONTACT_ID, String.valueOf(id));
+            values.put(GroupUserEntry.COLUMN_CONTACT_ID, id);
             values.put(GroupUserEntry.COLUMN_ADMIN, 0);
 
             db.insert(GroupUserEntry.TABLE_NAME, null, values);
@@ -172,7 +179,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return rowId;
     }
 
-    public ArrayList getAllPhoneNumbers(boolean registered) {
+    public ArrayList getAllPhoneNumbers() {
         SQLiteDatabase db = this.getReadableDatabase();
 
         ArrayList<String> numbers = new ArrayList<>();
@@ -180,14 +187,14 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactsEntry.COLUMN_PHONE_NUMBER
         };
 
-        String registerCondition = null;
-        if (registered) {
-            registerCondition = " is not NULL ";
-        } else {
-            registerCondition = " is NULL ";
-        }
+//        String registerCondition = null;
+//        if (registered) {
+//            registerCondition = " is not NULL ";
+//        } else {
+//            registerCondition = " is NULL ";
+//        }
 
-        String selection = ContactsEntry.COLUMN_JID + registerCondition + " and " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " != " + Contacts.AVAILABLE_NOT;
+        String selection = ContactsEntry.COLUMN_AVAILABLE_STATUS + " == " + Contacts.AVAILABLE_BY_MY_CONTACTS;
         String[] selectionArgs = null;
 
         Cursor c = db.query(
@@ -484,6 +491,45 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return allContacts;
     }
 
+    public ArrayList<Contacts> getBlockedContactList() {
+
+        ArrayList<Contacts> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                ContactsEntry.COLUMN_NAME,
+                ContactsEntry.COLUMN_JID,
+                ContactsEntry.COLUMN_PHONE_NUMBER,
+                ContactsEntry.COLUMN_USER_IMAGE,
+                ContactsEntry.COLUMN_CONTACT_ID,
+                ContactsEntry.COLUMN_STATUS,
+                ContactsEntry.COLUMN_BLOCK_USER,
+                ContactsEntry.COLUMN_AVAILABLE_STATUS
+        };
+
+        String selection = ContactsEntry.COLUMN_BLOCK_USER + " != " + "0";
+        String[] selectionArgs = null;
+        String sortOrder = ContactsEntry.COLUMN_NAME + " COLLATE NOCASE ASC ";
+
+        Cursor c = db.query(
+                ContactsEntry.TABLE_NAME,  // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                sortOrder                                 // The sort order
+        );
+        if (c.moveToFirst()) {
+            do {
+                list.add(new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5), c.getInt(6)));
+            } while (c.moveToNext());
+        }
+        c.close();
+        return list;
+
+    }
+
     public ArrayList<Contacts> getContactList(boolean registeredOnly) {
 
         ArrayList<Contacts> list = new ArrayList<>();
@@ -619,7 +665,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
 
         String selectQuery = "SELECT " + ContactsEntry.COLUMN_NAME + ", " + ContactsEntry.COLUMN_JID + ", " + ContactsEntry.COLUMN_PHONE_NUMBER + ", " +
-                ContactsEntry.COLUMN_USER_IMAGE + ", A." + ContactsEntry.COLUMN_CONTACT_ID + ", " + ContactsEntry.COLUMN_STATUS + ", " + ContactsEntry.COLUMN_AVAILABLE_STATUS +
+                ContactsEntry.COLUMN_USER_IMAGE + ", A." + ContactsEntry.COLUMN_CONTACT_ID + ", " + ContactsEntry.COLUMN_STATUS + ", " + ContactsEntry.COLUMN_AVAILABLE_STATUS + ", " + GroupUserEntry.COLUMN_ADMIN +
                 " FROM " + ContactsEntry.TABLE_NAME + " A INNER JOIN " + GroupUserEntry.TABLE_NAME + " B ON A." + ContactsEntry.COLUMN_CONTACT_ID + " = B." + GroupUserEntry.COLUMN_CONTACT_ID +
                 " WHERE B." + GroupUserEntry.COLUMN_CHAT_ID + " LIKE ?";
         String[] selectionArgs = {String.valueOf(chatId)};
@@ -627,14 +673,21 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery(selectQuery, selectionArgs);
 
         ArrayList<Contacts> users = new ArrayList<>();
+        ArrayList<String> admins = new ArrayList<>();
         if (cursor.moveToFirst()) {
             do {
+                int isAdmin = cursor.getInt(7);
+
+                if( isAdmin == 1 ){
+                    admins.add(cursor.getString(1));
+                }
+
                 users.add(new Contacts(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getBlob(3), cursor.getInt(4), cursor.getString(5), cursor.getInt(6)));
             } while (cursor.moveToNext());
         }
         cursor.close();
 
-        GroupParticipants groupParticipants = new GroupParticipants(chatId, users);
+        GroupParticipants groupParticipants = new GroupParticipants(chatId, users, admins);
         return groupParticipants;
     }
 
@@ -1094,6 +1147,34 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return DEFAULT_ENTRY_ID;
     }
 
+    public long getContactAssociatedToChat(long chatId){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String projection[] = {
+                ChatEntry.COLUMN_CONTACT_ID
+        };
+
+        String selection = ChatEntry.COLUMN_CHAT_ID + " = ? ";
+        String[] selectionArgs = { String.valueOf(chatId) };
+
+        Cursor c = db.query(
+                ChatEntry.TABLE_NAME,  // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                // The sort order
+        );
+
+        if (c.moveToFirst()) {
+            return c.getInt(0);
+        }
+
+        c.close();
+        return DEFAULT_ENTRY_ID;
+    }
+
     public long createChatEntry(String name, long contactId, boolean others) {
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1205,11 +1286,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
             String[] selectionArg = null;
             if (availability == DEFAULT_GET_ALL_CHAT_LIST) {
-                selectionArg = new String[]{String.valueOf(Contacts.AVAILABLE_NOT)};
-                selectQuery.append(" WHERE " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " NOT LIKE ? ");
+                selectionArg = new String[]{ SportsUnityDBHelper.DUMMY_JID, String.valueOf(Contacts.AVAILABLE_NOT)};
+                selectQuery.append(" WHERE " + ContactsEntry.COLUMN_JID + " = ? OR " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " NOT LIKE ?");
             } else if (availability == Contacts.AVAILABLE_BY_MY_CONTACTS) {
-                selectionArg = new String[]{String.valueOf(availability)};
-                selectQuery.append(" WHERE " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " LIKE ? ");
+                selectionArg = new String[]{ SportsUnityDBHelper.DUMMY_JID, String.valueOf(availability)};
+                selectQuery.append(" WHERE " + ContactsEntry.COLUMN_JID + " = ? OR " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " LIKE ? ");
             } else {
                 selectionArg = new String[]{String.valueOf(Contacts.AVAILABLE_BY_OTHER_CONTACTS), String.valueOf(Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME)};
                 selectQuery.append(" WHERE " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " LIKE ? OR " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " LIKE ? ");
@@ -1497,15 +1578,20 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return null;
     }
 
-    public void updateAdmin(String user, String groupname) {
+    public void updateAdmin(ArrayList<Long> selectedMembers, long chatId) {
+        for (Long id : selectedMembers) {
+            updateAdmin( id, chatId);
+        }
+    }
 
+    public void updateAdmin( long contactId, long chatId) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(GroupUserEntry.COLUMN_ADMIN, 1);
 
-        String selection = GroupUserEntry.COLUMN_CONTACT_ID + " = ? and " + GroupUserEntry.COLUMN_CHAT_ID + " LIKE ? ";
-        String[] selectionArgs = {user, String.valueOf(getChatEntryID(groupname))};
+        String selection = GroupUserEntry.COLUMN_CONTACT_ID + " = ? and " + GroupUserEntry.COLUMN_CHAT_ID + " = ? ";
+        String[] selectionArgs = { String.valueOf(contactId), String.valueOf(chatId)};
 
         int update = db.update(GroupUserEntry.TABLE_NAME,
                 values,
@@ -1618,10 +1704,12 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         public long chatId;
         public ArrayList<Contacts> usersInGroup;
+        public ArrayList<String> adminJids;
 
-        public GroupParticipants(long chatId, ArrayList<Contacts> usersInGroup) {
+        public GroupParticipants(long chatId, ArrayList<Contacts> usersInGroup, ArrayList<String> adminJids) {
             this.chatId = chatId;
             this.usersInGroup = usersInGroup;
+            this.adminJids = adminJids;
         }
 
     }
@@ -1662,6 +1750,44 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             }
         }
     }
+
+    public void addDummyContactIfNotExist() {
+        if (DUMMY_CONTACT_ROW_ID == DEFAULT_ENTRY_ID) {
+            SQLiteDatabase db = getReadableDatabase();
+            String[] projection = {
+                    ContactsEntry.COLUMN_CONTACT_ID
+            };
+
+            String selection = ContactsEntry.COLUMN_JID + " = ? ";
+            String[] selectionArgs = { DUMMY_JID };
+
+            Cursor c = db.query(
+                    ContactsEntry.TABLE_NAME,                 // The table to query
+                    projection,                               // The columns to return
+                    selection,                                // The columns for the WHERE clause
+                    selectionArgs,                            // The values for the WHERE clause
+                    null,                                     // don't group the rows
+                    null,                                     // don't filter by row groups
+                    null                                      // The sort order
+            );
+
+            boolean exist = false;
+            if (c.moveToFirst()) {
+                exist = true;
+                DUMMY_CONTACT_ROW_ID = c.getInt(0);
+            } else {
+                //nothing
+            }
+            c.close();
+
+            if (!exist) {
+                DUMMY_CONTACT_ROW_ID = addToContacts("", "", DUMMY_JID, "", null, Contacts.AVAILABLE_NOT);
+            } else {
+                //nothing
+            }
+        }
+    }
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {
