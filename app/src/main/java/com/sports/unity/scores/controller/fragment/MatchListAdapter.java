@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +25,7 @@ import com.sports.unity.scores.model.football.FootballMatchJsonCaller;
 import com.sports.unity.scores.model.football.MatchJsonCaller;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,6 +33,7 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -114,7 +117,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     @Override
     public void onBindViewHolder(MatchListAdapter.ViewHolder holder, int position) {
         JSONObject matchJsonObject = list.get(position);
-
+        Log.d("MatchJson ", "onBindViewHolder: "+matchJsonObject);
         try {
             matchJsonCaller.setJsonObject(matchJsonObject);
 
@@ -123,20 +126,24 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
             if( matchJsonCaller.getType().equals(ScoresJsonParser.CRICKET) ) {
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
-                JSONArray wigetTeamsArray = cricketMatchJsonCaller.getTeamsWiget();
-                if(wigetTeamsArray!=null){
-                    cricketMatchJsonCaller.setMatchWidgetHomeTeam(wigetTeamsArray.getJSONObject(0));
-                    cricketMatchJsonCaller.setMatchWidgetAwayTeam(wigetTeamsArray.getJSONObject(1));
+                JSONArray widgetTeamsArray = cricketMatchJsonCaller.getTeamsWiget();
+                if(widgetTeamsArray!=null){
+                    cricketMatchJsonCaller.setMatchWidgetHomeTeam(widgetTeamsArray.getJSONObject(0));
+                    cricketMatchJsonCaller.setMatchWidgetAwayTeam(widgetTeamsArray.getJSONObject(1));
                 }
                 holder.matchMinutes.setText("");
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000);
                 Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000)));
-                String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
+               /* String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
                 String day = (String) android.text.format.DateFormat.format("dd", date);
-                String month = getMonth((String) android.text.format.DateFormat.format("MMM", date));
+                String month = getMonth((String) android.text.format.DateFormat.format("MMM", date));*/
+
+
                 String isttime = null;
                 try {
-                    isttime = getLocalTime(cricketMatchJsonCaller.getMatchTime()).substring(0, 5);
-                } catch (ParseException e) {
+                    isttime =DateUtil.getMatchTime(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()* 1000));
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -144,7 +151,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 holder.team2.setText(cricketMatchJsonCaller.getTeam2());
 
                 holder.venue.setText(cricketMatchJsonCaller.getVenue());
-                holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
+                //holder.date.setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
+                 holder.date.setText(DateUtil.getDateFromEpochTime(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000));
 
                 Glide.with(activity).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(holder.t1flag);
                 Glide.with(activity).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(holder.t2flag);
@@ -163,20 +171,20 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
                     holder.liveText.setVisibility(View.GONE);
 
-                    JSONObject score = cricketMatchJsonCaller.getTeam1Score();
+                    //JSONObject score = cricketMatchJsonCaller.getTeam1Score();
 
                     StringBuilder stringBuilder = new StringBuilder("");
-                    stringBuilder.append(cricketMatchJsonCaller.getScore(score));
+                    stringBuilder.append(cricketMatchJsonCaller.getTeam1Score());
                     stringBuilder.append("/");
-                    stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
+                    stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam1());
 
                     holder.t1score.setText(stringBuilder.toString());
 
-                    score = cricketMatchJsonCaller.getTeam2Score();
+                   // score = cricketMatchJsonCaller.getTeam2Score();
                     stringBuilder = new StringBuilder("");
-                    stringBuilder.append(cricketMatchJsonCaller.getScore(score));
+                    stringBuilder.append(cricketMatchJsonCaller.getTeam2Score());
                     stringBuilder.append("/");
-                    stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
+                    stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam2());
 
                     holder.t2score.setText( stringBuilder.toString());
 
@@ -195,7 +203,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                             holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
                         }
                     } else {
-                       //nothing
+                        //nothing
                     }
                 } else if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("N") ) {
                     holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
@@ -207,22 +215,19 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     isLive = true;
                     holder.liveText.setVisibility(View.VISIBLE);
                     holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
-
-                    JSONObject score = cricketMatchJsonCaller.getTeam1Score();
-
                     StringBuilder stringBuilder = new StringBuilder("");
-                    stringBuilder.append(cricketMatchJsonCaller.getScore(score));
+                    stringBuilder.append(cricketMatchJsonCaller.getTeam1Score());
                     stringBuilder.append("/");
-                    stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
+                    stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam1());
                     holder.t1score.setText(stringBuilder.toString());
-                    holder.team1Overs.setText(cricketMatchJsonCaller.getOvers(score)+"ovs");
-                    score = cricketMatchJsonCaller.getTeam2Score();
+                    holder.team1Overs.setText(cricketMatchJsonCaller.getOversTeam1()+" ovs");
+
                     stringBuilder = new StringBuilder("");
-                    stringBuilder.append(cricketMatchJsonCaller.getScore(score));
+                    stringBuilder.append(cricketMatchJsonCaller.getTeam2Score());
                     stringBuilder.append("/");
-                    stringBuilder.append(cricketMatchJsonCaller.getWickets(score));
+                    stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam2 ());
                     holder.t2score.setText(stringBuilder.toString());
-                    holder.team2Overs.setText(cricketMatchJsonCaller.getOvers(score)+"ovs");
+                    holder.team2Overs.setText(cricketMatchJsonCaller.getOversTeam2()+" ovs");
 
                 }
 
@@ -301,22 +306,22 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
 
                 String result = matchJsonCaller.getResult();
-                    if(holder.matchDay.getText().equals("Completed")) {
-                        if(result != null || result != "") {
-                            if (result.equals("home_team")) {
-                                holder.team1.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
-                                holder.t1score.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
-                                holder.team1.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
-                                holder.t1score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
-                            }
-                            else if (result.equals("away_team")) {
-                                holder.team2.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
-                                holder.t2score.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
-                                holder.team2.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
-                                holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
-                            }
-                        }} else {
-                    }
+                if(holder.matchDay.getText().equals("Completed")) {
+                    if(result != null || result != "") {
+                        if (result.equals("home_team")) {
+                            holder.team1.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
+                            holder.t1score.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
+                            holder.team1.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+                            holder.t1score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+                        }
+                        else if (result.equals("away_team")) {
+                            holder.team2.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
+                            holder.t2score.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
+                            holder.team2.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+                            holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
+                        }
+                    }} else {
+                }
             }
 
         }catch (Exception ex){

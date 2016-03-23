@@ -29,6 +29,7 @@ import org.json.JSONObject;
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
+import static com.sports.unity.util.Constants.INTENT_KEY_SERIES;
 import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 
 public class CricketCompletedMatchSummaryFragment extends Fragment implements CricketCompletedMatchSummaryHandler.CricketCompletedMatchSummaryContentListener {
@@ -51,6 +52,7 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
     private CricketCompletedMatchSummaryHandler cricketCompletedMatchSummaryHandler;
     private String matchId;
     private LinearLayout errorLayout;
+    private String seriesId;
     //private CricketMatchJsonCaller cricketMatchJsonCaller;
 
     public CricketCompletedMatchSummaryFragment() {
@@ -67,9 +69,10 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
         toss = i.getStringExtra(INTENT_KEY_TOSS);
         date = i.getStringExtra(INTENT_KEY_DATE);
 
+        seriesId = i.getStringExtra(INTENT_KEY_SERIES);
         cricketCompletedMatchSummaryHandler = CricketCompletedMatchSummaryHandler.getInstance(context);
         cricketCompletedMatchSummaryHandler.addListener(this);
-        cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(matchId);
+        cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(seriesId,matchId);
 
     }
     @Override
@@ -249,7 +252,7 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
         }else {
             cricketCompletedMatchSummaryHandler= CricketCompletedMatchSummaryHandler.getInstance(getContext());
         }
-        cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(matchId);
+        cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(seriesId,matchId);
     }
     public void handleError(){
         showErrorLayout();

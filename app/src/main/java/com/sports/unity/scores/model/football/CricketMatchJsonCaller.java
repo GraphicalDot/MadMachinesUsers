@@ -91,24 +91,36 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
     }
 
     public JSONObject getTeam1Score() throws JSONException {
-        return jsonObject.getJSONObject("team_1_score");
+        return matchWidgetHomeTeam.getJSONObject("runs");
+
     }
 
     public JSONObject getTeam2Score() throws JSONException {
-        return jsonObject.getJSONObject("team_2_score");
+        return matchWidgetAwayTeam.getJSONObject("runs");
     }
 
     public String getScore(JSONObject jsonObject) throws JSONException {
         return jsonObject.getString("score");
     }
 
-    public String getOvers(JSONObject jsonObject) throws JSONException {
-        return jsonObject.getString("overs");
+    public String getOversTeam1() throws JSONException {
+        return matchWidgetHomeTeam.getString("overs");
     }
 
-    public String getWickets(JSONObject jsonObject) throws JSONException {
-        return jsonObject.getString("wickets");
+    public String getWicketsTeam1() throws JSONException {
+        return matchWidgetHomeTeam.getString("wickets");
     }
+
+    public String getOversTeam2() throws JSONException {
+        return matchWidgetAwayTeam.getString("overs");
+    }
+
+    public String getWicketsTeam2() throws JSONException {
+        return matchWidgetAwayTeam.getString("wickets");
+    }
+
+
+
     public String getMatchResult() throws JSONException {
         if(jsonObject.isNull("match_result")){
             return "";
@@ -136,6 +148,4 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         }
         return jsonObject.getString(team);
     }
-
-
 }
