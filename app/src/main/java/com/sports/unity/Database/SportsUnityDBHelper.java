@@ -660,7 +660,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 selectionArgs);
         Log.i("updated :", String.valueOf(count));
     }
-
     public GroupParticipants getGroupParticipants(long chatId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -1698,6 +1697,20 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     public void updateContactAvailibility(String jid) {
         //TODO
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ContactsEntry.COLUMN_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
+
+        String selection = ContactsEntry.COLUMN_JID + " LIKE ? ";
+        String[] selectionArgs = {jid};
+
+        int count = db.update(
+                ContactsEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
     }
 
     public static class GroupParticipants {

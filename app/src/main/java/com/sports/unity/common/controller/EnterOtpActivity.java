@@ -142,7 +142,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                         String message = currentMessage.getDisplayMessageBody();
 
                         try {
-                            if (senderNum.contains("SPOUNI") || senderNum.contains("INFINI")) {
+                            if (senderNum.contains("SPORTU") || message.toLowerCase().contains("Welcome to Sports Unity App.".toLowerCase())) {
                                 otpWaitingDialog.cancel();
                                 String str = message.replaceAll("\\D+", "");
                                 otpEditText.setText(str);
@@ -194,7 +194,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         String countryCode = countryDetails.get(0);
 
         TextView otpText = (TextView) findViewById(com.sports.unity.R.id.enterotpText);
-        otpText.setText(getString(R.string.otp_message_verification) +"+"+ countryCode +" "+ getPhoneNumber());
+        otpText.setText(getString(R.string.otp_message_verification) + "+" + countryCode + " " + getPhoneNumber());
         otpText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoLight());
 
         otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
@@ -366,11 +366,11 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                 int responseCode = response.getInt("status");
                 String info = response.getString("info");
 
-                if ( responseCode == 200 ) {
+                if (responseCode == 200) {
                     UserUtil.setOtpSent(EnterOtpActivity.this, true);
                     this.resendSuccessful = true;
                     this.toastMessage = getResources().getString(R.string.otp_message_otp_sent);
-                } else if( responseCode == 500 ){
+                } else if (responseCode == 500) {
                     UserUtil.setOtpSent(EnterOtpActivity.this, false);
                     this.resendSuccessful = false;
                     this.toastMessage = getResources().getString(R.string.otp_message_invalid_number);

@@ -65,6 +65,8 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     View backgroundDimmer;
     MenuItem syncProgress;
 
+    private SearchView searchView;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -261,7 +263,6 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
         }
     }
 
-    private SearchView searchView;
 
 
     @Override
@@ -327,6 +328,8 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
     public void showSyncProgress() {
 
         if (syncProgress != null) {
+            syncProgress.setVisible(true);
+            syncProgress.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
             syncProgress.setActionView(R.layout.menu_progress);
         }
     }
@@ -337,6 +340,8 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
             public void run() {
                 if (syncProgress != null) {
                     syncProgress.setActionView(null);
+                    syncProgress.setVisible(false);
+                    syncProgress.setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
                 }
             }
         });

@@ -34,9 +34,9 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
         @Override
         public void onClick(View view) {
             int viewId = view.getId();
-            if( viewId == R.id.getOtp ) {
+            if (viewId == R.id.getOtp) {
                 createUser();
-            } else if ( viewId == R.id.privacy_policy ) {
+            } else if (viewId == R.id.privacy_policy) {
                 CommonUtil.openLinkOnBrowser(EnterPhoneActivity.this, getResources().getString(R.string.link_of_privacy_policy));
             }
         }
@@ -85,13 +85,12 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
         TextView countryName = (TextView) findViewById(R.id.countryName);
 
 
-
         ArrayList<String> countryDetails = CommonUtil.getCountryDetailsByCountryCode(EnterPhoneActivity.this, UserUtil.getCountryCode());
 
-        Log.i("details",""+countryDetails.size());
+        Log.i("details", "" + countryDetails.size());
 
         countryName.setText(countryDetails.get(2));
-        countryCode.setText("+"+countryDetails.get(0));
+        countryCode.setText("+" + countryDetails.get(0));
 
         getCountryCode.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -123,7 +122,7 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
         TextView countryName = (TextView) findViewById(R.id.countryName);
 
         Log.i("country", "name" + countryName.getText().toString());
-        Log.i("country","get"+ countryCode.getText().toString());
+        Log.i("country", "get" + countryCode.getText().toString());
         Intent intent = new Intent(EnterPhoneActivity.this, GetCountryCode.class);
         intent.putExtra("CountryName", countryName.getText().toString());
         startActivityForResult(intent, 1111);
@@ -135,17 +134,17 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
 
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1111) {
-            if(resultCode == RESULT_OK){
-                String cName=data.getStringExtra("countryName");
-                String cCode=data.getStringExtra("countryCode");
+            if (resultCode == RESULT_OK) {
+                String cName = data.getStringExtra("countryName");
+                String cCode = data.getStringExtra("countryCode");
 
                 EditText countryCode = (EditText) findViewById(R.id.countryCode);
                 TextView countryName = (TextView) findViewById(R.id.countryName);
 
                 countryName.setText(cName);
-                countryCode.setText("+"+cCode);
+                countryCode.setText("+" + cCode);
 
-                UserUtil.setCountryCode( getApplicationContext(), cCode);
+                UserUtil.setCountryCode(getApplicationContext(), cCode);
             }
         }
     }
@@ -174,7 +173,7 @@ public class EnterPhoneActivity extends CustomVolleyCallerActivity implements Ac
         String phoneNumber = phoneNumberEditText.getText().toString();
         String countryCode = CommonUtil.getCountryDetailsByCountryCode(EnterPhoneActivity.this, UserUtil.getCountryCode()).get(0);
         TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_USERNAME, countryCode + phoneNumber);
-
+        TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_USER_MOBILE_NUMBER, phoneNumber);
         moveToNextActivity();
     }
 

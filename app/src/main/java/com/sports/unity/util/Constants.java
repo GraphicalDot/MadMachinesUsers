@@ -27,6 +27,8 @@ public class Constants {
     public static final String INTENT_KEY_ID = "ID";
     public static final String INTENT_KEY_MATCH_STATUS = "MATCH_STATUS";
 
+    public static final String INTENT_KEY_USER_AVAILABLE_STATUS = "USER_AVAILABLE_STATUS";
+
     public static final String INTENT_KEY_FILENAME = "FILE_NAME";
     public static final String INTENT_KEY_MIMETYPE = "MIME_TYPE";
 

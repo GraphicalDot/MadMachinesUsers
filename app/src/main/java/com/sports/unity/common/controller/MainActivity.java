@@ -16,11 +16,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
@@ -35,20 +33,16 @@ import com.sports.unity.common.controller.fragment.NavigationFragment;
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.ControlledSwipeViewPager;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.messages.controller.model.Contacts;
-import com.sports.unity.util.ActivityActionHandler;
-import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
-import com.sports.unity.util.NotificationHandler;
 import com.sports.unity.util.network.LocManager;
 
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,7 +65,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     public SlidingTabLayout tabs;
     private Toolbar toolbar;
     private TextView title;
-    private ViewPager pager;
+    private ControlledSwipeViewPager pager;
     private ViewPagerAdapterInMainActivity adapter;
     ImageView back;
     private MenuItem menuItem;
@@ -165,6 +159,42 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
     private void initViews() {
         Toolbar toolbar = initToolBar();
+        initiateDrawer();
+        String titles[] = {getString(R.string.scores), getString(R.string.news), getString(R.string.messages)};
+        int numberOfTabs = titles.length;
+
+        // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
+        adapter = new ViewPagerAdapterInMainActivity(getSupportFragmentManager(), titles, numberOfTabs);
+
+        // Assigning ViewPager View and setting the adapter
+        pager = (ControlledSwipeViewPager) findViewById(com.sports.unity.R.id.pager);
+        pager.setAdapter(adapter);
+        pager.addOnPageChangeListener(onPageChangeListener);
+
+        // Assiging the Sliding Tab Layout View
+        tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
+        tabs.setCustomTabView(R.layout.sliding_tab_layout, R.id.title_text);
+        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
+
+        // Setting Custom Color for the Scroll bar indicator of the Tab View
+        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.ColorPrimary);
+            }
+        });
+        // Setting the ViewPager For the SlidingTabsLayout
+        tabs.setViewPager(pager);
+        View v = tabs.getTabStrip().getChildAt(2);
+        unreadCount = (TextView) v.findViewById(R.id.unread_messages);
+
+        //set news pager as default
+        int tab_index = getIntent().getIntExtra("tab_index", 1);
+        pager.setCurrentItem(tab_index);
+        pager.setOffscreenPageLimit(2);
+    }
+
+    private void initiateDrawer() {
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.openDrawer, R.string.closeDrawer) {
 
@@ -194,38 +224,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         drawer.setDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
-        String titles[] = {getString(R.string.scores), getString(R.string.news), getString(R.string.messages)};
-        int numberOfTabs = titles.length;
-
-        // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        adapter = new ViewPagerAdapterInMainActivity(getSupportFragmentManager(), titles, numberOfTabs);
-
-        // Assigning ViewPager View and setting the adapter
-        pager = (ViewPager) findViewById(com.sports.unity.R.id.pager);
-        pager.setAdapter(adapter);
-        pager.addOnPageChangeListener(onPageChangeListener);
-
-        // Assiging the Sliding Tab Layout View
-        tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
-        tabs.setCustomTabView(R.layout.sliding_tab_layout, R.id.title_text);
-        tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
-
-        // Setting Custom Color for the Scroll bar indicator of the Tab View
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.ColorPrimary);
-            }
-        });
-        // Setting the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(pager);
-        View v = tabs.getTabStrip().getChildAt(2);
-        unreadCount = (TextView) v.findViewById(R.id.unread_messages);
-
-        //set news pager as default
-        int tab_index = getIntent().getIntExtra("tab_index", 1);
-        pager.setCurrentItem(tab_index);
-        pager.setOffscreenPageLimit(2);
     }
 
     ViewPager.OnPageChangeListener onPageChangeListener = new ViewPager.OnPageChangeListener() {
@@ -395,6 +393,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
     public void disableSearch() {
         pager.setOnTouchListener(null);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         mgr.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -403,28 +402,34 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         back.setVisibility(View.GONE);
         findViewById(R.id.seprator).setVisibility(View.VISIBLE);
         toolbar.setBackgroundColor(getResources().getColor(R.color.app_theme_blue));
+        toolbar.setNavigationIcon(R.drawable.ic_menu);
+        initiateDrawer();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             toolbar.setElevation(0);
         }
+        pager.enablePaging(true);
     }
 
 
     public void enableSearch() {
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        toolbar.setNavigationIcon(R.drawable.ic_menu_back_blk);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
         tabs.setVisibility(View.GONE);
         title.setVisibility(View.GONE);
         findViewById(R.id.seprator).setVisibility(View.GONE);
-        back.setVisibility(View.VISIBLE);
+        back.setVisibility(View.GONE);
         toolbar.setBackgroundColor(getResources().getColor(R.color.textColorPrimary));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             toolbar.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
         }
-        pager.setOnTouchListener(new View.OnTouchListener() {
-
-            public boolean onTouch(View arg0, MotionEvent arg1) {
-                return true;
-            }
-        });
+        pager.enablePaging(false);
     }
 
     public void notifyToContactFragment() {
