@@ -205,8 +205,8 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
     private void showErrorLayout(View view) {
 
-       /* LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.VISIBLE);*/
+        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        errorLayout.setVisibility(View.VISIBLE);
 
     }
     private void initProgress(View view) {
@@ -248,15 +248,15 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                             BallDetail[] balls = new BallDetail[]{defb, defb, defb, defb, defb, defb, defb};
                             int ballIndex = 6;
                             Drawable drawable = null;
-                           for (int i = 0; i < recentOverArray.length(); i++) {
-                                    BallDetail curBall= null;
-                                    if(liveCricketMatchSummaryParser.getRecentWicket(i)){
-                                        curBall= getResolveBall("w");
-                                    }else{
-                                        curBall = getResolveBall(liveCricketMatchSummaryParser.getRecentRuns(i));
-                                    }
-                                    balls[ballIndex] =curBall;
-                                    ballIndex--;
+                            for (int i = 0; i < recentOverArray.length(); i++) {
+                                BallDetail curBall= null;
+                                if(liveCricketMatchSummaryParser.getRecentWicket(i)){
+                                    curBall= getResolveBall("w");
+                                }else{
+                                    curBall = getResolveBall(liveCricketMatchSummaryParser.getRecentRuns(i));
+                                }
+                                balls[ballIndex] =curBall;
+                                ballIndex--;
 
                             }
                             if (!balls[0].getValue().equals("0")) {
@@ -303,8 +303,16 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
                             tvFirstPlayerName.setText(liveCricketMatchSummaryParser.getPlayeFirstName());
                             tvSecondPlayerName.setText(liveCricketMatchSummaryParser.getPlayeSecondName());
-                            tvFirstPlayerRunRate.setText((playerFirstRuns*100/playerFirstBalls)+"");
-                            tvSecondPlayerRunRate.setText((playerSecondRuns*100/ playerSecondBalls)+"");
+                            if(playerFirstBalls==0){
+                                tvFirstPlayerRunRate.setText(0+"");
+                            }else{
+                                tvFirstPlayerRunRate.setText((playerFirstRuns*100/playerFirstBalls)+"");
+                            }
+                            if(playerSecondBalls==0){
+                                tvSecondPlayerRunRate.setText(0+"");
+
+                            }else { tvSecondPlayerRunRate.setText((playerSecondRuns*100/ playerSecondBalls)+"");
+                            }
                             tvFirstPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeFirstRuns() + "(" + liveCricketMatchSummaryParser.getPlayeFirstBalls() + ")");
                             tvSecondPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeSecondRuns() + "(" + liveCricketMatchSummaryParser.getPlayeSecondBalls() + ")");
                             tvPartnershipRecord.setText((playerFirstRuns + playerSecondRuns) + "(" + (playerFirstBalls + playerSecondBalls) + ")");
@@ -453,7 +461,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     @Override
     public void onResume() {
         super.onResume();
-       showProgress();
+        showProgress();
         if(cricketLiveMatchSummaryHandler != null){
             cricketLiveMatchSummaryHandler.addListener(this);
 

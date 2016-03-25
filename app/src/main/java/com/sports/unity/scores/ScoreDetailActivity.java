@@ -92,19 +92,19 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         getExtras();
         initView();
         setToolbar();
+        setTitle();
 
         {
             LinearLayout errorLayout = (LinearLayout) findViewById(R.id.error);
             errorLayout.setVisibility(View.GONE);
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
 
-            ScoreDetailComponentListener createUserComponentListener = new ScoreDetailComponentListener(progressBar, errorLayout);
+            ScoreDetailComponentListener scoreDetailComponentListener = new ScoreDetailComponentListener(progressBar, errorLayout);
             MatchCommentariesComponentListener matchCommentariesComponentListener = new MatchCommentariesComponentListener(progressBar, errorLayout);
-            MatchScoreCardComponentListener matchScoreCardComponentListener = new MatchScoreCardComponentListener(progressBar,errorLayout);
             ArrayList<CustomComponentListener> listeners = new ArrayList<>();
-            listeners.add(createUserComponentListener);
+            listeners.add(scoreDetailComponentListener);
             listeners.add(matchCommentariesComponentListener);
-            listeners.add(matchScoreCardComponentListener);
+
 
             onComponentCreate(listeners, REQUEST_LISTENER_KEY);
         }
@@ -303,34 +303,26 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             cricketMatchJsonCaller.setJsonObject(matchScoreDetails);
 
             try {
-                JSONArray wigetTeamsArray = cricketMatchJsonCaller.getTeamsWiget();
-                if(wigetTeamsArray!=null){
-                    cricketMatchJsonCaller.setMatchWidgetHomeTeam(wigetTeamsArray.getJSONObject(0));
-                    cricketMatchJsonCaller.setMatchWidgetAwayTeam(wigetTeamsArray.getJSONObject(1));
-                }
-
-
-
-                Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000)));
-                String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
-                String day = (String) android.text.format.DateFormat.format("dd", date);
-                String month = MatchListAdapter.getMonth((String) android.text.format.DateFormat.format("MMM", date));
-                String isttime = null;
-                try {
-                    isttime = MatchListAdapter.getLocalTime(cricketMatchJsonCaller.getMatchTime()).substring(0, 5);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                JSONArray widgetTeamsArray = cricketMatchJsonCaller.getTeamsWiget();
+                String homeTeam = cricketMatchJsonCaller.getTeam1();
+                String awayTeam  = cricketMatchJsonCaller.getTeam2();
                 ImageView flag1 = (ImageView)findViewById(R.id.team1_image);
                 ImageView flag2 = (ImageView)findViewById(R.id.team2_image);
+                for(int i = 0 ; i< widgetTeamsArray.length();i++){
+                    JSONObject teamData= widgetTeamsArray.getJSONObject(i);
+                    if(homeTeam.equalsIgnoreCase(teamData.getString("team_name"))){
+                        cricketMatchJsonCaller.setMatchWidgetHomeTeam(teamData);
+                        Glide.with(this).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(flag1);
+                    }else if(awayTeam.equalsIgnoreCase(teamData.getString("team_name"))){
+                        cricketMatchJsonCaller.setMatchWidgetAwayTeam(teamData);
+                        Glide.with(this).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(flag2);
+                    }
+                }
 
-                Glide.with(this).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(flag1);
-                Glide.with(this).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(flag2);
-
-               // findViewById(R.id.central_score).setVisibility(View.GONE);
+                 // findViewById(R.id.central_score).setVisibility(View.GONE);
 
                 ((TextView)findViewById(R.id.venue)).setText(cricketMatchJsonCaller.getVenue());
-                ((TextView)findViewById(R.id.date)).setText(dayOfTheWeek + ", " + month + " " + day + ", " + isttime + " (IST) ");
+                ((TextView)findViewById(R.id.date)).setText(DateUtil.getDateFromEpochTime(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000));
                 tvNeededRun.setText(cricketMatchJsonCaller.getTeam1() + " vs " + cricketMatchJsonCaller.getTeam2() + ", " + cricketMatchJsonCaller.getMatchNumber());
 
                 if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("N") ) {
@@ -351,7 +343,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     textView = (TextView) findViewById(R.id.team2_name);
                     textView.setText(cricketMatchJsonCaller.getTeam2());
                     if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("F") ) {
-                         tvCurrentScore.setText(cricketMatchJsonCaller.getWinnerTeam(cricketMatchJsonCaller.getResult())+" Won The Match");
+                         tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
                         {
                             StringBuilder stringBuilder = new StringBuilder("");
                             stringBuilder.append(cricketMatchJsonCaller.getTeam1Score());
@@ -562,6 +554,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(ScoresContentHandler.PARAM_SPORTS_TYPE, sportsType);
         parameters.put(ScoresContentHandler.PARAM_ID, matchId);
+        parameters.put(ScoresContentHandler.PARAM_SERIESID,seriesId);
         requestContent(ScoresContentHandler.CALL_NAME_MATCH_DETAIL, parameters, SCORE_DETAIL_REQUEST_TAG);
     }
 

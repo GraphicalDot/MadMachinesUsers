@@ -44,7 +44,9 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         return jsonObject.getString("series_id");
     }
     public JSONArray getTeamsWiget() throws JSONException {
-
+        if(jsonObject.isNull("match_widget")){
+            return  new JSONArray();
+        }
         return jsonObject.getJSONArray("match_widget");
     }
 
@@ -127,10 +129,10 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
 
 
     public String getMatchResult() throws JSONException {
-        if(jsonObject.isNull("match_result")){
+        if(jsonObject.isNull("result")){
             return "";
         }
-        return jsonObject.getString("match_result");
+        return jsonObject.getString("result");
     }
     public String getToss() throws JSONException {
         if(jsonObject.isNull("toss"))

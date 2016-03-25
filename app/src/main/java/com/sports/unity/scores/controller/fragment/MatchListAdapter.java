@@ -124,7 +124,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
 //            holder.liveText.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
 //            holder.liveText.setTextColor(Color.BLACK);
-
+            Log.d("Object Counter", "onBindViewHolder: "+position);
             if( matchJsonCaller.getType().equals(ScoresJsonParser.CRICKET) ) {
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
                 JSONArray widgetTeamsArray = cricketMatchJsonCaller.getTeamsWiget();
@@ -413,6 +413,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             intent.putExtra(Constants.INTENT_KEY_TOSS,toss);
             intent.putExtra(Constants.INTENT_KEY_MATCH_NAME, matchName);
             intent.putExtra(Constants.INTENT_KEY_DATE,date);
+            intent.putExtra(Constants.LEAGUE_NAME,leagueName);
 
 
 

@@ -68,7 +68,6 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
         toss = i.getStringExtra(INTENT_KEY_TOSS);
         date = i.getStringExtra(INTENT_KEY_DATE);
-
         seriesId = i.getStringExtra(INTENT_KEY_SERIES);
         cricketCompletedMatchSummaryHandler = CricketCompletedMatchSummaryHandler.getInstance(context);
         cricketCompletedMatchSummaryHandler.addListener(this);
@@ -110,14 +109,11 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
                 showProgress();
                 JSONObject jsonObject = new JSONObject(content);
                 boolean success = jsonObject.getBoolean("success");
-                boolean error = jsonObject.getBoolean("error");
-
                 if( success ) {
 
                     renderDisplay(jsonObject);
 
                 } else {
-                    //Toast.makeText(getActivity(), R.string.match_not_exist, Toast.LENGTH_SHORT).show();
                     showErrorLayout();
                 }
             }catch (Exception ex){
@@ -130,16 +126,16 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
 
         errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.GONE);
-   }
+    }
 
     private void showErrorLayout() {
 
-               errorLayout.setVisibility(View.VISIBLE);
+        errorLayout.setVisibility(View.VISIBLE);
 
     }
     private void initProgress(View view) {
-         progressBar = (ProgressBar) view.findViewById(R.id.progress);
-         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
     }
     private void showProgress() {
         progressBar.setVisibility(View.VISIBLE);
@@ -154,45 +150,48 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
         hideProgress();
         if(!jsonObject.isNull("data")){
             JSONArray dataArray= jsonObject.getJSONArray("data");
-            final JSONObject matchObject = dataArray.getJSONObject(0);
-            final CompletedCricketMatchSummaryParser cricketMatchSummaryParser = new CompletedCricketMatchSummaryParser();
-            cricketMatchSummaryParser.setJsonObject(matchObject);
-            JSONObject matchSummary = cricketMatchSummaryParser.getMatchSummary();
-            cricketMatchSummaryParser.setCricketSummary(matchSummary);
-            JSONObject manOftheMatch = cricketMatchSummaryParser.getManOfMatchDetails();
-            cricketMatchSummaryParser.setManOfTheMatch(manOftheMatch);
-            final JSONObject batting=cricketMatchSummaryParser.getBattingDetails();
-            cricketMatchSummaryParser.setBatting(batting);
-            final JSONObject umpire = cricketMatchSummaryParser.getUmpireDetails();
-            cricketMatchSummaryParser.setUmpire(umpire);
-             if (activity != null) {
+            for(int i = 0;i<dataArray.length();i++){
+                final JSONObject matchObject = dataArray.getJSONObject(i);
+                final CompletedCricketMatchSummaryParser cricketMatchSummaryParser = new CompletedCricketMatchSummaryParser();
+                cricketMatchSummaryParser.setJsonObject(matchObject);
+                JSONObject matchSummary = cricketMatchSummaryParser.getMatchSummary();
+                cricketMatchSummaryParser.setCricketSummary(matchSummary);
+                JSONObject manOftheMatch = cricketMatchSummaryParser.getManOfMatchDetails();
+                cricketMatchSummaryParser.setManOfTheMatch(manOftheMatch);
+                final JSONObject batting=cricketMatchSummaryParser.getBattingDetails();
+                cricketMatchSummaryParser.setBatting(batting);
+                final JSONObject umpire = cricketMatchSummaryParser.getUmpireDetails();
+                cricketMatchSummaryParser.setUmpire(umpire);
+                if (activity != null) {
 
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            Log.i("run: ", jsonObject.toString());
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Log.i("run: ", jsonObject.toString());
                             /*if( manOftheMatch != null &&  !manOftheMatch.isNull("image")){
                                 Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivPlayerProfileView);
                                 Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivCountryImage);
                             }*/
-                            playerName.setText(cricketMatchSummaryParser.getPlayerName());
-                            tvPlayerRun.setText(cricketMatchSummaryParser.getruns());
-                            tvPlayerPlayedBall.setText(cricketMatchSummaryParser.getBalls());
-                            tvPlayerStrike_Rate.setText(cricketMatchSummaryParser.getstrikerate());
-                            tvMatchDate.setText(DateUtil.getFormattedDate(date));
-                            tvTossWinTeam.setText(toss);
-                            tvSeriesName.setText(matchName);
-                            tvUmpiresName.setText(cricketMatchSummaryParser.getFirstUmpire());
-                            tvMatchReferee.setText(cricketMatchSummaryParser.getRefree());
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                            showErrorLayout();
+                                playerName.setText(cricketMatchSummaryParser.getPlayerName());
+                                tvPlayerRun.setText(cricketMatchSummaryParser.getruns());
+                                tvPlayerPlayedBall.setText(cricketMatchSummaryParser.getBalls());
+                                tvPlayerStrike_Rate.setText(cricketMatchSummaryParser.getstrikerate());
+                                tvMatchDate.setText(DateUtil.getFormattedDate(date));
+                                tvTossWinTeam.setText(toss);
+                                tvSeriesName.setText(matchName);
+                                tvUmpiresName.setText(cricketMatchSummaryParser.getFirstUmpire());
+                                tvMatchReferee.setText(cricketMatchSummaryParser.getRefree());
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                showErrorLayout();
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
-        } else {
+        }
+        else {
             showErrorLayout();
         }
     }
@@ -221,7 +220,7 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
             tvPlayerPlayedBall.setText(statObject.getString("balls"));
         }   else {
             tvPlayerPlayedBall.setText("N/A");
-            }
+        }
 
         if(!statObject.isNull("strike_rate")) {
             tvPlayerStrike_Rate.setText(statObject.getString("strike_rate"));}else{

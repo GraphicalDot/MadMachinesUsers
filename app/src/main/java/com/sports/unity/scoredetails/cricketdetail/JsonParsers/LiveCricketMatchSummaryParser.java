@@ -1,5 +1,6 @@
 package com.sports.unity.scoredetails.cricketdetail.JsonParsers;
 
+import com.sports.unity.common.view.DonutProgress;
 import com.sports.unity.util.JsonObjectCaller;
 
 import org.json.JSONArray;
@@ -50,6 +51,10 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
         return cricketSummary.getJSONObject("umpires");
     }
     public JSONArray getUpCommingBatsMan() throws JSONException {
+
+        if(cricketSummary.isNull("upcoming_batsmen")){
+            return new JSONArray();
+        }
         return cricketSummary.getJSONArray("upcoming_batsmen");
     }
 
@@ -90,7 +95,7 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
         }else  {return  "";}
     }
 
-    public Integer getPlayeFirstBalls() throws  JSONException{
+    public int getPlayeFirstBalls() throws  JSONException{
         if(!currentPartnership.isNull("player_1_balls")){
             return  currentPartnership.getInt("player_1_balls");
         }else  {return 0;}
@@ -107,7 +112,7 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
         }else  {return  "";}
     }
 
-    public Integer getPlayeSecondBalls() throws  JSONException{
+    public int getPlayeSecondBalls() throws  JSONException{
         if(!currentPartnership.isNull("player_2_balls")){
             return  currentPartnership.getInt("player_2_balls");
         }else  {return  0;}

@@ -256,12 +256,13 @@ public class MatchListFragment extends Fragment {
             for(int i = 0; i<matches.size();i++){
                 try{
                     JSONObject object = matches.get(i);
-                    if(!object.isNull("match_time")){
+
+                    if(!object.isNull("match_time") && Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(object.getString("type"))){
                         epochTime = object.getLong("match_time");
                         day=  DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
                         leagueName = object.getString("series_name");
                         sportsType = object.getString("type");
-                    } else if(!object.isNull("match_date_epoch")){
+                    } else {
                         epochTime = object.getLong("match_date_epoch");
                         sportsType = object.getString("type");
                         day=  DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
