@@ -127,19 +127,46 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             Log.d("Object Counter", "onBindViewHolder: "+position);
             if( matchJsonCaller.getType().equals(ScoresJsonParser.CRICKET) ) {
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
-                JSONArray widgetTeamsArray = cricketMatchJsonCaller.getTeamsWiget();
+                JSONObject widgetTeamsObject = cricketMatchJsonCaller.getTeamsWiget();
+                JSONArray widgetTeamsFirst = null;
+                JSONArray widgetTeamSecond = null;
+                if(!widgetTeamsObject.isNull("1")){
+                     widgetTeamsFirst = widgetTeamsObject.getJSONArray("1");
+                }
+               if(!widgetTeamsObject.isNull("2")){
+                   widgetTeamSecond= widgetTeamsObject.getJSONArray("2");
+               }
+
                 String homeTeam = cricketMatchJsonCaller.getTeam1();
                 String awayTeam  = cricketMatchJsonCaller.getTeam2();
-                  for(int i = 0 ; i< widgetTeamsArray.length();i++){
-                     JSONObject teamData= widgetTeamsArray.getJSONObject(i);
-                      if(homeTeam.equalsIgnoreCase(teamData.getString("team_name"))){
-                          cricketMatchJsonCaller.setMatchWidgetHomeTeam(teamData);
-                          Glide.with(activity).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(holder.t1flag);
-                    }else if(awayTeam.equalsIgnoreCase(teamData.getString("team_name"))){
-                          cricketMatchJsonCaller.setMatchWidgetAwayTeam(teamData);
-                          Glide.with(activity).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(holder.t2flag);
-                      }
-                 }
+                Glide.with(activity).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(holder.t1flag);
+                Glide.with(activity).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(holder.t2flag);
+
+
+                if(widgetTeamsFirst!=null){
+                    for(int i = 0 ; i< widgetTeamsFirst.length();i++){
+                        JSONObject teamData= widgetTeamsFirst.getJSONObject(i);
+                        if(awayTeam.equalsIgnoreCase(teamData.getString("team_name"))){
+                            cricketMatchJsonCaller.setMatchWidgetAwayTeam(teamData);
+                         }else if(homeTeam.equalsIgnoreCase(teamData.getString("team_name"))){
+                            cricketMatchJsonCaller.setMatchWidgetHomeTeam(teamData);
+
+                        }
+
+                    }
+                }
+              if(widgetTeamSecond!=null){
+
+                    for(int i = 0 ; i< widgetTeamSecond.length();i++){
+                        JSONObject teamData= widgetTeamSecond.getJSONObject(i);
+                        if(homeTeam.equalsIgnoreCase(teamData.getString("team_name"))){
+                            cricketMatchJsonCaller.setMatchWidgetHomeTeam(teamData);
+
+                        }else if(awayTeam.equalsIgnoreCase(teamData.getString("team_name"))){
+                            cricketMatchJsonCaller.setMatchWidgetAwayTeam(teamData);
+                        }
+                    }
+                }
                 setCommonDetails(holder, homeTeam, awayTeam);
                 // f completed
                 if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("F") ) {
@@ -294,6 +321,10 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         holder.team1.setText(homeTeam);
         holder.team2.setText(awayTeam);
         holder.venue.setText(cricketMatchJsonCaller.getVenue());
+        holder.t1score.setVisibility(View.VISIBLE);
+        holder.t2score.setVisibility(View.VISIBLE);
+        holder.team1Overs.setVisibility(View.VISIBLE);
+        holder.team2Overs.setVisibility(View.VISIBLE);
         holder.date.setText(DateUtil.getDateFromEpochTime(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000));
         holder.team1.setTextColor(activity.getResources().getColor(R.color.ColorPrimaryDark));
         holder.t1score.setTextColor(activity.getResources().getColor(R.color.ColorPrimaryDark));
@@ -341,6 +372,10 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     private void SetCompletedMatchScoreCard(ViewHolder holder) throws JSONException {
         holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
         holder.liveText.setVisibility(View.GONE);
+        holder.t1score.setVisibility(View.VISIBLE);
+        holder.t2score.setVisibility(View.VISIBLE);
+        holder.team1Overs.setVisibility(View.VISIBLE);
+        holder.team2Overs.setVisibility(View.VISIBLE);
         holder.t1score.setText(cricketMatchJsonCaller.getTeam1Score() + "/" + cricketMatchJsonCaller.getWicketsTeam1());
         holder.t2score.setText( cricketMatchJsonCaller.getTeam2Score()+"/"+cricketMatchJsonCaller.getWicketsTeam2());
 
@@ -380,11 +415,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             Intent intent = new Intent( activity, ScoreDetailActivity.class);
             if( type.equalsIgnoreCase(ScoresJsonParser.CRICKET) ){
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
-                JSONArray wigetTeamsArray = cricketMatchJsonCaller.getTeamsWiget();
-                if(wigetTeamsArray!=null){
-                    cricketMatchJsonCaller.setMatchWidgetHomeTeam(wigetTeamsArray.getJSONObject(0));
-                    cricketMatchJsonCaller.setMatchWidgetAwayTeam(wigetTeamsArray.getJSONObject(1));
-                }
                 matchId = cricketMatchJsonCaller.getMatchId();
                 matchStatus = cricketMatchJsonCaller.getStatus();
                 toss = cricketMatchJsonCaller.getToss();
@@ -533,11 +563,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             try {
                 if (matchJsonCaller.getType().equals(ScoresJsonParser.CRICKET)) {
                     cricketMatchJsonCaller.setJsonObject(jsonObject);
-                    JSONArray wigetTeamsArray = cricketMatchJsonCaller.getTeamsWiget();
-                    if(wigetTeamsArray!=null){
-                        cricketMatchJsonCaller.setMatchWidgetHomeTeam(wigetTeamsArray.getJSONObject(0));
-                        cricketMatchJsonCaller.setMatchWidgetAwayTeam(wigetTeamsArray.getJSONObject(1));
-                    }
 
 
                     Glide.with(activity).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(flag1);

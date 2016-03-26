@@ -32,6 +32,12 @@ public class CompletedCricketMatchSummaryParser extends JsonObjectCaller {
             return manOfTheMatch.getString("name");
         }else{return  "";}
     }
+    public String getPlayerId() throws  JSONException{
+        if(!manOfTheMatch.isNull("player_id")){
+            return manOfTheMatch.getString("player_id");
+        }else{return  "";}
+    }
+
     public JSONObject getBattingDetails()throws JSONException
     {
         return manOfTheMatch.getJSONObject("batting");
@@ -105,6 +111,11 @@ public class CompletedCricketMatchSummaryParser extends JsonObjectCaller {
     public String getRefree() throws  JSONException{
         if(!umpires.isNull("referee")){
             return umpires.getString("referee");
+        }else{return  "";}
+    }
+    public String getPlayerImage() throws  JSONException{
+        if(!manOfTheMatch.isNull("player_image")){
+            return manOfTheMatch.getString("player_image");
         }else{return  "";}
     }
 

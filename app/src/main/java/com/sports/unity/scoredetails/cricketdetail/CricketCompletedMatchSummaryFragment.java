@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
+import com.sports.unity.playerprofile.cricket.PlayerCricketBioDataActivity;
 import com.sports.unity.scoredetails.cricketdetail.JsonParsers.CompletedCricketMatchSummaryParser;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
@@ -53,6 +54,7 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
     private String matchId;
     private LinearLayout errorLayout;
     private String seriesId;
+    private CompletedCricketMatchSummaryParser cricketMatchSummaryParser;
     //private CricketMatchJsonCaller cricketMatchJsonCaller;
 
     public CricketCompletedMatchSummaryFragment() {
@@ -71,7 +73,7 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
         seriesId = i.getStringExtra(INTENT_KEY_SERIES);
         cricketCompletedMatchSummaryHandler = CricketCompletedMatchSummaryHandler.getInstance(context);
         cricketCompletedMatchSummaryHandler.addListener(this);
-        cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(seriesId,matchId);
+        cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(seriesId, matchId);
 
     }
     @Override
@@ -99,6 +101,26 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
         tvTossWinTeam.setText(toss);
         initProgress(view);
         initErrorLayout(view);
+
+       ivPlayerProfileView.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               if(cricketMatchSummaryParser!=null){
+                   try {
+                       String playerId =   cricketMatchSummaryParser.getPlayerId();
+                       Intent i = new Intent(getContext(), PlayerCricketBioDataActivity.class);
+                       i.putExtra(Constants.INTENT_KEY_ID,playerId);
+                       startActivity(i);
+                   }catch (Exception e){
+                       e.printStackTrace();
+                   }
+
+               }
+
+           }
+       });
+
+
 
     }
     @Override
@@ -152,7 +174,7 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
             JSONArray dataArray= jsonObject.getJSONArray("data");
             for(int i = 0;i<dataArray.length();i++){
                 final JSONObject matchObject = dataArray.getJSONObject(i);
-                final CompletedCricketMatchSummaryParser cricketMatchSummaryParser = new CompletedCricketMatchSummaryParser();
+                cricketMatchSummaryParser = new CompletedCricketMatchSummaryParser();
                 cricketMatchSummaryParser.setJsonObject(matchObject);
                 JSONObject matchSummary = cricketMatchSummaryParser.getMatchSummary();
                 cricketMatchSummaryParser.setCricketSummary(matchSummary);
@@ -169,10 +191,15 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
                         public void run() {
                             try {
                                 Log.i("run: ", jsonObject.toString());
+                                Glide.with(getContext()).load(cricketMatchSummaryParser.getPlayerImage()).placeholder(R.drawable.ic_no_img).into(ivPlayerProfileView);
                             /*if( manOftheMatch != null &&  !manOftheMatch.isNull("image")){
-                                Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivPlayerProfileView);
-                                Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivCountryImage);
+
+                                //Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivCountryImage);
                             }*/
+
+
+
+
                                 playerName.setText(cricketMatchSummaryParser.getPlayerName());
                                 tvPlayerRun.setText(cricketMatchSummaryParser.getruns());
                                 tvPlayerPlayedBall.setText(cricketMatchSummaryParser.getBalls());

@@ -100,7 +100,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         TextView title_text = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        ImageView back = (ImageView) toolbar.findViewById(R.id.backarrow);
+        ImageView back = (ImageView) toolbar.findViewById(R.id.back_img);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

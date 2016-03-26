@@ -542,6 +542,7 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
      </android.support.v4.widget.SwipeRefreshLayout>
     <include
         android:id="@+id/error"

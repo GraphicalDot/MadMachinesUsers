@@ -230,10 +230,11 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             final LiveCricketMatchSummaryParser liveCricketMatchSummaryParser = new LiveCricketMatchSummaryParser();
             liveCricketMatchSummaryParser.setJsonObject(matchObject);
             liveCricketMatchSummaryParser.setCricketSummary(liveCricketMatchSummaryParser.getMatchSummary());
-            final JSONArray recentOverArray =liveCricketMatchSummaryParser.getRecentOver();
-            final JSONArray currentPartnershipDetails = liveCricketMatchSummaryParser.getCurrentPartnership();
-            final JSONArray yetToBatting = liveCricketMatchSummaryParser.getUpCommingBatsMan();
-            final JSONObject currentBowlerObject = liveCricketMatchSummaryParser.getCurentBowler();
+            final JSONArray recentOverArray = liveCricketMatchSummaryParser.getRecentOver();
+            JSONArray currentPartnershipDetails = liveCricketMatchSummaryParser.getCurrentPartnership();
+            JSONArray yetToBatting = liveCricketMatchSummaryParser.getUpCommingBatsMan();
+            JSONObject currentBowlerObject = liveCricketMatchSummaryParser.getCurentBowler();
+            if (currentBowlerObject != null) {
             liveCricketMatchSummaryParser.setCurrentBowler(currentBowlerObject);
             liveCricketMatchSummaryParser.setCurrentPartnership(currentPartnershipDetails.getJSONObject(0));
             liveCricketMatchSummaryParser.setYetToBat(yetToBatting);
@@ -249,13 +250,13 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                             int ballIndex = 6;
                             Drawable drawable = null;
                             for (int i = 0; i < recentOverArray.length(); i++) {
-                                BallDetail curBall= null;
-                                if(liveCricketMatchSummaryParser.getRecentWicket(i)){
-                                    curBall= getResolveBall("w");
-                                }else{
+                                BallDetail curBall = null;
+                                if (liveCricketMatchSummaryParser.getRecentWicket(i)) {
+                                    curBall = getResolveBall("w");
+                                } else {
                                     curBall = getResolveBall(liveCricketMatchSummaryParser.getRecentRuns(i));
                                 }
-                                balls[ballIndex] =curBall;
+                                balls[ballIndex] = curBall;
                                 ballIndex--;
 
                             }
@@ -303,15 +304,16 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
                             tvFirstPlayerName.setText(liveCricketMatchSummaryParser.getPlayeFirstName());
                             tvSecondPlayerName.setText(liveCricketMatchSummaryParser.getPlayeSecondName());
-                            if(playerFirstBalls==0){
-                                tvFirstPlayerRunRate.setText(0+"");
-                            }else{
-                                tvFirstPlayerRunRate.setText((playerFirstRuns*100/playerFirstBalls)+"");
+                            if (playerFirstBalls == 0) {
+                                tvFirstPlayerRunRate.setText(0 + "");
+                            } else {
+                                tvFirstPlayerRunRate.setText((playerFirstRuns * 100 / playerFirstBalls) + "");
                             }
-                            if(playerSecondBalls==0){
-                                tvSecondPlayerRunRate.setText(0+"");
+                            if (playerSecondBalls == 0) {
+                                tvSecondPlayerRunRate.setText(0 + "");
 
-                            }else { tvSecondPlayerRunRate.setText((playerSecondRuns*100/ playerSecondBalls)+"");
+                            } else {
+                                tvSecondPlayerRunRate.setText((playerSecondRuns * 100 / playerSecondBalls) + "");
                             }
                             tvFirstPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeFirstRuns() + "(" + liveCricketMatchSummaryParser.getPlayeFirstBalls() + ")");
                             tvSecondPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeSecondRuns() + "(" + liveCricketMatchSummaryParser.getPlayeSecondBalls() + ")");
@@ -332,6 +334,9 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                         }
                     }
                 });
+            }
+        } else{
+                showErrorLayout(getView());
             }
         }else {
             showErrorLayout(getView());

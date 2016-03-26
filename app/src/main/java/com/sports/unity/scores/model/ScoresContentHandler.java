@@ -27,10 +27,6 @@ public class ScoresContentHandler {
     public static final String CALL_NAME_MATCH_COMMENTARIES = "MATCH_COMMENTARIES";
     public static final String CALL_NAME_NEAR_BY_USERS = "NEAR_BY_USERS";
     public static final String CALL_NAME_PLAYER_PROFILE = "PLAYER_PROFILE";
-    public static final String CALL_NAME_MATCH_TIMELINE = "MATCH_TIMELINE";
-    public static final String CALL_NAME_MATCH_LINEUP = "MATCH_LINEUP";
-    public static final String CALL_NAME_MATCH_STAT = "MATCH_STAT";
-
     public static final String PARAM_SPORTS_TYPE = "SPORTS_TYPE";
     public static final String PARAM_ID = "ID";
     public static final String PARAM_SERIESID = "series_id";
@@ -54,7 +50,7 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_LIST_OF_MATCHES = "v1/get_all_matches_list";
     private static final String URL_PARAMS_FOR_FOOTBALL_MATCH_DETAIL = "get_football_match_scores?match_id=";
     private static final String URL_PARAMS_FOR_CRICKET_MATCH_DETAIL = "v1/get_match_widget?season_key=%s&match_id=";
-    private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "v1/get_match_commentary?season_key=%s&match_id=%s";
+    private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "v1/get_match_commentary?season_key=%s&match_id=";
     private static final String URL_PARAMS_FOR_FOOTBALL_COMMENTARY = "get_football_commentary?match_id=";
     private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = "http://52.76.74.188:5600/get_football_player_profile?player_id=";
 
@@ -297,7 +293,7 @@ public class ScoresContentHandler {
             if (sportType.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
                 baseUrl = URL_PARAMS_FOR_CRICKET_COMMENTARY;
                 baseUrl = generateURL(baseUrl + matchId);
-                url = String.format(baseUrl,seriesId,matchId);
+                url = String.format(baseUrl,seriesId);
             } else if (sportType.equalsIgnoreCase(ScoresJsonParser.FOOTBALL)) {
                 baseUrl = URL_PARAMS_FOR_FOOTBALL_COMMENTARY;
                  url = generateURL(baseUrl + matchId);
