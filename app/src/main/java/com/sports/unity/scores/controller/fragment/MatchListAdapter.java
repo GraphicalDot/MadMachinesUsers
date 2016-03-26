@@ -374,8 +374,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         holder.liveText.setVisibility(View.GONE);
         holder.t1score.setVisibility(View.VISIBLE);
         holder.t2score.setVisibility(View.VISIBLE);
-        holder.team1Overs.setVisibility(View.VISIBLE);
-        holder.team2Overs.setVisibility(View.VISIBLE);
+        holder.team1Overs.setVisibility(View.GONE);
+        holder.team2Overs.setVisibility(View.GONE);
         holder.t1score.setText(cricketMatchJsonCaller.getTeam1Score() + "/" + cricketMatchJsonCaller.getWicketsTeam1());
         holder.t2score.setText( cricketMatchJsonCaller.getTeam2Score()+"/"+cricketMatchJsonCaller.getWicketsTeam2());
 
