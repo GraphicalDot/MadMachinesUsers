@@ -1,5 +1,6 @@
 package com.sports.unity.scoredetails.cricketdetail;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -286,7 +287,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         final JSONObject dataObject = jsonArray.getJSONObject(0);
         final CricketMatchScoreJsonParser cricketMatchScoreJsonParser = new CricketMatchScoreJsonParser();
         cricketMatchScoreJsonParser.setJsonObject(dataObject);
-        ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
+        Activity activity =  getActivity();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -303,8 +304,10 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
 
     }
     private void setScoreCardNew(CricketMatchScoreJsonParser cricketMatchScoreJsonParser) throws JSONException {
-        tvFirstTeamInning.setText(cricketMatchScoreJsonParser.getHomeTeam() + " Innings");
-        tvSecondTeamInning.setText(cricketMatchScoreJsonParser.getAwayTeam() + " Innings");
+        //tvFirstTeamInning.setText(cricketMatchScoreJsonParser.getHomeTeam() + " Innings");
+        //tvSecondTeamInning.setText(cricketMatchScoreJsonParser.getAwayTeam() + " Innings");
+        String teamNameFirst = null;
+        String teamNameSecond = null;
         JSONObject scoreCard = cricketMatchScoreJsonParser.getScoreCrad();
         JSONObject teamFirst = cricketMatchScoreJsonParser.getTeamFirst(scoreCard);
         JSONObject teamSecond = cricketMatchScoreJsonParser.getTeamSecond(scoreCard);
@@ -327,7 +330,8 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         if(iteratorTeamFirst!=null){
             while(iteratorTeamFirst.hasNext()){
                 String key = iteratorTeamFirst.next();
-                teamFirstInnings[i++] = cricketMatchScoreJsonParser.getTeamFirstInnings(teamFirst,key);
+                teamNameFirst = key.split(" ")[2];
+                teamFirstInnings[i++] = cricketMatchScoreJsonParser.getTeamFirstInnings(teamFirst, key);
             }
         }
 
@@ -335,10 +339,12 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         if(iteratorTeamSecond!=null){
             while(iteratorTeamSecond.hasNext()){
                 String key = iteratorTeamSecond.next();
+                teamNameSecond = key.split(" ")[2];
                 teamSecondInnings[i++] = cricketMatchScoreJsonParser.getTeamSecondInnings(teamSecond, key);
             }
         }
-
+        tvFirstTeamInning.setText(cricketMatchScoreJsonParser.getHomeTeam().contains(teamNameFirst)?cricketMatchScoreJsonParser.getHomeTeam():cricketMatchScoreJsonParser.getAwayTeam());
+        tvSecondTeamInning.setText(cricketMatchScoreJsonParser.getAwayTeam().contains(teamNameSecond)?cricketMatchScoreJsonParser.getAwayTeam():cricketMatchScoreJsonParser.getHomeTeam());
       /* String teamsShortName = "";
         if (!dataObject.isNull("short_name")) {
             teamsShortName = dataObject.getString("short_name");

@@ -99,7 +99,7 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         if(matchWidgetHomeTeam!=null && !matchWidgetHomeTeam.isNull("runs") ){
             return matchWidgetHomeTeam.getString("runs");
         }else{
-            return "0";
+            return "";
         }
 
 
@@ -111,7 +111,7 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         if(matchWidgetAwayTeam!=null && !matchWidgetAwayTeam.isNull("runs") ){
             return matchWidgetAwayTeam.getString("runs");
         }else{
-            return "0";
+            return "";
         }
    }
 
@@ -150,7 +150,7 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         if(matchWidgetAwayTeam!=null && !matchWidgetAwayTeam.isNull("wickets"))
         return matchWidgetAwayTeam.getString("wickets");
         else
-            return "0";
+            return "";
     }
 
 
