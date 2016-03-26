@@ -127,6 +127,16 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
                return  nameObject.getString("name");
            }else {return  "";}
     }
+
+    public String getYetToPlayerImage(int index) throws JSONException{
+        if(yetToBat.get(index)!=null){
+            JSONObject nameObject = yetToBat.getJSONObject(index);
+            return  nameObject.getString("player_image");
+        }else {return  "";}
+    }
+
+
+
     public String getRecentOver(int index) throws JSONException{
         if(recentOver.get(index)!=null){
             JSONObject nameObject = recentOver.getJSONObject(index);

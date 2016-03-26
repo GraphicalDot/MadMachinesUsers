@@ -16,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
+import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.scoredetails.BallDetail;
 import com.sports.unity.scoredetails.cricketdetail.JsonParsers.LiveCricketMatchSummaryParser;
@@ -319,8 +320,11 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                             tvSecondPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeSecondRuns() + "(" + liveCricketMatchSummaryParser.getPlayeSecondBalls() + ")");
                             tvPartnershipRecord.setText((playerFirstRuns + playerSecondRuns) + "(" + (playerFirstBalls + playerSecondBalls) + ")");
                             tvFirstUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(0));
+                            Glide.with(getContext()).load(liveCricketMatchSummaryParser.getYetToPlayerImage(0)).placeholder(R.drawable.ic_no_img).into(ivUppComingPlayerFirst);
                             tvSecondUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(1));
+                            Glide.with(getContext()).load(liveCricketMatchSummaryParser.getYetToPlayerImage(1)).placeholder(R.drawable.ic_no_img).into(ivUppComingPlayerSecond);
                             tvThirdUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(2));
+                            Glide.with(getContext()).load(liveCricketMatchSummaryParser.getYetToPlayerImage(2)).placeholder(R.drawable.ic_no_img).into(ivUppComingPlayerThird);
                             tvBowlerName.setText(liveCricketMatchSummaryParser.getCurentBowlerName());
 
                             tvBowlerEcon.setText("ECON " + liveCricketMatchSummaryParser.getCurentBowlerName());
@@ -456,7 +460,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     @Override
     public void onPause() {
         super.onPause();
-        autRefreshEnabled = false;
+        autRefreshEnabled = true;
         if(cricketLiveMatchSummaryHandler != null){
             cricketLiveMatchSummaryHandler.addListener(null);
         }
@@ -474,7 +478,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             cricketLiveMatchSummaryHandler= CricketLiveMatchSummaryHandler.getInstance(getContext());
         }
         cricketLiveMatchSummaryHandler.requestLiveMatchSummary(seriesId,matchId);
-        autRefreshEnabled = true;
+        autRefreshEnabled = false;
     }
 
 }

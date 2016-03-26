@@ -308,20 +308,37 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         JSONObject scoreCard = cricketMatchScoreJsonParser.getScoreCrad();
         JSONObject teamFirst = cricketMatchScoreJsonParser.getTeamFirst(scoreCard);
         JSONObject teamSecond = cricketMatchScoreJsonParser.getTeamSecond(scoreCard);
-        Iterator<String> iteratorTeamFirst = teamFirst.keys();
-        Iterator<String> iteratorTeamSecond = teamSecond.keys();
+        Iterator<String> iteratorTeamFirst = null;
+        Iterator<String> iteratorTeamSecond = null;
+        if(teamFirst!=null){
+            iteratorTeamFirst = teamFirst.keys();
+        }
+        if(teamSecond!=null){
+            iteratorTeamSecond = teamSecond.keys();
+        }
+
+
+
+
+
         JSONObject teamFirstInnings [] = new JSONObject[2];
         JSONObject teamSecondInnings [] = new JSONObject[2];
         int i = 0;
-        while(iteratorTeamFirst.hasNext()){
-            String key = iteratorTeamFirst.next();
-            teamFirstInnings[i++] = cricketMatchScoreJsonParser.getTeamFirstInnings(teamFirst,key);
+        if(iteratorTeamFirst!=null){
+            while(iteratorTeamFirst.hasNext()){
+                String key = iteratorTeamFirst.next();
+                teamFirstInnings[i++] = cricketMatchScoreJsonParser.getTeamFirstInnings(teamFirst,key);
+            }
         }
+
         i= 0;
-        while(iteratorTeamSecond.hasNext()){
-            String key = iteratorTeamSecond.next();
-            teamSecondInnings[i++] = cricketMatchScoreJsonParser.getTeamSecondInnings(teamSecond, key);
+        if(iteratorTeamSecond!=null){
+            while(iteratorTeamSecond.hasNext()){
+                String key = iteratorTeamSecond.next();
+                teamSecondInnings[i++] = cricketMatchScoreJsonParser.getTeamSecondInnings(teamSecond, key);
+            }
         }
+
       /* String teamsShortName = "";
         if (!dataObject.isNull("short_name")) {
             teamsShortName = dataObject.getString("short_name");
@@ -386,24 +403,28 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                 tvRunRateSecondTeam.setText(cricketMatchScoreJsonParser.getTeamRunsRate(teamSecondInnings[k]));
                 tvTeamSecondNameAndScore.setText(cricketMatchScoreJsonParser.getAwayTeam() + " " + cricketMatchScoreJsonParser.getTeamRuns(teamSecondInnings[k]) + "/" + cricketMatchScoreJsonParser.getTeamWicket(teamSecondInnings[k]));
             }
-
+            if(teamBBattingArray!=null){
             for ( i = 0; i < teamBBattingArray.length(); i++) {
                 JSONObject battingObject = teamBBattingArray.getJSONObject(i);
                 LiveAndCompletedCricketBattingCardDTO liveAndCompletedCricketBattingCardDTO = CricketMatchScoreCardUtil.getLiveAndCompletedCricketBattingCardDTO(cricketMatchScoreJsonParser, battingObject);
                 teamBBattingCardList.add(liveAndCompletedCricketBattingCardDTO);
             }
-            for (int j = 0; j < teamBBowlingArray.length(); j++) {
-                JSONObject bowlingObject = teamBBowlingArray.getJSONObject(j);
-                LiveAndCompletedCricketBowlingCardDTO bowling = CricketMatchScoreCardUtil.getLiveAndCompletedCricketBowlingCardDTO(cricketMatchScoreJsonParser, bowlingObject);
-                teamBBowlingCardList.add(bowling);
             }
 
+            if(teamBBowlingArray!=null) {
+                for (int j = 0; j < teamBBowlingArray.length(); j++) {
+                    JSONObject bowlingObject = teamBBowlingArray.getJSONObject(j);
+                    LiveAndCompletedCricketBowlingCardDTO bowling = CricketMatchScoreCardUtil.getLiveAndCompletedCricketBowlingCardDTO(cricketMatchScoreJsonParser, bowlingObject);
+                    teamBBowlingCardList.add(bowling);
+                }
+            }
+            if(teamBFallWicketArray!=null) {
             for (int k = 0; k < teamBFallWicketArray.length(); k++) {
                 JSONObject fallOfWicketObject = teamBFallWicketArray.getJSONObject(k);
                 LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets = CricketMatchScoreCardUtil.getLiveAndCompletedCricketFallOfWicketCardDTO(cricketMatchScoreJsonParser, k, fallOfWicketObject);
 
                 teamBFallOfWicketCardList.add(fallOfWickets);
-
+            }
             }
         }
         teamABattingAdapter.notifyDataSetChanged();

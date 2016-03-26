@@ -38,6 +38,9 @@ public class CricketMatchScoreJsonParser  extends JsonObjectCaller{
         return  scoreCard.getJSONObject("1");
     }
     public JSONObject getTeamSecond(JSONObject scoreCard)throws JSONException{
+        if(scoreCard.isNull("2")){
+            return null;
+        }
         return  scoreCard.getJSONObject("2");
     }
 
@@ -48,46 +51,52 @@ public class CricketMatchScoreJsonParser  extends JsonObjectCaller{
         return  teamSecondinnings.getJSONObject(key);
     }
     public JSONArray getTeamBatting(JSONObject innings )throws JSONException{
-
+        if(innings==null || innings.isNull("batting")){
+            return  null;
+        }
         return  innings.getJSONArray("batting");
     }
     public JSONArray getTeamBowlling(JSONObject innings )throws JSONException{
-
+        if(innings==null || innings.isNull("bowling")){
+            return  null;
+        }
         return  innings.getJSONArray("bowling");
     }
     public JSONArray getTeamFallOfWickets(JSONObject innings )throws JSONException{
-
+        if(innings==null || innings.isNull("fall_of_wickets")){
+            return  null;
+        }
         return  innings.getJSONArray("fall_of_wickets");
     }
     public String getOvers(JSONObject jsonObject) throws  JSONException{
-        if(!jsonObject.isNull("overs"))
+        if(jsonObject!=null && !jsonObject.isNull("overs"))
             return  jsonObject.getString("overs");
         else
             return  "";
     }
     public String getExtra(JSONObject jsonObject) throws  JSONException{
-        if(!jsonObject.isNull("extra"))
+        if(jsonObject!=null && !jsonObject.isNull("extra"))
             return  jsonObject.getString("extra");
         else
             return  "";
     }
 
     public String getTeamRuns(JSONObject jsonObject) throws  JSONException{
-        if(!jsonObject.isNull("runs"))
+        if(jsonObject!=null && !jsonObject.isNull("runs"))
             return  jsonObject.getString("runs");
         else
             return  "";
     }
 
     public String getTeamRunsRate(JSONObject jsonObject) throws  JSONException{
-        if(!jsonObject.isNull("run_rate"))
+        if(jsonObject!=null && !jsonObject.isNull("run_rate"))
             return  jsonObject.getString("run_rate");
         else
             return  "";
     }
 
     public String getTeamWicket(JSONObject jsonObject) throws  JSONException{
-        if(!jsonObject.isNull("wickets"))
+        if(jsonObject!=null && !jsonObject.isNull("wickets"))
             return  jsonObject.getString("wickets");
         else
             return  "";

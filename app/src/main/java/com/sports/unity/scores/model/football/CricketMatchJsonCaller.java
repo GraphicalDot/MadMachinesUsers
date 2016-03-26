@@ -99,7 +99,7 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         if(matchWidgetHomeTeam!=null && !matchWidgetHomeTeam.isNull("runs") ){
             return matchWidgetHomeTeam.getString("runs");
         }else{
-            return "";
+            return "0";
         }
 
 
@@ -111,7 +111,7 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         if(matchWidgetAwayTeam!=null && !matchWidgetAwayTeam.isNull("runs") ){
             return matchWidgetAwayTeam.getString("runs");
         }else{
-            return "";
+            return "0";
         }
    }
 
@@ -132,18 +132,25 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
     public String getWicketsTeam1() throws JSONException {
         if(matchWidgetHomeTeam!=null && !matchWidgetHomeTeam.isNull("wickets")){
             return matchWidgetHomeTeam.getString("wickets");
-        }else {
-            return  "";
         }
+            return  "";
+
 
     }
 
     public String getOversTeam2() throws JSONException {
-        return matchWidgetAwayTeam.getString("overs");
+        if(matchWidgetAwayTeam!=null && !matchWidgetAwayTeam.isNull("overs")){
+            return matchWidgetAwayTeam.getString("overs");
+        }
+        return "";
+
     }
 
     public String getWicketsTeam2() throws JSONException {
+        if(matchWidgetAwayTeam!=null && !matchWidgetAwayTeam.isNull("wickets"))
         return matchWidgetAwayTeam.getString("wickets");
+        else
+            return "0";
     }
 
 
