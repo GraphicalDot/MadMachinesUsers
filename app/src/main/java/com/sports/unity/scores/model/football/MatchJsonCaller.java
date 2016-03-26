@@ -58,8 +58,8 @@ public class MatchJsonCaller extends JsonObjectCaller {
     public String getLeagueName(){
 
             try {
-                if (!jsonObject.isNull("series_name")){
-                return  jsonObject.getString("series_name");
+                if (!jsonObject.isNull("league_name")){
+                return  jsonObject.getString("league_name");
                 }
             } catch (JSONException e) {
                 e.printStackTrace();

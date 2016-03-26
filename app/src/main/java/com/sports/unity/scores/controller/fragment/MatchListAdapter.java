@@ -421,12 +421,13 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 matchName = cricketMatchJsonCaller.getMatchNumber()+", " +cricketMatchJsonCaller.getTeam1()+" v "+cricketMatchJsonCaller.getTeam2();
                 date = cricketMatchJsonCaller.getMatchDate();
                 seriesId = cricketMatchJsonCaller.getSeriesId();
-                leagueName  =cricketMatchJsonCaller.getLeagueName();
+                leagueName  =cricketMatchJsonCaller.getSeriesName();
             } else if( type.equalsIgnoreCase(ScoresJsonParser.FOOTBALL) ){
                 footballMatchJsonCaller.setJsonObject(matchJsonObject);
                 matchId = String.valueOf(footballMatchJsonCaller.getMatchId());
                 matchStatus = footballMatchJsonCaller.getMatchStatus();
                 matchTime = footballMatchJsonCaller.getMatchTime();
+                leagueName  =footballMatchJsonCaller.getLeagueName();
                 intent.putExtra(Constants.INTENT_KEY_MATCH_TIME, matchTime);
                 intent.putExtra(Constants.INTENT_KEY_MATCH_LIVE,footballMatchJsonCaller.isLive());
                 intent.putExtra(Constants.INTENT_KEY_TEAM1_ID,footballMatchJsonCaller.getTeam1Id());
