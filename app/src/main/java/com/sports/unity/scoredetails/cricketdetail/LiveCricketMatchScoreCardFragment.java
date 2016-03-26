@@ -343,9 +343,9 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                 teamSecondInnings[i++] = cricketMatchScoreJsonParser.getTeamSecondInnings(teamSecond, key);
             }
         }
-        tvFirstTeamInning.setText(cricketMatchScoreJsonParser.getHomeTeam().contains(teamNameFirst)?cricketMatchScoreJsonParser.getHomeTeam():cricketMatchScoreJsonParser.getAwayTeam());
-        tvSecondTeamInning.setText(cricketMatchScoreJsonParser.getAwayTeam().contains(teamNameSecond)?cricketMatchScoreJsonParser.getAwayTeam():cricketMatchScoreJsonParser.getHomeTeam());
-      /* String teamsShortName = "";
+       /* tvFirstTeamInning.setText(cricketMatchScoreJsonParser.getHomeTeam().contains(teamNameFirst)?cricketMatchScoreJsonParser.getHomeTeam():cricketMatchScoreJsonParser.getAwayTeam()+" Innings");
+        tvSecondTeamInning.setText(cricketMatchScoreJsonParser.getAwayTeam().contains(teamNameSecond)?cricketMatchScoreJsonParser.getAwayTeam():cricketMatchScoreJsonParser.getHomeTeam()+" Innings");
+      */  /* String teamsShortName = "";
         if (!dataObject.isNull("short_name")) {
             teamsShortName = dataObject.getString("short_name");
         }
@@ -354,10 +354,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         JSONArray teamABowlingArray = null;
         JSONArray teamAFallWicketArray = null;
         if (teamFirstInnings!=null) {
-
-
             for (int k = 0;k<teamFirstInnings.length-1;k++){
-
                 teamABattingArray = cricketMatchScoreJsonParser.getTeamBatting(teamFirstInnings[k]);
                 teamABowlingArray = cricketMatchScoreJsonParser.getTeamBowlling(teamFirstInnings[k]);
                 teamAFallWicketArray = cricketMatchScoreJsonParser.getTeamFallOfWickets(teamFirstInnings[k]);
@@ -365,7 +362,8 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                 tvExtraRunTeamFirst.setText("Extras " + cricketMatchScoreJsonParser.getExtra(teamFirstInnings[k]));
                 tvTotalRunFirstTeam.setText(cricketMatchScoreJsonParser.getTeamRuns(teamFirstInnings[k]));
                 tvRunRateFirstTeam.setText(cricketMatchScoreJsonParser.getTeamRunsRate(teamFirstInnings[k]));
-                tvTeamFirstNameAndScore.setText(cricketMatchScoreJsonParser.getHomeTeam() + " " + cricketMatchScoreJsonParser.getTeamRuns(teamFirstInnings[k]) + "/" + cricketMatchScoreJsonParser.getTeamWicket(teamFirstInnings[k]));
+                tvTeamFirstNameAndScore.setText(teamNameFirst + " " + cricketMatchScoreJsonParser.getTeamRuns(teamFirstInnings[k]) + "/" + cricketMatchScoreJsonParser.getTeamWicket(teamFirstInnings[k]));
+                tvFirstTeamInning.setText(teamNameFirst+ " Innings");
             }
             if (teamABattingArray != null) {
                 for (i = 0; i < teamABattingArray.length(); i++) {
@@ -386,7 +384,6 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                 for (int k = 0; k < teamAFallWicketArray.length(); k++) {
                     JSONObject fallOfWicketObject = teamAFallWicketArray.getJSONObject(k);
                     LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets = CricketMatchScoreCardUtil.getLiveAndCompletedCricketFallOfWicketCardDTO(cricketMatchScoreJsonParser, k, fallOfWicketObject);
-
                     teamAFallOfWicketCardList.add(fallOfWickets);
 
                 }
@@ -407,7 +404,8 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                 tvExtraRunTeamSecond.setText("Extras " + cricketMatchScoreJsonParser.getExtra(teamSecondInnings[k]));
                 tvTotalRunSecondTeam.setText(cricketMatchScoreJsonParser.getTeamRuns(teamSecondInnings[k]));
                 tvRunRateSecondTeam.setText(cricketMatchScoreJsonParser.getTeamRunsRate(teamSecondInnings[k]));
-                tvTeamSecondNameAndScore.setText(cricketMatchScoreJsonParser.getAwayTeam() + " " + cricketMatchScoreJsonParser.getTeamRuns(teamSecondInnings[k]) + "/" + cricketMatchScoreJsonParser.getTeamWicket(teamSecondInnings[k]));
+                tvTeamSecondNameAndScore.setText(teamNameSecond + " " + cricketMatchScoreJsonParser.getTeamRuns(teamSecondInnings[k]) + "/" + cricketMatchScoreJsonParser.getTeamWicket(teamSecondInnings[k]));
+                tvSecondTeamInning.setText(teamNameSecond + " Innings");
             }
             if(teamBBattingArray!=null){
             for ( i = 0; i < teamBBattingArray.length(); i++) {
