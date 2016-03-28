@@ -20,8 +20,8 @@ public class CricketMatchScoreCardUtil {
         cricketMatchScoreJsonParser.setFallofWicketObject(fallOfWicketObject);
         LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets = new LiveAndCompletedCricketFallOfWicketCardDTO();
         fallOfWickets.setTvBowlerName(cricketMatchScoreJsonParser.getFallOfName());
-        fallOfWickets.setTvOverNumber(cricketMatchScoreJsonParser.getFallOfWicketScore() + "ovs");
-        fallOfWickets.setTvWicket(cricketMatchScoreJsonParser.getFallOfRuns() + "-" + (k + 1));
+        fallOfWickets.setTvOverNumber(cricketMatchScoreJsonParser.getFallOfWicketOver() + "ovs");
+        fallOfWickets.setTvWicket(cricketMatchScoreJsonParser.getFallOfWicketScore());
         return fallOfWickets;
     }
 

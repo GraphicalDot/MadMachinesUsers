@@ -63,6 +63,7 @@ public class CompletedMatchScoreCardHandler {
         Log.i("Score Detail", "Request Score Details");
         String url = String.format(BASEURL,seriesId,matchId);
         StringRequest stringRequest = null;
+        Log.d("CompletedScoreDetails", "requestCompletdMatchScoreCard: "+url);
        // RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
         VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);

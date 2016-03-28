@@ -198,8 +198,8 @@ public class CricketMatchScoreJsonParser  extends JsonObjectCaller{
             return  "";
     }
     public String getBowlerExtra() throws  JSONException{
-        if(!bowllingObject.isNull("extra"))
-            return  bowllingObject.getString("extra");
+        if(!bowllingObject.isNull("extras"))
+            return  bowllingObject.getString("extras");
         else
             return  "";
     }

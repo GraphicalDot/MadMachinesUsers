@@ -121,28 +121,33 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
 
 
     public void setProfileInfo(final JSONObject object) {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    final JSONObject playerInfo = (JSONObject) object.get("info");
-                    if (object != null) {
-                        if (!object.isNull("image")) {
-                            Log.i("run: ", object.getString("image"));
-                            Glide.with(PlayerCricketBioDataActivity.this).load(object.getString("image")).placeholder(R.drawable.ic_no_img).into(playerProfileImage);
-                        }
-                        if (!playerInfo.isNull("Full Name")) {
-                            playerName.setText(playerInfo.getString("Full Name"));
-                        }
-                        if (!playerInfo.isNull("Place of birth")) {
-                            playerNationName.setText(playerInfo.getString("Place of birth").split(",")[2]);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+try {
+    final JSONObject playerInfo = object.getJSONObject("info");
+    runOnUiThread(new Runnable() {
+        @Override
+        public void run() {
 
-    }
+
+            try {
+                if (object != null) {
+                    if (!object.isNull("player_image")) {
+                        Log.i("run: ", object.getString("player_image"));
+                        Glide.with(PlayerCricketBioDataActivity.this).load(object.getString("player_image")).placeholder(R.drawable.ic_no_img).into(playerProfileImage);
+                    }
+                    if (!playerInfo.isNull("full_name")) {
+                        playerName.setText(playerInfo.getString("full_name"));
+                    }
+                    if (!playerInfo.isNull("birth_place")) {
+                        playerNationName.setText(playerInfo.getString("birth_place").split(",")[2]);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    });
+
+}
+catch (Exception e)
+{e.printStackTrace();}}
 }
