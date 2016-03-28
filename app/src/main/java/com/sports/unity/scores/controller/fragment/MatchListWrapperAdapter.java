@@ -49,7 +49,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     public void onBindViewHolder(ViewHolder holder, int position) {
         try{
             MatchListWrapperDTO previousDTO = null;
-            if(position == 0 || position == 1){
+            if(position == 0){
                 previousDTO = matchDay.get(position);
             }else {
                 previousDTO = matchDay.get(position-1);
