@@ -32,8 +32,8 @@ public class MatchJsonCaller extends JsonObjectCaller {
     public String getTeams1Odds() {
         String odds = null;
         try{
-            if (!jsonObject.isNull("team_1_odds"))
-            odds = jsonObject.getString("team_1_odds");
+            if (!jsonObject.isNull("home_team_odds"))
+            odds = jsonObject.getString("home_team_odds");
             else
                 odds = "";
         }catch (JSONException ex){
@@ -45,8 +45,8 @@ public class MatchJsonCaller extends JsonObjectCaller {
     public String getTeams2Odds() throws JSONException {
         String odds = null;
         try{
-            if (!jsonObject.isNull("team_2_odds"))
-            odds = jsonObject.getString("team_2_odds");
+            if (!jsonObject.isNull("away_team_odds"))
+            odds = jsonObject.getString("away_team_odds");
             else
                 odds = "";
         }catch (JSONException ex){

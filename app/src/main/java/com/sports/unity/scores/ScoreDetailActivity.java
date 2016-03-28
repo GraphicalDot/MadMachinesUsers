@@ -226,6 +226,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                 @Override
                 public void onClick(View v) {
+
                     int index = mViewPager.getCurrentItem();
                     List<Fragment> fargmentList = getSupportFragmentManager().getFragments();
                     Fragment fragment=  fargmentList.get(index);
@@ -557,7 +558,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 autoRefreshCall();
             }
 
-        }, 60000, 60000);
+        }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
     }
 
     private void autoRefreshCall(){
