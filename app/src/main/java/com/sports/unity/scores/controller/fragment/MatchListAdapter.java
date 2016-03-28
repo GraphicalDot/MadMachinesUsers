@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -44,7 +46,7 @@ import java.util.TimeZone;
 /**
  * Created by madmachines on 8/10/15.
  */
-public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.ViewHolder> {
+public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.ViewHolder> implements TokenRegistrationHandler.TokenRegistrationContentListener {
 
     private Activity activity;
     private List<JSONObject> list;
@@ -64,19 +66,23 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
     };
 
-    private View.OnClickListener matchAlertListener = new View.OnClickListener() {
+    /*private View.OnClickListener matchAlertListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View view) {
             handleMatchAlert(view);
         }
 
-    };
+    };*/
+    private TokenRegistrationHandler tokenRegistrationHandler;
+    private SharedPreferences preferences;
 
     public MatchListAdapter(List<JSONObject> list, Activity activity) {
         this.list = list;
         this.activity = activity;
     }
+
+
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
@@ -118,16 +124,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             team2Overs = (TextView) v.findViewById(R.id.t2over);
             matchMinutes = (TextView) v.findViewById(R.id.minutes);
             notification = (ImageView) v.findViewById(R.id.notification);
-            notification.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-
-
-
-
-                }
-            });
 
         }
     }
@@ -145,11 +141,30 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         try {
             matchJsonCaller.setJsonObject(matchJsonObject);
 
+
+
+
 //            holder.liveText.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
 //            holder.liveText.setTextColor(Color.BLACK);
             Log.d("Object Counter", "onBindViewHolder: "+position);
             if( matchJsonCaller.getType().equals(ScoresJsonParser.CRICKET) ) {
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
+
+                    holder.notification.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            try {
+                                String seriesId = cricketMatchJsonCaller.getSeriesId();
+                                String matchId = cricketMatchJsonCaller.getMatchId();
+                                tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
+                                tokenRegistrationHandler.addListener(MatchListAdapter.this);
+                                tokenRegistrationHandler.registrerMatchUser(seriesId + "|" + matchId, CommonUtil.getToken(activity));
+                               // Toast.makeText(activity,seriesId+" "+matchId,Toast.LENGTH_SHORT).show();
+                            }catch (Exception e){e.printStackTrace();}
+                        }
+                    });
+
+
                 JSONObject widgetTeamsObject = cricketMatchJsonCaller.getTeamsWiget();
                 JSONArray widgetTeamsFirst = null;
                 JSONArray widgetTeamSecond = null;
@@ -325,7 +340,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
         holder.view.setTag(position);
         holder.view.setOnClickListener(listener);
-        holder.notification.setOnClickListener(matchAlertListener);
+        /*holder.notification.setOnClickListener(matchAlertListener);*/
 
 //        try {
 //            if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {
@@ -637,22 +652,47 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     }
 
 
-    private void handleMatchAlert(View view) {
-        int position = (Integer) view.getTag();
+    /*private void handleMatchAlert(View view) {
+        Integer position = (Integer) view.getTag();
         JSONObject matchJsonObject = list.get(position);
         cricketMatchJsonCaller.setJsonObject(matchJsonObject);
+        preferences = PreferenceManager.getDefaultSharedPreferences(activity);
+
         try {
+            String seriesId = cricketMatchJsonCaller.getSeriesId();
             String matchId = cricketMatchJsonCaller.getMatchId();
-            String seriesId  = cricketMatchJsonCaller.getSeriesId();
+            tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
+            tokenRegistrationHandler.addListener(this);
+            tokenRegistrationHandler.registrerMatchUser(seriesId + "|" + matchId, CommonUtil.getToken(activity));
             Toast.makeText(activity,matchId+" "+seriesId,Toast.LENGTH_SHORT).show();
 
 
 
-        } catch (JSONException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
 
+    }*/
+
+    @Override
+    public void handleContent(String content) {
+        try {
+            JSONObject object = new JSONObject(content);
+            if(object!=null){
+                if(200==object.getInt("status")){
+                    if("success".equalsIgnoreCase(object.getString("info"))) {
+
+                        preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, true).apply();
+                    }else{
+                        preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
+                    }
+                }
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 

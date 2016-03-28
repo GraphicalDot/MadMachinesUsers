@@ -30,7 +30,6 @@ public class ScoresJsonParser {
             JSONObject jsonObject = new JSONObject(jsonContent);
 
             boolean success = jsonObject.getBoolean("success");
-            boolean error = jsonObject.getBoolean("error");
 
             if( success ) {
                 list = new ArrayList<>();

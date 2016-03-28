@@ -49,10 +49,15 @@ public class RegistrationIntentService extends IntentService implements TokenReg
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         try
         {
-            String token = CommonUtil.getToken(this);
+            InstanceID instanceID = InstanceID.getInstance(this);
+            String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
             Log.i("Token", "onHandleIntent: " + token);
             if(preferences!=null){
                 registerToken(token);
+                SharedPreferences.Editor editor= preferences.edit();
+                editor.putString(Constants.REQUEST_PARAMETER_KEY_TOKEN, token);
+                editor.apply();
+
             }
 
         }
@@ -93,8 +98,11 @@ public class RegistrationIntentService extends IntentService implements TokenReg
             if(object!=null){
                 if(200==object.getInt("status")){
                     if("success".equalsIgnoreCase(object.getString("info"))) {
-                        preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, true).apply();
+                        SharedPreferences.Editor editor= preferences.edit();
+                        editor.putBoolean(Constants.SENT_TOKEN_TO_SERVER, true);
+                        editor.apply();
                         sendNotification("Notification");
+
 
                     }else{
                         preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
