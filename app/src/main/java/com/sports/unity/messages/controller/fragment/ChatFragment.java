@@ -19,10 +19,12 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.activity.ForwardSelectedItems;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.messages.controller.model.ShareableData;
 import com.sports.unity.messages.controller.model.ToolbarActionsForChatScreen;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
@@ -233,7 +235,8 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
                 if (chat.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
                     deleteSingleChat(chat);
                 } else {
-                    //TODO
+                    String currentUserJID = TinyDB.getInstance(getContext()).getString(TinyDB.KEY_USER_JID);
+                    PubSubMessaging.getInstance().exitGroup( currentUserJID+"@mm.io", chat.groupServerId);
                 }
             }
         };

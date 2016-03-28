@@ -688,11 +688,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         String s = "";
         SportsUnityDBHelper.GroupParticipants participants = sportsUnityDBHelper.getGroupParticipants(chatID);
         ArrayList<Contacts> users = participants.usersInGroup;
-        for (Contacts c : users) {
-            s += c.name;
-            s += ", ";
+        if( users != null && users.size() > 1 ) {
+            Contacts contacts = users.get(0);
+            s += contacts.name;
+            for (int index=1;index<users.size();index++) {
+                s += ", ";
+                s += users.get(index).name;
+            }
         }
-        s += "You";
         status.setText(s);
     }
 

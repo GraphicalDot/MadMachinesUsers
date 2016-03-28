@@ -1468,6 +1468,25 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     }
 
+    public void updateChatBlockStatus(long chatId, boolean blockStatus) {
+        //TODO
+
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//        ContentValues values = new ContentValues();
+//        values.put(ChatEntry.COLUMN_BLOCK_USER, blockStatus);
+//
+//        String selection = ChatEntry.COLUMN_CHAT_ID + " = ?";
+//        String[] selectionArgs = {String.valueOf(chatId)};
+//
+//        int count = db.update(
+//                ContactsEntry.TABLE_NAME,
+//                values,
+//                selection,
+//                selectionArgs);
+
+    }
+
     public boolean isChatBlocked(long contactId) {
 
         boolean block = false;
@@ -1594,6 +1613,18 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         int update = db.update(GroupUserEntry.TABLE_NAME,
                 values,
+                selection,
+                selectionArgs);
+
+    }
+
+    public void deleteGroupMember( long contactId) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        String selection = GroupUserEntry.COLUMN_CONTACT_ID + " = ? ";
+        String[] selectionArgs = { String.valueOf(contactId)};
+
+        int deleted = db.delete(GroupUserEntry.TABLE_NAME,
                 selection,
                 selectionArgs);
 
