@@ -3,6 +3,7 @@ package com.sports.unity.messages.controller.fragment;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.Filter;
 import android.widget.Filterable;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sports.unity.R;
@@ -92,7 +94,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
 
             if (previouslySelectedMembersList.contains(contacts.jid)) {
                 CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.checkbox);
-                if(checkBox != null) {
+                if (checkBox != null) {
                     checkBox.setChecked(true);
                 }
 
@@ -100,12 +102,12 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
             } else {
                 if (selectedMemberList != null && selectedMemberList.contains(contacts)) {
                     CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.checkbox);
-                    if(checkBox != null) {
+                    if (checkBox != null) {
                         checkBox.setChecked(true);
                     }
                 } else {
                     CheckBox checkBox = (CheckBox) rowView.findViewById(R.id.checkbox);
-                    if(checkBox != null) {
+                    if (checkBox != null) {
                         checkBox.setChecked(false);
                     }
                 }
@@ -183,9 +185,16 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
             holder = (HeaderViewHolder) convertView.getTag();
         }
         if (usedContact.size() == finalContact.size()) {
+            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.text.getLayoutParams();
             if (position >= registeredContactCount) {
+                params.setMargins(0, 75, 0, 0);
+                holder.text.setLayoutParams(params);
+                holder.text.setTextColor(Color.BLACK);
                 headerText = "Invite People to Sports Unity";
             } else {
+                params.setMargins(0, 0, 0, 0);
+                holder.text.setLayoutParams(params);
+                holder.text.setTextColor(context.getResources().getColor(R.color.gray1));
                 headerText = "" + getHeader(position);
             }
         } else {
