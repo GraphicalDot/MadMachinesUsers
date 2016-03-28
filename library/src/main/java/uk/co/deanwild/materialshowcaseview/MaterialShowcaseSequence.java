@@ -1,6 +1,7 @@
 package uk.co.deanwild.materialshowcaseview;
 
 import android.app.Activity;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -55,7 +56,7 @@ public class MaterialShowcaseSequence implements IDetachedListener {
                 .setTarget(targetView)
                 .setDismissText(dismissText)
                 .setContentHeadingText(heading)
-                .setSmallCircle(true).setShape(new RectangleShape(targetView.getWidth(),targetView.getHeight()))
+                .setSmallCircle(true).setShape(new RectangleShape(targetView.getWidth(), targetView.getHeight()))
                 .setContentText(content)
                 .build();
 
@@ -65,6 +66,11 @@ public class MaterialShowcaseSequence implements IDetachedListener {
 
         mShowcaseQueue.add(sequenceItem);
         return this;
+    }
+
+    public void clearShowcaseQueue() {
+        mShowcaseQueue.clear();
+        mPrefsManager.setFired();
     }
 
     public MaterialShowcaseSequence addSequenceItem(MaterialShowcaseView sequenceItem) {
@@ -168,6 +174,11 @@ public class MaterialShowcaseSequence implements IDetachedListener {
 
             showNextItem();
         }
+    }
+
+    @Override
+    public void onShowcaseSequenceDismiss() {
+        clearShowcaseQueue();
     }
 
     public void setConfig(ShowcaseConfig config) {

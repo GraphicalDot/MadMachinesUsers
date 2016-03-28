@@ -1,21 +1,149 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.sports.unity.common.controller.fragment.FilterFragment">
 
     <!-- TODO: Update blank fragment layout -->
+    <LinearLayout
+        android:id="@+id/parent_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/white"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:id="@+id/cricket_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/flag_cricket"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:paddingBottom="@dimen/vertical_padding_very_very_small"
+                android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+                android:paddingRight="@dimen/horizontal_padding_very_very_small"
+                android:paddingTop="@dimen/vertical_padding_very_very_small"
+                android:scaleType="center"
+                android:src="@drawable/ic_cricket" />
+
+            <com.sports.unity.common.view.CustomRobotoSlabBold
+                android:id="@+id/item_text_cricket"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/edit_cricket"
+                android:layout_toRightOf="@id/flag_cricket"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@string/cricket"
+                android:textColor="@color/gray2"
+                android:textSize="@dimen/font_size_small_xlarge"
+                android:textStyle="bold" />
+
+            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                android:id="@+id/edit_cricket"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/horizontal_padding_small"
+                android:background="@drawable/round_edge_box_white_border"
+                android:gravity="center"
+                android:paddingBottom="@dimen/vertical_padding_very_very_small"
+                android:paddingLeft="@dimen/horizontal_padding_very_small"
+                android:paddingRight="@dimen/horizontal_padding_very_small"
+                android:paddingTop="@dimen/vertical_padding_very_very_small"
+                android:text="@string/nav_edit"
+                android:textColor="@color/app_theme_blue"
+                android:textSize="@dimen/font_size_very_small"
+                android:visibility="visible" />
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray3"></ImageView>
+
+        <RelativeLayout
+            android:id="@+id/football_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/flag_football"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:paddingBottom="@dimen/vertical_padding_very_very_small"
+                android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+                android:paddingRight="@dimen/horizontal_padding_very_very_small"
+                android:paddingTop="@dimen/vertical_padding_very_very_small"
+                android:scaleType="center"
+                android:src="@drawable/ic_football" />
+
+            <com.sports.unity.common.view.CustomRobotoSlabBold
+                android:id="@+id/item_text_football"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/edit_football"
+                android:layout_toRightOf="@id/flag_football"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="@string/football"
+                android:textColor="@color/gray2"
+                android:textSize="@dimen/font_size_small_xlarge"
+                android:textStyle="bold" />
+
+            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                android:id="@+id/edit_football"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="@dimen/horizontal_padding_small"
+                android:background="@drawable/round_edge_box_white_border"
+                android:gravity="center"
+                android:paddingBottom="@dimen/vertical_padding_very_very_small"
+                android:paddingLeft="@dimen/horizontal_padding_very_small"
+                android:paddingRight="@dimen/horizontal_padding_very_small"
+                android:paddingTop="@dimen/vertical_padding_very_very_small"
+                android:text="@string/nav_edit"
+                android:textColor="@color/app_theme_blue"
+                android:textSize="@dimen/font_size_very_small"
+                android:visibility="visible" />
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/seprator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray3"></ImageView>
+    </LinearLayout>
 
     <se.emilsjolander.stickylistheaders.StickyListHeadersListView
         android:id="@+id/filter_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white"
+        android:layout_below="@+id/parent_empty"
         android:dividerHeight="0dp" />
+
     <include
         android:id="@+id/error"
         layout="@layout/filter_error"
+        android:layout_centerInParent="true"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content" />
 
-</FrameLayout>
+</RelativeLayout>

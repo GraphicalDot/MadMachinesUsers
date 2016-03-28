@@ -1,5 +1,6 @@
 package com.sports.unity.common.controller.fragment;
 
+import android.content.Intent;
 import android.widget.BaseAdapter;
 
 import java.util.ArrayList;
@@ -11,12 +12,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.PlayerProfileDetails;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
@@ -98,6 +102,7 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
             convertView = mInflater.inflate(R.layout.filter_header, null);
             holder.textView = (TextView) convertView.findViewById(R.id.itemtext);
             holder.imageView = (ImageView) convertView.findViewById(R.id.flag);
+            holder.editSport= (TextView) convertView.findViewById(R.id.edit_sports);
             convertView.setTag(holder);
         } else {
             holder = (HeaderViewHolder) convertView.getTag();
@@ -105,9 +110,32 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
         if (mData.get(position).getSportsType().equals(Constants.GAME_KEY_CRICKET)) {
             headerText = "Cricket";
             holder.imageView.setImageResource(R.drawable.ic_cricket);
+            holder.editSport.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(new Intent(context,AdvancedFilterActivity.class));
+                    intent.putExtra(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_CRICKET);
+                    intent.putExtra(Constants.SPORTS_FILTER_TYPE, mData.get(0).getFilterType());
+                    intent.putExtra(Constants.RESULT_REQUIRED, true);
+                    intent.putExtra(Constants.RESULT_SINGLE_USE, true);
+                    ((FilterActivity)context).startActivityForResult(intent, Constants.REQUEST_CODE_ADD_SPORT);
+
+                }
+            });
         } else {
             headerText = "Football";
-            holder.imageView.setImageResource(R.drawable.ic_football);
+            holder.imageView.setImageResource(R.drawable.ic_football);holder.editSport.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(new Intent(context, AdvancedFilterActivity.class));
+                    intent.putExtra(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_FOOTBALL);
+                    intent.putExtra(Constants.SPORTS_FILTER_TYPE, mData.get(0).getFilterType());
+                    intent.putExtra(Constants.RESULT_REQUIRED, true);
+                    intent.putExtra(Constants.RESULT_SINGLE_USE, true);
+                    ((FilterActivity) context).startActivityForResult(intent, Constants.REQUEST_CODE_ADD_SPORT);
+
+                }
+            });
         }
 
         holder.textView.setText(headerText);
@@ -131,6 +159,7 @@ public class FilterAdapter extends BaseAdapter implements StickyListHeadersAdapt
     public static class HeaderViewHolder {
         public TextView textView;
         public ImageView imageView;
+        public TextView editSport;
     }
 
 }

@@ -107,9 +107,6 @@
                     android:layout_margin="@dimen/activity_vertical_margin"
                     android:orientation="vertical"
                     android:background="@drawable/round_edge_black_box">
-
-
-
                     <LinearLayout
                         android:id="@+id/lo_batting"
                         android:layout_width="match_parent"
@@ -154,7 +151,7 @@
                             android:layout_height="@dimen/group_info_padding"
                             android:layout_centerVertical="true"
                             android:layout_toRightOf="@id/iv_player_first"
-                            android:src="@drawable/ic_active_player" />
+                             />
 
                         <de.hdodenhof.circleimageview.CircleImageView
                             android:id="@+id/iv_player_second"
@@ -169,7 +166,7 @@
                             android:layout_height="@dimen/group_info_padding"
                             android:layout_centerVertical="true"
                             android:layout_toLeftOf="@id/iv_player_second"
-                            android:src="@drawable/ic_active_player" />
+                             />
                         <View
                             android:id="@+id/vw_divider"
                             android:layout_width="match_parent"

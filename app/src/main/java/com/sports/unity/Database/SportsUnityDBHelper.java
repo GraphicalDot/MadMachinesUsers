@@ -660,6 +660,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 selectionArgs);
         Log.i("updated :", String.valueOf(count));
     }
+
     public GroupParticipants getGroupParticipants(long chatId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -677,7 +678,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             do {
                 int isAdmin = cursor.getInt(7);
 
-                if( isAdmin == 1 ){
+                if (isAdmin == 1) {
                     admins.add(cursor.getString(1));
                 }
 
@@ -1146,7 +1147,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return DEFAULT_ENTRY_ID;
     }
 
-    public long getContactAssociatedToChat(long chatId){
+    public long getContactAssociatedToChat(long chatId) {
         SQLiteDatabase db = getReadableDatabase();
 
         String projection[] = {
@@ -1154,7 +1155,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         };
 
         String selection = ChatEntry.COLUMN_CHAT_ID + " = ? ";
-        String[] selectionArgs = { String.valueOf(chatId) };
+        String[] selectionArgs = {String.valueOf(chatId)};
 
         Cursor c = db.query(
                 ChatEntry.TABLE_NAME,  // The table to query
@@ -1285,10 +1286,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
             String[] selectionArg = null;
             if (availability == DEFAULT_GET_ALL_CHAT_LIST) {
-                selectionArg = new String[]{ SportsUnityDBHelper.DUMMY_JID, String.valueOf(Contacts.AVAILABLE_NOT)};
+                selectionArg = new String[]{SportsUnityDBHelper.DUMMY_JID, String.valueOf(Contacts.AVAILABLE_NOT)};
                 selectQuery.append(" WHERE " + ContactsEntry.COLUMN_JID + " = ? OR " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " NOT LIKE ?");
             } else if (availability == Contacts.AVAILABLE_BY_MY_CONTACTS) {
-                selectionArg = new String[]{ SportsUnityDBHelper.DUMMY_JID, String.valueOf(availability)};
+                selectionArg = new String[]{SportsUnityDBHelper.DUMMY_JID, String.valueOf(availability)};
                 selectQuery.append(" WHERE " + ContactsEntry.COLUMN_JID + " = ? OR " + ContactsEntry.COLUMN_AVAILABLE_STATUS + " LIKE ? ");
             } else {
                 selectionArg = new String[]{String.valueOf(Contacts.AVAILABLE_BY_OTHER_CONTACTS), String.valueOf(Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME)};
@@ -1440,15 +1441,22 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return mapOnType;
     }
 
-    public void clearChatEntry(long chatId) {
-        SQLiteDatabase db = this.getWritableDatabase();
+    public void clearChatEntry(long chatId, String groupServerId) {
+        if (groupServerId.equals(DEFAULT_GROUP_SERVER_ID)) {
+            SQLiteDatabase db = this.getWritableDatabase();
 
-        String selection = ChatEntry.COLUMN_CHAT_ID + " = ? ";
-        String[] selectionArgs = {String.valueOf(chatId)};
+            String selection = ChatEntry.COLUMN_CHAT_ID + " = ? ";
+            String[] selectionArgs = {String.valueOf(chatId)};
 
-        if (chatId != DEFAULT_ENTRY_ID) {
-            db.delete(ChatEntry.TABLE_NAME, selection, selectionArgs);
+            if (chatId != DEFAULT_ENTRY_ID) {
+                db.delete(ChatEntry.TABLE_NAME, selection, selectionArgs);
+            }
+        } else {
+            /**
+             * Cannot delete group chat entry from chats
+             */
         }
+
     }
 
     public void updateUserBlockStatus(long contactId, boolean blockStatus) {
@@ -1598,18 +1606,18 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     public void updateAdmin(ArrayList<Long> selectedMembers, long chatId) {
         for (Long id : selectedMembers) {
-            updateAdmin( id, chatId);
+            updateAdmin(id, chatId);
         }
     }
 
-    public void updateAdmin( long contactId, long chatId) {
+    public void updateAdmin(long contactId, long chatId) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(GroupUserEntry.COLUMN_ADMIN, 1);
 
         String selection = GroupUserEntry.COLUMN_CONTACT_ID + " = ? and " + GroupUserEntry.COLUMN_CHAT_ID + " = ? ";
-        String[] selectionArgs = { String.valueOf(contactId), String.valueOf(chatId)};
+        String[] selectionArgs = {String.valueOf(contactId), String.valueOf(chatId)};
 
         int update = db.update(GroupUserEntry.TABLE_NAME,
                 values,
@@ -1618,11 +1626,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     }
 
-    public void deleteGroupMember( long contactId) {
+    public void deleteGroupMember(long contactId) {
         SQLiteDatabase db = getWritableDatabase();
 
         String selection = GroupUserEntry.COLUMN_CONTACT_ID + " = ? ";
-        String[] selectionArgs = { String.valueOf(contactId)};
+        String[] selectionArgs = {String.valueOf(contactId)};
 
         int deleted = db.delete(GroupUserEntry.TABLE_NAME,
                 selection,
@@ -1803,7 +1811,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             };
 
             String selection = ContactsEntry.COLUMN_JID + " = ? ";
-            String[] selectionArgs = { DUMMY_JID };
+            String[] selectionArgs = {DUMMY_JID};
 
             Cursor c = db.query(
                     ContactsEntry.TABLE_NAME,                 // The table to query

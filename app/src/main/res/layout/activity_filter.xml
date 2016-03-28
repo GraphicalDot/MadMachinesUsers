@@ -80,7 +80,6 @@
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/favourite_checkbox"
                 android:clickable="false"
                 android:gravity="right" />
         </LinearLayout>
@@ -117,7 +116,6 @@
             <CheckBox
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:button="@drawable/favourite_checkbox"
                 android:clickable="false"
                 android:gravity="right" />
         </LinearLayout>

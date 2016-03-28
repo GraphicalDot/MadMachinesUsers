@@ -343,7 +343,7 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
         ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getApplicationContext()).getChatList(SportsUnityDBHelper.DEFAULT_GET_ALL_CHAT_LIST);
         for (Chats chatObject : chatList) {
             SportsUnityDBHelper.getInstance(getApplicationContext()).clearChat(this, chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
-            SportsUnityDBHelper.getInstance(this).clearChatEntry(chatObject.chatid);
+            SportsUnityDBHelper.getInstance(this).clearChatEntry(chatObject.chatid, chatObject.groupServerId);
             NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid));
         }
     }

@@ -60,6 +60,7 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
     private TextView mContentTextView;
     private TextView mContentHeadingTextView;
     private TextView mDismissButton;
+    private TextView mDismissAllShowcasePreviewButton;
     private int mGravity;
     private int mContentBottomMargin;
     private int mContentTopMargin;
@@ -125,7 +126,10 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
         mContentTextView = (TextView) contentView.findViewById(R.id.tv_content);
         mContentHeadingTextView = (TextView) contentView.findViewById(R.id.tv_heading);
         mDismissButton = (TextView) contentView.findViewById(R.id.tv_dismiss);
+        mDismissAllShowcasePreviewButton = (TextView) contentView.findViewById(R.id.dismiss_info_overlay);
         mDismissButton.setOnClickListener(this);
+        mDismissAllShowcasePreviewButton.setOnClickListener(this);
+
     }
 
 
@@ -198,8 +202,8 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
             mShape.draw(mCanvas, strokepaint1, mXPosition, mYPosition, mShapePadding - 20);
             mShape.draw(mCanvas, strokepaint1, mXPosition, mYPosition, mShapePadding);
         } else {
-            mShape.draw(mCanvas, mEraser, mXPosition, mYPosition, mShapePadding-(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics()));
-            mShape.draw(mCanvas, strokepaint1, mXPosition, mYPosition, mShapePadding-(int)TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics()));
+            mShape.draw(mCanvas, mEraser, mXPosition, mYPosition, mShapePadding - (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics()));
+            mShape.draw(mCanvas, strokepaint1, mXPosition, mYPosition, mShapePadding - (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 50, getResources().getDisplayMetrics()));
         }
 
         // Draw the bitmap on our views  canvas.
@@ -264,7 +268,14 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
      */
     @Override
     public void onClick(View v) {
-        hide();
+        if (v.getId() == R.id.dismiss_info_overlay) {
+            hide();
+            if (mDetachedListener != null) {
+                mDetachedListener.onShowcaseSequenceDismiss();
+            }
+        } else {
+            hide();
+        }
     }
 
     /**
@@ -379,8 +390,9 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
             mContentHeadingTextView.setText(Html.fromHtml(contentText));
         }
     }
+
     private void setSmallCircle(boolean isSmall) {
-        this.isSmall=isSmall;
+        this.isSmall = isSmall;
     }
 
     private void setDismissText(CharSequence dismissText) {
@@ -549,10 +561,12 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
             showcaseView.setContentHeadingText(text);
             return this;
         }
-        public Builder setSmallCircle(boolean isSmall){
+
+        public Builder setSmallCircle(boolean isSmall) {
             showcaseView.setSmallCircle(isSmall);
             return this;
         }
+
         /**
          * Set the title text shown on the ShowcaseView.
          */

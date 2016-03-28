@@ -133,6 +133,14 @@ public class GroupInfoFragment extends Fragment {
 
         ((ImageView)toolbar.findViewById(R.id.backarrow)).setImageResource(R.drawable.ic_menu_back_blk);
 
+        toolbar.findViewById(R.id.backarrow).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                getActivity().onBackPressed();
+            }
+        });
+
         TextView toolbarEdit = (TextView) toolbar.findViewById(R.id.actionButton);
         toolbarEdit.setText("Edit");
         toolbarEdit.setTextColor(getResources().getColor(R.color.app_theme_blue));

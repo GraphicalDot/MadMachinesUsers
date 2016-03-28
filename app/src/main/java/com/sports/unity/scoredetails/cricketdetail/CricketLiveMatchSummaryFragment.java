@@ -415,21 +415,21 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             case "b4":
                 ballDetail.setValue("4");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
-                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
+                ballDetail.setBackGroundColor(getBallColor(R.color.app_theme_blue));
                 break;
             case "r5":
                 ballDetail.setValue("5");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
-                ballDetail.setBackGroundColor(getBallColor(R.color.font_color_wide_no));
+                ballDetail.setBackGroundColor(getBallColor(R.color.grayBorder));
                 break;
             case "b6":
                 ballDetail.setValue("6");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
-                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
+                ballDetail.setBackGroundColor(getBallColor(R.color.app_theme_blue));
                 break;
             case "e1,wd":
                 ballDetail.setValue("WD");
-                ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
+                ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
                 ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
                 break;
             case "e1,by":

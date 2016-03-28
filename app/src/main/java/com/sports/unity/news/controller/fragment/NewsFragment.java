@@ -3,14 +3,11 @@ package com.sports.unity.news.controller.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -68,7 +65,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
         View v = inflater.inflate(com.sports.unity.R.layout.news, container, false);
         initViews(v);
-        if(UserUtil.getFilterSportsSelected()!=null){
+        if (UserUtil.getFilterSportsSelected() != null) {
             sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
         }
         sportSelected = UserUtil.getFilterSportsSelected();
@@ -153,7 +150,6 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
     }
 
     /**
-     *
      * @param v as view
      */
     private void initViews(View v) {
@@ -188,7 +184,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         } else {
             String keyword = getArguments().getString("search_keyword");
             String searchKeyword = null;
-            if(keyword != null) {
+            if (keyword != null) {
 
                 if (keyword.contains(",")) {
                     searchKeyword = keyword.split(",")[0];
@@ -208,7 +204,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         }
 
 
-    mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
             public void onRefresh() {
@@ -302,7 +298,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
     private void handleIfSportsChanged() {
         boolean isSportsChanged = false;
-        ArrayList<String> sports=UserUtil.getFilterSportsSelected();
+        ArrayList<String> sports = UserUtil.getFilterSportsSelected();
         if (sportsSelectedNum != UserUtil.getFilterSportsSelected().size()) {
             isSportsChanged = true;
         } else {
@@ -502,17 +498,17 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                     View menuButton1 = getActivity().findViewById(R.id.action_search);
                     View menuButton2 = getActivity().findViewById(R.id.mini_cards);
                     if (menuButton != null) {
-                        sequence.addSequenceItem(menuButton, getActivity().getResources().getString(R.string.showcase_filter_heading), getActivity().getResources().getString(R.string.showcase_filter_message), getActivity().getResources().getString(R.string.got_it));
+                        sequence.addSequenceItem(menuButton, getActivity().getResources().getString(R.string.showcase_filter_heading), getActivity().getResources().getString(R.string.showcase_filter_message), getActivity().getResources().getString(R.string.next_showcase_preview_text));
                         if (viewTreeObserver.isAlive())
                             viewTreeObserver.removeOnGlobalLayoutListener(this);
                     }
                     if (menuButton1 != null) {
-                        sequence.addSequenceItem(menuButton1, getActivity().getResources().getString(R.string.showcase_search_heading), getActivity().getResources().getString(R.string.showcase_search_message), getActivity().getResources().getString(R.string.got_it));
+                        sequence.addSequenceItem(menuButton1, getActivity().getResources().getString(R.string.showcase_search_heading), getActivity().getResources().getString(R.string.showcase_search_message), getActivity().getResources().getString(R.string.next_showcase_preview_text));
                         if (viewTreeObserver.isAlive())
                             viewTreeObserver.removeOnGlobalLayoutListener(this);
                     }
                     if (menuButton2 != null) {
-                        sequence.addSequenceItem(menuButton2, getActivity().getResources().getString(R.string.showcase_mini_card_heading), getActivity().getResources().getString(R.string.showcase_mini_card_message), getActivity().getResources().getString(R.string.got_it));
+                        sequence.addSequenceItem(menuButton2, getActivity().getResources().getString(R.string.showcase_mini_card_heading), getActivity().getResources().getString(R.string.showcase_mini_card_message), getActivity().getResources().getString(R.string.next_showcase_preview_text));
                         sequence.start();
                         if (viewTreeObserver.isAlive())
                             viewTreeObserver.removeOnGlobalLayoutListener(this);

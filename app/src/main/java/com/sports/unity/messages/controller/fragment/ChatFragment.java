@@ -17,27 +17,19 @@ import android.widget.TextView;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
-import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.TinyDB;
-import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.activity.ForwardSelectedItems;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.messages.controller.model.ShareableData;
-import com.sports.unity.messages.controller.model.ToolbarActionsForChatScreen;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.AlertDialogUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.NotificationHandler;
-
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.pubsub.LeafNode;
-import org.jivesoftware.smackx.pubsub.PubSubManager;
 
 import java.util.ArrayList;
 
@@ -302,7 +294,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
 
     private void deleteSingleChat(Chats chatObject) {
         SportsUnityDBHelper.getInstance(getActivity()).clearChat(getActivity(), chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
-        SportsUnityDBHelper.getInstance(getActivity()).clearChatEntry(chatObject.chatid);
+        SportsUnityDBHelper.getInstance(getActivity()).clearChatEntry(chatObject.chatid, chatObject.groupServerId);
 
         NotificationHandler.getInstance(getActivity().getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid));
 
