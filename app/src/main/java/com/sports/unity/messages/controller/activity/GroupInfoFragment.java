@@ -1,9 +1,11 @@
 package com.sports.unity.messages.controller.activity;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,17 +19,22 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.XMPPManager.PubSubUtil;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.fragment.ChatFragmentDialogListAdapter;
+import com.sports.unity.messages.controller.fragment.ContactsFragment;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.messages.controller.model.PubSubMessaging;
 
 import org.jivesoftware.smack.chat.Chat;
 
@@ -66,6 +73,14 @@ public class GroupInfoFragment extends Fragment {
         View view = inflater.inflate(R.layout.group_info_activity, container, false);
         initToolbar();
         initViews(view);
+
+//        try {
+////            PubSubMessaging.getInstance().getNodeConfig(groupJID);
+//            PubSubUtil.getNodeConfig(groupJID);
+//
+//        }catch (Exception ex){
+//            ex.printStackTrace();
+//        }
 
         return view;
     }
@@ -170,7 +185,8 @@ public class GroupInfoFragment extends Fragment {
                 } else if (which == 1) {
                     openChat(contacts);
                 } else if (which == 2) {
-                    removeUserFromGroup(contacts);
+                    RemoveMemberTask removeMemberTask = new RemoveMemberTask(contacts.jid, contacts.id);
+                    removeMemberTask.execute();
                 }
             }
 
@@ -204,10 +220,6 @@ public class GroupInfoFragment extends Fragment {
         startActivity(chatScreenIntent);
     }
 
-    private void removeUserFromGroup(Contacts contacts){
-        //TODO
-    }
-
     class EventListener implements AdapterView.OnItemClickListener {
 
         @Override
@@ -225,6 +237,53 @@ public class GroupInfoFragment extends Fragment {
             } else {
                 //nothing
             }
+        }
+
+    }
+
+    class RemoveMemberTask extends AsyncTask<Void, Void, Boolean> {
+
+        private ProgressDialog progressDialog;
+        private String jid;
+        private long contactId;
+
+        public RemoveMemberTask(String jid, long contactId) {
+            this.jid = jid;
+            this.contactId = contactId;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            ProgressBar progressBar = new ProgressBar(GroupInfoFragment.this.getActivity());
+            progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+            progressDialog = new ProgressDialog(GroupInfoFragment.this.getActivity());
+            progressDialog.setMessage("removing member...");
+            progressDialog.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
+            progressDialog.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            return removeUserFromGroup();
+        }
+
+        @Override
+        protected void onPostExecute(Boolean success) {
+            progressDialog.dismiss();
+            if( success == true ){
+                SportsUnityDBHelper.getInstance(GroupInfoFragment.this.getActivity()).deleteGroupMember(contactId);
+            } else {
+                Toast.makeText(GroupInfoFragment.this.getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        private boolean removeUserFromGroup(){
+            boolean success = PubSubMessaging.getInstance().removeFromGroup(jid + "@mm.io", groupJID);
+            if( success ) {
+                PubSubMessaging.getInstance().sendIntimationAboutMemberRemoved();
+            }
+            return success;
         }
 
     }

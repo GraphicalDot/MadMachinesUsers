@@ -22,16 +22,20 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.packet.DefaultExtensionElement;
 import org.jivesoftware.smack.packet.ExtensionElement;
+import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smackx.pubsub.AccessModel;
+import org.jivesoftware.smackx.pubsub.ConfigureForm;
 import org.jivesoftware.smackx.pubsub.EventElement;
 import org.jivesoftware.smackx.pubsub.ItemsExtension;
 import org.jivesoftware.smackx.pubsub.LeafNode;
+import org.jivesoftware.smackx.pubsub.NodeExtension;
 import org.jivesoftware.smackx.pubsub.PayloadItem;
 import org.jivesoftware.smackx.pubsub.PubSubElementType;
 import org.jivesoftware.smackx.pubsub.PubSubManager;
 import org.jivesoftware.smackx.pubsub.PublishModel;
 import org.jivesoftware.smackx.pubsub.SimplePayload;
 import org.jivesoftware.smackx.pubsub.Subscription;
+import org.jivesoftware.smackx.pubsub.UnsubscribeExtension;
 import org.jivesoftware.smackx.pubsub.packet.PubSub;
 import org.jivesoftware.smackx.xdata.FormField;
 import org.jivesoftware.smackx.xdata.packet.DataForm;
@@ -73,25 +77,15 @@ public class PubSubMessaging {
 
     private static PubSubMessaging PUB_SUB_MESSAGING = null;
 
-    //    private Thread publishMessageThread = null;
-    private LeafNode currentNode = null;
-
-//    private PubSubManager pubSubManager = null;
-
     public PubSubMessaging() {
-//        pubSubManager = new PubSubManager(XMPPClient.getConnection());
+        //nothing
     }
 
     public void initGroupChat(String groupJid){
-        try {
-            currentNode = getLeafNode(groupJid);
-        }catch (Exception ex){
-            ex.printStackTrace();
-            handleConnectionException(ex);
-        }
+        //nothing
     }
 
-    public boolean createNode(String groupJid, ArrayList<String> membersJid, Context context) {
+    public boolean createNode(String groupJid, String groupTitle, ArrayList<String> membersJid, Context context) {
         boolean success = false;
         PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
 
@@ -104,6 +98,7 @@ public class PubSubMessaging {
         form.getAccessModel();
         form.setSubscribe(true);
         form.setPublishModel(PublishModel.publishers);
+        form.setTitle(groupTitle);
 
         form.addField("pubsub#notification_type", FormField.Type.text_single);
         form.setAnswer("pubsub#notification_type", "normal");
@@ -115,8 +110,8 @@ public class PubSubMessaging {
             LeafNode leaf = (LeafNode) pubSubManager.createNode(groupJid, form);
             String ownerJID = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID) + "@mm.io";
 
-            PubSubUtil.updateAffiliations(leaf, ownerJID, membersJid);
-            PubSubUtil.updateSubscriptions(leaf, ownerJID, membersJid);
+            PubSubUtil.updateAffiliations(leaf.getId(), ownerJID, membersJid);
+            PubSubUtil.updateSubscriptions(leaf.getId(), ownerJID, membersJid);
 
             success = true;
         } catch (Exception ex) {
@@ -130,10 +125,10 @@ public class PubSubMessaging {
     public boolean addMembers(String groupJid, ArrayList<String> membersJid, Context context) {
         boolean success = false;
         try {
-            LeafNode leaf = getLeafNode(groupJid);
+//            LeafNode leaf = getLeafNode(groupJid);
 
-            PubSubUtil.updateAffiliations(leaf, null, membersJid);
-            PubSubUtil.updateSubscriptions(leaf, null, membersJid);
+            PubSubUtil.updateAffiliations(groupJid, null, membersJid);
+            PubSubUtil.updateSubscriptions(groupJid, null, membersJid);
 
             success = true;
         } catch (Exception ex) {
@@ -143,11 +138,11 @@ public class PubSubMessaging {
         return success;
     }
 
-    public LeafNode getLeafNode(String nodeId) throws SmackException.NoResponseException, XMPPException.XMPPErrorException, SmackException.NotConnectedException {
-        PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
-        LeafNode leafNode = pubSubManager.getNode(nodeId);
-        return leafNode;
-    }
+//    private LeafNode getLeafNode(String nodeId) throws SmackException.NoResponseException, XMPPException.XMPPErrorException, SmackException.NotConnectedException {
+//        PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
+//        LeafNode leafNode = pubSubManager.getNode(nodeId);
+//        return leafNode;
+//    }
 
     public void updatePublishedReceipt(Context context, String packetId) {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
@@ -177,7 +172,7 @@ public class PubSubMessaging {
             SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
             PayloadItem item = new PayloadItem(from, simplePayload);
 
-            String stanzaId = publishItem( currentNode, item);
+            String stanzaId = publishItem(item, groupJid);
 
             long messageId = sportsUnityDBHelper.addMessage(message, SportsUnityDBHelper.MIME_TYPE_TEXT, from, true, time, stanzaId, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS);
             sportsUnityDBHelper.updateChatEntry(messageId, chatID, groupJid);
@@ -188,12 +183,12 @@ public class PubSubMessaging {
         }
     }
 
-    public void sendMediaMessage(Context context, String contentChecksum, String thumbnailImageAsBase64, long messageId, String mimeType, String groupServerId) {
+    public void sendMediaMessage(Context context, String contentChecksum, String thumbnailImageAsBase64, long messageId, String mimeType, String groupJid) {
         try{
             SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
             TinyDB tinyDB = TinyDB.getInstance(context);
 
-            LeafNode node = getLeafNode(groupServerId);
+//            LeafNode node = getLeafNode(groupJid);
 
             String from = tinyDB.getString(TinyDB.KEY_USER_JID);
             String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
@@ -205,11 +200,11 @@ public class PubSubMessaging {
                 messageBody = contentChecksum;
             }
 
-            String payLoad = encodeSimpleMessagePayload(messageBody, from, groupServerId, time, mimeType);
+            String payLoad = encodeSimpleMessagePayload(messageBody, from, groupJid, time, mimeType);
             SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
             PayloadItem item = new PayloadItem(from, simplePayload);
 
-            String stanzaId = publishItem(node, item);
+            String stanzaId = publishItem(item, groupJid);
 
             sportsUnityDBHelper.updateMediaMessage_ContentUploaded(messageId, stanzaId, contentChecksum);
         }catch (Exception ex){
@@ -218,29 +213,37 @@ public class PubSubMessaging {
         }
     }
 
-    public void sendStickerMessage(Context context, String stickerAssetPath, long chatId, String groupServerId) {
+    public void sendStickerMessage(Context context, String stickerAssetPath, long chatId, String groupJid) {
         TinyDB tinyDB = TinyDB.getInstance(context);
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
 
         try{
-            LeafNode node = getLeafNode(groupServerId);
+//            LeafNode node = getLeafNode(groupJid);
 
             String from = tinyDB.getString(TinyDB.KEY_USER_JID);
             String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
 
-            String payLoad = encodeSimpleMessagePayload(stickerAssetPath, from, groupServerId, time, SportsUnityDBHelper.MIME_TYPE_STICKER);
+            String payLoad = encodeSimpleMessagePayload(stickerAssetPath, from, groupJid, time, SportsUnityDBHelper.MIME_TYPE_STICKER);
             SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
             PayloadItem item = new PayloadItem(from, simplePayload);
 
-            String stanzaId = publishItem( node, item);
+            String stanzaId = publishItem(item, groupJid);
 
             long messageId = sportsUnityDBHelper.addMessage(stickerAssetPath, SportsUnityDBHelper.MIME_TYPE_STICKER, from, true, time,
                     stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, groupServerId);
+            sportsUnityDBHelper.updateChatEntry(messageId, chatId, groupJid);
         }catch (Exception ex){
             ex.printStackTrace();
             handleConnectionException(ex);
         }
+    }
+
+    public void sendIntimationAboutMemberRemoved(){
+        //TODO
+    }
+
+    public void sendIntimationAboutAffiliationListChanged(){
+        //TODO
     }
 
     public void handlePubSubMessage(Context context, org.jivesoftware.smack.packet.Message message) {
@@ -259,10 +262,10 @@ public class PubSubMessaging {
                 PubSubExtension pubSubExtension = message.getExtension("pubsub", "http://jabber.org/protocol/pubsub");
                 if( pubSubExtension.getExtensions().size() > 0 ){
                     Subscription subscription = (Subscription) pubSubExtension.getExtensions().get(0);
-                    if( subscription.getState().equals(Subscription.State.subscribed)){
+                    if( subscription.getState().equals(Subscription.State.subscribed) ){
                         handleGroupInvitation(context, subscription.getNode());
-                    } else {
-                        //nothing
+                    } else if( subscription.getState().equals(Subscription.State.none) ){
+                        handleGroupElimination(context, subscription.getNode());
                     }
                 } else {
                     //nothing
@@ -309,49 +312,73 @@ public class PubSubMessaging {
     public void loadAffiliations(Context context, long chatId, String groupJid) {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         try {
-            LeafNode node = getLeafNode(groupJid);
-            loadAffiliations(context, chatId, node);
+            SportsUnityDBHelper.GroupParticipants groupParticipants = sportsUnityDBHelper.getGroupParticipants(chatId);
+            if( groupParticipants.usersInGroup.size() == 0 ) {
+                List<SPUAffiliation> spuAffiliationsList = PubSubUtil.getAffiliations(groupJid);
+
+                ArrayList<Long> members = new ArrayList<>();
+                ArrayList<Long> admins = new ArrayList<>();
+
+                String jid = null;
+                long contactId = 0;
+                for (SPUAffiliation affiliation : spuAffiliationsList) {
+                    jid = affiliation.getJid();
+                    jid = jid.substring( 0, jid.indexOf("@mm.io"));
+
+                    Contacts contacts = sportsUnityDBHelper.getContactByJid(jid);
+                    if (contacts == null) {
+                        contactId = sportsUnityDBHelper.addToContacts("Unknown", null, jid, "", null, Contacts.AVAILABLE_BY_OTHER_CONTACTS);
+                    } else {
+                        contactId = contacts.id;
+                    }
+
+                    if (affiliation.getType() == SPUAffiliation.Type.owner) {
+                        admins.add(contactId);
+                    }
+
+                    if (affiliation.getType() == SPUAffiliation.Type.owner || affiliation.getType() == SPUAffiliation.Type.publisher) {
+                        members.add(contactId);
+                    } else {
+                        //nothing
+                    }
+                }
+
+                SportsUnityDBHelper.getInstance(context).createGroupUserEntry(chatId, members);
+                SportsUnityDBHelper.getInstance(context).updateAdmin(admins, chatId);
+            } else {
+                //nothing
+            }
         }catch (Exception ex){
             ex.printStackTrace();
             handleConnectionException(ex);
         }
     }
 
-    private void loadAffiliations(Context context, long chatId, LeafNode node) throws Exception {
-        SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
-
-        SportsUnityDBHelper.GroupParticipants groupParticipants = sportsUnityDBHelper.getGroupParticipants(chatId);
-        if( groupParticipants.usersInGroup.size() == 0 ) {
-            List<SPUAffiliation> spuAffiliationsList = PubSubUtil.getAffiliations(node);
-
-            ArrayList<Long> members = new ArrayList<>();
-            ArrayList<Long> admins = new ArrayList<>();
-
-            String jid = null;
-            long contactId = 0;
-            for (SPUAffiliation affiliation : spuAffiliationsList) {
-                jid = affiliation.getJid();
-                jid = jid.substring( 0, jid.indexOf("@mm.io"));
-
-                Contacts contacts = sportsUnityDBHelper.getContactByJid(jid);
-                if (contacts == null) {
-                    contactId = sportsUnityDBHelper.addToContacts("Unknown", null, jid, "", null, Contacts.AVAILABLE_BY_OTHER_CONTACTS);
-                } else {
-                    contactId = contacts.id;
-                }
-
-                if (affiliation.getType() == SPUAffiliation.Type.owner) {
-                    admins.add(contactId);
-                }
-                members.add(contactId);
-            }
-
-            SportsUnityDBHelper.getInstance(context).createGroupUserEntry(chatId, members);
-            SportsUnityDBHelper.getInstance(context).updateAdmin(admins, chatId);
-        } else {
-            //nothing
+    public boolean removeFromGroup(String jid, String groupJID){
+        boolean success = false;
+        try {
+            success = PubSubUtil.removeFromGroup(groupJID, jid);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            handleConnectionException(ex);
         }
+        return success;
+    }
 
+    public void exitGroup(String jid, String groupJID){
+        try {
+            PubSubUtil.unsubscribe(jid, groupJID);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            handleConnectionException(ex);
+        }
+    }
+
+    public void getNodeConfig(String nodeId) throws SmackException.NoResponseException, XMPPException.XMPPErrorException, SmackException.NotConnectedException {
+        PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
+//        ConfigureForm form = pubSubManager.getDefaultConfiguration();
+
+        pubSubManager.getNode(nodeId);
     }
 
     private void handleUserPubSubMessage(Context context, String from, String mimeType, String text, String time, String groupJID, String stanzaId){
@@ -403,6 +430,20 @@ public class PubSubMessaging {
             ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
 
             loadAffiliations(context, chatId, groupJID);
+        }
+    }
+
+    private void handleGroupElimination(Context context, String groupJID){
+        SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
+        long chatId = sportsUnityDBHelper.getChatEntryID(groupJID);
+        if( chatId == SportsUnityDBHelper.DEFAULT_ENTRY_ID ) {
+            String currentUserJID = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
+            long contactId = sportsUnityDBHelper.getContactIdFromJID(currentUserJID);
+
+            sportsUnityDBHelper.updateChatBlockStatus(chatId, false);
+            sportsUnityDBHelper.deleteGroupMember(contactId);
+
+            ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
         }
     }
 
@@ -461,15 +502,15 @@ public class PubSubMessaging {
         //TODO
     }
 
-    private String encodeSimpleMessagePayload(String message, String from, String groupServerId, String time, String mimeType) {
-        return encodeHiddenMessagePayload( USER_MESSAGE_TYPE, message, from, groupServerId, time, mimeType);
+    private String encodeSimpleMessagePayload(String message, String from, String groupJid, String time, String mimeType) {
+        return encodeHiddenMessagePayload( USER_MESSAGE_TYPE, message, from, groupJid, time, mimeType);
     }
 
-    private String encodeGroupInvitationMessagePayload(String from, String groupServerId, String time) {
-        return encodeHiddenMessagePayload( GROUP_INVITATION_MESSAGE_TYPE, "", from, groupServerId, time, "");
+    private String encodeGroupInvitationMessagePayload(String from, String groupJid, String time) {
+        return encodeHiddenMessagePayload( GROUP_INVITATION_MESSAGE_TYPE, "", from, groupJid, time, "");
     }
 
-    private String encodeHiddenMessagePayload(String messageType, String message, String from, String groupServerId, String time, String mimeType) {
+    private String encodeHiddenMessagePayload(String messageType, String message, String from, String groupJid, String time, String mimeType) {
         JSONObject payloadJsonObject = new JSONObject();
         String encodedPayload = null;
         try {
@@ -478,7 +519,7 @@ public class PubSubMessaging {
             payloadJsonObject.put(MESSAGE_TEXT_DATA, message);
             payloadJsonObject.put(MESSAGE_TIME, time);
             payloadJsonObject.put(MESSAGE_FROM, from);
-            payloadJsonObject.put(GROUP_SERVER_ID, groupServerId);
+            payloadJsonObject.put(GROUP_SERVER_ID, groupJid);
 
             encodedPayload = URLEncoder.encode(payloadJsonObject.toString(), "utf-8");
         } catch (JSONException e) {
@@ -489,9 +530,8 @@ public class PubSubMessaging {
         return encodedPayload;
     }
 
-    private String publishItem(LeafNode node, PayloadItem item) throws SmackException.NotConnectedException {
-        return PubSubUtil.publish(item, node);
-//        node.publish(item);
+    private String publishItem(PayloadItem item, String groupJid) throws SmackException.NotConnectedException {
+        return PubSubUtil.publish(item, groupJid);
     }
 
 }
