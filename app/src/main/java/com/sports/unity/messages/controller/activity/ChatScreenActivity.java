@@ -11,7 +11,6 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -28,16 +27,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.ChatScreenApplication;
-import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
-import com.sports.unity.XMPPManager.XMPPConnectionListener;
 import com.sports.unity.XMPPManager.XMPPConnectionUtil;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.UserProfileActivity;
@@ -55,12 +51,13 @@ import com.sports.unity.messages.controller.viewhelper.AudioRecordingHelper;
 import com.sports.unity.messages.controller.viewhelper.ChatKeyboardHelper;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
+import com.sports.unity.util.AlertDialogUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.FileOnCloudHandler;
 import com.sports.unity.util.GlobalEventHandler;
-import com.sports.unity.util.GlobalEventListener;
 import com.sports.unity.util.NotificationHandler;
+import com.sports.unity.util.ThreadTask;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
@@ -68,15 +65,15 @@ import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.chatstates.ChatState;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
-public class ChatScreenActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class ChatScreenActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, BlockUnblockUserHelper.BlockUnblockListener {
 
     public static final String INTENT_KEY_JID = "jid";
     public static final String INTENT_KEY_NAME = "name";
@@ -132,8 +129,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     private ArrayList<Message> messageList;
     private ChatScreenAdapter chatScreenAdapter;
-
-    private ListView mChatView;
+    private int availableStatus = Contacts.AVAILABLE_BY_MY_CONTACTS;
+    private StickyListHeadersListView mChatView;
     private boolean otherChat = false;
     private boolean isLastTimeRequired;
     private boolean isRoasterEntryRequired;
@@ -285,7 +282,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     @Override
     protected void onPause() {
         super.onPause();
-
+        blockUnblockUserHelper.removeBlockUnblockListener();
         ChatScreenApplication.activityPaused();
         AudioRecordingHelper.getInstance(this).stopAndReleaseMediaPlayer();
     }
@@ -340,6 +337,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     protected void onResume() {
         super.onResume();
 
+        blockUnblockUserHelper.addBlockUnblockListener(ChatScreenActivity.this);
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, jabberId, activityActionListener);
 //        GlobalEventHandler.getInstance().addGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY, this);
         ChatScreenApplication.activityResumed();
@@ -367,6 +365,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             invalidateOptionsMenu();
         } else if (toolbarActionsForChatScreen.getSearchFlag()) {
             toolbarActionsForChatScreen.setSearchFlag(false);
+            LinearLayout sendContentLayout = (LinearLayout) findViewById(R.id.type_msg);
+            sendContentLayout.setVisibility(View.VISIBLE);
             invalidateOptionsMenu();
             chatScreenAdapter.filterSearchQuery("");
         } else {
@@ -403,7 +403,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         clearUnreadCount();
         initToolbar();
         hideStatusIfUserBlocked();
-
+        initAddBlockView();
         final Handler mHandler = new Handler();
 
         mSend = (Button) findViewById(R.id.send);
@@ -428,6 +428,33 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         setEventListeners(mHandler);
 
         checkForwardMessageQueue();
+        toolbarActionsForChatScreen.resetVariables();
+    }
+
+    private void initAddBlockView() {
+        final LinearLayout addBlockLayout = (LinearLayout) findViewById(R.id.add_block_layout);
+        if ((availableStatus == Contacts.AVAILABLE_BY_OTHER_CONTACTS || availableStatus == Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME) && !blockUnblockUserHelper.isBlockStatus()) {
+            addBlockLayout.setVisibility(View.VISIBLE);
+            TextView addFriend = (TextView) findViewById(R.id.add_friend);
+            addFriend.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+            addFriend.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    sportsUnityDBHelper.updateContactAvailibility(jabberId);
+                    addBlockLayout.setVisibility(View.GONE);
+                }
+            });
+            final TextView blockUser = (TextView) findViewById(R.id.block_user);
+            blockUser.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+            blockUser.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    blockUnblockUserHelper.onMenuItemSelected(ChatScreenActivity.this, contactID, jabberId, menu);
+                }
+            });
+        } else {
+            addBlockLayout.setVisibility(View.GONE);
+        }
     }
 
     private void hideStatusIfUserBlocked() {
@@ -643,7 +670,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void populateMessagesOnScreen() {
-        mChatView = (ListView) findViewById(R.id.msgview);               // List for messages
+        mChatView = (StickyListHeadersListView) findViewById(R.id.msgview);               // List for messages
         if (isGroupChat) {
             setGroupMembers();
         }
@@ -727,6 +754,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     private void getIntentExtras() {
         groupServerId = getIntent().getStringExtra(INTENT_KEY_GROUP_SERVER_ID);
+        availableStatus = getIntent().getIntExtra(Constants.INTENT_KEY_USER_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
         if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
             jabberId = getIntent().getStringExtra(INTENT_KEY_JID);
             if (XMPPClient.getInstance().isConnectionAuthenticated()) {
@@ -747,6 +775,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             chatID = getIntent().getLongExtra(INTENT_KEY_CHAT_ID, SportsUnityDBHelper.DEFAULT_ENTRY_ID);
             userImageBytes = getIntent().getByteArrayExtra(INTENT_KEY_IMAGE);
             otherChat = getIntent().getBooleanExtra(INTENT_KEY_NEARBY_CHAT, false);
+
+            isGroupChat = true;
         }
     }
 
@@ -1028,15 +1058,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         } else if (id == R.id.action_block_user) {
             blockUnblockUserHelper.onMenuItemSelected(this, contactID, jabberId, menu);
         } else if (id == R.id.action_clear_chat) {
-
-            sportsUnityDBHelper.clearChat(getApplicationContext(), chatID, groupServerId);
-
-            AudioRecordingHelper.getInstance(this).stopAndReleaseMediaPlayer();
-            AudioRecordingHelper.getInstance(this).clearProgressMap();
-
-            messageList = sportsUnityDBHelper.getMessages(chatID);
-
-            chatScreenAdapter.notifydataset(messageList);
+            showAlertDialogToClearChat();
         } else if (id == R.id.forward) {
             toolbarActionsForChatScreen.forwardSelectedMessages(messageList);
         } else if (id == R.id.delete) {
@@ -1061,6 +1083,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             return true;
         } else if (id == R.id.searchChatScreen) {
             toolbarActionsForChatScreen.setSearchFlag(true);
+            LinearLayout sendContentLayout = (LinearLayout) findViewById(R.id.type_msg);
+            sendContentLayout.setVisibility(View.GONE);
             invalidateOptionsMenu();
 
             View view = findViewById(R.id.btn_text);
@@ -1068,6 +1092,32 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showAlertDialogToClearChat() {
+        String positiveButtonTitle = "CLEAR";
+        String negativeButtonTitle = "CANCEL";
+        String dialogTitle = "Are you sure you want to clear all messages ?";
+
+        DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                clearChat();
+            }
+        };
+
+        new AlertDialogUtil(AlertDialogUtil.ACTION_CLEAR_ALL_MESSAGES, dialogTitle, positiveButtonTitle, negativeButtonTitle, ChatScreenActivity.this, clickListener).show();
+    }
+
+    private void clearChat() {
+        sportsUnityDBHelper.clearChat(getApplicationContext(), chatID, groupServerId);
+
+        AudioRecordingHelper.getInstance(ChatScreenActivity.this).stopAndReleaseMediaPlayer();
+        AudioRecordingHelper.getInstance(ChatScreenActivity.this).clearProgressMap();
+
+        messageList = sportsUnityDBHelper.getMessages(chatID);
+
+        chatScreenAdapter.notifydataset(messageList);
     }
 
 //    public HashMap<String, byte[]> getMediaMap() {
@@ -1194,4 +1244,18 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         }
     }
 
+    @Override
+    public void onBlock(boolean success) {
+        if (success) {
+            findViewById(R.id.add_block_layout).setVisibility(View.GONE);
+            initAddBlockView();
+        }
+    }
+
+    @Override
+    public void onUnblock(boolean success) {
+        if (success) {
+            initAddBlockView();
+        }
+    }
 }

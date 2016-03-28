@@ -266,7 +266,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
         byte[] userpicture = chatObject.userImage;
 
         Intent intent = ChatScreenActivity.createChatScreenIntent(getActivity(), jid, name, contactId, chatId, groupSeverId, userpicture, blockStatus, true);
-
+        intent.putExtra(Constants.INTENT_KEY_USER_AVAILABLE_STATUS, contact.availableStatus);
         if (dataList != null) {
             ArrayList<ShareableData> dataArrayList = getArguments().getParcelableArrayList(Constants.INTENT_FORWARD_SELECTED_IDS);
             intent.putParcelableArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS, dataArrayList);

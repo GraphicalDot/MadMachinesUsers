@@ -29,9 +29,11 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.SettingsHelper;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.BlockUnblockUserHelper;
+import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.fragment.ContactListAdapter;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.util.AlertDialogUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.NotificationHandler;
@@ -51,6 +53,7 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
     private TextView blockCount;
 
     private String myLocation;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,8 +64,8 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
 
         initToolbar();
         Intent i = getIntent();
-         myLocation = i.getStringExtra(Constants.ENABLE_LOCATION);
-        if(Constants.CHECK_LOCATION.equalsIgnoreCase(myLocation)){
+        myLocation = i.getStringExtra(Constants.ENABLE_LOCATION);
+        if (Constants.CHECK_LOCATION.equalsIgnoreCase(myLocation)) {
             currentItemId = 10;
         }
         renderDrillDownItems(currentItemId);
@@ -70,13 +73,12 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
 
     @Override
     public void onBackPressed() {
-        if (currentItemId == SettingsHelper.SETTINGS_MAIN_ID || Constants.CHECK_LOCATION.equalsIgnoreCase(myLocation)  ) {
+        if (currentItemId == SettingsHelper.SETTINGS_MAIN_ID || Constants.CHECK_LOCATION.equalsIgnoreCase(myLocation)) {
             super.onBackPressed();
         } else if (currentItemId == SettingsHelper.BLOCKED_CONTACTS_ITEM_ID) {
             findViewById(R.id.block_view).setVisibility(View.GONE);
             renderDrillDownItems(SettingsHelper.PRIVACY_ITEM_ID);
-        }
-        else {
+        } else {
             renderDrillDownItems(SettingsHelper.SETTINGS_MAIN_ID);
         }
     }
@@ -410,11 +412,13 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                 checkBox.setChecked(!checkBox.isChecked());
             } else if (itemType == SettingsHelper.ITEM_TYPE_CLICK) {
                 if (itemId == SettingsHelper.CLEAR_ALL_CHATS_ITEM_ID) {
-                    ConfirmationAlertDialog confirmationAlertDialog = new ConfirmationAlertDialog(itemId, getResources().getString(R.string.clear_all_chats_confirm_message), getResources().getString(R.string.clear));
-                    confirmationAlertDialog.show();
+                    showdialogToClearOrDeleteAllChats(itemId);
+//                    ConfirmationAlertDialog confirmationAlertDialog = new ConfirmationAlertDialog(itemId, getResources().getString(R.string.clear_all_chats_confirm_message), getResources().getString(R.string.clear));
+//                    confirmationAlertDialog.show();
                 } else if (itemId == SettingsHelper.DELETE_ALL_CHATS_ITEM_ID) {
-                    ConfirmationAlertDialog confirmationAlertDialog = new ConfirmationAlertDialog(itemId, getResources().getString(R.string.delete_all_chats_confirm_message), getResources().getString(R.string.ok));
-                    confirmationAlertDialog.show();
+                    showdialogToClearOrDeleteAllChats(itemId);
+//                    ConfirmationAlertDialog confirmationAlertDialog = new ConfirmationAlertDialog(itemId, getResources().getString(R.string.delete_all_chats_confirm_message), getResources().getString(R.string.ok));
+//                    confirmationAlertDialog.show();
                 } else if (itemId == SettingsHelper.BLOCKED_CONTACTS_ITEM_ID) {
                     //TODO
                     renderDrillDownItems(SettingsHelper.BLOCKED_CONTACTS_ITEM_ID);
@@ -512,6 +516,35 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                 UserUtil.setSaveInAppCaptureMediaToGallery(SettingsActivity.this, isChecked);
             }
         }
+    }
+
+    private void showdialogToClearOrDeleteAllChats(final int itemId) {
+        String positiveButtonTitle = "";
+        String negativeButtonTitle = "CANCEL";
+        String dialogTitle = "";
+
+        DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (itemId == SettingsHelper.CLEAR_ALL_CHATS_ITEM_ID) {
+                    clearAllChat();
+                } else {
+                    deleteAllChat();
+                }
+            }
+        };
+
+        if (itemId == SettingsHelper.CLEAR_ALL_CHATS_ITEM_ID) {
+            positiveButtonTitle = "CLEAR ALL";
+            dialogTitle = getResources().getString(R.string.clear_all_chats_confirm_message);
+            new AlertDialogUtil(AlertDialogUtil.ACTION_CLEAR_ALL_CHAT, dialogTitle, positiveButtonTitle, negativeButtonTitle, SettingsActivity.this, clickListener).show();
+        } else {
+            positiveButtonTitle = "DELETE ALL";
+            dialogTitle = getResources().getString(R.string.delete_all_chats_confirm_message);
+            new AlertDialogUtil(AlertDialogUtil.ACTION_DELETE_ALL_CHAT, dialogTitle, positiveButtonTitle, negativeButtonTitle, SettingsActivity.this, clickListener).show();
+        }
+
+
     }
 
     private class SettingsItem {
@@ -622,50 +655,50 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
 
     }
 
-    public class ConfirmationAlertDialog {
-
-        private int itemId = 0;
-        private String dialogTitle = null;
-        private String okButtonTitle = null;
-
-        public ConfirmationAlertDialog(int itemId, String dialogTitle, String okButtonTitle) {
-            this.itemId = itemId;
-            this.dialogTitle = dialogTitle;
-            this.okButtonTitle = okButtonTitle;
-        }
-
-        private void show() {
-            AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
-            builder.setTitle(dialogTitle);
-
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                }
-
-            });
-
-            builder.setPositiveButton(okButtonTitle, new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-
-                    if (itemId == SettingsHelper.CLEAR_ALL_CHATS_ITEM_ID) {
-                        clearAllChat();
-                    } else if (itemId == SettingsHelper.DELETE_ALL_CHATS_ITEM_ID) {
-                        deleteAllChat();
-                    }
-
-                }
-
-            });
-
-            builder.create().show();
-        }
-
-    }
+//    public class ConfirmationAlertDialog {
+//
+//        private int itemId = 0;
+//        private String dialogTitle = null;
+//        private String okButtonTitle = null;
+//
+//        public ConfirmationAlertDialog(int itemId, String dialogTitle, String okButtonTitle) {
+//            this.itemId = itemId;
+//            this.dialogTitle = dialogTitle;
+//            this.okButtonTitle = okButtonTitle;
+//        }
+//
+//        private void show() {
+//            AlertDialog.Builder builder = new AlertDialog.Builder(SettingsActivity.this);
+//            builder.setTitle(dialogTitle);
+//
+//            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+//
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//
+//                }
+//
+//            });
+//
+//            builder.setPositiveButton(okButtonTitle, new DialogInterface.OnClickListener() {
+//
+//                @Override
+//                public void onClick(DialogInterface dialog, int which) {
+//
+//                    if (itemId == SettingsHelper.CLEAR_ALL_CHATS_ITEM_ID) {
+//                        clearAllChat();
+//                    } else if (itemId == SettingsHelper.DELETE_ALL_CHATS_ITEM_ID) {
+//                        deleteAllChat();
+//                    }
+//
+//                }
+//
+//            });
+//
+//            builder.create().show();
+//        }
+//
+//    }
 
     public class ListingAlertDialog implements DialogInterface.OnMultiChoiceClickListener {
 

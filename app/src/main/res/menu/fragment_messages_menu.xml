@@ -7,14 +7,15 @@
         android:orderInCategory="200"
         android:title="Search"
         app:actionViewClass="android.support.v7.widget.SearchView"
-        app:showAsAction="ifRoom"></item>
+        app:showAsAction="always"></item>
 
     <item
         android:id="@+id/menu_progress"
         android:title=""
+        android:visible="false"
         android:orderInCategory="100"
         android:enabled="false"
-        app:showAsAction="always" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/sync_contacts"

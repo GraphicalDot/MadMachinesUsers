@@ -31,7 +31,54 @@
             android:layout_height="wrap_content"
             android:minHeight="?android:attr/actionBarSize" />
 
-        <ListView
+        <LinearLayout
+            android:id="@+id/add_block_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:background="@color/textColorPrimary"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:weightSum="2">
+
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:id="@+id/add_friend"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingBottom="@dimen/vertical_padding_small"
+                android:paddingLeft="@dimen/horizontal_padding_small"
+                android:paddingRight="@dimen/horizontal_padding_small"
+                android:paddingTop="@dimen/vertical_padding_small"
+                android:text="ADD FRIEND"
+                android:textColor="@color/gray1"
+                android:textSize="@dimen/font_size_small_large" />
+
+            <View
+                android:layout_width="0.3dp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/vertical_padding_very_small"
+                android:layout_marginTop="@dimen/vertical_padding_very_small"
+                android:background="@color/gray4" />
+
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:id="@+id/block_user"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:paddingBottom="@dimen/vertical_padding_small"
+                android:paddingLeft="@dimen/horizontal_padding_small"
+                android:paddingRight="@dimen/horizontal_padding_small"
+                android:paddingTop="@dimen/vertical_padding_small"
+                android:text="BLOCK USER"
+                android:textColor="@color/gray1"
+                android:textSize="@dimen/font_size_small_large" />
+        </LinearLayout>
+
+        <se.emilsjolander.stickylistheaders.StickyListHeadersListView
             android:id="@+id/msgview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -80,23 +127,24 @@
                     android:scrollbars="vertical"
                     android:textColor="@android:color/black"
                     android:textSize="@dimen/font_size_medium" />
+
                 <Button
                     android:id="@+id/msgbtn"
-                    android:onClick="openCamera"
                     style="?android:attr/buttonBarButtonStyle"
                     android:layout_width="0dp"
-                    android:visibility="gone"
-                    android:gravity="center_vertical"
                     android:layout_height="match_parent"
                     android:layout_weight="4"
                     android:background="@android:color/transparent"
                     android:focusable="true"
+                    android:gravity="center_vertical"
                     android:hint="Write a message"
                     android:maxLength="2000"
                     android:maxLines="5"
+                    android:onClick="openCamera"
                     android:paddingLeft="@dimen/horizontal_padding_small"
                     android:scrollbars="vertical"
-                    android:textSize="@dimen/font_size_medium" />
+                    android:textSize="@dimen/font_size_medium"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/send"

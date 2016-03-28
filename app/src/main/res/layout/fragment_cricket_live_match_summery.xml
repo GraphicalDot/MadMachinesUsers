@@ -4,26 +4,26 @@
     android:layout_height="match_parent"
     android:focusableInTouchMode="true"
     android:orientation="vertical">
-     <android.support.v4.widget.SwipeRefreshLayout
-         android:layout_width="wrap_content"
-         android:layout_height="match_parent"
-         android:id="@+id/live_summary">
-    <ScrollView
-        android:layout_width="match_parent"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_below="@+id/tool_bar">
-
-        <LinearLayout
+        android:id="@+id/live_summary">
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="match_parent"
+            android:layout_below="@+id/tool_bar">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/activity_vertical_margin"
-                android:orientation="vertical"
-                android:background="@drawable/round_edge_black_box">
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/activity_vertical_margin"
+                    android:orientation="vertical"
+                    android:background="@drawable/round_edge_black_box">
 
 
 
@@ -99,14 +99,14 @@
                     </LinearLayout>
 
 
-            </LinearLayout>
+                </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/activity_vertical_margin"
-                android:orientation="vertical"
-                android:background="@drawable/round_edge_black_box">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/activity_vertical_margin"
+                    android:orientation="vertical"
+                    android:background="@drawable/round_edge_black_box">
 
 
 
@@ -179,11 +179,11 @@
                             android:layout_toRightOf="@id/iv_player_first_status"
                             android:background="@color/gray3"></View>
 
-                       <LinearLayout
+                        <LinearLayout
                             android:id="@+id/layout_batting"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                           android:layout_marginBottom="@dimen/horizontal_padding_large"
+                            android:layout_marginBottom="@dimen/live_player_card_margin"
                             android:layout_toRightOf="@+id/iv_player_first"
                             android:orientation="vertical">
 
@@ -276,14 +276,14 @@
                     </RelativeLayout>
 
 
-            </LinearLayout>
+                </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/activity_vertical_margin"
-                android:background="@drawable/round_edge_black_box"
-                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/activity_vertical_margin"
+                    android:background="@drawable/round_edge_black_box"
+                    android:orientation="vertical">
 
 
 
@@ -411,138 +411,138 @@
                         </LinearLayout>
                     </RelativeLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/activity_vertical_margin">
+                </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/lo_bowling"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/round_edge_black_box"
-                    android:orientation="vertical">
+                    android:layout_margin="@dimen/activity_vertical_margin">
 
-                    <com.sports.unity.common.view.CustomRobotoRegularTextView
-                        android:id="@+id/tv_bowling"
+                    <LinearLayout
+                        android:id="@+id/lo_bowling"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_very_very_small"
-                        android:text="@string/blowing"
-                        android:textColor="@color/gray1"
-                        android:textSize="@dimen/font_size_very_small" />
+                        android:background="@drawable/round_edge_black_box"
+                        android:orientation="vertical">
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/gray3" />
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:padding="@dimen/horizontal_padding_small">
-
-                        <de.hdodenhof.circleimageview.CircleImageView
-                            android:id="@+id/iv_bowler_profile"
-                            android:layout_width="@dimen/profile_thumb_image_small"
-                            android:layout_height="@dimen/profile_thumb_image_small"
-                            android:layout_marginBottom="@dimen/activity_vertical_margin_small"
-                            android:layout_marginLeft="@dimen/activity_vertical_margin_small"
-                            android:layout_marginTop="@dimen/activity_vertical_margin_small"
-                            android:src="@drawable/ic_user" />
-
-                        <android.support.percent.PercentRelativeLayout
+                        <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            android:id="@+id/tv_bowling"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_centerVertical="true"
-                            android:layout_toRightOf="@id/iv_bowler_profile"
-                            android:paddingLeft="@dimen/horizontal_padding_very_very_small">
+                            android:padding="@dimen/horizontal_padding_very_very_small"
+                            android:text="@string/blowing"
+                            android:textColor="@color/gray1"
+                            android:textSize="@dimen/font_size_very_small" />
 
-                            <LinearLayout
-                                android:id="@+id/ll_bowler_1"
-                                android:layout_width="0dp"
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:background="@color/gray3" />
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:padding="@dimen/horizontal_padding_small">
+
+                            <de.hdodenhof.circleimageview.CircleImageView
+                                android:id="@+id/iv_bowler_profile"
+                                android:layout_width="@dimen/profile_thumb_image_small"
+                                android:layout_height="@dimen/profile_thumb_image_small"
+                                android:layout_marginBottom="@dimen/activity_vertical_margin_small"
+                                android:layout_marginLeft="@dimen/activity_vertical_margin_small"
+                                android:layout_marginTop="@dimen/activity_vertical_margin_small"
+                                android:src="@drawable/ic_user" />
+
+                            <android.support.percent.PercentRelativeLayout
+                                android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical"
-                                app:layout_widthPercent="50%">
+                                android:layout_centerVertical="true"
+                                android:layout_toRightOf="@id/iv_bowler_profile"
+                                android:paddingLeft="@dimen/horizontal_padding_very_very_small">
 
-                                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                                    android:id="@+id/tv_bowler_name"
-                                    android:layout_width="wrap_content"
+                                <LinearLayout
+                                    android:id="@+id/ll_bowler_1"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:layout_gravity="left"
-                                    android:text=""
-                                    android:textSize="@dimen/font_size_very_small" />
+                                    android:orientation="vertical"
+                                    app:layout_widthPercent="50%">
 
-                                <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                    android:id="@+id/tv_bowler_econ"
-                                    android:layout_width="wrap_content"
+                                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                                        android:id="@+id/tv_bowler_name"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="left"
+                                        android:text=""
+                                        android:textSize="@dimen/font_size_very_small" />
+
+                                    <com.sports.unity.common.view.CustomRobotoRegularTextView
+                                        android:id="@+id/tv_bowler_econ"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="left"
+                                        android:text=""
+                                        android:textColor="@color/score_light_grey"
+                                        android:textSize="@dimen/font_size_very_small" />
+                                </LinearLayout>
+
+                                <LinearLayout
+                                    android:id="@+id/ll_bowler_2"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:layout_gravity="left"
-                                    android:text=""
-                                    android:textColor="@color/score_light_grey"
-                                    android:textSize="@dimen/font_size_very_small" />
-                            </LinearLayout>
+                                    android:layout_toRightOf="@id/ll_bowler_1"
+                                    android:orientation="vertical"
+                                    app:layout_widthPercent="25%">
 
-                            <LinearLayout
-                                android:id="@+id/ll_bowler_2"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_toRightOf="@id/ll_bowler_1"
-                                android:orientation="vertical"
-                                app:layout_widthPercent="25%">
+                                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                                        android:id="@+id/tv_bowler_over"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_horizontal"
+                                        android:text=""
+                                        android:textSize="@dimen/font_size_very_small" />
+                                    <com.sports.unity.common.view.CustomRobotoRegularTextView
+                                        android:id="@+id/tv_bowler_over_label"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="center_horizontal"
+                                        android:text="OVERS"
+                                        android:textColor="@color/score_light_grey"
+                                        android:textSize="@dimen/font_size_very_small" />
+                                </LinearLayout>
 
-                                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                                    android:id="@+id/tv_bowler_over"
-                                    android:layout_width="wrap_content"
+                                <LinearLayout
+                                    android:id="@+id/ll_bowler_3"
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:layout_gravity="center_horizontal"
-                                    android:text=""
-                                    android:textSize="@dimen/font_size_very_small" />
-                                <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                    android:id="@+id/tv_bowler_over_label"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="center_horizontal"
-                                    android:text="OVERS"
-                                    android:textColor="@color/score_light_grey"
-                                    android:textSize="@dimen/font_size_very_small" />
-                            </LinearLayout>
+                                    android:layout_toRightOf="@id/ll_bowler_2"
+                                    android:orientation="vertical"
+                                    app:layout_widthPercent="25%">
 
-                            <LinearLayout
-                                android:id="@+id/ll_bowler_3"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_toRightOf="@id/ll_bowler_2"
-                                android:orientation="vertical"
-                                app:layout_widthPercent="25%">
+                                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                                        android:id="@+id/tv_bowler_W_Run"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="right"
+                                        android:text=""
+                                        android:textSize="@dimen/font_size_very_small" />
+                                    <com.sports.unity.common.view.CustomRobotoRegularTextView
+                                        android:id="@+id/tv_bowler_wr"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:layout_gravity="right"
+                                        android:text="W/R"
+                                        android:textColor="@color/score_light_grey"
+                                        android:textSize="@dimen/font_size_very_small" />
+                                </LinearLayout>
+                            </android.support.percent.PercentRelativeLayout>
+                        </RelativeLayout>
 
-                                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                                    android:id="@+id/tv_bowler_W_Run"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="right"
-                                    android:text=""
-                                    android:textSize="@dimen/font_size_very_small" />
-                                <com.sports.unity.common.view.CustomRobotoRegularTextView
-                                    android:id="@+id/tv_bowler_wr"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_gravity="right"
-                                    android:text="W/R"
-                                    android:textColor="@color/score_light_grey"
-                                    android:textSize="@dimen/font_size_very_small" />
-                            </LinearLayout>
-                        </android.support.percent.PercentRelativeLayout>
-                    </RelativeLayout>
-
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
-        </LinearLayout>
-    </ScrollView>
-     </android.support.v4.widget.SwipeRefreshLayout>
+        </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
     <include
         android:id="@+id/error"
         layout="@layout/error_layout"
