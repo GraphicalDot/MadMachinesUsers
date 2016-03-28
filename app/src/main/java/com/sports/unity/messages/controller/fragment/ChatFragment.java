@@ -24,9 +24,11 @@ import com.sports.unity.messages.controller.activity.ForwardSelectedItems;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.ShareableData;
+import com.sports.unity.messages.controller.model.ToolbarActionsForChatScreen;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
+import com.sports.unity.util.AlertDialogUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.NotificationHandler;
 
@@ -193,26 +195,8 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
                         alert.dismiss();
                         break;
                     case 1:
-                        if (chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
-                            deleteSingleChat(chatObject);
-                        } else {
-                            /*
-                             * Exit Group
-                             */
-//                            PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
-//                            try {
-//                                LeafNode leafNode = pubSubManager.getNode(chatObject.groupServerId);
-//                                leafNode.unsubscribe(TinyDB.KEY_USERNAME);
-//                            } catch (SmackException.NoResponseException e) {
-//                                e.printStackTrace();
-//                            } catch (XMPPException.XMPPErrorException e) {
-//                                e.printStackTrace();
-//                            } catch (SmackException.NotConnectedException e) {
-//                                e.printStackTrace();
-//                            }
-
-                        }
                         alert.dismiss();
+                        showAlertDialogToDeleteChatOrExitGroup(chatObject);
                         break;
                     case 2:
                         Switch switchView = (Switch) view.findViewById(R.id.mute_switcher);
@@ -228,7 +212,33 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
                 }
             }
         });
+    }
 
+    private void showAlertDialogToDeleteChatOrExitGroup(final Chats chat) {
+
+        String positiveButtonTitle = "";
+        String negativeButtonTitle = "CANCEL";
+        String dialogTitle = "";
+        if (chat.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+            positiveButtonTitle = "DELETE";
+            dialogTitle = "Are you sure you want to delete chat with " + chat.name + " ?";
+        } else {
+            positiveButtonTitle = "EXIT";
+            dialogTitle = "Are you sure you want to exit group " + chat.name + " ?";
+        }
+
+        DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (chat.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+                    deleteSingleChat(chat);
+                } else {
+                    //TODO
+                }
+            }
+        };
+
+        new AlertDialogUtil(AlertDialogUtil.ACTION_DELETE_CHAT, dialogTitle, positiveButtonTitle, negativeButtonTitle, getActivity(), clickListener).show();
     }
 
     public void filterResults(String filter) {

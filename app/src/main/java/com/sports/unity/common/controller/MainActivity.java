@@ -1,8 +1,11 @@
 package com.sports.unity.common.controller;
 
 import android.Manifest;
+import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,10 +24,13 @@ import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.github.clans.fab.FloatingActionMenu;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -37,6 +43,8 @@ import com.sports.unity.common.model.ControlledSwipeViewPager;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.messages.controller.activity.GroupDetailActivity;
+import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -74,6 +82,9 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     private TextView unreadCount;
     private boolean messagesFragmentInFront = false;
 
+    private FloatingActionMenu fabMenu;
+    private View backgroundDimmer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +114,70 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                 }
             }
         }
+
+        fabMenu = (FloatingActionMenu) findViewById(R.id.fab_menu);
+        backgroundDimmer = findViewById(R.id.background_dimmer);
+        fabMenu.hideMenuButton(false);
+        setFabMenuListeners(fabMenu);
+
+        LayoutTransition lt = new LayoutTransition();
+        lt.disableTransitionType(LayoutTransition.DISAPPEARING);
+        lt.setStartDelay(LayoutTransition.APPEARING, 0);
+        FrameLayout frameLayout = (FrameLayout) findViewById(R.id.childFragmentContainer);
+        frameLayout.setLayoutTransition(lt);
+    }
+
+    private void setFabMenuListeners(final FloatingActionMenu fabMenu) {
+
+        fabMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (fabMenu.isOpened()) {
+                    //nothing
+                } else {
+                    backgroundDimmer.setVisibility(View.VISIBLE);
+                }
+                fabMenu.toggle(true);
+            }
+        });
+
+        fabMenu.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
+            @Override
+            public void onMenuToggle(boolean opened) {
+                if (opened) {
+                    //do nothing
+                } else {
+                    backgroundDimmer.setVisibility(View.GONE);
+                }
+            }
+        });
+
+        FloatingActionButton peopleAroundMeFab = (FloatingActionButton) findViewById(R.id.people_around_me);
+        peopleAroundMeFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fabMenu.toggle(true);
+                if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+                    Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
+                    startActivity(intent);
+                } else {
+                    if (PermissionUtil.getInstance().requestPermission(MainActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)), getResources().getString(R.string.location_permission_message), Constants.REQUEST_CODE_LOCATION_PERMISSION)) {
+                        Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
+                        startActivity(intent);
+                    }
+                }
+            }
+        });
+
+        FloatingActionButton createGroupFab = (FloatingActionButton) findViewById(R.id.create_group);
+        createGroupFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fabMenu.toggle(true);
+                Intent intent = new Intent(getApplicationContext(), GroupDetailActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void setNavigationProfile() {
@@ -148,6 +223,16 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         if (savedInstanceState == null) {
             navigationFragment = new NavigationFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.nav_fragment, navigationFragment, "Nav_frag").commit();
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (fabMenu != null) {
+            if (fabMenu.isOpened()) {
+                fabMenu.close(false);
+            }
         }
     }
 
@@ -237,8 +322,14 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             if (position == 2) {
                 setUnreadCountToNull();
                 messagesFragmentInFront = true;
+                if (fabMenu != null) {
+                    fabMenu.showMenuButton(true);
+                }
             } else {
                 messagesFragmentInFront = false;
+                if (fabMenu != null) {
+                    fabMenu.hideMenuButton(true);
+                }
             }
         }
 
@@ -328,21 +419,19 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (searchView != null && !searchView.isIconified()) {
+            searchView.clearFocus();
+            searchView.setIconified(true);
+            //Intentionally written twice, please don't delete.
+            searchView.setIconified(true);
+
+        } else if (fabMenu != null && fabMenu.isOpened()) {
+            fabMenu.toggle(true);
         } else {
-            if (searchView != null) {
-                if (!searchView.isIconified()) {
-                    searchView.setIconified(true);
-                    //Intentionally written twice, please don't delete.
-                    searchView.setIconified(true);
-                    searchView.clearFocus();
-                } else {
-                    super.onBackPressed();
-                }
-            } else {
-                super.onBackPressed();
-            }
+            super.onBackPressed();
         }
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -397,10 +486,11 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         mgr.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        fabMenu.showMenuButton(true);
         tabs.setVisibility(View.VISIBLE);
         title.setVisibility(View.VISIBLE);
         back.setVisibility(View.GONE);
-        findViewById(R.id.seprator).setVisibility(View.VISIBLE);
+        findViewById(R.id.seperator).setVisibility(View.VISIBLE);
         toolbar.setBackgroundColor(getResources().getColor(R.color.app_theme_blue));
         toolbar.setNavigationIcon(R.drawable.ic_menu);
         initiateDrawer();
@@ -412,6 +502,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
 
     public void enableSearch() {
+        fabMenu.hideMenuButton(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
         toolbar.setNavigationIcon(R.drawable.ic_menu_back_blk);
@@ -423,7 +514,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         });
         tabs.setVisibility(View.GONE);
         title.setVisibility(View.GONE);
-        findViewById(R.id.seprator).setVisibility(View.GONE);
+        findViewById(R.id.seperator).setVisibility(View.GONE);
         back.setVisibility(View.GONE);
         toolbar.setBackgroundColor(getResources().getColor(R.color.textColorPrimary));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

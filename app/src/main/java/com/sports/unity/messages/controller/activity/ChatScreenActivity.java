@@ -27,7 +27,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -52,6 +51,7 @@ import com.sports.unity.messages.controller.viewhelper.AudioRecordingHelper;
 import com.sports.unity.messages.controller.viewhelper.ChatKeyboardHelper;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
+import com.sports.unity.util.AlertDialogUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.FileOnCloudHandler;
@@ -71,6 +71,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 public class ChatScreenActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, BlockUnblockUserHelper.BlockUnblockListener {
 
@@ -129,7 +130,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     private ArrayList<Message> messageList;
     private ChatScreenAdapter chatScreenAdapter;
     private int availableStatus = Contacts.AVAILABLE_BY_MY_CONTACTS;
-    private ListView mChatView;
+    private StickyListHeadersListView mChatView;
     private boolean otherChat = false;
     private boolean isLastTimeRequired;
     private boolean isRoasterEntryRequired;
@@ -364,6 +365,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             invalidateOptionsMenu();
         } else if (toolbarActionsForChatScreen.getSearchFlag()) {
             toolbarActionsForChatScreen.setSearchFlag(false);
+            LinearLayout sendContentLayout = (LinearLayout) findViewById(R.id.type_msg);
+            sendContentLayout.setVisibility(View.VISIBLE);
             invalidateOptionsMenu();
             chatScreenAdapter.filterSearchQuery("");
         } else {
@@ -425,6 +428,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         setEventListeners(mHandler);
 
         checkForwardMessageQueue();
+        toolbarActionsForChatScreen.resetVariables();
     }
 
     private void initAddBlockView() {
@@ -559,7 +563,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void getChatThread() {
-        if (isGroupChat == false) {
+        if ( isGroupChat == false ) {
             ChatManager chatManager = ChatManager.getInstanceFor(XMPPClient.getConnection());
             chat = chatManager.getThreadChat(jabberId + "@mm.io");
             if (chat == null) {
@@ -666,7 +670,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void populateMessagesOnScreen() {
-        mChatView = (ListView) findViewById(R.id.msgview);               // List for messages
+        mChatView = (StickyListHeadersListView) findViewById(R.id.msgview);               // List for messages
         if (isGroupChat) {
             setGroupMembers();
         }
@@ -771,6 +775,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             chatID = getIntent().getLongExtra(INTENT_KEY_CHAT_ID, SportsUnityDBHelper.DEFAULT_ENTRY_ID);
             userImageBytes = getIntent().getByteArrayExtra(INTENT_KEY_IMAGE);
             otherChat = getIntent().getBooleanExtra(INTENT_KEY_NEARBY_CHAT, false);
+
+            isGroupChat = true;
         }
     }
 
@@ -988,7 +994,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         getMenuInflater().inflate(R.menu.menu_chat_screen, menu);
         this.menu = menu;
 
-        if (isGroupChat) {
+        if( isGroupChat ) {
             MenuItem viewGroupItem = menu.findItem(R.id.action_view_group);
             viewGroupItem.setVisible(true);
 
@@ -1052,15 +1058,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         } else if (id == R.id.action_block_user) {
             blockUnblockUserHelper.onMenuItemSelected(this, contactID, jabberId, menu);
         } else if (id == R.id.action_clear_chat) {
-
-            sportsUnityDBHelper.clearChat(getApplicationContext(), chatID, groupServerId);
-
-            AudioRecordingHelper.getInstance(this).stopAndReleaseMediaPlayer();
-            AudioRecordingHelper.getInstance(this).clearProgressMap();
-
-            messageList = sportsUnityDBHelper.getMessages(chatID);
-
-            chatScreenAdapter.notifydataset(messageList);
+            showAlertDialogToClearChat();
         } else if (id == R.id.forward) {
             toolbarActionsForChatScreen.forwardSelectedMessages(messageList);
         } else if (id == R.id.delete) {
@@ -1085,6 +1083,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             return true;
         } else if (id == R.id.searchChatScreen) {
             toolbarActionsForChatScreen.setSearchFlag(true);
+            LinearLayout sendContentLayout = (LinearLayout) findViewById(R.id.type_msg);
+            sendContentLayout.setVisibility(View.GONE);
             invalidateOptionsMenu();
 
             View view = findViewById(R.id.btn_text);
@@ -1092,6 +1092,32 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showAlertDialogToClearChat() {
+        String positiveButtonTitle = "CLEAR";
+        String negativeButtonTitle = "CANCEL";
+        String dialogTitle = "Are you sure you want to clear all messages ?";
+
+        DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                clearChat();
+            }
+        };
+
+        new AlertDialogUtil(AlertDialogUtil.ACTION_CLEAR_ALL_MESSAGES, dialogTitle, positiveButtonTitle, negativeButtonTitle, ChatScreenActivity.this, clickListener).show();
+    }
+
+    private void clearChat() {
+        sportsUnityDBHelper.clearChat(getApplicationContext(), chatID, groupServerId);
+
+        AudioRecordingHelper.getInstance(ChatScreenActivity.this).stopAndReleaseMediaPlayer();
+        AudioRecordingHelper.getInstance(ChatScreenActivity.this).clearProgressMap();
+
+        messageList = sportsUnityDBHelper.getMessages(chatID);
+
+        chatScreenAdapter.notifydataset(messageList);
     }
 
 //    public HashMap<String, byte[]> getMediaMap() {

@@ -51,19 +51,19 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
 
     private OnSearchViewQueryListener mListener = null;
 
-    FrameLayout frame;
-    TextView contacts;
-    TextView chats;
-    TextView others;
-    LinearLayout buttonContainerLayout;
-    Activity activity;
-    Fragment currentFragment;
-    LinearLayout childStripLayout;
+    private FrameLayout frame;
+    private TextView contacts;
+    private TextView chats;
+    private TextView others;
+    private LinearLayout buttonContainerLayout;
+    private Activity activity;
+    private Fragment currentFragment;
+    private LinearLayout childStripLayout;
 
-    TextView friendsUnreadCount;
-    TextView othersUnreadCount;
-    View backgroundDimmer;
-    MenuItem syncProgress;
+    private TextView friendsUnreadCount;
+    private TextView othersUnreadCount;
+    private View backgroundDimmer;
+    private MenuItem syncProgress;
 
     private SearchView searchView;
 
@@ -125,54 +125,52 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
 
         friendsUnreadCount = (TextView) v.findViewById(R.id.friends_unread_count);
         othersUnreadCount = (TextView) v.findViewById(R.id.others_unread_count);
-        backgroundDimmer = v.findViewById(R.id.background_dimmer);
+//        backgroundDimmer = v.findViewById(R.id.background_dimmer);
 
 
-        final FloatingActionMenu fabMenu = (FloatingActionMenu) v.findViewById(R.id.fab_menu);
-        fabMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fabMenu.toggle(true);
-            }
-        });
-
-        fabMenu.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
-            @Override
-            public void onMenuToggle(boolean opened) {
-                if (opened) {
-                    backgroundDimmer.setVisibility(View.VISIBLE);
-                } else {
-                    backgroundDimmer.setVisibility(View.GONE);
-                }
-            }
-        });
-
-        FloatingActionButton peopleAroundMeFab = (FloatingActionButton) v.findViewById(R.id.people_around_me);
-        peopleAroundMeFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fabMenu.toggle(true);
-                backgroundDimmer.setVisibility(View.GONE);
-                if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-                    startPeopleAroundMeActivity();
-                } else {
-                    if (PermissionUtil.getInstance().requestPermission(getActivity(), new ArrayList<String>(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)), getResources().getString(R.string.location_permission_message), Constants.REQUEST_CODE_LOCATION_PERMISSION)) {
-                        startPeopleAroundMeActivity();
-                    }
-                }
-            }
-        });
-
-        FloatingActionButton createGroupFab = (FloatingActionButton) v.findViewById(R.id.create_group);
-        createGroupFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fabMenu.toggle(true);
-                backgroundDimmer.setVisibility(View.GONE);
-                Intent intent = new Intent(getActivity(), GroupDetailActivity.class);
-                startActivity(intent);
-            }
-        });
+//        fabMenu = (FloatingActionMenu) v.findViewById(R.id.fab_menu);
+//        fabMenu.setOnMenuButtonClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                fabMenu.toggle(true);
+//            }
+//        });
+//
+//        fabMenu.setOnMenuToggleListener(new FloatingActionMenu.OnMenuToggleListener() {
+//            @Override
+//            public void onMenuToggle(boolean opened) {
+//                if (opened) {
+//                    backgroundDimmer.setVisibility(View.VISIBLE);
+//                } else {
+//                    backgroundDimmer.setVisibility(View.GONE);
+//                }
+//            }
+//        });
+//
+//        FloatingActionButton peopleAroundMeFab = (FloatingActionButton) v.findViewById(R.id.people_around_me);
+//        peopleAroundMeFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                fabMenu.toggle(true);
+//                if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+//                    startPeopleAroundMeActivity();
+//                } else {
+//                    if (PermissionUtil.getInstance().requestPermission(getActivity(), new ArrayList<String>(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)), getResources().getString(R.string.location_permission_message), Constants.REQUEST_CODE_LOCATION_PERMISSION)) {
+//                        startPeopleAroundMeActivity();
+//                    }
+//                }
+//            }
+//        });
+//
+//        FloatingActionButton createGroupFab = (FloatingActionButton) v.findViewById(R.id.create_group);
+//        createGroupFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                fabMenu.toggle(true);
+//                Intent intent = new Intent(getActivity(), GroupDetailActivity.class);
+//                startActivity(intent);
+//            }
+//        });
 
         ChatFragment fragment = new ChatFragment();
         mListener = fragment;
