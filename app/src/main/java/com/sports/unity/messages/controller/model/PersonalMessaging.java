@@ -281,9 +281,11 @@ public class PersonalMessaging {
         String thumbnailImage = null;
         if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE) || mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
             try {
-                if( mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO) ) {
-                    Bitmap videoThumbnail = ThumbnailUtils.createVideoThumbnail( DBUtil.getFilePath(context, mimeType, fileName), MediaStore.Images.Thumbnails.MINI_KIND);
-                    thumbnailImage = ImageUtil.getBaseEncoded_ThumbnailImage(context, videoThumbnail);
+                if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
+                    Bitmap videoThumbnail = ThumbnailUtils.createVideoThumbnail(DBUtil.getFilePath(context, mimeType, fileName), MediaStore.Images.Thumbnails.MINI_KIND);
+
+                    byte[] content = ImageUtil.getCompressedBytes(videoThumbnail, 20);
+                    thumbnailImage = Base64.encodeToString(content, Base64.DEFAULT);
                 } else {
                     thumbnailImage = ImageUtil.getBaseEncoded_ThumbnailImage(context, DBUtil.getFilePath(context, mimeType, fileName));
                 }
@@ -421,11 +423,11 @@ public class PersonalMessaging {
 //                success = false;
 //            }
 //        } else {
-            groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
-            messageFrom = fromId;
+        groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
+        messageFrom = fromId;
 
-            chatId = XMPPService.getChatIdOrCreateIfNotExist( context, false, fromId, groupServerId, nearByChat);
-            handleMessage(message, value, chatId, fromId, groupServerId, nearByChat);
+        chatId = XMPPService.getChatIdOrCreateIfNotExist(context, false, fromId, groupServerId, nearByChat);
+        handleMessage(message, value, chatId, fromId, groupServerId, nearByChat);
 //        }
 
 

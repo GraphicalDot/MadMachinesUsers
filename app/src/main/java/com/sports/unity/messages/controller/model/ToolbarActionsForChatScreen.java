@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 
+import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
+import se.emilsjolander.stickylistheaders.WrapperView;
+
 /**
  * Created by madmachines on 19/11/15.
  */
@@ -147,7 +150,9 @@ public class ToolbarActionsForChatScreen {
             }
 
             ColorDrawable drawable = new ColorDrawable(view.getResources().getColor(R.color.list_selector));
-            ((FrameLayout) view).setForeground(drawable);
+            WrapperView wrapperView = (WrapperView) view;
+            ((FrameLayout) wrapperView.getChildAt(0)).setForeground(drawable);
+//            ((FrameLayout) view).setForeground(drawable);
 
             if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
                 selectedFlag = true;
@@ -338,7 +343,7 @@ public class ToolbarActionsForChatScreen {
         mediaSelectedItems = 0;
     }
 
-    public void resetList(ListView mChatView) {
+    public void resetList(StickyListHeadersListView mChatView) {
         selectedFlag = false;
         selecteditems = 0;
         selectedItemsList.clear();

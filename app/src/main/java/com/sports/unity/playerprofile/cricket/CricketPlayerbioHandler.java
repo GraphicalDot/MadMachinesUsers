@@ -10,6 +10,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.network.VolleyRequestHandler;
 
 import java.util.HashSet;
 
@@ -55,13 +56,12 @@ public class CricketPlayerbioHandler {
         }
     };
     public void requestData(String playerId) {
-        Log.i("Score Detail", "Request Score Details");
         String url = BASEURL+playerId;
-
+        Log.i("Get player Bio Request", url);
         StringRequest stringRequest = null;
-        RequestQueue queue = Volley.newRequestQueue(mContext);
+        //RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
-        queue.add(stringRequest);
+        VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
 
         requestInProcess.add(REQUEST_TAG);
 

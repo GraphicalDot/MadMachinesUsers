@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:clipToPadding="false"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/vertical_padding_very_very_small"
+    android:paddingTop="@dimen/vertical_padding_very_very_small">
+
+    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/list_header_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/shape_drawable_timelabel"
+        android:elevation="2dp"
+        android:gravity="center"
+        android:paddingBottom="@dimen/vertical_padding_very_very_small"
+        android:paddingLeft="@dimen/horizontal_padding_very_small"
+        android:paddingRight="@dimen/horizontal_padding_very_small"
+        android:paddingTop="@dimen/vertical_padding_very_very_small"
+        android:text="A"
+        android:textAllCaps="true"
+        android:textColor="@color/gray2"
+        android:textSize="@dimen/font_size_very_small" />
+
+</FrameLayout>

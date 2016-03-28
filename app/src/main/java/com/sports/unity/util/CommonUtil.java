@@ -212,7 +212,7 @@ public class CommonUtil {
 //        intent.putExtra("sms_body", inviteText);
 //        intent.setType("vnd.android-dir/mms-sms");
 //        context.startActivity(intent);
-        Uri uri = Uri.parse("smsto:" + contact.phoneNumber);
+        Uri uri = Uri.parse("smsto:+" + contact.phoneNumber);
         Intent it = new Intent(Intent.ACTION_SENDTO, uri);
         it.putExtra("sms_body", inviteText);
         context.startActivity(it);

@@ -18,7 +18,6 @@ public class ViewPagerAdapterInMainActivity extends FragmentStatePagerAdapter {
 
     private String Titles[];
     private int numberOfTabs;
-    private boolean enabled = true;
 
     public ViewPagerAdapterInMainActivity(FragmentManager fm, String mTitles[], int numberOfTabs) {
         super(fm);
@@ -57,9 +56,5 @@ public class ViewPagerAdapterInMainActivity extends FragmentStatePagerAdapter {
     @Override
     public int getCount() {
         return numberOfTabs;
-    }
-
-    public void setPagingEnabled(boolean enabled) {
-        this.enabled = enabled;
     }
 }

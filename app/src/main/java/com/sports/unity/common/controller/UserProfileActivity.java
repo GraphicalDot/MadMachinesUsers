@@ -2,6 +2,7 @@ package com.sports.unity.common.controller;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -45,6 +46,7 @@ import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserProfileHandler;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
+import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.playerprofile.cricket.PlayerCricketBioDataActivity;
 import com.sports.unity.playerprofile.football.PlayerProfileView;
@@ -94,6 +96,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private boolean ownProfile;
 
     private LayoutInflater mInflater;
+
+    private ProgressBar progessBar;
+    private ProgressDialog dialog;
 
     private int statusValue[] = {R.string.available, R.string.busy, R.string.movie, R.string.work};
 
@@ -214,14 +219,19 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     }
 
     private void onClickSaveButton() {
+        showInDeterminateProgress("updating details on vcard...");
         if (!TextUtils.isEmpty(name.getText().toString()) && !TextUtils.isEmpty(status.getText().toString())) {
             String nickname = name.getText().toString();
-            String status = currentStatus.getText().toString();
+            String status = this.status.getText().toString();
+            Log.d("max", "Status is>" + status);
             String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
             String jid = TinyDB.getInstance(UserProfileActivity.this).getString(TinyDB.KEY_USER_JID);
 
             Contacts contacts = new Contacts(nickname, jid, phoneNumber, byteArray, -1, status, Contacts.AVAILABLE_NOT);
-            UserProfileHandler.getInstance().submitUserProfile(UserProfileActivity.this, contacts, LISTENER_KEY);
+            int requestStatus = UserProfileHandler.getInstance().submitUserProfile(UserProfileActivity.this, contacts, LISTENER_KEY);
+            if (requestStatus == UserProfileHandler.REQUEST_STATUS_FAILED) {
+                onUnSuccessfulVCardSubmit();
+            }
         } else {
             if (TextUtils.isEmpty(name.getText().toString())) {
                 Toast.makeText(this, "Please enter your name", Toast.LENGTH_SHORT).show();
@@ -293,8 +303,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
         favDetails = (LinearLayout) findViewById(R.id.favDetails);
         fbButton = (FrameLayout) findViewById(R.id.faceBook_btn);
+
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        progressBar.setVisibility(View.GONE);
+//        progressBar.setVisibility(View.GONE);
         name = (EditText) findViewById(R.id.name);
         oldBackgroundForNameEditView = name.getBackground();
 
@@ -311,6 +322,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         status.setTextColor(getResources().getColor(R.color.ColorPrimaryDark));
         status.setBackground(new ColorDrawable(Color.TRANSPARENT));
         status.setEnabled(false);
+
+        progessBar = (ProgressBar) findViewById(R.id.progressBar);
+        progressBar.setIndeterminate(true);
 
         currentStatus = (TextView) findViewById(R.id.current_status);
         profileImage = (CircleImageView) findViewById(R.id.user_picture);
@@ -401,7 +415,27 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             }
         }
         String jid = getIntent().getStringExtra("jid");
-        UserProfileHandler.getInstance().loadProfile(getApplicationContext(), jid, LISTENER_KEY);
+        progessBar.setVisibility(View.VISIBLE);
+        int requestStatus = UserProfileHandler.getInstance().loadProfile(getApplicationContext(), jid, LISTENER_KEY);
+        if (requestStatus == UserProfileHandler.REQUEST_STATUS_FAILED) {
+            onUnSuccessfulVCardLoad();
+        }
+    }
+
+    private void showInDeterminateProgress(String message) {
+        ProgressBar progressBar = new ProgressBar(this);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+
+        dialog = ProgressDialog.show(UserProfileActivity.this, "", message, true);
+        dialog.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
+    }
+
+    private void dismissInDeterminateProgress() {
+        if (dialog != null) {
+            if (dialog.isShowing()) {
+                dialog.dismiss();
+            }
+        }
     }
 
     private void addFacebookCallback() {
@@ -503,18 +537,22 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     }
 
     private void successfulVCardLoad(VCard vCard) {
+        progressBar.setVisibility(View.GONE);
         updateUserDetail(vCard);
     }
 
     private void onUnSuccessfulVCardLoad() {
+        progressBar.setVisibility(View.GONE);
         Toast.makeText(UserProfileActivity.this, R.string.message_load_vcard_failed, Toast.LENGTH_SHORT).show();
     }
 
     private void onUnSuccessfulVCardSubmit() {
+        dismissInDeterminateProgress();
         Toast.makeText(UserProfileActivity.this, R.string.message_submit_vcard_failed, Toast.LENGTH_SHORT).show();
     }
 
     private void successfulVCardSubmit() {
+        dismissInDeterminateProgress();
         initViewUI();
         statusView.setVisibility(View.GONE);
         Toast.makeText(UserProfileActivity.this, R.string.message_submit_vcard_sucess, Toast.LENGTH_SHORT).show();
@@ -814,10 +852,12 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         if (Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)) {
             Intent intent = new Intent(UserProfileActivity.this, PlayerProfileView.class);
             intent.putExtra(Constants.INTENT_KEY_ID, playerId);
+            intent.putExtra(Constants.INTENT_KEY_PLAYER_NAME,playerName);
             startActivity(intent);
         } else {
             Intent intent = new Intent(UserProfileActivity.this, PlayerCricketBioDataActivity.class);
             intent.putExtra(Constants.INTENT_KEY_ID, playerId);
+            intent.putExtra(Constants.INTENT_KEY_PLAYER_NAME,playerName);
             startActivity(intent);
         }
     }
