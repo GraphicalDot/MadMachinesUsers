@@ -38,6 +38,8 @@ public class Constants {
     public static final String REQUEST_PARAMETER_KEY_USER_NAME = "username";
     public static final String REQUEST_PARAMETER_KEY_APK_VERSION = "apk_version";
     public static final String REQUEST_PARAMETER_KEY_UDID = "udid";
+    public static final String REQUEST_PARAMETER_KEY_MATCHID = "match_id";
+    public static final String REQUEST_PARAMETER_KEY_TOKEN = "token";
 
     public static final String PARAM_TIME = "time";
     public static final String PARAM_MIME_TYPE = "mime_type";

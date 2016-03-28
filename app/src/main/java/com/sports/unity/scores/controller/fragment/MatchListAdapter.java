@@ -14,10 +14,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.gcm.TokenRegistrationHandler;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
@@ -62,6 +64,15 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
     };
 
+    private View.OnClickListener matchAlertListener = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View view) {
+            handleMatchAlert(view);
+        }
+
+    };
+
     public MatchListAdapter(List<JSONObject> list, Activity activity) {
         this.list = list;
         this.activity = activity;
@@ -83,6 +94,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         private TextView team1Overs;
         private TextView team2Overs;
         private TextView matchMinutes;
+        private ImageView notification;
 
         private View view;
 
@@ -105,6 +117,17 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             team1Overs = (TextView) v.findViewById(R.id.t1over);
             team2Overs = (TextView) v.findViewById(R.id.t2over);
             matchMinutes = (TextView) v.findViewById(R.id.minutes);
+            notification = (ImageView) v.findViewById(R.id.notification);
+            notification.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+
+
+
+
+                }
+            });
 
         }
     }
@@ -302,6 +325,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
         holder.view.setTag(position);
         holder.view.setOnClickListener(listener);
+        holder.notification.setOnClickListener(matchAlertListener);
 
 //        try {
 //            if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {
@@ -611,4 +635,25 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     public void setList(List<JSONObject> list) {
         this.list = list;
     }
+
+
+    private void handleMatchAlert(View view) {
+        int position = (Integer) view.getTag();
+        JSONObject matchJsonObject = list.get(position);
+        cricketMatchJsonCaller.setJsonObject(matchJsonObject);
+        try {
+            String matchId = cricketMatchJsonCaller.getMatchId();
+            String seriesId  = cricketMatchJsonCaller.getSeriesId();
+            Toast.makeText(activity,matchId+" "+seriesId,Toast.LENGTH_SHORT).show();
+
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
 }

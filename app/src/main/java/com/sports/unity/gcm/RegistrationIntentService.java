@@ -38,9 +38,6 @@ public class RegistrationIntentService extends IntentService implements TokenReg
 {
     private TokenRegistrationHandler tokenRegistrationHandler;
     private SharedPreferences preferences;
-    String userName = "b";
-    String password = "password";
-    private NotificationManager mNotificationManager;
 
     public RegistrationIntentService()
     {
@@ -52,7 +49,7 @@ public class RegistrationIntentService extends IntentService implements TokenReg
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         try
         {
-            String token = getToken();
+            String token = CommonUtil.getToken(this);
             Log.i("Token", "onHandleIntent: " + token);
             if(preferences!=null){
                 registerToken(token);
@@ -67,10 +64,7 @@ public class RegistrationIntentService extends IntentService implements TokenReg
 
 
 
-    private String getToken() throws IOException {
-        InstanceID instanceID = InstanceID.getInstance(this);
-        return instanceID.getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-    }
+
 
     /**
      * @param token
