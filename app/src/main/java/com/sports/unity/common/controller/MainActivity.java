@@ -121,7 +121,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         setFabMenuListeners(fabMenu);
 
         LayoutTransition lt = new LayoutTransition();
-        lt.disableTransitionType(LayoutTransition.DISAPPEARING);
         lt.setStartDelay(LayoutTransition.APPEARING, 0);
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.childFragmentContainer);
         frameLayout.setLayoutTransition(lt);
@@ -156,7 +155,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         peopleAroundMeFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fabMenu.toggle(true);
                 if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
                     Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
                     startActivity(intent);
@@ -173,7 +171,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         createGroupFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                fabMenu.toggle(true);
                 Intent intent = new Intent(getApplicationContext(), GroupDetailActivity.class);
                 startActivity(intent);
             }
