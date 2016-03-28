@@ -24,9 +24,11 @@ public class AdvancedFilterFragment extends Fragment {
 
     private Bundle bundle;
     private String SPORTS_TYPE;
+    private String filterType;
     private final String SHOWCASE_ID = "filter_showcase1";
     private final String[] heading = {"Select your favourite leagues", "Select your favourite teams", "Select your favourite players"};
     private final String[] message = {"Add a star to your favourite leagues for easy use.", "Add a star to your favourite team for easy use.", "Add a star to your favourite players to get an update."};
+    private boolean singleUse;
 
     public AdvancedFilterFragment() {
     }
@@ -36,6 +38,10 @@ public class AdvancedFilterFragment extends Fragment {
         super.onCreate(savedInstanceState);
         bundle = getArguments();
         SPORTS_TYPE = bundle.getString(Constants.SPORTS_TYPE);
+        singleUse = bundle.getBoolean(Constants.RESULT_SINGLE_USE);
+        if (singleUse) {
+            filterType = bundle.getString(Constants.SPORTS_FILTER_TYPE);
+        }
     }
 
     @Nullable
@@ -52,8 +58,12 @@ public class AdvancedFilterFragment extends Fragment {
     }
 
     private void setTab(View view) {
-
-        FilterPagerAdapter filterPagerAdapter = new FilterPagerAdapter(getActivity().getSupportFragmentManager(), SPORTS_TYPE);
+        FilterPagerAdapter filterPagerAdapter = null;
+        if (!singleUse) {
+            filterPagerAdapter = new FilterPagerAdapter(getActivity().getSupportFragmentManager(), SPORTS_TYPE);
+        } else {
+            filterPagerAdapter = new FilterPagerAdapter(getActivity().getSupportFragmentManager(), SPORTS_TYPE, filterType, singleUse);
+        }
         ViewPager pager = (ViewPager) view.findViewById(R.id.pager);
         pager.setOffscreenPageLimit(2);
         pager.setAdapter(filterPagerAdapter);

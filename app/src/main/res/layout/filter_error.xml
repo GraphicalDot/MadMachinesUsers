@@ -4,8 +4,7 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:gravity="center"
-    android:orientation="vertical"
-    android:visibility="gone">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/oops"
@@ -27,18 +26,4 @@
         android:text="Add your favourite teams \n to see more details"
         android:textColor="@color/gray2"
         android:textSize="@dimen/font_size_small_medium" />
-
-    <TextView
-        android:id="@+id/addteam"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/filter_next_height"
-        android:layout_gravity="center"
-        android:layout_marginTop="@dimen/nav_flag_margin"
-        android:background="@drawable/round_edge_box_blue"
-        android:gravity="center"
-        android:paddingLeft="@dimen/horizontal_padding_small"
-        android:paddingRight="@dimen/horizontal_padding_small"
-        android:text="ADD TEAM"
-        android:textColor="@color/ColorPrimary"
-        android:textSize="@dimen/font_size_small_xlarge" />
 </LinearLayout>

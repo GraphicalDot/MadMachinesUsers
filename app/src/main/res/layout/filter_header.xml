@@ -6,13 +6,7 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/sepratorhead"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/gray3" />
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -30,17 +24,38 @@
             android:scaleType="center"
             android:src="@drawable/ic_cricket" />
 
-        <TextView
+        <com.sports.unity.common.view.CustomRobotoSlabBold
             android:id="@+id/itemtext"
             android:layout_width="match_parent"
             android:layout_height="@dimen/drawer_item_height"
+            android:layout_toLeftOf="@+id/edit_sports"
+            android:layout_toRightOf="@id/flag"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:singleLine="true"
             android:textColor="@color/gray2"
             android:textSize="@dimen/font_size_small_xlarge"
             android:textStyle="bold" />
-    </LinearLayout>
+
+        <com.sports.unity.common.view.CustomRobotoSlabRegularTextView
+            android:id="@+id/edit_sports"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/sportsindi"
+            android:layout_marginRight="@dimen/horizontal_padding_small"
+            android:background="@drawable/round_edge_box_white_border"
+            android:gravity="center"
+            android:paddingBottom="@dimen/vertical_padding_very_very_small"
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
+            android:paddingRight="@dimen/horizontal_padding_very_small"
+            android:paddingTop="@dimen/vertical_padding_very_very_small"
+            android:text="@string/nav_edit"
+            android:textColor="@color/app_theme_blue"
+            android:textSize="@dimen/font_size_very_small"
+            android:visibility="visible" />
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/seprator"

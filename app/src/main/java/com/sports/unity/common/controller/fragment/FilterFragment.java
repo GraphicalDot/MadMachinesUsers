@@ -8,15 +8,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.SelectSportsActivity;
 import com.sports.unity.common.controller.TeamLeagueDetails;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
@@ -24,13 +27,19 @@ import java.util.ArrayList;
 import se.emilsjolander.stickylistheaders.StickyListHeadersListView;
 
 
-public class FilterFragment extends Fragment implements FilterActivity.OnResultReceivedListener{
+public class FilterFragment extends Fragment implements FilterActivity.OnResultReceivedListener {
 
     private StickyListHeadersListView mlistView;
     private Bundle bundle;
-    FilterAdapter filterAdapter;
-    ArrayList<FavouriteItem> favList;
+    private FilterAdapter filterAdapter;
+    private ArrayList<FavouriteItem> favList;
     private String filter;
+    private RelativeLayout cricketLayout;
+    private RelativeLayout footballLayout;
+    private TextView editCricket;
+    private TextView editFootball;
+    private LinearLayout emptyLayout;
+    private LinearLayout parentEmpty;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +68,13 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mlistView = (StickyListHeadersListView) view.findViewById(R.id.filter_listview);
+        emptyLayout = (LinearLayout) view.findViewById(R.id.error);
+        editCricket = (TextView) view.findViewById(R.id.edit_cricket);
+        editFootball = (TextView) view.findViewById(R.id.edit_football);
+        parentEmpty = (LinearLayout) view.findViewById(R.id.parent_empty);
+        cricketLayout = (RelativeLayout) view.findViewById(R.id.cricket_layout);
+        footballLayout = (RelativeLayout) view.findViewById(R.id.football_layout);
+        mlistView.setEmptyView(emptyLayout);
         bundle = getArguments();
         filter = bundle.getString(Constants.SPORTS_FILTER_TYPE);
         if (filter.equals(Constants.FILTER_TYPE_TEAM)) {
@@ -66,19 +82,27 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
         } else if (filter.equals(Constants.FILTER_TYPE_PLAYER)) {
             favList = FavouriteItemWrapper.getInstance(getActivity()).getAllPlayers();
         } else if (filter.equals(Constants.FILTER_TYPE_LEAGUE)) {
+            cricketLayout.setVisibility(View.GONE);
             favList = FavouriteItemWrapper.getInstance(getActivity()).getAllLeagues();
         }
-        if (favList.size() > 0) {
-            filterAdapter = new FilterAdapter(getActivity(), favList);
-            mlistView.setAdapter(filterAdapter);
+        if (favList.size() <= 0) {
+            showErrorLayout(getView());
+            parentEmpty.setVisibility(View.VISIBLE);
+            if (!filter.equals(Constants.FILTER_TYPE_LEAGUE) && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
+                cricketLayout.setVisibility(View.VISIBLE);
+            }
+            if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
+                footballLayout.setVisibility(View.VISIBLE);
+            }
         } else {
-            mlistView.setVisibility(View.INVISIBLE);
-            showErrorLayout(view);
+            initAddLayout();
         }
+        filterAdapter = new FilterAdapter(getActivity(), favList);
+        mlistView.setAdapter(filterAdapter);
         mlistView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                FavouriteItem f=favList.get(position);
+                FavouriteItem f = favList.get(position);
                 Intent intent = new Intent(getContext(), TeamLeagueDetails.class);
                 intent.putExtra("Id", f.getId());
                 intent.putExtra("Name", f.getName());
@@ -86,6 +110,56 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
                 startActivity(intent);
             }
         });
+        editCricket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(new Intent(getActivity(), AdvancedFilterActivity.class));
+                intent.putExtra(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_CRICKET);
+                intent.putExtra(Constants.SPORTS_FILTER_TYPE, filter);
+                intent.putExtra(Constants.RESULT_REQUIRED, true);
+                intent.putExtra(Constants.RESULT_SINGLE_USE, true);
+                getActivity().startActivityForResult(intent, Constants.REQUEST_CODE_ADD_SPORT);
+            }
+        });
+        editFootball.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(new Intent(getActivity(), AdvancedFilterActivity.class));
+                intent.putExtra(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_FOOTBALL);
+                intent.putExtra(Constants.SPORTS_FILTER_TYPE, filter);
+                intent.putExtra(Constants.RESULT_REQUIRED, true);
+                intent.putExtra(Constants.RESULT_SINGLE_USE, true);
+                getActivity().startActivityForResult(intent, Constants.REQUEST_CODE_ADD_SPORT);
+            }
+        });
+    }
+
+    private void initAddLayout() {
+        boolean isCricket = false;
+        boolean isFootball = false;
+        for (FavouriteItem f : favList) {
+            if (f.getSportsType().equals(Constants.SPORTS_TYPE_CRICKET)) {
+                isCricket = true;
+            }
+            if (f.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                isFootball = true;
+            }
+        }
+        if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET) && !isCricket && !filter.equals(Constants.FILTER_TYPE_LEAGUE)) {
+            parentEmpty.setVisibility(View.VISIBLE);
+            cricketLayout.setVisibility(View.VISIBLE);
+        } else {
+            cricketLayout.setVisibility(View.GONE);
+        }
+        if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL) && !isFootball) {
+            parentEmpty.setVisibility(View.VISIBLE);
+            footballLayout.setVisibility(View.VISIBLE);
+        } else {
+            footballLayout.setVisibility(View.GONE);
+        }
+        if (isCricket && isFootball) {
+            parentEmpty.setVisibility(View.GONE);
+        }
     }
 
     /* private void searchNews(String s) {
@@ -99,26 +173,17 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
         layout.setVisibility(View.VISIBLE);
         TextView headingText = (TextView) layout.findViewById(R.id.oops);
         TextView messageText = (TextView) layout.findViewById(R.id.something_wrong);
-        TextView addText = (TextView) layout.findViewById(R.id.addteam);
         if (filter.equals(Constants.FILTER_TYPE_TEAM)) {
             headingText.setText("No Teams Selected");
             messageText.setText("Add your favourite teams \n to see more details");
         } else if (filter.equals(Constants.FILTER_TYPE_LEAGUE)) {
+
             headingText.setText("No Leagues Selected");
             messageText.setText("Add your favourite leagues \n to see more details");
         } else if (filter.equals(Constants.FILTER_TYPE_PLAYER)) {
             headingText.setText("No Players Selected");
             messageText.setText("Add your favourite players \n to see more details");
         }
-        addText.setText("ADD SPORTS");
-        addText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), SelectSportsActivity.class);
-                intent.putExtra(Constants.RESULT_REQUIRED, true);
-                getActivity().startActivityForResult(intent, Constants.REQUEST_CODE_ADD_SPORT);
-            }
-        });
     }
 
     private void hideErrorLayout(View view) {
@@ -137,14 +202,21 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
             } else if (filter.equals(Constants.FILTER_TYPE_LEAGUE)) {
                 favList = FavouriteItemWrapper.getInstance(getActivity()).getAllLeagues();
             }
-            if (favList.size() > 0) {
-                hideErrorLayout(getView());
-                filterAdapter = new FilterAdapter(getActivity(), favList);
-                mlistView.setAdapter(filterAdapter);
-            } else {
-                mlistView.setVisibility(View.INVISIBLE);
+            filterAdapter = new FilterAdapter(getActivity(), favList);
+            mlistView.setAdapter(filterAdapter);
+            if (favList.size() <= 0) {
                 showErrorLayout(getView());
+                parentEmpty.setVisibility(View.VISIBLE);
+                if (!filter.equals(Constants.FILTER_TYPE_LEAGUE) && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
+                    cricketLayout.setVisibility(View.VISIBLE);
+                }
+                if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
+                    footballLayout.setVisibility(View.VISIBLE);
+                }
+            } else {
+                initAddLayout();
             }
+
         } catch (Exception e) {
         }
     }

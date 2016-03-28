@@ -54,6 +54,8 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private boolean isResultRequired;
     public int fragmentNum = 0;
     public ViewPager pager;
+    private boolean isSingleUse;
+    private String sportsType;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,7 +66,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         sportsSelected = UserUtil.getSportsSelected();
         bundle = getIntent().getExtras();
         try {
-            isResultRequired = getIntent().getExtras().getBoolean(Constants.RESULT_REQUIRED);
+            isResultRequired = getIntent().getExtras().getBoolean(Constants.RESULT_REQUIRED, false);
+            isSingleUse = getIntent().getExtras().getBoolean(Constants.RESULT_SINGLE_USE, false);
+            sportsType = getIntent().getExtras().getString(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_CRICKET);
         } catch (NullPointerException booleanNull) {
 
         }
@@ -81,6 +85,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         Button skip = (Button) findViewById(R.id.skip);
         skip.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
         skip.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+        if (isSingleUse) {
+            skip.setVisibility(View.GONE);
+        }
         skip.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,7 +131,10 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
     private void handleNextClick() {
         FavouriteItemWrapper.getInstance(this).saveList(this, favList);
-        if (fragmentNum < sportsSelected.size()) {
+        if (isSingleUse) {
+            setResult(RESULT_OK, getIntent());
+            finish();
+        } else if (fragmentNum < sportsSelected.size()) {
             if (pager.getCurrentItem() < pager.getAdapter().getCount() - 1) {
                 pager.setCurrentItem(pager.getCurrentItem() + 1);
             } else {
@@ -320,7 +330,11 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         advancedFilterFragment = new AdvancedFilterFragment();
         advancedFilterFragment.setArguments(bundle);
         getSupportFragmentManager().beginTransaction().add(R.id.filter_container, advancedFilterFragment, bundle.getString(Constants.SPORTS_TYPE)).commit();
-        titleText.setText(CommonUtil.capitalize(sportsSelected.get(0)));
+        if (!isSingleUse) {
+            titleText.setText(CommonUtil.capitalize(sportsSelected.get(0)));
+        } else {
+            titleText.setText(CommonUtil.capitalize(sportsType));
+        }
 
     }
 

@@ -65,6 +65,7 @@ public class Constants {
     public static final String FILTER_SEARCH_EXTRA = "filter_search";
 
     public static final String RESULT_REQUIRED = "from_add_sports";
+    public static final String RESULT_SINGLE_USE = "single_use_result";
 
     public static final String COLOR_WHITE = "white";
     public static final String COLOR_BLUE = "blue";
@@ -96,10 +97,10 @@ public class Constants {
     public static final String INTENT_KEY_TEAM1_NAME = "team1";
     public static final String INTENT_KEY_TEAM2_NAME = "team2";
     public static final long TIMEINMILISECOND = 6000;
-    public static final String ERRORRESPONSE ="{\"success\":false,\"error\":true}";
+    public static final String ERRORRESPONSE = "{\"success\":false,\"error\":true}";
     public static final String LEAGUE_NAME = "leaague_name";
     public static final String ENABLE_LOCATION = "enable_location";
     public static final String CHECK_LOCATION = "location";
-    public static final String SENT_TOKEN_TO_SERVER = "token_sent_to_server" ;
+    public static final String SENT_TOKEN_TO_SERVER = "token_sent_to_server";
     public static final String INTENT_KEY_PLAYER_NAME = "player_name";
 }

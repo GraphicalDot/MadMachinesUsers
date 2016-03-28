@@ -223,7 +223,6 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         if (!TextUtils.isEmpty(name.getText().toString()) && !TextUtils.isEmpty(status.getText().toString())) {
             String nickname = name.getText().toString();
             String status = this.status.getText().toString();
-            Log.d("max", "Status is>" + status);
             String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
             String jid = TinyDB.getInstance(UserProfileActivity.this).getString(TinyDB.KEY_USER_JID);
 
