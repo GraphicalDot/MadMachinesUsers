@@ -5,13 +5,16 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.sports.unity.BuildConfig;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.util.CommonUtil;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
@@ -33,8 +36,10 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     private Context context;
     private Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
+    private  String UDID;
     public LocManager(Context context) {
         this.context = context;
+        UDID = CommonUtil.getDeviceId(context);
     }
 
     synchronized public static LocManager getInstance(Context context) {
@@ -116,7 +121,7 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     public void uploadLatLng(Location mLastLocation) {
         HttpURLConnection httpURLConnection = null;
-        url = base_url + TinyDB.getInstance(context).getString(TinyDB.KEY_USERNAME) + "@mm.io&lat=" + mLastLocation.getLatitude() + "&lng=" + mLastLocation.getLongitude();
+        url = base_url + TinyDB.getInstance(context).getString(TinyDB.KEY_USERNAME) + "@mm.io&lat=" + mLastLocation.getLatitude() + "&lng=" + mLastLocation.getLongitude()+"&apk_version="+ BuildConfig.VERSION_NAME+"&udid="+ UDID;
         try {
             URL sendData = new URL(url);
             httpURLConnection = (HttpURLConnection) sendData.openConnection();

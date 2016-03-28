@@ -365,12 +365,13 @@ public class MatchListFragment extends Fragment {
             for (int i = 0; i < matches.size(); i++) {
                 try {
                     JSONObject object = matches.get(i);
-                    if (!object.isNull("match_datetime_epoch")) {
-                        epochTime = object.getLong("match_datetime_epoch");
-                        day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
-                        leagueName = object.getString("league_name");
+
+                    if(!object.isNull("match_time") && Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(object.getString("type"))){
+                        epochTime = object.getLong("match_time");
+                        day=  DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
+                        leagueName = object.getString("series_name");
                         sportsType = object.getString("type");
-                    } else if (!object.isNull("match_date_epoch")) {
+                    } else {
                         epochTime = object.getLong("match_date_epoch");
                         sportsType = object.getString("type");
                         day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
@@ -395,10 +396,8 @@ public class MatchListFragment extends Fragment {
                             dayGroupDto = new MatchListWrapperDTO();
                             dayGroupList = new ArrayList<>();
 
-                        }
-
-
-                    } else {
+                       }
+                   }else{
 
                         leagueMapTemp = new HashMap<>();
                         dayGroupDto = new MatchListWrapperDTO();
@@ -421,9 +420,10 @@ public class MatchListFragment extends Fragment {
             }
             matchList.clear();
             Set<String> daySet = daysMap.keySet();
-
-            for (String dayKey : daySet) {
-                Map<String, MatchListWrapperDTO> leagueMaps = daysMap.get(dayKey);
+            Log.i("DAYMAP", "handleContent: "+daysMap);
+            for(String dayKey :daySet) {
+                Map<String, MatchListWrapperDTO > leagueMaps = daysMap.get(dayKey);
+                Log.i("LEAGUEMAP", "handleContent: "+leagueMaps);
                 Set<String> keySet = leagueMaps.keySet();
 
                 for (String key : keySet) {
@@ -436,6 +436,7 @@ public class MatchListFragment extends Fragment {
                 }
             }
             Collections.sort(matchList);
+            Log.i("MATCHLIST", "handleContent: " + matchList);
             matchListWrapperAdapter.notifyDataSetChanged();
         }
         return success;

@@ -6,11 +6,19 @@ import android.os.Parcelable;
 /**
  * Created by cfeindia on 4/2/16.
  */
-public class CommentriesModel implements Parcelable {
-private String comment;
+public class CommentriesModel implements Parcelable, Comparable<CommentriesModel> {
+    private  Long commentaryId;
+    private String comment;
     private String over;
     private String minute;
 
+    public Long getCommentaryId() {
+        return commentaryId;
+    }
+
+    public void setCommentaryId(Long commentaryId) {
+        this.commentaryId = commentaryId;
+    }
 
     public String getComment() {
         return comment;
@@ -70,5 +78,10 @@ private String comment;
         dest.writeString(minute);
 
 
+    }
+
+    @Override
+    public int compareTo(CommentriesModel another) {
+        return another.getCommentaryId().compareTo(this.getCommentaryId());
     }
 }

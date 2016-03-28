@@ -23,7 +23,7 @@ public class CricketLiveMatchSummaryHandler {
 
     private static final String REQUEST_TAG = "LIVE_SUMMARY_TAG";
     private static Context mContext;
-    private String BASEURL = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
+    private String BASEURL = "http://52.74.75.79:8080/v1/get_cricket_match_summary?season_key=%s&match_id=%s";
 
     private LiveCricketMatchSummaryContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -57,12 +57,13 @@ public class CricketLiveMatchSummaryHandler {
         }
     };
 
-    public void requestLiveMatchSummary(String matchId) {
+    public void requestLiveMatchSummary(String seriesId,String matchId) {
         Log.i("Score Detail", "Request Score Details");
-        String url = BASEURL+matchId;
+        String url = String.format(BASEURL, seriesId,matchId);
         StringRequest stringRequest = null;
         //RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
+        VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
         VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
 
         requestInProcess.add(REQUEST_TAG);

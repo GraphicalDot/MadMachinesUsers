@@ -20,6 +20,7 @@ public class DateUtil {
     private static final SimpleDateFormat DATE_FORMAT =  new SimpleDateFormat("dd MMMM yyyy");
     private static final SimpleDateFormat formatter_DD_MM_YYYY =  new SimpleDateFormat("dd-MM-yyyy");
     private static final SimpleDateFormat TIME_FORMAT =  new SimpleDateFormat("HH:mm");
+    private static final SimpleDateFormat DATE_TIME_FORMAT =  new SimpleDateFormat("EEE, MMMM dd yyyy HH:mm");
     public  static String getDaysDiffrence(String oldDate,Context context){
         String days;
         Calendar with = getCalendar(oldDate);
@@ -132,6 +133,35 @@ public class DateUtil {
 
         return days;
     }
+    public static String getDateFromEpochTime(long l) {
+        String days = "";
+        Calendar to = Calendar.getInstance();
+        TimeZone tz = to.getTimeZone();
+        Calendar with = Calendar.getInstance();
+        with.setTimeInMillis(l);
+        with.setTimeZone(tz);
+
+        to.set(Calendar.YEAR, with.get(Calendar.YEAR));
+        int withDAY = with.get(Calendar.DAY_OF_YEAR);
+        int toDAY = to.get(Calendar.DAY_OF_YEAR);
+
+        int diffDay =  withDAY-toDAY   ;
+       /* if(diffDay == 0){
+            days = context.getString(R.string.today);
+        } else if (diffDay == 1)
+        {
+            days = context.getString(R.string.tomorrow);
+        }else  if(diffDay == -1){
+            days = context.getString(R.string.yesterday);
+        }else {
+
+
+
+        }*/
+        Date utilDate = with.getTime();
+        days = DATE_TIME_FORMAT.format(utilDate);
+        return days;
+    }
 
     public static String getFormattedDateDDMMYYYY(String oldDate){
 
@@ -147,5 +177,15 @@ public class DateUtil {
             date = oldDate;
         }
         return  date;
+    }
+    public static String getCurrentTime() {
+        Calendar with = Calendar.getInstance();
+        return TIME_FORMAT.format(with.getTime());
+    }
+    public static String getMatchTimeWithIST(long l) {
+
+        Calendar with = Calendar.getInstance();
+        with.setTimeInMillis(l);
+        return TIME_FORMAT.format(with.getTime());
     }
 }

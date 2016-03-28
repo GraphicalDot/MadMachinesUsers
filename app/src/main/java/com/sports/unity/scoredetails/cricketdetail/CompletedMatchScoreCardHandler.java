@@ -23,7 +23,7 @@ import java.util.HashSet;
 public class CompletedMatchScoreCardHandler {
     private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
     private static Context mContext;
-    private String BASEURL = "http://52.74.75.79:8080/get_cricket_match_scorecard?match_key=";
+    private String BASEURL = "http://52.74.75.79:8080/v1/get_match_scorecard?season_key=%s&match_id=%s";
 
     private CompletedMatchContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -40,7 +40,7 @@ public class CompletedMatchScoreCardHandler {
     public interface CompletedMatchContentListener {
 
         void handleContent(String object);
-        void handleError();
+       // void handleError();
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -59,11 +59,11 @@ public class CompletedMatchScoreCardHandler {
         }
     };
 
-    public void requestCompletdMatchScoreCard(String matchId) {
+    public void requestCompletdMatchScoreCard(String seriesId,String matchId) {
         Log.i("Score Detail", "Request Score Details");
-         String url = BASEURL+matchId;
+        String url = String.format(BASEURL,seriesId,matchId);
         StringRequest stringRequest = null;
-        //RequestQueue queue = Volley.newRequestQueue(mContext);
+       // RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
         VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
 
