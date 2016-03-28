@@ -132,7 +132,6 @@
         android:layout_below="@id/seperator"
         android:background="@android:color/white">
 
-
         <FrameLayout
             android:id="@+id/childFragmentContainer"
             android:layout_width="match_parent"
@@ -149,37 +148,37 @@
             android:focusable="true"
             android:visibility="gone" />
 
-        <com.github.clans.fab.FloatingActionMenu
-            android:id="@+id/fab_menu"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            fab:menu_colorNormal="@color/app_theme_blue"
-            fab:menu_labels_colorNormal="@android:color/white"
-            fab:menu_labels_textColor="@android:color/black">
+        <!--<com.github.clans.fab.FloatingActionMenu-->
+        <!--android:id="@+id/fab_menu"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="bottom|right"-->
+        <!--android:layout_marginBottom="@dimen/activity_vertical_margin"-->
+        <!--android:layout_marginLeft="@dimen/activity_horizontal_margin"-->
+        <!--android:layout_marginRight="@dimen/activity_horizontal_margin"-->
+        <!--fab:menu_colorNormal="@color/app_theme_blue"-->
+        <!--fab:menu_labels_colorNormal="@android:color/white"-->
+        <!--fab:menu_labels_textColor="@android:color/black">-->
 
-            <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/create_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_create_group"
-                app:fab_colorNormal="@color/create_group"
-                fab:fab_label="Create Group"
-                fab:fab_size="mini" />
+        <!--<com.github.clans.fab.FloatingActionButton-->
+        <!--android:id="@+id/create_group"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@drawable/ic_create_group"-->
+        <!--app:fab_colorNormal="@color/create_group"-->
+        <!--fab:fab_label="Create Group"-->
+        <!--fab:fab_size="mini" />-->
 
-            <com.github.clans.fab.FloatingActionButton
-                android:id="@+id/people_around_me"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_ppl_around_me"
-                app:fab_colorNormal="@color/people_around_me"
-                fab:fab_label="People around me"
-                fab:fab_size="mini" />
+        <!--<com.github.clans.fab.FloatingActionButton-->
+        <!--android:id="@+id/people_around_me"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:src="@drawable/ic_ppl_around_me"-->
+        <!--app:fab_colorNormal="@color/people_around_me"-->
+        <!--fab:fab_label="People around me"-->
+        <!--fab:fab_size="mini" />-->
 
-        </com.github.clans.fab.FloatingActionMenu>
+        <!--</com.github.clans.fab.FloatingActionMenu>-->
 
     </android.support.design.widget.CoordinatorLayout>
 </RelativeLayout>

@@ -48,10 +48,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.File;
 
+import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
+
 /**
  * Created by madmachines on 8/9/15.
  */
-public class ChatScreenAdapter extends BaseAdapter {
+public class ChatScreenAdapter extends BaseAdapter implements StickyListHeadersAdapter {
 
     private ArrayList<Message> messageList;
 //    private ArrayList<Integer> messageListForFilter = new ArrayList<>();
@@ -167,6 +169,43 @@ public class ChatScreenAdapter extends BaseAdapter {
             }
         }
         return nextPosition;
+    }
+
+    @Override
+    public View getHeaderView(int position, View convertView, ViewGroup parent) {
+        LayoutInflater inflater = (LayoutInflater) activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        HeaderViewHolder holder;
+        if (convertView == null) {
+            holder = new HeaderViewHolder();
+            convertView = inflater.inflate(R.layout.timelabel_chatscreen, parent, false);
+            holder.text = (TextView) convertView.findViewById(R.id.list_header_title);
+            convertView.setTag(holder);
+        } else {
+            holder = (HeaderViewHolder) convertView.getTag();
+        }
+
+        String headerText = "";
+        if (getHeaderId(position) == 0) {
+            headerText = CommonUtil.getDefaultTimezoneTime(Long.parseLong(messageList.get(position).sendTime));
+        } else {
+            headerText = "Today";
+        }
+        holder.text.setText(headerText);
+        return convertView;
+    }
+
+    @Override
+    public long getHeaderId(int position) {
+        Message message = messageList.get(position);
+        if (CommonUtil.getTimeDifference(Long.parseLong(message.sendTime)) > 0) {
+            return 0;         //older messages than today since time difference between message time and current time is greater than 1 day
+        } else {
+            return 1;         //today's messages
+        }
+    }
+
+    class HeaderViewHolder {
+        TextView text;
     }
 
     public static class ViewHolder {

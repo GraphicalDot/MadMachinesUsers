@@ -205,8 +205,7 @@ public class ContactsHandler {
                     while (phoneCursor.moveToNext()) {
                         phoneNumber = phoneCursor.getString(phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
-                        phoneNumber = removeExtraCharacters(phoneNumber);
-                        phoneNumber = checkAndUpdateCountryCode(phoneNumber);
+                        phoneNumber = checkAndUpdateCountryCode(phoneNumber, context);
 
                         if (isValidPhoneNumber(phoneNumber)) {
                             SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
@@ -244,11 +243,23 @@ public class ContactsHandler {
         return true;
     }
 
-    private String checkAndUpdateCountryCode(String phoneNumber) {
+    private String checkAndUpdateCountryCode(String phoneNumber, Context context) {
         String countryCode = UserUtil.getCountryCode();
-        if (phoneNumber.startsWith("+" + countryCode) || phoneNumber.startsWith(countryCode)) {
-
+        int requiredLength = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_MOBILE_NUMBER).length();
+        if (phoneNumber.startsWith("+") || phoneNumber.startsWith("00")) {
+            phoneNumber = removeExtraCharacters(phoneNumber);
+            if (phoneNumber.startsWith("00")) {
+                phoneNumber = phoneNumber.substring(2, phoneNumber.length());
+            }
         } else {
+            phoneNumber = removeExtraCharacters(phoneNumber);
+            StringBuffer buffer = new StringBuffer(phoneNumber);
+            phoneNumber = buffer.reverse().toString();
+            if (phoneNumber.length() >= requiredLength) {
+                phoneNumber = phoneNumber.substring(0, requiredLength);
+            }
+            buffer = new StringBuffer(phoneNumber);
+            phoneNumber = buffer.reverse().toString();
             phoneNumber = countryCode + phoneNumber;
         }
         return phoneNumber;
@@ -420,7 +431,7 @@ public class ContactsHandler {
             inProcess = true;
             try {
                 processPendingActions(context);
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
