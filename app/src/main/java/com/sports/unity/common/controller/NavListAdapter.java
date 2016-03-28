@@ -69,10 +69,10 @@ public class NavListAdapter extends BaseExpandableListAdapter {
             }
             if (childItems.get(childPosition).getName().toLowerCase().equals(Constants.GAME_KEY_CRICKET.toLowerCase())) {
                 iv.setVisibility(View.VISIBLE);
-                iv.setImageResource(R.drawable.ic_cricket);
+                iv.setImageResource(R.drawable.ic_cricket_group);
             } else if (childItems.get(childPosition).getName().toLowerCase().equals(Constants.GAME_KEY_FOOTBALL.toLowerCase())) {
                 iv.setVisibility(View.VISIBLE);
-                iv.setImageResource(R.drawable.ic_football);
+                iv.setImageResource(R.drawable.ic_football_group);
             }
         } else {
             textView.setText("No favourites added");
