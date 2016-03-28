@@ -226,7 +226,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
     private void deleteSingleChat(Chats chatObject) {
         int contactId = chatObject.contactId;
         SportsUnityDBHelper.getInstance(getActivity()).clearChat(getActivity(), chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
-        SportsUnityDBHelper.getInstance(getActivity()).clearChatEntry(chatObject.chatid);
+        SportsUnityDBHelper.getInstance(getActivity()).clearChatEntry(chatObject.chatid, chatObject.groupServerId);
 
         NotificationHandler.getInstance(getActivity().getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid));
 

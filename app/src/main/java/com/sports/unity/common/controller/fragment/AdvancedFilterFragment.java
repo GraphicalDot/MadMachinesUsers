@@ -10,12 +10,9 @@ import android.view.ViewGroup;
 
 import com.sports.unity.R;
 import com.sports.unity.common.controller.AdvancedFilterActivity;
-import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.common.view.SlidingTabStrip;
 import com.sports.unity.util.Constants;
-
-import java.util.ArrayList;
 
 import uk.co.deanwild.materialshowcaseview.MaterialShowcaseSequence;
 import uk.co.deanwild.materialshowcaseview.ShowcaseConfig;
@@ -60,7 +57,7 @@ public class AdvancedFilterFragment extends Fragment {
         ViewPager pager = (ViewPager) view.findViewById(R.id.pager);
         pager.setOffscreenPageLimit(2);
         pager.setAdapter(filterPagerAdapter);
-        ((AdvancedFilterActivity)getActivity()).setUpViewPager(pager);
+        ((AdvancedFilterActivity) getActivity()).setUpViewPager(pager);
 
         SlidingTabLayout tabs = (SlidingTabLayout) view.findViewById(R.id.tabs);
         tabs.setDistributeEvenly(true);
@@ -79,16 +76,15 @@ public class AdvancedFilterFragment extends Fragment {
         ShowcaseConfig config = new ShowcaseConfig();
         config.setDelay(500); // half second between each showcase view
         final MaterialShowcaseSequence sequence = new MaterialShowcaseSequence(getActivity(), SHOWCASE_ID);
-        sequence.addSequenceItem(((AdvancedFilterActivity) getActivity()).search, getActivity().getResources().getString(R.string.showcase_heading), getActivity().getResources().getString(R.string.showcase_message), getActivity().getResources().getString(R.string.got_it));
+        sequence.addSequenceItem(((AdvancedFilterActivity) getActivity()).search, getActivity().getResources().getString(R.string.showcase_heading), getActivity().getResources().getString(R.string.showcase_message), getActivity().getResources().getString(R.string.next_showcase_preview_text));
         for (int i = 0; i < strip.getChildCount(); i++) {
             if (strip.getChildCount() < 3) {
-                sequence.addSequenceItemWithRectShape(strip.getChildAt(i), heading[i + 1], message[i + 1], getActivity().getResources().getString(R.string.got_it));
+                sequence.addSequenceItemWithRectShape(strip.getChildAt(i), heading[i + 1], message[i + 1], getActivity().getResources().getString(R.string.next_showcase_preview_text));
             } else {
-                sequence.addSequenceItemWithRectShape(strip.getChildAt(i), heading[i], message[i], getActivity().getResources().getString(R.string.got_it));
+                sequence.addSequenceItemWithRectShape(strip.getChildAt(i), heading[i], message[i], getActivity().getResources().getString(R.string.next_showcase_preview_text));
             }
         }
         sequence.start();
-
     }
 
 }
