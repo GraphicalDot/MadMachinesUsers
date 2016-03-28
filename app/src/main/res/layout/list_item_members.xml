@@ -48,7 +48,6 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="@dimen/horizontal_padding_small"
         android:background="@android:color/transparent"
-        android:button="@drawable/favourite_checkbox"
         android:clickable="false"
         android:focusable="false"
         android:gravity="center|right" />

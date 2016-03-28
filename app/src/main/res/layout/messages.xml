@@ -20,7 +20,7 @@
             android:id="@+id/fragmentChangeButtonLayout"
             style="?android:attr/buttonBarButtonStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/drawer_flag_height"
             android:background="@drawable/btn_chat_focused">
 
             <LinearLayout

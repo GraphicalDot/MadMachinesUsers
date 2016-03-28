@@ -73,8 +73,8 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
             status.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoLight());
 
             if (itemLayoutId == R.layout.list_contact_msgs) {
-                Button invite = (Button) rowView.findViewById(R.id.btn_invite);
-                invite.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
+                TextView invite = (TextView) rowView.findViewById(R.id.btn_invite);
+                invite.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoCondensedBold());
 
                 if (contacts.isRegistered()) {
                     invite.setVisibility(View.INVISIBLE);

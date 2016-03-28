@@ -26,7 +26,7 @@
     <string name="title_activity_enter_otp">EnterOtp</string>
     <string name="contacts">Contacts</string>
     <string name="others">OTHERS</string>
-    <string name="friends">FRIENDS</string>
+    <string name="friends">CHATS</string>
     <string name="title_activity_enter_phone">EnterPhone</string>
     <string name="title_activity_profile_creation">ProfileCreationActivity</string>
     <string name="title_activity_select_sports">SelectSportsActivity</string>
@@ -40,7 +40,7 @@
 
 
     <string name="start_messaging_others">To start messaging contacts who have Sports Unity, people around me and get started</string>
-    <string name="btn_invite">invite</string>
+    <string name="btn_invite">INVITE</string>
     <string name="activeStatus">Active_status</string>
     <string name="username">name</string>
     <string name="lastMessage">lastmessage</string>
@@ -131,8 +131,7 @@
     <string name="group_title_add_group_participanats">ADD GROUP PARTICIPANTS</string>
     <string name="enter_phone_number_text">Enter Your Phone Number</string>
     <string name="enter_phone_number_text_details">Sports Unity will send a one time SMS
-message to verify your phone number.
-Carrier SMS charges may apply.</string>
+message to verify your mobile number.</string>
     <string name="chat_activity_username">chat_username</string>
     <string name="chat_activity_status">tap here for contact info</string>
     <string name="group_chat_receive_time">8:02 pm</string>
