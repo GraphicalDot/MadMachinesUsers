@@ -399,7 +399,6 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                 }
             }
         }
-
         if (teamSecondInnings!=null) {
 
             JSONArray teamBBattingArray =  null;

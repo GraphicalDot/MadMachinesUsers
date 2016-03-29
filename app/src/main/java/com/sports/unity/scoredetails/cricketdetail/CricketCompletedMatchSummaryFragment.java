@@ -105,13 +105,13 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
        ivPlayerProfileView.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               if(cricketMatchSummaryParser!=null){
+               if (cricketMatchSummaryParser != null) {
                    try {
-                       String playerId =   cricketMatchSummaryParser.getPlayerId();
+                       String playerId = cricketMatchSummaryParser.getPlayerId();
                        Intent i = new Intent(getContext(), PlayerCricketBioDataActivity.class);
-                       i.putExtra(Constants.INTENT_KEY_ID,playerId);
+                       i.putExtra(Constants.INTENT_KEY_ID, playerId);
                        startActivity(i);
-                   }catch (Exception e){
+                   } catch (Exception e) {
                        e.printStackTrace();
                    }
 
@@ -119,7 +119,23 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
 
            }
        });
+        playerName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(cricketMatchSummaryParser!=null){
+                    try {
+                        String playerId =   cricketMatchSummaryParser.getPlayerId();
+                        Intent i = new Intent(getContext(), PlayerCricketBioDataActivity.class);
+                        i.putExtra(Constants.INTENT_KEY_ID,playerId);
+                        startActivity(i);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
 
+                }
+
+            }
+        });
 
 
     }

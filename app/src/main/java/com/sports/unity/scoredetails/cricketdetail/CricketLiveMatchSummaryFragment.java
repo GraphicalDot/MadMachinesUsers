@@ -140,6 +140,11 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             });
 
 
+
+
+
+
+
             initProgress(view);
             initErrorLayout(view);
         } catch (Exception e) {

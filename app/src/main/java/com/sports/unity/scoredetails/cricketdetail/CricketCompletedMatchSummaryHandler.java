@@ -73,8 +73,10 @@ public class CricketCompletedMatchSummaryHandler {
         try{
 
             Log.i("Score Card", "handleResponse: ");
+                   if(mcontentListener!=null){
+                       mcontentListener.handleContent(response);
+                   }
 
-                mcontentListener.handleContent(response);
 
         } catch (Exception e) {
             e.printStackTrace();
