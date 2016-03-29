@@ -1,6 +1,7 @@
 package com.sports.unity.scoredetails.cricketdetail;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 
 import com.sports.unity.R;
+import com.sports.unity.playerprofile.cricket.PlayerCricketBioDataActivity;
 import com.sports.unity.scoredetails.cricketdetail.JsonParsers.CricketMatchScoreJsonParser;
 import com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters.LiveAndCompletedCricketBattingCardAdapter;
 import com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters.LiveAndCompletedCricketBattingCardDTO;
@@ -39,7 +41,7 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 
 public class CompletedMatchScoreCardFragment extends Fragment implements CompletedMatchScoreCardHandler.CompletedMatchContentListener{
-
+    private Context mContext;
     private TextView tvFirstTeamInning;
     private TextView tvSecondTeamInning;
     private ImageView ivDwn;
@@ -94,7 +96,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         super.onAttach(context);
         matchId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
         seriesId=  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_SERIES);
-
+        mContext = context;
         completedMatchScoreCardHandler = CompletedMatchScoreCardHandler.getInstance(context);
         completedMatchScoreCardHandler.addListener(this);
         completedMatchScoreCardHandler.requestCompletdMatchScoreCard(seriesId, matchId);
@@ -145,21 +147,21 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
         teamBBowlingRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
         teamBFallOfWicketRecycler = (RecyclerView) view.findViewById(R.id.rv_second_team_fall_wicket);
         teamBFallOfWicketRecycler.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
-        teamABattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamABattingCardList);
+        teamABattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamABattingCardList,mContext);
         teamABattingRecycler.setAdapter(teamABattingAdapter);
         teamABattingRecycler.setNestedScrollingEnabled(false);
-        teamBBattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamBBattingCardList);
+        teamBBattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamBBattingCardList,mContext);
         teamBBattingRecycler.setAdapter(teamBBattingAdapter);
         teamBBattingRecycler.setNestedScrollingEnabled(false);
-        teamABowlingAdapter = new LiveAndCompletedCricketBowlingCardAdapter(teamABowlingCardList);
+        teamABowlingAdapter = new LiveAndCompletedCricketBowlingCardAdapter(teamABowlingCardList,mContext);
         teamABowlingRecycler.setAdapter(teamABowlingAdapter);
         teamABowlingRecycler.setNestedScrollingEnabled(false);
-        teamBBowlingAdapter = new LiveAndCompletedCricketBowlingCardAdapter(teamBBowlingCardList);
+        teamBBowlingAdapter = new LiveAndCompletedCricketBowlingCardAdapter(teamBBowlingCardList,mContext);
         teamBBowlingRecycler.setAdapter(teamBBowlingAdapter);
-        teamAFallOfWicketAdapter = new LiveAndCompletedCricketFallOfWicketAdapter(teamAFallOfWicketCardList);
+        teamAFallOfWicketAdapter = new LiveAndCompletedCricketFallOfWicketAdapter(teamAFallOfWicketCardList,mContext);
         teamAFallOfWicketRecycler.setAdapter(teamAFallOfWicketAdapter);
         teamAFallOfWicketRecycler.setNestedScrollingEnabled(false);
-        teamBFallOfWicketAdapter = new LiveAndCompletedCricketFallOfWicketAdapter(teamBFallOfWicketCardList);
+        teamBFallOfWicketAdapter = new LiveAndCompletedCricketFallOfWicketAdapter(teamBFallOfWicketCardList,mContext);
         teamBFallOfWicketRecycler.setAdapter(teamBFallOfWicketAdapter);
         teamBFallOfWicketRecycler.setNestedScrollingEnabled(false);
         initErrorLayout(view);
@@ -194,6 +196,8 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                 showhideTeamSecondScoreCard();
             }
         });
+
+
 
     }
 

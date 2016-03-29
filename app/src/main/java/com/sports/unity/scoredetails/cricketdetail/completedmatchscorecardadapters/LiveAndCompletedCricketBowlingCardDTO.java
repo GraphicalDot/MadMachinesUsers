@@ -6,12 +6,21 @@ import android.widget.TextView;
  * Created by madmachines on 18/2/16.
  */
 public class LiveAndCompletedCricketBowlingCardDTO {
+    private String playerId;
     private String tvBowlerName;
     private String tvOver;
     private String tvMiddenOver;
     private String tvRuns;
     private String tvWicket;
     private String tvExtra;
+
+    public String getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(String playerId) {
+        this.playerId = playerId;
+    }
 
     public String getTvBowlerName() {
         return tvBowlerName;

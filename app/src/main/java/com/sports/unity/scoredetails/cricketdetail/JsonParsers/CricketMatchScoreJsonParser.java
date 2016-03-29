@@ -126,6 +126,14 @@ public class CricketMatchScoreJsonParser  extends JsonObjectCaller{
         else
             return  "";
     }
+    public String getBatsManId() throws  JSONException{
+        if(!battingObject.isNull("batsman_id"))
+            return  battingObject.getString("batsman_id");
+        else
+            return  "";
+    }
+
+
 
     public String getBatsManFours() throws  JSONException{
         if(!battingObject.isNull("four"))
@@ -168,6 +176,12 @@ public class CricketMatchScoreJsonParser  extends JsonObjectCaller{
     public String getBowlerName() throws  JSONException{
         if(!bowllingObject.isNull("bowler_name"))
             return  bowllingObject.getString("bowler_name");
+        else
+            return  "";
+    }
+    public String getBowlerId() throws  JSONException{
+        if(!bowllingObject.isNull("bowler_id"))
+            return  bowllingObject.getString("bowler_id");
         else
             return  "";
     }

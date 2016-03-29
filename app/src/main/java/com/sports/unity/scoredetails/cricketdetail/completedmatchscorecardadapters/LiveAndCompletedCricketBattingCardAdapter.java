@@ -1,5 +1,7 @@
 package com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sports.unity.R;
+import com.sports.unity.playerprofile.cricket.PlayerCricketBioDataActivity;
+import com.sports.unity.util.Constants;
 
 import java.util.List;
 
@@ -16,9 +20,11 @@ import java.util.List;
 public class LiveAndCompletedCricketBattingCardAdapter extends RecyclerView.Adapter<LiveAndCompletedCricketBattingCardAdapter.ViewHolder> {
 
     private final List<LiveAndCompletedCricketBattingCardDTO> mValues;
+    private Context context;
 
-    public LiveAndCompletedCricketBattingCardAdapter(List<LiveAndCompletedCricketBattingCardDTO> mValues) {
+    public LiveAndCompletedCricketBattingCardAdapter(List<LiveAndCompletedCricketBattingCardDTO> mValues,Context context) {
         this.mValues = mValues;
+        this.context = context;
     }
 
     @Override
@@ -37,6 +43,28 @@ public class LiveAndCompletedCricketBattingCardAdapter extends RecyclerView.Adap
         holder.tvSixGainByPlayer.setText(holder.dto.getTvSixGainByPlayer());
         holder.tvWicketBy.setText(holder.dto.getTvWicketBy());
         holder.tvSrRateOfPlayer.setText(holder.dto.getTvSrRateOfPlayer());
+        final String playerId = holder.dto.getPlayerId();
+        holder.tvPlayerName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                    try {
+
+                        Intent i = new Intent(context, PlayerCricketBioDataActivity.class);
+                        i.putExtra(Constants.INTENT_KEY_ID, playerId);
+                        v.getContext().startActivity(i);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                }
+
+
+        });
+
+
+
+
     }
 
     @Override

@@ -31,6 +31,7 @@ public class CricketMatchScoreCardUtil {
         LiveAndCompletedCricketBowlingCardDTO bowling = new LiveAndCompletedCricketBowlingCardDTO();
         bowling.setTvRuns(cricketMatchScoreJsonParser.getBowlerRuns());
         bowling.setTvBowlerName(cricketMatchScoreJsonParser.getBowlerName());
+        bowling.setPlayerId(cricketMatchScoreJsonParser.getBowlerId());
         bowling.setTvExtra(cricketMatchScoreJsonParser.getBowlerExtra());
         bowling.setTvMiddenOver(cricketMatchScoreJsonParser.getBowlerMaidenOvers());
         bowling.setTvWicket(cricketMatchScoreJsonParser.getBowlerWicket());
@@ -42,6 +43,7 @@ public class CricketMatchScoreCardUtil {
     public static LiveAndCompletedCricketBattingCardDTO getLiveAndCompletedCricketBattingCardDTO(CricketMatchScoreJsonParser cricketMatchScoreJsonParser, JSONObject battingObject) throws JSONException {
         cricketMatchScoreJsonParser.setBattingObject(battingObject);
         LiveAndCompletedCricketBattingCardDTO liveAndCompletedCricketBattingCardDTO = new LiveAndCompletedCricketBattingCardDTO();
+        liveAndCompletedCricketBattingCardDTO.setPlayerId(cricketMatchScoreJsonParser.getBatsManId());
         liveAndCompletedCricketBattingCardDTO.setTvPlayerName(cricketMatchScoreJsonParser.getBatsManName());
         liveAndCompletedCricketBattingCardDTO.setTvBallPlayByPlayer(cricketMatchScoreJsonParser.getBall());
         liveAndCompletedCricketBattingCardDTO.setTvSrRateOfPlayer(cricketMatchScoreJsonParser.getBatsManStrikeRate());
