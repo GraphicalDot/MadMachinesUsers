@@ -31,13 +31,15 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="2.8"
-                    android:padding="@dimen/vertical_padding_very_very_small"
+                    android:layout_margin="@dimen/vertical_padding_very_very_small"
                     android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:padding="@dimen/horizontal_padding_very_very_small"
+                        android:paddingTop="@dimen/horizontal_padding_very_small"
+                        android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
+                        android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
 
                         android:orientation="horizontal">
 
@@ -46,12 +48,12 @@
                             android:layout_marginLeft="@dimen/horizontal_padding_small"
                             android:layout_width="@dimen/flag_size_small"
                             android:layout_height="@dimen/flag_size_small"
+                            android:src="@drawable/ic_no_img"
                             />
 
                         <android.support.percent.PercentRelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center">
+                            android:layout_height="match_parent">
 
                             <TextView
                                 android:id="@+id/team1"
@@ -60,8 +62,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentLeft="true"
                                 android:paddingLeft="@dimen/vertical_padding_very_small"
+                                android:layout_centerVertical="true"
                                 android:singleLine="true"
-                                android:text="USA"
+                                android:text=""
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
                                 />
@@ -69,6 +72,7 @@
                                 android:id="@+id/ll_first_score"
                                 perc:layout_widthPercent="35%"
                                 android:layout_width="0dp"
+                                android:layout_centerVertical="true"
                                 android:layout_alignParentRight="true"
                                 android:paddingLeft="@dimen/vertical_padding_very_very_small"
                                 android:orientation="vertical"
@@ -98,10 +102,12 @@
                         </android.support.percent.PercentRelativeLayout>
                     </LinearLayout>
                     <LinearLayout
-                        android:paddingLeft="@dimen/horizontal_padding_very_very_small"
-                        android:paddingRight="@dimen/horizontal_padding_very_very_small"
+                        android:paddingTop="@dimen/horizontal_padding_very_small"
+                        android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
+                        android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+
                         android:orientation="horizontal">
 
                         <ImageView
@@ -109,12 +115,12 @@
                             android:layout_marginLeft="@dimen/horizontal_padding_small"
                             android:layout_width="@dimen/flag_size_small"
                             android:layout_height="@dimen/flag_size_small"
+                            android:src="@drawable/ic_no_img"
                             />
 
                         <android.support.percent.PercentRelativeLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="center">
+                            android:layout_height="match_parent">
                             <TextView
                                 android:id="@+id/team2"
                                 perc:layout_widthPercent="65%"
@@ -122,8 +128,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentLeft="true"
                                 android:paddingLeft="@dimen/vertical_padding_very_small"
+                                android:layout_centerVertical="true"
                                 android:singleLine="true"
-                                android:text="Canada"
+                                android:text=""
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
                                 />
@@ -170,11 +177,10 @@
                     android:paddingBottom="@dimen/horizontal_padding_very_very_small"
                     android:orientation="vertical"
                     >
-                    <TextView
+                    <com.sports.unity.common.view.CustomRobotoRegularTextView
                         android:id="@+id/minutes"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
                         android:gravity="center"
                         android:text=""
                         android:textColor="@color/green"
@@ -190,23 +196,19 @@
                         android:textColor="@color/gray1"
                         android:textSize="@dimen/font_size_very_very_small"
                         />
-                    <TextView
+                    <com.sports.unity.common.view.CustomRobotoRegularTextView
                         android:id="@+id/liveText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
                         android:text="@string/live"
                         android:textColor="@color/app_theme_blue"
                         android:textSize="@dimen/font_size_small_large"
                         />
                     <com.sports.unity.common.view.CustomRobotoMediumTextView
                         android:id="@+id/matchDay"
+                        android:layout_marginBottom="@dimen/vertical_padding_very_very_small"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:gravity="center"
-                        android:paddingBottom="@dimen/vertical_padding_very_very_small"
                         android:text=""
                         android:textColor="@color/gray1"
                         android:textSize="@dimen/font_size_very_small"
@@ -217,14 +219,12 @@
                         android:id="@+id/show_odds"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
                         android:paddingLeft="@dimen/horizontal_padding_very_very_small"
                         android:paddingRight="@dimen/horizontal_padding_very_very_small"
                         android:background="@drawable/round_edge_box_blue"
-                        android:gravity="center"
                         android:text="@string/show_odds"
                         android:textColor="@color/ColorPrimary"
-                        android:textSize="@dimen/font_size_very_very_small"
+                        android:textSize="@dimen/font_size_very_small"
 
                         />
                 </LinearLayout>
