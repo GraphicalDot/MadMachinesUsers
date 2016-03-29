@@ -20,7 +20,10 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:visibility="gone">
-
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray3"></ImageView>
             <ImageView
                 android:id="@+id/flag_cricket"
                 android:layout_width="wrap_content"
@@ -46,8 +49,7 @@
                 android:textColor="@color/gray2"
                 android:textSize="@dimen/font_size_small_xlarge"
                 android:textStyle="bold" />
-
-            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+            <com.sports.unity.common.view.CustomRobotoSlabRegularTextView
                 android:id="@+id/edit_cricket"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -66,11 +68,6 @@
                 android:visibility="visible" />
         </RelativeLayout>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/gray3"></ImageView>
-
         <RelativeLayout
             android:id="@+id/football_layout"
             android:layout_width="match_parent"
@@ -78,7 +75,10 @@
             android:gravity="center"
             android:orientation="horizontal"
             android:visibility="gone">
-
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray3"></ImageView>
             <ImageView
                 android:id="@+id/flag_football"
                 android:layout_width="wrap_content"
@@ -104,8 +104,7 @@
                 android:textColor="@color/gray2"
                 android:textSize="@dimen/font_size_small_xlarge"
                 android:textStyle="bold" />
-
-            <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+            <com.sports.unity.common.view.CustomRobotoSlabRegularTextView
                 android:id="@+id/edit_football"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -125,7 +124,7 @@
         </RelativeLayout>
 
         <ImageView
-            android:id="@+id/seprator"
+            android:id="@+id/sep_bottom"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/gray3"></ImageView>
