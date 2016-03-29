@@ -148,6 +148,10 @@ public class UserProfileHandler {
     }
 
     VCard loadVCardAndUpdateDB(Context context, String jid){
+        return loadVCardAndUpdateDB(context, jid, true);
+    }
+
+    VCard loadVCardAndUpdateDB(Context context, String jid, boolean isAvailableInMyContacts){
         VCard card = new VCard();
         try {
             card.load(XMPPClient.getConnection(), jid + "@" + XMPPClient.SERVICE_NAME);
@@ -156,7 +160,11 @@ public class UserProfileHandler {
             byte[] image = card.getAvatar();
             String nickname = card.getNickName();
 
-            SportsUnityDBHelper.getInstance(context).updateContacts( jid, image, status);
+            if( isAvailableInMyContacts ) {
+                SportsUnityDBHelper.getInstance(context).updateContacts(jid, image, status);
+            } else {
+                SportsUnityDBHelper.getInstance(context).updateContacts(jid, nickname, image, status);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             card = null;

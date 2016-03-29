@@ -39,7 +39,8 @@ public class ContactsHandler {
     private static final int CONTACT_PENDING_ACTION_FETCH_JID = 5;
     private static final int CONTACT_PENDING_ACTION_ADD_NEW_CONTACTS = 7;
     private static final int CONTACT_PENDING_ACTION_UPDATE_USER_FAVORITES = 11;
-    private ContactCopyCompletedListener copyCompletedListener;
+    private static final int CONTACT_PENDING_ACTION_UPDATE_VCARD = 17;
+
     private static final int CONTACT_PENDING_ACTION_DEFAULT_VALUE = CONTACT_PENDING_ACTION_COPY_LOCALLY * CONTACT_PENDING_ACTION_FETCH_JID;
 
     private static ContactsHandler CONTACT_HANDLER = null;
@@ -53,6 +54,7 @@ public class ContactsHandler {
 
     private Roster roster = null;
     private boolean inProcess = false;
+    private ContactCopyCompletedListener copyCompletedListener;
 
     private ContactsHandler() {
 
@@ -90,6 +92,16 @@ public class ContactsHandler {
 
     synchronized public void addCallToUpdateUserFavorites(Context context) {
         addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_UPDATE_USER_FAVORITES);
+
+        if (!inProcess) {
+            process(context);
+        } else {
+            //nothing
+        }
+    }
+
+    synchronized public void addCallToUpdateUserVCard(Context context) {
+        addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_UPDATE_VCARD);
 
         if (!inProcess) {
             process(context);
@@ -286,6 +298,13 @@ public class ContactsHandler {
         return makeHttpCallToFetchJID(context, request);
     }
 
+    private boolean updateRequiredUsersInfoFromVCard(Context context){
+        boolean success = false;
+        ArrayList<Contacts> jids = SportsUnityDBHelper.getInstance(context).getListOfJIDRequireUpdate();
+        success = updateContactInfoFromVCards(context, jids);
+        return success;
+    }
+
     private boolean handleResponseOfGetJIDs(Context context, String content, int responseCode) {
         boolean success = false;
         if (responseCode == HttpURLConnection.HTTP_OK) {
@@ -295,6 +314,7 @@ public class ContactsHandler {
                 int info = jsonObject.getInt("status");
                 if (info == 200) {
                     JSONArray list = jsonObject.getJSONArray("jids");
+                    ArrayList<String> jids = new ArrayList<>();
 
                     String phoneNumber = null;
                     String jid = null;
@@ -303,15 +323,11 @@ public class ContactsHandler {
                         phoneNumber = map.getString("phone_number");
                         jid = map.getString("username");
 
+                        jids.add(jid);
                         SportsUnityDBHelper.getInstance(context).updateContacts(context, phoneNumber, jid);
                     }
 
-                    for (int index = 0; index < list.length(); index++) {
-                        JSONObject map = list.getJSONObject(index);
-                        jid = map.getString("username");
-
-                        UserProfileHandler.getInstance().loadVCardAndUpdateDB(context, jid);
-                    }
+                    updateMyContactInfoFromVCards(context, jids);
 
                     success = true;
                 } else {
@@ -323,6 +339,36 @@ public class ContactsHandler {
             }
         } else {
             //nothing
+        }
+        return success;
+    }
+
+    private boolean updateMyContactInfoFromVCards(Context context, ArrayList<String> jids){
+        boolean success = false;
+        try {
+            String jid = null;
+            for (int index = 0; index < jids.size(); index++) {
+                jid = jids.get(index);
+                UserProfileHandler.getInstance().loadVCardAndUpdateDB(context, jid, true);
+            }
+            success = true;
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return success;
+    }
+
+    private boolean updateContactInfoFromVCards(Context context, ArrayList<Contacts> contacts){
+        boolean success = false;
+        try {
+            Contacts contact = null;
+            for (int index = 0; index < contacts.size(); index++) {
+                contact = contacts.get(index);
+                UserProfileHandler.getInstance().loadVCardAndUpdateDB(context, contact.jid, contact.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS);
+            }
+            success = true;
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
         return success;
     }
@@ -507,6 +553,17 @@ public class ContactsHandler {
                     }
 
                     onCompleteActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_UPDATE_USER_FAVORITES);
+                } else if (isPendingAction(pendingActions, CONTACT_PENDING_ACTION_UPDATE_VCARD)) {
+                    Log.d("ContactsHandler", "update user vcard");
+
+                    boolean success = updateRequiredUsersInfoFromVCard(context);
+                    if (success) {
+                        //nothing
+                    } else {
+                        failedActions = addPendingAction(failedActions, CONTACT_PENDING_ACTION_UPDATE_VCARD);
+                    }
+
+                    onCompleteActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_UPDATE_VCARD);
                 }
             }
 

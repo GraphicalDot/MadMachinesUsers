@@ -11,6 +11,7 @@ import com.sports.unity.XMPPManager.PubSubUtil;
 import com.sports.unity.XMPPManager.SPUAffiliation;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
+import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserProfileHandler;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
@@ -327,7 +328,7 @@ public class PubSubMessaging {
 
                     Contacts contacts = sportsUnityDBHelper.getContactByJid(jid);
                     if (contacts == null) {
-                        contactId = sportsUnityDBHelper.addToContacts("Unknown", null, jid, "", null, Contacts.AVAILABLE_BY_OTHER_CONTACTS);
+                        contactId = sportsUnityDBHelper.addToContacts("Unknown", null, jid, "", null, Contacts.AVAILABLE_BY_OTHER_CONTACTS, true);
                     } else {
                         contactId = contacts.id;
                     }
@@ -342,6 +343,8 @@ public class PubSubMessaging {
                         //nothing
                     }
                 }
+
+                ContactsHandler.getInstance().addCallToUpdateUserVCard(context);
 
                 SportsUnityDBHelper.getInstance(context).createGroupUserEntry(chatId, members);
                 SportsUnityDBHelper.getInstance(context).updateAdmin(admins, chatId);
