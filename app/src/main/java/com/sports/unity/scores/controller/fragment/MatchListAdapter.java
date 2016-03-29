@@ -76,6 +76,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     };*/
     private TokenRegistrationHandler tokenRegistrationHandler;
     private SharedPreferences preferences;
+    private String seriesId;
+    private String matchId;
 
     public MatchListAdapter(List<JSONObject> list, Activity activity) {
         this.list = list;
@@ -137,7 +139,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     @Override
     public void onBindViewHolder(MatchListAdapter.ViewHolder holder, int position) {
         JSONObject matchJsonObject = list.get(position);
-        Log.d("MatchJson ", "onBindViewHolder: "+matchJsonObject);
         try {
             matchJsonCaller.setJsonObject(matchJsonObject);
 
@@ -146,7 +147,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
 //            holder.liveText.setTypeface(FontTypeface.getInstance(activity).getRobotoRegular());
 //            holder.liveText.setTextColor(Color.BLACK);
-            Log.d("Object Counter", "onBindViewHolder: "+position);
             if( matchJsonCaller.getType().equals(ScoresJsonParser.CRICKET) ) {
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
 
@@ -154,13 +154,13 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                         @Override
                         public void onClick(View v) {
                             try {
-                                String seriesId = cricketMatchJsonCaller.getSeriesId();
-                                String matchId = cricketMatchJsonCaller.getMatchId();
+                                seriesId = cricketMatchJsonCaller.getSeriesId();
+                                matchId = cricketMatchJsonCaller.getMatchId();
                                 tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
                                 tokenRegistrationHandler.addListener(MatchListAdapter.this);
                                 tokenRegistrationHandler.registrerMatchUser(seriesId + "|" + matchId, CommonUtil.getToken(activity));
-                               // Toast.makeText(activity,seriesId+" "+matchId,Toast.LENGTH_SHORT).show();
-                            }catch (Exception e){e.printStackTrace();}
+
+                             }catch (Exception e){e.printStackTrace();}
                         }
                     });
 
@@ -227,6 +227,19 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
                     ((ViewGroup) holder.odds.getParent()).setClickable(false);
                 }
+
+                preferences  = PreferenceManager.getDefaultSharedPreferences(activity);
+                String subsMatch = preferences.getString(cricketMatchJsonCaller.getSeriesId()+"|"+cricketMatchJsonCaller.getMatchId(),"");
+                if(!subsMatch.equals("")){
+                    holder.notification.setImageResource(R.drawable.ic_notification_enable);
+                }else{
+                    holder.notification.setImageResource(R.drawable.ic_notification_disabled);
+                }
+
+
+
+
+
 
             } else if( matchJsonCaller.getType().equals(ScoresJsonParser.FOOTBALL) ) {
                 holder.team1Overs.setVisibility(View.GONE);
@@ -340,7 +353,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
         holder.view.setTag(position);
         holder.view.setOnClickListener(listener);
-        /*holder.notification.setOnClickListener(matchAlertListener);*/
+
 
 //        try {
 //            if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {
@@ -678,14 +691,14 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     @Override
     public void handleContent(String content) {
         try {
+
             JSONObject object = new JSONObject(content);
-            if(object!=null){
+                  if(object!=null){
                 if(200==object.getInt("status")){
                     if("success".equalsIgnoreCase(object.getString("info"))) {
-
-                        preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, true).apply();
-                    }else{
-                        preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
+                        SharedPreferences.Editor editor  = PreferenceManager.getDefaultSharedPreferences(activity).edit();
+                        editor.putString(seriesId+"|"+matchId,seriesId+"|"+matchId);
+                        editor.apply();
                     }
                 }
             }

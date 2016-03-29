@@ -40,10 +40,14 @@ import static com.sports.unity.util.Constants.TOKEN_PARAM;
  * Created by madmachines on 17/3/16.
  */
 public class TokenRegistrationHandler {
+
+
+    public static final String USERNAME_KEY = "username";
+    public static final String PASSWORD_KEY = "password";
     private static final String REQUEST_TAG = "TOKEN_TAG";
     private static Context mContext;
-   private String BASE_URL = "http://52.74.142.219/";
-    private String SET_ANDROID_TOKEN = "set_android_token";
+   private String BASE_URL = "http://54.169.217.88/";
+    private String SET_ANDROID_TOKEN = "set_android_token_and_return_user_matches";
     private String REMOVE_ANDROID_TOKEN ="remove_android_token";
     private static final  String  USER_REGISTER_MATCH ="user_register_match";
     private String USER_UNREGISTER_MATCH ="user_unregister_match";
@@ -83,23 +87,38 @@ public class TokenRegistrationHandler {
     };
 
     public void registrerToken(final String token) {
-        Log.i("Register Token", "Register Token");
-        String url = getGeneratedUrl(SET_ANDROID_TOKEN);
-        //RequestQueue queue = Volley.newRequestQueue(mContext);
-        Log.i("registrerToken: ",url);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, responseListener_ForLoadContent,responseListener_ForLoadContent){
-            protected Map<String, String> getParams() {
-            Map<String, String> params = new HashMap<>();
-                params.put(PARAM_USERNAME, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
-                params.put(PARAM_PASSWORD, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
-                params.put(TOKEN_PARAM, token);
-                params.put(REQUEST_PARAMETER_KEY_APK_VERSION, getBuildConfig());
-                params.put(REQUEST_PARAMETER_KEY_UDID, getDeviceId(mContext));
-          return params;
-        };
-        };
-        VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
-        requestInProcess.add(REQUEST_TAG);
+
+        try{
+            Log.i("Register Token", "Register Token");
+            String url = getGeneratedUrl(SET_ANDROID_TOKEN);
+            JSONObject params = new JSONObject();
+            params.put(USERNAME_KEY, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
+            params.put(PASSWORD_KEY, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
+            params.put(TOKEN_PARAM, token);
+            params.put(REQUEST_PARAMETER_KEY_APK_VERSION, getBuildConfig());
+            params.put(REQUEST_PARAMETER_KEY_UDID, getDeviceId(mContext));
+
+            JsonRequest stringRequest = new JsonObjectRequest(Request.Method.POST, url, params, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    requestInProcess.remove(REQUEST_TAG);
+                    TokenRegistrationHandler.this.handleResponse(response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    requestInProcess.remove(REQUEST_TAG);
+                    TokenRegistrationHandler.this.handleErrorResponse(error);
+                }
+            });
+            VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
+            requestInProcess.add(REQUEST_TAG);}catch (Exception e){
+            e.printStackTrace();
+        }
+
+
+
+
     }
 
     public void removeToken() {
@@ -109,8 +128,8 @@ public class TokenRegistrationHandler {
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url, responseListener_ForLoadContent,responseListener_ForLoadContent){
             protected Map<String, String> getParams() {
                 Map<String, String> params = new HashMap<>();
-                params.put(PARAM_USERNAME, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
-                params.put(PARAM_PASSWORD, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
+                params.put(USERNAME_KEY, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
+                params.put(PASSWORD_KEY, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
                 params.put(REQUEST_PARAMETER_KEY_APK_VERSION, getBuildConfig());
                 params.put(REQUEST_PARAMETER_KEY_UDID, getDeviceId(mContext));
                 return params;
@@ -128,20 +147,22 @@ public class TokenRegistrationHandler {
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(REQUEST_PARAMETER_KEY_TOKEN, token);
             jsonObject.put(REQUEST_PARAMETER_KEY_MATCHID,matchUid);
-            jsonObject.put(PARAM_USERNAME, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
-            jsonObject.put(PARAM_PASSWORD, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
+            jsonObject.put(USERNAME_KEY, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
+            jsonObject.put(PASSWORD_KEY , TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
             jsonObject.put(REQUEST_PARAMETER_KEY_APK_VERSION, getBuildConfig());
             jsonObject.put(REQUEST_PARAMETER_KEY_UDID, getDeviceId(mContext));
 
             JsonRequest stringRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-
+                    requestInProcess.remove(REQUEST_TAG);
+                    TokenRegistrationHandler.this.handleResponse(response);
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-
+                    requestInProcess.remove(REQUEST_TAG);
+                    TokenRegistrationHandler.this.handleErrorResponse(error);
                 }
             });
             VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
@@ -206,8 +227,26 @@ public class TokenRegistrationHandler {
         }
 
 
+    }
+
+
+    private void handleResponse(JSONObject response) {
+        try{
+
+            Log.i("Score Card", "handleResponse: "+response);
+            requestInProcess.remove(REQUEST_TAG);
+            TokenRegistrationHandler.this.handleResponse(response.toString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
 
     }
+
+
+
     private void handleErrorResponse(VolleyError volleyError) {
         try{
             Log.i("Score Card", "handleResponse: "+volleyError.getMessage());

@@ -126,9 +126,8 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                 startService(intent);
             }
         }
-       /* Intent intent = new Intent(this, RegistrationIntentService.class);
+        Intent intent = new Intent(this, RegistrationIntentService.class);
         startService(intent);
-*/
         fabMenu = (FloatingActionMenu) findViewById(R.id.fab_menu);
         backgroundDimmer = findViewById(R.id.background_dimmer);
         fabMenu.hideMenuButton(false);

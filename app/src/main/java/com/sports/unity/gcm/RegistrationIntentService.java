@@ -101,8 +101,8 @@ public class RegistrationIntentService extends IntentService implements TokenReg
                         SharedPreferences.Editor editor= preferences.edit();
                         editor.putBoolean(Constants.SENT_TOKEN_TO_SERVER, true);
                         editor.apply();
-                        sendNotification("Notification");
-
+                        /*sendNotification("Notification");
+*/
 
                     }else{
                         preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
@@ -124,15 +124,15 @@ public class RegistrationIntentService extends IntentService implements TokenReg
 
 
 
-
+/*
 private void sendNotification(String message) {
     RemoteViews contentView = new RemoteViews(getPackageName(),
             R.layout.push_notification_layout);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_selected_sports)
-                        .setContentTitle(getString(R.string.app_name))
-                        .setContentText(getString(R.string.app_name));
+                        .setContentTitle(message)
+                        .setContentText(message);
         Intent i = new Intent(this, ScoreDetailActivity.class);
         i.putExtra(INTENT_KEY_TYPE, Constants.SPORTS_TYPE_CRICKET);
         i.putExtra(Constants.INTENT_KEY_ID, "icc_wc_t20_2016_g19");
@@ -162,5 +162,5 @@ private void sendNotification(String message) {
 
 
 
-    }
+    }*/
 }
