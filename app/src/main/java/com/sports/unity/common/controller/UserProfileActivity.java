@@ -274,6 +274,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         statusList.removeAllViews();
         for (int i = 0; i < statusValue.length; i++) {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
+            ImageView flag = (ImageView) linearLayout.findViewById(R.id.flag);
+            flag.setVisibility(View.GONE);
+
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
             textView.setText(statusValue[i]);
