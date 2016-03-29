@@ -46,6 +46,13 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
     private ArrayList<Contacts> finalContact;
     private ArrayList<Contacts> usedContact;
 
+    int DEFAULT_TOP_PADDING = 0;
+    int DEFAULT_BOTTOM_PADDING = 0;
+    int DEFAULT_LEFT_PADDING = 0;
+    int DEFAULT_RIGHT_PADDING = 0;
+    int addedPadding = 0;
+
+
     public ContactListAdapter(Activity context, int resource, ArrayList<Contacts> list, boolean multipleSelection, int registeredContactCount, ArrayList<Contacts> selectedMembersList) {
         super(context, resource, list);
         this.context = context;
@@ -179,21 +186,27 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
             holder = new HeaderViewHolder();
             convertView = inflater.inflate(R.layout.list_header, parent, false);
             holder.text = (TextView) convertView.findViewById(R.id.list_header_title);
+            DEFAULT_TOP_PADDING = holder.text.getPaddingTop();
+            DEFAULT_BOTTOM_PADDING = holder.text.getPaddingBottom();
+            DEFAULT_LEFT_PADDING = holder.text.getPaddingLeft();
+            DEFAULT_RIGHT_PADDING = holder.text.getPaddingRight();
+            addedPadding = DEFAULT_TOP_PADDING + 50;
             holder.text.setTypeface(FontTypeface.getInstance(context).getRobotoMedium());
             convertView.setTag(holder);
         } else {
             holder = (HeaderViewHolder) convertView.getTag();
         }
         if (usedContact.size() == finalContact.size()) {
-            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.text.getLayoutParams();
+//            LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.text.getLayoutParams();
             if (position >= registeredContactCount) {
-                params.setMargins(0, 75, 0, 0);
-                holder.text.setLayoutParams(params);
+//                params.setMargins(0, 50, 0, 0);
+                holder.text.setPadding(DEFAULT_LEFT_PADDING, addedPadding, DEFAULT_RIGHT_PADDING, DEFAULT_BOTTOM_PADDING);
+//                holder.text.setLayoutParams(params);
                 holder.text.setTextColor(Color.BLACK);
                 headerText = "Invite People to Sports Unity";
             } else {
-                params.setMargins(0, 0, 0, 0);
-                holder.text.setLayoutParams(params);
+                holder.text.setPadding(DEFAULT_LEFT_PADDING, DEFAULT_TOP_PADDING, DEFAULT_RIGHT_PADDING, DEFAULT_BOTTOM_PADDING);
+//                holder.text.setLayoutParams(params);
                 holder.text.setTextColor(context.getResources().getColor(R.color.gray1));
                 headerText = "" + getHeader(position);
             }
@@ -231,6 +244,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
     }
 
     class HeaderViewHolder {
+        LinearLayout headerLayout;
         TextView text;
     }
 
