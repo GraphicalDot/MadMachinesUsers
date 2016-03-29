@@ -5,11 +5,34 @@ package com.sports.unity.gcm;
  */
 public interface GCMConstants {
     public static final String MATCH_ID="m";
+    public static final String SERIES_ID="l";
     public static final String  SPORTS_ID ="S";
     public static final String EVENT_ID ="e";
     public static final String TOP_TEXT = "tt";
     public static final String BOTTOM_TEXT = "bt";
     public static final String LEAGUE_SERIES_ID = "l";
+    public static final String MATCH_STATUS = "MS";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

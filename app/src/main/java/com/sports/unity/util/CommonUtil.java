@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
@@ -12,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -358,7 +360,8 @@ public class CommonUtil {
         return countryDetails;
     }
     public static String getToken(Context context) throws IOException {
-        InstanceID instanceID = InstanceID.getInstance(context);
-        return instanceID.getToken(context.getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+        SharedPreferences sharedPreferences  = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getString(Constants.REQUEST_PARAMETER_KEY_TOKEN,"");
+
     }
 }

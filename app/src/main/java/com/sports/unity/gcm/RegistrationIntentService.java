@@ -49,12 +49,16 @@ public class RegistrationIntentService extends IntentService implements TokenReg
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         try
         {
-            String token = CommonUtil.getToken(this);
+            InstanceID instanceID = InstanceID.getInstance(this);
+            String token = instanceID.getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
             Log.i("Token", "onHandleIntent: " + token);
             if(preferences!=null){
                 registerToken(token);
-            }
+                SharedPreferences.Editor editor= preferences.edit();
+                editor.putString(Constants.REQUEST_PARAMETER_KEY_TOKEN, token);
+                editor.apply();
 
+            }
         }
         catch (IOException e)
         {
@@ -93,8 +97,11 @@ public class RegistrationIntentService extends IntentService implements TokenReg
             if(object!=null){
                 if(200==object.getInt("status")){
                     if("success".equalsIgnoreCase(object.getString("info"))) {
-                        preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, true).apply();
-                        sendNotification("Notification");
+                        SharedPreferences.Editor editor= preferences.edit();
+                        editor.putBoolean(Constants.SENT_TOKEN_TO_SERVER, true);
+                        editor.apply();
+                        /*sendNotification("Notification");
+*/
 
                     }else{
                         preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
@@ -105,10 +112,7 @@ public class RegistrationIntentService extends IntentService implements TokenReg
             }else{
                 preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
             }
-
-
-
-        } catch (JSONException e) {
+       } catch (JSONException e) {
             e.printStackTrace();
             preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
         }
@@ -116,15 +120,15 @@ public class RegistrationIntentService extends IntentService implements TokenReg
 
 
 
-
+/*
 private void sendNotification(String message) {
     RemoteViews contentView = new RemoteViews(getPackageName(),
             R.layout.push_notification_layout);
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_selected_sports)
-                        .setContentTitle(getString(R.string.app_name))
-                        .setContentText(getString(R.string.app_name));
+                        .setContentTitle(message)
+                        .setContentText(message);
         Intent i = new Intent(this, ScoreDetailActivity.class);
         i.putExtra(INTENT_KEY_TYPE, Constants.SPORTS_TYPE_CRICKET);
         i.putExtra(Constants.INTENT_KEY_ID, "icc_wc_t20_2016_g19");
@@ -154,5 +158,5 @@ private void sendNotification(String message) {
 
 
 
-    }
+    }*/
 }

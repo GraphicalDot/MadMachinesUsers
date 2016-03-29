@@ -22,10 +22,13 @@
             >
 
             <ImageView
+                android:id="@+id/comment_image"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/grey_ring"
                 />
+
+
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/comment_time"
                 android:layout_width="wrap_content"
