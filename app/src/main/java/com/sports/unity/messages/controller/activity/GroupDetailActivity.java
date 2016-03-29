@@ -254,6 +254,8 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance();
         success = pubSubMessaging.addMembers(groupJid, membersJid, getApplicationContext());
         if (success) {
+            PubSubMessaging.getInstance().sendIntimationAboutAffiliationListChanged();
+
             ArrayList<Long> members = new ArrayList<>();
             for (Contacts c : selectedMembers) {
                 members.add(c.id);
@@ -283,7 +285,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         }
 
         PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance();
-        success = pubSubMessaging.createNode(groupJID, membersJid, this);
+        success = pubSubMessaging.createNode(groupJID, groupName, membersJid, this);
 
 //        if (success) {
 //            long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry(subject, owner.id, groupImage, groupJID);

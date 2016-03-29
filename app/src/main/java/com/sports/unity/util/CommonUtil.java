@@ -16,6 +16,8 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
 import com.sports.unity.BuildConfig;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.R;
@@ -33,6 +35,7 @@ import org.joda.time.Seconds;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
@@ -212,7 +215,7 @@ public class CommonUtil {
 //        intent.putExtra("sms_body", inviteText);
 //        intent.setType("vnd.android-dir/mms-sms");
 //        context.startActivity(intent);
-        Uri uri = Uri.parse("smsto:" + contact.phoneNumber);
+        Uri uri = Uri.parse("smsto:+" + contact.phoneNumber);
         Intent it = new Intent(Intent.ACTION_SENDTO, uri);
         it.putExtra("sms_body", inviteText);
         context.startActivity(it);
@@ -354,5 +357,8 @@ public class CommonUtil {
 
         return countryDetails;
     }
-
+    public static String getToken(Context context) throws IOException {
+        InstanceID instanceID = InstanceID.getInstance(context);
+        return instanceID.getToken(context.getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+    }
 }

@@ -22,7 +22,9 @@
                 android:id="@+id/ScoreLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/vertical_padding_very_very_small"
+                android:paddingTop="@dimen/vertical_padding_very_very_small"
+                android:paddingLeft="@dimen/vertical_padding_very_very_small"
+                android:paddingRight="@dimen/vertical_padding_very_very_small"
                 android:orientation="horizontal"
                 android:weightSum="4">
 
@@ -41,6 +43,7 @@
                             android:id="@+id/t1flag"
                             android:layout_width="@dimen/flag_size_small"
                             android:layout_height="@dimen/flag_size_small"
+                            android:src="@drawable/ic_launcher"
                             />
 
                         <RelativeLayout
@@ -57,7 +60,7 @@
                                 android:paddingRight="@dimen/vertical_padding_very_small"
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
-                                android:text=""
+                                android:text="13-0"
                                 />
 
                             <TextView
@@ -71,7 +74,7 @@
                                 android:singleLine="true"
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
-                                android:text=""
+                                android:text="new"
                                 />
 
                         </RelativeLayout>
@@ -89,23 +92,23 @@
                             android:id="@+id/t2flag"
                             android:layout_width="@dimen/flag_size_small"
                             android:layout_height="@dimen/flag_size_small"
-                            />
+                           android:src="@drawable/ic_launcher" />
 
                         <RelativeLayout
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:gravity="center">
+                            android:gravity="bottom"
+                            >
 
                             <TextView
                                 android:id="@+id/t2score"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentRight="true"
-                                android:layout_centerInParent="true"
                                 android:paddingRight="@dimen/vertical_padding_very_small"
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
-                                android:text=""
+                                android:text="120/8"
                                 />
 
                             <TextView
@@ -114,12 +117,11 @@
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentLeft="true"
                                 android:layout_toLeftOf="@id/t2score"
-                                android:layout_centerInParent="true"
                                 android:paddingLeft="@dimen/vertical_padding_very_small"
                                 android:singleLine="true"
                                 android:textColor="@android:color/black"
                                 android:textSize="@dimen/font_size_small_large"
-                                android:text=""
+                                android:text="England"
                                 />
 
                         </RelativeLayout>

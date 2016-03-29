@@ -29,6 +29,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
+
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdate;
@@ -216,6 +217,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 latLong = place.getLatLng();
                 //getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
+               // getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
             }
 
             @Override

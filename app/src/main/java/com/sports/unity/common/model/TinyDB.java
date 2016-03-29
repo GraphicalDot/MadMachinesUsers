@@ -38,6 +38,7 @@ public class TinyDB {
     public static final String KEY_ADDRESS_LOCATION = "location";
     public static final String KEY_ADDRESS_STATE = "state";
 
+    public static final String KEY_USER_MOBILE_NUMBER="usermobilenumber";
     public static final String KEY_USERNAME = "username";
     public static final String KEY_USER_JID = "userjid";
     public static final String KEY_PASSWORD = "password";

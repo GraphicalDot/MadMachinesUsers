@@ -27,6 +27,8 @@ public class Constants {
     public static final String INTENT_KEY_ID = "ID";
     public static final String INTENT_KEY_MATCH_STATUS = "MATCH_STATUS";
 
+    public static final String INTENT_KEY_USER_AVAILABLE_STATUS = "USER_AVAILABLE_STATUS";
+
     public static final String INTENT_KEY_FILENAME = "FILE_NAME";
     public static final String INTENT_KEY_MIMETYPE = "MIME_TYPE";
 
@@ -38,6 +40,8 @@ public class Constants {
     public static final String REQUEST_PARAMETER_KEY_USER_NAME = "username";
     public static final String REQUEST_PARAMETER_KEY_APK_VERSION = "apk_version";
     public static final String REQUEST_PARAMETER_KEY_UDID = "udid";
+    public static final String REQUEST_PARAMETER_KEY_MATCHID = "match_id";
+    public static final String REQUEST_PARAMETER_KEY_TOKEN = "token";
 
     public static final String PARAM_TIME = "time";
     public static final String PARAM_MIME_TYPE = "mime_type";
@@ -101,4 +105,5 @@ public class Constants {
     public static final String ENABLE_LOCATION = "enable_location";
     public static final String CHECK_LOCATION = "location";
     public static final String SENT_TOKEN_TO_SERVER = "token_sent_to_server" ;
+    public static final String INTENT_KEY_PLAYER_NAME = "player_name";
 }

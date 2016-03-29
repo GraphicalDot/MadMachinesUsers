@@ -8,6 +8,7 @@ public class CricketPlayerMatchStatDTO {
     private String testsMatch;
     private String odis;
     private String t20s;
+    private String ipl;
 
     public String getTitles() {
         return titles;
@@ -40,4 +41,15 @@ public class CricketPlayerMatchStatDTO {
     public void setT20s(String t20s) {
         this.t20s = t20s;
     }
+
+    public String getIpl() {
+        return ipl;
+    }
+
+    public void setIpl(String testsMatch) {
+        this.ipl = ipl;
+    }
+
+
+
 }

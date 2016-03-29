@@ -660,7 +660,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 selectionArgs);
         Log.i("updated :", String.valueOf(count));
     }
-
     public GroupParticipants getGroupParticipants(long chatId) {
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -1469,6 +1468,25 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     }
 
+    public void updateChatBlockStatus(long chatId, boolean blockStatus) {
+        //TODO
+
+//        SQLiteDatabase db = getWritableDatabase();
+//
+//        ContentValues values = new ContentValues();
+//        values.put(ChatEntry.COLUMN_BLOCK_USER, blockStatus);
+//
+//        String selection = ChatEntry.COLUMN_CHAT_ID + " = ?";
+//        String[] selectionArgs = {String.valueOf(chatId)};
+//
+//        int count = db.update(
+//                ContactsEntry.TABLE_NAME,
+//                values,
+//                selection,
+//                selectionArgs);
+
+    }
+
     public boolean isChatBlocked(long contactId) {
 
         boolean block = false;
@@ -1600,6 +1618,18 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     }
 
+    public void deleteGroupMember( long contactId) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        String selection = GroupUserEntry.COLUMN_CONTACT_ID + " = ? ";
+        String[] selectionArgs = { String.valueOf(contactId)};
+
+        int deleted = db.delete(GroupUserEntry.TABLE_NAME,
+                selection,
+                selectionArgs);
+
+    }
+
     public void deleteMessageFromTable(int id) {
 
         SQLiteDatabase db = getWritableDatabase();
@@ -1698,6 +1728,20 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     public void updateContactAvailibility(String jid) {
         //TODO
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ContactsEntry.COLUMN_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
+
+        String selection = ContactsEntry.COLUMN_JID + " LIKE ? ";
+        String[] selectionArgs = {jid};
+
+        int count = db.update(
+                ContactsEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
     }
 
     public static class GroupParticipants {

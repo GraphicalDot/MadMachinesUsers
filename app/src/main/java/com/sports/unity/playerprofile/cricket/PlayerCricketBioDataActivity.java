@@ -138,7 +138,7 @@ try {
                         playerName.setText(playerInfo.getString("full_name"));
                     }
                     if (!playerInfo.isNull("birth_place")) {
-                        playerNationName.setText(playerInfo.getString("birth_place").split(",")[2]);
+                        playerNationName.setText(playerInfo.getString("birth_place"));
                     }
                 }
             } catch (Exception e) {

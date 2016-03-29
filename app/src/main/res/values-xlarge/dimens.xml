@@ -136,5 +136,10 @@
     <!-- ends -->
     <dimen name="recent_ball_radius">24dp</dimen>
     <dimen name="people_nearme_custom_location_height">60dp</dimen>
+  <!-- margin live score score summery-->
+    <dimen name="live_player_card_margin">50dp</dimen>
+    <dimen name="completed_player_card_margin">30dp</dimen>
+    <dimen name="completed_player_name_margin">20dp</dimen>
+    <dimen name="card_height">120dp</dimen>
 
 </resources>

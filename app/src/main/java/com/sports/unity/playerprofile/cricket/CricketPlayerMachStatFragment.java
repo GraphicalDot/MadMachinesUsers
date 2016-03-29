@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,7 +69,8 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-         playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        // playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        playerId = "4429";
          this.context = context;
         cricketPlayerMatchStatHandler = CricketPlayerMatchStatHandler.getInstance(context);
         cricketPlayerMatchStatHandler.addListener(this);
@@ -206,7 +208,8 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         rcBattingPerformanceSummery.setVisibility(VISIBLE);
         rcBowlingPerformanceSummary.setVisibility(VISIBLE);
         final JSONArray dataArray = jsonObject.getJSONArray("data");
-        final JSONObject dataObject = dataArray.getJSONObject(0);
+        Log.i("Msg","Array length"+dataArray.length());
+        final JSONObject dataObject = (JSONObject) dataArray.get(0);
         final JSONObject playerStatistics = dataObject.getJSONObject("statistics");
         /*final JSONObject playerObjectTest=playerStatistics.getJSONObject("TEST");
         final JSONObject playerBattingTest=playerObjectTest.getJSONObject("batting");
@@ -236,6 +239,39 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                             if (bowlingArray != null) bowlingStatProcess(key, bowlingArray);
                         }
 
+                        CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
+                        Set<String> keySet = battingTestsmatchMap.keySet();
+                        for (String mapKey : keySet) {
+                            String title = null;
+                            title = mapKey.toUpperCase();
+                            title = title.replaceAll("_", " ");
+                            cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
+                            cricketPlayerMatchStatDTO.setTitles(title);
+                            cricketPlayerMatchStatDTO.setTestsMatch(battingTestsmatchMap.get(mapKey));
+                            cricketPlayerMatchStatDTO.setOdis(battingOdisMap.get(mapKey));
+                            cricketPlayerMatchStatDTO.setT20s(battingT20sMap.get(mapKey));
+                            cricketPlayerMatchStatDTO.setIpl(battingIPLMap.get(mapKey));
+                            playerMatchBattingStatDTOList.add(cricketPlayerMatchStatDTO);
+
+
+                        }
+                         keySet = bowlingTestsmatchMap.keySet();
+                        for (String bowllingKey : keySet) {
+                            String title = null;
+                            title = bowllingKey.toUpperCase();
+                            title = title.replaceAll("_", " ");
+                            cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
+                            cricketPlayerMatchStatDTO.setTitles(title);
+                            cricketPlayerMatchStatDTO.setTestsMatch(bowlingTestsmatchMap.get(bowllingKey));
+                            cricketPlayerMatchStatDTO.setOdis(bowlingOdisMap.get(bowllingKey));
+                            cricketPlayerMatchStatDTO.setT20s(bowlingT20sMap.get(bowllingKey));
+                            cricketPlayerMatchStatDTO.setIpl(battingIPLMap.get(bowllingKey));
+                            playerMatchBowlingStatDTOList.add(cricketPlayerMatchStatDTO);
+
+
+                        }
+                        cricketPlayerMatchBowlingStatAdapter.notifyDataSetChanged();
+                        cricketPlayerMatchBattingStatAdapter.notifyDataSetChanged();
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());
@@ -246,13 +282,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
 
     }
 
-    private void battingStatProcess(String key, JSONObject battingObject) throws JSONException {
-
-        Iterator<String> keys = battingObject.keys();
-        while(keys.hasNext())
-        {
-            String battingKey = keys.next();
-            JSONObject batting = battingObject.getJSONObject(battingKey);
+    private void battingStatProcess(String key, JSONObject batting) throws JSONException {
 
             if (batting != null) {
                 if ("TEST".equalsIgnoreCase(key)) {
@@ -300,34 +330,14 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     //battingIPLMap.put("not_out", batting.getString("not_out"));
                 }
 
-            }
 
 
         }
-        CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
-        Set<String> keySet = battingTestsmatchMap.keySet();
-        for (String mapKey : keySet) {
-            String title = null;
-            title = mapKey.toUpperCase();
-            title = title.replaceAll("_", " ");
-            cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
-            cricketPlayerMatchStatDTO.setTitles(title);
-            cricketPlayerMatchStatDTO.setTestsMatch(battingTestsmatchMap.get(key));
-            cricketPlayerMatchStatDTO.setOdis(battingOdisMap.get(key));
-            cricketPlayerMatchStatDTO.setT20s(battingT20sMap.get(key));
-            playerMatchBattingStatDTOList.add(cricketPlayerMatchStatDTO);
 
-
-        }
-        cricketPlayerMatchBattingStatAdapter.notifyDataSetChanged();
     }
 
-    private void bowlingStatProcess(String key, JSONObject bowlingArray) throws JSONException {
-        Iterator<String> keys = bowlingArray.keys();
-        while(keys.hasNext())
-        {
-            String bowlingKey = keys.next();
-           JSONObject bowling=  bowlingArray.getJSONObject(bowlingKey);
+    private void bowlingStatProcess(String key, JSONObject bowling) throws JSONException {
+
             if (bowling != null) {
                 if ("TEST".equalsIgnoreCase(key)) {
 
@@ -373,24 +383,8 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
                     bowlingTestsmatchMap.put("overs", bowling.getString("overs"));
 
                 }
-            }
         }
-        CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
-        Set<String> keySet = bowlingTestsmatchMap.keySet();
-        for (String bowllingKey : keySet) {
-            String title = null;
-            title = bowllingKey.toUpperCase();
-            title = title.replaceAll("_", " ");
-            cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
-            cricketPlayerMatchStatDTO.setTitles(title);
-            cricketPlayerMatchStatDTO.setTestsMatch(bowlingTestsmatchMap.get(key));
-            cricketPlayerMatchStatDTO.setOdis(bowlingOdisMap.get(key));
-            cricketPlayerMatchStatDTO.setT20s(bowlingT20sMap.get(key));
-            playerMatchBowlingStatDTOList.add(cricketPlayerMatchStatDTO);
 
-
-        }
-        cricketPlayerMatchBowlingStatAdapter.notifyDataSetChanged();
     }
 
     @Override

@@ -185,4 +185,8 @@
     <dimen name="venus_layout_width">150dp</dimen>
     <!--score  card-->
     <dimen name="card_height">100dp</dimen>
+    <!-- margin live score score summery-->
+    <dimen name="live_player_card_margin">50dp</dimen>
+    <dimen name="completed_player_card_margin">24dp</dimen>
+    <dimen name="completed_player_name_margin">24dp</dimen>
 </resources>
