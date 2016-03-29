@@ -398,6 +398,9 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         shouldCloseDrawer = false;
         setNavigationProfile();
         updateLocation();
+        if (messagesFragmentInFront) {
+            fabMenu.showMenuButton(true);
+        }
     }
 
     private void updateLocation() {
