@@ -6,6 +6,7 @@ import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sports.unity.R;
@@ -26,7 +27,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
     private Context context;
     private ArrayList<CommentriesModel> list;
 
-    private String sportsType = null;
+    private String sportsType;
    // private MatchCommentaryJsonCaller jsonCaller = new MatchCommentaryJsonCaller();
 
     public BroadcastListAdapter(String sportsType, ArrayList<CommentriesModel> list, Context activity) {
@@ -39,6 +40,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
 
         private TextView broadcast;
         private TextView commentTime;
+        private ImageView commentImage;
 
         private View view;
 
@@ -49,6 +51,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
 
             broadcast = (TextView) v.findViewById(R.id.broadcast);
             commentTime = (TextView) v.findViewById(R.id.comment_time);
+            commentImage  = (ImageView) v.findViewById(R.id.comment_image);
 
             /*commentTime.setTypeface(FontTypeface.getInstance(view.getContext()).getRobotoCondensedBold());
             broadcast.setTypeface(FontTypeface.getInstance(view.getContext()).getRobotoMedium());*/
@@ -72,7 +75,13 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
                     holder.broadcast.setText(Html.fromHtml(jsonObject.getComment()));
                 }
                 if (sportsType.equals(ScoresJsonParser.CRICKET)) {
-                    holder.commentTime.setText(jsonObject.getOver());
+                    if("-1.0".equalsIgnoreCase(jsonObject.getOver())){
+                        holder.commentImage.setImageResource(R.drawable.commentary_icon);
+                        holder.commentTime.setVisibility(View.GONE);
+                    }else{
+                        holder.commentTime.setText(jsonObject.getOver());
+                    }
+
                 } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
                     holder.commentTime.setText(Html.fromHtml(jsonObject.getMinute()));
                 }

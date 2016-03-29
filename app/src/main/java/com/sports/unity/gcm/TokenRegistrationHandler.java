@@ -188,22 +188,51 @@ public class TokenRegistrationHandler {
     }
 
     public void removeMatchUser(final String matchUid) {
-        Log.i("Remove Token", "Remove Token");
-        String url = getGeneratedUrl(USER_UNREGISTER_MATCH);
-       //RequestQueue queue = Volley.newRequestQueue(mContext);
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url, responseListener_ForLoadContent,responseListener_ForLoadContent){
-            protected Map<String, String> getParams() {
-                Map<String, String> params = new HashMap<>();
-                params.put(PARAM_USERNAME, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
-                params.put(PARAM_PASSWORD, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
-                params.put(REQUEST_PARAMETER_KEY_APK_VERSION, getBuildConfig());
-                params.put(REQUEST_PARAMETER_KEY_UDID, getDeviceId(mContext));
-                params.put(REQUEST_PARAMETER_KEY_MATCHID,matchUid);
-                return params;
-            };
-        };
-        VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
-        requestInProcess.add(REQUEST_TAG);
+
+
+        Log.i("Register Token", "Register Token");
+        try{
+            String url = getGeneratedUrl(USER_UNREGISTER_MATCH);
+            JSONObject params = new JSONObject();
+            params.put(PARAM_USERNAME, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
+            params.put(PARAM_PASSWORD, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
+            params.put(REQUEST_PARAMETER_KEY_APK_VERSION, getBuildConfig());
+            params.put(REQUEST_PARAMETER_KEY_UDID, getDeviceId(mContext));
+            params.put(REQUEST_PARAMETER_KEY_MATCHID,matchUid);
+
+            JsonRequest stringRequest = new JsonObjectRequest(Request.Method.POST, url, params, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    requestInProcess.remove(REQUEST_TAG);
+                    TokenRegistrationHandler.this.handleResponse(response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    requestInProcess.remove(REQUEST_TAG);
+                    TokenRegistrationHandler.this.handleErrorResponse(error);
+                }
+            });
+            VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
+            requestInProcess.add(REQUEST_TAG);
+
+        }catch (Exception e){e.printStackTrace();}
+
+
+//        {
+//            protected Map<String, String> getParams() throws com.android.volley.AuthFailureError {
+//                Map<String, String> params = new HashMap<>();
+//
+//                params.put(REQUEST_PARAMETER_KEY_TOKEN, token);
+//                params.put(REQUEST_PARAMETER_KEY_MATCHID,matchUid);
+//                params.put(PARAM_USERNAME, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
+//                params.put(PARAM_PASSWORD, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
+//                params.put(REQUEST_PARAMETER_KEY_APK_VERSION, getBuildConfig());
+//                params.put(REQUEST_PARAMETER_KEY_UDID, getDeviceId(mContext));
+//             return params;
+//            };
+//        };
+
     }
 
 

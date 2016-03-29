@@ -59,7 +59,6 @@ public class RegistrationIntentService extends IntentService implements TokenReg
                 editor.apply();
 
             }
-
         }
         catch (IOException e)
         {
@@ -113,10 +112,7 @@ public class RegistrationIntentService extends IntentService implements TokenReg
             }else{
                 preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
             }
-
-
-
-        } catch (JSONException e) {
+       } catch (JSONException e) {
             e.printStackTrace();
             preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
         }
