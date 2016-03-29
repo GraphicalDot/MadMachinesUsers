@@ -114,20 +114,20 @@ public class XMPPService extends Service {
         }
     }
 
-    public static void displayNotification(Context context, String message, String from, String mimeType, long chatId, boolean isGroupChat, String groupServerId, byte[] image, int availibilityStatus) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+    public static void displayNotification(Context context, String message, String from, String mimeType, long chatId, boolean isGroupChat, String groupServerId, byte[] image, int availabilityStatus, String userStatus) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         UserUtil.init(context);
 
         String name = sportsUnityDBHelper.getUserNameByJid(from);
         if (isGroupChat) {
             name = name + "@" + sportsUnityDBHelper.getGroupSubject(groupServerId);
-            availibilityStatus = Contacts.AVAILABLE_BY_MY_CONTACTS;
+            availabilityStatus = Contacts.AVAILABLE_BY_MY_CONTACTS;
         } else {
             //nothing
         }
 
         NotificationHandler notificationHandler = NotificationHandler.getInstance(context);
-        notificationHandler.addNotificationMessage(chatId, name, message, mimeType, image, availibilityStatus);
+        notificationHandler.addNotificationMessage(chatId, name, message, mimeType, image, availabilityStatus);
 
         int chatCount = notificationHandler.getNotificationChatCount();
         PendingIntent pendingIntent = null;
@@ -136,10 +136,10 @@ public class XMPPService extends Service {
         } else if (chatCount == 1) {
             if( isGroupChat ){
                 String groupName = groupServerId.substring(groupServerId.indexOf("%") + 1, groupServerId.indexOf("%%"));
-                pendingIntent = getPendingIntentForChatActivity(context, groupName, groupServerId, chatId, SportsUnityDBHelper.getDummyContactRowId(), groupServerId, null, false);
+                pendingIntent = getPendingIntentForChatActivity(context, groupName, groupServerId, chatId, SportsUnityDBHelper.getDummyContactRowId(), groupServerId, null, false, availabilityStatus, userStatus);
             } else {
                 Contacts contact = sportsUnityDBHelper.getContactByJid(from);
-                pendingIntent = getPendingIntentForChatActivity(context, name, from, chatId, contact.id, groupServerId, contact.image, contact.isOthers());
+                pendingIntent = getPendingIntentForChatActivity(context, name, from, chatId, contact.id, groupServerId, contact.image, contact.isOthers(), availabilityStatus, userStatus);
             }
         }
 
@@ -215,10 +215,10 @@ public class XMPPService extends Service {
         return pendingIntent;
     }
 
-    private static PendingIntent getPendingIntentForChatActivity(Context context, String name, String from, long chatId, long contactId, String groupServerId, byte[] contactImage, boolean isOtherChat) {
+    private static PendingIntent getPendingIntentForChatActivity(Context context, String name, String from, long chatId, long contactId, String groupServerId, byte[] contactImage, boolean isOtherChat, int availabilityStatus, String userStatus) {
         Intent notificationIntent;
 
-        notificationIntent = ChatScreenActivity.createChatScreenIntent(context, from, name, contactId, chatId, groupServerId, contactImage, false, isOtherChat);
+        notificationIntent = ChatScreenActivity.createChatScreenIntent(context, from, name, contactId, chatId, groupServerId, contactImage, false, isOtherChat, availabilityStatus, userStatus);
 
         Intent backIntent = new Intent(context, MainActivity.class);
         backIntent.putExtra("tab_index", 2);

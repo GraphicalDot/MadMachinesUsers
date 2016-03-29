@@ -303,7 +303,7 @@ public class ContactsHandler {
                         phoneNumber = map.getString("phone_number");
                         jid = map.getString("username");
 
-                        SportsUnityDBHelper.getInstance(context).updateContacts(phoneNumber, jid);
+                        SportsUnityDBHelper.getInstance(context).updateContacts(context, phoneNumber, jid);
                     }
 
                     for (int index = 0; index < list.length(); index++) {

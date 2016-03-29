@@ -179,28 +179,31 @@ public class FavouriteItemWrapper {
      */
     public ArrayList<FavouriteItem> getFavListOfOthers(String favItem) {
         List<FavouriteItem> favouriteItems = new ArrayList<FavouriteItem>();
-        try {
-            JSONArray favArray = new JSONArray(favItem);
-            for (int i = 0; i < favArray.length(); i++) {
-                FavouriteItem item = new FavouriteItem();
-                JSONObject object = favArray.getJSONObject(i);
-                item.setName(object.getString(name));
-                String sportsType = object.getString(this.sportsType);
-                String filterType = object.getString(this.filterType);
-                item.setSportsType(sportsType);
-                item.setFilterType(filterType);
+        if( favItem != null ) {
+            try {
+                JSONArray favArray = new JSONArray(favItem);
+                for (int i = 0; i < favArray.length(); i++) {
+                    FavouriteItem item = new FavouriteItem();
+                    JSONObject object = favArray.getJSONObject(i);
+                    item.setName(object.getString(name));
+                    String sportsType = object.getString(this.sportsType);
+                    String filterType = object.getString(this.filterType);
+                    item.setSportsType(sportsType);
+                    item.setFilterType(filterType);
 
-                try {
-                    item.setFlagImageUrl(object.getString(this.flag));
-                } catch (Exception e) {
-                    e.printStackTrace();
+                    try {
+                        item.setFlagImageUrl(object.getString(this.flag));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    favouriteItems.add(item);
+
                 }
-                favouriteItems.add(item);
-
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
         }
+
         Collections.sort(favouriteItems);
         return new ArrayList<>(favouriteItems);
     }

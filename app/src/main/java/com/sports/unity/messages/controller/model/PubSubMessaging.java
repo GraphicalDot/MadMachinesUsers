@@ -407,7 +407,7 @@ public class PubSubMessaging {
 
                     //TODO to get image belongs to particular group.
                     byte[] image = null;
-                    XMPPService.displayNotification(context, text, from, mimeType, chatId, true, groupJID, image, contact.availableStatus);
+                    XMPPService.displayNotification(context, text, from, mimeType, chatId, true, groupJID, image, contact.availableStatus, contact.status);
                 } catch (XMPPException.XMPPErrorException e) {
                     e.printStackTrace();
                 } catch (SmackException.NoResponseException e) {

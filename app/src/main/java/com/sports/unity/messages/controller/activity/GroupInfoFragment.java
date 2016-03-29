@@ -211,7 +211,7 @@ public class GroupInfoFragment extends Fragment {
     private void viewUserProfile(Contacts contacts){
         String groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
         long chatId = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatEntryID(contacts.id, groupServerId);
-        ChatScreenActivity.viewProfile(getActivity(), chatId, contacts.image, contacts.name, groupServerId, contacts.jid, false);
+        ChatScreenActivity.viewProfile(getActivity(), chatId, contacts.image, contacts.name, groupServerId, contacts.jid, contacts.status, false, contacts.availableStatus);
     }
 
     private void openChat(Contacts contacts){
@@ -224,7 +224,7 @@ public class GroupInfoFragment extends Fragment {
         long chatId = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatEntryID(contactId, groupServerId);
         boolean blockStatus = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).isChatBlocked(contactId);
 
-        Intent chatScreenIntent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, userPicture, blockStatus, contacts.isOthers());
+        Intent chatScreenIntent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, userPicture, blockStatus, contacts.isOthers(), contacts.availableStatus, contacts.status);
         startActivity(chatScreenIntent);
     }
 

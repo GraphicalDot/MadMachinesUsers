@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.sports.unity.R;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.Message;
@@ -603,11 +604,16 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    public void updateContacts(String number, String jid) {
+    public void updateContacts(Context context, String number, String jid) {
+        updateContacts(number, jid, context.getResources().getString(R.string.others_default_status));
+    }
+
+    public void updateContacts(String number, String jid, String status) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(ContactsEntry.COLUMN_JID, jid);
+        values.put(ContactsEntry.COLUMN_STATUS, status);
 
         String selection = ContactsEntry.COLUMN_PHONE_NUMBER + " LIKE ? ";
         String[] selectionArgs = {number};

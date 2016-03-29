@@ -179,12 +179,13 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
+                        Contacts contacts = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId);
                         if (chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
                             ChatScreenActivity.viewProfile(getActivity(), chatObject.chatid, chatObject.userImage, chatObject.name, chatObject.groupServerId,
-                                    SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid, false);
+                                    contacts.jid, contacts.status, false, contacts.availableStatus);
                         } else {
                             ChatScreenActivity.viewProfile(getActivity(), chatObject.chatid, chatObject.chatImage, chatObject.name, chatObject.groupServerId,
-                                    SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid, false);
+                                    contacts.jid, contacts.status, false, contacts.availableStatus);
                         }
                         alert.dismiss();
                         break;
@@ -266,7 +267,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
             long chatId = chatObject.chatid;
             byte[] userpicture = chatObject.userImage;
 
-            intent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, userpicture, blockStatus, nearByChat);
+            intent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, userpicture, blockStatus, nearByChat, contact.availableStatus, contact.status);
         } else {
             long contactId = chatObject.contactId;
             String jid = groupServerId;
@@ -274,7 +275,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
             long chatId = chatObject.chatid;
             byte[] groupImage = chatObject.chatImage;
 
-            intent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, groupImage, false, nearByChat);
+            intent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, groupImage, false, nearByChat, Contacts.AVAILABLE_BY_MY_CONTACTS, "");
 
         }
 
