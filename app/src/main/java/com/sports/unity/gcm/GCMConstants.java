@@ -11,7 +11,7 @@ public interface GCMConstants {
     public static final String TOP_TEXT = "tt";
     public static final String BOTTOM_TEXT = "bt";
     public static final String LEAGUE_SERIES_ID = "l";
-    public static final String MATCH_STATUS = "MS";
+    public static final String MATCH_STATUS = "r";
 
 
 

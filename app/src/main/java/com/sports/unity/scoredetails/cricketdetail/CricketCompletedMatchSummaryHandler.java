@@ -40,7 +40,6 @@ public class CricketCompletedMatchSummaryHandler {
     public interface CricketCompletedMatchSummaryContentListener {
 
         void handleContent(String jsonObject);
-        void handleError();
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
