@@ -4,6 +4,7 @@ import android.Manifest;
 import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
@@ -11,6 +12,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
@@ -45,6 +47,7 @@ import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.messages.controller.activity.GroupDetailActivity;
 import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
+import com.sports.unity.gcm.RegistrationIntentService;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -82,6 +85,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     private ContactSyncListener contactSyncListener;
     private TextView unreadCount;
     private boolean messagesFragmentInFront = false;
+    private SharedPreferences preferences;
 
     private FloatingActionMenu fabMenu;
     private View backgroundDimmer;
@@ -115,7 +119,16 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                 }
             }
         }
-
+        preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if(preferences!=null){
+            boolean sentToken= preferences.getBoolean(Constants.SENT_TOKEN_TO_SERVER,false);
+            if(!sentToken){
+                Intent intent = new Intent(this, RegistrationIntentService.class);
+                startService(intent);
+            }
+        }
+        Intent intent = new Intent(this, RegistrationIntentService.class);
+        startService(intent);
         fabMenu = (FloatingActionMenu) findViewById(R.id.fab_menu);
         backgroundDimmer = findViewById(R.id.background_dimmer);
         fabMenu.hideMenuButton(false);
@@ -126,6 +139,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.childFragmentContainer);
         frameLayout.setLayoutTransition(lt);
     }
+
 
     private void setFabMenuListeners(final FloatingActionMenu fabMenu) {
 

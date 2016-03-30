@@ -6,9 +6,18 @@ import android.widget.TextView;
  * Created by madmachines on 18/2/16.
  */
 public class LiveAndCompletedCricketFallOfWicketCardDTO {
+    private String playerId;
     private String tvWicket;
     private String tvBowlerName;
     private String tvOverNumber;
+
+    public String getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(String playerId) {
+        this.playerId = playerId;
+    }
 
     public String getTvWicket() {
         return tvWicket;

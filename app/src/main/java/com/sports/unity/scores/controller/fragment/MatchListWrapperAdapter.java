@@ -3,7 +3,6 @@ package com.sports.unity.scores.controller.fragment;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,14 +12,12 @@ import android.widget.TextView;
 import com.sports.unity.R;
 import com.sports.unity.common.model.MatchDay;
 import com.sports.unity.util.Constants;
-import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONObject;
 import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
-
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 

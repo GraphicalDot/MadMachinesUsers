@@ -87,7 +87,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <ImageView
-                    android:layout_toRightOf="@id/tv_dummy_view"
                     android:id="@+id/tv_player_number_or_replace_second"
                     android:layout_width="0dp"
                     app:layout_widthPercent="15%"

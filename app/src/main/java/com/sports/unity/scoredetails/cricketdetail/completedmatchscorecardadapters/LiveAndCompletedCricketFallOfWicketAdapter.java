@@ -1,5 +1,6 @@
 package com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sports.unity.R;
+import com.sports.unity.common.model.UserProfileHandler;
 
 import java.util.List;
 
@@ -16,9 +18,11 @@ import java.util.List;
 public class LiveAndCompletedCricketFallOfWicketAdapter extends RecyclerView.Adapter<LiveAndCompletedCricketFallOfWicketAdapter.ViewHolder> {
 
     private final List<LiveAndCompletedCricketFallOfWicketCardDTO> mValues;
+    private Context context;
 
-    public LiveAndCompletedCricketFallOfWicketAdapter(List<LiveAndCompletedCricketFallOfWicketCardDTO> mValues) {
+    public LiveAndCompletedCricketFallOfWicketAdapter(List<LiveAndCompletedCricketFallOfWicketCardDTO> mValues,Context context) {
         this.mValues = mValues;
+        this.context= context;
     }
 
     @Override

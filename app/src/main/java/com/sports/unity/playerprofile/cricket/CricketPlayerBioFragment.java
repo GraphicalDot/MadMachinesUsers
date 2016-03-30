@@ -43,7 +43,8 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        playerId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        //playerId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        playerId = "4429";
         cricketPlayerbioHandler = CricketPlayerbioHandler.getInstance(context);
         cricketPlayerbioHandler.addListener(this);
         cricketPlayerbioHandler.requestData(playerId);
@@ -123,41 +124,38 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     }
     private void renderDisplay(JSONObject jsonObject) throws JSONException {
 
-        final JSONObject data = (JSONObject) jsonObject.get("data");
-        final JSONObject playerInfo = (JSONObject) data.get("info");
+        final JSONArray dataArray = jsonObject.getJSONArray("data");
+        final JSONObject dataObject = dataArray.getJSONObject(0);
+        final JSONObject playerInfo = dataObject.getJSONObject("info");
         PlayerCricketBioDataActivity activity = (PlayerCricketBioDataActivity) getActivity();
         hideProgress();
         if (activity != null) {
-            activity.setProfileInfo(data);
+            activity.setProfileInfo(dataObject);
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
 
-                      if (!playerInfo.isNull("Born")) {
+                      if (!playerInfo.isNull("born")) {
                           try{
                               tvPlayerDateOfBirth.setText(DateUtil.getFormattedDateDDMMYYYY(playerInfo.getString("Born")));
                           }catch (Exception e){
-                              tvPlayerDateOfBirth.setText(playerInfo.getString("Born"));
+                              tvPlayerDateOfBirth.setText(playerInfo.getString("born"));
                           }
 
                         }
-                        if (!playerInfo.isNull("Batting style")) {
-                            tvPlayerbattingStyle.setText(playerInfo.getString("Batting style"));
+                        if (!playerInfo.isNull("batting_style")) {
+                            tvPlayerbattingStyle.setText(playerInfo.getString("batting_style"));
                         }
-                        if (!playerInfo.isNull("Bowling style")) {
-                            tvPlayerBowingStyle.setText(playerInfo.getString("Bowling style"));
+                        if (!playerInfo.isNull("bowling_style")) {
+                            tvPlayerBowingStyle.setText(playerInfo.getString("bowling_style"));
                         }
-                        if (!playerInfo.isNull("Place of birth")) {
-                            tvPlayerbirthOfPlace.setText(playerInfo.getString("Place of birth"));
+                        if (!playerInfo.isNull("birth_place")) {
+                            tvPlayerbirthOfPlace.setText(playerInfo.getString("birth_place"));
                         }
 
-                        if (!data.isNull("teams_played_for")) {
-                            JSONArray array = data.getJSONArray("teams_played_for");
-                            for (int i = 0; i < array.length(); i++) {
-
-                                tvPlayerMajorTeam.setText(array.get(i).toString()+"\n\n");
-                            }
+                        if (!dataObject.isNull("team")) {
+                            tvPlayerMajorTeam.setText(dataObject.getString("team"));
 
                         }
 

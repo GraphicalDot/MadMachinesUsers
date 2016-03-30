@@ -148,8 +148,8 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                     if (people.size() > 1) {
                         plotMarkers(people, sportSelection);
                     } else {
-                        //map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
-                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong,getcurrentZoom()));
+                       // map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
                         LayoutInflater inflater = PeopleAroundMeMap.this.getLayoutInflater();
                         View view = inflater.inflate(R.layout.chat_other_profile_layout, null);
 //                        AlertDialog.Builder otherProfileBuilder = new AlertDialog.Builder(PeopleAroundMeMap.this);
@@ -215,6 +215,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 titleAddress.setText(place.getAddress());
                 titleCity.setText(place.getName());
                 latLong = place.getLatLng();
+                //getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
                // getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
             }

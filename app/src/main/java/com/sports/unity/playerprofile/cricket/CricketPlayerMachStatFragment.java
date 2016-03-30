@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,7 @@ import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,14 +37,14 @@ import static android.view.View.VISIBLE;
  * Created by madmachines on 15/2/16.
  */
 public class CricketPlayerMachStatFragment extends Fragment implements CricketPlayerMatchStatHandler.CricketPlayerMatchStatContentListener {
-    Map<String, String> battingTestsmatchMap = new LinkedHashMap<String, String>();
-    Map<String, String> battingOdisMap = new LinkedHashMap<String, String>();
-    Map<String, String> battingT20sMap = new LinkedHashMap<String, String>();
-    Map<String, String> battingIPLMap = new LinkedHashMap<String, String>();
-    Map<String, String> bowlingTestsmatchMap = new LinkedHashMap<String, String>();
-    Map<String, String> bowlingOdisMap = new LinkedHashMap<String, String>();
-    Map<String, String> bowlingT20sMap = new LinkedHashMap<String, String>();
-    Map<String, String> bowlingIPLMap = new LinkedHashMap<String, String>();
+    Map<String, String> battingTestsmatchMap = new HashMap<String, String>();
+    Map<String, String> battingOdisMap = new HashMap<String, String>();
+    Map<String, String> battingT20sMap = new HashMap<String, String>();
+    Map<String, String> battingIPLMap = new HashMap<String, String>();
+    Map<String, String> bowlingTestsmatchMap = new HashMap<String, String>();
+    Map<String, String> bowlingOdisMap = new HashMap<String, String>();
+    Map<String, String> bowlingT20sMap = new HashMap<String, String>();
+    Map<String, String> bowlingIPLMap = new HashMap<String, String>();
     private RecyclerView rcBattingPerformanceSummery;
     private RecyclerView rcBowlingPerformanceSummary;
     private ImageView battingImageView;
@@ -68,7 +69,8 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-         playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        // playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        playerId = "4429";
          this.context = context;
         cricketPlayerMatchStatHandler = CricketPlayerMatchStatHandler.getInstance(context);
         cricketPlayerMatchStatHandler.addListener(this);
@@ -205,24 +207,71 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         bowlingIPLMap .clear();
         rcBattingPerformanceSummery.setVisibility(VISIBLE);
         rcBowlingPerformanceSummary.setVisibility(VISIBLE);
-        final JSONObject data = (JSONObject) jsonObject.get("data");
-        final JSONArray playerStatsArray = (JSONArray) data.get("stats");
+        final JSONArray dataArray = jsonObject.getJSONArray("data");
+        Log.i("Msg","Array length"+dataArray.length());
+        final JSONObject dataObject = (JSONObject) dataArray.get(0);
+        final JSONObject playerStatistics = dataObject.getJSONObject("statistics");
+        /*final JSONObject playerObjectTest=playerStatistics.getJSONObject("TEST");
+        final JSONObject playerBattingTest=playerObjectTest.getJSONObject("batting");
+        final JSONObject playerBowlingTest=playerObjectTest.getJSONObject("bowling");
+        final JSONObject playerObjectOdi=playerStatistics.getJSONObject("ODI");
+        final JSONObject playerBattingOdi=playerObjectOdi.getJSONObject("batting");
+        final JSONObject playerBowlingOdi=playerObjectOdi.getJSONObject("bowling");
+        final JSONObject playerObjectT20=playerStatistics.getJSONObject("T20 Int");
+        final JSONObject playerBattingT20=playerObjectT20.getJSONObject("batting");
+        final JSONObject playerBowlingT20=playerObjectT20.getJSONObject("bowling");*/
+        final Iterator<String> keys = playerStatistics.keys();
+
         PlayerCricketBioDataActivity activity = (PlayerCricketBioDataActivity) getActivity();
         hideProgress();
         if (activity != null) {
-            activity.setProfileInfo(data);
+            activity.setProfileInfo(dataObject);
             activity.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        for (int i = 0; i < playerStatsArray.length(); i++) {
-                            JSONObject battingJsonObject = (JSONObject) playerStatsArray.get(i);
-                            JSONArray battingArray = battingJsonObject.getJSONArray("batting");
-                            JSONArray bowlingArray = battingJsonObject.getJSONArray("bowling");
-                            if (battingArray != null) battingStatProcess(i, battingArray);
-                            if (bowlingArray != null) bowlingStatProcess(i, bowlingArray);
+                        while (keys.hasNext()){
+                            String key = keys.next();
+                            JSONObject battingJsonObject = playerStatistics.getJSONObject(key);
+                            JSONObject battingArray = battingJsonObject.getJSONObject("batting");
+                            JSONObject bowlingArray = battingJsonObject.getJSONObject("bowling");
+                            if (battingArray != null) battingStatProcess(key, battingArray);
+                            if (bowlingArray != null) bowlingStatProcess(key, bowlingArray);
                         }
 
+                        CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
+                        Set<String> keySet = battingTestsmatchMap.keySet();
+                        for (String mapKey : keySet) {
+                            String title = null;
+                            title = mapKey.toUpperCase();
+                            title = title.replaceAll("_", " ");
+                            cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
+                            cricketPlayerMatchStatDTO.setTitles(title);
+                            cricketPlayerMatchStatDTO.setTestsMatch(battingTestsmatchMap.get(mapKey));
+                            cricketPlayerMatchStatDTO.setOdis(battingOdisMap.get(mapKey));
+                            cricketPlayerMatchStatDTO.setT20s(battingT20sMap.get(mapKey));
+                            cricketPlayerMatchStatDTO.setIpl(battingIPLMap.get(mapKey));
+                            playerMatchBattingStatDTOList.add(cricketPlayerMatchStatDTO);
+
+
+                        }
+                         keySet = bowlingTestsmatchMap.keySet();
+                        for (String bowllingKey : keySet) {
+                            String title = null;
+                            title = bowllingKey.toUpperCase();
+                            title = title.replaceAll("_", " ");
+                            cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
+                            cricketPlayerMatchStatDTO.setTitles(title);
+                            cricketPlayerMatchStatDTO.setTestsMatch(bowlingTestsmatchMap.get(bowllingKey));
+                            cricketPlayerMatchStatDTO.setOdis(bowlingOdisMap.get(bowllingKey));
+                            cricketPlayerMatchStatDTO.setT20s(bowlingT20sMap.get(bowllingKey));
+                            cricketPlayerMatchStatDTO.setIpl(battingIPLMap.get(bowllingKey));
+                            playerMatchBowlingStatDTOList.add(cricketPlayerMatchStatDTO);
+
+
+                        }
+                        cricketPlayerMatchBowlingStatAdapter.notifyDataSetChanged();
+                        cricketPlayerMatchBattingStatAdapter.notifyDataSetChanged();
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         showErrorLayout(getView());
@@ -233,128 +282,109 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
 
     }
 
-    private void battingStatProcess(int i, JSONArray battingArray) throws JSONException {
-        for (int j = 0; j < battingArray.length(); j++) {
-            JSONObject batting = (JSONObject) battingArray.get(j);
+    private void battingStatProcess(String key, JSONObject batting) throws JSONException {
 
             if (batting != null) {
-                if (batting.getString("format").equalsIgnoreCase("TESTS")) {
-                    battingTestsmatchMap.put("100s", batting.getString("100s"));
-                    battingTestsmatchMap.put("strike_rate", batting.getString("strike_rate"));
-                    battingTestsmatchMap.put("average", batting.getString("average"));
-                    battingTestsmatchMap.put("highest", batting.getString("highest"));
-                    battingTestsmatchMap.put("runs", batting.getString("runs"));
-                    battingTestsmatchMap.put("not_out", batting.getString("not_out"));
+                if ("TEST".equalsIgnoreCase(key)) {
                     battingTestsmatchMap.put("innings", batting.getString("innings"));
+                    battingTestsmatchMap.put("runs", batting.getString("runs"));
                     battingTestsmatchMap.put("matches", batting.getString("matches"));
+                    //battingTestsmatchMap.put("average", batting.getString("average"));
+                    //battingTestsmatchMap.put("strike_rate", batting.getString("strike_rate"));
+                    //battingTestsmatchMap.put("highest", batting.getString("highest"));
+                    battingTestsmatchMap.put("100s", batting.getString("100s"));
+                    battingTestsmatchMap.put("50s", batting.getString("50s"));
+                    //battingTestsmatchMap.put("not_out", batting.getString("not_out"));
+                } else if ("ODI".equalsIgnoreCase(key)) {
 
-                } else if (batting.getString("format").equalsIgnoreCase("ODI")) {
-                    battingOdisMap.put("100s", batting.getString("100s"));
-                    battingOdisMap.put("strike_rate", batting.getString("strike_rate"));
-                    battingOdisMap.put("average", batting.getString("average"));
-                    battingOdisMap.put("highest", batting.getString("highest"));
-                    battingOdisMap.put("runs", batting.getString("runs"));
-                    battingOdisMap.put("not_out", batting.getString("not_out"));
                     battingOdisMap.put("innings", batting.getString("innings"));
+                    battingOdisMap.put("runs", batting.getString("runs"));
                     battingOdisMap.put("matches", batting.getString("matches"));
-                } else if (batting.getString("format").equalsIgnoreCase("Twenty20")) {
-                    battingT20sMap.put("100s", batting.getString("100s"));
-                    battingT20sMap.put("strike_rate", batting.getString("strike_rate"));
-                    battingT20sMap.put("average", batting.getString("average"));
-                    battingT20sMap.put("highest", batting.getString("highest"));
-                    battingT20sMap.put("runs", batting.getString("runs"));
-                    battingT20sMap.put("not_out", batting.getString("not_out"));
+                   // battingOdisMap.put("average", batting.getString("average"));
+                    //battingOdisMap.put("strike_rate", batting.getString("strike_rate"));
+                    //battingOdisMap.put("highest", batting.getString("highest"));
+                    battingOdisMap.put("100s", batting.getString("100s"));
+                    battingOdisMap.put("50s", batting.getString("50s"));
+                  //  battingOdisMap.put("not_out", batting.getString("not_out"));
+                } else if ("T20 Int".equalsIgnoreCase(key)) {
+
                     battingT20sMap.put("innings", batting.getString("innings"));
+                    battingT20sMap.put("runs", batting.getString("runs"));
                     battingT20sMap.put("matches", batting.getString("matches"));
-                } else if (batting.getString("format").equalsIgnoreCase("IPL")) {
-                    battingIPLMap.put("100s", batting.getString("100s"));
-                    battingIPLMap.put("strike_rate", batting.getString("strike_rate"));
-                    battingIPLMap.put("average", batting.getString("average"));
-                    battingIPLMap.put("highest", batting.getString("highest"));
-                    battingIPLMap.put("runs", batting.getString("runs"));
-                    battingIPLMap.put("not_out", batting.getString("not_out"));
+                    //battingT20sMap.put("average", batting.getString("average"));
+                  //  battingT20sMap.put("strike_rate", batting.getString("strike_rate"));
+                   // battingT20sMap.put("highest", batting.getString("highest"));
+                    battingT20sMap.put("100s", batting.getString("100s"));
+                    battingT20sMap.put("50s", batting.getString("50s"));
+                   // battingT20sMap.put("not_out", batting.getString("not_out"));
+                } else if ("IPL".equalsIgnoreCase(key)) {
+
                     battingIPLMap.put("innings", batting.getString("innings"));
+                    battingIPLMap.put("runs", batting.getString("runs"));
                     battingIPLMap.put("matches", batting.getString("matches"));
+                    //battingIPLMap.put("average", batting.getString("average"));
+                    //battingIPLMap.put("strike_rate", batting.getString("strike_rate"));
+                    //battingIPLMap.put("highest", batting.getString("highest"));
+                    battingIPLMap.put("100s", batting.getString("100s"));
+                    battingIPLMap.put("50s", batting.getString("50s"));
+                    //battingIPLMap.put("not_out", batting.getString("not_out"));
                 }
 
-            }
 
 
         }
-        CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
-        Set<String> keySet = battingTestsmatchMap.keySet();
-        for (String key : keySet) {
-            String title = null;
-            title = key.toUpperCase();
-            title = title.replaceAll("_", " ");
-            cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
-            cricketPlayerMatchStatDTO.setTitles(title);
-            cricketPlayerMatchStatDTO.setTestsMatch(battingTestsmatchMap.get(key));
-            cricketPlayerMatchStatDTO.setOdis(battingOdisMap.get(key));
-            cricketPlayerMatchStatDTO.setT20s(battingT20sMap.get(key));
-            playerMatchBattingStatDTOList.add(cricketPlayerMatchStatDTO);
 
-
-        }
-        cricketPlayerMatchBattingStatAdapter.notifyDataSetChanged();
     }
 
-    private void bowlingStatProcess(int i, JSONArray bowlingArray) throws JSONException {
-        for (int j = 0; j < bowlingArray.length(); j++) {
-            JSONObject bowling = (JSONObject) bowlingArray.get(j);
+    private void bowlingStatProcess(String key, JSONObject bowling) throws JSONException {
 
             if (bowling != null) {
-                if (bowling.getString("format").equalsIgnoreCase("TESTS")) {
-                    bowlingTestsmatchMap.put("economy", bowling.getString("economy"));
-                    bowlingTestsmatchMap.put("average", bowling.getString("average"));
-                    bowlingTestsmatchMap.put("best", bowling.getString("best"));
-                    bowlingTestsmatchMap.put("wickets", bowling.getString("wickets"));
-                    bowlingTestsmatchMap.put("runs", bowling.getString("runs"));
-                    bowlingTestsmatchMap.put("balls", bowling.getString("balls"));
+                if ("TEST".equalsIgnoreCase(key)) {
+
+                   // bowlingTestsmatchMap.put("runs", bowling.getString("runs"));
                     bowlingTestsmatchMap.put("matches", bowling.getString("matches"));
-                } else if (bowling.getString("format").equalsIgnoreCase("ODI")) {
-                    bowlingOdisMap.put("economy", bowling.getString("economy"));
-                    bowlingOdisMap.put("average", bowling.getString("average"));
-                    bowlingOdisMap.put("best", bowling.getString("best"));
-                    bowlingOdisMap.put("wickets", bowling.getString("wickets"));
-                    bowlingOdisMap.put("runs", bowling.getString("runs"));
-                    bowlingOdisMap.put("balls", bowling.getString("balls"));
+                    bowlingTestsmatchMap.put("innings", bowling.getString("innings"));
+                    //bowlingTestsmatchMap.put("average", bowling.getString("average"));
+                   // bowlingTestsmatchMap.put("balls", bowling.getString("balls"));
+                    //bowlingTestsmatchMap.put("best", bowling.getString("best"));
+                    bowlingTestsmatchMap.put("wickets", bowling.getString("wickets"));
+                    bowlingTestsmatchMap.put("economy", bowling.getString("economy"));
+                    bowlingTestsmatchMap.put("overs", bowling.getString("overs"));
+                } else if ("ODI".equalsIgnoreCase(key)) {
+
+                   // bowlingOdisMap.put("runs", bowling.getString("runs"));
                     bowlingOdisMap.put("matches", bowling.getString("matches"));
-                } else if (bowling.getString("format").equalsIgnoreCase("Twenty20")) {
-                    bowlingT20sMap.put("economy", bowling.getString("economy"));
-                    bowlingT20sMap.put("average", bowling.getString("average"));
-                    bowlingT20sMap.put("best", bowling.getString("best"));
-                    bowlingT20sMap.put("wickets", bowling.getString("wickets"));
-                    bowlingT20sMap.put("runs", bowling.getString("runs"));
-                    bowlingT20sMap.put("balls", bowling.getString("balls"));
+                    /*bowlingOdisMap.put("average", bowling.getString("average"));
+                    bowlingOdisMap.put("balls", bowling.getString("balls"));
+                    bowlingOdisMap.put("best", bowling.getString("best"));*/
+                    bowlingOdisMap.put("wickets", bowling.getString("wickets"));
+                    bowlingOdisMap.put("economy", bowling.getString("economy"));
+                    bowlingTestsmatchMap.put("overs", bowling.getString("overs"));
+
+                } else if ("T20 Int".equalsIgnoreCase(key)) {
+
+                   // bowlingT20sMap.put("runs", bowling.getString("runs"));
                     bowlingT20sMap.put("matches", bowling.getString("matches"));
-                } else if (bowling.getString("format").equalsIgnoreCase("IPL")) {
-                    bowlingIPLMap.put("economy", bowling.getString("economy"));
-                    bowlingIPLMap.put("average", bowling.getString("average"));
-                    bowlingIPLMap.put("best", bowling.getString("best"));
-                    bowlingIPLMap.put("wickets", bowling.getString("wickets"));
-                    bowlingIPLMap.put("runs", bowling.getString("runs"));
-                    bowlingIPLMap.put("balls", bowling.getString("balls"));
+                    /*bowlingT20sMap.put("average", bowling.getString("average"));
+                    bowlingT20sMap.put("balls", bowling.getString("balls"));
+                    bowlingT20sMap.put("best", bowling.getString("best"));*/
+                    bowlingT20sMap.put("wickets", bowling.getString("wickets"));
+                    bowlingT20sMap.put("economy", bowling.getString("economy"));
+                    bowlingTestsmatchMap.put("overs", bowling.getString("overs"));
+                } else if ("IPL".equalsIgnoreCase(key)) {
+
+                    //bowlingIPLMap.put("runs", bowling.getString("runs"));
                     bowlingIPLMap.put("matches", bowling.getString("matches"));
+                   /* bowlingIPLMap.put("average", bowling.getString("average"));
+                    bowlingIPLMap.put("balls", bowling.getString("balls"));
+                    bowlingIPLMap.put("best", bowling.getString("best"));*/
+                    bowlingIPLMap.put("wickets", bowling.getString("wickets"));
+                    bowlingIPLMap.put("economy", bowling.getString("economy"));
+                    bowlingTestsmatchMap.put("overs", bowling.getString("overs"));
+
                 }
-            }
         }
-        CricketPlayerMatchStatDTO cricketPlayerMatchStatDTO = null;
-        Set<String> keySet = bowlingTestsmatchMap.keySet();
-        for (String key : keySet) {
-            String title = null;
-            title = key.toUpperCase();
-            title = title.replaceAll("_", " ");
-            cricketPlayerMatchStatDTO = new CricketPlayerMatchStatDTO();
-            cricketPlayerMatchStatDTO.setTitles(title);
-            cricketPlayerMatchStatDTO.setTestsMatch(bowlingTestsmatchMap.get(key));
-            cricketPlayerMatchStatDTO.setOdis(bowlingOdisMap.get(key));
-            cricketPlayerMatchStatDTO.setT20s(bowlingT20sMap.get(key));
-            playerMatchBowlingStatDTOList.add(cricketPlayerMatchStatDTO);
 
-
-        }
-        cricketPlayerMatchBowlingStatAdapter.notifyDataSetChanged();
     }
 
     @Override

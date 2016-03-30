@@ -9,7 +9,7 @@ import com.sports.unity.scoredetails.CommentaryFragment;
 import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scoredetails.UpcommingMatchCommentaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CompletedMatchScoreCardFragment;
-import com.sports.unity.scoredetails.cricketdetail.CricketCompletedMatchSummeryFragment;
+import com.sports.unity.scoredetails.cricketdetail.CricketCompletedMatchSummaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketLiveMatchSummaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketUpcomingMatchScoreCardFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketUpcomingMatchSummaryFragment;
@@ -44,15 +44,16 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
 
         Fragment fragment = null;
         if (position == 0) {
-            if(matchStatus.equalsIgnoreCase("notstarted")){
+            if(matchStatus.equalsIgnoreCase("N")){
                 fragment = new CricketUpcomingMatchSummaryFragment();
-            }else if(matchStatus.equalsIgnoreCase("started")){
+            }else if(matchStatus.equalsIgnoreCase("L")){
                 fragment = new CricketLiveMatchSummaryFragment();
-            } else {
-                fragment = new CricketCompletedMatchSummeryFragment();
+            } else  {
+                fragment = new CricketCompletedMatchSummaryFragment();
             }
+           //fragment = new CricketLiveMatchSummaryFragment();
         } else if (position == 1) {
-            if(matchStatus.equalsIgnoreCase("notstarted")){
+            if(matchStatus.equalsIgnoreCase("N")){
                 fragment = new UpcommingMatchCommentaryFragment();
             } else {
                 fragment = new CommentaryFragment();
@@ -62,18 +63,14 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
                 fragment.setArguments(cmBundel);
             }
         } else {
-            if(matchStatus.equalsIgnoreCase("notstarted")){
+            if(matchStatus.equalsIgnoreCase("N")){
                 fragment = new CricketUpcomingMatchScoreCardFragment();
-            }else if(matchStatus.equalsIgnoreCase("started")){
+            }else if(matchStatus.equalsIgnoreCase("L")){
                 fragment = new LiveCricketMatchScoreCardFragment();}
             else {
                 fragment = new CompletedMatchScoreCardFragment();
-
             }
         }
-
-
-
         return fragment;
     }
 

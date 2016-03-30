@@ -40,6 +40,8 @@ public class Constants {
     public static final String REQUEST_PARAMETER_KEY_USER_NAME = "username";
     public static final String REQUEST_PARAMETER_KEY_APK_VERSION = "apk_version";
     public static final String REQUEST_PARAMETER_KEY_UDID = "udid";
+    public static final String REQUEST_PARAMETER_KEY_MATCHID = "match_id";
+    public static final String REQUEST_PARAMETER_KEY_TOKEN = "token";
 
     public static final String PARAM_TIME = "time";
     public static final String PARAM_MIME_TYPE = "mime_type";
@@ -96,8 +98,10 @@ public class Constants {
     public static final String INTENT_KEY_LEAGUE_ID = "league_id";
     public static final String INTENT_KEY_TEAM1_NAME = "team1";
     public static final String INTENT_KEY_TEAM2_NAME = "team2";
-    public static final long TIMEINMILISECOND = 6000;
-    public static final String ERRORRESPONSE = "{\"success\":false,\"error\":true}";
+    public static final long TIMEINMILISECOND = 30000;
+    public static final String ERRORRESPONSE ="{\"success\":false,\"error\":true}";
+    public static final String TOKEN_PARAM ="token" ;
+    public static final String INTENT_KEY_SERIES = "series_id";
     public static final String LEAGUE_NAME = "leaague_name";
     public static final String ENABLE_LOCATION = "enable_location";
     public static final String CHECK_LOCATION = "location";

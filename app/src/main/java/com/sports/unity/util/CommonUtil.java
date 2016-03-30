@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
@@ -12,10 +13,13 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.iid.InstanceID;
 import com.sports.unity.BuildConfig;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.R;
@@ -33,6 +37,7 @@ import org.joda.time.Seconds;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.security.MessageDigest;
@@ -354,5 +359,9 @@ public class CommonUtil {
 
         return countryDetails;
     }
+    public static String getToken(Context context) throws IOException {
+        SharedPreferences sharedPreferences  = PreferenceManager.getDefaultSharedPreferences(context);
+        return sharedPreferences.getString(Constants.REQUEST_PARAMETER_KEY_TOKEN,"");
 
+    }
 }

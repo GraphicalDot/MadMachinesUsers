@@ -1,4 +1,6 @@
 package com.sports.unity.scores.model;
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.sports.unity.common.model.MatchDay;
 import com.sports.unity.messages.controller.model.PeoplesNearMe;
@@ -9,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -27,7 +30,6 @@ public class ScoresJsonParser {
             JSONObject jsonObject = new JSONObject(jsonContent);
 
             boolean success = jsonObject.getBoolean("success");
-            boolean error = jsonObject.getBoolean("error");
 
             if( success ) {
                 list = new ArrayList<>();
@@ -55,7 +57,7 @@ public class ScoresJsonParser {
             ex.printStackTrace();
             list.clear();
         }
-
+        Log.d("Score List", "parseListOfMatches: "+list);
         return list;
     }
 
@@ -109,14 +111,17 @@ public class ScoresJsonParser {
                     if(object == null){
                         continue;
                     } else {
+                        if(!object.isNull("commentary_id")){
+                            commentriesModel.setCommentaryId(object.getLong("commentary_id"));
+                        }
                         if(!object.isNull("comment")){
                             commentriesModel.setComment(object.getString("comment"));
                         }
                         if(!object.isNull("comment_storing_time")){
                             commentriesModel.setMinute(object.getString("comment_storing_time"));
                         }
-                        if(!object.isNull("overs")){
-                            commentriesModel.setOver(object.getString("overs"));
+                        if(!object.isNull("over")){
+                            commentriesModel.setOver(object.getString("over"));
                         }
                         if(!object.isNull("minute")){
                             commentriesModel.setMinute(object.getString("minute"));
@@ -133,7 +138,7 @@ public class ScoresJsonParser {
             ex.printStackTrace();
             list = null;
         }
-
+        Collections.sort(list);
         return list;
 
     }

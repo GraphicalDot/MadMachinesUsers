@@ -23,14 +23,14 @@ public class CricketCompletedMatchSummaryHandler {
 
     private static final String REQUEST_TAG = "COMPLETED_SUMMARY_TAG";
     private static Context mContext;
-    private String url = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
+    //private String url = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
+    private String BASEURL = "http://52.74.75.79:8080/v1/get_cricket_match_summary?season_key=%s&match_id=%s";
 
     private CricketCompletedMatchSummaryContentListener mcontentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
     public static CricketCompletedMatchSummaryHandler getInstance(Context context) {
-        CricketCompletedMatchSummaryHandler cricketCompletedMatchSummaryHandler = null;
-        cricketCompletedMatchSummaryHandler = new CricketCompletedMatchSummaryHandler();
+        CricketCompletedMatchSummaryHandler cricketCompletedMatchSummaryHandler = new CricketCompletedMatchSummaryHandler();
         mContext = context;
         return cricketCompletedMatchSummaryHandler;
     }
@@ -40,7 +40,6 @@ public class CricketCompletedMatchSummaryHandler {
     public interface CricketCompletedMatchSummaryContentListener {
 
         void handleContent(String jsonObject);
-        void handleError();
 
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
@@ -58,10 +57,10 @@ public class CricketCompletedMatchSummaryHandler {
         }
     };
 
-    public void requestCompletedMatchSummary(String matchId) {
+    public void requestCompletedMatchSummary(String seriesId,String matchId) {
         Log.i("Score Detail", "Request Score Details");
-
-        url = url+matchId;
+         String url = String.format(BASEURL, seriesId,matchId);
+        Log.d("Summary Url", "requestCompletedMatchSummary: "+url);
         StringRequest stringRequest = null;
         //RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
@@ -73,8 +72,10 @@ public class CricketCompletedMatchSummaryHandler {
         try{
 
             Log.i("Score Card", "handleResponse: ");
+                   if(mcontentListener!=null){
+                       mcontentListener.handleContent(response);
+                   }
 
-                mcontentListener.handleContent(response);
 
         } catch (Exception e) {
             e.printStackTrace();

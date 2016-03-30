@@ -1,5 +1,7 @@
 package com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.sports.unity.R;
+import com.sports.unity.playerprofile.cricket.PlayerCricketBioDataActivity;
+import com.sports.unity.util.Constants;
 
 import java.util.List;
 
@@ -16,9 +20,11 @@ import java.util.List;
 public class LiveAndCompletedCricketBowlingCardAdapter extends RecyclerView.Adapter<LiveAndCompletedCricketBowlingCardAdapter.ViewHolder> {
 
     private final List<LiveAndCompletedCricketBowlingCardDTO> mValues;
+    private Context context;
 
-    public LiveAndCompletedCricketBowlingCardAdapter(List<LiveAndCompletedCricketBowlingCardDTO> mValues) {
+    public LiveAndCompletedCricketBowlingCardAdapter(List<LiveAndCompletedCricketBowlingCardDTO> mValues,Context context) {
         this.mValues = mValues;
+        this.context = context;
     }
 
     @Override
@@ -36,6 +42,26 @@ public class LiveAndCompletedCricketBowlingCardAdapter extends RecyclerView.Adap
         holder.tvRuns.setText(holder.dto.getTvRuns());
         holder.tvWicket.setText(holder.dto.getTvWicket());
         holder.tvExtra.setText(holder.dto.getTvExtra());
+        final String playerId = holder.dto.getPlayerId();
+        holder.tvBowlerName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                try {
+
+                    Intent i = new Intent(context, PlayerCricketBioDataActivity.class);
+                    i.putExtra(Constants.INTENT_KEY_ID, playerId);
+                    v.getContext().startActivity(i);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+
+        });
+
+
     }
 
     @Override

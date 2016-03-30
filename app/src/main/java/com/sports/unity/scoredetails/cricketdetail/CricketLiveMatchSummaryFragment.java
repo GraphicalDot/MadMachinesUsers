@@ -16,8 +16,10 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.amulyakhare.textdrawable.TextDrawable;
+import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.scoredetails.BallDetail;
+import com.sports.unity.scoredetails.cricketdetail.JsonParsers.LiveCricketMatchSummaryParser;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.Constants;
 
@@ -67,6 +69,9 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     private Context context;
     private CricketLiveMatchSummaryHandler cricketLiveMatchSummaryHandler;
     private Timer timerToRefreshContent;
+    private boolean enableAutorefresh;
+    private String seriesId;
+
     private SwipeRefreshLayout swLivSummary;
     private boolean autRefreshEnabled;
     public CricketLiveMatchSummaryFragment() {
@@ -77,9 +82,10 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     public void onAttach(Context context) {
         super.onAttach(context);
         matchId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+        seriesId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_SERIES);
         this.context = context;
         matchSummary();
-
+        enableAutoRefreshContent();
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -134,17 +140,22 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             });
 
 
+
+
+
+
+
             initProgress(view);
             initErrorLayout(view);
         } catch (Exception e) {
             e.printStackTrace();
         }
-   }
+    }
 
     public void matchSummary(){
         cricketLiveMatchSummaryHandler = CricketLiveMatchSummaryHandler.getInstance(context);
         cricketLiveMatchSummaryHandler.addListener(this);
-        cricketLiveMatchSummaryHandler.requestLiveMatchSummary(matchId);
+        cricketLiveMatchSummaryHandler.requestLiveMatchSummary(seriesId, matchId);
         if(!autRefreshEnabled){
             enableAutoRefreshContent();
             autRefreshEnabled = true;
@@ -155,14 +166,19 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
     private void enableAutoRefreshContent(){
         timerToRefreshContent = new Timer();
-        timerToRefreshContent.schedule(new TimerTask() {
+        if(autRefreshEnabled){
+            timerToRefreshContent.schedule(new TimerTask() {
 
-            @Override
-            public void run() {
-                matchSummary();
-            }
+                @Override
+                public void run() {
+                    matchSummary();
+                }
 
-        }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
+            }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
+        }else{
+            timerToRefreshContent.cancel();
+        }
+
     }
 
     @Override
@@ -195,8 +211,8 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
     private void showErrorLayout(View view) {
 
-       /* LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.VISIBLE);*/
+        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        errorLayout.setVisibility(View.VISIBLE);
 
     }
     private void initProgress(View view) {
@@ -215,40 +231,41 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
         swLivSummary.setRefreshing(false);
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (!jsonObject.isNull("data")) {
-        JSONArray dataArray = jsonObject.getJSONArray("data");
-        JSONObject matchObject = dataArray.getJSONObject(0);
-        final JSONArray recentOverArray = matchObject.getJSONArray("recent_overs");
-        final JSONObject currentPartnershipDetails = matchObject.getJSONObject("current_partnership_details");
-        final JSONArray yetToBatting = matchObject.getJSONArray("yet_to_bat");
-        final JSONObject currentBowlerObject = matchObject.getJSONObject("current_bowler_details");
-        final JSONArray bowlerStatsArray = currentBowlerObject.getJSONArray("stats");
-        final JSONObject currentBowlerStatObject = bowlerStatsArray.getJSONObject(0);
-        hideProgress();
-
-        if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        BallDetail defb = new BallDetail();
-                        BallDetail[] balls = new BallDetail[]{defb, defb, defb, defb, defb, defb,defb};
-                        int ballIndex = 6;
-                        Drawable drawable = null;
-                        for (int i = 0; i < recentOverArray.length(); i++) {
-                            JSONArray ballsArray = recentOverArray.getJSONArray(i);
-                            JSONArray over = ballsArray.getJSONArray(1);
-                            for (int j = over.length()-1; j >= 0; j--) {
-
-                                balls[ballIndex] = getResolveBall(over.getString(j));
-                                ballIndex--;
-                                if (ballIndex < 0) {
-                                    break;
+            JSONArray dataArray = jsonObject.getJSONArray("data");
+            JSONObject matchObject = dataArray.getJSONObject(0);
+            final LiveCricketMatchSummaryParser liveCricketMatchSummaryParser = new LiveCricketMatchSummaryParser();
+            liveCricketMatchSummaryParser.setJsonObject(matchObject);
+            liveCricketMatchSummaryParser.setCricketSummary(liveCricketMatchSummaryParser.getMatchSummary());
+            final JSONArray recentOverArray = liveCricketMatchSummaryParser.getRecentOver();
+            JSONArray currentPartnershipDetails = liveCricketMatchSummaryParser.getCurrentPartnership();
+            JSONArray yetToBatting = liveCricketMatchSummaryParser.getUpCommingBatsMan();
+            JSONObject currentBowlerObject = liveCricketMatchSummaryParser.getCurentBowler();
+            if (currentBowlerObject != null) {
+            liveCricketMatchSummaryParser.setCurrentBowler(currentBowlerObject);
+            liveCricketMatchSummaryParser.setCurrentPartnership(currentPartnershipDetails.getJSONObject(0));
+            liveCricketMatchSummaryParser.setYetToBat(yetToBatting);
+            liveCricketMatchSummaryParser.setRecentOver(liveCricketMatchSummaryParser.getRecentOver());
+            hideProgress();
+            if (activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            BallDetail defb = new BallDetail();
+                            BallDetail[] balls = new BallDetail[]{defb, defb, defb, defb, defb, defb, defb};
+                            int ballIndex = 6;
+                            Drawable drawable = null;
+                            for (int i = 0; i < recentOverArray.length(); i++) {
+                                BallDetail curBall = null;
+                                if (liveCricketMatchSummaryParser.getRecentWicket(i)) {
+                                    curBall = getResolveBall("w");
+                                } else {
+                                    curBall = getResolveBall(liveCricketMatchSummaryParser.getRecentRuns(i));
                                 }
+                                balls[ballIndex] = curBall;
+                                ballIndex--;
+
                             }
-                            if (ballIndex < 0) {
-                                break;
-                            }
-                       }
                             if (!balls[0].getValue().equals("0")) {
                                 drawable = getTextDrawable(balls[0].getValue(), balls[0].getFontColor(), balls[0].getBackGroundColor());
                                 ivFirstBall.setImageDrawable(drawable);
@@ -286,88 +303,53 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                             } else {
                                 ivSixthBall.setImageResource(R.drawable.recent_dot_balls);
                             }
+                            int playerFirstRuns = liveCricketMatchSummaryParser.getPlayeFirstRuns();
+                            int playerSecondRuns = liveCricketMatchSummaryParser.getPlayeSecondRuns();
+                            int playerFirstBalls = liveCricketMatchSummaryParser.getPlayeFirstBalls();
+                            int playerSecondBalls = liveCricketMatchSummaryParser.getPlayeSecondBalls();
 
-                        //TextDrawable  playerNameDraw = null;
+                            tvFirstPlayerName.setText(liveCricketMatchSummaryParser.getPlayeFirstName());
+                            tvSecondPlayerName.setText(liveCricketMatchSummaryParser.getPlayeSecondName());
+                            if (playerFirstBalls == 0) {
+                                tvFirstPlayerRunRate.setText(0 + "");
+                            } else {
+                                tvFirstPlayerRunRate.setText((playerFirstRuns * 100 / playerFirstBalls) + "");
+                            }
+                            if (playerSecondBalls == 0) {
+                                tvSecondPlayerRunRate.setText(0 + "");
 
+                            } else {
+                                tvSecondPlayerRunRate.setText((playerSecondRuns * 100 / playerSecondBalls) + "");
+                            }
+                            tvFirstPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeFirstRuns() + "(" + liveCricketMatchSummaryParser.getPlayeFirstBalls() + ")");
+                            tvSecondPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeSecondRuns() + "(" + liveCricketMatchSummaryParser.getPlayeSecondBalls() + ")");
+                            tvPartnershipRecord.setText((playerFirstRuns + playerSecondRuns) + "(" + (playerFirstBalls + playerSecondBalls) + ")");
+                            tvFirstUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(0));
+                            Glide.with(getContext()).load(liveCricketMatchSummaryParser.getYetToPlayerImage(0)).placeholder(R.drawable.ic_no_img).into(ivUppComingPlayerFirst);
+                            tvSecondUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(1));
+                            Glide.with(getContext()).load(liveCricketMatchSummaryParser.getYetToPlayerImage(1)).placeholder(R.drawable.ic_no_img).into(ivUppComingPlayerSecond);
+                            tvThirdUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(2));
+                            Glide.with(getContext()).load(liveCricketMatchSummaryParser.getYetToPlayerImage(2)).placeholder(R.drawable.ic_no_img).into(ivUppComingPlayerThird);
+                            tvBowlerName.setText(liveCricketMatchSummaryParser.getCurentBowlerName());
 
-                        if (!currentPartnershipDetails.isNull("player_a")) {
-                            tvFirstPlayerName.setText(currentPartnershipDetails.getString("player_a"));
-                            /*playerNameDraw = getTextDrawable(currentPartnershipDetails.getString("player_a").substring(0,1),Color.WHITE,Color.BLUE);
-                            ivFirstPlayer.setImageDrawable(playerNameDraw);*/
+                            tvBowlerEcon.setText("ECON " + liveCricketMatchSummaryParser.getCurentBowlerName());
+
+                            tvBowlerOver.setText(liveCricketMatchSummaryParser.getCurentBowlerOvers());
+                            tvBowlerWRun.setText(liveCricketMatchSummaryParser.getCurentBowlerWicket() + "/" + liveCricketMatchSummaryParser.getCurentBowlerRuns());
+
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            showErrorLayout(getView());
                         }
-
-                        if (!currentPartnershipDetails.isNull("player_b")) {
-                            tvSecondPlayerName.setText(currentPartnershipDetails.getString("player_b"));
-                            /*playerNameDraw = getTextDrawable(currentPartnershipDetails.getString("player_b").substring(0,1),Color.WHITE,Color.BLUE);
-                            ivPlayerSecond.setImageDrawable(playerNameDraw);*/
-                        }
-
-                        if (!currentPartnershipDetails.isNull("player_a_strikerate"))
-                            tvFirstPlayerRunRate.setText(currentPartnershipDetails.getString("player_a_strikerate"));
-                        if (!currentPartnershipDetails.isNull("player_b_strikerate"))
-                            tvSecondPlayerRunRate.setText(currentPartnershipDetails.getString("player_b_strikerate"));
-                        if (!currentPartnershipDetails.isNull("player_a_runs"))
-                            tvFirstPlayerRunOnBall.setText(currentPartnershipDetails.getString("player_a_runs") + "(" + currentPartnershipDetails.getString("player_a_balls") + ")");
-                        if (!currentPartnershipDetails.isNull("player_b_runs"))
-                            tvSecondPlayerRunOnBall.setText(currentPartnershipDetails.getString("player_b_runs") + "(" + currentPartnershipDetails.getString("player_b_balls") + ")");
-                        if (!currentPartnershipDetails.isNull("partnership_runs"))
-                            tvPartnershipRecord.setText(currentPartnershipDetails.getString("partnership_runs") + "(" + currentPartnershipDetails.getString("partnership_balls") + ")");
-
-                        if (yetToBatting.length() > 3) {
-                            tvFirstUpComingPlayerName.setText(yetToBatting.getString(0));
-                            /*playerNameDraw = getTextDrawable(yetToBatting.getString(0).substring(0,1),Color.WHITE,Color.BLUE);
-                            ivUppComingPlayerFirst.setImageDrawable(playerNameDraw);*/
-                            tvSecondUpComingPlayerName.setText(yetToBatting.getString(1));
-                            /*playerNameDraw = getTextDrawable(yetToBatting.getString(1).substring(0,1),Color.WHITE,Color.BLUE);
-                            ivUppComingPlayerSecond.setImageDrawable(playerNameDraw);*/
-                            tvThirdUpComingPlayerName.setText(yetToBatting.getString(2));
-                           /* playerNameDraw = getTextDrawable(yetToBatting.getString(2).substring(0,1),Color.WHITE,Color.BLUE);
-                            ivUppComingPlayerThird.setImageDrawable(playerNameDraw);*/
-                        } else if (yetToBatting.length() == 2) {
-                            tvFirstUpComingPlayerName.setText(yetToBatting.getString(0));
-                           /* playerNameDraw = getTextDrawable(yetToBatting.getString(0).substring(0,1),Color.WHITE,Color.BLUE);
-                            ivUppComingPlayerFirst.setImageDrawable(playerNameDraw);*/
-                            tvSecondUpComingPlayerName.setText(yetToBatting.getString(1));
-                            /*playerNameDraw = getTextDrawable(yetToBatting.getString(1).substring(0,1),Color.WHITE,Color.BLUE);
-                            ivUppComingPlayerSecond.setImageDrawable(playerNameDraw);*/
-                            tvThirdUpComingPlayerName.setText("N/A");
-                        } else if (yetToBatting.length() == 1) {
-                            tvFirstUpComingPlayerName.setText(yetToBatting.getString(0));
-                            /*playerNameDraw = getTextDrawable(yetToBatting.getString(0).substring(0,1),Color.WHITE,Color.RED);
-                            ivUppComingPlayerFirst.setImageDrawable(playerNameDraw);*/
-                            tvSecondUpComingPlayerName.setText("N/A");
-                            tvThirdUpComingPlayerName.setText("N/A");
-                        } else if (yetToBatting.length() == 0) {
-                            tvFirstUpComingPlayerName.setText("N/A");
-                            tvSecondUpComingPlayerName.setText("N/A");
-                            tvThirdUpComingPlayerName.setText("N/A");
-                        }
-                        if (!currentBowlerObject.isNull("name")) {
-                            tvBowlerName.setText(currentBowlerObject.getString("name"));
-                            /*playerNameDraw = getTextDrawable(currentBowlerObject.getString("name").substring(0,1),Color.WHITE,Color.BLUE);
-                            ivBowlerProfile.setImageDrawable(playerNameDraw);*/
-                        }
-
-                        if (!currentBowlerStatObject.isNull("economy"))
-                            tvBowlerEcon.setText("ECON " + currentBowlerStatObject.getString("economy"));
-                        if (!currentBowlerStatObject.isNull("overs"))
-                            tvBowlerOver.setText(currentBowlerStatObject.getString("overs"));
-                       /* if(!currentBowlerStatObject.isNull("wickets"))
-                            tvBowlerWr.setText(currentBowlerStatObject.getString("wickets"));*/
-                        if (!currentBowlerStatObject.isNull("runs_conceded") && !currentBowlerStatObject.isNull("wickets"))
-                            tvBowlerWRun.setText(currentBowlerStatObject.getString("wickets") + "/" + currentBowlerStatObject.getString("runs_conceded"));
-
-
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        showErrorLayout(getView());
                     }
-                }
-            });
+                });
+            }
+        } else{
+                showErrorLayout(getView());
+            }
+        }else {
+            showErrorLayout(getView());
         }
-    }else {
-        showErrorLayout(getView());
-    }
     }
 
 
@@ -392,60 +374,60 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     private BallDetail getResolveBall(String value){
         BallDetail ballDetail = new BallDetail();
         switch (value){
-            case "r0":
+            case "0":
                 ballDetail.setValue("0");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
                 ballDetail.setBackGroundColor(getBallColor(R.color.grayBorder));
                 break;
-            case "r1":
+            case "1":
                 ballDetail.setValue("1");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
                 ballDetail.setBackGroundColor(getBallColor(R.color.grayBorder));
                 break;
-            case "r2":
+            case "2":
                 ballDetail.setValue("2");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
                 ballDetail.setBackGroundColor(getBallColor(R.color.grayBorder));
                 break;
-            case "r3":
+            case "3":
                 ballDetail.setValue("3");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
                 ballDetail.setBackGroundColor(getBallColor(R.color.grayBorder));
                 break;
-            case "b4":
+            case "4":
                 ballDetail.setValue("4");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
-                ballDetail.setBackGroundColor(getBallColor(R.color.app_theme_blue));
+                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
                 break;
             case "r5":
                 ballDetail.setValue("5");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
-                ballDetail.setBackGroundColor(getBallColor(R.color.grayBorder));
+                ballDetail.setBackGroundColor(getBallColor(R.color.font_color_wide_no));
                 break;
-            case "b6":
+            case "6":
                 ballDetail.setValue("6");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
-                ballDetail.setBackGroundColor(getBallColor(R.color.app_theme_blue));
+                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
                 break;
             case "e1,wd":
                 ballDetail.setValue("WD");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
-                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
+                ballDetail.setBackGroundColor(getBallColor(R.color.font_color_boundary));
                 break;
             case "e1,by":
                 ballDetail.setValue("B");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
-                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
+                ballDetail.setBackGroundColor(getBallColor(R.color.font_color_boundary));
                 break;
             case "e1,lb":
                 ballDetail.setValue("LB");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
-                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
+                ballDetail.setBackGroundColor(getBallColor(R.color.white_translucent));
                 break;
             case  "e1,nb":
                 ballDetail.setValue("NB");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary_no));
-                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
+                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary_no));
                 break;
 
             case "w":
@@ -463,7 +445,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary_no));
                 ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary_no));
                 break;
-       }
+        }
         return    ballDetail;
     }
 
@@ -483,6 +465,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     @Override
     public void onPause() {
         super.onPause();
+        autRefreshEnabled = true;
         if(cricketLiveMatchSummaryHandler != null){
             cricketLiveMatchSummaryHandler.addListener(null);
         }
@@ -492,14 +475,15 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     @Override
     public void onResume() {
         super.onResume();
-       showProgress();
+        showProgress();
         if(cricketLiveMatchSummaryHandler != null){
             cricketLiveMatchSummaryHandler.addListener(this);
 
         }else {
             cricketLiveMatchSummaryHandler= CricketLiveMatchSummaryHandler.getInstance(getContext());
         }
-        cricketLiveMatchSummaryHandler.requestLiveMatchSummary(matchId);
+        cricketLiveMatchSummaryHandler.requestLiveMatchSummary(seriesId,matchId);
+        autRefreshEnabled = false;
     }
 
 }
