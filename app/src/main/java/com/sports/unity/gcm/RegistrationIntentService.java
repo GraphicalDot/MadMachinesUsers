@@ -90,29 +90,32 @@ public class RegistrationIntentService extends IntentService implements TokenReg
         tokenRegistrationHandler.addListener(this);
         tokenRegistrationHandler.removeToken();
     }
-   @Override
+    @Override
     public void handleContent(String content) {
         try {
             JSONObject object = new JSONObject(content);
             if(object!=null){
-                if(200==object.getInt("status")){
-                    if("success".equalsIgnoreCase(object.getString("info"))) {
-                        SharedPreferences.Editor editor= preferences.edit();
-                        editor.putBoolean(Constants.SENT_TOKEN_TO_SERVER, true);
-                        editor.apply();
+                if(!object.isNull("status")){
+                    if(200==object.getInt("status")) {
+                        if ("success".equalsIgnoreCase(object.getString("info"))) {
+                            SharedPreferences.Editor editor = preferences.edit();
+                            editor.putBoolean(Constants.SENT_TOKEN_TO_SERVER, true);
+                            editor.apply();
                         /*sendNotification("Notification");
 */
 
-                    }else{
+                        } else {
+                            preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
+                        }
+                    }else {
                         preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
-                    }
-                }else {
+                    }               }else {
                     preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
                 }
             }else{
                 preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
             }
-       } catch (JSONException e) {
+        } catch (JSONException e) {
             e.printStackTrace();
             preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
         }

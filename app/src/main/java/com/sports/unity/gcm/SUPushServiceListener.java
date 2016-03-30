@@ -109,10 +109,7 @@ public class SUPushServiceListener extends GcmListenerService {
                     (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             mNotificationManager.notify(0, mBuilder.build());
 
-
-
-
-        } catch (JSONException e) {
+      } catch (JSONException e) {
             e.printStackTrace();
         }
 
