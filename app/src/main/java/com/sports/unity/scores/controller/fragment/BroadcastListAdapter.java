@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.sports.unity.R;
@@ -42,6 +43,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
         private TextView broadcast;
         private TextView commentTime;
         private ImageView commentImage;
+        private View lvDivider;
 
         private View view;
 
@@ -53,7 +55,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
             broadcast = (TextView) v.findViewById(R.id.broadcast);
             commentTime = (TextView) v.findViewById(R.id.comment_time);
             commentImage  = (ImageView) v.findViewById(R.id.comment_image);
-
+            lvDivider = v.findViewById(R.id.lv_divider);
             /*commentTime.setTypeface(FontTypeface.getInstance(view.getContext()).getRobotoCondensedBold());
             broadcast.setTypeface(FontTypeface.getInstance(view.getContext()).getRobotoMedium());*/
         }
@@ -71,7 +73,12 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
 
         try {
             if(list != null ) {
+                CommentriesModel previousObject = null;
                 CommentriesModel jsonObject = list.get(position);
+                if(position>0){
+                     previousObject = list.get(position-1);
+                }
+
                 if(jsonObject.getComment() != null) {
                     holder.broadcast.setText(Html.fromHtml(jsonObject.getComment()));
                 }
@@ -83,9 +90,17 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
                         holder.commentImage.setImageResource(R.drawable.grey_ring);
                         holder.commentTime.setVisibility(View.VISIBLE);
                         holder.commentTime.setText(jsonObject.getOver());
-
-
                     }
+                    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.lvDivider .getLayoutParams();
+                    if(jsonObject.getOver().contains(".1") && !previousObject.getOver().contains(".1")){
+                        params.height = 3;
+
+                        //holder.lvDivider.setBackground();
+
+                    }else{
+                        params.height = 1;
+                    }
+                    holder.lvDivider.setLayoutParams(params);
 
                 } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
                     holder.commentTime.setText(Html.fromHtml(jsonObject.getMinute()));

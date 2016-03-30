@@ -402,6 +402,8 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
                 }
             }
+        }else{
+            tvFirstTeamInning.setText("Yet To Batting");
         }
         if (teamSecondInnings!=null) {
 
@@ -443,6 +445,8 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
                     teamBFallOfWicketCardList.add(fallOfWickets);
                 }
             }
+        }else{
+            tvSecondTeamInning.setText("Yet To Batting");
         }
         teamABattingAdapter.notifyDataSetChanged();
         teamABowlingAdapter.notifyDataSetChanged();

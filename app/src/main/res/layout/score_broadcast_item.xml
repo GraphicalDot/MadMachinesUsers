@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:orientation="vertical"
     android:background="@android:color/white"
     android:layout_marginBottom="1dp"
-    android:orientation="horizontal"
     >
 
     <LinearLayout
@@ -52,9 +52,12 @@
             android:textColor="@color/news_headline_mini"
             android:text=""/>
 
+
     </LinearLayout>
-<!--<view
-    android:layout_width="match_parent"
-    android:layout_height="1dp"
-    android:background="@color/@color/news_headline_mini"/>-->
+    <View
+        android:id="@+id/lv_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/around_me_seekbar_progress_color"></View>
+
 </LinearLayout>
