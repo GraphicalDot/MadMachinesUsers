@@ -6,32 +6,34 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sports.unity.R;
+import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.util.Constants;
 
 public class TeamLeagueDetails extends CustomAppCompatActivity {
 
-    private String id ;
-    private String name ;
-    private String type ;
-
+    private String id;
+    private String name;
+    private String type;
+    private FavouriteItem favouriteItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_league_details);
-
-        name = getIntent().getStringExtra("Name");
-        id = getIntent().getStringExtra("Id");
-        type = getIntent().getStringExtra("Type");
-
+        String jsonObject = getIntent().getStringExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA);
+        favouriteItem = new FavouriteItem(jsonObject);
+        name = favouriteItem.getName();
+        id = favouriteItem.getId();
+        type = favouriteItem.getSportsType();
         initToolbar();
         initView();
 
@@ -63,14 +65,15 @@ public class TeamLeagueDetails extends CustomAppCompatActivity {
 
     private void initView() {
 
-       // String titles[] = {getString(R.string.fixture), getString(R.string.news)};
-       // int numberOfTabs = titles.length;
+        // String titles[] = {getString(R.string.fixture), getString(R.string.news)};
+        // int numberOfTabs = titles.length;
 
         // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        ViewPagerAdapterForTeamAndLeagueDetails adapter = new ViewPagerAdapterForTeamAndLeagueDetails(getSupportFragmentManager(), id, name, type);
+        ViewPagerAdapterForTeamAndLeagueDetails adapter = new ViewPagerAdapterForTeamAndLeagueDetails(getSupportFragmentManager(), favouriteItem);
 
         // Assigning ViewPager View and setting the adapter
         ViewPager pager = (ViewPager) findViewById(com.sports.unity.R.id.pager);
+        pager.setOffscreenPageLimit(3);
         pager.setAdapter(adapter);
         // Assiging the Sliding Tab Layout View
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);

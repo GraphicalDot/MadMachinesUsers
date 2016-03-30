@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.sports.unity.R;
@@ -26,51 +27,67 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
  */
 public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapperAdapter.ViewHolder> {
 
-    private List<MatchListWrapperDTO>  matchDay;
+    private List<MatchListWrapperDTO> matchDay;
     private Activity activity;
-    private  Context context;
+    private Context context;
 
-    public MatchListWrapperAdapter(List<MatchListWrapperDTO> matchDay, Activity activity,Context context) {
+    public void setIsIndividualFixture() {
+        this.isIndividualFixture = true;
+    }
+
+    private boolean isIndividualFixture = false;
+
+    public MatchListWrapperAdapter(List<MatchListWrapperDTO> matchDay, Activity activity, Context context) {
         this.matchDay = matchDay;
         this.activity = activity;
         this.context = context;
     }
 
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_score_wrapper,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_score_wrapper, parent, false);
 
         return new ViewHolder(view);
     }
+
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        try{
+        try {
             MatchListWrapperDTO previousDTO = null;
-            if(position == 0){
+            if (position == 0) {
                 previousDTO = matchDay.get(position);
-            }else {
-                previousDTO = matchDay.get(position-1);
+            } else {
+                previousDTO = matchDay.get(position - 1);
             }
 
             MatchListWrapperDTO dto = matchDay.get(position);
-            List<JSONObject>  list = holder.mAdapter.getList();
+            List<JSONObject> list = holder.mAdapter.getList();
             list.clear();
             list.addAll(dto.getList());
-            if(previousDTO.getDay().equalsIgnoreCase(dto.getDay()) && position!=0){
+            if (previousDTO.getDay().equalsIgnoreCase(dto.getDay()) && position != 0) {
                 holder.tvDayName.setVisibility(View.GONE);
-            }else{
+            } else {
                 holder.tvDayName.setVisibility(View.VISIBLE);
                 holder.tvDayName.setText(dto.getDay());
             }
 
-            holder.tvLeagueName.setText(dto.getLeagueName());
-            if(dto.getSportsType().equals(Constants.SPORTS_TYPE_CRICKET)){
+            if (!isIndividualFixture) {
+                holder.tvLeagueName.setText(dto.getLeagueName());
+            } else {
+                holder.leagueLayout.setVisibility(View.GONE);
+                holder.sepTop.setVisibility(View.GONE);
+                holder.sepBottom.setVisibility(View.GONE);
+            }
+            if (dto.getSportsType().equals(Constants.SPORTS_TYPE_CRICKET)) {
                 holder.ivSportsIcon.setImageResource(R.drawable.ic_cricket_group);
-            }else{
+            } else {
                 holder.ivSportsIcon.setImageResource(R.drawable.ic_football_group);
             }
             holder.mAdapter.notifyDataSetChanged();
-        }catch (Exception  e){e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -80,30 +97,32 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder
-    {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         private TextView tvDayName;
         private TextView tvLeagueName;
         private RecyclerView rvChild;
         private MatchListAdapter mAdapter;
         private ImageView ivSportsIcon;
-
-
+        private RelativeLayout leagueLayout;
+        private View sepTop;
+        private View sepBottom;
         public MatchDay dto;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             tvDayName = (TextView) view.findViewById(R.id.id_day_name);
+            leagueLayout = (RelativeLayout) view.findViewById(R.id.league_layout);
             tvLeagueName = (TextView) view.findViewById(R.id.league_name);
             ivSportsIcon = (ImageView) view.findViewById(R.id.iv_league);
             rvChild = (RecyclerView) view.findViewById(R.id.child_rv);
-            mAdapter = new MatchListAdapter(new ArrayList<JSONObject>() ,activity);
+            mAdapter = new MatchListAdapter(new ArrayList<JSONObject>(), activity);
             rvChild.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
             rvChild.setNestedScrollingEnabled(false);
             rvChild.setAdapter(mAdapter);
-
+            sepTop = view.findViewById(R.id.sep_top);
+            sepBottom = view.findViewById(R.id.sep_bottom);
         }
     }
 

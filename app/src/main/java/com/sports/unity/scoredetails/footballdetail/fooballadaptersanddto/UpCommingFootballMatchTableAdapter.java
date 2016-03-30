@@ -1,6 +1,7 @@
 package com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
+import com.sports.unity.common.controller.TeamLeagueDetails;
+import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.util.Constants;
 
 import java.util.List;
 
@@ -39,7 +43,7 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         try{
 
 
@@ -81,7 +85,19 @@ public class UpCommingFootballMatchTableAdapter   extends RecyclerView.Adapter<U
                 holder.llLiveTeam.setVisibility(View.INVISIBLE);
                 Glide.with(context).load(holder.dto.getIvTeamProfileImage()).placeholder(R.drawable.ic_no_img).into(holder.ivTeamProfileImage);
             }
-
+    holder.mView.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            FavouriteItem f=new FavouriteItem();
+            f.setName(holder.dto.getTvTeamName());
+            f.setId(holder.dto.getTeamId());
+            f.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
+            f.setFilterType(Constants.FILTER_TYPE_TEAM);
+            Intent intent = new Intent(context, TeamLeagueDetails.class);
+            intent.putExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, f.getJsonObject().toString());
+            context.startActivity(intent);
+        }
+    });
 
         }catch (Exception e)
         {

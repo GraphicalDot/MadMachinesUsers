@@ -309,13 +309,13 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
             case R.id.fav_team:
                 if (teamChildItems.size() > 0) {
                     FavouriteItem favouriteItem = teamChildItems.get(childPosition);
-                    onClickListnerForTeamAndLeague(favouriteItem.getId(), favouriteItem.getName(), favouriteItem.getFilterType());
+                    onClickListnerForTeamAndLeague(favouriteItem);
                 }
                 break;
             case R.id.complist:
                 if (competeChildItems.size() > 0) {
                     FavouriteItem favouriteItem = competeChildItems.get(childPosition);
-                    onClickListnerForTeamAndLeague(favouriteItem.getId(), favouriteItem.getName(), favouriteItem.getFilterType());
+                    onClickListnerForTeamAndLeague(favouriteItem);
                 }
                 break;
         }
@@ -324,11 +324,9 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
         return false;
     }
 
-    private void onClickListnerForTeamAndLeague(String id, String name, String type) {
+    private void onClickListnerForTeamAndLeague(FavouriteItem f) {
         Intent intent = new Intent(getContext(), TeamLeagueDetails.class);
-        intent.putExtra("Id", id);
-        intent.putExtra("Name", name);
-        intent.putExtra("Type", type);
+        intent.putExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, f.getJsonObject().toString());
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

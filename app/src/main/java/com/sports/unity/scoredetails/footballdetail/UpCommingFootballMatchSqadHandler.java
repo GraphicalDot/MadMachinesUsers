@@ -23,8 +23,9 @@ public class UpCommingFootballMatchSqadHandler {
 
     private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
     private static Context mContext;
-    private String BASEURL = " http://52.74.75.79:8080/get_football_squads?team_1=";
+    private String BASEURL = "http://52.74.75.79:8080/get_football_squads?team_1=";
 
+    private String BASEURLFORFOTTBALLSQUAD = "http://52.74.75.79:8080/get_team_players?team_id=";
     private UpCommingFootballMatchSqadContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
@@ -33,14 +34,17 @@ public class UpCommingFootballMatchSqadHandler {
         UpCommingFootballMatchSqadHandler completedMatchScoreCardHandler = new UpCommingFootballMatchSqadHandler();
         return completedMatchScoreCardHandler;
     }
+
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
+
     public interface UpCommingFootballMatchSqadContentListener {
 
         void handleContent(String object);
 
     }
+
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
 
         @Override
@@ -56,10 +60,11 @@ public class UpCommingFootballMatchSqadHandler {
         }
     };
 
-    public void requestUpCommingMatchSquad(String team1Id,String team2Id) {
+    public void requestUpCommingMatchSquad(String team1Id, String team2Id) {
         Log.i("Score Detail", "Request Score Details");
 
-        String url = BASEURL+team1Id+"&team_2="+team2Id;
+        String url = BASEURL + team1Id + "&team_2=" + team2Id;
+
         StringRequest stringRequest = null;
         //RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
@@ -67,11 +72,23 @@ public class UpCommingFootballMatchSqadHandler {
 
         requestInProcess.add(REQUEST_TAG);
     }
+
+    public void requestMatchSquad(String team1Id) {
+        Log.i("Score Detail", "Request Score Details");
+
+        String url = BASEURLFORFOTTBALLSQUAD + team1Id;
+        StringRequest stringRequest = null;
+        RequestQueue queue = Volley.newRequestQueue(mContext);
+        stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent, responseListener_ForLoadContent);
+        queue.add(stringRequest);
+        requestInProcess.add(REQUEST_TAG);
+    }
+
     private void handleResponse(String response) {
-        try{
+        try {
             JSONObject jsonObject = new JSONObject(response);
             Log.i("Score Card", "handleResponse: ");
-            if(jsonObject.getBoolean("success")){
+            if (jsonObject.getBoolean("success")) {
                 mContentListener.handleContent(response);
             }
         } catch (Exception e) {
@@ -79,11 +96,11 @@ public class UpCommingFootballMatchSqadHandler {
         }
 
 
-
     }
+
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
-        try{
+        try {
             Log.i("Score Card", "handleResponse: ");
             mContentListener.handleContent(Constants.ERRORRESPONSE);
         } catch (Exception e) {

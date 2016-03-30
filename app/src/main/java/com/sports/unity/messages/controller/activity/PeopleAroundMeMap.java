@@ -52,7 +52,6 @@ import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.SettingsActivity;
-import com.sports.unity.common.controller.TeamLeagueDetails;
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;

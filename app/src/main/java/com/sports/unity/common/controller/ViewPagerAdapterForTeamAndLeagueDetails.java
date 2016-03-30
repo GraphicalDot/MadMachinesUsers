@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 import com.sports.unity.R;
 import com.sports.unity.common.controller.fragment.FilterFragment;
@@ -18,6 +19,8 @@ import com.sports.unity.scoredetails.footballdetail.UpCommingFootballMatchTableF
 import com.sports.unity.scores.controller.fragment.MatchListFragment;
 import com.sports.unity.util.Constants;
 
+import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_ID;
+
 /**
  * Created by Edwin on 15/02/2015.
  */
@@ -26,31 +29,30 @@ public class ViewPagerAdapterForTeamAndLeagueDetails extends FragmentStatePagerA
     private String Titles[];
     private int numberOfTabs;
     private boolean enabled = true;
+    private FavouriteItem favouriteItem;
+    private String titlesLeague[] = {"Table", "Fixture", "News"};
+    private String titlesTeam[] = {"News", "Fixture", "Table", "Squad"};
+    private String[] footballLeagueTitle = {"News", "Fixture", "Table"};
+    private String[] footballTeamTitle = {"News", "Fixture", "Squad"};
+    private String[] cricketTeamTitle = {"News", "Fixture", "Squad"};
 
-    private String id;
-    private String name;
-    private String type;
-
-    String titlesLeague[] = {"Table","Fixture","News"};
-    String titlesTeam[] = {"News","Fixture","Table","Squad"};
-
-    //String titles[] = {"Fixture","News","Table","Squad"};
-
-    public ViewPagerAdapterForTeamAndLeagueDetails(FragmentManager fm, String id, String name, String type) {
+    public ViewPagerAdapterForTeamAndLeagueDetails(FragmentManager fm, FavouriteItem f) {
         super(fm);
-
-        this.id = id;
-        this.name = name;
-        this.type = type;
 //        this.Titles = titles;
 //        this.numberOfTabs = 4;
+        favouriteItem = f;
 
-        if(type.equals(Constants.FILTER_TYPE_LEAGUE)){
-            this.Titles = titlesLeague;
-            this.numberOfTabs = 3;
+        if (f.getFilterType().equalsIgnoreCase(Constants.FILTER_TYPE_LEAGUE)) {
+            this.Titles = footballLeagueTitle;
+            this.numberOfTabs = footballLeagueTitle.length;
         } else {
-            this.Titles = titlesTeam;
-            this.numberOfTabs = 4;
+            if (f.getSportsType().equalsIgnoreCase(Constants.SPORTS_TYPE_CRICKET)) {
+                this.Titles = cricketTeamTitle;
+                this.numberOfTabs = cricketTeamTitle.length;
+            } else if (f.getSportsType().equalsIgnoreCase(Constants.SPORTS_TYPE_FOOTBALL)) {
+                this.Titles = footballTeamTitle;
+                this.numberOfTabs = footballTeamTitle.length;
+            }
         }
 
     }
@@ -60,65 +62,33 @@ public class ViewPagerAdapterForTeamAndLeagueDetails extends FragmentStatePagerA
         Fragment fragment = null;
         if (position == 0) // if the position is 0 we are returning the First tab
         {
-            if(type.equals(Constants.FILTER_TYPE_LEAGUE)) {
-               fragment = new UpCommingFootballMatchTableFargment();
-
-
-            } else {
-               fragment= new NewsFragment();
-                Bundle bundle = new Bundle();
-                bundle.putBoolean(Constants.INTENT_KEY_SEARCH_ON, true);
-                bundle.putString("search_keyword", name);
-                fragment.setArguments(bundle);
-            }
+            fragment = new NewsFragment();
+            Bundle bundle = new Bundle();
+            bundle.putBoolean(Constants.INTENT_KEY_SEARCH_ON, true);
+            bundle.putString("search_keyword", favouriteItem.getName());
+            fragment.setArguments(bundle);
 
         } else if (position == 1) {
-               fragment = new MatchListFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.INTENT_KEY_ID, favouriteItem.getJsonObject().toString());
+            fragment = new MatchListFragment();
+            fragment.setArguments(bundle);
 
         } else if (position == 2) {
-            if(type.equals(Constants.FILTER_TYPE_LEAGUE)) {
-               fragment = new NewsFragment();
-                Bundle bundle = new Bundle();
-                bundle.putBoolean(Constants.INTENT_KEY_SEARCH_ON, true);
-                bundle.putString("search_keyword", name);
-                fragment.setArguments(bundle);
-
+            if (favouriteItem.getFilterType().equals(Constants.FILTER_TYPE_LEAGUE)) {
+                Bundle b = new Bundle();
+                b.putString(Constants.INTENT_KEY_LEAGUE_ID, favouriteItem.getId());
+                fragment = new UpCommingFootballMatchTableFargment();
+                fragment.setArguments(b);
             } else {
-               fragment = new UpCommingFootballMatchTableFargment();
-
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.INTENT_KEY_TEAM1_ID, favouriteItem.getJsonObject().toString());
+                fragment = new UpCommingFootballMatchSqadFragment();
+                fragment.setArguments(bundle);
             }
-
-        } else if (position == 3) {
-
-            fragment= new UpCommingFootballMatchSqadFragment();
 
         }
         return fragment;
-
-
-//            if (position == 0) {
-//                MatchListFragment matchesFragment = new MatchListFragment();
-//                return matchesFragment;
-//
-//            } else if (position == 1) {
-//                NewsFragment newsFragment = new NewsFragment();
-//                Bundle bundle = new Bundle();
-//                bundle.putBoolean(Constants.INTENT_KEY_SEARCH_ON, true);
-//                bundle.putString("search_keyword", name);
-//                newsFragment.setArguments(bundle);
-//                return newsFragment;
-//            }else if (position == 2) {
-//                MatchListFragment matchesFragment = new MatchListFragment();
-//                return matchesFragment;
-//            }else if (position == 3) {
-//                NewsFragment newsFragment = new NewsFragment();
-//                Bundle bundle = new Bundle();
-//                bundle.putBoolean(Constants.INTENT_KEY_SEARCH_ON, true);
-//                bundle.putString("search_keyword", name);
-//                newsFragment.setArguments(bundle);
-//                return newsFragment;
-//            }
-//       return null;
     }
 
 
