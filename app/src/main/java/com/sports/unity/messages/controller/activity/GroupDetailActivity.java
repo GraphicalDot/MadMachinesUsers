@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.util.Base64;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ import com.sports.unity.messages.controller.fragment.GroupCreateFragment;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.ImageUtil;
 
 import java.util.ArrayList;
 
@@ -254,7 +256,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance();
         success = pubSubMessaging.addMembers(groupJid, membersJid, getApplicationContext());
         if (success) {
-            PubSubMessaging.getInstance().sendIntimationAboutAffiliationListChanged();
+            PubSubMessaging.getInstance().sendIntimationAboutAffiliationListChanged(getApplicationContext(), groupJid);
 
             ArrayList<Long> members = new ArrayList<>();
             for (Contacts c : selectedMembers) {
@@ -275,34 +277,19 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
 
         String groupJID = currentUserJID + "" + System.currentTimeMillis();
         groupJID = groupJID + "%" + groupName + "%%";
-//        String subject = groupName;
-
-//        Contacts owner = SportsUnityDBHelper.getInstance(this).getContactByJid(currentUserJID);
 
         ArrayList<String> membersJid = new ArrayList<>();
         for (Contacts contacts : selectedMembers) {
             membersJid.add(contacts.jid + "@mm.io");
         }
 
-        PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance();
-        success = pubSubMessaging.createNode(groupJID, groupName, membersJid, this);
+        String groupImageAsBase64 = null;
+        if( groupImage != null ){
+            groupImageAsBase64 = Base64.encodeToString(groupImage, Base64.DEFAULT);
+        }
 
-//        if (success) {
-//            long chatId = SportsUnityDBHelper.getInstance(this).createGroupChatEntry(subject, owner.id, groupImage, groupJID);
-//            SportsUnityDBHelper.getInstance(this).updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), chatId, groupJID);
-//
-//            ArrayList<Long> members = new ArrayList<>();
-//            members.add(owner.id);
-//            for (Contacts c : selectedMembers) {
-//                members.add(c.id);
-//            }
-//
-//            SportsUnityDBHelper.getInstance(getApplicationContext()).createGroupUserEntry(chatId, members);
-//            SportsUnityDBHelper.getInstance(getApplicationContext()).updateAdmin( owner.id, chatId);
-//
-//        } else {
-//            //nothing
-//        }
+        PubSubMessaging pubSubMessaging = PubSubMessaging.getInstance();
+        success = pubSubMessaging.createNode(groupJID, groupName, groupImageAsBase64, membersJid, this);
 
         return success;
     }

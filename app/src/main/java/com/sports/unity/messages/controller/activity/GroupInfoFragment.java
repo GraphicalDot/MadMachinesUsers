@@ -280,7 +280,7 @@ public class GroupInfoFragment extends Fragment {
         protected void onPostExecute(Boolean success) {
             progressDialog.dismiss();
             if( success == true ){
-                SportsUnityDBHelper.getInstance(GroupInfoFragment.this.getActivity()).deleteGroupMember(contactId);
+                SportsUnityDBHelper.getInstance(GroupInfoFragment.this.getActivity()).deleteGroupMember(chatID, contactId);
             } else {
                 Toast.makeText(GroupInfoFragment.this.getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             }
@@ -289,7 +289,7 @@ public class GroupInfoFragment extends Fragment {
         private boolean removeUserFromGroup(){
             boolean success = PubSubMessaging.getInstance().removeFromGroup(jid + "@mm.io", groupJID);
             if( success ) {
-                PubSubMessaging.getInstance().sendIntimationAboutMemberRemoved();
+                PubSubMessaging.getInstance().sendIntimationAboutMemberRemoved(getContext(), jid, groupJID);
             }
             return success;
         }

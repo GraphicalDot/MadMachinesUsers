@@ -227,17 +227,17 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
 
     private void onUnSuccessfulLogin() {
         if (CommonUtil.isInternetConnectionAvailable(ProfileCreationActivity.this)) {
-            Toast.makeText(ProfileCreationActivity.this, R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
-        } else {
             Toast.makeText(ProfileCreationActivity.this, R.string.message_login_failed, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(ProfileCreationActivity.this, R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void onUnSuccessfulVCardSubmit() {
         if (CommonUtil.isInternetConnectionAvailable(ProfileCreationActivity.this)) {
-            Toast.makeText(ProfileCreationActivity.this, R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
-        } else {
             Toast.makeText(ProfileCreationActivity.this, R.string.message_submit_vcard_failed, Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(ProfileCreationActivity.this, R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
         }
     }
 
