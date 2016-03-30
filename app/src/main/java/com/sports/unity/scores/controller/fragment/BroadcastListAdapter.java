@@ -1,6 +1,7 @@
 package com.sports.unity.scores.controller.fragment;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -79,7 +80,11 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
                         holder.commentImage.setImageResource(R.drawable.commentary_icon);
                         holder.commentTime.setVisibility(View.GONE);
                     }else{
+                        holder.commentImage.setImageResource(R.drawable.grey_ring);
+                        holder.commentTime.setVisibility(View.VISIBLE);
                         holder.commentTime.setText(jsonObject.getOver());
+
+
                     }
 
                 } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
