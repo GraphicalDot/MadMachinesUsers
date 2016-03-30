@@ -112,7 +112,8 @@ public class TokenRegistrationHandler {
                 }
             });
             VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
-            requestInProcess.add(REQUEST_TAG);}catch (Exception e){
+            requestInProcess.add(REQUEST_TAG);}
+        catch (Exception e){
             e.printStackTrace();
         }
 

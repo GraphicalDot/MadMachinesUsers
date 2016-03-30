@@ -7,16 +7,16 @@ import android.os.Parcelable;
  * Created by cfeindia on 4/2/16.
  */
 public class CommentriesModel implements Parcelable, Comparable<CommentriesModel> {
-    private  Long commentaryId;
+    private  Integer commentaryId;
     private String comment;
     private String over;
     private String minute;
 
-    public Long getCommentaryId() {
+    public Integer getCommentaryId() {
         return commentaryId;
     }
 
-    public void setCommentaryId(Long commentaryId) {
+    public void setCommentaryId(Integer commentaryId) {
         this.commentaryId = commentaryId;
     }
 
