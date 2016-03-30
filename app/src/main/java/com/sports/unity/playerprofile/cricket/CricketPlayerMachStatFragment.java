@@ -69,8 +69,8 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        // playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-        playerId = "4429";
+         playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+       /* playerId = "4429";*/
          this.context = context;
         cricketPlayerMatchStatHandler = CricketPlayerMatchStatHandler.getInstance(context);
         cricketPlayerMatchStatHandler.addListener(this);
@@ -208,7 +208,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         rcBattingPerformanceSummery.setVisibility(VISIBLE);
         rcBowlingPerformanceSummary.setVisibility(VISIBLE);
         final JSONArray dataArray = jsonObject.getJSONArray("data");
-        Log.i("Msg","Array length"+dataArray.length());
+        Log.i("Msg", "Array length" + dataArray.length());
         final JSONObject dataObject = (JSONObject) dataArray.get(0);
         final JSONObject playerStatistics = dataObject.getJSONObject("statistics");
         /*final JSONObject playerObjectTest=playerStatistics.getJSONObject("TEST");
@@ -354,33 +354,36 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
 
                    // bowlingOdisMap.put("runs", bowling.getString("runs"));
                     bowlingOdisMap.put("matches", bowling.getString("matches"));
+                    bowlingOdisMap.put("innings", bowling.getString("innings"));
                     /*bowlingOdisMap.put("average", bowling.getString("average"));
                     bowlingOdisMap.put("balls", bowling.getString("balls"));
                     bowlingOdisMap.put("best", bowling.getString("best"));*/
                     bowlingOdisMap.put("wickets", bowling.getString("wickets"));
                     bowlingOdisMap.put("economy", bowling.getString("economy"));
-                    bowlingTestsmatchMap.put("overs", bowling.getString("overs"));
+                    bowlingOdisMap.put("overs", bowling.getString("overs"));
 
                 } else if ("T20 Int".equalsIgnoreCase(key)) {
 
                    // bowlingT20sMap.put("runs", bowling.getString("runs"));
                     bowlingT20sMap.put("matches", bowling.getString("matches"));
+                    bowlingT20sMap.put("innings", bowling.getString("innings"));
                     /*bowlingT20sMap.put("average", bowling.getString("average"));
                     bowlingT20sMap.put("balls", bowling.getString("balls"));
                     bowlingT20sMap.put("best", bowling.getString("best"));*/
                     bowlingT20sMap.put("wickets", bowling.getString("wickets"));
                     bowlingT20sMap.put("economy", bowling.getString("economy"));
-                    bowlingTestsmatchMap.put("overs", bowling.getString("overs"));
+                    bowlingT20sMap.put("overs", bowling.getString("overs"));
                 } else if ("IPL".equalsIgnoreCase(key)) {
 
                     //bowlingIPLMap.put("runs", bowling.getString("runs"));
                     bowlingIPLMap.put("matches", bowling.getString("matches"));
+                    bowlingIPLMap.put("innings", bowling.getString("innings"));
                    /* bowlingIPLMap.put("average", bowling.getString("average"));
                     bowlingIPLMap.put("balls", bowling.getString("balls"));
                     bowlingIPLMap.put("best", bowling.getString("best"));*/
                     bowlingIPLMap.put("wickets", bowling.getString("wickets"));
                     bowlingIPLMap.put("economy", bowling.getString("economy"));
-                    bowlingTestsmatchMap.put("overs", bowling.getString("overs"));
+                    bowlingIPLMap.put("overs", bowling.getString("overs"));
 
                 }
         }
