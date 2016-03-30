@@ -45,7 +45,6 @@ public class SUPushServiceListener extends GcmListenerService {
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
         sendNotification(message);
-
     }
 
 
