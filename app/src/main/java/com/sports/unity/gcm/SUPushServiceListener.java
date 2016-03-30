@@ -41,7 +41,11 @@ public class SUPushServiceListener extends GcmListenerService {
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        String message = data.getString("message");
+        Log.d(TAG, "Data: " + data);
+
+
+        String message = data.getString("data");
+
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
         sendNotification(message);
@@ -50,12 +54,14 @@ public class SUPushServiceListener extends GcmListenerService {
 
     private void sendNotification(String message) {
 
-        RemoteViews contentView = new RemoteViews(getPackageName(),
-                R.layout.push_notification_layout);
+
 
         try {
+            RemoteViews contentView = new RemoteViews(getPackageName(),
+                    R.layout.push_notification_layout);
             if(message!=null) {
-                JSONObject notification = new JSONObject(message);
+                JSONObject oldData = new JSONObject(message);
+                JSONObject notification = oldData.getJSONObject("message");
                 if (!notification.isNull(GCMConstants.SPORTS_ID)) {
                     sportsType = notification.getInt(GCMConstants.SPORTS_ID) == 1 ? Constants.SPORTS_TYPE_CRICKET : Constants.SPORTS_TYPE_FOOTBALL;
                 }
@@ -79,11 +85,13 @@ public class SUPushServiceListener extends GcmListenerService {
                     event = notification.getString(GCMConstants.EVENT_ID);
                 }
 
-                NotificationCompat.Builder mBuilder =
+                /*NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(this)
                                 .setSmallIcon(R.drawable.ic_notification_enable)
                                 .setContentTitle(title)
-                                .setContentText(content);
+                                .setContentText(content);*/
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(this);
                 Intent i = new Intent(this, ScoreDetailActivity.class);
                 i.putExtra(INTENT_KEY_TYPE, sportsType);
                 i.putExtra(Constants.INTENT_KEY_ID, matchiId);
@@ -99,10 +107,10 @@ public class SUPushServiceListener extends GcmListenerService {
                                 PendingIntent.FLAG_UPDATE_CURRENT
                         );
                 mBuilder.setContentIntent(resultPendingIntent);
-           /* mBuilder.setContent(contentView);*/
+                mBuilder.setContent(contentView);
                 contentView.setImageViewResource(R.id.iv_player, R.drawable.ic_cricket);
-                contentView.setTextViewText(R.id.tv_notification_subject, message);
-                contentView.setTextViewText(R.id.tv_notification_content, message);
+                contentView.setTextViewText(R.id.tv_notification_subject, title);
+                contentView.setTextViewText(R.id.tv_notification_content, content);
                 contentView.setTextViewText(R.id.tv_current_time, DateUtil.getCurrentTime());
                 contentView.setImageViewResource(R.id.iv_notification_icon, R.drawable.ic_flash_on);
                 NotificationManager mNotificationManager =
