@@ -16,11 +16,11 @@
         android:orientation="horizontal"
         >
 
+
         <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             >
-
             <ImageView
                 android:id="@+id/comment_image"
                 android:layout_width="wrap_content"
@@ -38,6 +38,7 @@
                 android:text="0"
                 android:textColor="@color/news_headline_mini"
                 />
+
         </FrameLayout>
 
 
@@ -49,6 +50,8 @@
             android:textSize="@dimen/font_size_small_medium"
             android:textColor="@color/news_headline_mini"
             android:text=""/>
+
+
     </LinearLayout>
 
 </LinearLayout>
