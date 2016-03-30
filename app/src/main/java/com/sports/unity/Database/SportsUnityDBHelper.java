@@ -1618,11 +1618,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     }
 
-    public void deleteGroupMember( long contactId) {
+    public void deleteGroupMember( long chatId, long contactId) {
         SQLiteDatabase db = getWritableDatabase();
 
-        String selection = GroupUserEntry.COLUMN_CONTACT_ID + " = ? ";
-        String[] selectionArgs = { String.valueOf(contactId)};
+        String selection = GroupUserEntry.COLUMN_CONTACT_ID + " = ? And " + GroupUserEntry.COLUMN_CHAT_ID + " = ? ";
+        String[] selectionArgs = { String.valueOf(contactId), String.valueOf(chatId)};
 
         int deleted = db.delete(GroupUserEntry.TABLE_NAME,
                 selection,

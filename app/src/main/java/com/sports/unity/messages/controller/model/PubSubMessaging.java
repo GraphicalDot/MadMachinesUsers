@@ -60,13 +60,16 @@ public class PubSubMessaging {
     public static final String GROUP_SERVER_ID = "group_server_id";
     public static final String MESSAGE_FROM = "message_from";
     private static final String MESSAGE_TYPE = "message_type";
+    private static final String MESSAGE_USER = "user";
 
     public static int RECEIPT_KIND_READ = 1;
     public static int RECEIPT_KIND_SERVER = 2;
     public static int RECEIPT_KIND_CLIENT = 3;
 
-    private static final String USER_MESSAGE_TYPE = "user_message";
-    private static final String GROUP_INVITATION_MESSAGE_TYPE = "group_invitation";
+    private static final String USER_MESSAGE_TYPE = "u";
+    private static final String GROUP_INVITATION_MESSAGE_TYPE = "i";
+    private static final String GROUP_MEMBER_REMOVED_MESSAGE_TYPE = "r";
+    private static final String GROUP_MEMBER_ADDED_MESSAGE_TYPE = "a";
 
     synchronized public static PubSubMessaging getInstance() {
         if (PUB_SUB_MESSAGING == null) {
@@ -85,7 +88,7 @@ public class PubSubMessaging {
         //nothing
     }
 
-    public boolean createNode(String groupJid, String groupTitle, ArrayList<String> membersJid, Context context) {
+    public boolean createNode(String groupJid, String groupTitle, String groupImage, ArrayList<String> membersJid, Context context) {
         boolean success = false;
         PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
 
@@ -98,7 +101,12 @@ public class PubSubMessaging {
         form.getAccessModel();
         form.setSubscribe(true);
         form.setPublishModel(PublishModel.publishers);
-        form.setTitle(groupTitle);
+
+//        if( groupImage != null ) {
+//            form.setTitle(groupTitle + "~!~" + groupImage);
+//        } else {
+            form.setTitle(groupTitle);
+//        }
 
         form.addField("pubsub#notification_type", FormField.Type.text_single);
         form.setAnswer("pubsub#notification_type", "normal");
@@ -170,7 +178,7 @@ public class PubSubMessaging {
 
             String payLoad = encodeSimpleMessagePayload(message, from, groupJid, time, SportsUnityDBHelper.MIME_TYPE_TEXT);
             SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
-            PayloadItem item = new PayloadItem(from, simplePayload);
+            PayloadItem item = new PayloadItem(simplePayload);
 
             String stanzaId = publishItem(item, groupJid);
 
@@ -202,7 +210,7 @@ public class PubSubMessaging {
 
             String payLoad = encodeSimpleMessagePayload(messageBody, from, groupJid, time, mimeType);
             SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
-            PayloadItem item = new PayloadItem(from, simplePayload);
+            PayloadItem item = new PayloadItem(simplePayload);
 
             String stanzaId = publishItem(item, groupJid);
 
@@ -225,7 +233,7 @@ public class PubSubMessaging {
 
             String payLoad = encodeSimpleMessagePayload(stickerAssetPath, from, groupJid, time, SportsUnityDBHelper.MIME_TYPE_STICKER);
             SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
-            PayloadItem item = new PayloadItem(from, simplePayload);
+            PayloadItem item = new PayloadItem(simplePayload);
 
             String stanzaId = publishItem(item, groupJid);
 
@@ -238,12 +246,47 @@ public class PubSubMessaging {
         }
     }
 
-    public void sendIntimationAboutMemberRemoved(){
-        //TODO
+    public void sendIntimationAboutMemberRemoved(Context context, String removedUserJid, String groupJid){
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        try{
+            String from = tinyDB.getString(TinyDB.KEY_USER_JID);
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(MESSAGE_TYPE, GROUP_MEMBER_REMOVED_MESSAGE_TYPE);
+            jsonObject.put(MESSAGE_FROM, from);
+            jsonObject.put(GROUP_SERVER_ID, groupJid);
+            jsonObject.put(MESSAGE_USER, removedUserJid);
+
+            String payLoad = encodeSimpleMessagePayload(jsonObject);
+            SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
+            PayloadItem item = new PayloadItem(simplePayload);
+
+            publishItem(item, groupJid);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            handleConnectionException(ex);
+        }
     }
 
-    public void sendIntimationAboutAffiliationListChanged(){
-        //TODO
+    public void sendIntimationAboutAffiliationListChanged(Context context, String groupJid){
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        try{
+            String from = tinyDB.getString(TinyDB.KEY_USER_JID);
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(MESSAGE_TYPE, GROUP_MEMBER_ADDED_MESSAGE_TYPE);
+            jsonObject.put(MESSAGE_FROM, from);
+            jsonObject.put(GROUP_SERVER_ID, groupJid);
+
+            String payLoad = encodeSimpleMessagePayload(jsonObject);
+            SimplePayload simplePayload = new SimplePayload("message", "pubsub:text:message", "<message xmlns='pubsub:text:message'>" + payLoad + "</message>");
+            PayloadItem item = new PayloadItem(simplePayload);
+
+            publishItem(item, groupJid);
+        }catch (Exception ex){
+            ex.printStackTrace();
+            handleConnectionException(ex);
+        }
     }
 
     public void handlePubSubMessage(Context context, org.jivesoftware.smack.packet.Message message) {
@@ -286,14 +329,27 @@ public class PubSubMessaging {
                         String decodedData = URLDecoder.decode(data, "utf-8");
                         messageJsonObject = new JSONObject(decodedData);
 
-                        from = messageJsonObject.getString(MESSAGE_FROM);
-//                        messageType = messageJsonObject.getString(MESSAGE_TYPE);
-                        time = messageJsonObject.getString(MESSAGE_TIME);
-                        text = messageJsonObject.getString(MESSAGE_TEXT_DATA);
-                        mimeType = messageJsonObject.getString(Constants.PARAM_MIME_TYPE);
+                        messageType = messageJsonObject.getString(MESSAGE_TYPE);
                         groupJID = messageJsonObject.getString(GROUP_SERVER_ID);
+                        from = messageJsonObject.getString(MESSAGE_FROM);
 
-                        handleUserPubSubMessage(context, from, mimeType, text, time, groupJID, stanzaId);
+                        TinyDB tinyDB = TinyDB.getInstance(context);
+                        if ( from.equals(tinyDB.getString(TinyDB.KEY_USER_JID)) ) {
+                            //nothing
+                        } else {
+                            if (messageType == null || messageType.equals(USER_MESSAGE_TYPE)) {
+                                time = messageJsonObject.getString(MESSAGE_TIME);
+                                text = messageJsonObject.getString(MESSAGE_TEXT_DATA);
+                                mimeType = messageJsonObject.getString(Constants.PARAM_MIME_TYPE);
+
+                                handleUserPubSubMessage(context, from, mimeType, text, time, groupJID, stanzaId);
+                            } else if (messageType.equals(GROUP_MEMBER_REMOVED_MESSAGE_TYPE)) {
+                                String userJid = messageJsonObject.getString(MESSAGE_USER);
+                                handleOtherMemberRemoved(context, userJid, groupJID);
+                            } else if (messageType.equals(GROUP_MEMBER_ADDED_MESSAGE_TYPE)) {
+                                handleMembersAdded(context, groupJID);
+                            }
+                        }
                     } else {
 
                     }
@@ -441,9 +497,26 @@ public class PubSubMessaging {
             long contactId = sportsUnityDBHelper.getContactIdFromJID(currentUserJID);
 
             sportsUnityDBHelper.updateChatBlockStatus(chatId, false);
-            sportsUnityDBHelper.deleteGroupMember(contactId);
+            sportsUnityDBHelper.deleteGroupMember(chatId, contactId);
 
             ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
+        }
+    }
+
+    private void handleOtherMemberRemoved(Context context, String removedUserJid, String groupJid){
+        SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
+        long chatId = sportsUnityDBHelper.getChatEntryID(groupJid);
+        if( chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID ) {
+            long contactId = sportsUnityDBHelper.getContactIdFromJID(removedUserJid);
+            sportsUnityDBHelper.deleteGroupMember(chatId, contactId);
+        }
+    }
+
+    private void handleMembersAdded(Context context, String groupJid){
+        SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
+        long chatId = sportsUnityDBHelper.getChatEntryID(groupJid);
+        if( chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID ) {
+//            loadAffiliations(context, chatId, groupJid);
         }
     }
 
@@ -521,12 +594,15 @@ public class PubSubMessaging {
             payloadJsonObject.put(MESSAGE_FROM, from);
             payloadJsonObject.put(GROUP_SERVER_ID, groupJid);
 
-            encodedPayload = URLEncoder.encode(payloadJsonObject.toString(), "utf-8");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
+            encodedPayload = encodeSimpleMessagePayload(payloadJsonObject);
+        } catch (Exception e) {
             e.printStackTrace();
         }
+        return encodedPayload;
+    }
+
+    private String encodeSimpleMessagePayload(JSONObject payloadJsonObject) throws Exception {
+        String encodedPayload = URLEncoder.encode(payloadJsonObject.toString(), "utf-8");
         return encodedPayload;
     }
 
