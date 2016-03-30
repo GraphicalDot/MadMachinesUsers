@@ -142,7 +142,10 @@ public class ScoresJsonParser {
                         continue;
                     } else {
                         if(!object.isNull("commentary_id")){
-                            commentriesModel.setCommentaryId(object.getLong("commentary_id"));
+                            commentriesModel.setCommentaryId(object.getInt("commentary_id"));
+                        }else if(!object.isNull("id"))
+                        {
+                            commentriesModel.setCommentaryId(object.getInt("id"));
                         }
                         if(!object.isNull("comment")){
                             commentriesModel.setComment(object.getString("comment"));
@@ -158,9 +161,7 @@ public class ScoresJsonParser {
                         }
                         list.add(commentriesModel);
                     }
-
-
-                }
+             }
             } else {
                 list.clear();
             }
