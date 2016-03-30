@@ -741,7 +741,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         boolean blockStatus = SportsUnityDBHelper.getInstance(getApplicationContext()).isChatBlocked(contactId);
         boolean othersChat = contact.isOthers();
 
-        Intent intent = ChatScreenActivity.createChatScreenIntent(this, number, name, contactId, chatId, groupServerId, userPicture, blockStatus, othersChat);
+        Intent intent = ChatScreenActivity.createChatScreenIntent(this, number, name, contactId, chatId, groupServerId, userPicture, blockStatus, othersChat, contact.availableStatus, contact.status);
         startActivity(intent);
     }
 

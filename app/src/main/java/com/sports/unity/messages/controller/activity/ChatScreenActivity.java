@@ -83,8 +83,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     public static final String INTENT_KEY_IMAGE = "image";
     public static final String INTENT_KEY_BLOCK_STATUS = "blockStatus";
     public static final String INTENT_KEY_NEARBY_CHAT = "nearbyChat";
+    public static final String INTENT_KEY_CONTACT_AVAILABLE_STATUS = "contactAvailableStatus";
+    public static final String INTENT_KEY_USER_STATUS = "userSTATUS";
 
-    public static Intent createChatScreenIntent(Context context, String jid, String name, long contactId, long chatId, String groupSeverId, byte[] userpicture, Boolean blockStatus, boolean othersChat) {
+    public static Intent createChatScreenIntent(Context context, String jid, String name, long contactId, long chatId, String groupSeverId, byte[] userpicture, Boolean blockStatus, boolean othersChat, int contactAvailableStatus, String userStatus) {
         Intent intent = new Intent(context, ChatScreenActivity.class);
         intent.putExtra(INTENT_KEY_JID, jid);
         intent.putExtra(INTENT_KEY_NAME, name);
@@ -94,10 +96,12 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         intent.putExtra(INTENT_KEY_IMAGE, userpicture);
         intent.putExtra(INTENT_KEY_BLOCK_STATUS, blockStatus);
         intent.putExtra(INTENT_KEY_NEARBY_CHAT, othersChat);
+        intent.putExtra(INTENT_KEY_CONTACT_AVAILABLE_STATUS, contactAvailableStatus);
+        intent.putExtra(INTENT_KEY_USER_STATUS, userStatus);
         return intent;
     }
 
-    public static void viewProfile(Activity activity, long chatId, byte[] profilePicture, String name, String groupServerId, String jid, boolean otherChat) {
+    public static void viewProfile(Activity activity, long chatId, byte[] profilePicture, String name, String groupServerId, String jid, String status, boolean otherChat, int contactAvailableStatus) {
         if (groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
             Intent intent = new Intent(activity, UserProfileActivity.class);
 
@@ -105,8 +109,9 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             intent.putExtra("profilePicture", profilePicture);
             intent.putExtra("groupServerId", groupServerId);
             intent.putExtra("jid", jid);
-            intent.putExtra("status", "available");
+            intent.putExtra("status", status);
             intent.putExtra("otherChat", otherChat);
+            intent.putExtra(INTENT_KEY_CONTACT_AVAILABLE_STATUS, contactAvailableStatus);
             activity.startActivityForResult(intent, Constants.REQUEST_CODE_VIEW_PROFILE);
         } else {
             Intent intent = new Intent(activity, GroupDetailActivity.class);
@@ -588,7 +593,9 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         profile_link.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                viewProfile(ChatScreenActivity.this, chatID, userImageBytes, jabberName, groupServerId, jabberId, otherChat);
+                int contactStatus = ChatScreenActivity.this.getIntent().getIntExtra(INTENT_KEY_CONTACT_AVAILABLE_STATUS, Contacts.AVAILABLE_NOT);
+                String status = ChatScreenActivity.this.getIntent().getStringExtra(INTENT_KEY_USER_STATUS);
+                viewProfile(ChatScreenActivity.this, chatID, userImageBytes, jabberName, groupServerId, jabberId, status,  otherChat, contactStatus);
             }
         });
 
@@ -998,11 +1005,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         this.menu = menu;
 
         if( isGroupChat ) {
-            MenuItem viewGroupItem = menu.findItem(R.id.action_view_group);
-            viewGroupItem.setVisible(true);
-
             MenuItem viewContactItem = menu.findItem(R.id.action_view_contact);
-            viewContactItem.setVisible(false);
+            viewContactItem.setTitle("View Group");
 
             MenuItem blockUserItem = menu.findItem(R.id.action_block_user);
             blockUserItem.setVisible(false);
@@ -1055,8 +1059,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_view_contact || id == R.id.action_view_group) {
-            viewProfile(ChatScreenActivity.this, chatID, userImageBytes, jabberName, groupServerId, jabberId, otherChat);
+        if (id == R.id.action_view_contact) {
+            int contactStatus = ChatScreenActivity.this.getIntent().getIntExtra(INTENT_KEY_CONTACT_AVAILABLE_STATUS, Contacts.AVAILABLE_NOT);
+            String status = ChatScreenActivity.this.getIntent().getStringExtra(INTENT_KEY_USER_STATUS);
+            viewProfile(ChatScreenActivity.this, chatID, userImageBytes, jabberName, groupServerId, jabberId, status, otherChat, contactStatus);
             return true;
         } else if (id == R.id.action_block_user) {
             blockUnblockUserHelper.onMenuItemSelected(this, contactID, jabberId, menu);

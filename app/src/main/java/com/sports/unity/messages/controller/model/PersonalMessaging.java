@@ -446,7 +446,7 @@ public class PersonalMessaging {
                         ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
                     }
                     byte[] image = contact.image;
-                    XMPPService.displayNotification(context, message.getBody(), messageFrom, mimeType, chatId, false, groupServerId, image, contact.availableStatus);
+                    XMPPService.displayNotification(context, message.getBody(), messageFrom, mimeType, chatId, false, groupServerId, image, contact.availableStatus, contact.status);
                 } catch (XMPPException.XMPPErrorException e) {
                     e.printStackTrace();
                 } catch (SmackException.NoResponseException e) {

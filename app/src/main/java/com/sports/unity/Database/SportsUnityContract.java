@@ -21,6 +21,7 @@ public final class SportsUnityContract {
         public static final String COLUMN_STATUS = "status";
         public static final String COLUMN_AVAILABLE_STATUS = "available_status";
         public static final String COLUMN_BLOCK_USER = "block_user";
+        public static final String COLUMN_UPDATE_REQUIRED = "update_required";
 
     }
 

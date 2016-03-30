@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.sports.unity.R;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.Message;
@@ -59,7 +60,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             ContactsEntry.COLUMN_USER_IMAGE + " BLOB " + COMMA_SEP +
             ContactsEntry.COLUMN_STATUS + " VARCHAR " + COMMA_SEP +
             ContactsEntry.COLUMN_AVAILABLE_STATUS + " INTEGER DEFAULT " + Contacts.AVAILABLE_NOT + " " + COMMA_SEP +
-            ContactsEntry.COLUMN_BLOCK_USER + " boolean DEFAULT 0 " +
+            ContactsEntry.COLUMN_BLOCK_USER + " boolean DEFAULT 0 " + COMMA_SEP +
+            ContactsEntry.COLUMN_UPDATE_REQUIRED + " boolean DEFAULT 0 " +
             ");";
 
     private static final String CREATE_MESSAGES_TABLE = "CREATE TABLE IF NOT EXISTS " +
@@ -159,7 +161,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     }
 
-    public long addToContacts(String name, String number, String jid, String defaultStatus, byte[] image, int availableStatus) {
+    public long addToContacts(String name, String number, String jid, String defaultStatus, byte[] image, int availableStatus, boolean vcardUpdateRequired) {
         long rowId = -1;
         try {
             SQLiteDatabase db = this.getWritableDatabase();
@@ -171,11 +173,17 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             contentValues.put(ContactsEntry.COLUMN_STATUS, defaultStatus);
             contentValues.put(ContactsEntry.COLUMN_USER_IMAGE, image);
             contentValues.put(ContactsEntry.COLUMN_AVAILABLE_STATUS, availableStatus);
+            contentValues.put(ContactsEntry.COLUMN_UPDATE_REQUIRED, vcardUpdateRequired);
 
             rowId = db.insert(ContactsEntry.TABLE_NAME, null, contentValues);
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return rowId;
+    }
+
+    public long addToContacts(String name, String number, String jid, String defaultStatus, byte[] image, int availableStatus) {
+        long rowId = addToContacts(name, number, jid, defaultStatus, image, availableStatus, false);
         return rowId;
     }
 
@@ -530,6 +538,44 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     }
 
+    public ArrayList<Contacts> getListOfJIDRequireUpdate() {
+        ArrayList<Contacts> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                ContactsEntry.COLUMN_NAME,
+                ContactsEntry.COLUMN_JID,
+                ContactsEntry.COLUMN_PHONE_NUMBER,
+                ContactsEntry.COLUMN_USER_IMAGE,
+                ContactsEntry.COLUMN_CONTACT_ID,
+                ContactsEntry.COLUMN_STATUS,
+                ContactsEntry.COLUMN_BLOCK_USER,
+                ContactsEntry.COLUMN_AVAILABLE_STATUS
+        };
+
+        String selection = ContactsEntry.COLUMN_UPDATE_REQUIRED + " == " + "1";
+        String[] selectionArgs = null;
+
+        Cursor c = db.query(
+                ContactsEntry.TABLE_NAME,  // The table to query
+                projection,                               // The columns to return
+                selection,                                // The columns for the WHERE clause
+                selectionArgs,                            // The values for the WHERE clause
+                null,                                     // don't group the rows
+                null,                                     // don't filter by row groups
+                null                                 // The sort order
+        );
+
+        if (c.moveToFirst()) {
+            do {
+                list.add(new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5), c.getInt(6)));
+            } while (c.moveToNext());
+        }
+        c.close();
+        return list;
+
+    }
+
     public ArrayList<Contacts> getContactList(boolean registeredOnly) {
 
         ArrayList<Contacts> list = new ArrayList<>();
@@ -603,11 +649,16 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    public void updateContacts(String number, String jid) {
+    public void updateContacts(Context context, String number, String jid) {
+        updateContacts(number, jid, context.getResources().getString(R.string.others_default_status));
+    }
+
+    public void updateContacts(String number, String jid, String status) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(ContactsEntry.COLUMN_JID, jid);
+        values.put(ContactsEntry.COLUMN_STATUS, status);
 
         String selection = ContactsEntry.COLUMN_PHONE_NUMBER + " LIKE ? ";
         String[] selectionArgs = {number};
@@ -647,6 +698,26 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
+        values.put(ContactsEntry.COLUMN_USER_IMAGE, userImage);
+        values.put(ContactsEntry.COLUMN_STATUS, status);
+
+        String selection = ContactsEntry.COLUMN_JID + " LIKE ? ";
+        String[] selectionArgs = {jid};
+
+        int count = db.update(
+                ContactsEntry.TABLE_NAME,
+                values,
+                selection,
+                selectionArgs);
+        Log.i("updated :", String.valueOf(count));
+    }
+
+    public void updateContacts(String jid, String name, byte[] userImage, String status) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ContactsEntry.COLUMN_NAME, name);
         values.put(ContactsEntry.COLUMN_USER_IMAGE, userImage);
         values.put(ContactsEntry.COLUMN_STATUS, status);
 

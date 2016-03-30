@@ -76,6 +76,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     private ControlledSwipeViewPager pager;
     private ViewPagerAdapterInMainActivity adapter;
     ImageView back;
+    private boolean shouldCloseDrawer = false;
     private MenuItem menuItem;
 
     private ContactSyncListener contactSyncListener;
@@ -211,6 +212,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                 intent.putExtra("profilePicture", contact.image);
                 intent.putExtra("status", contact.status);
                 startActivity(intent);
+                closeDrawer();
             }
         });
 
@@ -229,6 +231,11 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         if (fabMenu != null) {
             if (fabMenu.isOpened()) {
                 fabMenu.close(false);
+            }
+        }
+        if (shouldCloseDrawer) {
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
             }
         }
     }
@@ -388,8 +395,12 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     @Override
     protected void onResume() {
         super.onResume();
+        shouldCloseDrawer = false;
         setNavigationProfile();
         updateLocation();
+        if (messagesFragmentInFront) {
+            fabMenu.showMenuButton(true);
+        }
     }
 
     private void updateLocation() {
@@ -406,9 +417,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     }
 
     public void closeDrawer() {
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        }
+        shouldCloseDrawer = true;
     }
 
     @Override

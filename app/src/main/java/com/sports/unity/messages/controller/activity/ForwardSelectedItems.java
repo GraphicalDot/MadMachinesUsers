@@ -384,11 +384,11 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "FRIENDS";
+                    return getResources().getString(R.string.friends);
                 case 1:
-                    return "CONTACTS";
+                    return getResources().getString(R.string.contacts);
                 case 2:
-                    return "OTHERS";
+                    return getResources().getString(R.string.others);
             }
             return null;
         }

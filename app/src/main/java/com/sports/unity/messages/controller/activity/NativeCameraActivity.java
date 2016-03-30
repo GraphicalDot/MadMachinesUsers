@@ -295,6 +295,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
             if( ! captureImageClicked && mCamera != null  ) {
                 captureImageClicked = true;
                 mCamera.takePicture(null, null, mPicture);
+                findViewById(R.id.capture).setEnabled(false);
             } else {
                 //nothing
             }
@@ -649,6 +650,7 @@ public class NativeCameraActivity extends CustomAppCompatActivity implements Vie
         public void onPictureTaken(byte[] data, Camera camera) {
             contentMimeType = SportsUnityDBHelper.MIME_TYPE_IMAGE;
             showPictureViewsToSend(data);
+            findViewById(R.id.capture).setEnabled(true);
             captureImageClicked = false;
         }
 

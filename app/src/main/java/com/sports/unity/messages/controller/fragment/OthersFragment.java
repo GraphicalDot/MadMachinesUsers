@@ -176,12 +176,13 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
+                        Contacts contacts = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId);
                         if (chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
                             ChatScreenActivity.viewProfile(getActivity(), chatObject.chatid, chatObject.userImage, chatObject.name,
-                                    chatObject.groupServerId, SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid, true);
+                                    chatObject.groupServerId, contacts.jid, contacts.status, true, contacts.availableStatus);
                         } else {
                             ChatScreenActivity.viewProfile(getActivity(), chatObject.chatid, chatObject.chatImage, chatObject.name, chatObject.groupServerId,
-                                    SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId).jid, true);
+                                    contacts.jid, contacts.status, true, contacts.availableStatus);
                         }
                         alert.dismiss();
                         break;
@@ -265,7 +266,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
         long chatId = chatObject.chatid;
         byte[] userpicture = chatObject.userImage;
 
-        Intent intent = ChatScreenActivity.createChatScreenIntent(getActivity(), jid, name, contactId, chatId, groupSeverId, userpicture, blockStatus, true);
+        Intent intent = ChatScreenActivity.createChatScreenIntent(getActivity(), jid, name, contactId, chatId, groupSeverId, userpicture, blockStatus, true, contact.availableStatus, contact.status);
         intent.putExtra(Constants.INTENT_KEY_USER_AVAILABLE_STATUS, contact.availableStatus);
         if (dataList != null) {
             ArrayList<ShareableData> dataArrayList = getArguments().getParcelableArrayList(Constants.INTENT_FORWARD_SELECTED_IDS);

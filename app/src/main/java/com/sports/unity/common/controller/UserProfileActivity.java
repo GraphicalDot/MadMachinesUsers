@@ -274,6 +274,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         statusList.removeAllViews();
         for (int i = 0; i < statusValue.length; i++) {
             LinearLayout linearLayout = (LinearLayout) mInflater.inflate(R.layout.textview_user_profile_activity, null);
+            ImageView flag = (ImageView) linearLayout.findViewById(R.id.flag);
+            flag.setVisibility(View.GONE);
+
             TextView textView = (TextView) linearLayout.findViewById(R.id.list_item);
             textView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
             textView.setText(statusValue[i]);
@@ -395,7 +398,6 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     }
 
     private void setInitDataOthers() {
-
         editFavourite = (TextView) findViewById(R.id.edit_fav);
 
         editFavourite.setVisibility(View.GONE);
@@ -504,23 +506,30 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         //TODO
 
         try {
+            int contactAvailableStatus = getIntent().getIntExtra(ChatScreenActivity.INTENT_KEY_CONTACT_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
+
             String userStatus = card.getMiddleName();
             imageArray = card.getAvatar();
             String nickname = card.getNickName();
 
             if (imageArray != null) {
                 profileImage.setImageBitmap(BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length));
+            } else {
+                //nothing
             }
 
-            name.setText(nickname);
+            if( contactAvailableStatus <= Contacts.AVAILABLE_BY_OTHER_CONTACTS ) {
+                name.setText(nickname);
+            } else {
+                //nothing
+            }
+
             status.setText(userStatus);
+
             {
                 String favorite = card.getField("fav_list");
-                ArrayList<FavouriteItem> savedList = null;
-                if (favorite != null) {
-                    savedList = FavouriteItemWrapper.getInstance(this).getFavListOfOthers(favorite);
-                    setFavouriteProfile(savedList);
-                }
+                ArrayList<FavouriteItem> savedList = FavouriteItemWrapper.getInstance(this).getFavListOfOthers(favorite);
+                setFavouriteProfile(savedList);
             }
         } catch (Exception e) {
             e.printStackTrace();

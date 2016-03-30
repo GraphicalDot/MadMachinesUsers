@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -40,7 +41,7 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
     private TextView editFootball;
     private LinearLayout emptyLayout;
     private LinearLayout parentEmpty;
-
+    private ImageView sepBottom;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +75,7 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
         parentEmpty = (LinearLayout) view.findViewById(R.id.parent_empty);
         cricketLayout = (RelativeLayout) view.findViewById(R.id.cricket_layout);
         footballLayout = (RelativeLayout) view.findViewById(R.id.football_layout);
+        sepBottom= (ImageView) view.findViewById(R.id.sep_bottom);
         mlistView.setEmptyView(emptyLayout);
         bundle = getArguments();
         filter = bundle.getString(Constants.SPORTS_FILTER_TYPE);
@@ -88,6 +90,7 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
         if (favList.size() <= 0) {
             showErrorLayout(getView());
             parentEmpty.setVisibility(View.VISIBLE);
+            sepBottom.setVisibility(View.VISIBLE);
             if (!filter.equals(Constants.FILTER_TYPE_LEAGUE) && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
                 cricketLayout.setVisibility(View.VISIBLE);
             }
@@ -145,6 +148,8 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
                 isFootball = true;
             }
         }
+
+        sepBottom.setVisibility(View.GONE);
         if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET) && !isCricket && !filter.equals(Constants.FILTER_TYPE_LEAGUE)) {
             parentEmpty.setVisibility(View.VISIBLE);
             cricketLayout.setVisibility(View.VISIBLE);
@@ -206,6 +211,7 @@ public class FilterFragment extends Fragment implements FilterActivity.OnResultR
             mlistView.setAdapter(filterAdapter);
             if (favList.size() <= 0) {
                 showErrorLayout(getView());
+                sepBottom.setVisibility(View.VISIBLE);
                 parentEmpty.setVisibility(View.VISIBLE);
                 if (!filter.equals(Constants.FILTER_TYPE_LEAGUE) && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
                     cricketLayout.setVisibility(View.VISIBLE);

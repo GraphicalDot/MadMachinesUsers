@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Sports Unity</string>
 
-    <string name="facebook_app_id">1641376076109497</string>
+    <string name="facebook_app_id">192424827806141</string>
     <string name="link_of_terms_of_use">http://www.sportsunity.co/terms/</string>
     <string name="link_of_privacy_policy">http://www.sportsunity.co/privacy-policy/</string>
 
@@ -52,6 +52,7 @@
     <string name="btn_create_account">Create Account</string>
 
     <string name="default_status">Available</string>
+    <string name="others_default_status">No Status</string>
 
     <string name="message_login_failed">Login failed, try again.</string>
 
