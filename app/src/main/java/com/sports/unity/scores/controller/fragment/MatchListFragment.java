@@ -247,14 +247,15 @@ public class MatchListFragment extends Fragment {
             for (int i = 0; i < matches.size(); i++) {
                 try {
                     JSONObject object = matches.get(i);
-                    if (!object.isNull("match_datetime_epoch")) {
-                        epochTime = object.getLong("match_datetime_epoch");
-                        day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
-                        leagueName = object.getString("league_name");
-                        sportsType = favouriteItem.getSportsType();
-                    } else if (!object.isNull("match_date_epoch")) {
+
+                    if(!object.isNull("match_time") && Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(object.getString("type"))){
+                        epochTime = object.getLong("match_time");
+                        day=  DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
+                        leagueName = object.getString("series_name");
+                        sportsType = object.getString("type");
+                    } else {
                         epochTime = object.getLong("match_date_epoch");
-                        sportsType = favouriteItem.getSportsType();
+                        sportsType = object.getString("type");
                         day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
                         if (!object.isNull("league_name")) {
                             leagueName = object.getString("league_name");
@@ -269,16 +270,16 @@ public class MatchListFragment extends Fragment {
                         leagueMapTemp = daysMap.get(day);
 
                         if (leagueMapTemp.containsKey(leagueName)) {
+                            Log.d("imax","setting daygroup");
                             dayGroupDto = leagueMapTemp.get(leagueName);
                             dayGroupList = dayGroupDto.getList();
                         } else {
+                            Log.d("imax","resetting current daygroup");
                             dayGroupDto = new MatchListWrapperDTO();
                             dayGroupList = new ArrayList<>();
 
                         }
-
-
-                    } else {
+                    }else{
 
                         leagueMapTemp = new HashMap<>();
                         dayGroupDto = new MatchListWrapperDTO();
@@ -301,9 +302,10 @@ public class MatchListFragment extends Fragment {
             }
             matchList.clear();
             Set<String> daySet = daysMap.keySet();
-
-            for (String dayKey : daySet) {
-                Map<String, MatchListWrapperDTO> leagueMaps = daysMap.get(dayKey);
+            Log.i("DAYMAP", "handleContent: "+daysMap);
+            for(String dayKey :daySet) {
+                Map<String, MatchListWrapperDTO > leagueMaps = daysMap.get(dayKey);
+                Log.i("LEAGUEMAP", "handleContent: "+leagueMaps);
                 Set<String> keySet = leagueMaps.keySet();
 
                 for (String key : keySet) {
@@ -316,9 +318,9 @@ public class MatchListFragment extends Fragment {
                 }
             }
             Collections.sort(matchList);
-            if (favouriteItem.getFilterType().equalsIgnoreCase(Constants.FILTER_TYPE_LEAGUE)) {
+           /* if (favouriteItem.getFilterType().equalsIgnoreCase(Constants.FILTER_TYPE_LEAGUE)) {
                 matchListWrapperAdapter.setIsIndividualFixture();
-            }
+            }*/
             matchListWrapperAdapter.notifyDataSetChanged();
         }
         return success;

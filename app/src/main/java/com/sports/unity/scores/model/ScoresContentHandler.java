@@ -147,7 +147,7 @@ public class ScoresContentHandler {
             if (scoreId == null) {
                 requestListOfMatches(requestListenerKey, requestTag);
             } else {
-                //requestListOfMatches(requestListenerKey, requestTag, scoreId);
+                requestListOfMatches(requestListenerKey, requestTag, scoreId);
             }
         } else if (callName.equals(CALL_NAME_MATCH_DETAIL)) {
             String matchId = parameters.get(PARAM_ID);
@@ -279,7 +279,23 @@ public class ScoresContentHandler {
             //nothing
         }
     }
-
+    private void requestListOfMatches(String listenerKey, String requestTag,String favouriteItemJsonString) {
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
+            FavouriteItem f=new FavouriteItem(favouriteItemJsonString);
+            String url="";
+            if(f.getFilterType().equals(Constants.FILTER_TYPE_LEAGUE)) {
+                url = generateURL(URL_PARAMS_FOR_LEAGUE_FIXTURES + f.getId());
+            }else if(f.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)){
+                url=generateURL(URL_PARAMS_FOR_FOOTBAL_TEAM_FIXTURES + f.getId());
+            }else{
+                url=generateURL(URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES);
+            }
+            Log.d("max", "Score url is-" + url +"  <TYPE> "+f.getSportsType()+" <filter> "+f.getFilterType());
+            requestContent(requestTag, listenerKey, url);
+        } else {
+            //nothing
+        }
+    }
     private void requestScoresOfMatch(String sportType, String matchId,String seriesId, String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
 
