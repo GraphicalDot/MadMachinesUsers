@@ -69,8 +69,7 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        // playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-        playerId = "4429";
+         playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
          this.context = context;
         cricketPlayerMatchStatHandler = CricketPlayerMatchStatHandler.getInstance(context);
         cricketPlayerMatchStatHandler.addListener(this);

@@ -13,10 +13,25 @@
 
         <LinearLayout
             android:id="@+id/squad_parent_linearlayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:visibility="visible">
+
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:id="@+id/cricket_team_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@color/gray3"
+                android:gravity="left"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:padding="@dimen/horizontal_padding_very_small"
+                android:text="Name"
+                android:textColor="@color/news_static"
+                android:textSize="@dimen/font_size_small_large"
+                android:visibility="gone"/>
 
             <android.support.percent.PercentRelativeLayout
                 android:id="@+id/team1_layout"

@@ -43,8 +43,7 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        //playerId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-        playerId = "4429";
+        playerId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
         cricketPlayerbioHandler = CricketPlayerbioHandler.getInstance(context);
         cricketPlayerbioHandler.addListener(this);
         cricketPlayerbioHandler.requestData(playerId);

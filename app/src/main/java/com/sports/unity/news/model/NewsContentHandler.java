@@ -1,17 +1,14 @@
 package com.sports.unity.news.model;
 
 import android.content.Context;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.sports.unity.Database.NewsDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.UserUtil;
@@ -21,7 +18,6 @@ import com.sports.unity.util.network.VolleyRequestHandler;
 
 import org.json.JSONObject;
 
-import java.net.URI;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -156,7 +152,7 @@ public class NewsContentHandler {
     }
 
     public void selectedSportsChanged() {
-        selectedSports = UserUtil.getFilterSportsSelected();
+        selectedSports = UserUtil.getNewsFilterSportsSelected();
          if(selectedSports != null) {
              StringBuilder stringBuilder = new StringBuilder();
              for (int i = 0; i < selectedSports.size(); i++) {

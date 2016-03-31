@@ -1,13 +1,11 @@
 package com.sports.unity.scores.controller.fragment;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -89,8 +87,8 @@ public class MatchListFragment extends Fragment {
 
         View view = inflater.inflate(com.sports.unity.R.layout.fragment_match_list, container, false);
         initView(view);
-        sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
-        sportSelected = UserUtil.getFilterSportsSelected();
+        sportsSelectedNum = UserUtil.getScoreFilterSportsSelected().size();
+        sportSelected = UserUtil.getScoreFilterSportsSelected();
         return view;
     }
 
@@ -114,6 +112,7 @@ public class MatchListFragment extends Fragment {
 
         if (id == com.sports.unity.R.id.action_filter) {
             Intent i = new Intent(getActivity(), FilterActivity.class);
+            i.putExtra(Constants.KEY_ORIGIN_ACTIVITY,Constants.SCORE_ACTIVITY);
             startActivityForResult(i, Constants.REQUEST_CODE_SCORE);
             return true;
         }
@@ -153,8 +152,8 @@ public class MatchListFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
-        sportSelected = UserUtil.getFilterSportsSelected();
+        sportsSelectedNum = UserUtil.getScoreFilterSportsSelected().size();
+        sportSelected = UserUtil.getScoreFilterSportsSelected();
         removeResponseListener();
         mSwipeRefreshLayout.setRefreshing(false);
     }
@@ -207,11 +206,11 @@ public class MatchListFragment extends Fragment {
 
     private void handleIfSportsChanged() {
         boolean isSportsChanged = false;
-        if (sportsSelectedNum != UserUtil.getFilterSportsSelected().size()) {
+        if (sportsSelectedNum != UserUtil.getScoreFilterSportsSelected().size()) {
             isSportsChanged = true;
         } else {
             for (int i = 0; i < sportSelected.size(); i++) {
-                if (!UserUtil.getFilterSportsSelected().contains(sportSelected.get(i))) {
+                if (!UserUtil.getScoreFilterSportsSelected().contains(sportSelected.get(i))) {
                     isSportsChanged = true;
                 }
             }
@@ -219,8 +218,8 @@ public class MatchListFragment extends Fragment {
         if (isSportsChanged) {
             mSwipeRefreshLayout.setRefreshing(true);
             requestContent();
-            sportSelected = UserUtil.getFilterSportsSelected();
-            sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
+            sportSelected = UserUtil.getScoreFilterSportsSelected();
+            sportsSelectedNum = UserUtil.getScoreFilterSportsSelected().size();
         }
     }
 
@@ -334,7 +333,7 @@ public class MatchListFragment extends Fragment {
         ArrayList<JSONObject> list = ScoresJsonParser.parseListOfMatches(content);
         if (list.size() > 0) {
 
-            if (UserUtil.getFilterSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET) && UserUtil.getFilterSportsSelected().contains(Constants.SPORTS_TYPE_FOOTBALL)) {
+            if (UserUtil.getScoreFilterSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET) && UserUtil.getScoreFilterSportsSelected().contains(Constants.SPORTS_TYPE_FOOTBALL)) {
                 matches.addAll(list);
             } else {
                 ArrayList<JSONObject> cricket = new ArrayList<>();
@@ -351,7 +350,7 @@ public class MatchListFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
-                if (UserUtil.getFilterSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET)) {
+                if (UserUtil.getScoreFilterSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET)) {
                     matches.addAll(cricket);
                 } else {
                     matches.addAll(football);
@@ -385,16 +384,12 @@ public class MatchListFragment extends Fragment {
                     ArrayList<JSONObject> dayGroupList = null;
                     Map<String, MatchListWrapperDTO> leagueMapTemp = null;
                     if (daysMap.containsKey(day)) {
-                        Log.i("League Name", "handleContent: " + leagueName);
-                        Log.i("Day Name", "handleContent: " + day);
                         leagueMapTemp = daysMap.get(day);
 
                         if (leagueMapTemp.containsKey(leagueName)) {
-                            Log.d("imax","setting daygroup");
                             dayGroupDto = leagueMapTemp.get(leagueName);
                             dayGroupList = dayGroupDto.getList();
                         } else {
-                            Log.d("imax","resetting current daygroup");
                             dayGroupDto = new MatchListWrapperDTO();
                             dayGroupList = new ArrayList<>();
 
@@ -422,10 +417,8 @@ public class MatchListFragment extends Fragment {
             }
             matchList.clear();
             Set<String> daySet = daysMap.keySet();
-            Log.i("DAYMAP", "handleContent: "+daysMap);
             for(String dayKey :daySet) {
                 Map<String, MatchListWrapperDTO > leagueMaps = daysMap.get(dayKey);
-                Log.i("LEAGUEMAP", "handleContent: "+leagueMaps);
                 Set<String> keySet = leagueMaps.keySet();
 
                 for (String key : keySet) {
@@ -438,7 +431,6 @@ public class MatchListFragment extends Fragment {
                 }
             }
             Collections.sort(matchList);
-            Log.i("MATCHLIST", "handleContent: " + matchList);
             matchListWrapperAdapter.notifyDataSetChanged();
         }
         return success;

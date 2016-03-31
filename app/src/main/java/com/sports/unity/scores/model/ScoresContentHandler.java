@@ -55,7 +55,7 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = "http://52.76.74.188:5600/get_football_player_profile?player_id=";
     private static final String URL_PARAMS_FOR_LEAGUE_FIXTURES = "get_football_league_specific_fixtures?league_id=";
     private static final String URL_PARAMS_FOR_FOOTBAL_TEAM_FIXTURES = "get_football_team_fixtures?team_id=";
-    private static final String URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES ="v1/get_specific_fixtures?team_id=4";
+    private static final String URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES ="v1/get_specific_fixtures?team_id=";
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
     private HashMap<String, ContentListener> mapOfResponseListeners = new HashMap<>();
     private HashMap<String, String> requestInProcess_RequestTagAndListenerKey = new HashMap<>();
@@ -288,7 +288,8 @@ public class ScoresContentHandler {
             }else if(f.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)){
                 url=generateURL(URL_PARAMS_FOR_FOOTBAL_TEAM_FIXTURES + f.getId());
             }else{
-                url=generateURL(URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES);
+               url=generateURL(URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES+ f.getId());
+                //url=generateURL(URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES+3);
             }
             Log.d("max", "Score url is-" + url +"  <TYPE> "+f.getSportsType()+" <filter> "+f.getFilterType());
             requestContent(requestTag, listenerKey, url);
