@@ -403,7 +403,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         holder.t1score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
         holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedRegular());
     }
-
     private void SetLiveMatchScoreCard(ViewHolder holder) throws JSONException {
         holder.team1Overs.setVisibility(View.VISIBLE);
         holder.team2Overs.setVisibility(View.VISIBLE);
@@ -418,8 +417,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam1() != null ? cricketMatchJsonCaller.getWicketsTeam1():"0");
         holder.t1score.setText(stringBuilder.toString());
         holder.team1Overs.setText(cricketMatchJsonCaller.getOversTeam1()!=null?cricketMatchJsonCaller.getOversTeam1():"0"+"ovs");
-
-
         stringBuilder = new StringBuilder("");
         stringBuilder.append(cricketMatchJsonCaller.getTeam2Score()!=null?cricketMatchJsonCaller.getTeam2Score():"0");
         stringBuilder.append("/");

@@ -260,7 +260,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                         try {
 
                             BallDetail defb = new BallDetail();
-                            BallDetail[] balls = new BallDetail[]{defb, defb, defb, defb, defb, defb};
+                            BallDetail[] balls = new BallDetail[]{defb, defb, defb, defb, defb, defb,defb};
                             int ballIndex = 6;
                             Drawable drawable = null;
 
