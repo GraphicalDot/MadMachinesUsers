@@ -132,8 +132,6 @@ public class SUPushServiceListener extends GcmListenerService {
       } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
     }
 
     private int getDrawableIcon(int event) {

@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -215,8 +216,9 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 }
 
                 preferences  = PreferenceManager.getDefaultSharedPreferences(activity);
-                String subsMatch = preferences.getString(cricketMatchJsonCaller.getMatchId()+"|"+cricketMatchJsonCaller.getSeriesId().toString(),"");
-                if(subsMatch.equals("")){
+                final String key = cricketMatchJsonCaller.getMatchId()+"|"+cricketMatchJsonCaller.getSeriesId().toString();
+                String subsMatch = preferences.getString(key,"");
+                if(!TextUtils.isEmpty(subsMatch) && key.equalsIgnoreCase(subsMatch)){
                     holder.notification.setImageResource(R.drawable.ic_notification_enable);
                     holder.notification.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -226,7 +228,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                                 matchId = cricketMatchJsonCaller.getMatchId();
                                 tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
                                 tokenRegistrationHandler.addListener(MatchListAdapter.this);
-                                tokenRegistrationHandler.removeMatchUser(seriesId + "|" + matchId);
+                                tokenRegistrationHandler.removeMatchUser(key);
 
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -245,7 +247,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                                 matchId = cricketMatchJsonCaller.getMatchId();
                                 tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
                                 tokenRegistrationHandler.addListener(MatchListAdapter.this);
-                                tokenRegistrationHandler.registrerMatchUser(matchId + "|" + seriesId, CommonUtil.getToken(activity));
+                                tokenRegistrationHandler.registrerMatchUser(key, CommonUtil.getToken(activity));
 
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -710,8 +712,16 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                   if(object!=null){
                 if(200==object.getInt("status")){
                     if("success".equalsIgnoreCase(object.getString("info"))) {
-                        SharedPreferences.Editor editor  = PreferenceManager.getDefaultSharedPreferences(activity).edit();
-                        editor.putString(matchId+"|"+seriesId,matchId+"|"+seriesId);
+                        String key = matchId+"|"+seriesId;
+                        SharedPreferences prefs  = PreferenceManager.getDefaultSharedPreferences(activity);
+                        SharedPreferences.Editor editor = prefs.edit();
+                        if(TextUtils.isEmpty(prefs.getString(key,"")))
+                        {
+                            editor.remove(key);
+                        } else {
+                            editor.putString(key,key);
+                        }
+                        //editor.putString(matchId+"|"+seriesId,matchId+"|"+seriesId);
                         editor.apply();
                         notifyDataSetChanged();
 
