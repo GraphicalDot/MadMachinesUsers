@@ -89,8 +89,10 @@ public class MatchListFragment extends Fragment {
 
         View view = inflater.inflate(com.sports.unity.R.layout.fragment_match_list, container, false);
         initView(view);
-        sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
-        sportSelected = UserUtil.getFilterSportsSelected();
+        if(UserUtil.getFilterSportsSelected()!=null){
+            sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
+            sportSelected = UserUtil.getFilterSportsSelected();
+        }
         return view;
     }
 

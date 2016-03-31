@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -37,7 +38,7 @@ public class SUPushServiceListener extends GcmListenerService {
     private boolean isLive;
     private String title;
     private String content;
-    private String event;
+    private int event;
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
@@ -57,8 +58,7 @@ public class SUPushServiceListener extends GcmListenerService {
 
 
         try {
-            RemoteViews contentView = new RemoteViews(getPackageName(),
-                    R.layout.push_notification_layout);
+
             if(message!=null) {
                 JSONObject oldData = new JSONObject(message);
                 JSONObject notification = oldData.getJSONObject("message");
@@ -82,21 +82,30 @@ public class SUPushServiceListener extends GcmListenerService {
                     content = notification.getString(GCMConstants.BOTTOM_TEXT);
                 }
                 if (!notification.isNull(GCMConstants.EVENT_ID)) {
-                    event = notification.getString(GCMConstants.EVENT_ID);
+                    event = notification.getInt(GCMConstants.EVENT_ID);
                 }
 
-                /*NotificationCompat.Builder mBuilder =
-                        new NotificationCompat.Builder(this)
-                                .setSmallIcon(R.drawable.ic_notification_enable)
-                                .setContentTitle(title)
-                                .setContentText(content);*/
-                NotificationCompat.Builder mBuilder =
-                        new NotificationCompat.Builder(this);
+               /* RemoteViews contentView = new RemoteViews(getPackageName(),
+                        R.layout.push_notification_layout);
+
+                contentView.setImageViewResource(R.id.iv_player, R.drawable.ic_cricket);
+                contentView.setTextViewText(R.id.tv_notification_subject, title);
+                contentView.setTextViewText(R.id.tv_notification_content, content);
+                contentView.setTextViewText(R.id.tv_current_time, DateUtil.getCurrentTime());
+                contentView.setImageViewResource(R.id.iv_notification_icon, R.drawable.ic_flash_on);*/
                 Intent i = new Intent(this, ScoreDetailActivity.class);
                 i.putExtra(INTENT_KEY_TYPE, sportsType);
                 i.putExtra(Constants.INTENT_KEY_ID, matchiId);
                 i.putExtra(Constants.INTENT_KEY_SERIES, seriesid);
                 i.putExtra(Constants.INTENT_KEY_MATCH_STATUS, matchStatus);
+                int  drawableId = getDrawableIcon(event);
+               NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(this)
+                                .setSmallIcon(drawableId)
+                                .setContentTitle(title)
+                                .setContentText(content);
+              /*  NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(this).setSmallIcon(R.drawable.ic_notification_enable);*/
                 //i.putExtra(Constants.INTENT_KEY_MATCH_LIVE, isLive);
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
                 stackBuilder.addParentStack(ScoreDetailActivity.class);
@@ -107,26 +116,40 @@ public class SUPushServiceListener extends GcmListenerService {
                                 PendingIntent.FLAG_UPDATE_CURRENT
                         );
                 mBuilder.setContentIntent(resultPendingIntent);
-                mBuilder.setContent(contentView);
-                contentView.setImageViewResource(R.id.iv_player, R.drawable.ic_cricket);
-                contentView.setTextViewText(R.id.tv_notification_subject, title);
-                contentView.setTextViewText(R.id.tv_notification_content, content);
-                contentView.setTextViewText(R.id.tv_current_time, DateUtil.getCurrentTime());
-                contentView.setImageViewResource(R.id.iv_notification_icon, R.drawable.ic_flash_on);
+                //mBuilder.setContent(contentView);
+
                 NotificationManager mNotificationManager =
                         (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-                mNotificationManager.notify(0, mBuilder.build());
+                mNotificationManager.notify(1, mBuilder.build());
             }
       } catch (JSONException e) {
             e.printStackTrace();
         }
 
 
-
-
-
-
-
-
     }
+
+    private int getDrawableIcon(int event) {
+        int  drawable=0;
+        switch (event){
+            case 1:
+                drawable = R.drawable.ic_active_player;
+                break;
+            case 2:
+                drawable = R.drawable.ic_active_player;
+                break;
+            case 3:
+                drawable = R.drawable.ic_active_player;
+                break;
+            case 4:
+                drawable = R.drawable.ic_active_player;
+                break;
+        }
+
+
+
+        return drawable;
+    }
+
+
 }
