@@ -7,6 +7,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -250,31 +251,64 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             liveCricketMatchSummaryParser.setCurrentPartnership(currentPartnershipDetails.getJSONObject(0));
             liveCricketMatchSummaryParser.setYetToBat(yetToBatting);
             liveCricketMatchSummaryParser.setRecentOver(recentOver);
+               final Stack<JSONObject> ballsStack = new Stack<>();
             hideProgress();
             if (activity != null) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            Stack<JSONObject> ballsStack = new Stack<>();
+
                             BallDetail defb = new BallDetail();
-                            BallDetail[] balls = new BallDetail[]{defb, defb, defb, defb, defb, defb, defb};
+                            BallDetail[] balls = new BallDetail[]{defb, defb, defb, defb, defb, defb};
                             int ballIndex = 6;
                             Drawable drawable = null;
 
 
                             Iterator<String> recentOverKeys = recentOver.keys();
-
+                            Integer keys[]= new Integer[2];
+                            int arrayCount= 0;
                             while(recentOverKeys.hasNext()){
-                             JSONArray recentOverJSONArray = recentOver.getJSONArray(recentOverKeys.next());
-                                for(int count=0;count<recentOverJSONArray.length();count++){
-                                    JSONObject ballObject = recentOverJSONArray.getJSONObject(count);
-                                    ballsStack.add(ballObject);
-                                }
+                                try{
+                                    keys[arrayCount++] = Integer.parseInt(recentOverKeys.next());
+                                }catch (Exception e){e.printStackTrace();}
+
                             }
 
+                                if(keys[0]>keys[1]){
+                                    JSONArray recentOverJSONArray = recentOver.getJSONArray(keys[0].toString());
+                                    for(int count=0;count<recentOverJSONArray.length();count++){
+                                        JSONObject ballObject = recentOverJSONArray.getJSONObject(count);
+                                        ballsStack.add(ballObject);
+                                    }
 
-                            for (int i = 0; i < ballsStack.size(); i++) {
+                                    recentOverJSONArray = recentOver.getJSONArray(keys[1].toString());
+                                    for(int count=0;count<recentOverJSONArray.length();count++){
+                                        JSONObject ballObject = recentOverJSONArray.getJSONObject(count);
+                                        ballsStack.add(ballObject);
+                                    }
+
+                                }else{
+                                    JSONArray recentOverJSONArray = recentOver.getJSONArray(keys[1].toString());
+                                    for(int count=0;count<recentOverJSONArray.length();count++){
+                                        JSONObject ballObject = recentOverJSONArray.getJSONObject(count);
+                                        ballsStack.add(ballObject);
+                                    }
+
+                                     recentOverJSONArray = recentOver.getJSONArray(keys[0].toString());
+                                    for(int count=0;count<recentOverJSONArray.length();count++){
+                                        JSONObject ballObject = recentOverJSONArray.getJSONObject(count);
+                                        ballsStack.add(ballObject);
+                                    }
+                                }
+
+                            Log.i("BEFOREQUE ", "run: "+ballsStack);
+                            int queuSize = ballsStack.size();
+                            for (int i = 0; i < queuSize; i++) {
+                                if(i==6){
+                                    break;
+                                }
+
                                 BallDetail curBall = null;
                                 JSONObject object = ballsStack.pop();
                                 JSONArray eventArray = object.getJSONArray("event");
@@ -284,19 +318,19 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
 
 
-                                if (wicket!=null) {
+                                if (wicket!=null && !wicket.equals("")) {
                                     curBall = getResolveBall("w");
-                                } else if(event!=null) {
+                                } else if(event!=null && !event.equals("")) {
                                     curBall = getResolveBall(event);
-                                }else{
+                                }else  {
                                     curBall = getResolveBall(run);
                                 }
                                 balls[ballIndex] = curBall;
                                 ballIndex--;
-                                if(ballIndex==-1)
-                                    break;
+
 
                             }
+                            Log.i("AFTERQUE si", "run: "+ballsStack);
                             if (!balls[0].getValue().equals("0")) {
                                 drawable = getTextDrawable(balls[0].getValue(), balls[0].getFontColor(), balls[0].getBackGroundColor());
                                 ivFirstBall.setImageDrawable(drawable);
@@ -353,7 +387,11 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                                 tvSecondPlayerRunRate.setText((playerSecondRuns * 100 / playerSecondBalls) + "");
                             }
                             tvFirstPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeFirstRuns() + "(" + liveCricketMatchSummaryParser.getPlayeFirstBalls() + ")");
+                            Glide.with(getContext()).load(liveCricketMatchSummaryParser.getPlayerFirstImage()).placeholder(R.drawable.ic_no_img).into(ivFirstPlayer);
+
                             tvSecondPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeSecondRuns() + "(" + liveCricketMatchSummaryParser.getPlayeSecondBalls() + ")");
+                            Glide.with(getContext()).load(liveCricketMatchSummaryParser.getPlayerSecondImage()).placeholder(R.drawable.ic_no_img).into(ivPlayerSecond);
+
                             tvPartnershipRecord.setText((playerFirstRuns + playerSecondRuns) + "(" + (playerFirstBalls + playerSecondBalls) + ")");
                             tvFirstUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(0));
                             Glide.with(getContext()).load(liveCricketMatchSummaryParser.getYetToPlayerImage(0)).placeholder(R.drawable.ic_no_img).into(ivUppComingPlayerFirst);
@@ -367,6 +405,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
                             tvBowlerOver.setText(liveCricketMatchSummaryParser.getCurentBowlerOvers());
                             tvBowlerWRun.setText(liveCricketMatchSummaryParser.getCurentBowlerWicket() + "/" + liveCricketMatchSummaryParser.getCurentBowlerRuns());
+                            Glide.with(getContext()).load(liveCricketMatchSummaryParser.getCurentBowlerImage()).placeholder(R.drawable.ic_no_img).into(ivBowlerProfile);
 
                         } catch (Exception ex) {
                             ex.printStackTrace();
@@ -430,7 +469,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
                 ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
                 break;
-            case "r5":
+            case "5":
                 ballDetail.setValue("5");
                 ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
                 ballDetail.setBackGroundColor(getBallColor(R.color.font_color_wide_no));
