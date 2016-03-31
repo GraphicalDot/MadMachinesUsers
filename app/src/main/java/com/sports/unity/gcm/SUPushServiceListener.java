@@ -108,11 +108,11 @@ public class SUPushServiceListener extends GcmListenerService {
 
 
                 int sportsTypeId = getSportId(sportsType);
-               NotificationCompat.Builder mBuilder =
+                 NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(this)
                                 .setSmallIcon(drawableId)
                                 .setContentTitle(title)
-                                .setContentText(content).addAction(sportsTypeId, sportsType, shareIntent).addAction(R.drawable.ic_mute,title,mpi);
+                                .setContentText(content).addAction(sportsTypeId, sportsType, shareIntent).addAction(R.drawable.ic_mute_notification,getString(R.string.mute_alerts),mpi);
 
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
                 stackBuilder.addParentStack(ScoreDetailActivity.class);

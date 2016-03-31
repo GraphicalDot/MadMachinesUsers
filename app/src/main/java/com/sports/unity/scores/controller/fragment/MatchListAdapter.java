@@ -215,8 +215,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 }
 
                 preferences  = PreferenceManager.getDefaultSharedPreferences(activity);
-                String subsMatch = preferences.getString(cricketMatchJsonCaller.getSeriesId()+"|"+cricketMatchJsonCaller.getMatchId(),"");
-                if(!subsMatch.equals("")){
+                String subsMatch = preferences.getString(cricketMatchJsonCaller.getMatchId()+"|"+cricketMatchJsonCaller.getSeriesId().toString(),"");
+                if(subsMatch.equals("")){
                     holder.notification.setImageResource(R.drawable.ic_notification_enable);
                     holder.notification.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -245,7 +245,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                                 matchId = cricketMatchJsonCaller.getMatchId();
                                 tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
                                 tokenRegistrationHandler.addListener(MatchListAdapter.this);
-                                tokenRegistrationHandler.registrerMatchUser(seriesId + "|" + matchId, CommonUtil.getToken(activity));
+                                tokenRegistrationHandler.registrerMatchUser(matchId + "|" + seriesId, CommonUtil.getToken(activity));
 
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -711,8 +711,10 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 if(200==object.getInt("status")){
                     if("success".equalsIgnoreCase(object.getString("info"))) {
                         SharedPreferences.Editor editor  = PreferenceManager.getDefaultSharedPreferences(activity).edit();
-                        editor.putString(seriesId+"|"+matchId,seriesId+"|"+matchId);
+                        editor.putString(matchId+"|"+seriesId,matchId+"|"+seriesId);
                         editor.apply();
+                        notifyDataSetChanged();
+
                     }
                 }
             }
