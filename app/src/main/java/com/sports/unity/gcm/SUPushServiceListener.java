@@ -41,78 +41,83 @@ public class SUPushServiceListener extends GcmListenerService {
 
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        String message = data.getString("message");
+        Log.d(TAG, "Data: " + data);
+
+
+        String message = data.getString("data");
+
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
         sendNotification(message);
-
     }
 
 
     private void sendNotification(String message) {
 
-        RemoteViews contentView = new RemoteViews(getPackageName(),
-                R.layout.push_notification_layout);
+
 
         try {
-            JSONObject notification = new JSONObject(message);
-            if (!notification.isNull(GCMConstants.SPORTS_ID)){
-                sportsType = notification.getInt(GCMConstants.SPORTS_ID)==1?Constants.SPORTS_TYPE_CRICKET:Constants.SPORTS_TYPE_FOOTBALL;
-            }
-            if (!notification.isNull(GCMConstants.MATCH_ID)){
-                matchiId = notification.getString(GCMConstants.MATCH_ID);
-            }
-            if (!notification.isNull(GCMConstants.LEAGUE_SERIES_ID)) {
-                seriesid = notification.getString(GCMConstants.LEAGUE_SERIES_ID);
-            }
-            if (!notification.isNull(GCMConstants.MATCH_STATUS)) {
-                matchStatus= notification.getString(GCMConstants.MATCH_STATUS);
-            }
-            if (!notification.isNull(GCMConstants.TOP_TEXT)) {
-                title = notification.getString(GCMConstants.TOP_TEXT);
-            }
-            if (!notification.isNull(GCMConstants.BOTTOM_TEXT)) {
+            RemoteViews contentView = new RemoteViews(getPackageName(),
+                    R.layout.push_notification_layout);
+            if(message!=null) {
+                JSONObject oldData = new JSONObject(message);
+                JSONObject notification = oldData.getJSONObject("message");
+                if (!notification.isNull(GCMConstants.SPORTS_ID)) {
+                    sportsType = notification.getInt(GCMConstants.SPORTS_ID) == 1 ? Constants.SPORTS_TYPE_CRICKET : Constants.SPORTS_TYPE_FOOTBALL;
+                }
+                if (!notification.isNull(GCMConstants.MATCH_ID)) {
+                    matchiId = notification.getString(GCMConstants.MATCH_ID);
+                }
+                if (!notification.isNull(GCMConstants.LEAGUE_SERIES_ID)) {
+                    seriesid = notification.getString(GCMConstants.LEAGUE_SERIES_ID);
+                }
+                if (!notification.isNull(GCMConstants.MATCH_STATUS)) {
+                    matchStatus = notification.getString(GCMConstants.MATCH_STATUS);
+                }
+                if (!notification.isNull(GCMConstants.TOP_TEXT)) {
+                    title = notification.getString(GCMConstants.TOP_TEXT);
+                }
+                if (!notification.isNull(GCMConstants.BOTTOM_TEXT)) {
 
-                content = notification.getString(GCMConstants.BOTTOM_TEXT);
+                    content = notification.getString(GCMConstants.BOTTOM_TEXT);
+                }
+                if (!notification.isNull(GCMConstants.EVENT_ID)) {
+                    event = notification.getString(GCMConstants.EVENT_ID);
+                }
+
+                /*NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(this)
+                                .setSmallIcon(R.drawable.ic_notification_enable)
+                                .setContentTitle(title)
+                                .setContentText(content);*/
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(this);
+                Intent i = new Intent(this, ScoreDetailActivity.class);
+                i.putExtra(INTENT_KEY_TYPE, sportsType);
+                i.putExtra(Constants.INTENT_KEY_ID, matchiId);
+                i.putExtra(Constants.INTENT_KEY_SERIES, seriesid);
+                i.putExtra(Constants.INTENT_KEY_MATCH_STATUS, matchStatus);
+                //i.putExtra(Constants.INTENT_KEY_MATCH_LIVE, isLive);
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
+                stackBuilder.addParentStack(ScoreDetailActivity.class);
+                stackBuilder.addNextIntent(i);
+                PendingIntent resultPendingIntent =
+                        stackBuilder.getPendingIntent(
+                                0,
+                                PendingIntent.FLAG_UPDATE_CURRENT
+                        );
+                mBuilder.setContentIntent(resultPendingIntent);
+                mBuilder.setContent(contentView);
+                contentView.setImageViewResource(R.id.iv_player, R.drawable.ic_cricket);
+                contentView.setTextViewText(R.id.tv_notification_subject, title);
+                contentView.setTextViewText(R.id.tv_notification_content, content);
+                contentView.setTextViewText(R.id.tv_current_time, DateUtil.getCurrentTime());
+                contentView.setImageViewResource(R.id.iv_notification_icon, R.drawable.ic_flash_on);
+                NotificationManager mNotificationManager =
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                mNotificationManager.notify(0, mBuilder.build());
             }
-            if (!notification.isNull(GCMConstants.EVENT_ID)) {
-                event = notification.getString(GCMConstants.EVENT_ID);
-            }
-
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.ic_notification_enable)
-                            .setContentTitle(title)
-                            .setContentText(content);
-            Intent i = new Intent(this, ScoreDetailActivity.class);
-            i.putExtra(INTENT_KEY_TYPE,sportsType);
-            i.putExtra(Constants.INTENT_KEY_ID,matchiId);
-            i.putExtra(Constants.INTENT_KEY_SERIES,seriesid);
-            i.putExtra(Constants.INTENT_KEY_MATCH_STATUS,matchStatus);
-            //i.putExtra(Constants.INTENT_KEY_MATCH_LIVE, isLive);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-            stackBuilder.addParentStack(ScoreDetailActivity.class);
-            stackBuilder.addNextIntent(i);
-            PendingIntent resultPendingIntent =
-                    stackBuilder.getPendingIntent(
-                            0,
-                            PendingIntent.FLAG_UPDATE_CURRENT
-                    );
-            mBuilder.setContentIntent(resultPendingIntent);
-           /* mBuilder.setContent(contentView);*/
-            contentView.setImageViewResource(R.id.iv_player, R.drawable.ic_cricket);
-            contentView.setTextViewText(R.id.tv_notification_subject, message);
-            contentView.setTextViewText(R.id.tv_notification_content, message);
-            contentView.setTextViewText(R.id.tv_current_time, DateUtil.getCurrentTime());
-            contentView.setImageViewResource(R.id.iv_notification_icon, R.drawable.ic_flash_on);
-            NotificationManager mNotificationManager =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            mNotificationManager.notify(0, mBuilder.build());
-
-
-
-
-        } catch (JSONException e) {
+      } catch (JSONException e) {
             e.printStackTrace();
         }
 
