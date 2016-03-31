@@ -85,28 +85,35 @@ public class SUPushServiceListener extends GcmListenerService {
                     event = notification.getInt(GCMConstants.EVENT_ID);
                 }
 
-               /* RemoteViews contentView = new RemoteViews(getPackageName(),
-                        R.layout.push_notification_layout);
 
-                contentView.setImageViewResource(R.id.iv_player, R.drawable.ic_cricket);
-                contentView.setTextViewText(R.id.tv_notification_subject, title);
-                contentView.setTextViewText(R.id.tv_notification_content, content);
-                contentView.setTextViewText(R.id.tv_current_time, DateUtil.getCurrentTime());
-                contentView.setImageViewResource(R.id.iv_notification_icon, R.drawable.ic_flash_on);*/
                 Intent i = new Intent(this, ScoreDetailActivity.class);
                 i.putExtra(INTENT_KEY_TYPE, sportsType);
                 i.putExtra(Constants.INTENT_KEY_ID, matchiId);
                 i.putExtra(Constants.INTENT_KEY_SERIES, seriesid);
                 i.putExtra(Constants.INTENT_KEY_MATCH_STATUS, matchStatus);
+
+                Intent muteIntent = new Intent(this,UnRegisterMatch.class);
+                muteIntent.putExtra(Constants.INTENT_KEY_ID,matchiId);
+                muteIntent.putExtra(Constants.INTENT_KEY_SERIES,seriesid);
+                PendingIntent mpi = PendingIntent.getService(this,0,muteIntent,PendingIntent.FLAG_UPDATE_CURRENT) ;
+
+                Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, title);
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, content);
+
+                PendingIntent shareIntent = PendingIntent.getActivity(this,0,sharingIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+
                 int  drawableId = getDrawableIcon(event);
+
+
+                int sportsTypeId = getSportId(sportsType);
                NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(this)
                                 .setSmallIcon(drawableId)
                                 .setContentTitle(title)
-                                .setContentText(content);
-              /*  NotificationCompat.Builder mBuilder =
-                        new NotificationCompat.Builder(this).setSmallIcon(R.drawable.ic_notification_enable);*/
-                //i.putExtra(Constants.INTENT_KEY_MATCH_LIVE, isLive);
+                                .setContentText(content).addAction(sportsTypeId, sportsType, shareIntent).addAction(R.drawable.ic_mute,title,mpi);
+
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
                 stackBuilder.addParentStack(ScoreDetailActivity.class);
                 stackBuilder.addNextIntent(i);
@@ -175,5 +182,18 @@ public class SUPushServiceListener extends GcmListenerService {
       return drawable;
     }
 
+    private int getSportId(String sports) {
+        int  drawable=0;
+        switch (sports){
+            case Constants.SPORTS_TYPE_CRICKET :
+                drawable = R.drawable.ic_cricket;
+                break;
+            case Constants.SPORTS_TYPE_FOOTBALL:
+                drawable = R.drawable.ic_football;
+                break;
+
+        }
+        return drawable;
+    }
 
 }

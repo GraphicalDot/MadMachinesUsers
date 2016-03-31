@@ -314,7 +314,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                                 ivThirdBall.setImageDrawable(drawable);
                             } else {
                                 ivThirdBall.setImageResource(R.drawable.recent_dot_balls);
-                            }ballIndex
+                            }
 
                             if (!balls[3].getValue().equals("0")) {
                                 drawable = getTextDrawable(balls[3].getValue(), balls[3].getFontColor(), balls[3].getBackGroundColor());
