@@ -15,7 +15,7 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
     private JSONObject currentBowler;
     private JSONObject currentPartnership;
     private  JSONArray yetToBat;
-    private  JSONArray recentOver;
+    private  JSONObject recentOver;
 
     public JSONObject getMatchSummary() throws JSONException {
         return jsonObject.getJSONObject("summary");
@@ -38,11 +38,11 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
     }
 
 
-    public JSONArray getRecentOver() throws JSONException {
-        return cricketSummary.getJSONArray("recent_over");
+    public JSONObject getRecentOver() throws JSONException {
+        return cricketSummary.getJSONObject("recent_over");
     }
 
-    public void setRecentOver(JSONArray recentOver) throws JSONException {
+    public void setRecentOver(JSONObject recentOver) throws JSONException {
         this.recentOver = recentOver;
     }
 
@@ -137,7 +137,7 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
 
 
 
-    public String getRecentOver(int index) throws JSONException{
+    /*public String getRecentOver(int index) throws JSONException{
         if(recentOver.get(index)!=null){
             JSONObject nameObject = recentOver.getJSONObject(index);
             return  nameObject.getString("over");
@@ -154,5 +154,5 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
             JSONObject nameObject = recentOver.getJSONObject(index);
             return  nameObject.getBoolean("wicket");
         }else {return  false;}
-    }
+    }*/
 }

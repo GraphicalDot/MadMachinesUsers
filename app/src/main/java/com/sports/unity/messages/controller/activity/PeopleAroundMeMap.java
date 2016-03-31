@@ -56,6 +56,7 @@ import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.gcm.TokenRegistrationHandler;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.NearByUserJsonCaller;
 import com.sports.unity.messages.controller.model.PeoplesNearMe;
@@ -69,6 +70,7 @@ import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -96,7 +98,7 @@ import static com.sports.unity.util.CommonUtil.getDeviceId;
 import static com.sports.unity.util.Constants.REQUEST_PARAMETER_KEY_APK_VERSION;
 import static com.sports.unity.util.Constants.REQUEST_PARAMETER_KEY_UDID;
 
-public class PeopleAroundMeMap extends CustomAppCompatActivity implements PeopleService, ClusterManager.OnClusterClickListener<Person>, ClusterManager.OnClusterItemClickListener<Person> {
+public class PeopleAroundMeMap extends CustomAppCompatActivity implements PeopleService, ClusterManager.OnClusterClickListener<Person>, ClusterManager.OnClusterItemClickListener<Person>, TokenRegistrationHandler.TokenRegistrationContentListener {
 
     private static final String REQUEST_LISTENER_KEY = "nearby_key";
     private static final String REQUEST_TAG = "nearby_tag";
@@ -176,6 +178,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         }
 
     };
+    private TokenRegistrationHandler tokenRegistrationHandler;
 
 
     @Override
@@ -198,6 +201,15 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         setsportSelectionButtons();
         setCustomButtonsForNavigationAndUsers();
         bindAutoComplete();
+
+
+        boolean userlocation = UserUtil.isShowToAllLocation();
+        tokenRegistrationHandler = TokenRegistrationHandler.getInstance(getApplicationContext());
+        tokenRegistrationHandler.addListener(this);
+        tokenRegistrationHandler.setUserPrivacyPolicy(userlocation);
+
+
+
 
     }
 
@@ -464,12 +476,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
               //  makeText(getApplicationContext(), "Privacy Policy work in progress", LENGTH_LONG).show();
 
 
-                    checkAndEnableLocation();
+                  //  checkAndEnableLocation();
 
-
-
-
-            }
+             }
         });
         toolbar.findViewById(R.id.myaddress).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -893,6 +902,24 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
     protected void onStart() {
         super.onStart();
         locManager.connect();
+    }
+
+    @Override
+    public void handleContent(String content) {
+        try {
+            JSONObject object = new JSONObject(content);
+            if(object!=null && !object.isNull("status") ){
+                if(200 == object.getInt("status")){
+                    if(!object.isNull("info") && object.getString("info").equalsIgnoreCase("Success")){
+
+                    }
+                    Toast.makeText(this,R.string.privacy_policy_status,Toast.LENGTH_SHORT).show();
+                }
+            }
+        }catch (Exception e){
+
+        }
+
     }
 
     class FetchAndDisplayCurrentAddress extends AsyncTask<Void, Void, Void> {
