@@ -2,6 +2,7 @@ package com.sports.unity.gcm;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import com.sports.unity.util.Constants;
 
@@ -29,16 +30,16 @@ public class UnRegisterMatch extends IntentService implements TokenRegistrationH
         }
     }
 
-    public void removeMatchUser(String token)
+    public void removeMatchUser(String matchId)
     {
 
         tokenRegistrationHandler = TokenRegistrationHandler.getInstance(getApplicationContext());
         tokenRegistrationHandler.addListener(this);
-        tokenRegistrationHandler.removeMatchUser(token);
+        tokenRegistrationHandler.removeMatchUser(matchId);
     }
 
     @Override
     public void handleContent(String content) {
-
+        Log.i("Remove Match", "handleContent: "+content);
     }
 }
