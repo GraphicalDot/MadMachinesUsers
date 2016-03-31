@@ -132,6 +132,8 @@ public class SUPushServiceListener extends GcmListenerService {
       } catch (JSONException e) {
             e.printStackTrace();
         }
+
+
     }
 
     private int getDrawableIcon(int event) {
@@ -144,13 +146,13 @@ public class SUPushServiceListener extends GcmListenerService {
                 drawable = R.drawable.ic_match_started;
                 break;
             case 3:
-                drawable = R.drawable.ic_active_player;
+                drawable = R.drawable.ic_no_img;
                 break;
             case 4:
-                drawable = R.drawable.ic_active_player;
+                drawable = R.drawable.ic_no_img;
                 break;
             case 5:
-                drawable = R.drawable.ic_active_player;
+                drawable = R.drawable.ic_no_img;
                 break;
             case 6:
                 drawable = R.drawable.ic_half_century;
@@ -159,22 +161,22 @@ public class SUPushServiceListener extends GcmListenerService {
                 drawable = R.drawable.ic_century;
                 break;
             case 8:
-                drawable = R.drawable.ic_active_player;
+                drawable = R.drawable.ic_no_img;
                 break;
             case 9:
                 drawable = R.drawable.ic_win_no_flag_available;
                 break;
             case 10:
-                drawable = R.drawable.ic_active_player;
+                drawable = R.drawable.ic_no_img;
                 break;
             case 11:
-                drawable = R.drawable.ic_active_player;
+                drawable = R.drawable.ic_cricket_group;
                 break;
             case 12:
                 drawable = R.drawable.ic_mute_notification;
                 break;
             case 13:
-                drawable = R.drawable.ic_active_player;
+                drawable = R.drawable.ic_no_img;
                 break;
         }
       return drawable;
