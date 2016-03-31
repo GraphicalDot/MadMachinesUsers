@@ -172,10 +172,7 @@ public class SUPushServiceListener extends GcmListenerService {
                 drawable = R.drawable.ic_active_player;
                 break;
         }
-
-
-
-        return drawable;
+      return drawable;
     }
 
 
