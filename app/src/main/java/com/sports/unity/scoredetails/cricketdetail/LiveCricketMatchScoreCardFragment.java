@@ -75,8 +75,6 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     private RecyclerView teamBBowlingRecycler;
     private RecyclerView teamAFallOfWicketRecycler;
     private RecyclerView teamBFallOfWicketRecycler;
-    private LinearLayout firstLinearLayout;
-    private LinearLayout seconLinearLayout;
     private ProgressBar progressBar;
     private LivedMatchScoreCardHandler livedMatchScoreCardHandler;
     private String matchId;

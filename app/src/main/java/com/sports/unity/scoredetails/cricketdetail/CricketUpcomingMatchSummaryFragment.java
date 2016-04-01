@@ -32,9 +32,9 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
     private TextView tvMatchDate;
     private TextView tvMatchToss;
     private ProgressBar progressBar;
-    String toss = "";
-    String matchName="";
-    String date = "";
+    private String toss = "";
+    private String matchName="";
+    private String date = "";
     private  String matchId;
     private LinearLayout errorLayout;
     private CricketUpcomingMatchSummaryHandler cricketUpcomingMatchSummaryHandler;
@@ -87,11 +87,8 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
                 boolean success = object.getBoolean("success");
                 boolean error = object.getBoolean("error");
                  if( success ) {
-
                     renderDisplay(object);
-
                 } else {
-                    //showErrorLayout(getView());
                     renderDisplay(object);
                 }
             }catch (Exception ex){

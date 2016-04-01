@@ -44,9 +44,9 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
 
 
     private RecyclerView recyclerView;
-    String toss = "";
-    String matchName="";
-    String date = "";
+    private String toss = "";
+    private String matchName="";
+    private String date = "";
     private String matchId;
     private SwipeRefreshLayout swTimeLineRefresh;
     private TextView nocomments;
@@ -112,8 +112,6 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
                 showProgressBar();
                 JSONObject jsonObject = new JSONObject(object);
                 boolean success = jsonObject.getBoolean("success");
-                boolean error = jsonObject.getBoolean("error");
-
                 if( success ) {
 
                     renderDisplay(jsonObject);

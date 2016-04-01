@@ -15,6 +15,7 @@ import android.widget.RemoteViews;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.google.gson.Gson;
 import com.sports.unity.R;
+import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.SPORTSENUM;
@@ -31,6 +32,7 @@ import static com.sports.unity.util.Constants.INTENT_KEY_TYPE;
 public class SUPushServiceListener extends GcmListenerService {
 
     private static final String TAG = "SUPushServiceListener";
+
     private String sportsType;
     private String matchiId;
     private String seriesid;
@@ -54,10 +56,7 @@ public class SUPushServiceListener extends GcmListenerService {
 
 
     private void sendNotification(String message) {
-
-
-
-        try {
+       try {
 
             if(message!=null) {
                 JSONObject oldData = new JSONObject(message);
@@ -84,9 +83,12 @@ public class SUPushServiceListener extends GcmListenerService {
                 if (!notification.isNull(GCMConstants.EVENT_ID)) {
                     event = notification.getInt(GCMConstants.EVENT_ID);
                 }
-
-
-                Intent i = new Intent(this, ScoreDetailActivity.class);
+                Intent i =null;
+                if(sportsType!=null && matchiId!=null && seriesid!=null && matchStatus!=null && title!=null && content!=null && event!=0  ){
+                    i = new Intent(this, ScoreDetailActivity.class);
+                }else{
+                    i = new Intent(this, MainActivity.class);
+                }
                 i.putExtra(INTENT_KEY_TYPE, sportsType);
                 i.putExtra(Constants.INTENT_KEY_ID, matchiId);
                 i.putExtra(Constants.INTENT_KEY_SERIES, seriesid);
@@ -105,8 +107,6 @@ public class SUPushServiceListener extends GcmListenerService {
                 PendingIntent shareIntent = PendingIntent.getActivity(this,0,sharingIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
                 int  drawableId = getDrawableIcon(event);
-
-
                 int sportsTypeId = getSportId(sportsType);
                  NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(this)
