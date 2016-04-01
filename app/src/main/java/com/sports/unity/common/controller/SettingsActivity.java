@@ -333,18 +333,18 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
     private void clearAllChat() {
         ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getApplicationContext()).getChatList(SportsUnityDBHelper.DEFAULT_GET_ALL_CHAT_LIST);
         for (Chats chatObject : chatList) {
-            SportsUnityDBHelper.getInstance(getApplicationContext()).clearChat(getApplicationContext(), chatObject.chatid, chatObject.groupServerId);
-            SportsUnityDBHelper.getInstance(getApplicationContext()).clearUnreadCount(chatObject.chatid, chatObject.groupServerId);
-            NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid));
+            SportsUnityDBHelper.getInstance(getApplicationContext()).clearChat(getApplicationContext(), chatObject.id);
+            SportsUnityDBHelper.getInstance(getApplicationContext()).clearUnreadCount(chatObject.id, chatObject.jid);
+            NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.id));
         }
     }
 
     private void deleteAllChat() {
         ArrayList<Chats> chatList = SportsUnityDBHelper.getInstance(getApplicationContext()).getChatList(SportsUnityDBHelper.DEFAULT_GET_ALL_CHAT_LIST);
         for (Chats chatObject : chatList) {
-            SportsUnityDBHelper.getInstance(getApplicationContext()).clearChat(this, chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
-            SportsUnityDBHelper.getInstance(this).clearChatEntry(chatObject.chatid, chatObject.groupServerId);
-            NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid));
+            SportsUnityDBHelper.getInstance(getApplicationContext()).clearChat(this, chatObject.id);
+            SportsUnityDBHelper.getInstance(this).clearChatEntry(chatObject.id, chatObject.isGroupChat);
+            NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.id));
         }
     }
 

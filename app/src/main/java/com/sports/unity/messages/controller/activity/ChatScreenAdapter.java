@@ -55,18 +55,14 @@ import se.emilsjolander.stickylistheaders.StickyListHeadersAdapter;
  */
 public class ChatScreenAdapter extends BaseAdapter implements StickyListHeadersAdapter {
 
+    private Activity activity;
     private ArrayList<Message> messageList;
-//    private ArrayList<Integer> messageListForFilter = new ArrayList<>();
-
 
     private boolean nearByChat = false;
-    private Activity activity;
-    private String searchString = "";
     private boolean isGroupChat = false;
-    private String groupServerId;
+    private String searchString = "";
     private String jid = null;
 
-    //    private HashMap<String, byte[]> mediaMap = null;
     private AudioRecordingHelper audioRecordingHelper = null;
 
     private ArrayList<Integer> positions = new ArrayList<>();
@@ -75,15 +71,13 @@ public class ChatScreenAdapter extends BaseAdapter implements StickyListHeadersA
     private AudioEventListener audioEventListener = new AudioEventListener();
     private ImageOrVideoClickListener imageOrVideoClickListener = new ImageOrVideoClickListener();
 
-    public ChatScreenAdapter(ChatScreenActivity chatScreenActivity, ArrayList<Message> messagelist, boolean otherChat, boolean isGroupChat, String groupServerId, String jid) {
+    public ChatScreenAdapter(ChatScreenActivity chatScreenActivity, ArrayList<Message> messagelist, boolean otherChat, boolean isGroupChat, String jid) {
         this.messageList = messagelist;
         activity = chatScreenActivity;
-//        mediaMap = chatScreenActivity.getMediaMap();
         nearByChat = otherChat;
         this.isGroupChat = isGroupChat;
         audioRecordingHelper = AudioRecordingHelper.getInstance(activity);
         audioRecordingHelper.clearProgressMap();
-        this.groupServerId = groupServerId;
         this.jid = jid;
     }
 
@@ -314,7 +308,7 @@ public class ChatScreenAdapter extends BaseAdapter implements StickyListHeadersA
         }
 
         if (holder.sendersName != null) {
-            String name = SportsUnityDBHelper.getInstance(activity).getUserNameByPhoneNumber(messageList.get(position).number);
+            String name = SportsUnityDBHelper.getInstance(activity).getNameByJID(messageList.get(position).number);
             if (name == null) {
                 holder.sendersName.setText(messageList.get(position).number);
             } else {
@@ -612,7 +606,7 @@ public class ChatScreenAdapter extends BaseAdapter implements StickyListHeadersA
                     thumbnailImage = Base64.encodeToString(message.media, Base64.DEFAULT);
                 }
 
-                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, null, message.mimeType, chat, message.id, nearByChat, isGroupChat, groupServerId, jid);
+                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, null, message.mimeType, chat, message.id, nearByChat, isGroupChat, jid);
 
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -741,7 +735,7 @@ public class ChatScreenAdapter extends BaseAdapter implements StickyListHeadersA
                 if (message.media != null) {
                     thumbnailImage = Base64.encodeToString(message.media, Base64.DEFAULT);
                 }
-                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, thumbnailImage, message.mimeType, chat, message.id, nearByChat, isGroupChat, groupServerId, jid);
+                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, thumbnailImage, message.mimeType, chat, message.id, nearByChat, isGroupChat, jid);
 
                 activity.runOnUiThread(new Runnable() {
                     @Override

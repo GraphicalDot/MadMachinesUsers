@@ -64,11 +64,11 @@ public class NotificationHandler {
         initUnreadCountData(context);
     }
 
-    synchronized public void addNotificationMessage(long chatId, String from, String message, String mimeType, byte[] image, int availibilityStatus) {
-        NotificationMessage notificationMessage = new NotificationMessage(chatId, from, message, mimeType, image, availibilityStatus);
+    synchronized public void addNotificationMessage(int chatId, String from, String message, String mimeType, byte[] image, int availabilityStatus) {
+        NotificationMessage notificationMessage = new NotificationMessage(chatId, from, message, mimeType, image, availabilityStatus);
         notificationMessageList.add(notificationMessage);
 
-        updateUnreadCountBasedOnNewMessageArrived(String.valueOf(chatId), availibilityStatus);
+        updateUnreadCountBasedOnNewMessageArrived(String.valueOf(chatId), availabilityStatus);
 //        updateUnreadCount(chatIdSet.size(), 0, notificationMessageList.size());
 
         if (notificationMessageList.size() > MESSAGE_LIMIT) {
@@ -446,14 +446,14 @@ public class NotificationHandler {
 
 
     private class NotificationMessage {
-        private long chatId;
+        private int chatId;
         private String from;
         private String message;
         private String mimeType;
         private byte[] image;
         private int availibilityStatus;
 
-        NotificationMessage(long chatId, String from, String message, String mimeType, byte[] image, int availibilityStatus) {
+        NotificationMessage(int chatId, String from, String message, String mimeType, byte[] image, int availibilityStatus) {
             this.chatId = chatId;
             this.from = from;
             this.message = message;

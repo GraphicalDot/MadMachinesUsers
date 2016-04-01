@@ -10,7 +10,7 @@ public class Contacts {
     public static final int AVAILABLE_BY_OTHER_CONTACTS = 2;
     public static final int AVAILABLE_BY_MY_CONTACTS = 3;
 
-    public long id;
+    public int id;
     public String jid;
     public String name;
     public String phoneNumber;
@@ -18,7 +18,7 @@ public class Contacts {
     public String status;
     public int availableStatus = AVAILABLE_NOT;
 
-    public Contacts(String name, String jid, String phoneNumber, byte[] userImage, long cId, String status, int availableStatus) {
+    public Contacts(String name, String jid, String phoneNumber, byte[] userImage, int cId, String status, int availableStatus) {
         this.name = name;
         this.jid = jid;
         this.phoneNumber = phoneNumber;

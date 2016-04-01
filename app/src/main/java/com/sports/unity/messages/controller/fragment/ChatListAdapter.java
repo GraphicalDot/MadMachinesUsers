@@ -1,6 +1,5 @@
 package com.sports.unity.messages.controller.fragment;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
@@ -15,9 +14,7 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.model.Chats;
-import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.CommonUtil;
-import com.sports.unity.util.Constants;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,24 +55,23 @@ public class ChatListAdapter extends ArrayAdapter<Chats> implements StickyListHe
         name.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
 
         ImageView userPic = (ImageView) rowView.findViewById(R.id.user_pic);
-        if (chatArrayList.get(position).groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
-            if (chatArrayList.get(position).userImage != null) {
-                userPic.setImageBitmap(BitmapFactory.decodeByteArray(chatArrayList.get(position).userImage, 0, chatArrayList.get(position).userImage.length));
+        if ( ! chats.isGroupChat ) {
+            if (chatArrayList.get(position).image != null) {
+                userPic.setImageBitmap(BitmapFactory.decodeByteArray(chatArrayList.get(position).image, 0, chatArrayList.get(position).image.length));
+            } else {
+                //nothing
             }
-
         } else {
-            if (chatArrayList.get(position).chatImage == null) {
+            if (chatArrayList.get(position).image == null) {
                 userPic.setImageResource(R.drawable.ic_group);
             } else {
-                userPic.setImageBitmap(BitmapFactory.decodeByteArray(chatArrayList.get(position).chatImage, 0, chatArrayList.get(position).chatImage.length));
+                userPic.setImageBitmap(BitmapFactory.decodeByteArray(chatArrayList.get(position).image, 0, chatArrayList.get(position).image.length));
             }
         }
 
         ImageView mute_icon = (ImageView) rowView.findViewById(R.id.mute_icon);
-
         if (chats.mute) {
             mute_icon.setVisibility(View.VISIBLE);
-
         } else {
             mute_icon.setVisibility(View.GONE);
         }

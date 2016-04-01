@@ -114,7 +114,7 @@ public class XMPPService extends Service {
         }
     }
 
-    public static void displayNotification(Context context, String message, String from, String mimeType, long chatId, boolean isGroupChat, String groupServerId, byte[] image, int availabilityStatus, String userStatus) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
+    public static void displayNotification(Context context, String message, String from, String mimeType, int chatId, boolean isGroupChat, String groupServerId, byte[] image, int availabilityStatus, String userStatus) throws SmackException.NotConnectedException, XMPPException.XMPPErrorException, SmackException.NoResponseException {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         UserUtil.init(context);
 
@@ -136,10 +136,10 @@ public class XMPPService extends Service {
         } else if (chatCount == 1) {
             if( isGroupChat ){
                 String groupName = groupServerId.substring(groupServerId.indexOf("%") + 1, groupServerId.indexOf("%%"));
-                pendingIntent = getPendingIntentForChatActivity(context, groupName, groupServerId, chatId, SportsUnityDBHelper.getDummyContactRowId(), groupServerId, null, false, availabilityStatus, userStatus);
+                pendingIntent = getPendingIntentForChatActivity(context, isGroupChat, groupName, groupServerId, chatId, null, false, availabilityStatus, userStatus);
             } else {
                 Contacts contact = sportsUnityDBHelper.getContactByJid(from);
-                pendingIntent = getPendingIntentForChatActivity(context, name, from, chatId, contact.id, groupServerId, contact.image, contact.isOthers(), availabilityStatus, userStatus);
+                pendingIntent = getPendingIntentForChatActivity(context, isGroupChat, name, from, chatId, contact.image, contact.isOthers(), availabilityStatus, userStatus);
             }
         }
 
@@ -147,9 +147,9 @@ public class XMPPService extends Service {
         ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.UNREAD_COUNT_KEY);
     }
 
-    public static long getChatIdOrCreateIfNotExist(Context context, boolean isGroupChat, String from, String fromGroup, boolean nearByChat) {
+    public static int getChatIdOrCreateIfNotExist(Context context, boolean isGroupChat, String from, boolean nearByChat) {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
-        long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
+        int chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
 
         if (!isGroupChat) {
             Contacts contact = sportsUnityDBHelper.getContactByJid(from);
@@ -157,17 +157,9 @@ public class XMPPService extends Service {
                 createContact(from, context, nearByChat);
                 contact = sportsUnityDBHelper.getContactByJid(from);
             }
-
-            chatId = sportsUnityDBHelper.getChatEntryID(contact.id, fromGroup);
-            if (chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
-                //nothing
-            } else {
-                chatId = sportsUnityDBHelper.createChatEntry(contact.name, contact.id, nearByChat);
-                Log.i("ChatEntry : ", "chat entry made from server " + chatId + " , " + contact.id);
-            }
-
+            chatId = contact.id;
         } else {
-            chatId = sportsUnityDBHelper.getChatEntryID(fromGroup);
+            chatId = sportsUnityDBHelper.getChatEntryID(from);
         }
         return chatId;
     }
@@ -175,6 +167,8 @@ public class XMPPService extends Service {
     public static boolean createContact(String jid, Context context, boolean nearByChat) {
         boolean success = false;
         try {
+            //TODO add contact in db first then try to load, and if not able to load vcard, atleast contact created for sure.
+
             XMPPTCPConnection connection = XMPPClient.getInstance().getConnection();
             VCard card = new VCard();
             card.load(connection, jid + "@mm.io");
@@ -215,10 +209,8 @@ public class XMPPService extends Service {
         return pendingIntent;
     }
 
-    private static PendingIntent getPendingIntentForChatActivity(Context context, String name, String from, long chatId, long contactId, String groupServerId, byte[] contactImage, boolean isOtherChat, int availabilityStatus, String userStatus) {
-        Intent notificationIntent;
-
-        notificationIntent = ChatScreenActivity.createChatScreenIntent(context, from, name, contactId, chatId, groupServerId, contactImage, false, isOtherChat, availabilityStatus, userStatus);
+    private static PendingIntent getPendingIntentForChatActivity(Context context, boolean isGroupChat, String name, String from, int chatId, byte[] contactImage, boolean isOtherChat, int availabilityStatus, String userStatus) {
+        Intent notificationIntent = ChatScreenActivity.createChatScreenIntent(context, isGroupChat, from, name, chatId, contactImage, false, isOtherChat, availabilityStatus, userStatus);
 
         Intent backIntent = new Intent(context, MainActivity.class);
         backIntent.putExtra("tab_index", 2);
