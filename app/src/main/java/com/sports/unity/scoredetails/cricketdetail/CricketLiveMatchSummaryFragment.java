@@ -465,7 +465,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             case "4":
                 ballDetail.setValue("4");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
-                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
+                ballDetail.setBackGroundColor(getBallColor(R.color.app_theme_blue));
                 break;
             case "5":
                 ballDetail.setValue("5");
@@ -475,27 +475,27 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             case "6":
                 ballDetail.setValue("6");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
-                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
+                ballDetail.setBackGroundColor(getBallColor(R.color.app_theme_blue));
                 break;
             case "e1,wd":
                 ballDetail.setValue("WD");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
-                ballDetail.setBackGroundColor(getBallColor(R.color.font_color_boundary));
+                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
                 break;
             case "e1,by":
                 ballDetail.setValue("B");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
-                ballDetail.setBackGroundColor(getBallColor(R.color.font_color_boundary));
+                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
                 break;
             case "e1,lb":
                 ballDetail.setValue("LB");
-                ballDetail.setFontColor(getBallColor(R.color.balls_color_odd_font));
-                ballDetail.setBackGroundColor(getBallColor(R.color.white_translucent));
+                ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
+                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
                 break;
             case  "e1,nb":
                 ballDetail.setValue("NB");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary_no));
-                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary_no));
+                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
                 break;
 
             case "w":
@@ -511,7 +511,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             case "r2,nb,b4":
                 ballDetail.setValue("4NB");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary_no));
-                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary_no));
+                ballDetail.setBackGroundColor(getBallColor(R.color.app_theme_blue));
                 break;
         }
         return    ballDetail;

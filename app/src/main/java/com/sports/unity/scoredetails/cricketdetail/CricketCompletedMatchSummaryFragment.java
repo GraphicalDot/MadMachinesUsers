@@ -82,7 +82,7 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
 
         View view = inflater.inflate(R.layout.fragment_cricket_completed_match_summery, container, false);
         initView(view);
-
+        initProgress(view);
         return view;
     }
     private void initView(View view) {

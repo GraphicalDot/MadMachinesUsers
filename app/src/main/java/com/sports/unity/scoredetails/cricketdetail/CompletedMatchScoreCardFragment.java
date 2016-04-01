@@ -292,7 +292,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
             final JSONObject dataObject = jsonArray.getJSONObject(0);
             final CricketMatchScoreJsonParser cricketMatchScoreJsonParser = new CricketMatchScoreJsonParser();
             cricketMatchScoreJsonParser.setJsonObject(dataObject);
-
+hideProgress();
             if (activity != null) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
