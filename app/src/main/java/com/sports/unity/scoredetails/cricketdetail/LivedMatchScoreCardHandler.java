@@ -63,7 +63,6 @@ public class LivedMatchScoreCardHandler {
 
         String url = String.format(BASEURL,seriesId,matchId);
         StringRequest stringRequest = null;
-       // RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
         VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
 

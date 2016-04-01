@@ -115,6 +115,10 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
 
     /* Tis method use to initialization view element of  fragment_completed_match_score_card*/
     private void initView(View view) {
+        initializeView(view);
+    }
+
+    public void initializeView(View view) {
         firstBattingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_first_view_visibility);
         firstBowlingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_first_bowling_visibility);
         firstFallofWicketsLinearLayout = (LinearLayout) view.findViewById(R.id.first_layout_fall_wicket);
@@ -194,6 +198,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
             }
         });
     }
+
     private void showhideTeamSecondScoreCard() {
         if (secondBattingLinearLayout.getVisibility() == View.GONE) {
             secondBattingLinearLayout.setVisibility(View.VISIBLE);

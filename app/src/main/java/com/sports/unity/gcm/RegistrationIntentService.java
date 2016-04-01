@@ -24,6 +24,7 @@ import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -85,7 +86,6 @@ public class RegistrationIntentService extends IntentService implements TokenReg
 
     public void removeToken(String uuid)
     {
-
         tokenRegistrationHandler = TokenRegistrationHandler.getInstance(getApplicationContext());
         tokenRegistrationHandler.addListener(this);
         tokenRegistrationHandler.removeToken();
@@ -94,25 +94,19 @@ public class RegistrationIntentService extends IntentService implements TokenReg
     public void handleContent(String content) {
         try {
             JSONObject object = new JSONObject(content);
-            if(object!=null){
-                if(!object.isNull("status")){
-                    if(200==object.getInt("status")) {
-                        if ("success".equalsIgnoreCase(object.getString("info"))) {
-                            SharedPreferences.Editor editor = preferences.edit();
-                            editor.putBoolean(Constants.SENT_TOKEN_TO_SERVER, true);
-                            editor.apply();
-                        /*sendNotification("Notification");
-*/
-
-                        } else {
-                            preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
+            if(object!=null && !object.isNull("status") && 200==object.getInt("status") && "success".equalsIgnoreCase(object.getString("info"))){
+                    SharedPreferences.Editor editor = preferences.edit();
+                    editor.putBoolean(Constants.SENT_TOKEN_TO_SERVER, true);
+                    if (!object.isNull("match_ids")) {
+                        JSONArray matchIds = object.getJSONArray("match_ids");
+                        int l = matchIds.length();
+                        for (int i = 0; i < l; i++) {
+                            String matchSeriesId = matchIds.getString(i);
+                            editor.putString(matchSeriesId, matchSeriesId);
                         }
-                    }else {
-                        preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
-                    }               }else {
-                    preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
-                }
-            }else{
+                    }
+                    editor.apply();
+            }else {
                 preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
             }
         } catch (JSONException e) {

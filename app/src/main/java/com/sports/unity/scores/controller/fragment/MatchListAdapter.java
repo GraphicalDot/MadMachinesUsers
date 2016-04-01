@@ -651,7 +651,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     team1.setText(footballMatchJsonCaller.getHomeTeam());
                     team2.setText(footballMatchJsonCaller.getAwayTeam());
                 }
-
                 bet1.setText(matchJsonCaller.getTeams1Odds());
                 bet2.setText(matchJsonCaller.getTeams2Odds());
             }catch (Exception ex){
@@ -731,7 +730,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     }
                 }
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
