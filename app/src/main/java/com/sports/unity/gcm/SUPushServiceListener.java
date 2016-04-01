@@ -119,8 +119,6 @@ public class SUPushServiceListener extends GcmListenerService {
                                 .setContentTitle(title)
                                 .setContentText(content)
                                 .setColor(getResources().getColor(R.color.app_theme_blue))
-                                .setVibrate(new long[]{100, 250})
-                                .setDefaults(Notification.DEFAULT_SOUND)
                                 .setPriority(Notification.PRIORITY_HIGH)
                                 .setAutoCancel(true)
                                 .addAction(sportsTypeId, sportsType, shareIntent)
@@ -152,31 +150,31 @@ public class SUPushServiceListener extends GcmListenerService {
         int  drawable=0;
         switch (event){
             case 1:
-                drawable = R.drawable.ic_toss1;
+                drawable = R.drawable.ic_toss;
                 break;
             case 2:
-                drawable = R.drawable.ic_match_started1;
+                drawable = R.drawable.ic_match_started;
                 break;
             case 3:
-                drawable = R.drawable.ic_wkt1;
+                drawable = R.drawable.ic_wkt;
                 break;
             case 4:
-                drawable = R.drawable.ic_four1;
+                drawable = R.drawable.ic_four;
                 break;
             case 5:
-                drawable = R.drawable.ic_six1;
+                drawable = R.drawable.ic_six;
                 break;
             case 6:
-                drawable = R.drawable.ic_half_century1;
+                drawable = R.drawable.ic_half_century;
                 break;
             case 7:
-                drawable = R.drawable.ic_century1;
+                drawable = R.drawable.ic_century;
                 break;
             case 8:
                 drawable = R.drawable.ic_no_img;
                 break;
             case 9:
-                drawable = R.drawable.ic_win_no_flag_available1;
+                drawable = R.drawable.ic_win_no_flag_available;
                 break;
             case 10:
                 drawable = R.drawable.ic_no_img;
@@ -185,7 +183,7 @@ public class SUPushServiceListener extends GcmListenerService {
                 drawable = R.drawable.ic_cricket_group;
                 break;
             case 12:
-                drawable = R.drawable.ic_mute_notification1;
+                drawable = R.drawable.ic_mute_notification;
                 break;
             case 13:
                 drawable = R.drawable.ic_no_img;

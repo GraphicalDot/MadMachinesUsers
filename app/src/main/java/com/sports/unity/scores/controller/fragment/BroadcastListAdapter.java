@@ -81,23 +81,30 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
                      previousObject = list.get(position-1);
                 }
 
-                if(jsonObject.getComment() != null) {
-                    if(jsonObject.getComment().contains("FOUR") ||  jsonObject.getComment().contains("SIX")){
-                        holder.backGroundColor.setBackgroundColor(context.getResources().getColor(R.color.app_theme_blue));
-                        holder.broadcast.setTextColor(context.getResources().getColor(R.color.ColorPrimary));
+
+                if (sportsType.equals(ScoresJsonParser.CRICKET)) {
+
+                    if(jsonObject.getComment() != null) {
                         holder.broadcast.setText(Html.fromHtml(jsonObject.getComment()));
-                    }else if(jsonObject.getComment().contains("OUT") || jsonObject.getComment().contains("WICKET")){
-                        holder.backGroundColor.setBackgroundColor(context.getResources().getColor(R.color.brick_red));
-                        holder.broadcast.setTextColor(context.getResources().getColor(R.color.ColorPrimary));
-                        holder.broadcast.setText(Html.fromHtml(jsonObject.getComment()));
-                    }else{
-                        holder.backGroundColor.setBackgroundColor(context.getResources().getColor(R.color.ColorPrimary));
-                        holder.broadcast.setTextColor(context.getResources().getColor(R.color.news_headline_mini));
-                        holder.broadcast.setText(Html.fromHtml(jsonObject.getComment()));
+                        if(jsonObject.getComment().contains("FOUR") ||  jsonObject.getComment().contains("SIX")){
+
+                            holder.broadcast.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
+                            holder.commentTime.setTextColor(context.getResources().getColor(R.color.app_theme_blue));
+                        }else if(jsonObject.getComment().contains("OUT") || jsonObject.getComment().contains("WICKET")){
+
+                            holder.broadcast.setTextColor(context.getResources().getColor(R.color.brick_red));
+                            holder.commentTime.setTextColor(context.getResources().getColor(R.color.brick_red));
+
+                        }else{
+                            holder.broadcast.setTextColor(context.getResources().getColor(R.color.news_headline_mini));
+                            holder.commentTime.setTextColor(context.getResources().getColor(R.color.news_headline_mini));
+                        }
+
                     }
 
-                }
-                if (sportsType.equals(ScoresJsonParser.CRICKET)) {
+
+
+
                     if("-1.0".equalsIgnoreCase(jsonObject.getOver())){
                         holder.commentImage.setImageResource(R.drawable.commentary_icon);
                         holder.commentTime.setVisibility(View.GONE);
@@ -118,6 +125,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
                     holder.lvDivider.setLayoutParams(params);
 
                 } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
+                    holder.broadcast.setText(Html.fromHtml(jsonObject.getComment()));
                     holder.commentTime.setText(Html.fromHtml(jsonObject.getMinute()));
                 }
             }

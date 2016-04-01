@@ -71,12 +71,17 @@ public class CricketLiveMatchSummaryHandler {
     private void handleResponse(String response) {
 
         try{
-            JSONObject jsonObject = new JSONObject(response);
-            Log.i("Summary", "handleResponse: ");
-            if(jsonObject.getBoolean("success")){
-                Log.i("Score Card",response);
-                mContentListener.handleContent(response);
+            if(response!=null){
+                JSONObject jsonObject = new JSONObject(response);
+                Log.i("Summary", "handleResponse: ");
+                if(jsonObject.getBoolean("success")){
+                    Log.i("Score Card",response);
+                    mContentListener.handleContent(response);
+                }
+            }else{
+                mContentListener.handleContent(Constants.ERRORRESPONSE);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
