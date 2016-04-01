@@ -17,6 +17,7 @@ import android.widget.RemoteViews;
 import com.google.android.gms.gcm.GcmListenerService;
 import com.google.gson.Gson;
 import com.sports.unity.R;
+import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.SPORTSENUM;
@@ -33,6 +34,7 @@ import static com.sports.unity.util.Constants.INTENT_KEY_TYPE;
 public class SUPushServiceListener extends GcmListenerService {
 
     private static final String TAG = "SUPushServiceListener";
+
     private String sportsType;
     private String matchiId;
     private String seriesid;
@@ -56,10 +58,7 @@ public class SUPushServiceListener extends GcmListenerService {
 
 
     private void sendNotification(String message) {
-
-
-
-        try {
+       try {
 
             if(message!=null) {
                 JSONObject oldData = new JSONObject(message);
@@ -86,9 +85,12 @@ public class SUPushServiceListener extends GcmListenerService {
                 if (!notification.isNull(GCMConstants.EVENT_ID)) {
                     event = notification.getInt(GCMConstants.EVENT_ID);
                 }
-
-
-                Intent i = new Intent(this, ScoreDetailActivity.class);
+                Intent i =null;
+                if(sportsType!=null && matchiId!=null && seriesid!=null && matchStatus!=null && title!=null && content!=null && event!=0  ){
+                    i = new Intent(this, ScoreDetailActivity.class);
+                }else{
+                    i = new Intent(this, MainActivity.class);
+                }
                 i.putExtra(INTENT_KEY_TYPE, sportsType);
                 i.putExtra(Constants.INTENT_KEY_ID, matchiId);
                 i.putExtra(Constants.INTENT_KEY_SERIES, seriesid);
@@ -107,7 +109,6 @@ public class SUPushServiceListener extends GcmListenerService {
                 PendingIntent shareIntent = PendingIntent.getActivity(this,0,sharingIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
                 int  drawableId = getDrawableIcon(event);
-
                 Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), drawableId);
                 int sportsTypeId = getSportId(sportsType);
                  NotificationCompat.Builder mBuilder =
@@ -118,8 +119,6 @@ public class SUPushServiceListener extends GcmListenerService {
                                 .setContentTitle(title)
                                 .setContentText(content)
                                 .setColor(getResources().getColor(R.color.app_theme_blue))
-                                .setVibrate(new long[]{100, 250})
-                                .setDefaults(Notification.DEFAULT_SOUND)
                                 .setPriority(Notification.PRIORITY_HIGH)
                                 .setAutoCancel(true)
                                 .addAction(sportsTypeId, sportsType, shareIntent)
@@ -151,31 +150,31 @@ public class SUPushServiceListener extends GcmListenerService {
         int  drawable=0;
         switch (event){
             case 1:
-                drawable = R.drawable.ic_toss1;
+                drawable = R.drawable.ic_toss;
                 break;
             case 2:
-                drawable = R.drawable.ic_match_started1;
+                drawable = R.drawable.ic_match_started;
                 break;
             case 3:
-                drawable = R.drawable.ic_wkt1;
+                drawable = R.drawable.ic_wkt;
                 break;
             case 4:
-                drawable = R.drawable.ic_four1;
+                drawable = R.drawable.ic_four;
                 break;
             case 5:
-                drawable = R.drawable.ic_six1;
+                drawable = R.drawable.ic_six;
                 break;
             case 6:
-                drawable = R.drawable.ic_half_century1;
+                drawable = R.drawable.ic_half_century;
                 break;
             case 7:
-                drawable = R.drawable.ic_century1;
+                drawable = R.drawable.ic_century;
                 break;
             case 8:
                 drawable = R.drawable.ic_no_img;
                 break;
             case 9:
-                drawable = R.drawable.ic_win_no_flag_available1;
+                drawable = R.drawable.ic_win_no_flag_available;
                 break;
             case 10:
                 drawable = R.drawable.ic_no_img;
@@ -184,7 +183,7 @@ public class SUPushServiceListener extends GcmListenerService {
                 drawable = R.drawable.ic_cricket_group;
                 break;
             case 12:
-                drawable = R.drawable.ic_mute_notification1;
+                drawable = R.drawable.ic_mute_notification;
                 break;
             case 13:
                 drawable = R.drawable.ic_no_img;

@@ -69,27 +69,20 @@ public class TokenRegistrationHandler {
     public interface TokenRegistrationContentListener {
 
         void handleContent(String content);
-
-
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
-
         @Override
         public void onResponse(String s) {
             requestInProcess.remove(REQUEST_TAG);
             TokenRegistrationHandler.this.handleResponse(s);
-
         }
-
         @Override
         public void onErrorResponse(VolleyError volleyError) {
             requestInProcess.remove(REQUEST_TAG);
             TokenRegistrationHandler.this.handleErrorResponse(volleyError);
         }
     };
-
     public void registrerToken(final String token) {
-
         try{
             Log.i("Register Token", "Register Token");
             String url = getGeneratedUrl(SET_ANDROID_TOKEN);

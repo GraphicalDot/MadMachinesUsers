@@ -27,15 +27,8 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class CricketMatchSummaryFragment extends Fragment implements CricketMatchSummaryHandler.ContentListener {
-    // upcomming match summary card
-    private TextView tvMatchName;
-    private TextView tvMatchDate;
-    private TextView tossStatus;
-
-
 
     public CricketMatchSummaryFragment() {
-        // Required empty public constructor
     }
 
 

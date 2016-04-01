@@ -432,7 +432,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     }
 
     private void setUpcommingMatchScoreCard(ViewHolder holder) throws JSONException {
-        holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
+        //holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
+        holder.matchDay.setText("Upcomming");
         holder.liveText.setVisibility(View.GONE);
         holder.t1score.setVisibility(View.GONE);
         holder.t2score.setVisibility(View.GONE);
@@ -441,15 +442,15 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     }
 
     private void SetCompletedMatchScoreCard(ViewHolder holder) throws JSONException {
-        holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
+       /* holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());*/
         holder.liveText.setVisibility(View.GONE);
         holder.t1score.setVisibility(View.VISIBLE);
         holder.t2score.setVisibility(View.VISIBLE);
         holder.team1Overs.setVisibility(View.GONE);
         holder.team2Overs.setVisibility(View.GONE);
         holder.t1score.setText(cricketMatchJsonCaller.getTeam1Score() + "/" + cricketMatchJsonCaller.getWicketsTeam1());
-        holder.t2score.setText( cricketMatchJsonCaller.getTeam2Score()+"/"+cricketMatchJsonCaller.getWicketsTeam2());
-
+        holder.t2score.setText(cricketMatchJsonCaller.getTeam2Score()+"/"+ cricketMatchJsonCaller.getWicketsTeam2());
+        holder.matchDay.setText("Completed");
 
         String result = matchJsonCaller.getResult();
         if(result != null || result != "") {
@@ -651,7 +652,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     team1.setText(footballMatchJsonCaller.getHomeTeam());
                     team2.setText(footballMatchJsonCaller.getAwayTeam());
                 }
-
                 bet1.setText(matchJsonCaller.getTeams1Odds());
                 bet2.setText(matchJsonCaller.getTeams2Odds());
             }catch (Exception ex){
@@ -731,7 +731,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     }
                 }
             }
-
         } catch (JSONException e) {
             e.printStackTrace();
         }

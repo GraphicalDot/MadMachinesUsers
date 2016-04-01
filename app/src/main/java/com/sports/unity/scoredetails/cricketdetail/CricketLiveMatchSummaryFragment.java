@@ -59,22 +59,17 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     private TextView tvSecondUpComingPlayerName;
     private TextView tvThirdUpComingPlayerName;
     private TextView tvFirstUpComingPlayerName;
-    private TextView tvFirstUpComingPlayerRunRate;
-    private TextView tvSecondUpComingPlayerRunRate;
-    private TextView tvThirdUpComingPlayerRunRate;
+
     private ImageView ivBowlerProfile;
     private TextView tvBowlerName;
-    private TextView tvBowlerOverlabel;
     private TextView tvBowlerWRun;
     private TextView tvBowlerEcon;
     private TextView tvBowlerOver;
-    private TextView tvBowlerWr;
     private ProgressBar progressBar;
     private String matchId;
     private Context context;
     private CricketLiveMatchSummaryHandler cricketLiveMatchSummaryHandler;
     private Timer timerToRefreshContent;
-    private boolean enableAutorefresh;
     private String seriesId;
 
     private SwipeRefreshLayout swLivSummary;
@@ -123,16 +118,11 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             tvSecondUpComingPlayerName = (TextView) view.findViewById(R.id.tv_second_up_coming_player_name);
             tvThirdUpComingPlayerName = (TextView) view.findViewById(R.id.tv_third_up_coming_player_name);
             tvFirstUpComingPlayerName = (TextView) view.findViewById(R.id.tv_first_up_coming_player_name);
-            tvFirstUpComingPlayerRunRate = (TextView) view.findViewById(R.id.tv_first_up_coming_player_run_rate);
-            tvSecondUpComingPlayerRunRate = (TextView) view.findViewById(R.id.tv_second_up_coming_player_run_rate);
-            tvThirdUpComingPlayerRunRate = (TextView) view.findViewById(R.id.tv_third_up_coming_player_run_rate);
             ivBowlerProfile = (ImageView) view.findViewById(R.id.iv_bowler_profile);
             tvBowlerName = (TextView) view.findViewById(R.id.tv_bowler_name);
-            tvBowlerOverlabel = (TextView) view.findViewById(R.id.tv_bowler_over_label);
             tvBowlerWRun = (TextView) view.findViewById(R.id.tv_bowler_W_Run);
             tvBowlerEcon = (TextView) view.findViewById(R.id.tv_bowler_econ);
             tvBowlerOver = (TextView) view.findViewById(R.id.tv_bowler_over);
-            tvBowlerWr = (TextView) view.findViewById(R.id.tv_bowler_wr);
             swLivSummary = (SwipeRefreshLayout) view.findViewById(R.id.live_summary);
 
             swLivSummary.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -189,11 +179,10 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     @Override
     public void handleContent(String content) {
         try {
-          //  content = "{\"data\": [{\"status\": \"F\", \"home_team\": \"England\", \"away_team\": \"New Zealand\", \"match_id\": \"33\", \"series_name\": \"T20I: World '16\", \"venue\": \"Feroz Shah Kotla Ground\", \"summary\": {\"recent_over\": {\"17\": [{\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"1\"}], \"16\": [{\"event\": [\"\", \"\", \"4\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"2\"}, {\"event\": [\"\", \"\", \"4\"], \"ball_id\": \"3\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"4\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"5\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"6\"}]}, \"upcoming_batsmen\": [{\"player_id\": \"14482\", \"name\": \"BA Stokes\", \"player_image\": \"http://players.images.s3.amazonaws.com/14482.png\"}, {\"player_id\": \"15513\", \"name\": \"MM Ali\", \"player_image\": \"http://players.images.s3.amazonaws.com/15513.png\"}, {\"player_id\": \"15541\", \"name\": \"CJ Jordan\", \"player_image\": \"http://players.images.s3.amazonaws.com/15541.png\"}, {\"player_id\": \"7573\", \"name\": \"AU Rashid\", \"player_image\": \"http://players.images.s3.amazonaws.com/7573.png\"}, {\"player_id\": \"7986\", \"name\": \"DJ Willey\", \"player_image\": \"http://players.images.s3.amazonaws.com/7986.png\"}, {\"player_id\": \"3396\", \"name\": \"LE Plunkett\", \"player_image\": \"http://players.images.s3.amazonaws.com/3396.png\"}], \"current_partnership\": [{\"player_2_runs\": \"32\", \"player_1_runs\": \"17\", \"player_1_id\": \"15004\", \"player_1_image\": \"http://players.images.s3.amazonaws.com/15004.png\", \"player_1\": \"Root, JE\", \"player_2_balls\": \"17\", \"player_1_index\": \"1\", \"player_2_index\": \"2\", \"player_2\": \"Buttler, JC\", \"player_2_id\": \"8082\", \"player_1_balls\": \"12\", \"player_2_image\": \"http://players.images.s3.amazonaws.com/8082.png\"}], \"toss\": \"England won the toss and elected to bowl\", \"man_of_the_match\": {\"player_id\": \"15914\", \"name\": \"Jason Roy\", \"batting\": {\"runs\": \"78\", \"balls\": \"44\", \"strike_rate\": \"177.0\", \"six\": \"2\"}, \"player_image\": \"http://players.images.s3.amazonaws.com/15914.png\"}, \"venue\": \"Feroz Shah Kotla Ground\", \"umpires\": {\"first_umpire\": \"Dharmasena, HDPK (SLA)\", \"third_umpire\": \"Oxenford, BNJ (AUS)\", \"referee\": \"Boon, DC (AUS)\", \"second_umpire\": \"Tucker, RJ (AUS)\"}, \"current_bowler\": {\"runs\": \"28\", \"name\": \"Santner, MJ\", \"wicket\": \"1\", \"player_id\": \"14620\", \"overs\": \"3.1\", \"player_image\": \"http://players.images.s3.amazonaws.com/14620.png\"}, \"last_wicket\": \"Morgan, EJG,0(LBW:Sodhi, IS)\"}, \"series_id\": \"5166\", \"match_time\": 1459344600, \"result\": \"England won by 7 wickets\", \"start_date\": \"2016-03-31T00:30:00\"}], \"success\": true, \"error\": false}";
+           //content = "{\"data\": [{\"status\": \"F\", \"home_team\": \"England\", \"away_team\": \"New Zealand\", \"match_id\": \"33\", \"series_name\": \"T20I: World '16\", \"venue\": \"Feroz Shah Kotla Ground\", \"summary\": {\"recent_over\": {\"17\": [{\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"1\"}], \"16\": [{\"event\": [\"\", \"\", \"4\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"2\"}, {\"event\": [\"\", \"\", \"4\"], \"ball_id\": \"3\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"4\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"5\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"6\"}]}, \"upcoming_batsmen\": [{\"player_id\": \"14482\", \"name\": \"BA Stokes\", \"player_image\": \"http://players.images.s3.amazonaws.com/14482.png\"}, {\"player_id\": \"15513\", \"name\": \"MM Ali\", \"player_image\": \"http://players.images.s3.amazonaws.com/15513.png\"}, {\"player_id\": \"15541\", \"name\": \"CJ Jordan\", \"player_image\": \"http://players.images.s3.amazonaws.com/15541.png\"}, {\"player_id\": \"7573\", \"name\": \"AU Rashid\", \"player_image\": \"http://players.images.s3.amazonaws.com/7573.png\"}, {\"player_id\": \"7986\", \"name\": \"DJ Willey\", \"player_image\": \"http://players.images.s3.amazonaws.com/7986.png\"}, {\"player_id\": \"3396\", \"name\": \"LE Plunkett\", \"player_image\": \"http://players.images.s3.amazonaws.com/3396.png\"}], \"current_partnership\": [{\"player_2_runs\": \"32\", \"player_1_runs\": \"17\", \"player_1_id\": \"15004\", \"player_1_image\": \"http://players.images.s3.amazonaws.com/15004.png\", \"player_1\": \"Root, JE\", \"player_2_balls\": \"17\", \"player_1_index\": \"1\", \"player_2_index\": \"2\", \"player_2\": \"Buttler, JC\", \"player_2_id\": \"8082\", \"player_1_balls\": \"12\", \"player_2_image\": \"http://players.images.s3.amazonaws.com/8082.png\"}], \"toss\": \"England won the toss and elected to bowl\", \"man_of_the_match\": {\"player_id\": \"15914\", \"name\": \"Jason Roy\", \"batting\": {\"runs\": \"78\", \"balls\": \"44\", \"strike_rate\": \"177.0\", \"six\": \"2\"}, \"player_image\": \"http://players.images.s3.amazonaws.com/15914.png\"}, \"venue\": \"Feroz Shah Kotla Ground\", \"umpires\": {\"first_umpire\": \"Dharmasena, HDPK (SLA)\", \"third_umpire\": \"Oxenford, BNJ (AUS)\", \"referee\": \"Boon, DC (AUS)\", \"second_umpire\": \"Tucker, RJ (AUS)\"}, \"current_bowler\": {\"runs\": \"28\", \"name\": \"Santner, MJ\", \"wicket\": \"1\", \"player_id\": \"14620\", \"overs\": \"3.1\", \"player_image\": \"http://players.images.s3.amazonaws.com/14620.png\"}, \"last_wicket\": \"Morgan, EJG,0(LBW:Sodhi, IS)\"}, \"series_id\": \"5166\", \"match_time\": 1459344600, \"result\": \"England won by 7 wickets\", \"start_date\": \"2016-03-31T00:30:00\"}], \"success\": true, \"error\": false}";
             showProgress();
             JSONObject object = new JSONObject(content);
             boolean success = object.getBoolean("success");
-            boolean error = object.getBoolean("error");
 
             if (success) {
 
@@ -252,84 +241,83 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             liveCricketMatchSummaryParser.setYetToBat(yetToBatting);
             liveCricketMatchSummaryParser.setRecentOver(recentOver);
                final Stack<JSONObject> ballsStack = new Stack<>();
-            hideProgress();
+
+
+                BallDetail defb = new BallDetail();
+                final BallDetail[] balls = new BallDetail[]{defb, defb, defb, defb, defb, defb,defb};
+                int ballIndex = 6;
+
+                Iterator<String> recentOverKeys = recentOver.keys();
+                Integer keys[]= new Integer[2];
+                int arrayCount= 0;
+                while(recentOverKeys.hasNext()){
+                    try{
+                        keys[arrayCount++] = Integer.parseInt(recentOverKeys.next());
+                    }catch (Exception e){e.printStackTrace();}
+
+                }
+
+                if(keys[0]<keys[1]){
+                    JSONArray recentOverJSONArray = recentOver.getJSONArray(keys[0].toString());
+                    for(int count=0;count<recentOverJSONArray.length();count++){
+                        JSONObject ballObject = recentOverJSONArray.getJSONObject(count);
+                        ballsStack.add(ballObject);
+                    }
+
+                    recentOverJSONArray = recentOver.getJSONArray(keys[1].toString());
+                    for(int count=0;count<recentOverJSONArray.length();count++){
+                        JSONObject ballObject = recentOverJSONArray.getJSONObject(count);
+                        ballsStack.add(ballObject);
+                    }
+
+                }else{
+                    JSONArray recentOverJSONArray = recentOver.getJSONArray(keys[1].toString());
+                    for(int count=0;count<recentOverJSONArray.length();count++){
+                        JSONObject ballObject = recentOverJSONArray.getJSONObject(count);
+                        ballsStack.add(ballObject);
+                    }
+
+                    recentOverJSONArray = recentOver.getJSONArray(keys[0].toString());
+                    for(int count=0;count<recentOverJSONArray.length();count++){
+                        JSONObject ballObject = recentOverJSONArray.getJSONObject(count);
+                        ballsStack.add(ballObject);
+                    }
+                }
+                int queuSize = ballsStack.size();
+                for (int i = 0; i < queuSize; i++) {
+                    if(i==6){
+                        break;
+                    }
+
+                    BallDetail curBall = null;
+                    JSONObject object = ballsStack.pop();
+                    JSONArray eventArray = object.getJSONArray("event");
+                    String event = eventArray.getString(0);
+                    String wicket = eventArray.getString(1);
+                    String run = eventArray.getString(2);
+
+
+
+                    if (wicket!=null && !wicket.equals("")) {
+                        curBall = getResolveBall(wicket);
+                    } else if(event!=null && !event.equals("")) {
+                        curBall = getResolveBall(event);
+                    }else  {
+                        curBall = getResolveBall(run);
+                    }
+                    balls[ballIndex] = curBall;
+                    ballIndex--;
+
+
+                }
+                hideProgress();
             if (activity != null) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         try {
-
-                            BallDetail defb = new BallDetail();
-                            BallDetail[] balls = new BallDetail[]{defb, defb, defb, defb, defb, defb,defb};
-                            int ballIndex = 6;
                             Drawable drawable = null;
-
-
-                            Iterator<String> recentOverKeys = recentOver.keys();
-                            Integer keys[]= new Integer[2];
-                            int arrayCount= 0;
-                            while(recentOverKeys.hasNext()){
-                                try{
-                                    keys[arrayCount++] = Integer.parseInt(recentOverKeys.next());
-                                }catch (Exception e){e.printStackTrace();}
-
-                            }
-
-                                if(keys[0]>keys[1]){
-                                    JSONArray recentOverJSONArray = recentOver.getJSONArray(keys[0].toString());
-                                    for(int count=0;count<recentOverJSONArray.length();count++){
-                                        JSONObject ballObject = recentOverJSONArray.getJSONObject(count);
-                                        ballsStack.add(ballObject);
-                                    }
-
-                                    recentOverJSONArray = recentOver.getJSONArray(keys[1].toString());
-                                    for(int count=0;count<recentOverJSONArray.length();count++){
-                                        JSONObject ballObject = recentOverJSONArray.getJSONObject(count);
-                                        ballsStack.add(ballObject);
-                                    }
-
-                                }else{
-                                    JSONArray recentOverJSONArray = recentOver.getJSONArray(keys[1].toString());
-                                    for(int count=0;count<recentOverJSONArray.length();count++){
-                                        JSONObject ballObject = recentOverJSONArray.getJSONObject(count);
-                                        ballsStack.add(ballObject);
-                                    }
-
-                                     recentOverJSONArray = recentOver.getJSONArray(keys[0].toString());
-                                    for(int count=0;count<recentOverJSONArray.length();count++){
-                                        JSONObject ballObject = recentOverJSONArray.getJSONObject(count);
-                                        ballsStack.add(ballObject);
-                                    }
-                                }
-
-                            int queuSize = ballsStack.size();
-                            for (int i = 0; i < queuSize; i++) {
-                                if(i==6){
-                                    break;
-                                }
-
-                                BallDetail curBall = null;
-                                JSONObject object = ballsStack.pop();
-                                JSONArray eventArray = object.getJSONArray("event");
-                                String event = eventArray.getString(0);
-                                String wicket = eventArray.getString(1);
-                                String run = eventArray.getString(2);
-
-
-
-                                if (wicket!=null && !wicket.equals("")) {
-                                    curBall = getResolveBall(wicket);
-                                } else if(event!=null && !event.equals("")) {
-                                    curBall = getResolveBall(event);
-                                }else  {
-                                    curBall = getResolveBall(run);
-                                }
-                                balls[ballIndex] = curBall;
-                                ballIndex--;
-
-
-                            }
-                            if (!balls[1].getValue().equals("0")) {
+                         if (!balls[1].getValue().equals("0")) {
                                 drawable = getTextDrawable(balls[1].getValue(), balls[1].getFontColor(), balls[1].getBackGroundColor());
                                 ivFirstBall.setImageDrawable(drawable);
                             } else {
@@ -533,7 +521,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     @Override
     public void onPause() {
         super.onPause();
-        autRefreshEnabled = true;
+        autRefreshEnabled = false;
         if(cricketLiveMatchSummaryHandler != null){
             cricketLiveMatchSummaryHandler.addListener(null);
         }
@@ -551,7 +539,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             cricketLiveMatchSummaryHandler= CricketLiveMatchSummaryHandler.getInstance(getContext());
         }
         cricketLiveMatchSummaryHandler.requestLiveMatchSummary(seriesId,matchId);
-        autRefreshEnabled = false;
+        autRefreshEnabled = true;
     }
 
 }

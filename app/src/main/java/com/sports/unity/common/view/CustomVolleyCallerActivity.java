@@ -102,8 +102,6 @@ public class CustomVolleyCallerActivity extends CustomAppCompatActivity {
             customComponentListener.hideProgress();
             customComponentListener.hideErrorLayout();
         }
-//        customComponentListenerHashMap.clear();
-
         removeCustomContentListener();
     }
 
@@ -120,31 +118,6 @@ public class CustomVolleyCallerActivity extends CustomAppCompatActivity {
             //nothing
         }
     }
-
-//    private void disableAutoRefreshContent(){
-//        if( timerToRefreshContent != null ){
-//            timerToRefreshContent.cancel();
-//            timerToRefreshContent = null;
-//        }
-//    }
-
-//    private void enableAutoRefreshContent(){
-//        disableAutoRefreshContent();
-//
-//        timerToRefreshContent = new Timer();
-//        timerToRefreshContent.schedule(new TimerTask() {
-//
-//            @Override
-//            public void run() {
-//                autoRefreshCall();
-//            }
-//
-//        }, 60000, 60000);
-//    }
-
-//    private void autoRefreshCall(){
-//        requestMatchScoreDetails();
-//    }
 
     private void initListeners(ArrayList<CustomComponentListener> customComponentListeners){
         for(CustomComponentListener customComponentListener : customComponentListeners) {
@@ -187,8 +160,6 @@ public class CustomVolleyCallerActivity extends CustomAppCompatActivity {
             if( ! customComponentListener.isComponentPaused() ) {
                 customComponentListener.hideProgress();
             }
-        } else {
-            //nothing
         }
     }
 

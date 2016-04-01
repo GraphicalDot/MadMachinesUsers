@@ -72,10 +72,11 @@ public class CompletedMatchScoreCardHandler {
     }
     private void handleResponse(String response) {
                 try{
-
             Log.i("Score Card", "handleResponse: ");
+        if(mContentListener!=null){
+            mContentListener.handleContent(response);
+        }
 
-                mContentListener.handleContent(response);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,8 +87,11 @@ public class CompletedMatchScoreCardHandler {
     }
     private void handleErrorResponse(VolleyError volleyError) {
         try{
-            Log.i("Score Card", "handleResponse: ");
-            mContentListener.handleContent(Constants.ERRORRESPONSE);
+            Log.i("Score Card", "handleResponse: " + volleyError.getMessage());
+            if(mContentListener!=null){
+                mContentListener.handleContent(Constants.ERRORRESPONSE);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
