@@ -24,12 +24,13 @@ public class TeamLeagueDetails extends CustomAppCompatActivity {
     private String name;
     private String type;
     private FavouriteItem favouriteItem;
-
+    private boolean isStaffPicked;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_team_league_details);
         String jsonObject = getIntent().getStringExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA);
+        isStaffPicked=getIntent().getExtras().getBoolean(Constants.SPORTS_TYPE_STAFF,false);
         favouriteItem = new FavouriteItem(jsonObject);
         name = favouriteItem.getName();
         id = favouriteItem.getId();
@@ -69,7 +70,7 @@ public class TeamLeagueDetails extends CustomAppCompatActivity {
         // int numberOfTabs = titles.length;
 
         // Creating The ViewPagerAdapterInMainActivity and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
-        ViewPagerAdapterForTeamAndLeagueDetails adapter = new ViewPagerAdapterForTeamAndLeagueDetails(getSupportFragmentManager(), favouriteItem);
+        ViewPagerAdapterForTeamAndLeagueDetails adapter = new ViewPagerAdapterForTeamAndLeagueDetails(getSupportFragmentManager(), favouriteItem,isStaffPicked);
 
         // Assigning ViewPager View and setting the adapter
         ViewPager pager = (ViewPager) findViewById(com.sports.unity.R.id.pager);

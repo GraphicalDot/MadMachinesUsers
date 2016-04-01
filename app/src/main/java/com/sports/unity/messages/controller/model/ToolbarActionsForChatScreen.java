@@ -114,7 +114,7 @@ public class ToolbarActionsForChatScreen {
         context.startActivity(forwardIntent);
     }
 
-    public void deleteMessages(ArrayList<Message> messageList, long chatID, ChatScreenAdapter chatScreenAdapter) {
+    public void deleteMessages(ArrayList<Message> messageList, int chatID, ChatScreenAdapter chatScreenAdapter) {
         HashMap<String, ArrayList<String>> mapOnType = new HashMap<>();
         mapOnType.put(SportsUnityDBHelper.MIME_TYPE_IMAGE, new ArrayList<String>());
         mapOnType.put(SportsUnityDBHelper.MIME_TYPE_VIDEO, new ArrayList<String>());
@@ -137,9 +137,9 @@ public class ToolbarActionsForChatScreen {
 
         chatScreenAdapter.notifydataset(messageList);
         if (messageList.isEmpty()) {
-            sportsUnityDBHelper.updateChatEntry(sportsUnityDBHelper.getDummyMessageRowId(), chatID, sportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+            sportsUnityDBHelper.updateChatEntry(sportsUnityDBHelper.getDummyMessageRowId(), chatID);
         } else {
-            sportsUnityDBHelper.updateChatEntry(messageList.get(messageList.size() - 1).id, chatID, sportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+            sportsUnityDBHelper.updateChatEntry(messageList.get(messageList.size() - 1).id, chatID);
         }
     }
 

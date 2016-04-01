@@ -43,6 +43,11 @@ public class Constants {
     public static final String REQUEST_PARAMETER_KEY_MATCHID = "match_id";
     public static final String REQUEST_PARAMETER_KEY_TOKEN = "token";
 
+
+    public static final String KEY_ORIGIN_ACTIVITY = "origin_activity";
+    public static final String SCORE_ACTIVITY = "score_activity";
+    public static final String NEWS_ACTIVITY = "news_activity";
+
     public static final String PARAM_TIME = "time";
     public static final String PARAM_MIME_TYPE = "mime_type";
     public static final String PARAM_CHAT_TYPE_OTHERS = "chat_type_others";
@@ -64,6 +69,7 @@ public class Constants {
     public static final String SPORTS_TYPE = "sports_type";
     public static final String SPORTS_TYPE_CRICKET = "cricket";
     public static final String SPORTS_TYPE_FOOTBALL = "football";
+    public static final String SPORTS_TYPE_STAFF = "staff";
     public static final String FILTER_SEARCH_EXTRA = "filter_search";
 
     public static final String RESULT_REQUIRED = "from_add_sports";
@@ -99,8 +105,8 @@ public class Constants {
     public static final String INTENT_KEY_TEAM1_NAME = "team1";
     public static final String INTENT_KEY_TEAM2_NAME = "team2";
     public static final long TIMEINMILISECOND = 30000;
-    public static final String ERRORRESPONSE ="{\"success\":false,\"error\":true}";
-    public static final String TOKEN_PARAM ="token" ;
+    public static final String ERRORRESPONSE = "{\"success\":false,\"error\":true}";
+    public static final String TOKEN_PARAM = "token";
     public static final String INTENT_KEY_SERIES = "series_id";
     public static final String LEAGUE_NAME = "league_name";
     public static final String ENABLE_LOCATION = "enable_location";

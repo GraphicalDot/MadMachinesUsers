@@ -730,27 +730,14 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
     }
 
     private void moveToChatActivity(Contacts contact, boolean contactAvailable) {
-        String number = contact.jid;
         String name = contact.name;
-        long contactId = contact.id;
+        int contactId = contact.id;
         byte[] userPicture = contact.image;
         boolean nearbyChat = false;
-
-        String groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
-        long chatId = SportsUnityDBHelper.getInstance(getApplicationContext()).getChatEntryID(contactId, groupServerId);
-        if (chatId == SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
-            if (contactAvailable) {
-                //create chat entry inside ChatScreenActivity only
-            } else {
-                nearbyChat = true;
-                chatId = SportsUnityDBHelper.getInstance(getApplicationContext()).createChatEntry(name, contactId, nearbyChat);
-            }
-
-        }
         boolean blockStatus = SportsUnityDBHelper.getInstance(getApplicationContext()).isChatBlocked(contactId);
         boolean othersChat = contact.isOthers();
 
-        Intent intent = ChatScreenActivity.createChatScreenIntent(this, number, name, contactId, chatId, groupServerId, userPicture, blockStatus, othersChat, contact.availableStatus, contact.status);
+        Intent intent = ChatScreenActivity.createChatScreenIntent(this, false, contact.jid, name, contact.id, userPicture, blockStatus, othersChat, contact.availableStatus, contact.status);
         startActivity(intent);
     }
 

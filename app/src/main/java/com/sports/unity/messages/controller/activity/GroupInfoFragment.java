@@ -49,7 +49,7 @@ public class GroupInfoFragment extends Fragment {
 
     private ListView participantsList;
 
-    private long chatID;
+    private int chatID;
     private String groupJID;
     private String name;
     private byte[] byteArray;
@@ -88,8 +88,8 @@ public class GroupInfoFragment extends Fragment {
     private void getIntentExtras(Bundle bundle) {
         name = bundle.getString("name");
         byteArray = bundle.getByteArray("profilePicture");
-        groupJID = bundle.getString("groupServerId");
-        chatID = bundle.getLong("chatID");
+        groupJID = bundle.getString("jid");
+        chatID = bundle.getInt("chatID");
     }
 
     private void initViews(View view) {
@@ -209,22 +209,17 @@ public class GroupInfoFragment extends Fragment {
     }
 
     private void viewUserProfile(Contacts contacts){
-        String groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
-        long chatId = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatEntryID(contacts.id, groupServerId);
-        ChatScreenActivity.viewProfile(getActivity(), chatId, contacts.image, contacts.name, groupServerId, contacts.jid, contacts.status, false, contacts.availableStatus);
+        ChatScreenActivity.viewProfile(getActivity(), false, contacts.id, contacts.image, contacts.name, contacts.jid, contacts.status, false, contacts.availableStatus);
     }
 
     private void openChat(Contacts contacts){
         String jid = contacts.jid;
         String name = contacts.name;
-        long contactId = contacts.id;
+        int contactId = contacts.id;
         byte[] userPicture = contacts.image;
-
-        String groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
-        long chatId = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getChatEntryID(contactId, groupServerId);
         boolean blockStatus = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).isChatBlocked(contactId);
 
-        Intent chatScreenIntent = ChatScreenActivity.createChatScreenIntent(getContext(), jid, name, contactId, chatId, groupServerId, userPicture, blockStatus, contacts.isOthers(), contacts.availableStatus, contacts.status);
+        Intent chatScreenIntent = ChatScreenActivity.createChatScreenIntent(getContext(), false, jid, name, contactId, userPicture, blockStatus, contacts.isOthers(), contacts.availableStatus, contacts.status);
         startActivity(chatScreenIntent);
     }
 
@@ -253,9 +248,9 @@ public class GroupInfoFragment extends Fragment {
 
         private ProgressDialog progressDialog;
         private String jid;
-        private long contactId;
+        private int contactId;
 
-        public RemoveMemberTask(String jid, long contactId) {
+        public RemoveMemberTask(String jid, int contactId) {
             this.jid = jid;
             this.contactId = contactId;
         }

@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
@@ -29,12 +31,15 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
     private ViewPagerAdapterForFilter adapter;
     private ViewPager pager;
     private ArrayList<OnResultReceivedListener> resultReceivedListeners;
+    String originActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_filter);
+
+        originActivity = getIntent().getExtras().getString(Constants.KEY_ORIGIN_ACTIVITY, Constants.NEWS_ACTIVITY);
         setToolBar();
         initCheckedFlagList();
         initViews();
@@ -44,7 +49,12 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
 
     private void initCheckedFlagList() {
         ArrayList<String> sportsSelected = UserUtil.getSportsSelected();
-        ArrayList<String> filter = UserUtil.getFilterSportsSelected();
+        ArrayList<String> filter = new ArrayList<String>();
+        if (originActivity.equals(Constants.SCORE_ACTIVITY)) {
+            filter = UserUtil.getScoreFilterSportsSelected();
+        } else {
+            filter = UserUtil.getNewsFilterSportsSelected();
+        }
         if (filter.contains(Constants.GAME_KEY_CRICKET)) {
             checkedFlag[0] = true;
         }
@@ -68,8 +78,11 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
         if (checkedFlag[1]) {
             filter.add(Constants.GAME_KEY_FOOTBALL);
         }
-
-        UserUtil.setFilterSportsSelected(this, filter);
+        if (originActivity.equals(Constants.SCORE_ACTIVITY)) {
+            UserUtil.setScoreFilterSportsSelected(this, filter);
+        } else {
+            UserUtil.setNewsFilterSportsSelected(this, filter);
+        }
     }
 
     private void setToolBar() {
@@ -266,12 +279,12 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
             if (Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)) {
                 Intent intent = new Intent(FilterActivity.this, PlayerProfileView.class);
                 intent.putExtra(Constants.INTENT_KEY_ID, playerId);
-                intent.putExtra(Constants.INTENT_KEY_PLAYER_NAME,playerName);
+                intent.putExtra(Constants.INTENT_KEY_PLAYER_NAME, playerName);
                 startActivity(intent);
             } else {
                 Intent intent = new Intent(FilterActivity.this, PlayerCricketBioDataActivity.class);
                 intent.putExtra(Constants.INTENT_KEY_ID, playerId);
-                intent.putExtra(Constants.INTENT_KEY_PLAYER_NAME,playerName);
+                intent.putExtra(Constants.INTENT_KEY_PLAYER_NAME, playerName);
                 startActivity(intent);
             }
         }
@@ -282,9 +295,9 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
     /**
      * Interface definition for the callback to be
      * invoked in onActivityResult of FilterActivity class
-     * which is caused by the ADD Sport action of FilterFragment class.
+     * which is caused by the add Sport action of FilterFragment class.
      * After receiving result the data in the FilterFragment class must be updated
-     * so FilterFragment class will implement this interface.
+     * so FilterFragment class must implement this interface.
      */
     public interface OnResultReceivedListener {
         public void updateData();

@@ -24,6 +24,7 @@ public class UpCommingFootballMatchTableHandler {
     private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
     private static Context mContext;
     private String BASEURL = "http://52.74.75.79:8080/get_league_standings?league_id=";
+    private String STAFF_PICK_URL = "http://52.74.75.79:8080/v1/get_season_table?season_key=";
 
 
     private UpCommingFootballMatchTableContentListener mContentListener;
@@ -31,17 +32,20 @@ public class UpCommingFootballMatchTableHandler {
 
     public static UpCommingFootballMatchTableHandler getInstance(Context context) {
         mContext = context;
-        UpCommingFootballMatchTableHandler completedMatchScoreCardHandler =  new UpCommingFootballMatchTableHandler();
+        UpCommingFootballMatchTableHandler completedMatchScoreCardHandler = new UpCommingFootballMatchTableHandler();
         return completedMatchScoreCardHandler;
     }
+
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
+
     public interface UpCommingFootballMatchTableContentListener {
 
         void handleContent(String object);
 
     }
+
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
 
         @Override
@@ -60,34 +64,48 @@ public class UpCommingFootballMatchTableHandler {
     public void requestUpcommingMatchTableContent(String leagueId) {
         Log.i("Score Detail", "Request Score Details");
 
-        String url = BASEURL+leagueId;
+        String url = BASEURL + leagueId;
         StringRequest stringRequest = null;
-       // RequestQueue queue = Volley.newRequestQueue(mContext);
-        stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
+        // RequestQueue queue = Volley.newRequestQueue(mContext);
+        stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent, responseListener_ForLoadContent);
         VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
 
         requestInProcess.add(REQUEST_TAG);
     }
+
+    public void requestStaffPickedLeague(String leagueId) {
+        Log.i("Score Detail", "Request Score Details");
+
+        String url = STAFF_PICK_URL + leagueId;
+        StringRequest stringRequest = null;
+        // RequestQueue queue = Volley.newRequestQueue(mContext);
+        stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent, responseListener_ForLoadContent);
+        Log.d("max","URL>>"+url);
+        VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
+
+        requestInProcess.add(REQUEST_TAG);
+    }
+
     private void handleResponse(String response) {
-        try{
+        try {
             Log.i("Score Card", "handleResponse: ");
-                mContentListener.handleContent(response);
+            mContentListener.handleContent(response);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
-
     }
+
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
-        try{
+        try {
             Log.i("Score Card", "handleResponse: ");
             mContentListener.handleContent(Constants.ERRORRESPONSE);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        }
+    }
 
     public void addListener(UpCommingFootballMatchTableContentListener contentListener) {
         mContentListener = contentListener;

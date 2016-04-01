@@ -62,7 +62,7 @@ public class FavouriteContentHandler {
     private static final String URL_FOOTBALL_LEAGUE = "http://52.74.75.79:8000/get_football_leagues";
     private static final String URL_FOOTBALL_PLAYER = "http://52.74.75.79:8000/get_top_football_players";
     private static final String URL_FOOTBALL_TEAM = "http://52.74.75.79:8000/get_top_football_teams";
-    private static final String URL_CRICKET_TEAM = "http://52.74.75.79:8080/top_cricket_teams";
+    private static final String URL_CRICKET_TEAM = "http://52.74.75.79:8080/v1/get_cricket_teams";
     private static final String URL_CRICKET_PLAYER = "http://52.74.75.79:8080/top_cricket_players";
 
 
@@ -573,7 +573,7 @@ public class FavouriteContentHandler {
                                 item.setName(s);
                                 s = obj.getString("league_id");
                                 item.setId(s);
-                                s=obj.getString("flag_image");
+                                s = obj.getString("flag_image");
                                 item.setFlagImageUrl(s);
                                 item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                 item.setFilterType(Constants.FILTER_TYPE_LEAGUE);
@@ -611,7 +611,7 @@ public class FavouriteContentHandler {
                                 FavouriteItem item = new FavouriteItem();
                                 String s = obj.getString("player_name");
                                 item.setName(s);
-                                s=obj.getString("player_id");
+                                s = obj.getString("player_id");
                                 item.setId(s);
                                 item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                 item.setFilterType(Constants.FILTER_TYPE_PLAYER);
@@ -630,10 +630,12 @@ public class FavouriteContentHandler {
                                 FavouriteItem item = new FavouriteItem();
                                 String s = obj.getString("team");
                                 item.setName(s);
-                                s=obj.getString("team_id");
+                                s = obj.getString("team_id");
                                 item.setId(s);
-                                s = obj.getString("flag_image");
-                                item.setFlagImageUrl(s);
+                                if (!obj.isNull("flag_image")) {
+                                    s = obj.getString("flag_image");
+                                    item.setFlagImageUrl(s);
+                                }
                                 item.setSportsType(Constants.SPORTS_TYPE_CRICKET);
                                 item.setFilterType(Constants.FILTER_TYPE_TEAM);
                                 if (savedFavList.contains(item)) {
@@ -675,7 +677,7 @@ public class FavouriteContentHandler {
                                     item.setName(s);
                                     s = obj.getString("league_id");
                                     item.setId(s);
-                                    s=obj.getString("flag_image");
+                                    s = obj.getString("flag_image");
                                     item.setFlagImageUrl(s);
                                     item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                     item.setFilterType(Constants.FILTER_TYPE_LEAGUE);
@@ -705,8 +707,10 @@ public class FavouriteContentHandler {
                                     item.setName(s);
                                     s = obj.getString("team_id");
                                     item.setId(s);
-                                    s = obj.getString("flag_image");
-                                    item.setFlagImageUrl(s);
+                                    if (!obj.isNull("flag_image")) {
+                                        s = obj.getString("flag_image");
+                                        item.setFlagImageUrl(s);
+                                    }
                                     item.setSportsType(Constants.SPORTS_TYPE_CRICKET);
                                     item.setFilterType(Constants.FILTER_TYPE_TEAM);
                                     if (savedFavList.contains(item)) {

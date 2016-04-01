@@ -515,8 +515,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             intent.putExtra(Constants.INTENT_KEY_MATCH_STATUS,matchStatus);
             intent.putExtra(Constants.INTENT_KEY_TOSS,toss);
             intent.putExtra(Constants.INTENT_KEY_MATCH_NAME, matchName);
-            intent.putExtra(Constants.INTENT_KEY_DATE,date);
-            intent.putExtra(Constants.LEAGUE_NAME,leagueName);
+            intent.putExtra(Constants.INTENT_KEY_DATE, date);
+            intent.putExtra(Constants.LEAGUE_NAME, leagueName);
 
 
 
