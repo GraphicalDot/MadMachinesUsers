@@ -332,6 +332,8 @@ message to verify your mobile number.</string>
     <string name="d">D</string>
     <string name="l">L</string>
     <string name="pts">Pts</string>
+    <string name="nrr">NRR</string>
+    <string name="pos">POS</string>
     <string name="pl">PL</string>
     <string name="point">POINTS</string>
     <string name="win">WINS</string>
@@ -417,6 +419,8 @@ message to verify your mobile number.</string>
     </plurals>
     <string name="game_details">Game Details</string>
     <string name="request_code">1</string>
+    <string name="staff_picked">Sports Unity Staff Picked</string>
+    <string name="ipl">Indian Premier League</string>
     <plurals name="file_count">
         <item quantity="one">%d file was not sent, file size was too large</item>
         <item quantity="other">%d files were not sent, file sizes were too large</item>

@@ -315,8 +315,6 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
 
                 ScoresContentHandler.getInstance().requestSquadContent(SQUAD_CRICKET_URL + favouriteItem.getId(), SQUAD_LISTENER_KEY, SQUAD_REQUEST_TAG);
                 //ScoresContentHandler.getInstance().requestSquadContent(SQUAD_CRICKET_URL + 3, SQUAD_LISTENER_KEY, SQUAD_REQUEST_TAG);
-
-                Log.d("dmax", "URL is" + SQUAD_CRICKET_URL + favouriteItem.getId());
             }
         } else {
 

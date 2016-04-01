@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -45,7 +46,8 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     private ArrayList<FavouriteItem> competeChildItems = new ArrayList<FavouriteItem>();
     private ArrayList<String> sportsGroupItem = new ArrayList<String>();
     private ArrayList<FavouriteItem> sportsChildItem = new ArrayList<FavouriteItem>();
-
+    private LinearLayout staffPickView;
+    private TextView iplTv;
     private ExpandableListView teamList, competeList, sportsList;
 
     private NavListAdapter teamAdapter, compAdapter, sportsAdapter;
@@ -165,6 +167,21 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
         shareFeedback.setOnClickListener(textViewClickListener);
         rateUs.setOnClickListener(textViewClickListener);
         about.setOnClickListener(textViewClickListener);
+
+        iplTv = (TextView) view.findViewById(R.id.ipl);
+        staffPickView = (LinearLayout) view.findViewById(R.id.staff_pick_ll);
+        staffPickView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+        staffPickView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FavouriteItem favouriteItem = new FavouriteItem();
+                favouriteItem.setId("3");
+                favouriteItem.setSportsType(Constants.SPORTS_TYPE_CRICKET);
+                favouriteItem.setFilterType(Constants.FILTER_TYPE_TEAM);
+                favouriteItem.setName("Indian Premier League");
+                onClickListnerForTeamAndLeague(favouriteItem, true);
+            }
+        });
     }
 
     private void setUpExpandableLists(View view) {
@@ -309,13 +326,13 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
             case R.id.fav_team:
                 if (teamChildItems.size() > 0) {
                     FavouriteItem favouriteItem = teamChildItems.get(childPosition);
-                    onClickListnerForTeamAndLeague(favouriteItem);
+                    onClickListnerForTeamAndLeague(favouriteItem, false);
                 }
                 break;
             case R.id.complist:
                 if (competeChildItems.size() > 0) {
                     FavouriteItem favouriteItem = competeChildItems.get(childPosition);
-                    onClickListnerForTeamAndLeague(favouriteItem);
+                    onClickListnerForTeamAndLeague(favouriteItem, false);
                 }
                 break;
         }
@@ -324,9 +341,10 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
         return false;
     }
 
-    private void onClickListnerForTeamAndLeague(FavouriteItem f) {
+    private void onClickListnerForTeamAndLeague(FavouriteItem f, boolean isStaffPicked) {
         Intent intent = new Intent(getContext(), TeamLeagueDetails.class);
         intent.putExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, f.getJsonObject().toString());
+        intent.putExtra(Constants.SPORTS_TYPE_STAFF, isStaffPicked);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }

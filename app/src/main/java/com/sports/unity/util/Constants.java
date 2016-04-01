@@ -69,6 +69,7 @@ public class Constants {
     public static final String SPORTS_TYPE = "sports_type";
     public static final String SPORTS_TYPE_CRICKET = "cricket";
     public static final String SPORTS_TYPE_FOOTBALL = "football";
+    public static final String SPORTS_TYPE_STAFF = "staff";
     public static final String FILTER_SEARCH_EXTRA = "filter_search";
 
     public static final String RESULT_REQUIRED = "from_add_sports";
