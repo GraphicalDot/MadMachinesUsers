@@ -279,7 +279,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-        hideProgress();
+       // hideProgress();
         teamABattingCardList.clear();
         teamABowlingCardList.clear();
         teamAFallOfWicketCardList.clear();

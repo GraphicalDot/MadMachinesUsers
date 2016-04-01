@@ -108,7 +108,13 @@ public class SUPushServiceListener extends GcmListenerService {
 
                 PendingIntent shareIntent = PendingIntent.getActivity(this,0,sharingIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
-                int  drawableId = getDrawableIcon(event);
+                int  drawableId = 0;
+
+                if(Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(sportsType)){
+                    getDrawableIconCricket(event);
+                }else{
+                    getDrawableIconFootball(event);
+                }
                 Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), drawableId);
                 int sportsTypeId = getSportId(sportsType);
                  NotificationCompat.Builder mBuilder =
@@ -146,7 +152,30 @@ public class SUPushServiceListener extends GcmListenerService {
 
     }
 
-    private int getDrawableIcon(int event) {
+    private int getDrawableIconFootball(int event) {
+        int  drawable=0;
+        switch (event) {
+            case 1:
+                drawable = R.drawable.ic_toss;
+                break;
+            case 2:
+                drawable = R.drawable.ic_match_started;
+                break;
+            case 3:
+                drawable = R.drawable.ic_wkt;
+                break;
+            case 4:
+                drawable = R.drawable.ic_four;
+                break;
+            case 5:
+                drawable = R.drawable.ic_six;
+                break;
+        }
+        return  drawable;
+    }
+
+
+    private int getDrawableIconCricket(int event) {
         int  drawable=0;
         switch (event){
             case 1:
