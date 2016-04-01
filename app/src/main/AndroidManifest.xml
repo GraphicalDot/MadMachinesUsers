@@ -35,10 +35,10 @@
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <permission
-        android:name="co.sports.unity.permission.C2D_MESSAGE"
-        />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+
+    <permission android:name="co.sports.unity.permission.C2D_MESSAGE" />
+
     <uses-permission
         android:name="co.sports.unity.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
@@ -90,7 +90,9 @@
                 <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
-        <service android:name=".gcm.RegistrationIntentService" android:exported="false"/>
+        <service
+            android:name=".gcm.RegistrationIntentService"
+            android:exported="false" />
         <service
             android:name=".XMPPManager.XMPPService"
             android:enabled="true"
@@ -101,6 +103,7 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -160,45 +163,48 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
+
                 <category android:name="android.intent.category.DEFAULT" />
+
                 <data android:mimeType="text/plain" />
                 <data android:mimeType="image/*" />
                 <data android:mimeType="video/*" />
                 <data android:mimeType="audio/*" />
             </intent-filter>
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.SEND" />-->
-            <!--<category android:name="android.intent.category.DEFAULT" />-->
-            <!--<data android:mimeType="image/*" />-->
-            <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.SEND" /> -->
+            <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+            <!-- <data android:mimeType="image/*" /> -->
+            <!-- </intent-filter> -->
             <intent-filter>
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="image/*" />
                 <data android:mimeType="audio/*" />
                 <data android:mimeType="video/*" />
             </intent-filter>
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.SEND" />-->
-            <!--<category android:name="android.intent.category.DEFAULT" />-->
-            <!--<data android:mimeType="audio/*" />-->
-            <!--</intent-filter>-->
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.SEND_MULTIPLE" />-->
-            <!--<category android:name="android.intent.category.DEFAULT" />-->
-            <!--<data android:mimeType="audio/*" />-->
-            <!--</intent-filter>-->
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.SEND" />-->
-            <!--<category android:name="android.intent.category.DEFAULT" />-->
-            <!--<data android:mimeType="video/*" />-->
-            <!--</intent-filter>-->
-            <!--<intent-filter>-->
-            <!--<action android:name="android.intent.action.SEND_MULTIPLE" />-->
-            <!--<category android:name="android.intent.category.DEFAULT" />-->
-            <!--<data android:mimeType="video/*" />-->
-            <!--</intent-filter>-->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.SEND" /> -->
+            <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+            <!-- <data android:mimeType="audio/*" /> -->
+            <!-- </intent-filter> -->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.SEND_MULTIPLE" /> -->
+            <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+            <!-- <data android:mimeType="audio/*" /> -->
+            <!-- </intent-filter> -->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.SEND" /> -->
+            <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+            <!-- <data android:mimeType="video/*" /> -->
+            <!-- </intent-filter> -->
+            <!-- <intent-filter> -->
+            <!-- <action android:name="android.intent.action.SEND_MULTIPLE" /> -->
+            <!-- <category android:name="android.intent.category.DEFAULT" /> -->
+            <!-- <data android:mimeType="video/*" /> -->
+            <!-- </intent-filter> -->
         </activity>
         <activity
             android:name=".scores.ScoreDetailActivity"
@@ -213,9 +219,6 @@
         <activity
             android:name=".common.controller.About"
             android:screenOrientation="portrait" />
-
-        
-        
         <activity
             android:name=".scoredetails.footballdetail.FootballDetailsActivity"
             android:screenOrientation="portrait"
@@ -227,14 +230,19 @@
         <activity
             android:name=".common.controller.TeamLeagueDetails"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"></activity>
+            android:theme="@style/AppTheme" />
         <activity
             android:name=".playerprofile.cricket.PlayerCricketBioDataActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme" />
-        <activity android:name=".playerprofile.football.PlayerProfileView"
-        android:screenOrientation="portrait"
-        android:theme="@style/AppTheme" />
+        <activity
+            android:name=".playerprofile.football.PlayerProfileView"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+
+        <service
+            android:name=".gcm.UnRegisterMatch"
+            android:exported="false"></service>
     </application>
 
 </manifest>

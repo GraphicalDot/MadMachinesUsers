@@ -43,7 +43,6 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
     private ProgressBar progressBar;
     private String matchId;
     private RecyclerView rvFootballMatchStat;
-    private TextView nocomments;
     private CompleteFootballMatchStatAdapter completeFootballMatchStatAdapter;
     private Map<String,CompleteFootballMatchStatDTO> map = new HashMap<>();
     private int baseWidth;
@@ -95,7 +94,6 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
             progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
             swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_stat);
             initErrorLayout(view);
-            nocomments = (TextView) view.findViewById(R.id.no_comments);
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {

@@ -82,7 +82,7 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
 
         View view = inflater.inflate(R.layout.fragment_cricket_completed_match_summery, container, false);
         initView(view);
-
+        initProgress(view);
         return view;
     }
     private void initView(View view) {
@@ -208,14 +208,6 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
                             try {
                                 Log.i("run: ", jsonObject.toString());
                                 Glide.with(getContext()).load(cricketMatchSummaryParser.getPlayerImage()).placeholder(R.drawable.ic_no_img).into(ivPlayerProfileView);
-                            /*if( manOftheMatch != null &&  !manOftheMatch.isNull("image")){
-
-                                //Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivCountryImage);
-                            }*/
-
-
-
-
                                 playerName.setText(cricketMatchSummaryParser.getPlayerName());
                                 tvPlayerRun.setText(cricketMatchSummaryParser.getruns());
                                 tvPlayerPlayedBall.setText(cricketMatchSummaryParser.getBalls());

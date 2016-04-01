@@ -15,7 +15,7 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
     private JSONObject currentBowler;
     private JSONObject currentPartnership;
     private  JSONArray yetToBat;
-    private  JSONArray recentOver;
+    private  JSONObject recentOver;
 
     public JSONObject getMatchSummary() throws JSONException {
         return jsonObject.getJSONObject("summary");
@@ -38,11 +38,11 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
     }
 
 
-    public JSONArray getRecentOver() throws JSONException {
-        return cricketSummary.getJSONArray("recent_over");
+    public JSONObject getRecentOver() throws JSONException {
+        return cricketSummary.getJSONObject("recent_over");
     }
 
-    public void setRecentOver(JSONArray recentOver) throws JSONException {
+    public void setRecentOver(JSONObject recentOver) throws JSONException {
         this.recentOver = recentOver;
     }
 
@@ -88,6 +88,12 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
         return currentBowler.getString("wicket");
     }
 
+    public String getCurentBowlerImage() throws JSONException {
+        if(currentBowler.isNull("player_image")){
+            return  "";
+        }
+        return currentBowler.getString("player_image");
+    }
     public String getPlayeFirstName() throws  JSONException{
         if(!currentPartnership.isNull("player_1")){
             return  currentPartnership.getString("player_1");
@@ -103,6 +109,13 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
         if(!currentPartnership.isNull("player_1_runs")){
             return  currentPartnership.getInt("player_1_runs");
         }else  {return  0;}
+    }
+
+    public String getPlayerFirstImage() throws JSONException {
+        if(currentPartnership.isNull("player_1_image")){
+            return  "";
+        }
+        return currentPartnership.getString("player_1_image");
     }
 
     public String getPlayeSecondName() throws  JSONException{
@@ -121,6 +134,14 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
             return  currentPartnership.getInt("player_2_runs");
         }else  {return  0;}
     }
+
+    public String getPlayerSecondImage() throws JSONException {
+        if(currentPartnership.isNull("player_2_image")){
+            return  "";
+        }
+        return currentPartnership.getString("player_2_image");
+    }
+
     public String getYetToPlayerName(int index) throws JSONException{
            if(yetToBat.get(index)!=null){
                JSONObject nameObject = yetToBat.getJSONObject(index);
@@ -137,7 +158,7 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
 
 
 
-    public String getRecentOver(int index) throws JSONException{
+    /*public String getRecentOver(int index) throws JSONException{
         if(recentOver.get(index)!=null){
             JSONObject nameObject = recentOver.getJSONObject(index);
             return  nameObject.getString("over");
@@ -154,5 +175,5 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
             JSONObject nameObject = recentOver.getJSONObject(index);
             return  nameObject.getBoolean("wicket");
         }else {return  false;}
-    }
+    }*/
 }

@@ -32,10 +32,10 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         return jsonObject.getString("match_id");
     }
     public String getSeriesName() throws JSONException {
-        if(jsonObject.isNull("series_name")){
-            return "";
+        if(jsonObject!=null && !jsonObject.isNull("series_name")){
+            return  jsonObject.getString("series_name");
         }
-        return jsonObject.getString("series_name");
+        return "";
     }
     public String getSeriesId() throws JSONException {
         if(jsonObject.isNull("series_id")){
@@ -47,7 +47,6 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
 
         return jsonObject.getJSONObject("match_widget");
     }
-
 
     public void setMatchWidgetHomeTeam(JSONObject matchWidgetHomeTeam) {
         this.matchWidgetHomeTeam = matchWidgetHomeTeam;

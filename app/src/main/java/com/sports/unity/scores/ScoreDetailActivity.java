@@ -52,12 +52,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private static final String SCORE_DETAIL_REQUEST_TAG = "score_detail_request_tag";
     private static final String LIST_OF_COMMENTARIES_REQUEST_TAG = "list_commentaries_request_tag";
     private static final String LIST_OF_SUMMARY_REQUEST_TAG = "list_summary_request_tag";
-
-
-
-//    private ScoresContentListener contentListener = new ScoresContentListener();
-
-    private CricketMatchJsonCaller cricketMatchJsonCaller = new CricketMatchJsonCaller();
+   private CricketMatchJsonCaller cricketMatchJsonCaller = new CricketMatchJsonCaller();
     private FootballMatchJsonCaller footballMatchJsonCaller = new FootballMatchJsonCaller();
 
     private JSONObject matchScoreDetails = null;
@@ -73,7 +68,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
     private Timer timerToRefreshContent = null;
 
-    private RecyclerView mRecyclerView = null;
     private ViewPager mViewPager;
     private ViewPagerCricketScoreDetailAdapter cricketScoreDetailAdapter ;
     private ViewPagerFootballScoreDetailAdapter footballScoreDetailAdapter;
@@ -104,9 +98,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             ArrayList<CustomComponentListener> listeners = new ArrayList<>();
             listeners.add(scoreDetailComponentListener);
             listeners.add(matchCommentariesComponentListener);
-
-
-            onComponentCreate(listeners, REQUEST_LISTENER_KEY);
+           onComponentCreate(listeners, REQUEST_LISTENER_KEY);
         }
     }
 
@@ -410,15 +402,28 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                     textView = (TextView) findViewById(R.id.team2_name);
                     textView.setText(cricketMatchJsonCaller.getTeam2());
+                    if(cricketMatchJsonCaller.getStatus().equalsIgnoreCase("L")){
+
+                        tvCurrentScore.setVisibility(View.GONE);
+                    }else{
+                        tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
+                        tvCurrentScore.setVisibility(View.VISIBLE);
+                    }
+
+
+
+
                     if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("F") ||cricketMatchJsonCaller.getStatus().equalsIgnoreCase("L") ) {
-                         tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
+
+
+
                         {
                             StringBuilder stringBuilder = new StringBuilder("");
-                            stringBuilder.append(cricketMatchJsonCaller.getTeam1Score());
+                            stringBuilder.append(cricketMatchJsonCaller.getTeam1Score()!=null?cricketMatchJsonCaller.getTeam1Score():"0");
                             stringBuilder.append("/");
-                            stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam1());
+                            stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam1() != null ? cricketMatchJsonCaller.getWicketsTeam1() : "0");
 
-                            teamFirstOvers.setText("("+cricketMatchJsonCaller.getOversTeam1()+")");
+                            teamFirstOvers.setText("("+cricketMatchJsonCaller.getOversTeam1()!=null?cricketMatchJsonCaller.getOversTeam1():"0"+")");
 
                             textView = (TextView) findViewById(R.id.team1_score);
                             textView.setText(stringBuilder.toString());
@@ -428,10 +433,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                         {
                             StringBuilder stringBuilder = new StringBuilder("");
-                            stringBuilder.append(cricketMatchJsonCaller.getTeam2Score());
+                            stringBuilder.append(cricketMatchJsonCaller.getTeam2Score()!=null?cricketMatchJsonCaller.getTeam2Score():"0");
                             stringBuilder.append("/");
-                            stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam2());
-                            teamSecondOvers.setText("("+cricketMatchJsonCaller.getOversTeam2()+")");
+                            stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam2() != null ? cricketMatchJsonCaller.getWicketsTeam2() : "0");
+                            teamSecondOvers.setText("("+cricketMatchJsonCaller.getOversTeam2()!=null?cricketMatchJsonCaller.getOversTeam2():"0"+")");
                             textView = (TextView) findViewById(R.id.team2_score);
                             textView.setText(stringBuilder.toString());
                             textView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());

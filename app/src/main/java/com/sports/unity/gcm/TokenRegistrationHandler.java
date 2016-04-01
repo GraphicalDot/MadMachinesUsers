@@ -44,13 +44,15 @@ public class TokenRegistrationHandler {
 
     public static final String USERNAME_KEY = "username";
     public static final String PASSWORD_KEY = "password";
-    private static final String REQUEST_TAG = "TOKEN_TAG";
+    public static final String LOCATION_STATUS_KEY = "show_location_status";
+    private static final String REQUEST_TAG = "request_tag";
     private static Context mContext;
    private String BASE_URL = "http://54.169.217.88/";
     private String SET_ANDROID_TOKEN = "set_android_token_and_return_user_matches";
     private String REMOVE_ANDROID_TOKEN ="remove_android_token";
     private static final  String  USER_REGISTER_MATCH ="user_register_match";
     private String USER_UNREGISTER_MATCH ="user_unregister_match";
+    private String USER_LOCATION_PRIVACY ="set_location_privacy";
 
     private TokenRegistrationContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -67,27 +69,20 @@ public class TokenRegistrationHandler {
     public interface TokenRegistrationContentListener {
 
         void handleContent(String content);
-
-
     }
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
-
         @Override
         public void onResponse(String s) {
             requestInProcess.remove(REQUEST_TAG);
             TokenRegistrationHandler.this.handleResponse(s);
-
         }
-
         @Override
         public void onErrorResponse(VolleyError volleyError) {
             requestInProcess.remove(REQUEST_TAG);
             TokenRegistrationHandler.this.handleErrorResponse(volleyError);
         }
     };
-
     public void registrerToken(final String token) {
-
         try{
             Log.i("Register Token", "Register Token");
             String url = getGeneratedUrl(SET_ANDROID_TOKEN);
@@ -236,8 +231,38 @@ public class TokenRegistrationHandler {
 
     }
 
+    public void setUserPrivacyPolicy(boolean showLocationStatus) {
 
+        try {
+            Log.i("Register Token", "Register Token");
+            String url = getGeneratedUrl(USER_LOCATION_PRIVACY);
+            JSONObject params = new JSONObject();
+            params.put(USERNAME_KEY, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
+            params.put(PASSWORD_KEY, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
+            params.put(LOCATION_STATUS_KEY, showLocationStatus);
+            params.put(REQUEST_PARAMETER_KEY_APK_VERSION, getBuildConfig());
+            params.put(REQUEST_PARAMETER_KEY_UDID, getDeviceId(mContext));
 
+            JsonRequest stringRequest = new JsonObjectRequest(Request.Method.POST, url, params, new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    requestInProcess.remove(REQUEST_TAG);
+                    TokenRegistrationHandler.this.handleResponse(response);
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    requestInProcess.remove(REQUEST_TAG);
+                    TokenRegistrationHandler.this.handleErrorResponse(error);
+                }
+            });
+            VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
+            requestInProcess.add(REQUEST_TAG);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
 
 
  private String getGeneratedUrl(String requestEndPoint) {

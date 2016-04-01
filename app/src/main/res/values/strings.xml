@@ -417,6 +417,8 @@ message to verify your mobile number.</string>
     </plurals>
     <string name="game_details">Game Details</string>
     <string name="request_code">1</string>
+    <string name="privacy_policy_status">Privacy policy Not Updated</string>
+    <string name="mute_alerts">MUTE ALERTS</string>
     <plurals name="file_count">
         <item quantity="one">%d file was not sent, file size was too large</item>
         <item quantity="other">%d files were not sent, file sizes were too large</item>
