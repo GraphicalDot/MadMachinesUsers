@@ -72,10 +72,11 @@ public class CompletedMatchScoreCardHandler {
     }
     private void handleResponse(String response) {
                 try{
-
             Log.i("Score Card", "handleResponse: ");
+        if(mContentListener!=null){
+            mContentListener.handleContent(response);
+        }
 
-                mContentListener.handleContent(response);
 
         } catch (Exception e) {
             e.printStackTrace();
