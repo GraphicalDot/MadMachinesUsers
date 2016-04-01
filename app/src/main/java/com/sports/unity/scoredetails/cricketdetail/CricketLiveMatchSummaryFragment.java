@@ -302,7 +302,6 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                                     }
                                 }
 
-                            Log.i("BEFOREQUE ", "run: "+ballsStack);
                             int queuSize = ballsStack.size();
                             for (int i = 0; i < queuSize; i++) {
                                 if(i==6){
@@ -319,7 +318,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
 
                                 if (wicket!=null && !wicket.equals("")) {
-                                    curBall = getResolveBall("w");
+                                    curBall = getResolveBall(wicket);
                                 } else if(event!=null && !event.equals("")) {
                                     curBall = getResolveBall(event);
                                 }else  {
@@ -330,40 +329,39 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
 
                             }
-                            Log.i("AFTERQUE si", "run: "+ballsStack);
-                            if (!balls[0].getValue().equals("0")) {
-                                drawable = getTextDrawable(balls[0].getValue(), balls[0].getFontColor(), balls[0].getBackGroundColor());
+                            if (!balls[1].getValue().equals("0")) {
+                                drawable = getTextDrawable(balls[1].getValue(), balls[1].getFontColor(), balls[1].getBackGroundColor());
                                 ivFirstBall.setImageDrawable(drawable);
                             } else {
                                 ivFirstBall.setImageResource(R.drawable.recent_dot_balls);
                             }
-                            if (!balls[1].getValue().equals("0")) {
-                                drawable = getTextDrawable(balls[1].getValue(), balls[1].getFontColor(), balls[1].getBackGroundColor());
+                            if (!balls[2].getValue().equals("0")) {
+                                drawable = getTextDrawable(balls[2].getValue(), balls[2].getFontColor(), balls[2].getBackGroundColor());
                                 ivSecondBall.setImageDrawable(drawable);
                             } else {
                                 ivSecondBall.setImageResource(R.drawable.recent_dot_balls);
                             }
-                            if (!balls[2].getValue().equals("0")) {
-                                drawable = getTextDrawable(balls[2].getValue(), balls[2].getFontColor(), balls[2].getBackGroundColor());
+                            if (!balls[3].getValue().equals("0")) {
+                                drawable = getTextDrawable(balls[3].getValue(), balls[3].getFontColor(), balls[4].getBackGroundColor());
                                 ivThirdBall.setImageDrawable(drawable);
                             } else {
                                 ivThirdBall.setImageResource(R.drawable.recent_dot_balls);
                             }
 
-                            if (!balls[3].getValue().equals("0")) {
-                                drawable = getTextDrawable(balls[3].getValue(), balls[3].getFontColor(), balls[3].getBackGroundColor());
+                            if (!balls[4].getValue().equals("0")) {
+                                drawable = getTextDrawable(balls[4].getValue(), balls[4].getFontColor(), balls[4].getBackGroundColor());
                                 ivFourthBall.setImageDrawable(drawable);
                             } else {
                                 ivFourthBall.setImageResource(R.drawable.recent_dot_balls);
                             }
-                            if (!balls[4].getValue().equals("0")) {
-                                drawable = getTextDrawable(balls[4].getValue(), balls[4].getFontColor(), balls[4].getBackGroundColor());
+                            if (!balls[5].getValue().equals("0")) {
+                                drawable = getTextDrawable(balls[5].getValue(), balls[5].getFontColor(), balls[5].getBackGroundColor());
                                 ivFifthBall.setImageDrawable(drawable);
                             } else {
                                 ivFifthBall.setImageResource(R.drawable.recent_dot_balls);
                             }
-                            if (!balls[5].getValue().equals("0")) {
-                                drawable = getTextDrawable(balls[5].getValue(), balls[5].getFontColor(), balls[5].getBackGroundColor());
+                            if (!balls[6].getValue().equals("0")) {
+                                drawable = getTextDrawable(balls[6].getValue(), balls[6].getFontColor(), balls[6].getBackGroundColor());
                                 ivSixthBall.setImageDrawable(drawable);
                             } else {
                                 ivSixthBall.setImageResource(R.drawable.recent_dot_balls);

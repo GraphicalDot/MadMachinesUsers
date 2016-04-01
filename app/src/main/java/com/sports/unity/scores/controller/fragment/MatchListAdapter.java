@@ -157,10 +157,16 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 JSONArray widgetTeamSecond = null;
                 if(!widgetTeamsObject.isNull("1")){
                      widgetTeamsFirst = widgetTeamsObject.getJSONArray("1");
+                }else{
+                    widgetTeamsFirst = new JSONArray();
                 }
+
                if(!widgetTeamsObject.isNull("2")){
                    widgetTeamSecond= widgetTeamsObject.getJSONArray("2");
+               }else{
+                   widgetTeamSecond = new JSONArray();
                }
+
 
                 String homeTeam = cricketMatchJsonCaller.getTeam1();
                 String awayTeam  = cricketMatchJsonCaller.getTeam2();
