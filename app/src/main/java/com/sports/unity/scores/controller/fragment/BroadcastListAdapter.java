@@ -44,6 +44,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
         private TextView commentTime;
         private ImageView commentImage;
         private View lvDivider;
+        private LinearLayout backGroundColor;
 
         private View view;
 
@@ -56,6 +57,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
             commentTime = (TextView) v.findViewById(R.id.comment_time);
             commentImage  = (ImageView) v.findViewById(R.id.comment_image);
             lvDivider = v.findViewById(R.id.lv_divider);
+            backGroundColor = (LinearLayout) v.findViewById(R.id.back_ground_color);
             /*commentTime.setTypeface(FontTypeface.getInstance(view.getContext()).getRobotoCondensedBold());
             broadcast.setTypeface(FontTypeface.getInstance(view.getContext()).getRobotoMedium());*/
         }
@@ -80,7 +82,20 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
                 }
 
                 if(jsonObject.getComment() != null) {
-                    holder.broadcast.setText(Html.fromHtml(jsonObject.getComment()));
+                    if(jsonObject.getComment().contains("FOUR") ||  jsonObject.getComment().contains("SIX")){
+                        holder.backGroundColor.setBackgroundColor(context.getResources().getColor(R.color.app_theme_blue));
+                        holder.broadcast.setTextColor(context.getResources().getColor(R.color.ColorPrimary));
+                        holder.broadcast.setText(Html.fromHtml(jsonObject.getComment()));
+                    }else if(jsonObject.getComment().contains("OUT") || jsonObject.getComment().contains("WICKET")){
+                        holder.backGroundColor.setBackgroundColor(context.getResources().getColor(R.color.brick_red));
+                        holder.broadcast.setTextColor(context.getResources().getColor(R.color.ColorPrimary));
+                        holder.broadcast.setText(Html.fromHtml(jsonObject.getComment()));
+                    }else{
+                        holder.backGroundColor.setBackgroundColor(context.getResources().getColor(R.color.ColorPrimary));
+                        holder.broadcast.setTextColor(context.getResources().getColor(R.color.news_headline_mini));
+                        holder.broadcast.setText(Html.fromHtml(jsonObject.getComment()));
+                    }
+
                 }
                 if (sportsType.equals(ScoresJsonParser.CRICKET)) {
                     if("-1.0".equalsIgnoreCase(jsonObject.getOver())){
