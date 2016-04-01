@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
@@ -106,13 +108,22 @@ public class SUPushServiceListener extends GcmListenerService {
 
                 int  drawableId = getDrawableIcon(event);
 
-
+                Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), drawableId);
                 int sportsTypeId = getSportId(sportsType);
                  NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(this)
-                                .setSmallIcon(drawableId)
+                                .setVisibility(Notification.VISIBILITY_PUBLIC)
+                                .setSmallIcon(R.drawable.ic_stat_notification)
+                                .setLargeIcon(largeIcon)
                                 .setContentTitle(title)
-                                .setContentText(content).addAction(sportsTypeId, sportsType, shareIntent).addAction(R.drawable.ic_mute_notification,getString(R.string.mute_alerts),mpi);
+                                .setContentText(content)
+                                .setColor(getResources().getColor(R.color.app_theme_blue))
+                                .setVibrate(new long[]{100, 250})
+                                .setDefaults(Notification.DEFAULT_SOUND)
+                                .setPriority(Notification.PRIORITY_HIGH)
+                                .setAutoCancel(true)
+                                .addAction(sportsTypeId, sportsType, shareIntent)
+                                .addAction(R.drawable.ic_mute_notification, getString(R.string.mute_alerts), mpi);
 
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
                 stackBuilder.addParentStack(ScoreDetailActivity.class);
@@ -140,31 +151,31 @@ public class SUPushServiceListener extends GcmListenerService {
         int  drawable=0;
         switch (event){
             case 1:
-                drawable = R.drawable.ic_toss;
+                drawable = R.drawable.ic_toss1;
                 break;
             case 2:
-                drawable = R.drawable.ic_match_started;
+                drawable = R.drawable.ic_match_started1;
                 break;
             case 3:
-                drawable = R.drawable.ic_no_img;
+                drawable = R.drawable.ic_wkt1;
                 break;
             case 4:
-                drawable = R.drawable.ic_no_img;
+                drawable = R.drawable.ic_four1;
                 break;
             case 5:
-                drawable = R.drawable.ic_no_img;
+                drawable = R.drawable.ic_six1;
                 break;
             case 6:
-                drawable = R.drawable.ic_half_century;
+                drawable = R.drawable.ic_half_century1;
                 break;
             case 7:
-                drawable = R.drawable.ic_century;
+                drawable = R.drawable.ic_century1;
                 break;
             case 8:
                 drawable = R.drawable.ic_no_img;
                 break;
             case 9:
-                drawable = R.drawable.ic_win_no_flag_available;
+                drawable = R.drawable.ic_win_no_flag_available1;
                 break;
             case 10:
                 drawable = R.drawable.ic_no_img;
@@ -173,7 +184,7 @@ public class SUPushServiceListener extends GcmListenerService {
                 drawable = R.drawable.ic_cricket_group;
                 break;
             case 12:
-                drawable = R.drawable.ic_mute_notification;
+                drawable = R.drawable.ic_mute_notification1;
                 break;
             case 13:
                 drawable = R.drawable.ic_no_img;
