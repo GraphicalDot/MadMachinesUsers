@@ -64,7 +64,10 @@ public class SUPushServiceListener extends GcmListenerService {
                 JSONObject oldData = new JSONObject(message);
                 JSONObject notification = oldData.getJSONObject("message");
                 if (!notification.isNull(GCMConstants.SPORTS_ID)) {
-                    sportsType = notification.getInt(GCMConstants.SPORTS_ID) == 1 ? Constants.SPORTS_TYPE_CRICKET : Constants.SPORTS_TYPE_FOOTBALL;
+                    int sportsId = notification.getInt(GCMConstants.SPORTS_ID);
+                    if(sportsId==1 || sportsId==2){
+                        sportsType = sportsId == 1 ? Constants.SPORTS_TYPE_CRICKET : Constants.SPORTS_TYPE_FOOTBALL;
+                    }
                 }
                 if (!notification.isNull(GCMConstants.MATCH_ID)) {
                     matchiId = notification.getString(GCMConstants.MATCH_ID);
@@ -112,8 +115,10 @@ public class SUPushServiceListener extends GcmListenerService {
 
                 if(Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(sportsType)){
                     getDrawableIconCricket(event);
-                }else{
+                }else if(Constants.SPORTS_TYPE_FOOTBALL.equalsIgnoreCase(sportsType)){
                     getDrawableIconFootball(event);
+                }else{
+
                 }
                 Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), drawableId);
                 int sportsTypeId = getSportId(sportsType);
