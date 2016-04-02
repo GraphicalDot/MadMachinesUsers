@@ -511,11 +511,14 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return db.update(ContactChatEntry.TABLE_NAME, values, selection, selectionArgs);
     }
 
-    public int updateContacts(String jid, String phoneNumber) {
+    public int updateContactsPhoneNumberAndName(String jid, String phoneNumber, String name) {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(ContactChatEntry.COLUMN_PHONE_NUMBER, phoneNumber);
+        if( name != null && name.length() > 0 ) {
+            values.put(ContactChatEntry.COLUMN_NAME, name);
+        }
 
         String selection = ContactChatEntry.COLUMN_JID + " LIKE ? ";
         String[] selectionArgs = {jid};
