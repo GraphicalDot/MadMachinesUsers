@@ -168,7 +168,7 @@ public class PersonalMessaging {
     }
 
     public void getLastTime(String jid) {
-        Message msg = new Message("gettimedev@mm.io", Message.Type.headline);
+        Message msg = new Message("gettime@dev.mm.io", Message.Type.headline);
         msg.setBody(jid);
         try {
             XMPPClient.getConnection().sendPacket(msg);
@@ -188,7 +188,7 @@ public class PersonalMessaging {
                 e.printStackTrace();
             }
 
-            Message message = new Message("settimedev@mm.io", Message.Type.headline);
+            Message message = new Message("settime@dev.mm.io", Message.Type.headline);
             message.setBody(String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()));
             try {
                 XMPPClient.getConnection().sendStanza(message);
@@ -204,7 +204,7 @@ public class PersonalMessaging {
         if (XMPPClient.getInstance().isConnectionAuthenticated()) {
             Presence presence = new Presence(Presence.Type.available);
             presence.setStatus("Online");
-            Message message = new Message("settimedev@mm.io", Message.Type.headline);
+            Message message = new Message("settime@dev.mm.io", Message.Type.headline);
             message.setBody(String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch()));
             try {
                 XMPPClient.getConnection().sendStanza(presence);
