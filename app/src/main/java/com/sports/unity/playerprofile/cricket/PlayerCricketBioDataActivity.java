@@ -6,7 +6,6 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -137,8 +136,8 @@ try {
                     if (!playerInfo.isNull("full_name")) {
                         playerName.setText(playerInfo.getString("full_name"));
                     }
-                    if (!playerInfo.isNull("birth_place")) {
-                        playerNationName.setText(playerInfo.getString("birth_place"));
+                    if (!object.isNull("team")) {
+                        playerNationName.setText(object.getString("team"));
                     }
                 }
             } catch (Exception e) {
