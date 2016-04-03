@@ -115,11 +115,11 @@ public class SUPushServiceListener extends GcmListenerService {
 
                 if(Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(sportsType)){
 
-                    getDrawableIconCricket(event);
+                    drawableId= getDrawableIconCricket(event);
                 }else if(Constants.SPORTS_TYPE_FOOTBALL.equalsIgnoreCase(sportsType)){
-                    getDrawableIconFootball(event);
+                    drawableId=  getDrawableIconFootball(event);
                 }else{
-
+                    drawableId = 0;
 
                 }
                 Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), drawableId);
