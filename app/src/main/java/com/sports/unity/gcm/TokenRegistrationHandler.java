@@ -230,7 +230,7 @@ public class TokenRegistrationHandler {
 //        };
 
     }
-
+//modify by Ashish
     public void setUserPrivacyPolicy(boolean showLocationStatus) {
 
         try {

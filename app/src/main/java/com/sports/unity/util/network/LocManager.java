@@ -121,6 +121,7 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     public void uploadLatLng(Location mLastLocation) {
         HttpURLConnection httpURLConnection = null;
+        //added by ashish
         url = base_url + TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID)+"&password="+TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD) + "&@mm.io&lat=" + mLastLocation.getLatitude() + "&lng=" + mLastLocation.getLongitude()+"&apk_version="+ BuildConfig.VERSION_NAME+"&udid="+ UDID;
         try {
             URL sendData = new URL(url);
