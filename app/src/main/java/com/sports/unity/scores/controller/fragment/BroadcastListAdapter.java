@@ -112,11 +112,11 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
                         holder.commentImage.setImageResource(R.drawable.grey_ring);
                         holder.commentTime.setVisibility(View.VISIBLE);
                         holder.commentTime.setText(jsonObject.getOver());
+
                     }
                     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.lvDivider .getLayoutParams();
                     if(jsonObject.getOver().contains(".1") && !previousObject.getOver().contains(".1")){
                         params.height = 3;
-
                         //holder.lvDivider.setBackground();
 
                     }else{

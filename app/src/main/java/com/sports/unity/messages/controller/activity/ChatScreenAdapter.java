@@ -606,7 +606,7 @@ public class ChatScreenAdapter extends BaseAdapter implements StickyListHeadersA
                     thumbnailImage = Base64.encodeToString(message.media, Base64.DEFAULT);
                 }
 
-                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, null, message.mimeType, chat, message.id, nearByChat, isGroupChat, jid);
+                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, thumbnailImage, message.mimeType, chat, message.id, nearByChat, isGroupChat, jid);
 
                 activity.runOnUiThread(new Runnable() {
                     @Override

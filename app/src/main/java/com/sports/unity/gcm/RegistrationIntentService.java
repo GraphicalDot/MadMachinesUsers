@@ -66,11 +66,6 @@ public class RegistrationIntentService extends IntentService implements TokenReg
             preferences.edit().putBoolean(Constants.SENT_TOKEN_TO_SERVER, false).apply();
         }
     }
-
-
-
-
-
     /**
      * @param token
      * @return
@@ -94,8 +89,7 @@ public class RegistrationIntentService extends IntentService implements TokenReg
     public void handleContent(String content) {
         try {
             JSONObject object = new JSONObject(content);
-            if(object!=null && !object.isNull("status") && 200==object.getInt("status") && "success".equalsIgnoreCase(object.getString("info"))){
-                    SharedPreferences.Editor editor = preferences.edit();
+            if(object!=null && !object.isNull("status") && 200==object.getInt("status") && "success".equalsIgnoreCase(object.getString("info"))){                SharedPreferences.Editor editor = preferences.edit();
                     editor.putBoolean(Constants.SENT_TOKEN_TO_SERVER, true);
                     if (!object.isNull("match_ids")) {
                         JSONArray matchIds = object.getJSONArray("match_ids");

@@ -230,7 +230,7 @@ public class TokenRegistrationHandler {
 //        };
 
     }
-
+//modify by Ashish
     public void setUserPrivacyPolicy(boolean showLocationStatus) {
 
         try {
@@ -239,7 +239,7 @@ public class TokenRegistrationHandler {
             JSONObject params = new JSONObject();
             params.put(USERNAME_KEY, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
             params.put(PASSWORD_KEY, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
-            params.put(LOCATION_STATUS_KEY, showLocationStatus);
+            params.put(LOCATION_STATUS_KEY, String.valueOf(showLocationStatus));
             params.put(REQUEST_PARAMETER_KEY_APK_VERSION, getBuildConfig());
             params.put(REQUEST_PARAMETER_KEY_UDID, getDeviceId(mContext));
 

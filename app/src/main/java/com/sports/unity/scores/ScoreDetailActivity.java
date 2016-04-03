@@ -51,7 +51,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private static final String REQUEST_LISTENER_KEY = "score_detail_listener";
     private static final String SCORE_DETAIL_REQUEST_TAG = "score_detail_request_tag";
     private static final String LIST_OF_COMMENTARIES_REQUEST_TAG = "list_commentaries_request_tag";
-    private static final String LIST_OF_SUMMARY_REQUEST_TAG = "list_summary_request_tag";
    private CricketMatchJsonCaller cricketMatchJsonCaller = new CricketMatchJsonCaller();
     private FootballMatchJsonCaller footballMatchJsonCaller = new FootballMatchJsonCaller();
 
