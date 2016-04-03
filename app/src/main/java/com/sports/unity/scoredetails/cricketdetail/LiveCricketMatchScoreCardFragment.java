@@ -391,6 +391,8 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
 
                 }
             }
+        }else{
+            tvFirstTeamInning.setText("Yet To Batting");
         }
 
         if (teamSecondInnings!=null) {
@@ -433,6 +435,8 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                 teamBFallOfWicketCardList.add(fallOfWickets);
             }
             }
+        }else{
+            tvFirstTeamInning.setText("Yet To Batting");
         }
         teamABattingAdapter.notifyDataSetChanged();
         teamABowlingAdapter.notifyDataSetChanged();
