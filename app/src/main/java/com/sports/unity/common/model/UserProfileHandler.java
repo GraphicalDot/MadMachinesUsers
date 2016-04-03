@@ -292,7 +292,7 @@ public class UserProfileHandler {
     public void initFacebookLogin(Context context) {
         FacebookSdk.sdkInitialize(context.getApplicationContext());
         try {
-            PackageInfo info = context.getPackageManager().getPackageInfo("com.sports.unity", PackageManager.GET_SIGNATURES);
+            PackageInfo info = context.getPackageManager().getPackageInfo("co.sports.unity", PackageManager.GET_SIGNATURES);
             for (Signature signature : info.signatures) {
                 MessageDigest md = MessageDigest.getInstance("SHA");
                 md.update(signature.toByteArray());
