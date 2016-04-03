@@ -420,6 +420,7 @@ message to verify your mobile number.</string>
     <string name="game_details">Game Details</string>
     <string name="request_code">1</string>
     <string name="privacy_policy_status">Privacy policy Not Updated</string>
+    <string name="privacy_policy_status_success">Privacy policy Updated</string>
     <string name="mute_alerts">MUTE ALERTS</string>
     <string name="staff_picked">Sports Unity Staff Picked</string>
     <string name="ipl">Indian Premier League</string>

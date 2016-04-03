@@ -149,7 +149,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                     if (people.size() > 1) {
                         plotMarkers(people, sportSelection);
                     } else {
-                       // map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                        // map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
                         LayoutInflater inflater = PeopleAroundMeMap.this.getLayoutInflater();
                         View view = inflater.inflate(R.layout.chat_other_profile_layout, null);
@@ -228,7 +228,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 latLong = place.getLatLng();
                 //getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
                 map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
-               // getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
+                // getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
             }
 
             @Override
@@ -473,12 +473,12 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 Intent i = getIntent();
 
 
-              //  makeText(getApplicationContext(), "Privacy Policy work in progress", LENGTH_LONG).show();
+                //  makeText(getApplicationContext(), "Privacy Policy work in progress", LENGTH_LONG).show();
 
 
-                  //  checkAndEnableLocation();
+                //  checkAndEnableLocation();
 
-             }
+            }
         });
         toolbar.findViewById(R.id.myaddress).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -515,7 +515,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
             public void onMapReady(GoogleMap googleMap) {
 
 
-                    openMap(googleMap);
+                openMap(googleMap);
 
 
             }
@@ -895,12 +895,14 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         try {
             JSONObject object = new JSONObject(content);
             if(object!=null && !object.isNull("status") ){
-                if(200 == object.getInt("status")){
-                    if(!object.isNull("info") && object.getString("info").equalsIgnoreCase("Success")){
 
-                    }
+                if(200 == object.getInt("status") && !object.isNull("info") && object.getString("info").equalsIgnoreCase("Success")){
+                    Toast.makeText(this,R.string.privacy_policy_status_success,Toast.LENGTH_SHORT).show();
+                }else{
                     Toast.makeText(this,R.string.privacy_policy_status,Toast.LENGTH_SHORT).show();
+
                 }
+
             }
         }catch (Exception e){
 
