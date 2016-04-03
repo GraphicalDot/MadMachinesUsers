@@ -27,7 +27,7 @@ import java.util.Locale;
  */
 public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    private static String base_url = "http://" + XMPPClient.SERVER_HOST + "/set_location?user=";
+    private static String base_url = "http://" + XMPPClient.SERVER_HOST + "/set_location?username=";
     private static LocManager locManager = null;
     boolean dataSent = false;
     private Thread uploadLocation = null;
@@ -121,7 +121,7 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     public void uploadLatLng(Location mLastLocation) {
         HttpURLConnection httpURLConnection = null;
-        url = base_url + TinyDB.getInstance(context).getString(TinyDB.KEY_USERNAME) + "@mm.io&lat=" + mLastLocation.getLatitude() + "&lng=" + mLastLocation.getLongitude()+"&apk_version="+ BuildConfig.VERSION_NAME+"&udid="+ UDID;
+        url = base_url + TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID)+"&password="+TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD) + "&@mm.io&lat=" + mLastLocation.getLatitude() + "&lng=" + mLastLocation.getLongitude()+"&apk_version="+ BuildConfig.VERSION_NAME+"&udid="+ UDID;
         try {
             URL sendData = new URL(url);
             httpURLConnection = (HttpURLConnection) sendData.openConnection();

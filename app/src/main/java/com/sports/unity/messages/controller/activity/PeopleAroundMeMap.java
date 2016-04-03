@@ -868,7 +868,6 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
             aDialog.cancel();
         }
     }
-
     @Override
     protected void onPause() {
         super.onPause();
