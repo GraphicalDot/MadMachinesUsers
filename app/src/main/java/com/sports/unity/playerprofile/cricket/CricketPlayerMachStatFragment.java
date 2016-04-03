@@ -169,12 +169,14 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
             } else {
                 linearLayoutBatting.setVisibility(View.GONE);
                 linearLayoutBolling.setVisibility(View.GONE);
+                Toast.makeText(getActivity(), R.string.player_details_not_exists, Toast.LENGTH_SHORT).show();
                 showErrorLayout(getView());
             }
         } catch (Exception ex) {
             ex.printStackTrace();
             linearLayoutBatting.setVisibility(View.GONE);
             linearLayoutBolling.setVisibility(View.GONE);
+            Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             showErrorLayout(getView());
         }
     }
@@ -209,6 +211,15 @@ public class CricketPlayerMachStatFragment extends Fragment implements CricketPl
         Log.i("Msg", "Array length" + dataArray.length());
         final JSONObject dataObject = (JSONObject) dataArray.get(0);
         final JSONObject playerStatistics = dataObject.getJSONObject("statistics");
+        /*final JSONObject playerObjectTest=playerStatistics.getJSONObject("TEST");
+        final JSONObject playerBattingTest=playerObjectTest.getJSONObject("batting");
+        final JSONObject playerBowlingTest=playerObjectTest.getJSONObject("bowling");
+        final JSONObject playerObjectOdi=playerStatistics.getJSONObject("ODI");
+        final JSONObject playerBattingOdi=playerObjectOdi.getJSONObject("batting");
+        final JSONObject playerBowlingOdi=playerObjectOdi.getJSONObject("bowling");
+        final JSONObject playerObjectT20=playerStatistics.getJSONObject("T20 Int");
+        final JSONObject playerBattingT20=playerObjectT20.getJSONObject("batting");
+        final JSONObject playerBowlingT20=playerObjectT20.getJSONObject("bowling");*/
         final Iterator<String> keys = playerStatistics.keys();
 
         PlayerCricketBioDataActivity activity = (PlayerCricketBioDataActivity) getActivity();

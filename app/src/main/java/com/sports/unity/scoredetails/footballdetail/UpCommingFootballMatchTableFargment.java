@@ -71,7 +71,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bundle = getArguments();
-        if(bundle!=null) {
+        if (bundle != null) {
             leagueId = bundle.getString(Constants.INTENT_KEY_LEAGUE_ID);
         }
         this.context = getContext();
@@ -207,7 +207,7 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
                                 tvMatchDate.setText(teamObject.getString("stand_season"));
                             if (!teamObject.isNull("flag_image"))
                                 upCommngFootbalMatchTableDTO.setIvTeamProfileImage(teamObject.getString("flag_image"));
-                            if(!teamObject.isNull("team_id")){
+                            if (!teamObject.isNull("team_id")) {
                                 upCommngFootbalMatchTableDTO.setTeamId(teamObject.getString("team_id"));
                             }
                             if (!teamObject.isNull("team_name")) {
@@ -227,9 +227,9 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
                             list.add(upCommngFootbalMatchTableDTO);
 
                         }
-                        if(list.size()>0) {
+                        if (list.size() > 0) {
                             adapter.notifyDataSetChanged();
-                        }else{
+                        } else {
                             showErrorLayout(getView());
                         }
                     } catch (Exception ex) {
@@ -257,9 +257,9 @@ public class UpCommingFootballMatchTableFargment extends Fragment implements UpC
         showProgressBar();
         if (upCommingFootballMatchTableHandler != null) {
             upCommingFootballMatchTableHandler.addListener(this);
-
         } else {
             upCommingFootballMatchTableHandler = UpCommingFootballMatchTableHandler.getInstance(context);
+            upCommingFootballMatchTableHandler.addListener(this);
         }
         upCommingFootballMatchTableHandler.requestUpcommingMatchTableContent(leagueId);
     }

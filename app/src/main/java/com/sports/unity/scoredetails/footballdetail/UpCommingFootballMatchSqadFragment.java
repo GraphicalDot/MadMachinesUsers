@@ -18,6 +18,7 @@ import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.common.view.CustomRobotoCondenseBoldTextView;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.UpCommingFootballMatchSquadAdapter;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.UpCommingFootballMatchSquadDTO;
 import com.sports.unity.scores.controller.fragment.MatchListFragment;
@@ -78,6 +79,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
     public static final String SQUAD_LISTENER_KEY = "squad_listener_key";
     public static final String SQUAD_REQUEST_TAG = "squad_request_tag";
     public static final String SQUAD_FOOTBALL_URL = "http://52.74.75.79:8080/get_team_players?team_id=";
+    public static final String SQUAD_CRICKET_URL = "http://52.74.75.79:8080/v1/get_team_squad?team_id=";
 
     public UpCommingFootballMatchSqadFragment() {
 
@@ -191,9 +193,16 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
             } else {
                 teamFirstSquadArray = jsonObject.getJSONArray("data");
                 tvTeamFirst.setText(favouriteItem.getName());
-                getView().findViewById(R.id.team2_layout).setVisibility(View.GONE);
+                if (favouriteItem.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                    getView().findViewById(R.id.team2_layout).setVisibility(View.GONE);
+                } else {
+                    getView().findViewById(R.id.team1_layout).setVisibility(View.GONE);
+                    getView().findViewById(R.id.team2_layout).setVisibility(View.GONE);
+                    CustomRobotoCondenseBoldTextView cricketTeamName = (CustomRobotoCondenseBoldTextView) getView().findViewById(R.id.cricket_team_name);
+                    cricketTeamName.setVisibility(View.VISIBLE);
+                    cricketTeamName.setText("NAME");
+                }
             }
-
             squadParnetLinearLayout.setVisibility(View.VISIBLE);
             if (activity != null) {
                 activity.runOnUiThread(new Runnable() {
@@ -207,7 +216,13 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
                                 for (int i = 0; i < teamFirstSquadArray.length(); i++) {
                                     JSONObject playerObject = teamFirstSquadArray.getJSONObject(i);
                                     dto = new UpCommingFootballMatchSquadDTO();
-                                    getSquadDetails(dto, playerObject);
+
+                                    if (bundle == null || favouriteItem.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                                        getSquadDetails(dto, playerObject);
+                                    } else {
+                                        getCricketSquadDetails(dto, playerObject);
+                                        upCommingFootballMatchSquadAdapterFirst.setCricketSquad(true);
+                                    }
                                     listTeamFirst.add(dto);
                                 }
                             }
@@ -222,7 +237,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
                             if (bundle == null) {
                                 upCommingFootballMatchSquadAdapterFirst.notifyDataSetChanged();
                                 upCommingFootballMatchSquadAdapterSecond.notifyDataSetChanged();
-                            }else{
+                            } else {
                                 upCommingFootballMatchSquadAdapterFirst.notifyDataSetChanged();
                                 rcRecyclerViewTeamFirst.setFocusable(false);
                             }
@@ -266,6 +281,15 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
         }
     }
 
+    private void getCricketSquadDetails(UpCommingFootballMatchSquadDTO dto, JSONObject playerObject) throws JSONException {
+        if (!playerObject.isNull("player_id")) {
+            dto.setId(playerObject.getString("player_id"));
+        }
+        if (!playerObject.isNull("name")) {
+            dto.setTvPlayerName(playerObject.getString("name"));
+        }
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -288,8 +312,9 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
                 ScoresContentHandler.getInstance().requestSquadContent(SQUAD_FOOTBALL_URL + favouriteItem.getId(), SQUAD_LISTENER_KEY, SQUAD_REQUEST_TAG);
             } else {
                 //TODO request for cricket squad; dependency API
-                hideProgressBar();
-                showErrorLayout();
+
+                ScoresContentHandler.getInstance().requestSquadContent(SQUAD_CRICKET_URL + favouriteItem.getId(), SQUAD_LISTENER_KEY, SQUAD_REQUEST_TAG);
+                //ScoresContentHandler.getInstance().requestSquadContent(SQUAD_CRICKET_URL + 3, SQUAD_LISTENER_KEY, SQUAD_REQUEST_TAG);
             }
         } else {
 

@@ -279,7 +279,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-        hideProgress();
+       // hideProgress();
         teamABattingCardList.clear();
         teamABowlingCardList.clear();
         teamAFallOfWicketCardList.clear();
@@ -292,7 +292,7 @@ public class CompletedMatchScoreCardFragment extends Fragment implements Complet
             final JSONObject dataObject = jsonArray.getJSONObject(0);
             final CricketMatchScoreJsonParser cricketMatchScoreJsonParser = new CricketMatchScoreJsonParser();
             cricketMatchScoreJsonParser.setJsonObject(dataObject);
-
+hideProgress();
             if (activity != null) {
                 activity.runOnUiThread(new Runnable() {
                     @Override

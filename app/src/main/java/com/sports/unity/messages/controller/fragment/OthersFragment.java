@@ -68,7 +68,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
             Chats chatObject = chatList.get(position);
 
             int tag = 0;
-            if (chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+            if ( ! chatObject.isGroupChat ) {
                 tag = 0;
             } else {
                 tag = 1;
@@ -176,18 +176,18 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 switch (position) {
                     case 0:
-                        Contacts contacts = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.contactId);
-                        if (chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
-                            ChatScreenActivity.viewProfile(getActivity(), chatObject.chatid, chatObject.userImage, chatObject.name,
-                                    chatObject.groupServerId, contacts.jid, contacts.status, true, contacts.availableStatus);
+                        Contacts contacts = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.id);
+                        if ( ! chatObject.isGroupChat ) {
+                            ChatScreenActivity.viewProfile(getActivity(), chatObject.isGroupChat, chatObject.id, chatObject.image, chatObject.name,
+                                    chatObject.jid, contacts.status, true, contacts.availableStatus);
                         } else {
-                            ChatScreenActivity.viewProfile(getActivity(), chatObject.chatid, chatObject.chatImage, chatObject.name, chatObject.groupServerId,
-                                    contacts.jid, contacts.status, true, contacts.availableStatus);
+                            ChatScreenActivity.viewProfile(getActivity(), chatObject.isGroupChat, chatObject.id, chatObject.image, chatObject.name,
+                                    chatObject.jid, contacts.status, true, contacts.availableStatus);
                         }
                         alert.dismiss();
                         break;
                     case 1:
-                        if (chatObject.groupServerId.equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
+                        if ( ! chatObject.isGroupChat ) {
                             deleteSingleChat(chatObject);
                         } else {
                             /*
@@ -195,7 +195,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
                              */
                             PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
                             try {
-                                LeafNode leafNode = pubSubManager.getNode(chatObject.groupServerId);
+                                LeafNode leafNode = pubSubManager.getNode(chatObject.jid);
                                 leafNode.unsubscribe(TinyDB.KEY_USERNAME);
                             } catch (SmackException.NoResponseException e) {
                                 e.printStackTrace();
@@ -215,7 +215,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
                         } else {
                             chatObject.mute = true;
                         }
-                        SportsUnityDBHelper.getInstance(getActivity()).muteConversation(chatObject.chatid, chatObject.mute);
+                        SportsUnityDBHelper.getInstance(getActivity()).muteConversation(chatObject.id, chatObject.mute);
                         switchView.setChecked(chatObject.mute);
                         updateContent();
                         break;
@@ -225,11 +225,11 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
     }
 
     private void deleteSingleChat(Chats chatObject) {
-        int contactId = chatObject.contactId;
-        SportsUnityDBHelper.getInstance(getActivity()).clearChat(getActivity(), chatObject.chatid, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
-        SportsUnityDBHelper.getInstance(getActivity()).clearChatEntry(chatObject.chatid, chatObject.groupServerId);
+        int contactId = chatObject.id;
+        SportsUnityDBHelper.getInstance(getActivity()).clearChat(getActivity(), chatObject.id);
+        SportsUnityDBHelper.getInstance(getActivity()).clearChatEntry(chatObject.id, chatObject.isGroupChat);
 
-        NotificationHandler.getInstance(getActivity().getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.chatid));
+        NotificationHandler.getInstance(getActivity().getApplicationContext()).clearNotificationMessages(String.valueOf(chatObject.id));
 
         deleteContact(contactId);
 
@@ -237,7 +237,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
     }
 
     private void deleteContact(int contactId) {
-        SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).deleteContactIfNotAvailable(contactId);
+        SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).deleteContactIfNotVisible(contactId);
     }
 
     private void updateContent() {
@@ -256,17 +256,15 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
     }
 
     private void moveToNextActivity(Chats chatObject, ArrayList<ShareableData> dataList) {
-        String groupSeverId = chatObject.groupServerId;
-        long contactId = chatObject.contactId;
-        Contacts contact = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(contactId);
+        Contacts contact = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.id);
 
         String jid = contact.jid;
         String name = chatObject.name;
         Boolean blockStatus = chatObject.block;
-        long chatId = chatObject.chatid;
-        byte[] userpicture = chatObject.userImage;
+        int chatId = chatObject.id;
+        byte[] userPicture = chatObject.image;
 
-        Intent intent = ChatScreenActivity.createChatScreenIntent(getActivity(), jid, name, contactId, chatId, groupSeverId, userpicture, blockStatus, true, contact.availableStatus, contact.status);
+        Intent intent = ChatScreenActivity.createChatScreenIntent(getActivity(), chatObject.isGroupChat, jid, name, chatId, userPicture, blockStatus, true, contact.availableStatus, contact.status);
         intent.putExtra(Constants.INTENT_KEY_USER_AVAILABLE_STATUS, contact.availableStatus);
         if (dataList != null) {
             ArrayList<ShareableData> dataArrayList = getArguments().getParcelableArrayList(Constants.INTENT_FORWARD_SELECTED_IDS);

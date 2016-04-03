@@ -39,7 +39,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_group_detail);
 
-        String groupServerId = getIntent().getStringExtra("groupServerId");
+        String groupServerId = getIntent().getStringExtra("jid");
         if( groupServerId != null ){
             isGroupEditing = true;
         } else {
@@ -64,8 +64,8 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putString("name", getIntent().getStringExtra("name"));
         bundle.putString("profilePicture", getIntent().getStringExtra("profilePicture"));
-        bundle.putString("groupServerId", getIntent().getStringExtra("groupServerId"));
-        bundle.putLong("chatID", getIntent().getLongExtra("chatID", SportsUnityDBHelper.DEFAULT_ENTRY_ID));
+        bundle.putString("jid", getIntent().getStringExtra("jid"));
+        bundle.putInt("chatID", getIntent().getIntExtra("chatID", SportsUnityDBHelper.DEFAULT_ENTRY_ID));
 
         GroupInfoFragment groupInfoFragment = new GroupInfoFragment();
         groupInfoFragment.setArguments(bundle);
@@ -229,7 +229,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
 
         @Override
         protected Boolean doInBackground(Void... params) {
-            String groupJid = getIntent().getStringExtra("groupServerId");
+            String groupJid = getIntent().getStringExtra("jid");
             boolean success = addMembers( groupJid, contactsFragment.getSelectedMembersList());
             return success;
         }
@@ -258,12 +258,12 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         if (success) {
             PubSubMessaging.getInstance().sendIntimationAboutAffiliationListChanged(getApplicationContext(), groupJid);
 
-            ArrayList<Long> members = new ArrayList<>();
+            ArrayList<Integer> members = new ArrayList<>();
             for (Contacts c : selectedMembers) {
                 members.add(c.id);
             }
 
-            long chatId = getIntent().getLongExtra("chatID", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
+            int chatId = getIntent().getIntExtra("chatID", SportsUnityDBHelper.DEFAULT_ENTRY_ID);
             SportsUnityDBHelper.getInstance(getApplicationContext()).createGroupUserEntry(chatId, members);
         } else {
             //nothing

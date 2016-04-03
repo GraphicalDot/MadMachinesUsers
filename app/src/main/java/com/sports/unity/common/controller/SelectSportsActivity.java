@@ -2,7 +2,6 @@ package com.sports.unity.common.controller;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
@@ -171,7 +170,8 @@ public class SelectSportsActivity extends CustomAppCompatActivity {
     private void moveOn() {
         executeThreadToUpdateInterests();
         UserUtil.setSportsSelected(SelectSportsActivity.this, sports);
-        UserUtil.setFilterSportsSelected(SelectSportsActivity.this, new ArrayList<String>(sports));
+        UserUtil.setScoreFilterSportsSelected(SelectSportsActivity.this, new ArrayList<String>(sports));
+        UserUtil.setNewsFilterSportsSelected(SelectSportsActivity.this, new ArrayList<String>(sports));
         Intent intent = new Intent(getIntent());
         intent.setClass(this, AdvancedFilterActivity.class);
         intent.putExtra(Constants.SPORTS_TYPE, UserUtil.getSportsSelected().get(0));

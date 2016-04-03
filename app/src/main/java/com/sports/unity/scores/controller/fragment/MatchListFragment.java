@@ -89,9 +89,9 @@ public class MatchListFragment extends Fragment {
 
         View view = inflater.inflate(com.sports.unity.R.layout.fragment_match_list, container, false);
         initView(view);
-        if(UserUtil.getFilterSportsSelected()!=null){
-            sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
-            sportSelected = UserUtil.getFilterSportsSelected();
+        if(UserUtil.getScoreFilterSportsSelected()!=null) {
+            sportsSelectedNum = UserUtil.getScoreFilterSportsSelected().size();
+            sportSelected = UserUtil.getScoreFilterSportsSelected();
         }
         return view;
     }
@@ -105,6 +105,7 @@ public class MatchListFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+
         int id = item.getItemId();
 
         if (id == R.id.action_search) {
@@ -115,6 +116,7 @@ public class MatchListFragment extends Fragment {
 
         if (id == com.sports.unity.R.id.action_filter) {
             Intent i = new Intent(getActivity(), FilterActivity.class);
+            i.putExtra(Constants.KEY_ORIGIN_ACTIVITY,Constants.SCORE_ACTIVITY);
             startActivityForResult(i, Constants.REQUEST_CODE_SCORE);
             return true;
         }
@@ -154,8 +156,8 @@ public class MatchListFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
-        sportSelected = UserUtil.getFilterSportsSelected();
+        sportsSelectedNum = UserUtil.getScoreFilterSportsSelected().size();
+        sportSelected = UserUtil.getScoreFilterSportsSelected();
         removeResponseListener();
         mSwipeRefreshLayout.setRefreshing(false);
     }
@@ -208,11 +210,11 @@ public class MatchListFragment extends Fragment {
 
     private void handleIfSportsChanged() {
         boolean isSportsChanged = false;
-        if (sportsSelectedNum != UserUtil.getFilterSportsSelected().size()) {
+        if (sportsSelectedNum != UserUtil.getScoreFilterSportsSelected().size()) {
             isSportsChanged = true;
         } else {
             for (int i = 0; i < sportSelected.size(); i++) {
-                if (!UserUtil.getFilterSportsSelected().contains(sportSelected.get(i))) {
+                if (!UserUtil.getScoreFilterSportsSelected().contains(sportSelected.get(i))) {
                     isSportsChanged = true;
                 }
             }
@@ -220,8 +222,8 @@ public class MatchListFragment extends Fragment {
         if (isSportsChanged) {
             mSwipeRefreshLayout.setRefreshing(true);
             requestContent();
-            sportSelected = UserUtil.getFilterSportsSelected();
-            sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
+            sportSelected = UserUtil.getScoreFilterSportsSelected();
+            sportsSelectedNum = UserUtil.getScoreFilterSportsSelected().size();
         }
     }
 
@@ -335,7 +337,7 @@ public class MatchListFragment extends Fragment {
         ArrayList<JSONObject> list = ScoresJsonParser.parseListOfMatches(content);
         if (list.size() > 0) {
 
-            if (UserUtil.getFilterSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET) && UserUtil.getFilterSportsSelected().contains(Constants.SPORTS_TYPE_FOOTBALL)) {
+            if (UserUtil.getScoreFilterSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET) && UserUtil.getScoreFilterSportsSelected().contains(Constants.SPORTS_TYPE_FOOTBALL)) {
                 matches.addAll(list);
             } else {
                 ArrayList<JSONObject> cricket = new ArrayList<>();
@@ -352,7 +354,7 @@ public class MatchListFragment extends Fragment {
                         e.printStackTrace();
                     }
                 }
-                if (UserUtil.getFilterSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET)) {
+                if (UserUtil.getScoreFilterSportsSelected().contains(Constants.SPORTS_TYPE_CRICKET)) {
                     matches.addAll(cricket);
                 } else {
                     matches.addAll(football);

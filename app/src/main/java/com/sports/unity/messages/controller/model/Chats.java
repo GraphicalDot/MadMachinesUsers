@@ -5,45 +5,41 @@ package com.sports.unity.messages.controller.model;
  */
 public class Chats {
 
-    public int chatid;
-    public String groupServerId = null;
-    public int contactId;
+    public int id;
+    public String jid;
     public String name;
-    public byte[] chatImage;
+    public byte[] image;
     public int unreadCount;
     public int lastMessage;
     public boolean mute;
 
     public String data;
-    public byte[] media;
     public String mimeType;
     public String sent;
     public String received;
 
-    public byte[] userImage;
     public boolean block;
+    public boolean isGroupChat;
 
-    public Chats(int unread, String name, int contactId, int lastMessageId, String dataText, byte[] dataMedia,
-                 String dataType, String sentTime, String recieveTime, int chatId, String groupServerId, byte[] chatImage, boolean muteValue, byte[] userImage, boolean blockValue) {
+    public Chats(int unread, String name, int id, int lastMessageId, String dataText,
+                 String dataType, String sentTime, String recieveTime, String jid, byte[] image, boolean muteValue, boolean blockValue, boolean isGroupChat) {
+
+        this.id = id;
+        this.jid = jid;
+        this.name = name;
+        this.image = image;
 
         this.unreadCount = unread;
-        this.name = name;
-        this.contactId = contactId;
         this.lastMessage = lastMessageId;
+
         this.data = dataText;
-        this.media = dataMedia;
         this.mimeType = dataType;
         this.sent = sentTime;
         this.received = recieveTime;
-        this.userImage = userImage;
-        this.chatid = chatId;
-
-        this.groupServerId = groupServerId;
-        this.chatImage = chatImage;
 
         this.mute = muteValue;
-
         this.block = blockValue;
+        this.isGroupChat = isGroupChat;
     }
 
 }

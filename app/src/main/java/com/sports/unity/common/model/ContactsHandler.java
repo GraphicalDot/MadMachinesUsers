@@ -225,10 +225,10 @@ public class ContactsHandler {
                             if (rowId == -1) {
                                 if (!name.isEmpty()) {
                                     sportsUnityDBHelper.updateUserContactFromPhoneContactDetails(phoneNumber, name);
-                                    sportsUnityDBHelper.updateChatEntryName(sportsUnityDBHelper.getContactIdFromPhoneNumber(phoneNumber), name, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+                                    sportsUnityDBHelper.updateContactName(sportsUnityDBHelper.getContactIdFromPhoneNumber(phoneNumber), name);
                                 } else {
                                     sportsUnityDBHelper.setPhoneNumberAsName(phoneNumber);
-                                    sportsUnityDBHelper.getInstance(context).updateChatEntryName(sportsUnityDBHelper.getContactIdFromPhoneNumber(phoneNumber), phoneNumber, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+                                    sportsUnityDBHelper.getInstance(context).updateContactName(sportsUnityDBHelper.getContactIdFromPhoneNumber(phoneNumber), phoneNumber);
                                 }
                             } else {
                                 //nothing
@@ -324,7 +324,22 @@ public class ContactsHandler {
                         jid = map.getString("username");
 
                         jids.add(jid);
-                        SportsUnityDBHelper.getInstance(context).updateContacts(context, phoneNumber, jid);
+
+                        try {
+                            Contacts contacts = SportsUnityDBHelper.getInstance(context).getContactByJid(jid);
+                            if( contacts == null ) {
+                                SportsUnityDBHelper.getInstance(context).updateContacts(context, phoneNumber, jid);
+                            } else {
+                                if( contacts.phoneNumber == null ){
+                                    SportsUnityDBHelper.getInstance(context).deleteContact(phoneNumber);
+                                    SportsUnityDBHelper.getInstance(context).updateContacts(jid, contacts.phoneNumber);
+                                } else {
+                                    //nothing
+                                }
+                            }
+                        }catch (Exception ex){
+                            ex.printStackTrace();
+                        }
                     }
 
                     updateMyContactInfoFromVCards(context, jids);

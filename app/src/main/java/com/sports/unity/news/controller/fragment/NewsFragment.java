@@ -65,10 +65,10 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
         View v = inflater.inflate(com.sports.unity.R.layout.news, container, false);
         initViews(v);
-        if (UserUtil.getFilterSportsSelected() != null) {
-            sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
+        if (UserUtil.getNewsFilterSportsSelected() != null) {
+            sportsSelectedNum = UserUtil.getNewsFilterSportsSelected().size();
         }
-        sportSelected = UserUtil.getFilterSportsSelected();
+        sportSelected = UserUtil.getNewsFilterSportsSelected();
         return v;
     }
 
@@ -94,8 +94,8 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         super.onPause();
         newsContentHandler.removeContentListener();
 
-        sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
-        sportSelected = UserUtil.getFilterSportsSelected();
+        sportsSelectedNum = UserUtil.getNewsFilterSportsSelected().size();
+        sportSelected = UserUtil.getNewsFilterSportsSelected();
     }
 
     @Override
@@ -126,6 +126,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
         if (id == com.sports.unity.R.id.action_filter) {
             Intent i = new Intent(getActivity(), FilterActivity.class);
+            i.putExtra(Constants.KEY_ORIGIN_ACTIVITY, Constants.NEWS_ACTIVITY);
             startActivityForResult(i, Constants.REQUEST_CODE_NEWS);
             return true;
         }
@@ -298,8 +299,8 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
 
     private void handleIfSportsChanged() {
         boolean isSportsChanged = false;
-        ArrayList<String> sports = UserUtil.getFilterSportsSelected();
-        if (sportsSelectedNum != UserUtil.getFilterSportsSelected().size()) {
+        ArrayList<String> sports = UserUtil.getNewsFilterSportsSelected();
+        if (sportsSelectedNum != sports.size()) {
             isSportsChanged = true;
         } else {
             for (int i = 0; i < sportSelected.size(); i++) {
@@ -312,8 +313,8 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
             newsContentHandler.clearContent();
             mAdapter.notifyDataSetChanged();
             newsContentHandler.selectedSportsChanged();
-            sportSelected = UserUtil.getFilterSportsSelected();
-            sportsSelectedNum = UserUtil.getFilterSportsSelected().size();
+            sportSelected = sports;
+            sportsSelectedNum = sports.size();
             boolean success = newsContentHandler.refreshNews(true);
             if (success == false) {
                 showErrorLayout(getView());

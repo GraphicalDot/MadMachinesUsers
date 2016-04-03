@@ -171,7 +171,7 @@ public class GroupMessaging {
 
     }
 
-    public void sendMessageToGroup(String msg, MultiUserChat multiUserChat, long chatId, String groupServerId, String from) {
+    public void sendMessageToGroup(String msg, MultiUserChat multiUserChat, int chatId, String groupJID, String from) {
         Message message = new Message();
         message.setType(Message.Type.groupchat);
         message.setBody(msg);
@@ -189,8 +189,8 @@ public class GroupMessaging {
          * SportsUnityDBHelper.getInstance(context).addMessageToDatabase();
          */
 
-        long messageId = sportsUnityDBHelper.addMessage(msg, SportsUnityDBHelper.MIME_TYPE_TEXT, from, true, null, id, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-        sportsUnityDBHelper.updateChatEntry(messageId, chatId, groupServerId);
+        int messageId = sportsUnityDBHelper.addMessage(msg, SportsUnityDBHelper.MIME_TYPE_TEXT, from, true, null, id, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
+        sportsUnityDBHelper.updateChatEntry(messageId, groupJID);
 
     }
 

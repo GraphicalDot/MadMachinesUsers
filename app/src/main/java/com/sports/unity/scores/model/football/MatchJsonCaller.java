@@ -15,7 +15,11 @@ public class MatchJsonCaller extends JsonObjectCaller {
     }
 
     public String getMatchDate() throws JSONException {
-        return jsonObject.getString("start_date");
+        if (!jsonObject.isNull("start_date")) {
+            return jsonObject.getString("start_date");
+        } else {
+            return "";
+        }
     }
 
     public String getMatchTime() throws JSONException {
@@ -23,20 +27,20 @@ public class MatchJsonCaller extends JsonObjectCaller {
     }
 
     public String getResult() throws JSONException {
-        if(jsonObject.isNull("result")){
-            return  "";
+        if (jsonObject.isNull("result")) {
+            return "";
         }
         return jsonObject.getString("result");
     }
 
     public String getTeams1Odds() {
         String odds = null;
-        try{
+        try {
             if (!jsonObject.isNull("home_team_odds"))
-            odds = jsonObject.getString("home_team_odds");
+                odds = jsonObject.getString("home_team_odds");
             else
                 odds = "";
-        }catch (JSONException ex){
+        } catch (JSONException ex) {
             ex.printStackTrace();
         }
         return odds;
@@ -44,28 +48,28 @@ public class MatchJsonCaller extends JsonObjectCaller {
 
     public String getTeams2Odds() throws JSONException {
         String odds = null;
-        try{
+        try {
             if (!jsonObject.isNull("away_team_odds"))
-            odds = jsonObject.getString("away_team_odds");
+                odds = jsonObject.getString("away_team_odds");
             else
                 odds = "";
-        }catch (JSONException ex){
+        } catch (JSONException ex) {
             ex.printStackTrace();
         }
         return odds;
     }
 
-    public String getLeagueName(){
+    public String getLeagueName() {
 
-            try {
-                if (!jsonObject.isNull("league_name")){
-                return  jsonObject.getString("league_name");
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+        try {
+            if (!jsonObject.isNull("league_name")) {
+                return jsonObject.getString("league_name");
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
-    return  "";
+        return "";
     }
 
 

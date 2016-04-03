@@ -49,11 +49,11 @@ public class BlockUnblockUserHelper {
         }
     }
 
-    public void showAlert_ToSendMessage_UnblockUser(Activity activity, long contactId, String phoneNumber, Menu menu) {
+    public void showAlert_ToSendMessage_UnblockUser(Activity activity, int contactId, String phoneNumber, Menu menu) {
         alert_Dialog("To send message, please unblock this user.", false, activity, contactId, phoneNumber, menu);
     }
 
-    public void onMenuItemSelected(Activity activity, long contactId, String phoneNumber, Menu menu) {
+    public void onMenuItemSelected(Activity activity, int contactId, String phoneNumber, Menu menu) {
         if (blockStatus) {
             startTaskToBlockOrUnBlock(false, activity, contactId, phoneNumber, menu);
         } else {
@@ -61,7 +61,7 @@ public class BlockUnblockUserHelper {
         }
     }
 
-    private void alert_Dialog(String message, final boolean status, final Activity activity, final long contactId, final String phoneNumber, final Menu menu) {
+    private void alert_Dialog(String message, final boolean status, final Activity activity, final int contactId, final String phoneNumber, final Menu menu) {
         AlertDialog.Builder altDialog = new AlertDialog.Builder(activity);
         altDialog.setMessage(message);
         altDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -83,7 +83,7 @@ public class BlockUnblockUserHelper {
         altDialog.show();
     }
 
-    private void startTaskToBlockOrUnBlock(boolean status, Activity activity, long contactId, String phoneNumber, Menu menu) {
+    private void startTaskToBlockOrUnBlock(boolean status, Activity activity, int contactId, String phoneNumber, Menu menu) {
         new BlockOrUnBlockUserAsyncTask(status, activity, contactId, phoneNumber, menu).execute();
     }
 
@@ -118,7 +118,7 @@ public class BlockUnblockUserHelper {
 
         private boolean status = false;
         private Activity activity;
-        private long contactId;
+        private int contactId;
         private String phoneNumber;
         private Menu menu;
 
@@ -126,7 +126,7 @@ public class BlockUnblockUserHelper {
 
         private boolean success = false;
 
-        public BlockOrUnBlockUserAsyncTask(boolean status, Activity activity, long contactId, String phoneNumber, Menu menu) {
+        public BlockOrUnBlockUserAsyncTask(boolean status, Activity activity, int contactId, String phoneNumber, Menu menu) {
             this.status = status;
             this.activity = activity;
             this.contactId = contactId;

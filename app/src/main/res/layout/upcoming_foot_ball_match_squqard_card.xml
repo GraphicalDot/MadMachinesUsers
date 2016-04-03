@@ -1,97 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:card="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical">
-    <android.support.percent.PercentRelativeLayout
+
+    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+        android:id="@+id/cricket_player_name"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:gravity="left|center_vertical"
         android:padding="@dimen/horizontal_padding_very_small"
-        android:layout_height="wrap_content">
+        android:text=""
+        android:textColor="@color/news_static"
+        android:textSize="@dimen/font_size_small_medium"
+        android:visibility="gone" />
+
+    <android.support.percent.PercentRelativeLayout
+        android:id="@+id/football_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/horizontal_padding_very_small">
+
         <LinearLayout
             android:id="@+id/ll_header"
             android:layout_width="wrap_content"
-            card:layout_widthPercent="40%"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            card:layout_widthPercent="40%">
+
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_player_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/news_static"
-                android:textSize="@dimen/font_size_small_medium"
                 android:gravity="right"
                 android:text=""
-                />
+                android:textColor="@color/news_static"
+                android:textSize="@dimen/font_size_small_medium" />
+
             <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
-                android:paddingLeft="@dimen/horizontal_padding_very_very_small"
                 android:id="@+id/tv_player_age"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="left"
-                android:textColor="@color/news_static"
-                android:textSize="@dimen/font_size_small_medium"
+                android:paddingLeft="@dimen/horizontal_padding_very_very_small"
                 android:text=""
-                />
+                android:textColor="@color/news_static"
+                android:textSize="@dimen/font_size_small_medium" />
         </LinearLayout>
 
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:id="@+id/tv_p"
-            android:layout_toRightOf="@id/ll_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/ll_header"
             android:gravity="center"
+            android:text=""
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
-            card:layout_widthPercent="12%"
-            android:text=""
-            />
+            card:layout_widthPercent="12%" />
+
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:id="@+id/tv_pl"
-            android:layout_toRightOf="@id/tv_p"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tv_p"
             android:gravity="center"
+            android:text=""
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
-            card:layout_widthPercent="12%"
-            android:text=""
-            />
+            card:layout_widthPercent="12%" />
+
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:id="@+id/tv_gol"
-            android:layout_toRightOf="@id/tv_pl"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tv_pl"
             android:gravity="center"
+            android:text=""
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
-            card:layout_widthPercent="12%"
-            android:text=""
-            />
+            card:layout_widthPercent="12%" />
+
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-            android:layout_toRightOf="@id/tv_gol"
             android:id="@+id/tv_yellow_card"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tv_gol"
             android:gravity="center"
+            android:text=""
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
-            card:layout_widthPercent="12%"
-            android:text=""
-            />
+            card:layout_widthPercent="12%" />
+
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-            android:layout_toRightOf="@id/tv_yellow_card"
             android:id="@+id/tv_red_card"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tv_yellow_card"
             android:gravity="center"
+            android:text=""
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
-            card:layout_widthPercent="12%"
-            android:text=""
-            />
+            card:layout_widthPercent="12%" />
     </android.support.percent.PercentRelativeLayout>
+
     <View
         android:layout_width="match_parent"
-        android:background="@color/gray3"
-        android:layout_height="1dp"></View>
+        android:layout_height="1dp"
+        android:background="@color/gray3"></View>
 </LinearLayout>

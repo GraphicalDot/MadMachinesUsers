@@ -64,7 +64,10 @@ public class SUPushServiceListener extends GcmListenerService {
                 JSONObject oldData = new JSONObject(message);
                 JSONObject notification = oldData.getJSONObject("message");
                 if (!notification.isNull(GCMConstants.SPORTS_ID)) {
-                    sportsType = notification.getInt(GCMConstants.SPORTS_ID) == 1 ? Constants.SPORTS_TYPE_CRICKET : Constants.SPORTS_TYPE_FOOTBALL;
+                    int sportsId = notification.getInt(GCMConstants.SPORTS_ID);
+                    if(sportsId==1 || sportsId==2){
+                        sportsType = sportsId == 1 ? Constants.SPORTS_TYPE_CRICKET : Constants.SPORTS_TYPE_FOOTBALL;
+                    }
                 }
                 if (!notification.isNull(GCMConstants.MATCH_ID)) {
                     matchiId = notification.getString(GCMConstants.MATCH_ID);
@@ -108,7 +111,17 @@ public class SUPushServiceListener extends GcmListenerService {
 
                 PendingIntent shareIntent = PendingIntent.getActivity(this,0,sharingIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
-                int  drawableId = getDrawableIcon(event);
+                int  drawableId = 0;
+
+                if(Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(sportsType)){
+
+                    getDrawableIconCricket(event);
+                }else if(Constants.SPORTS_TYPE_FOOTBALL.equalsIgnoreCase(sportsType)){
+                    getDrawableIconFootball(event);
+                }else{
+
+
+                }
                 Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), drawableId);
                 int sportsTypeId = getSportId(sportsType);
                  NotificationCompat.Builder mBuilder =
@@ -146,7 +159,30 @@ public class SUPushServiceListener extends GcmListenerService {
 
     }
 
-    private int getDrawableIcon(int event) {
+    private int getDrawableIconFootball(int event) {
+        int  drawable=0;
+        switch (event) {
+            case 1:
+                drawable = R.drawable.ic_toss;
+                break;
+            case 2:
+                drawable = R.drawable.ic_match_started;
+                break;
+            case 3:
+                drawable = R.drawable.ic_wkt;
+                break;
+            case 4:
+                drawable = R.drawable.ic_four;
+                break;
+            case 5:
+                drawable = R.drawable.ic_six;
+                break;
+        }
+        return  drawable;
+    }
+
+
+    private int getDrawableIconCricket(int event) {
         int  drawable=0;
         switch (event){
             case 1:

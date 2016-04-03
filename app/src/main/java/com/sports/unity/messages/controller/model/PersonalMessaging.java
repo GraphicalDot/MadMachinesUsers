@@ -62,31 +62,31 @@ public class PersonalMessaging {
         sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
     }
 
-    public void sendTextMessage(String msg, Chat chat, String fromJID, long chatId, boolean otherChat) {
+    public void sendTextMessage(String msg, Chat chat, String fromJID, int chatId, boolean otherChat) {
         Message message = new Message();
         message.setBody(msg);
 
         String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
         String stanzaId = sendMessage(message, chat, time, SportsUnityDBHelper.MIME_TYPE_TEXT, otherChat);
 
-        long messageId = sportsUnityDBHelper.addMessage(message.getBody(), SportsUnityDBHelper.MIME_TYPE_TEXT, fromJID, true, time,
+        int messageId = sportsUnityDBHelper.addMessage(message.getBody(), SportsUnityDBHelper.MIME_TYPE_TEXT, fromJID, true, time,
                 stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-        sportsUnityDBHelper.updateChatEntry(messageId, chatId, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+        sportsUnityDBHelper.updateChatEntry(messageId, chatId);
     }
 
-    public void sendStickerMessage(String msg, Chat chat, String fromJID, long chatId, boolean otherChat) {
+    public void sendStickerMessage(String msg, Chat chat, String fromJID, int chatId, boolean otherChat) {
         Message message = new Message();
         message.setBody(msg);
 
         String time = String.valueOf(CommonUtil.getCurrentGMTTimeInEpoch());
         String stanzaId = sendMessage(message, chat, time, SportsUnityDBHelper.MIME_TYPE_STICKER, otherChat);
 
-        long messageId = sportsUnityDBHelper.addMessage(message.getBody(), SportsUnityDBHelper.MIME_TYPE_STICKER, fromJID, true, time,
+        int messageId = sportsUnityDBHelper.addMessage(message.getBody(), SportsUnityDBHelper.MIME_TYPE_STICKER, fromJID, true, time,
                 stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-        sportsUnityDBHelper.updateChatEntry(messageId, chatId, SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID);
+        sportsUnityDBHelper.updateChatEntry(messageId, chatId);
     }
 
-    public void sendMediaMessage(String contentChecksum, String thumbnailImageAsBase64, Chat chat, long messageId, String mimeType, boolean nearByChat) {
+    public void sendMediaMessage(String contentChecksum, String thumbnailImageAsBase64, Chat chat, int messageId, String mimeType, boolean nearByChat) {
         String messageBody = null;
         if (thumbnailImageAsBase64 != null) {
             messageBody = contentChecksum + ":" + thumbnailImageAsBase64;
@@ -408,10 +408,7 @@ public class PersonalMessaging {
         }
 
         boolean success = true;
-        long chatId = SportsUnityDBHelper.DEFAULT_ENTRY_ID;
-
-        String groupServerId = null;
-        String messageFrom = null;
+        String messageFrom = fromId;
 //        if (isGroupChat) {
 //            groupServerId = fromId;
 //            messageFrom = message.getFrom().substring(message.getFrom().indexOf("/") + 1);
@@ -423,11 +420,9 @@ public class PersonalMessaging {
 //                success = false;
 //            }
 //        } else {
-        groupServerId = SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID;
-        messageFrom = fromId;
 
-        chatId = XMPPService.getChatIdOrCreateIfNotExist(context, false, fromId, groupServerId, nearByChat);
-        handleMessage(message, value, chatId, fromId, groupServerId, nearByChat);
+        int chatId = XMPPService.getChatIdOrCreateIfNotExist(context, false, fromId, nearByChat);
+        handleMessage(message, value, chatId, fromId, nearByChat);
 //        }
 
 
@@ -439,14 +434,14 @@ public class PersonalMessaging {
             } else {
                 Contacts contact = sportsUnityDBHelper.getContactByJid(fromId);
                 try {
-                    sportsUnityDBHelper.updateUnreadCount(chatId, groupServerId);
+                    sportsUnityDBHelper.updateUnreadCount(chatId, fromId);
                     if (contact.availableStatus != Contacts.AVAILABLE_BY_MY_CONTACTS) {
                         ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_OTHERS_LIST_KEY);
                     } else {
                         ActivityActionHandler.getInstance().dispatchCommonEvent(ActivityActionHandler.CHAT_LIST_KEY);
                     }
                     byte[] image = contact.image;
-                    XMPPService.displayNotification(context, message.getBody(), messageFrom, mimeType, chatId, false, groupServerId, image, contact.availableStatus, contact.status);
+                    XMPPService.displayNotification(context, message.getBody(), messageFrom, mimeType, chatId, false, fromId, image, contact.availableStatus, contact.status);
                 } catch (XMPPException.XMPPErrorException e) {
                     e.printStackTrace();
                 } catch (SmackException.NoResponseException e) {
@@ -458,7 +453,7 @@ public class PersonalMessaging {
         }
     }
 
-    public void handleMessage(Message message, Object value, long chatId, String from, String fromGroup, boolean nearByChat) {
+    public void handleMessage(Message message, Object value, int chatId, String from, boolean nearByChat) {
         String mimeType = (String) JivePropertiesManager.getProperty(message, Constants.PARAM_MIME_TYPE);
 
         if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_IMAGE)) {
@@ -470,21 +465,21 @@ public class PersonalMessaging {
                 bytesOfThumbnail = Base64.decode(thumbnail, Base64.DEFAULT);
             }
 
-            long messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
+            int messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
                     value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, bytesOfThumbnail);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
+            sportsUnityDBHelper.updateChatEntry(messageId, from);
 
             ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, from, mimeType, checksum, Long.valueOf(messageId));
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
-            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
+            int messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
                     value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
+            sportsUnityDBHelper.updateChatEntry(messageId, from);
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_AUDIO)) {
             String checksum = message.getBody();
 
-            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
+            int messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
                     value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
+            sportsUnityDBHelper.updateChatEntry(messageId, from);
 
             ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, from, mimeType, checksum, Long.valueOf(messageId));
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_VIDEO)) {
@@ -498,16 +493,16 @@ public class PersonalMessaging {
 
 //            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
 //                    value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-            long messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
+            int messageId = sportsUnityDBHelper.addMediaMessage(checksum, mimeType, from, false,
                     value.toString(), message.getStanzaId(), null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS, null, bytesOfThumbnail);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
+            sportsUnityDBHelper.updateChatEntry(messageId, from);
 
             ActivityActionHandler.getInstance().dispatchIncomingMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, from, mimeType, checksum, Long.valueOf(messageId));
         } else if (mimeType.equals(SportsUnityDBHelper.MIME_TYPE_STICKER)) {
-            long messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
+            int messageId = sportsUnityDBHelper.addMessage(message.getBody().toString(), mimeType, from, false,
                     value.toString(), message.getStanzaId(), null, null,
                     chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
-            sportsUnityDBHelper.updateChatEntry(messageId, chatId, fromGroup);
+            sportsUnityDBHelper.updateChatEntry(messageId, from);
         }
     }
 

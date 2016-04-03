@@ -409,11 +409,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         if (imageArray != null) {
             profileImage.setImageBitmap(BitmapFactory.decodeByteArray(imageArray, 0, imageArray.length));
         } else {
-            if (getIntent().getStringExtra("groupServerId").equals(SportsUnityDBHelper.DEFAULT_GROUP_SERVER_ID)) {
-                profileImage.setImageResource(R.drawable.ic_user);
-            } else {
-                //TODO
-            }
+            profileImage.setImageResource(R.drawable.ic_user);
         }
         String jid = getIntent().getStringExtra("jid");
         progessBar.setVisibility(View.VISIBLE);
