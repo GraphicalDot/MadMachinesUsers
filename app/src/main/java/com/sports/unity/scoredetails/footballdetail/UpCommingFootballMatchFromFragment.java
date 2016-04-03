@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.provider.CalendarContract;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
@@ -15,28 +14,23 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.amulyakhare.textdrawable.TextDrawable;
-import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.scores.ScoreDetailActivity;
-import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.sports.unity.util.Constants.COLOR_BLUE;
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_LEAGUE_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
+import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_NAME;
+import static com.sports.unity.util.Constants.INTENT_KEY_TEAM2_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_TEAM2_NAME;
-import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 
 /**
  * Created by madmachines on 23/2/16.
@@ -49,6 +43,8 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     private String leagueId = "";
     private String team1;
     private String team2;
+    private String teamId1;
+    private String teamId2;
     private SwipeRefreshLayout commentaryrefresh;
     private TextView tvnamefirstteam;
     private TextView tvlastfivematchteamfirst;
@@ -103,9 +99,11 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         date = i.getStringExtra(INTENT_KEY_DATE);
         team1 = i.getStringExtra(INTENT_KEY_TEAM1_NAME);
         team2 = i.getStringExtra(INTENT_KEY_TEAM2_NAME);
+        teamId1 = i.getStringExtra(INTENT_KEY_TEAM1_ID);
+        teamId2 = i.getStringExtra(INTENT_KEY_TEAM2_ID);
         upCommingFootballMatchFromHandler = UpCommingFootballMatchFromHandler.getInstance(context);
         upCommingFootballMatchFromHandler.addListener(this);
-        upCommingFootballMatchFromHandler.requestUpcommingMatchFrom(leagueId);
+        upCommingFootballMatchFromHandler.requestUpcommingMatchFrom(teamId1,teamId2,leagueId);
 
     }
     @Override
@@ -202,6 +200,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
         hideProgressBar();
+        parentView.setVisibility(View.VISIBLE);
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         final JSONArray dataArray = jsonObject.getJSONArray("data");
         if (activity != null) {
@@ -216,7 +215,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                     tvnamefirstteam.setText(teamFromObject.getString("team_name"));
                                     if(!teamFromObject.isNull("recent_form")){
                                         String recentForm = teamFromObject.getString("recent_form");
-                                        if(recentForm !=null && recentForm.length()<1){
+                                        if(recentForm !=null){
                                             initializeTeamForms(recentForm);
                                         }else{
                                             showErrorLayout(getView());
@@ -237,7 +236,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                     tvnamesecondteam.setText(teamFromObject.getString("team_name"));
                                     if(!teamFromObject.isNull("recent_form")) {
                                         String recentForm = teamFromObject.getString("recent_form");
-                                        if(recentForm !=null && recentForm.length()<1){
+                                        if(recentForm !=null){
                                             initFromDataTeamSecond(recentForm);
                                         }else{
                                             showErrorLayout(getView());
@@ -353,7 +352,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
             upCommingFootballMatchFromHandler = UpCommingFootballMatchFromHandler.getInstance(context);
 
         }
-        upCommingFootballMatchFromHandler.requestUpcommingMatchFrom(leagueId);
+        upCommingFootballMatchFromHandler.requestUpcommingMatchFrom(teamId1,teamId2,leagueId);
     }
 
 

@@ -22,7 +22,7 @@ public class UpCommingFootballMatchFromHandler {
 
     private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
     private static Context mContext;
-    private String BASEURL = "http://52.74.75.79:8080/get_league_standings?league_id=";
+    private String BASEURL = " http://52.74.75.79:8080/get_team_form?team_1=%s&team_2=%s&league_id=%s";
 
     private UpCommingMatchFromContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -55,10 +55,10 @@ public class UpCommingFootballMatchFromHandler {
         }
     };
 
-    public void requestUpcommingMatchFrom(String leagueId) {
+    public void requestUpcommingMatchFrom(String teamFirst,String teamSecond,String leagueId) {
         Log.i("Score Detail", "Request Score Details");
 
-       String  url = BASEURL+leagueId;
+       String  url = String.format(BASEURL,teamFirst,teamSecond,leagueId);
         StringRequest stringRequest = null;
        // RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
