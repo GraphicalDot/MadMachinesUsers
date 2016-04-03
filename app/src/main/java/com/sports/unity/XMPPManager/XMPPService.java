@@ -504,10 +504,9 @@ public class XMPPService extends Service {
                 if (message.getFrom().equals("pubsub.mm.io")) {
                     //TODO
                 } else {
-                    //TODO from has to JID of user, whom getting last seen.
-                    String from = message.getFrom();
-                    String jid = from.substring(0, from.indexOf("@mm.io"));
-                    String gmtEpoch = message.getBody();
+                    String body = message.getBody();
+                    String jid = body.substring(0, body.indexOf('|'));
+                    String gmtEpoch = body.substring( body.indexOf('|')+1);
                     int days = CommonUtil.getTimeDifference(Long.parseLong(gmtEpoch));
                     if (days > 0) {
                         if (days == 1) {

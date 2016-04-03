@@ -331,8 +331,9 @@ public class ContactsHandler {
                                 SportsUnityDBHelper.getInstance(context).updateContacts(context, phoneNumber, jid);
                             } else {
                                 if( contacts.phoneNumber == null ){
+                                    Contacts removeContact = SportsUnityDBHelper.getInstance(context).getContactByPhoneNumber(contacts.phoneNumber);
                                     SportsUnityDBHelper.getInstance(context).deleteContact(phoneNumber);
-                                    SportsUnityDBHelper.getInstance(context).updateContacts(jid, contacts.phoneNumber);
+                                    SportsUnityDBHelper.getInstance(context).updateContacts(jid, contacts.phoneNumber, removeContact.name);
                                 } else {
                                     //nothing
                                 }

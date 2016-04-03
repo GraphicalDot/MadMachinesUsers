@@ -183,7 +183,7 @@ public class ActivityActionHandler {
         return success;
     }
 
-    public boolean dispatchIncomingMediaEvent(String key, String filter, String mimeType, String checksum, long messageId) {
+    public boolean dispatchIncomingMediaEvent(String key, String filter, String mimeType, String checksum, int messageId) {
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
