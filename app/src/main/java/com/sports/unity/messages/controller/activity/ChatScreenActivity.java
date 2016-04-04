@@ -417,7 +417,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         populateMessagesOnScreen();
         setEventListeners(mHandler);
 
-        checkForwardMessageQueue();
         toolbarActionsForChatScreen.resetVariables();
     }
 
@@ -1208,6 +1207,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     public void onXMPPServiceAuthenticated(boolean connected, XMPPConnection connection) {
         if (connected) {
             getChatThread();
+            checkForwardMessageQueue();
 
             if (!isGroupChat) {
                 if (isLastTimeRequired) {

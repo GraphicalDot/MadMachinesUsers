@@ -68,7 +68,7 @@ public class StaffPickTable extends Fragment implements UpCommingFootballMatchTa
             @Override
             public void onRefresh() {
                 if (upCommingFootballMatchTableHandler != null) {
-                    upCommingFootballMatchTableHandler.requestStaffPickedLeague("5166");
+                    upCommingFootballMatchTableHandler.requestStaffPickedLeague("5181");
                     swipeRefreshLayout.setRefreshing(true);
                 }
             }
@@ -130,6 +130,7 @@ public class StaffPickTable extends Fragment implements UpCommingFootballMatchTa
         JSONArray array = jsonObject.getJSONArray("data");
         JSONObject obj1 = array.getJSONObject(0);
         final JSONObject object = obj1.getJSONObject("season_table");
+        groupName = obj1.getString("series_name");
         seriesArray = new ArrayList<String>();
         for (int i = 0; i < object.names().length(); i++) {
             seriesArray.add(object.names().getString(i));
@@ -141,7 +142,6 @@ public class StaffPickTable extends Fragment implements UpCommingFootballMatchTa
             StaffPickTableDTO staffPickTableDTO = null;
             for (int j = 0; j < seriesArray.size(); j++) {
                 dataArray = new JSONArray();
-                groupName = seriesArray.get(j);
                 dataArray = object.getJSONArray(seriesArray.get(j));
                 List<StaffPickTableDTO> list = new ArrayList<StaffPickTableDTO>();
                 final LinearLayout tableData = (LinearLayout) inflater.inflate(R.layout.staff_pick_table, null);
@@ -218,7 +218,7 @@ public class StaffPickTable extends Fragment implements UpCommingFootballMatchTa
         super.onResume();
         if (upCommingFootballMatchTableHandler == null) {
             upCommingFootballMatchTableHandler = UpCommingFootballMatchTableHandler.getInstance(getContext());
-            upCommingFootballMatchTableHandler.requestStaffPickedLeague("5166");
+            upCommingFootballMatchTableHandler.requestStaffPickedLeague("5181");
             showProgressBar();
         }
         upCommingFootballMatchTableHandler.addListener(this);
