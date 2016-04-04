@@ -89,7 +89,12 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         }
         return jsonObject.getString("match_number");
     }
-
+    public String getMatchName() throws JSONException {
+        if(jsonObject.isNull("match_name")){
+            return  "";
+        }
+        return jsonObject.getString("match_name");
+    }
     public String getMatchFormat() throws JSONException {
         return jsonObject.getString("match_format");
     }
