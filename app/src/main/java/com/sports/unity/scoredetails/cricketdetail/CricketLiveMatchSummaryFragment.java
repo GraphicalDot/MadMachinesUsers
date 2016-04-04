@@ -313,7 +313,6 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                     balls[ballIndex] = curBall;
                     ballIndex--;
 
-
                 }
                 hideProgress();
             if (activity != null) {
