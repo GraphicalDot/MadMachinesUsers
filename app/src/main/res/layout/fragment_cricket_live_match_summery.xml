@@ -59,7 +59,6 @@
                             android:layout_width="@dimen/recent_ball_radius"
                             android:layout_height="@dimen/recent_ball_radius"
                             android:layout_weight="1"
-
                             android:src="@drawable/recent_balls" />
 
                         <ImageView

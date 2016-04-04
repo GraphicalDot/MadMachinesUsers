@@ -156,7 +156,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 //                        AlertDialog.Builder otherProfileBuilder = new AlertDialog.Builder(PeopleAroundMeMap.this);
 //                        otherProfileBuilder.setView(view);
 //                        aDialog = otherProfileBuilder.create();
-//                        aDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//                        aDialog.getWindow().setBackgroundDra'getDrawable(int)' is deprecated more... (Ctrl+wable(new ColorDrawable(Color.TRANSPARENT));
 //                        aDialog.show();
                         aDialog.setContentView(R.layout.chat_other_profile_layout);
                         aDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
