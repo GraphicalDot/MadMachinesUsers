@@ -150,7 +150,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 //            holder.liveText.setTextColor(Color.BLACK);
             if( matchJsonCaller.getType().equals(ScoresJsonParser.CRICKET) ) {
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
-
+                cricketMatchJsonCaller.setMatchWidgetAwayTeam(null);
+                cricketMatchJsonCaller.setMatchWidgetHomeTeam(null);
 
                 JSONObject widgetTeamsObject = cricketMatchJsonCaller.getTeamsWiget();
                 JSONArray widgetTeamsFirst = null;
@@ -214,6 +215,9 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     SetLiveMatchScoreCard(holder);
                 }
 
+
+
+
                 if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {
                     holder.odds.setVisibility(View.VISIBLE);
                     ((ViewGroup) holder.odds.getParent()).setTag(position);
@@ -225,48 +229,58 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     ((ViewGroup) holder.odds.getParent()).setClickable(false);
                 }
 
-                preferences  = PreferenceManager.getDefaultSharedPreferences(activity);
-                final String key = cricketMatchJsonCaller.getMatchId()+"|"+cricketMatchJsonCaller.getSeriesId().toString();
-                String subsMatch = preferences.getString(key,"");
-                if(!TextUtils.isEmpty(subsMatch) && key.equalsIgnoreCase(subsMatch)){
-                    holder.notification.setImageResource(R.drawable.ic_notification_enable);
-                    holder.notification.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            try {
-                                seriesId = cricketMatchJsonCaller.getSeriesId();
-                                matchId = cricketMatchJsonCaller.getMatchId();
-                                tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
-                                tokenRegistrationHandler.addListener(MatchListAdapter.this);
-                                tokenRegistrationHandler.removeMatchUser(key);
+                if("L".equalsIgnoreCase(cricketMatchJsonCaller.getStatus()) ||"N".equalsIgnoreCase(cricketMatchJsonCaller.getStatus()) ){
+                    preferences  = PreferenceManager.getDefaultSharedPreferences(activity);
+                    final String key = cricketMatchJsonCaller.getMatchId()+"|"+cricketMatchJsonCaller.getSeriesId().toString();
+                    String subsMatch = preferences.getString(key,"");
+                    if(!TextUtils.isEmpty(subsMatch) && key.equalsIgnoreCase(subsMatch)){
+                        holder.notification.setImageResource(R.drawable.ic_notification_enable);
+                        holder.notification.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                try {
+                                    seriesId = cricketMatchJsonCaller.getSeriesId();
+                                    matchId = cricketMatchJsonCaller.getMatchId();
+                                    tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
+                                    tokenRegistrationHandler.addListener(MatchListAdapter.this);
+                                    tokenRegistrationHandler.removeMatchUser(key);
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                    });
+                        });
 
 
-                }else{
-                    holder.notification.setImageResource(R.drawable.ic_notification_disabled);
-                    holder.notification.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            try {
-                                seriesId = cricketMatchJsonCaller.getSeriesId();
-                                matchId = cricketMatchJsonCaller.getMatchId();
-                                tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
-                                tokenRegistrationHandler.addListener(MatchListAdapter.this);
-                                tokenRegistrationHandler.registrerMatchUser(key, CommonUtil.getToken(activity));
+                    }else{
+                        holder.notification.setImageResource(R.drawable.ic_notification_disabled);
+                        holder.notification.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                try {
+                                    seriesId = cricketMatchJsonCaller.getSeriesId();
+                                    matchId = cricketMatchJsonCaller.getMatchId();
+                                    tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
+                                    tokenRegistrationHandler.addListener(MatchListAdapter.this);
+                                    tokenRegistrationHandler.registrerMatchUser(key, CommonUtil.getToken(activity));
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                    });
-
-
+                        });
+                    }
+                    holder.notification.setVisibility(View.VISIBLE);
+                } else{
+                    holder.notification.setVisibility(View.GONE);
                 }
+
+
+
+
+
+
+
             } else if( matchJsonCaller.getType().equals(ScoresJsonParser.FOOTBALL) ) {
                 holder.team1Overs.setVisibility(View.GONE);
                 holder.team2Overs.setVisibility(View.GONE);
@@ -275,49 +289,52 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
 
 
+                /*if(!"FT".equalsIgnoreCase(footballMatchJsonCaller.getMatchStatus())){*/
+                    Log.i("FOOTBALMATCHSTATUS: ",footballMatchJsonCaller.getMatchStatus());
+                    preferences  = PreferenceManager.getDefaultSharedPreferences(activity);
+                    final String key = footballMatchJsonCaller.getMatchId()+"|"+footballMatchJsonCaller.getLeagueId();
+                    String subsMatch = preferences.getString(key,"");
+                    if(!TextUtils.isEmpty(subsMatch) && key.equalsIgnoreCase(subsMatch)){
+                        holder.notification.setImageResource(R.drawable.ic_notification_enable);
+                        holder.notification.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                try {
+                                    seriesId = footballMatchJsonCaller.getLeagueId();
+                                    matchId = footballMatchJsonCaller.getMatchId().toString();
+                                    tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
+                                    tokenRegistrationHandler.addListener(MatchListAdapter.this);
+                                    tokenRegistrationHandler.removeMatchUser(key);
 
-                preferences  = PreferenceManager.getDefaultSharedPreferences(activity);
-                final String key = footballMatchJsonCaller.getMatchId()+"|"+footballMatchJsonCaller.getLeagueId();
-                String subsMatch = preferences.getString(key,"");
-                if(!TextUtils.isEmpty(subsMatch) && key.equalsIgnoreCase(subsMatch)){
-                    holder.notification.setImageResource(R.drawable.ic_notification_enable);
-                    holder.notification.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            try {
-                                seriesId = footballMatchJsonCaller.getLeagueId();
-                                matchId = footballMatchJsonCaller.getMatchId().toString();
-                                tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
-                                tokenRegistrationHandler.addListener(MatchListAdapter.this);
-                                tokenRegistrationHandler.removeMatchUser(key);
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                    });
+                        });
 
 
-                }else{
-                    holder.notification.setImageResource(R.drawable.ic_notification_disabled);
-                    holder.notification.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            try {
-                                seriesId = footballMatchJsonCaller.getLeagueId();
-                                matchId = footballMatchJsonCaller.getMatchId().toString();
-                                tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
-                                tokenRegistrationHandler.addListener(MatchListAdapter.this);
-                                tokenRegistrationHandler.registrerMatchUser(key, CommonUtil.getToken(activity));
+                    }else{
+                        holder.notification.setImageResource(R.drawable.ic_notification_disabled);
+                        holder.notification.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                try {
+                                    seriesId = footballMatchJsonCaller.getLeagueId();
+                                    matchId = footballMatchJsonCaller.getMatchId().toString();
+                                    tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
+                                    tokenRegistrationHandler.addListener(MatchListAdapter.this);
+                                    tokenRegistrationHandler.registrerMatchUser(key, CommonUtil.getToken(activity));
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }
-                    });
+                        });
 
 
-                }
+                    }
+              /*  }*/
+
 
                 Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000)));
                 String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
@@ -763,22 +780,20 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
             JSONObject object = new JSONObject(content);
             if(object!=null){
-                if(200==object.getInt("status")){
-                    if("success".equalsIgnoreCase(object.getString("info"))) {
-                        String key = matchId+"|"+seriesId;
-                        SharedPreferences prefs  = PreferenceManager.getDefaultSharedPreferences(activity);
-                        SharedPreferences.Editor editor = prefs.edit();
-                        if(TextUtils.isEmpty(prefs.getString(key,"")))
-                        {
-                            editor.remove(key);
-                        } else {
-                            editor.putString(key,key);
-                        }
-                        //editor.putString(matchId+"|"+seriesId,matchId+"|"+seriesId);
-                        editor.apply();
-                        notifyDataSetChanged();
+                if(200==object.getInt("status") && "success".equalsIgnoreCase(object.getString("info"))){
 
+                    String key = matchId+"|"+seriesId;
+                    SharedPreferences prefs  = PreferenceManager.getDefaultSharedPreferences(activity);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    if(TextUtils.isEmpty(prefs.getString(key,"")))
+                    {
+                        editor.remove(key);
+                    } else {
+                        editor.putString(key,key);
                     }
+                    editor.apply();
+                    notifyDataSetChanged();
+
                 }
             }
         } catch (JSONException e) {

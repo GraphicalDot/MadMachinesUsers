@@ -179,7 +179,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     @Override
     public void handleContent(String content) {
         try {
-           //content = "{\"data\": [{\"status\": \"F\", \"home_team\": \"England\", \"away_team\": \"New Zealand\", \"match_id\": \"33\", \"series_name\": \"T20I: World '16\", \"venue\": \"Feroz Shah Kotla Ground\", \"summary\": {\"recent_over\": {\"17\": [{\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"1\"}], \"16\": [{\"event\": [\"\", \"\", \"4\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"2\"}, {\"event\": [\"\", \"\", \"4\"], \"ball_id\": \"3\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"4\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"5\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"6\"}]}, \"upcoming_batsmen\": [{\"player_id\": \"14482\", \"name\": \"BA Stokes\", \"player_image\": \"http://players.images.s3.amazonaws.com/14482.png\"}, {\"player_id\": \"15513\", \"name\": \"MM Ali\", \"player_image\": \"http://players.images.s3.amazonaws.com/15513.png\"}, {\"player_id\": \"15541\", \"name\": \"CJ Jordan\", \"player_image\": \"http://players.images.s3.amazonaws.com/15541.png\"}, {\"player_id\": \"7573\", \"name\": \"AU Rashid\", \"player_image\": \"http://players.images.s3.amazonaws.com/7573.png\"}, {\"player_id\": \"7986\", \"name\": \"DJ Willey\", \"player_image\": \"http://players.images.s3.amazonaws.com/7986.png\"}, {\"player_id\": \"3396\", \"name\": \"LE Plunkett\", \"player_image\": \"http://players.images.s3.amazonaws.com/3396.png\"}], \"current_partnership\": [{\"player_2_runs\": \"32\", \"player_1_runs\": \"17\", \"player_1_id\": \"15004\", \"player_1_image\": \"http://players.images.s3.amazonaws.com/15004.png\", \"player_1\": \"Root, JE\", \"player_2_balls\": \"17\", \"player_1_index\": \"1\", \"player_2_index\": \"2\", \"player_2\": \"Buttler, JC\", \"player_2_id\": \"8082\", \"player_1_balls\": \"12\", \"player_2_image\": \"http://players.images.s3.amazonaws.com/8082.png\"}], \"toss\": \"England won the toss and elected to bowl\", \"man_of_the_match\": {\"player_id\": \"15914\", \"name\": \"Jason Roy\", \"batting\": {\"runs\": \"78\", \"balls\": \"44\", \"strike_rate\": \"177.0\", \"six\": \"2\"}, \"player_image\": \"http://players.images.s3.amazonaws.com/15914.png\"}, \"venue\": \"Feroz Shah Kotla Ground\", \"umpires\": {\"first_umpire\": \"Dharmasena, HDPK (SLA)\", \"third_umpire\": \"Oxenford, BNJ (AUS)\", \"referee\": \"Boon, DC (AUS)\", \"second_umpire\": \"Tucker, RJ (AUS)\"}, \"current_bowler\": {\"runs\": \"28\", \"name\": \"Santner, MJ\", \"wicket\": \"1\", \"player_id\": \"14620\", \"overs\": \"3.1\", \"player_image\": \"http://players.images.s3.amazonaws.com/14620.png\"}, \"last_wicket\": \"Morgan, EJG,0(LBW:Sodhi, IS)\"}, \"series_id\": \"5166\", \"match_time\": 1459344600, \"result\": \"England won by 7 wickets\", \"start_date\": \"2016-03-31T00:30:00\"}], \"success\": true, \"error\": false}";
+           content = "{\"data\": [{\"status\": \"F\", \"home_team\": \"England\", \"away_team\": \"West Indies\", \"match_id\": \"35\", \"series_name\": \"T20I: World '16\", \"venue\": \"Eden Gardens\", \"summary\": {\"recent_over\": {\"19\": [{\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"2\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"3\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"4\"}], \"18\": [{\"event\": [\"\", \"\", \"4\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"2\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"3\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"4\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"5\"}, {\"event\": [\"\", \"\", \"0\"], \"ball_id\": \"6\"}]}, \"upcoming_batsmen\": [{\"player_id\": \"3376\", \"name\": \"D Ramdin\", \"player_image\": \"http://players.images.s3.amazonaws.com/3376.png\"}, {\"player_id\": \"8095\", \"name\": \"S Badree\", \"player_image\": \"http://players.images.s3.amazonaws.com/8095.png\"}, {\"player_id\": \"7165\", \"name\": \"SJ Benn\", \"player_image\": \"http://players.images.s3.amazonaws.com/7165.png\"}], \"current_partnership\": [{\"player_2_runs\": \"34\", \"player_1_runs\": \"20\", \"player_1_id\": \"2866\", \"player_1_image\": \"http://players.images.s3.amazonaws.com/2866.png\", \"player_1\": \"Samuels, MN\", \"player_2_balls\": \"10\", \"player_1_index\": \"1\", \"player_2_index\": \"2\", \"player_2\": \"Brathwaite, CR\", \"player_2_id\": \"15548\", \"player_1_balls\": \"16\", \"player_2_image\": \"http://players.images.s3.amazonaws.com/15548.png\"}], \"toss\": \"West Indies won the toss and elected to bowl\", \"man_of_the_match\": {\"player_id\": \"2866\", \"name\": \"Marlon Samuels\", \"batting\": {\"runs\": \"85\", \"balls\": \"66\", \"strike_rate\": \"128.0\", \"six\": \"2\"}, \"player_image\": \"http://players.images.s3.amazonaws.com/2866.png\"}, \"venue\": \"Eden Gardens\", \"umpires\": {\"first_umpire\": \"Dharmasena, HDPK (SLA)\", \"third_umpire\": \"Erasmus, M (SAF)\", \"referee\": \"Madugalle, RS (SLA)\", \"second_umpire\": \"Tucker, RJ (AUS)\"}, \"current_bowler\": {\"runs\": \"41\", \"name\": \"Stokes, BA\", \"wicket\": \"0\", \"player_id\": \"14482\", \"overs\": \"2.4\", \"player_image\": \"http://players.images.s3.amazonaws.com/14482.png\"}, \"last_wicket\": \"Sammy, DJG,2(c:Hales, AD and b:Willey, DJ)\"}, \"series_id\": \"5166\", \"match_time\": 1459690200, \"result\": \"West Indies won by 4 wickets\", \"start_date\": \"2016-04-03T23:30:00\"}], \"success\": true, \"error\": false}";
             showProgress();
             JSONObject object = new JSONObject(content);
             boolean success = object.getBoolean("success");
@@ -244,8 +244,8 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
 
                 BallDetail defb = new BallDetail();
-                final BallDetail[] balls = new BallDetail[]{defb, defb, defb, defb, defb, defb,defb};
-                int ballIndex = 6;
+                final BallDetail[] balls = new BallDetail[]{defb, defb, defb, defb, defb, defb};
+                int ballIndex = 5;
 
                 Iterator<String> recentOverKeys = recentOver.keys();
                 Integer keys[]= new Integer[2];
@@ -291,6 +291,10 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
                     BallDetail curBall = null;
                     JSONObject object = ballsStack.pop();
+
+                        int ballId = object.getInt("ball_id");
+
+
                     JSONArray eventArray = object.getJSONArray("event");
                     String event = eventArray.getString(0);
                     String wicket = eventArray.getString(1);
@@ -305,6 +309,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                     }else  {
                         curBall = getResolveBall(run);
                     }
+                    curBall.setBallId(ballId);
                     balls[ballIndex] = curBall;
                     ballIndex--;
 

@@ -142,6 +142,7 @@
                     android:paddingLeft="@dimen/vertical_padding_medium"
                     android:paddingRight="@dimen/vertical_padding_medium"
                     android:paddingTop="@dimen/vertical_padding_small"
+                    android:layout_marginBottom="10dp"
                     android:progressDrawable="@drawable/seekbar_drawable"
                     android:thumb="@drawable/ic_distance_slider_01" />
 
