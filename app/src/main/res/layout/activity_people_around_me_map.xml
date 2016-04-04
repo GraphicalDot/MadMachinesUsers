@@ -2,6 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/white"
     android:orientation="vertical"
     tools:context="com.sports.unity.messages.controller.activity.PeopleAroundMeMap">
@@ -143,6 +144,86 @@
                     android:paddingTop="@dimen/vertical_padding_small"
                     android:progressDrawable="@drawable/seekbar_drawable"
                     android:thumb="@drawable/ic_distance_slider_01" />
+
+                <android.support.percent.PercentRelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/vertical_padding_very_small"
+                    >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_launcher"
+                        android:id="@+id/my_location"
+                        app:layout_widthPercent="5%"/>
+
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="My location"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/my_location"
+                        app:layout_widthPercent="15%"
+                        android:id="@+id/my_location_text"
+                        android:textSize="@dimen/font_size_very_small"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_widthPercent="5%"
+                        android:src="@drawable/ic_launcher"
+                        android:id="@+id/my_location_friends"
+                        android:layout_toRightOf="@+id/my_location_text"/>
+
+                   < com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Friends"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/my_location_friends"
+                    app:layout_widthPercent="10%"
+                    android:id="@+id/friends_text"
+                    android:textSize="@dimen/font_size_very_small"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_widthPercent="5%"
+                        android:src="@drawable/ic_launcher"
+                        android:id="@+id/my_location_users"
+                        android:layout_toRightOf="@+id/friends_text"/>
+
+                    < com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sports Unity users"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/my_location_users"
+                        app:layout_widthPercent="22%"
+                        android:id="@+id/users_text"
+                        android:textSize="@dimen/font_size_very_small"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_widthPercent="5%"
+                        android:src="@drawable/ic_launcher"
+                        android:id="@+id/my_location_people_intrest"
+                        android:layout_toRightOf="@+id/users_text"/>
+
+                    < com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="People with same intrest"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/my_location_people_intrest"
+                        app:layout_widthPercent="28%"
+                        android:id="@+id/people_intrest_text"
+                        android:textSize="@dimen/font_size_very_small"/>
+
+
+                </android.support.percent.PercentRelativeLayout>
 
             </LinearLayout>
         </RelativeLayout>
