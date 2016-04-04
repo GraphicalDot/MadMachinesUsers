@@ -74,7 +74,6 @@
             android:layout_height="wrap_content"
             android:background="@color/textColorPrimary"
             android:visibility="gone">
-
             <fragment
                 android:id="@+id/custom_location"
                 android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
@@ -155,7 +154,7 @@
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:src="@drawable/ic_launcher"
+                        android:src="@drawable/ic_my_location"
                         android:id="@+id/my_location"
                         app:layout_widthPercent="5%"/>
 
@@ -173,11 +172,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_widthPercent="5%"
-                        android:src="@drawable/ic_launcher"
+                        android:src="@drawable/ic_friends"
                         android:id="@+id/my_location_friends"
                         android:layout_toRightOf="@+id/my_location_text"/>
 
-                   < com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                   <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Friends"
@@ -191,11 +190,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_widthPercent="5%"
-                        android:src="@drawable/ic_launcher"
+                        android:src="@drawable/ic_sports_unity_users"
                         android:id="@+id/my_location_users"
                         android:layout_toRightOf="@+id/friends_text"/>
 
-                    < com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Sports Unity users"
@@ -204,22 +203,21 @@
                         app:layout_widthPercent="22%"
                         android:id="@+id/users_text"
                         android:textSize="@dimen/font_size_very_small"/>
-
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_widthPercent="5%"
-                        android:src="@drawable/ic_launcher"
+                        android:src="@drawable/ic_ppl_with_same_interest"
                         android:id="@+id/my_location_people_intrest"
                         android:layout_toRightOf="@+id/users_text"/>
 
-                    < com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="People with same intrest"
                         android:layout_centerVertical="true"
                         android:layout_toRightOf="@+id/my_location_people_intrest"
-                        app:layout_widthPercent="28%"
+                        app:layout_widthPercent="30%"
                         android:id="@+id/people_intrest_text"
                         android:textSize="@dimen/font_size_very_small"/>
 

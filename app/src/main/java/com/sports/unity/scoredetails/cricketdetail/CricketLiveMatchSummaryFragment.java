@@ -250,14 +250,15 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                 Iterator<String> recentOverKeys = recentOver.keys();
                 Integer keys[]= new Integer[2];
                 int arrayCount= 0;
+                int recentOverValue= 0;
                 while(recentOverKeys.hasNext()){
                     try{
                         keys[arrayCount++] = Integer.parseInt(recentOverKeys.next());
                     }catch (Exception e){e.printStackTrace();}
 
                 }
-
                 if(keys[0]<keys[1]){
+                    recentOverValue = keys[1];
                     JSONArray recentOverJSONArray = recentOver.getJSONArray(keys[0].toString());
                     for(int count=0;count<recentOverJSONArray.length();count++){
                         JSONObject ballObject = recentOverJSONArray.getJSONObject(count);
@@ -271,6 +272,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                     }
 
                 }else{
+                    recentOverValue = keys[0];
                     JSONArray recentOverJSONArray = recentOver.getJSONArray(keys[1].toString());
                     for(int count=0;count<recentOverJSONArray.length();count++){
                         JSONObject ballObject = recentOverJSONArray.getJSONObject(count);

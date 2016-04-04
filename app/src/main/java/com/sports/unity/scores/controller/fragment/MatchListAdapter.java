@@ -264,6 +264,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                                     tokenRegistrationHandler.addListener(MatchListAdapter.this);
                                     tokenRegistrationHandler.registrerMatchUser(key, CommonUtil.getToken(activity));
 
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -289,7 +290,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
 
 
-                /*if(!"FT".equalsIgnoreCase(footballMatchJsonCaller.getMatchStatus())){*/
+                if(!"completed".equalsIgnoreCase(footballMatchJsonCaller.getResult())){
                     Log.i("FOOTBALMATCHSTATUS: ",footballMatchJsonCaller.getMatchStatus());
                     preferences  = PreferenceManager.getDefaultSharedPreferences(activity);
                     final String key = footballMatchJsonCaller.getMatchId()+"|"+footballMatchJsonCaller.getLeagueId();
@@ -333,7 +334,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
 
                     }
-              /*  }*/
+               }
 
 
                 Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000)));
@@ -483,6 +484,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         holder.t1score.setVisibility(View.VISIBLE);
         holder.t2score.setVisibility(View.VISIBLE);
         holder.liveText.setText(R.string.live);
+        holder.liveText.setVisibility(View.VISIBLE);
         holder.matchDay.setText(cricketMatchJsonCaller.getMatchName());
         StringBuilder stringBuilder = new StringBuilder("");
         stringBuilder.append(cricketMatchJsonCaller.getTeam1Score()!=null?cricketMatchJsonCaller.getTeam1Score():"0");
@@ -506,27 +508,29 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         holder.t2score.setVisibility(View.GONE);
         holder.team1Overs.setVisibility(View.GONE);
         holder.team2Overs.setVisibility(View.GONE);
+        holder.liveText.setVisibility(View.VISIBLE);
     }
 
     private void SetCompletedMatchScoreCard(ViewHolder holder) throws JSONException {
-        holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
+        holder.matchDay.setText(cricketMatchJsonCaller.getMatchName());
         holder.liveText.setText("Completed");
+        holder.liveText.setVisibility(View.VISIBLE);
         holder.t1score.setVisibility(View.VISIBLE);
         holder.t2score.setVisibility(View.VISIBLE);
         holder.team1Overs.setVisibility(View.GONE);
         holder.team2Overs.setVisibility(View.GONE);
         holder.t1score.setText(cricketMatchJsonCaller.getTeam1Score() + "/" + cricketMatchJsonCaller.getWicketsTeam1());
         holder.t2score.setText(cricketMatchJsonCaller.getTeam2Score()+"/"+ cricketMatchJsonCaller.getWicketsTeam2());
-        holder.matchDay.setText("Completed");
+        //holder.matchDay.setText("Completed");
 
-        String result = matchJsonCaller.getResult();
+        String result = matchJsonCaller.getWinerTeam();
         if(result != null || result != "") {
-            if(result.equals("team_1")) {
+            if(result.equals("home_team")) {
                 holder.team1.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
                 holder.t1score.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
                 holder.team1.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
                 holder.t1score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
-            } else if(result.equals("team_2")){
+            } else if(result.equals("away_team")){
                 holder.team2.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
                 holder.t2score.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
                 holder.team2.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());

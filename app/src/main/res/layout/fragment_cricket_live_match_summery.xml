@@ -96,7 +96,7 @@
                             android:id="@+id/iv_fourth_ball"
                             android:layout_width="@dimen/recent_ball_radius"
                             android:layout_height="@dimen/recent_ball_radius"
-                            android:layout_weight="0.8"
+                            android:layout_weight="0.9"
                             android:src="@drawable/recent_balls" />
 
                         <View
@@ -108,7 +108,7 @@
                             android:id="@+id/iv_fifth_ball"
                             android:layout_width="@dimen/recent_ball_radius"
                             android:layout_height="@dimen/recent_ball_radius"
-                            android:layout_weight="0.8"
+                            android:layout_weight="0.9"
                             android:src="@drawable/recent_balls" />
 
                         <View
@@ -120,7 +120,7 @@
                             android:id="@+id/iv_sixth_ball"
                             android:layout_width="@dimen/recent_ball_radius"
                             android:layout_height="@dimen/recent_ball_radius"
-                            android:layout_weight="1"
+                            android:layout_weight="0.9"
                             android:src="@drawable/recent_balls" />
                     </LinearLayout>
 
