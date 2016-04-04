@@ -21,6 +21,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -33,6 +34,7 @@ import android.widget.TextView;
 
 import com.github.clans.fab.FloatingActionButton;
 import com.github.clans.fab.FloatingActionMenu;
+import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -54,6 +56,8 @@ import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.LocManager;
 
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +68,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by Edwin on 15/02/2015.
  */
 public class MainActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+
+    private static final String projectToken = "077215613b5134abb421fd53879c42db";
+    private MixpanelAPI mixpanel = null;
 
     NavigationFragment navigationFragment;
 
@@ -96,6 +103,9 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         FavouriteItemWrapper.getInstance(this);
         setContentView(com.sports.unity.R.layout.activity_main);
 
+        mixpanel = MixpanelAPI.getInstance(this, projectToken);
+        sendMixpaneldata();
+
         SportsUnityDBHelper.getInstance(this).addDummyMessageIfNotExist();
         SportsUnityDBHelper.getInstance(this).addDummyContactIfNotExist();
         XMPPService.startService(MainActivity.this);
@@ -120,9 +130,9 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             }
         }
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        if(preferences!=null){
-            boolean sentToken= preferences.getBoolean(Constants.SENT_TOKEN_TO_SERVER,false);
-            if(!sentToken){
+        if (preferences != null) {
+            boolean sentToken = preferences.getBoolean(Constants.SENT_TOKEN_TO_SERVER, false);
+            if (!sentToken) {
                 Intent intent = new Intent(this, RegistrationIntentService.class);
                 startService(intent);
             }
@@ -138,6 +148,17 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         lt.setStartDelay(LayoutTransition.APPEARING, 0);
         FrameLayout frameLayout = (FrameLayout) findViewById(R.id.childFragmentContainer);
         frameLayout.setLayoutTransition(lt);
+    }
+
+    private void sendMixpaneldata() {
+        try {
+            JSONObject props = new JSONObject();
+            props.put("User", TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USER_JID) + "@mm.io");
+            mixpanel.track("MainActivity - onCreate called", props);
+        } catch (JSONException e) {
+            Log.i("SPU", "Unable to add properties to JSONObject", e);
+        }
+        mixpanel.flush();
     }
 
 
