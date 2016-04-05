@@ -226,10 +226,11 @@ public class FavouriteItemWrapper {
         Collections.sort(savedCricketTeams);
         Collections.sort(savedFootballTeams);
         ArrayList<FavouriteItem> savedTeams = new ArrayList<FavouriteItem>();
-        if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
+
+        if (UserUtil.getSportsSelected()!=null && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
             savedTeams.addAll(savedCricketTeams);
         }
-        if (UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
+        if (UserUtil.getSportsSelected()!=null && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
             savedTeams.addAll(savedFootballTeams);
         }
         return savedTeams;

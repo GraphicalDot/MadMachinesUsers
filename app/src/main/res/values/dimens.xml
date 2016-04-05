@@ -189,4 +189,8 @@
     <dimen name="live_player_card_margin">50dp</dimen>
     <dimen name="completed_player_card_margin">24dp</dimen>
     <dimen name="completed_player_name_margin">24dp</dimen>
+    <!-- margin completed match  summery-->
+    <dimen name="recent_card_height">50dp</dimen>
+    <dimen name="over_divider_height">10dp</dimen>
+    <dimen name="over_divider_width">1dp</dimen>
 </resources>

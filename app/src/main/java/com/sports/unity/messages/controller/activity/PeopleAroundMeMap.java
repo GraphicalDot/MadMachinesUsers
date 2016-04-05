@@ -1,5 +1,6 @@
 package com.sports.unity.messages.controller.activity;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -129,6 +130,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
     private PeoplesNearMe peoplesNearMe;
     private ClusterManager<Person> mClusterManager;
+    private boolean userLocation;
     private ScoresContentHandler.ContentListener contentListener = new ScoresContentHandler.ContentListener() {
 
         @Override
@@ -201,16 +203,14 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         setsportSelectionButtons();
         setCustomButtonsForNavigationAndUsers();
         bindAutoComplete();
+        userPrivacyUpdate();
+  }
 
-
-        boolean userlocation = UserUtil.isShowToAllLocation();
+    private void userPrivacyUpdate() {
+        userLocation = UserUtil.isShowToAllLocation();
         tokenRegistrationHandler = TokenRegistrationHandler.getInstance(getApplicationContext());
         tokenRegistrationHandler.addListener(this);
-        tokenRegistrationHandler.setUserPrivacyPolicy(userlocation);
-
-
-
-
+        tokenRegistrationHandler.setUserPrivacyPolicy(userLocation);
     }
 
     private void bindAutoComplete() {
@@ -257,7 +257,10 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         refreshUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getPeopleAroundMe(latLong.latitude, latLong.longitude);
+                if(latLong!=null){
+                    getPeopleAroundMe(latLong.latitude, latLong.longitude);
+                }
+
             }
         });
     }
@@ -476,7 +479,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 //  makeText(getApplicationContext(), "Privacy Policy work in progress", LENGTH_LONG).show();
 
 
-                //  checkAndEnableLocation();
+                checkAndEnableLocation();
 
             }
         });
@@ -514,8 +517,33 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
             @Override
             public void onMapReady(GoogleMap googleMap) {
 
+                if(userLocation){
+                    openMap(googleMap);
+                }else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PeopleAroundMeMap.this);
+                    builder.setTitle("Are You Sure Want To Enable Your Location?");
 
-                openMap(googleMap);
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            checkAndEnableLocation();
+                            /*dialog.dismiss();*/
+                        }
+
+                    });
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+
+                    });
+                    builder.show();
+                    //Toast.makeText(PeopleAroundMeMap.this,R.string.location_turned_off_text,Toast.LENGTH_LONG).show();
+
+                }
+
 
 
             }
@@ -839,7 +867,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         } else {
             //nothing
         }
-
+        userPrivacyUpdate();
         loadMap();
     }
 

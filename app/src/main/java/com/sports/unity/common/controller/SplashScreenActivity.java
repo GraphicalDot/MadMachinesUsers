@@ -10,6 +10,9 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.crittercism.app.Crittercism;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.sports.unity.ChatScreenApplication;
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
 import com.sports.unity.common.model.ContactsHandler;
@@ -28,7 +31,10 @@ public class SplashScreenActivity extends AppCompatActivity {
         Crittercism.initialize(getApplicationContext(), CRITTERCISM_API_KEY);
 
         UserUtil.init(this);
-
+        ChatScreenApplication application = (ChatScreenApplication) getApplication();
+        Tracker mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("AppLaunchScreen");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 //        cachedFlow( "9717261060", "641970");
 //        showScreenSize();
 

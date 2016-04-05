@@ -219,10 +219,10 @@
         <activity
             android:name=".common.controller.About"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".scoredetails.footballdetail.FootballDetailsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
+        <!--<activity-->
+        <!--android:name=".scoredetails.footballdetail.FootballDetailsActivity"-->
+        <!--android:screenOrientation="portrait"-->
+        <!--android:theme="@style/AppTheme" />-->
         <activity
             android:name=".common.controller.GetCountryCode"
             android:screenOrientation="portrait"
@@ -243,6 +243,17 @@
         <service
             android:name=".gcm.UnRegisterMatch"
             android:exported="false"></service>
+        <receiver
+            android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+        <service
+            android:name="com.google.android.gms.analytics.CampaignTrackingService"
+            android:enabled="true"
+            android:exported="false" />
     </application>
 
 </manifest>

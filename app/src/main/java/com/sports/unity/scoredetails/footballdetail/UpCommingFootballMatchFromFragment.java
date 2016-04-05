@@ -168,7 +168,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                 JSONObject jsonObject = new JSONObject(object);
 
                 boolean success = jsonObject.getBoolean("success");
-                boolean error = jsonObject.getBoolean("error");
+              //  boolean error = jsonObject.getBoolean("error");
 
                 if( success ) {
 
