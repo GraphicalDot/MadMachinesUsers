@@ -504,6 +504,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
                         }
                         initStaffView(staffFavouriteItem);
                         FavouriteItem item = new FavouriteItem(staffFavouriteItem.getJsonObject().toString());
+                        Log.d("max", "On saving>> " + item.getId());
                         item.setFlagImageUrl(flagUrl);
                         flagItem.add(item);
 
@@ -512,7 +513,8 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
                     for (FavouriteItem f : flagItem) {
                         jsonArray.put(f.getJsonObject());
                     }
-                    UserUtil.setStaffFlagUrl(getContext(), jsonArray.toString());
+                    Log.d("max", "On saving>> " + jsonArray.toString());
+                    UserUtil.setStaffFlagUrl(getActivity(), jsonArray.toString());
                     isStaffInitialized = true;
                 }
             }

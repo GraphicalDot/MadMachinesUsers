@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/score_staff_image"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/profile_thumb_image_large"
+    android:layout_height="@dimen/profile_thumb_image_xlarge"
     android:layout_margin="@dimen/horizontal_padding_very_very_small"
     android:orientation="horizontal">
 
@@ -10,5 +10,5 @@
         android:id="@+id/flag"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scaleType="center" />
+        android:scaleType="fitXY" />
 </LinearLayout>

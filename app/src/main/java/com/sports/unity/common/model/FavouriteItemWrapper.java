@@ -64,9 +64,9 @@ public class FavouriteItemWrapper {
                 item.setFilterType(filterType);
 
                 try {
-               if(!object.isNull(this.flag)){
-                   item.setFlagImageUrl(object.getString(this.flag));
-               }
+                    if (!object.isNull(this.flag)) {
+                        item.setFlagImageUrl(object.getString(this.flag));
+                    }
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -179,7 +179,7 @@ public class FavouriteItemWrapper {
      */
     public ArrayList<FavouriteItem> getFavListOfOthers(String favItem) {
         List<FavouriteItem> favouriteItems = new ArrayList<FavouriteItem>();
-        if( favItem != null ) {
+        if (favItem != null) {
             try {
                 JSONArray favArray = new JSONArray(favItem);
                 for (int i = 0; i < favArray.length(); i++) {
@@ -192,7 +192,12 @@ public class FavouriteItemWrapper {
                     item.setFilterType(filterType);
 
                     try {
-                        item.setFlagImageUrl(object.getString(this.flag));
+                        if (!object.isNull(this.flag)) {
+                            item.setFlagImageUrl(object.getString(this.flag));
+                        }
+                        if (!object.isNull(this.id)) {
+                            item.setId(object.getString(this.id));
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -276,7 +281,7 @@ public class FavouriteItemWrapper {
         ArrayList<FavouriteItem> savedSports = new ArrayList<FavouriteItem>();
         for (String s : sportsSelected) {
             FavouriteItem f = new FavouriteItem();
-            String sportsName= CommonUtil.capitalize(s);
+            String sportsName = CommonUtil.capitalize(s);
             f.setName(sportsName);
            /* if(sportsName.toLowerCase().contains(Constants.GAME_KEY_CRICKET.toLowerCase())){
                 Uri uri = Uri.parse("android.resource://"+context.getPackageName()+"/drawable/ic_cricket");
@@ -346,10 +351,11 @@ public class FavouriteItemWrapper {
 
     /**
      * This method retrieves the saved favourites string from shared preference.
+     *
      * @param context Context of origin activity.
      * @return Saved favourites as {@link JSONObject} String.
      */
-    public String getSavedFavouritesAsJsonString(Context context){
+    public String getSavedFavouritesAsJsonString(Context context) {
         TinyDB tinyDB = TinyDB.getInstance(context);
         return tinyDB.getString(TinyDB.FAVOURITE_FILTERS);
     }
