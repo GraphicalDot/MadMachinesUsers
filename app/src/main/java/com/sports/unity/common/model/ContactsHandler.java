@@ -14,6 +14,7 @@ import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import org.jivesoftware.smack.roster.Roster;
+import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -331,9 +332,10 @@ public class ContactsHandler {
                                 SportsUnityDBHelper.getInstance(context).updateContacts(context, phoneNumber, jid);
                             } else {
                                 if( contacts.phoneNumber == null ){
-                                    Contacts removeContact = SportsUnityDBHelper.getInstance(context).getContactByPhoneNumber(contacts.phoneNumber);
+                                    Contacts removeContact = SportsUnityDBHelper.getInstance(context).getContactByPhoneNumber(phoneNumber);
                                     SportsUnityDBHelper.getInstance(context).deleteContact(phoneNumber);
-                                    SportsUnityDBHelper.getInstance(context).updateContacts(jid, contacts.phoneNumber, removeContact.name);
+                                    SportsUnityDBHelper.getInstance(context).updateContactsPhoneNumberAndName(jid, removeContact.phoneNumber, removeContact.getName());
+                                    SportsUnityDBHelper.getInstance(context).updateContactAvailability(jid);
                                 } else {
                                     //nothing
                                 }
@@ -343,7 +345,8 @@ public class ContactsHandler {
                         }
                     }
 
-                    updateMyContactInfoFromVCards(context, jids);
+                    addCallToUpdateUserVCard(context);
+//                    updateMyContactInfoFromVCards(context, jids);
 
                     success = true;
                 } else {
@@ -375,14 +378,18 @@ public class ContactsHandler {
     }
 
     private boolean updateContactInfoFromVCards(Context context, ArrayList<Contacts> contacts){
-        boolean success = false;
+        boolean success = true;
         try {
             Contacts contact = null;
             for (int index = 0; index < contacts.size(); index++) {
                 contact = contacts.get(index);
-                UserProfileHandler.getInstance().loadVCardAndUpdateDB(context, contact.jid, contact.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS);
+                VCard vCard = UserProfileHandler.getInstance().loadVCardAndUpdateDB(context, contact.jid, contact.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS);
+
+                if( vCard == null ) {
+                    success = false;
+                    break;
+                }
             }
-            success = true;
         }catch (Exception ex){
             ex.printStackTrace();
         }

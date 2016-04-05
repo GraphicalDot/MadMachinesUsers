@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/vertical_padding_very_very_small"
+        app:cardCornerRadius="0dp"
         app:cardElevation="@dimen/toolbar_elevation">
 
         <LinearLayout
@@ -39,7 +40,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_widthPercent="30%">
+                    app:layout_widthPercent="29%">
 
                     <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                         android:id="@+id/tv_fteam_name"

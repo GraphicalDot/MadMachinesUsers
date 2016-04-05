@@ -730,7 +730,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
     }
 
     private void moveToChatActivity(Contacts contact, boolean contactAvailable) {
-        String name = contact.name;
+        String name = contact.getName();
         int contactId = contact.id;
         byte[] userPicture = contact.image;
         boolean nearbyChat = false;

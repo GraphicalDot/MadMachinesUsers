@@ -2,6 +2,7 @@ package com.sports.unity.scores.controller.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -17,13 +18,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
+import com.sports.unity.common.controller.MainActivity;
+import com.sports.unity.common.controller.TeamLeagueDetails;
 import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.scores.model.ScoresContentHandler;
@@ -71,6 +77,10 @@ public class MatchListFragment extends Fragment {
     private Bundle bundle;
     private String scoreDetailsId = "";
     private FavouriteItem favouriteItem;
+    private boolean isStaffPicked;
+    private LinearLayout staffView;
+    private LayoutInflater inflater;
+    private ArrayList<FavouriteItem> flagFavItem;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,6 +88,7 @@ public class MatchListFragment extends Fragment {
         bundle = getArguments();
         if (bundle != null) {
             scoreDetailsId = bundle.getString(Constants.INTENT_KEY_ID);
+            isStaffPicked = bundle.getBoolean(Constants.SPORTS_TYPE_STAFF, false);
             favouriteItem = new FavouriteItem(scoreDetailsId);
             scoreDetailsId = favouriteItem.getId();
         }
@@ -86,10 +97,10 @@ public class MatchListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-
+        this.inflater = inflater;
         View view = inflater.inflate(com.sports.unity.R.layout.fragment_match_list, container, false);
         initView(view);
-        if(UserUtil.getScoreFilterSportsSelected()!=null) {
+        if (UserUtil.getScoreFilterSportsSelected() != null) {
             sportsSelectedNum = UserUtil.getScoreFilterSportsSelected().size();
             sportSelected = UserUtil.getScoreFilterSportsSelected();
         }
@@ -116,7 +127,7 @@ public class MatchListFragment extends Fragment {
 
         if (id == com.sports.unity.R.id.action_filter) {
             Intent i = new Intent(getActivity(), FilterActivity.class);
-            i.putExtra(Constants.KEY_ORIGIN_ACTIVITY,Constants.SCORE_ACTIVITY);
+            i.putExtra(Constants.KEY_ORIGIN_ACTIVITY, Constants.SCORE_ACTIVITY);
             startActivityForResult(i, Constants.REQUEST_CODE_SCORE);
             return true;
         }
@@ -147,9 +158,39 @@ public class MatchListFragment extends Fragment {
             showProgress(getView());
             requestContent();
         }
-
+        if (getActivity() instanceof MainActivity) {
+            handleStaffFavContent();
+        }
         handleIfSportsChanged();
 
+    }
+
+    private void handleStaffFavContent() {
+        String staffFavString = UserUtil.getStaffFlagUrl();
+        if (null != staffFavString && !TextUtils.isEmpty(staffFavString)) {
+            flagFavItem = FavouriteItemWrapper.getInstance(getActivity()).getFavListOfOthers(staffFavString);
+            if (flagFavItem != null && flagFavItem.size() > 0) {
+                staffView.removeAllViews();
+                for (final FavouriteItem f : flagFavItem) {
+                    LinearLayout scoreView = (LinearLayout) inflater.inflate(R.layout.score_staff_item, null);
+                    ImageView flag = (ImageView) scoreView.findViewById(R.id.flag);
+                    Glide.with(getActivity()).load(Uri.parse(f.getFlagImageUrl())).placeholder(R.drawable.ic_no_img).into(flag);
+                    scoreView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getContext(), TeamLeagueDetails.class);
+                            intent.putExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, f.getJsonObject().toString());
+                            intent.putExtra(Constants.SPORTS_TYPE_STAFF, true);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                        }
+                    });
+                    staffView.addView(scoreView);
+                }
+                staffView.requestLayout();
+                staffView.invalidate();
+            }
+        }
     }
 
 
@@ -174,11 +215,13 @@ public class MatchListFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);*/
 
         mWraperRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_scores);
+        mWraperRecyclerView.setNestedScrollingEnabled(false);
         mWraperRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getContext(), VERTICAL, false));
         mWraperRecyclerView.setNestedScrollingEnabled(false);
+        mWraperRecyclerView.setFocusable(false);
         matchListWrapperAdapter = new MatchListWrapperAdapter(matchList, getActivity(), getContext());
         mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
-
+        staffView = (LinearLayout) view.findViewById(R.id.staff_pick_ll);
 
         initErrorLayout(view);
         hideErrorLayout(view);
@@ -251,9 +294,9 @@ public class MatchListFragment extends Fragment {
                 try {
                     JSONObject object = matches.get(i);
 
-                    if(!object.isNull("match_time") && Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(object.getString("type"))){
+                    if (!object.isNull("match_time") && Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(object.getString("type"))) {
                         epochTime = object.getLong("match_time");
-                        day=  DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
+                        day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
                         leagueName = object.getString("series_name");
                         sportsType = object.getString("type");
                     } else {
@@ -273,16 +316,16 @@ public class MatchListFragment extends Fragment {
                         leagueMapTemp = daysMap.get(day);
 
                         if (leagueMapTemp.containsKey(leagueName)) {
-                            Log.d("imax","setting daygroup");
+                            Log.d("imax", "setting daygroup");
                             dayGroupDto = leagueMapTemp.get(leagueName);
                             dayGroupList = dayGroupDto.getList();
                         } else {
-                            Log.d("imax","resetting current daygroup");
+                            Log.d("imax", "resetting current daygroup");
                             dayGroupDto = new MatchListWrapperDTO();
                             dayGroupList = new ArrayList<>();
 
                         }
-                    }else{
+                    } else {
 
                         leagueMapTemp = new HashMap<>();
                         dayGroupDto = new MatchListWrapperDTO();
@@ -305,10 +348,10 @@ public class MatchListFragment extends Fragment {
             }
             matchList.clear();
             Set<String> daySet = daysMap.keySet();
-            Log.i("DAYMAP", "handleContent: "+daysMap);
-            for(String dayKey :daySet) {
-                Map<String, MatchListWrapperDTO > leagueMaps = daysMap.get(dayKey);
-                Log.i("LEAGUEMAP", "handleContent: "+leagueMaps);
+            Log.i("DAYMAP", "handleContent: " + daysMap);
+            for (String dayKey : daySet) {
+                Map<String, MatchListWrapperDTO> leagueMaps = daysMap.get(dayKey);
+                Log.i("LEAGUEMAP", "handleContent: " + leagueMaps);
                 Set<String> keySet = leagueMaps.keySet();
 
                 for (String key : keySet) {
@@ -371,9 +414,9 @@ public class MatchListFragment extends Fragment {
                 try {
                     JSONObject object = matches.get(i);
 
-                    if(!object.isNull("match_time") && Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(object.getString("type"))){
+                    if (!object.isNull("match_time") && Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(object.getString("type"))) {
                         epochTime = object.getLong("match_time");
-                        day=  DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
+                        day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
                         leagueName = object.getString("series_name");
                         sportsType = object.getString("type");
                     } else {
@@ -393,16 +436,16 @@ public class MatchListFragment extends Fragment {
                         leagueMapTemp = daysMap.get(day);
 
                         if (leagueMapTemp.containsKey(leagueName)) {
-                            Log.d("imax","setting daygroup");
+                            Log.d("imax", "setting daygroup");
                             dayGroupDto = leagueMapTemp.get(leagueName);
                             dayGroupList = dayGroupDto.getList();
                         } else {
-                            Log.d("imax","resetting current daygroup");
+                            Log.d("imax", "resetting current daygroup");
                             dayGroupDto = new MatchListWrapperDTO();
                             dayGroupList = new ArrayList<>();
 
-                       }
-                   }else{
+                        }
+                    } else {
 
                         leagueMapTemp = new HashMap<>();
                         dayGroupDto = new MatchListWrapperDTO();
@@ -425,10 +468,10 @@ public class MatchListFragment extends Fragment {
             }
             matchList.clear();
             Set<String> daySet = daysMap.keySet();
-            Log.i("DAYMAP", "handleContent: "+daysMap);
-            for(String dayKey :daySet) {
-                Map<String, MatchListWrapperDTO > leagueMaps = daysMap.get(dayKey);
-                Log.i("LEAGUEMAP", "handleContent: "+leagueMaps);
+            Log.i("DAYMAP", "handleContent: " + daysMap);
+            for (String dayKey : daySet) {
+                Map<String, MatchListWrapperDTO> leagueMaps = daysMap.get(dayKey);
+                Log.i("LEAGUEMAP", "handleContent: " + leagueMaps);
                 Set<String> keySet = leagueMaps.keySet();
 
                 for (String key : keySet) {
@@ -505,6 +548,7 @@ public class MatchListFragment extends Fragment {
         } else {
             HashMap<String, String> parameters = new HashMap<>();
             parameters.put(Constants.INTENT_KEY_ID, favouriteItem.getJsonObject().toString());
+            parameters.put(Constants.SPORTS_TYPE_STAFF, String.valueOf(isStaffPicked));
             ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCHES_LIST, parameters, LIST_LISTENER_KEY, LIST_OF_MATCHES_REQUEST_TAG);
         }
 //        ScoresContentHandler.getInstance().requestListOfMatches(LIST_LISTENER_KEY, LIST_OF_MATCHES_REQUEST_TAG);

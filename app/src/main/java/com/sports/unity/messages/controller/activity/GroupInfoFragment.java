@@ -209,12 +209,12 @@ public class GroupInfoFragment extends Fragment {
     }
 
     private void viewUserProfile(Contacts contacts){
-        ChatScreenActivity.viewProfile(getActivity(), false, contacts.id, contacts.image, contacts.name, contacts.jid, contacts.status, false, contacts.availableStatus);
+        ChatScreenActivity.viewProfile(getActivity(), false, contacts.id, contacts.image, contacts.getName(), contacts.jid, contacts.status, false, contacts.availableStatus);
     }
 
     private void openChat(Contacts contacts){
         String jid = contacts.jid;
-        String name = contacts.name;
+        String name = contacts.getName();
         int contactId = contacts.id;
         byte[] userPicture = contacts.image;
         boolean blockStatus = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).isChatBlocked(contactId);

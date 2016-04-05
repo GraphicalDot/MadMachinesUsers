@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -18,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.About;
 import com.sports.unity.common.controller.MainActivity;
@@ -28,8 +30,14 @@ import com.sports.unity.common.controller.TeamLeagueDetails;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -46,18 +54,24 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     private ArrayList<FavouriteItem> competeChildItems = new ArrayList<FavouriteItem>();
     private ArrayList<String> sportsGroupItem = new ArrayList<String>();
     private ArrayList<FavouriteItem> sportsChildItem = new ArrayList<FavouriteItem>();
-    private LinearLayout staffPickView;
-    private TextView iplTv;
     private ExpandableListView teamList, competeList, sportsList;
 
     private NavListAdapter teamAdapter, compAdapter, sportsAdapter;
-
+    private final String STAFF_LISTENER_KEY = "staff_pick_key";
+    private final String STAFF_REQUEST_TAG = "staff_request_tag";
     TextView editTeam, editComp, editSports;
 
     ImageView teamIndi, compIndi, sportsIndi;
     boolean isTeam, isComp;
     FavouriteItemWrapper favouriteItemWrapper;
     private boolean isResult = false;
+
+    private LayoutInflater inflater;
+    private LinearLayout staffView;
+
+    private boolean isStaffInitialized;
+
+    private StaffContentListener listener = new StaffContentListener();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,6 +83,11 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     public void onResume() {
         super.onResume();
         initItemList();
+        ScoresContentHandler.getInstance().addResponseListener(listener, STAFF_LISTENER_KEY);
+        if (!isStaffInitialized) {
+
+            ScoresContentHandler.getInstance().requestStaffContent(STAFF_LISTENER_KEY, STAFF_REQUEST_TAG);
+        }
     }
 
     @Override
@@ -80,12 +99,14 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
         teamChildItems = new ArrayList<>();
         competeChildItems = new ArrayList<>();
         sportsChildItem = new ArrayList<>();
+        ScoresContentHandler.getInstance().removeResponseListener(STAFF_LISTENER_KEY);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+        this.inflater = inflater;
         return inflater.inflate(R.layout.fragment_nav, container, false);
     }
 
@@ -167,19 +188,34 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
         shareFeedback.setOnClickListener(textViewClickListener);
         rateUs.setOnClickListener(textViewClickListener);
         about.setOnClickListener(textViewClickListener);
+        staffView = (LinearLayout) view.findViewById(R.id.staff_layout);
+    }
 
-        iplTv = (TextView) view.findViewById(R.id.ipl);
-        staffPickView = (LinearLayout) view.findViewById(R.id.staff_pick_ll);
-        staffPickView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
-        staffPickView.setOnClickListener(new View.OnClickListener() {
+    private void initStaffView(final FavouriteItem staffFavouriteItem) {
+        getActivity().runOnUiThread(new Runnable() {
             @Override
-            public void onClick(View v) {
-                FavouriteItem favouriteItem = new FavouriteItem();
-                favouriteItem.setId("3");
-                favouriteItem.setSportsType(Constants.SPORTS_TYPE_CRICKET);
-                favouriteItem.setFilterType(Constants.FILTER_TYPE_TEAM);
-                favouriteItem.setName("Indian Premier League");
-                onClickListnerForTeamAndLeague(favouriteItem, true);
+            public void run() {
+                LinearLayout staffPickView = (LinearLayout) inflater.inflate(R.layout.staff_nav_item, null);
+                staffView.addView(staffPickView);
+                staffPickView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+                TextView staffName = (TextView) staffPickView.findViewById(R.id.ipl);
+                ;
+                ImageView staffFlag = (ImageView) getView().findViewById(R.id.flag);
+                String uri = staffFavouriteItem.getFlagImageUrl();
+                staffName.setText(staffFavouriteItem.getName());
+                if (uri != null) {
+                    Glide.with(getActivity()).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).into(staffFlag);
+                } else {
+                    staffFlag.setImageResource(R.drawable.ic_no_img);
+                }
+                staffPickView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onClickListnerForTeamAndLeague(staffFavouriteItem, true);
+                    }
+                });
+
+
             }
         });
     }
@@ -433,6 +469,68 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
 //                advancedFilterLeague.putExtra(Constants.SPORTS_FILTER_TYPE, Constants.FILTER_TYPE_LEAGUE);
 //                advancedFilterLeague.putExtra(Constants.IS_FROM_NAV, isComp);
 //                getActivity().startActivityForResult(advancedFilterLeague, Constants.REQUEST_CODE_NAV);
+        }
+    }
+
+    private void handleContent(String jsonObject) {
+        JSONObject object = null;
+        ArrayList<FavouriteItem> flagItem = new ArrayList<FavouriteItem>();
+        boolean success = false;
+        try {
+            object = new JSONObject(jsonObject);
+            if (!object.isNull("success")) {
+                success = object.getBoolean("success");
+            }
+            if (success) {
+                staffView.removeAllViews();
+                JSONArray array = object.getJSONArray("data");
+                if (array.length() > 0) {
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject staffData = array.getJSONObject(i);
+                        String name = staffData.getString("series_name");
+                        String id = staffData.getString("series_id");
+                        String leagueLogo = staffData.getString("league_logo");
+                        String flagUrl = staffData.getString("league_banner");
+                        String sportsType = staffData.getString("sport_type");
+                        FavouriteItem staffFavouriteItem = new FavouriteItem();
+                        staffFavouriteItem.setName(name);
+                        staffFavouriteItem.setId(id);
+                        staffFavouriteItem.setFlagImageUrl(leagueLogo);
+                        staffFavouriteItem.setSportsType(sportsType);
+                        if (sportsType.equalsIgnoreCase(Constants.SPORTS_TYPE_CRICKET)) {
+                            staffFavouriteItem.setFilterType(Constants.FILTER_TYPE_TEAM);
+                        } else {
+                            staffFavouriteItem.setFilterType(Constants.FILTER_TYPE_LEAGUE);
+                        }
+                        initStaffView(staffFavouriteItem);
+                        FavouriteItem item = new FavouriteItem(staffFavouriteItem.getJsonObject().toString());
+                        item.setFlagImageUrl(flagUrl);
+                        flagItem.add(item);
+
+                    }
+                    JSONArray jsonArray = new JSONArray();
+                    for (FavouriteItem f : flagItem) {
+                        jsonArray.put(f.getJsonObject());
+                    }
+                    UserUtil.setStaffFlagUrl(getContext(), jsonArray.toString());
+                    isStaffInitialized = true;
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private class StaffContentListener implements ScoresContentHandler.ContentListener {
+
+        @Override
+        public void handleContent(String tag, String content, int responseCode) {
+            if (tag.equals(STAFF_REQUEST_TAG)) {
+                boolean success = false;
+                if (responseCode == 200) {
+                    NavigationFragment.this.handleContent(content);
+                }
+            }
         }
     }
 }

@@ -15,11 +15,12 @@
         android:layout_marginRight="@dimen/horizontal_padding_very_small"
         android:layout_marginTop="@dimen/vertical_space_between_chats"
         android:background="@drawable/chat_blue"
+        android:descendantFocusability="blocksDescendants"
         android:orientation="vertical"
-        android:paddingTop="@dimen/vertical_padding_very_very_small"
         android:paddingBottom="@dimen/vertical_padding_very_very_small"
         android:paddingLeft="@dimen/horizontal_padding_very_very_small"
-        android:paddingRight="@dimen/horizontal_padding_very_very_small">
+        android:paddingRight="@dimen/horizontal_padding_very_very_small"
+        android:paddingTop="@dimen/vertical_padding_very_very_small">
 
         <RelativeLayout
             android:id="@+id/mediaPlayer"

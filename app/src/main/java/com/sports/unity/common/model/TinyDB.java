@@ -58,6 +58,8 @@ public class TinyDB {
     public static final String FILTER_COMPLETE = "filter_complete";
     public static final String VCARD_UPDATED = "vcard_updated";
 
+
+    public static final String KEY_STAFF_FLAG = "key_staff_flag";
     /**
      * Settings Screen Options
      */

@@ -25,7 +25,7 @@ public class UserUtil {
     private static boolean OTP_SENT = false;
     private static boolean PROFILE_CREATED = false;
     private static String COUNTRY_CODE = "";
-
+    private static String STAFF_FLAG = "";
     private static ArrayList<String> SPORTS_SELECTED = null;
     private static ArrayList<String> SCORE_FILTER_SPORTS_SELECTED = null;
     private static ArrayList<String> NEWS_FILTER_SPORTS_SELECTED = null;
@@ -433,11 +433,22 @@ public class UserUtil {
         return COUNTRY_CODE;
     }
 
+    public static String getStaffFlagUrl() {
+        return STAFF_FLAG;
+    }
+
     public static void setCountryCode(Context context, String countryCode) {
         COUNTRY_CODE = countryCode;
 
         TinyDB tinyDB = TinyDB.getInstance(context);
         tinyDB.putString(TinyDB.KEY_COUNTRY_CODE, countryCode);
+    }
+
+    public static void setStaffFlagUrl(Context context, String flagUrl) {
+        STAFF_FLAG = flagUrl;
+
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putString(TinyDB.KEY_STAFF_FLAG, flagUrl);
     }
 
     private static void loadBasicPreferences(TinyDB tinyDB, Context context) {
@@ -454,7 +465,7 @@ public class UserUtil {
     private static void loadFavoritePreferences(TinyDB tinyDB) {
         SPORTS_SELECTED = tinyDB.getListString(TinyDB.KEY_SPORTS_SELECTED);
         SCORE_FILTER_SPORTS_SELECTED = tinyDB.getListString(TinyDB.KEY_SCORE_FILTER_SPORTS_SELECTED);
-
+        STAFF_FLAG = tinyDB.getString(TinyDB.KEY_STAFF_FLAG);
         NEWS_FILTER_SPORTS_SELECTED = tinyDB.getListString(TinyDB.KEY_NEWS_FILTER_SPORTS_SELECTED);
         favFilterList = tinyDB.getString(TinyDB.FAVOURITE_FILTERS);
 

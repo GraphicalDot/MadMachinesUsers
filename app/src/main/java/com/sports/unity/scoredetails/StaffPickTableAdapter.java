@@ -60,7 +60,6 @@ public class StaffPickTableAdapter extends RecyclerView.Adapter<StaffPickTableAd
             holder.tvL.setTextColor(context.getResources().getColor(R.color.news_static));
             holder.tvPts.setTextColor(context.getResources().getColor(R.color.news_static));
             holder.tvNrr.setTextColor(context.getResources().getColor(R.color.news_static));
-            Glide.with(context).load(holder.dto.getIvTeamProfileImage()).placeholder(R.drawable.ic_no_img).into(holder.ivTeamProfileImage);
 
             holder.mView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -91,7 +90,6 @@ public class StaffPickTableAdapter extends RecyclerView.Adapter<StaffPickTableAd
         public final View mView;
         public StaffPickTableDTO dto;
         private TextView tvSerialNumber;
-        private ImageView ivTeamProfileImage;
         private TextView tvTeamName;
         private TextView tvP;
         private TextView tvW;
@@ -104,7 +102,6 @@ public class StaffPickTableAdapter extends RecyclerView.Adapter<StaffPickTableAd
             super(view);
             mView = view;
             tvSerialNumber = (TextView) view.findViewById(R.id.tv_serial_number);
-            ivTeamProfileImage = (ImageView) view.findViewById(R.id.iv_team_profile_image);
             tvTeamName = (TextView) view.findViewById(R.id.tv_team_name);
             tvP = (TextView) view.findViewById(R.id.tv_p);
             tvW = (TextView) view.findViewById(R.id.tv_w);

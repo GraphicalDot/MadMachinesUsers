@@ -17,7 +17,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.sports.unity.R;
+import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.scoredetails.footballdetail.UpCommingFootballMatchTableHandler;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -32,7 +34,7 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 /**
  * Created by madmachines on 23/2/16.
  */
-public class StaffPickTable extends Fragment implements UpCommingFootballMatchTableHandler.UpCommingFootballMatchTableContentListener {
+public class StaffPickedFragment extends Fragment implements UpCommingFootballMatchTableHandler.UpCommingFootballMatchTableContentListener {
     private UpCommingFootballMatchTableHandler upCommingFootballMatchTableHandler;
     private ProgressBar progressBar;
     private ArrayList<String> seriesArray;
@@ -43,10 +45,14 @@ public class StaffPickTable extends Fragment implements UpCommingFootballMatchTa
     private String groupName = "";
 
     private SwipeRefreshLayout swipeRefreshLayout;
+    private FavouriteItem favouriteItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle bundle = getArguments();
+        String s = bundle.getString(Constants.INTENT_KEY_ID);
+        favouriteItem = new FavouriteItem(s);
     }
 
     @Override
@@ -68,7 +74,7 @@ public class StaffPickTable extends Fragment implements UpCommingFootballMatchTa
             @Override
             public void onRefresh() {
                 if (upCommingFootballMatchTableHandler != null) {
-                    upCommingFootballMatchTableHandler.requestStaffPickedLeague("5166");
+                    upCommingFootballMatchTableHandler.requestStaffPickedLeague(favouriteItem.getId());
                     swipeRefreshLayout.setRefreshing(true);
                 }
             }
@@ -130,6 +136,7 @@ public class StaffPickTable extends Fragment implements UpCommingFootballMatchTa
         JSONArray array = jsonObject.getJSONArray("data");
         JSONObject obj1 = array.getJSONObject(0);
         final JSONObject object = obj1.getJSONObject("season_table");
+        groupName = obj1.getString("series_name");
         seriesArray = new ArrayList<String>();
         for (int i = 0; i < object.names().length(); i++) {
             seriesArray.add(object.names().getString(i));
@@ -139,9 +146,9 @@ public class StaffPickTable extends Fragment implements UpCommingFootballMatchTa
         }
         try {
             StaffPickTableDTO staffPickTableDTO = null;
+            tableView.removeAllViews();
             for (int j = 0; j < seriesArray.size(); j++) {
                 dataArray = new JSONArray();
-                groupName = seriesArray.get(j);
                 dataArray = object.getJSONArray(seriesArray.get(j));
                 List<StaffPickTableDTO> list = new ArrayList<StaffPickTableDTO>();
                 final LinearLayout tableData = (LinearLayout) inflater.inflate(R.layout.staff_pick_table, null);
@@ -218,7 +225,7 @@ public class StaffPickTable extends Fragment implements UpCommingFootballMatchTa
         super.onResume();
         if (upCommingFootballMatchTableHandler == null) {
             upCommingFootballMatchTableHandler = UpCommingFootballMatchTableHandler.getInstance(getContext());
-            upCommingFootballMatchTableHandler.requestStaffPickedLeague("5166");
+            upCommingFootballMatchTableHandler.requestStaffPickedLeague(favouriteItem.getId());
             showProgressBar();
         }
         upCommingFootballMatchTableHandler.addListener(this);

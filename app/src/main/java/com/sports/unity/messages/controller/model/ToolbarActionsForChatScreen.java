@@ -150,9 +150,12 @@ public class ToolbarActionsForChatScreen {
             }
 
             ColorDrawable drawable = new ColorDrawable(view.getResources().getColor(R.color.list_selector));
-            WrapperView wrapperView = (WrapperView) view;
-            ((FrameLayout) wrapperView.getChildAt(0)).setForeground(drawable);
-//            ((FrameLayout) view).setForeground(drawable);
+            if (view instanceof TextView) {
+                ((FrameLayout) view.getParent().getParent()).setForeground(drawable);
+            } else {
+                WrapperView wrapperView = (WrapperView) view;
+                ((FrameLayout) wrapperView.getChildAt(0)).setForeground(drawable);
+            }
 
             if (message.mimeType.equals(SportsUnityDBHelper.MIME_TYPE_TEXT)) {
                 selectedFlag = true;

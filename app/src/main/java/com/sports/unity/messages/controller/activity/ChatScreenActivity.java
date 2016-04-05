@@ -417,7 +417,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         populateMessagesOnScreen();
         setEventListeners(mHandler);
 
-        checkForwardMessageQueue();
         toolbarActionsForChatScreen.resetVariables();
     }
 
@@ -682,10 +681,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         ArrayList<Contacts> users = participants.usersInGroup;
         if( users != null && users.size() > 1 ) {
             Contacts contacts = users.get(0);
-            s += contacts.name;
+            s += contacts.getName();
             for (int index=1;index<users.size();index++) {
                 s += ", ";
-                s += users.get(index).name;
+                s += users.get(index).getName();
             }
         }
         status.setText(s);
@@ -1208,6 +1207,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     public void onXMPPServiceAuthenticated(boolean connected, XMPPConnection connection) {
         if (connected) {
             getChatThread();
+            checkForwardMessageQueue();
 
             if (!isGroupChat) {
                 if (isLastTimeRequired) {

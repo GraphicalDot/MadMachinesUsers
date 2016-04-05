@@ -56,9 +56,9 @@
 
     <string name="message_login_failed">Login failed, try again.</string>
 
-    <string name="message_load_vcard_failed">Unable to load your info, try again.</string>
-    <string name="message_submit_vcard_failed">Unable to save your info, try again.</string>
-    <string name="message_submit_vcard_sucess">Your info is saved.</string>
+    <string name="message_load_vcard_failed">Unable to load info, try again.</string>
+    <string name="message_submit_vcard_failed">Unable to save info, try again.</string>
+    <string name="message_submit_vcard_sucess">Saved successfully.</string>
 
     <string name="title_activity_demo">demo</string>
     <string name="title_activity_news_details">NewsDetailsActivity</string>
@@ -423,7 +423,7 @@ message to verify your mobile number.</string>
     <string name="privacy_policy_status_success">Privacy policy Updated</string>
     <string name="mute_alerts">MUTE ALERTS</string>
     <string name="staff_picked">Sports Unity Staff Picked</string>
-    <string name="ipl">Indian Premier League</string>
+    <string name="ipl">Nothing to show</string>
     <plurals name="file_count">
         <item quantity="one">%d file was not sent, file size was too large</item>
         <item quantity="other">%d files were not sent, file sizes were too large</item>

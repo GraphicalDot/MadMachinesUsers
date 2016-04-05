@@ -54,8 +54,10 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_FOOTBALL_COMMENTARY = "get_football_commentary?match_id=";
     private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = "http://52.76.74.188:5600/get_football_player_profile?player_id=";
     private static final String URL_PARAMS_FOR_LEAGUE_FIXTURES = "get_football_league_specific_fixtures?league_id=";
-    private static final String URL_PARAMS_FOR_FOOTBAL_TEAM_FIXTURES = "get_football_team_fixtures?team_id=";
+    private static final String URL_PARAMS_FOR_FOOTBALL_TEAM_FIXTURES = "get_football_team_fixtures?team_id=";
     private static final String URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES = "v1/get_specific_fixtures?team_id=";
+    private static final String URL_PARAMS_FOR_CRICKET_LEAGUE_FIXTURES = "/v1/get_series_fixtures?season_key=";
+    private static final String URL_PARAMS_FOR_STAFF_LEAGUE = "/v1/get_major_tournament";
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
     private HashMap<String, ContentListener> mapOfResponseListeners = new HashMap<>();
     private HashMap<String, String> requestInProcess_RequestTagAndListenerKey = new HashMap<>();
@@ -139,15 +141,20 @@ public class ScoresContentHandler {
             requestNearByUsers(apk_version, udid, lat, lng, radius, requestListenerKey, requestTag, username, password);
         } else if (callName.equals(CALL_NAME_MATCHES_LIST)) {
             String scoreId = null;
+            boolean isStaff = false;
+            String staffPicked = "";
             try {
                 scoreId = parameters.get(Constants.INTENT_KEY_ID);
+                staffPicked = parameters.get(Constants.SPORTS_TYPE_STAFF);
+                isStaff = Boolean.parseBoolean(staffPicked);
             } catch (Exception e) {
             }
 
             if (scoreId == null) {
                 requestListOfMatches(requestListenerKey, requestTag);
             } else {
-                requestListOfMatches(requestListenerKey, requestTag, scoreId);
+                requestListOfMatches(requestListenerKey, requestTag, scoreId, isStaff);
+
             }
         } else if (callName.equals(CALL_NAME_MATCH_DETAIL)) {
             String matchId = parameters.get(PARAM_ID);
@@ -280,14 +287,16 @@ public class ScoresContentHandler {
         }
     }
 
-    private void requestListOfMatches(String listenerKey, String requestTag, String favouriteItemJsonString) {
+    private void requestListOfMatches(String listenerKey, String requestTag, String favouriteItemJsonString, boolean isStaff) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             FavouriteItem f = new FavouriteItem(favouriteItemJsonString);
             String url = "";
-            if (f.getFilterType().equals(Constants.FILTER_TYPE_LEAGUE)) {
+            if (isStaff && f.getSportsType().equals(Constants.SPORTS_TYPE_CRICKET)) {
+                url = generateURL(URL_PARAMS_FOR_CRICKET_LEAGUE_FIXTURES + f.getId());
+            } else if (f.getFilterType().equals(Constants.FILTER_TYPE_LEAGUE)) {
                 url = generateURL(URL_PARAMS_FOR_LEAGUE_FIXTURES + f.getId());
             } else if (f.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
-                url = generateURL(URL_PARAMS_FOR_FOOTBAL_TEAM_FIXTURES + f.getId());
+                url = generateURL(URL_PARAMS_FOR_FOOTBALL_TEAM_FIXTURES + f.getId());
             } else {
                 //TODO FOR NEW IDS
                 url = generateURL(URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES + f.getId());
@@ -297,6 +306,16 @@ public class ScoresContentHandler {
             requestContent(requestTag, listenerKey, url);
         } else {
             //nothing
+        }
+    }
+
+
+    public void requestStaffContent(String listenerKey, String requestTag) {
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
+            String url = generateURL(URL_PARAMS_FOR_STAFF_LEAGUE);
+            requestContent(requestTag, listenerKey, url);
+
+            Log.d("navmax", "URL IS > " + url);
         }
     }
 

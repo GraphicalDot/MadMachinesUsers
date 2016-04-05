@@ -8,8 +8,8 @@ import org.json.JSONObject;
  * Created by madmachines on 8/10/15.
  */
 public class CricketMatchJsonCaller extends MatchJsonCaller {
-     private JSONObject matchWidgetHomeTeam;
-     private JSONObject matchWidgetAwayTeam;
+    private JSONObject matchWidgetHomeTeam;
+    private JSONObject matchWidgetAwayTeam;
 
 
     public int getMatchDateTimeEpoch() throws JSONException {
@@ -31,20 +31,22 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
     public String getMatchId() throws JSONException {
         return jsonObject.getString("match_id");
     }
+
     public String getSeriesName() throws JSONException {
-        if(jsonObject!=null && !jsonObject.isNull("series_name")){
-            return  jsonObject.getString("series_name");
+        if (jsonObject != null && !jsonObject.isNull("series_name")) {
+            return jsonObject.getString("series_name");
         }
         return "";
     }
+
     public String getSeriesId() throws JSONException {
-        if(jsonObject.isNull("series_id")){
+        if (jsonObject.isNull("series_id")) {
             return "";
         }
         return jsonObject.getString("series_id");
     }
-    public JSONObject getTeamsWiget() throws JSONException {
 
+    public JSONObject getTeamsWiget() throws JSONException {
         return jsonObject.getJSONObject("match_widget");
     }
 
@@ -57,35 +59,35 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
     }
 
 
-   public String getTeam1Flag() throws JSONException {
-       if(jsonObject!=null){
-           if(jsonObject.isNull("home_team_flag")){
-               return "";
-           }
-           return jsonObject.getString("home_team_flag");
-       }else{
-           return  "";
-       }
+    public String getTeam1Flag() throws JSONException {
+        if (jsonObject != null) {
+            if (jsonObject.isNull("home_team_flag")) {
+                return "";
+            }
+            return jsonObject.getString("home_team_flag");
+        } else {
+            return "";
+        }
 
     }
 
     public String getTeam2Flag() throws JSONException {
-        if(jsonObject.isNull("away_team_flag")){
+        if (jsonObject.isNull("away_team_flag")) {
             return "";
         }
         return jsonObject.getString("away_team_flag");
     }
 
     public String getVenue() throws JSONException {
-        if(jsonObject.isNull("venue")){
-            return  "";
+        if (jsonObject.isNull("venue")) {
+            return "";
         }
         return jsonObject.getString("venue");
     }
 
     public String getMatchNumber() throws JSONException {
-        if(jsonObject.isNull("match_number")){
-            return  "";
+        if (jsonObject.isNull("match_number")) {
+            return "";
         }
         return jsonObject.getString("match_number");
     }
@@ -100,9 +102,9 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
     }
 
     public String getTeam1Score() throws JSONException {
-        if(matchWidgetHomeTeam!=null && !matchWidgetHomeTeam.isNull("runs") ){
+        if (matchWidgetHomeTeam != null && !matchWidgetHomeTeam.isNull("runs")) {
             return matchWidgetHomeTeam.getString("runs");
-        }else{
+        } else {
             return "";
         }
 
@@ -112,12 +114,12 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
     public String getTeam2Score() throws JSONException {
 
 
-        if(matchWidgetAwayTeam!=null && !matchWidgetAwayTeam.isNull("runs") ){
+        if (matchWidgetAwayTeam != null && !matchWidgetAwayTeam.isNull("runs")) {
             return matchWidgetAwayTeam.getString("runs");
-        }else{
+        } else {
             return "";
         }
-   }
+    }
 
     public String getScore(JSONObject jsonObject) throws JSONException {
 
@@ -125,25 +127,25 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
     }
 
     public String getOversTeam1() throws JSONException {
-        if(matchWidgetHomeTeam!=null && !matchWidgetHomeTeam.isNull("overs")){
+        if (matchWidgetHomeTeam != null && !matchWidgetHomeTeam.isNull("overs")) {
             return matchWidgetHomeTeam.getString("overs");
-        }else {
-            return  "";
+        } else {
+            return "";
         }
 
     }
 
     public String getWicketsTeam1() throws JSONException {
-        if(matchWidgetHomeTeam!=null && !matchWidgetHomeTeam.isNull("wickets")){
+        if (matchWidgetHomeTeam != null && !matchWidgetHomeTeam.isNull("wickets")) {
             return matchWidgetHomeTeam.getString("wickets");
         }
-            return  "";
+        return "";
 
 
     }
 
     public String getOversTeam2() throws JSONException {
-        if(matchWidgetAwayTeam!=null && !matchWidgetAwayTeam.isNull("overs")){
+        if (matchWidgetAwayTeam != null && !matchWidgetAwayTeam.isNull("overs")) {
             return matchWidgetAwayTeam.getString("overs");
         }
         return "";
@@ -151,37 +153,36 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
     }
 
     public String getWicketsTeam2() throws JSONException {
-        if(matchWidgetAwayTeam!=null && !matchWidgetAwayTeam.isNull("wickets"))
-        return matchWidgetAwayTeam.getString("wickets");
+        if (matchWidgetAwayTeam != null && !matchWidgetAwayTeam.isNull("wickets"))
+            return matchWidgetAwayTeam.getString("wickets");
         else
             return "";
     }
 
 
-
     public String getMatchResult() throws JSONException {
-        if(jsonObject.isNull("result")){
+        if (jsonObject.isNull("result")) {
             return "";
         }
         return jsonObject.getString("result");
     }
+
     public String getToss() throws JSONException {
-        if(jsonObject.isNull("toss"))
-        {
+        if (jsonObject.isNull("toss")) {
             return "";
         }
         return jsonObject.getString("toss");
     }
+
     public String getShortName() throws JSONException {
-        if(jsonObject.isNull("short_name"))
-        {
+        if (jsonObject.isNull("short_name")) {
             return "";
         }
         return jsonObject.getString("short_name");
     }
+
     public String getWinnerTeam(String team) throws JSONException {
-        if(jsonObject.isNull(team))
-        {
+        if (jsonObject.isNull(team)) {
             return "";
         }
         return jsonObject.getString(team);
