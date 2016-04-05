@@ -129,6 +129,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
     private PeoplesNearMe peoplesNearMe;
     private ClusterManager<Person> mClusterManager;
+    private boolean userLocation;
     private ScoresContentHandler.ContentListener contentListener = new ScoresContentHandler.ContentListener() {
 
         @Override
@@ -201,16 +202,14 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         setsportSelectionButtons();
         setCustomButtonsForNavigationAndUsers();
         bindAutoComplete();
+        userPrivacyUpdate();
+  }
 
-
-        boolean userlocation = UserUtil.isShowToAllLocation();
+    private void userPrivacyUpdate() {
+        userLocation = UserUtil.isShowToAllLocation();
         tokenRegistrationHandler = TokenRegistrationHandler.getInstance(getApplicationContext());
         tokenRegistrationHandler.addListener(this);
-        tokenRegistrationHandler.setUserPrivacyPolicy(userlocation);
-
-
-
-
+        tokenRegistrationHandler.setUserPrivacyPolicy(userLocation);
     }
 
     private void bindAutoComplete() {
@@ -476,7 +475,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 //  makeText(getApplicationContext(), "Privacy Policy work in progress", LENGTH_LONG).show();
 
 
-                //  checkAndEnableLocation();
+                checkAndEnableLocation();
 
             }
         });
@@ -514,8 +513,13 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
             @Override
             public void onMapReady(GoogleMap googleMap) {
 
+                if(userLocation){
+                    openMap(googleMap);
+                }else{
+                    Toast.makeText(PeopleAroundMeMap.this,R.string.location_turned_off_text,Toast.LENGTH_LONG).show();
+                    checkAndEnableLocation();
+                }
 
-                openMap(googleMap);
 
 
             }
@@ -839,7 +843,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         } else {
             //nothing
         }
-
+        userPrivacyUpdate();
         loadMap();
     }
 
