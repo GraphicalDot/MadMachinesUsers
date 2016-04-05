@@ -1377,8 +1377,18 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return db.delete(GroupUserEntry.TABLE_NAME, selection, selectionArgs);
     }
 
+    public int deleteGroupMembers( int chatId) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        String selection = GroupUserEntry.COLUMN_CHAT_ID + " = ? ";
+        String[] selectionArgs = { String.valueOf(chatId)};
+
+        return db.delete(GroupUserEntry.TABLE_NAME, selection, selectionArgs);
+    }
+
     public void deleteGroup(int chatId){
         deleteContact(chatId);
+        deleteGroupMembers(chatId);
     }
 
     public int deleteMessageFromTable(int messageId) {
