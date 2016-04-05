@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.news.controller.fragment.NewsFragment;
-import com.sports.unity.scoredetails.StaffPickTable;
+import com.sports.unity.scoredetails.StaffPickedFragment;
 import com.sports.unity.scoredetails.footballdetail.UpCommingFootballMatchSqadFragment;
 import com.sports.unity.scoredetails.footballdetail.UpCommingFootballMatchTableFargment;
 import com.sports.unity.scores.controller.fragment.MatchListFragment;
@@ -36,7 +36,7 @@ public class ViewPagerAdapterForTeamAndLeagueDetails extends FragmentStatePagerA
 //        this.numberOfTabs = 4;
         favouriteItem = f;
         this.isStaffPicked = isStaffPicked;
-        if (f.getFilterType().equalsIgnoreCase(Constants.FILTER_TYPE_LEAGUE)||isStaffPicked) {
+        if (f.getFilterType().equalsIgnoreCase(Constants.FILTER_TYPE_LEAGUE) || isStaffPicked) {
             this.Titles = footballLeagueTitle;
             this.numberOfTabs = footballLeagueTitle.length;
         } else {
@@ -65,12 +65,16 @@ public class ViewPagerAdapterForTeamAndLeagueDetails extends FragmentStatePagerA
         } else if (position == 1) {
             Bundle bundle = new Bundle();
             bundle.putString(Constants.INTENT_KEY_ID, favouriteItem.getJsonObject().toString());
+            bundle.putBoolean(Constants.SPORTS_TYPE_STAFF, isStaffPicked);
             fragment = new MatchListFragment();
             fragment.setArguments(bundle);
 
         } else if (position == 2) {
             if (isStaffPicked) {
-                fragment = new StaffPickTable();
+                Bundle bundle = new Bundle();
+                bundle.putString(Constants.INTENT_KEY_ID, favouriteItem.getJsonObject().toString());
+                fragment = new StaffPickedFragment();
+                fragment.setArguments(bundle);
             } else if (favouriteItem.getFilterType().equals(Constants.FILTER_TYPE_LEAGUE)) {
                 Bundle b = new Bundle();
                 b.putString(Constants.INTENT_KEY_LEAGUE_ID, favouriteItem.getId());

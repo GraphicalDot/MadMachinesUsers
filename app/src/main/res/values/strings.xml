@@ -423,7 +423,7 @@ message to verify your mobile number.</string>
     <string name="privacy_policy_status_success">Privacy policy Updated</string>
     <string name="mute_alerts">MUTE ALERTS</string>
     <string name="staff_picked">Sports Unity Staff Picked</string>
-    <string name="ipl">Indian Premier League</string>
+    <string name="ipl">Nothing to show</string>
     <plurals name="file_count">
         <item quantity="one">%d file was not sent, file size was too large</item>
         <item quantity="other">%d files were not sent, file sizes were too large</item>
