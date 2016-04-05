@@ -143,4 +143,6 @@
     <!--score card-->
     <dimen name="layout_minutes">-8dp</dimen>
     <dimen name="card_height">130dp</dimen>
+    <!-- margin completed match  summery-->
+    <dimen name="recent_card_height">50dp</dimen>
 </resources>

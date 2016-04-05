@@ -49,7 +49,7 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="@dimen/recent_card_height"
                         android:orientation="horizontal"
                         android:padding="@dimen/horizontal_padding_very_small"
                         android:weightSum="6">
@@ -62,11 +62,25 @@
 
                             android:src="@drawable/recent_balls" />
 
-                      <View
-                          android:layout_width="1dp"
-                          android:layout_height="match_parent"
-                          android:background="@color/app_theme_blue"
-                         />
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:paddingTop="@dimen/font_size_very_very_small"
+                            android:layout_height="match_parent">
+                            <View
+                                android:layout_centerHorizontal="true"
+                                android:id="@+id/vi_first"
+                                android:layout_width="@dimen/over_divider_width"
+                                android:layout_height="@dimen/over_divider_height"
+                                android:background="@color/gray1"
+                                />
+                            <TextView
+                                android:layout_below="@id/vi_first"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/gray1"
+                                android:textSize="@dimen/font_size_very_very_small"
+                                android:text=""/>
+                        </RelativeLayout>
 
                         <ImageView
                             android:id="@+id/iv_second_ball"
@@ -75,10 +89,25 @@
                             android:layout_weight="0.9"
                             android:src="@drawable/recent_balls" />
 
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:background="@color/app_theme_blue"/>
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:paddingTop="@dimen/font_size_very_very_small"
+                            android:layout_height="match_parent">
+                            <View
+                                android:layout_centerHorizontal="true"
+                                android:id="@+id/vi_second"
+                                android:layout_width="@dimen/over_divider_width"
+                                android:layout_height="@dimen/over_divider_height"
+                                android:background="@color/gray1"
+                                />
+                            <TextView
+                                android:layout_below="@id/vi_second"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/gray1"
+                                android:textSize="@dimen/font_size_very_very_small"
+                                android:text=""/>
+                        </RelativeLayout>
 
                         <ImageView
                             android:id="@+id/iv_third_ball"
@@ -87,10 +116,25 @@
                             android:layout_weight="0.9"
                             android:src="@drawable/recent_balls" />
 
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:background="@color/app_theme_blue"/>
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:paddingTop="@dimen/font_size_very_very_small"
+                            android:layout_height="match_parent">
+                            <View
+                                android:layout_centerHorizontal="true"
+                                android:id="@+id/vi_third"
+                                android:layout_width="@dimen/over_divider_width"
+                                android:layout_height="@dimen/over_divider_height"
+                                android:background="@color/gray1"
+                                />
+                            <TextView
+                                android:layout_below="@id/vi_third"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/gray1"
+                                android:textSize="@dimen/font_size_very_very_small"
+                                android:text=""/>
+                        </RelativeLayout>
 
                         <ImageView
                             android:id="@+id/iv_fourth_ball"
@@ -99,11 +143,25 @@
                             android:layout_weight="0.9"
                             android:src="@drawable/recent_balls" />
 
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:background="@color/app_theme_blue"/>
-
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:paddingTop="@dimen/font_size_very_very_small"
+                            android:layout_height="match_parent">
+                            <View
+                                android:layout_centerHorizontal="true"
+                                android:id="@+id/vi_four"
+                                android:layout_width="@dimen/over_divider_width"
+                                android:layout_height="@dimen/over_divider_height"
+                                android:background="@color/gray1"
+                                />
+                            <TextView
+                                android:layout_below="@id/vi_four"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/gray1"
+                                android:textSize="@dimen/font_size_very_very_small"
+                                android:text=""/>
+                        </RelativeLayout>
                         <ImageView
                             android:id="@+id/iv_fifth_ball"
                             android:layout_width="@dimen/recent_ball_radius"
@@ -111,11 +169,25 @@
                             android:layout_weight="0.9"
                             android:src="@drawable/recent_balls" />
 
-                        <View
-                            android:layout_width="1dp"
-                            android:layout_height="match_parent"
-                            android:background="@color/app_theme_blue"/>
-
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:paddingTop="@dimen/font_size_very_very_small"
+                            android:layout_height="match_parent">
+                            <View
+                                android:layout_centerHorizontal="true"
+                                android:id="@+id/vi_five"
+                                android:layout_width="@dimen/over_divider_width"
+                                android:layout_height="@dimen/over_divider_height"
+                                android:background="@color/gray1"
+                                />
+                            <TextView
+                                android:layout_below="@id/vi_five"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/gray1"
+                                android:textSize="@dimen/font_size_very_very_small"
+                                android:text=""/>
+                        </RelativeLayout>
                         <ImageView
                             android:id="@+id/iv_sixth_ball"
                             android:layout_width="@dimen/recent_ball_radius"
