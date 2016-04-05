@@ -93,7 +93,7 @@ public class GroupParticipantsAdapter extends BaseAdapter {
             }
             userImage.setBorderColor(context.getResources().getColor(R.color.gray4));
 
-            userName.setText(c.name);
+            userName.setText(c.getName());
             userStatus.setText(c.status);
 
             if( adminJIDs.contains(c.jid) ) {

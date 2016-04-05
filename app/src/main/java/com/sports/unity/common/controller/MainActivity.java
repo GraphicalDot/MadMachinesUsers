@@ -236,14 +236,14 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             profilePhoto.setImageResource(R.drawable.ic_user);
         }
 
-        name.setText(contact.name);
+        name.setText(contact.getName());
 
         viewMyProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, UserProfileActivity.class);
                 intent.putExtra(Constants.IS_OWN_PROFILE, true);
-                intent.putExtra("name", contact.name);
+                intent.putExtra("name", contact.getName());
                 intent.putExtra("profilePicture", contact.image);
                 intent.putExtra("status", contact.status);
                 startActivity(intent);

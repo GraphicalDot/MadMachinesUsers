@@ -96,7 +96,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
                 }
             }
 
-            txtTitle.setText(contacts.name);
+            txtTitle.setText(contacts.getName());
             status.setText(contacts.status);
 
             if (previouslySelectedMembersList.contains(contacts.jid)) {
@@ -121,7 +121,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
                 rowView.setTag(new Boolean(true));
             }
 
-            txtTitle.setText(contacts.name);
+            txtTitle.setText(contacts.getName());
             status.setText(contacts.status);
 
             if (contacts.image != null) {
@@ -233,7 +233,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
 
     @SuppressLint("NewApi")
     public char getHeader(int position) {
-        char c = usedContact.get(position).name.subSequence(0, 1).charAt(0);
+        char c = usedContact.get(position).getName().subSequence(0, 1).charAt(0);
         boolean isAlphabetic = Character.isLetter(c);
         if (isAlphabetic) {
             c = Character.toUpperCase(c);
@@ -279,7 +279,7 @@ public class ContactListAdapter extends ArrayAdapter<Contacts> implements Sticky
 
             for (Contacts c : finalContact) {
                 if (!nlist.contains(c)) {
-                    if (c.name.toLowerCase().contains(filterString)) {
+                    if (c.getName().toLowerCase().contains(filterString)) {
                         nlist.add(c);
                     }
                 }

@@ -12,7 +12,7 @@ public class Contacts {
 
     public int id;
     public String jid;
-    public String name;
+    private String name;
     public String phoneNumber;
     public byte[] image;
     public String status;
@@ -50,6 +50,13 @@ public class Contacts {
         String s1 = String.valueOf(id);
         String s2 = String.valueOf(((Contacts) o).id);
         return s1.equals(s2);
+    }
+
+    public String getName() {
+        if( name == null || name.isEmpty() ) {
+            name = "unknown";
+        }
+        return name;
     }
 
 }

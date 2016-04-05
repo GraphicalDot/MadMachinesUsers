@@ -184,7 +184,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     }
 
     public int addToContacts(String name, String number, String jid, String defaultStatus, byte[] image, int availableStatus) {
-        return addToContacts(name, number, jid, defaultStatus, image, availableStatus, false);
+        return addToContacts(name, number, jid, defaultStatus, image, availableStatus, true);
     }
 
     public ArrayList getAllPhoneNumbers() {
@@ -548,6 +548,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(ContactChatEntry.COLUMN_IMAGE, userImage);
         values.put(ContactChatEntry.COLUMN_STATUS, status);
+        values.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, false);
 
         String selection = ContactChatEntry.COLUMN_JID + " LIKE ? ";
         String[] selectionArgs = {jid};
@@ -562,6 +563,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         values.put(ContactChatEntry.COLUMN_NAME, name);
         values.put(ContactChatEntry.COLUMN_IMAGE, userImage);
         values.put(ContactChatEntry.COLUMN_STATUS, status);
+        values.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, false);
 
         String selection = ContactChatEntry.COLUMN_JID + " LIKE ? ";
         String[] selectionArgs = {jid};
@@ -1135,9 +1137,9 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 //
 //        }
 //
-        printChatEntryTable();
+//        printChatEntryTable();
 //        printContactsTable();
-        printMessagesTable();
+//        printMessagesTable();
         return list;
 
     }

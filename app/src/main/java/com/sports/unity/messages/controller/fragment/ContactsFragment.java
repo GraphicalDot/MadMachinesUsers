@@ -71,7 +71,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
 
             if (c.isRegistered()) {
                 String jid = c.jid;
-                String name = c.name;
+                String name = c.getName();
                 int contactId = c.id;
                 byte[] userPicture = c.image;
                 boolean blockStatus = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).isChatBlocked(contactId);
@@ -137,7 +137,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
             AlertDialog.Builder build = new AlertDialog.Builder(
                     getActivity());
             build.setMessage(
-                    "Send to " + contact.name + " ?");
+                    "Send to " + contact.getName() + " ?");
             build.setPositiveButton("ok",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
@@ -161,7 +161,7 @@ public class ContactsFragment extends Fragment implements OnSearchViewQueryListe
         if (contact.isRegistered()) {
             ToolbarActionsForChatScreen.getInstance(getActivity().getApplicationContext()).resetVariables();
             String jid = contact.jid;
-            String name = contact.name;
+            String name = contact.getName();
             int contactId = contact.id;
             byte[] userPicture = contact.image;
             boolean blockStatus = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).isChatBlocked(contactId);
