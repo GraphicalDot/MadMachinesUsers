@@ -16,3 +16,4 @@
 #   public *;
 #}
 -dontwarn org.joda.convert.**
+-keep public interface com.sports.unity.util.ActivityActionListener
