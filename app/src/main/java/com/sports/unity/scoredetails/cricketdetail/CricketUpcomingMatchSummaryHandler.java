@@ -23,7 +23,7 @@ public class CricketUpcomingMatchSummaryHandler {
     private static final String REQUEST_TAG = "UPCOMMING_MATCH_SUMMARY";
     private static Context mContext;
 
-    private String BASEURL = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
+    private String BASEURL = Constants.SCORE_BASE_URL+"/get_cricket_match_summary?match_key=";
 
 
     private CricketUpcomingMatchSummaryContentListener mcontentListener;

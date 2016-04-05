@@ -10,6 +10,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.VolleyRequestHandler;
 
 import java.util.HashSet;
@@ -22,7 +23,7 @@ public class CricketMatchSummaryHandler {
     private static final String REQUEST_TAG = "SUMMARY_TAG";
     private Context context;
     private String matchId = null;
-    private String BASEURL = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
+    private String BASEURL = Constants.SCORE_BASE_URL+"/get_cricket_match_summary?match_key=";
 
 
     private ContentListener contentListener = null;

@@ -75,11 +75,11 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
 
     private SquadContentListener squadContentListener;
 
-    public static final String SQUAD_BASE_URL = "http://52.74.75.79:8080/get_football_squads?team_1=";
+    public static final String SQUAD_BASE_URL = Constants.SCORE_BASE_URL+"/get_football_squads?team_1=";
     public static final String SQUAD_LISTENER_KEY = "squad_listener_key";
     public static final String SQUAD_REQUEST_TAG = "squad_request_tag";
-    public static final String SQUAD_FOOTBALL_URL = "http://52.74.75.79:8080/get_team_players?team_id=";
-    public static final String SQUAD_CRICKET_URL = "http://52.74.75.79:8080/v1/get_team_squad?team_id=";
+    public static final String SQUAD_FOOTBALL_URL = Constants.SCORE_BASE_URL+"/get_team_players?team_id=";
+    public static final String SQUAD_CRICKET_URL = Constants.SCORE_BASE_URL+"/v1/get_team_squad?team_id=";
 
     public UpCommingFootballMatchSqadFragment() {
 

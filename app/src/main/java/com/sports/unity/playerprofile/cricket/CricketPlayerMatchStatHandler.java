@@ -21,7 +21,7 @@ public class CricketPlayerMatchStatHandler {
 
     private static final String REQUEST_TAG = "CRICKET_PLAYER_STATS_TAG";
     private static Context mContext;
-    private String BASEURL = "http://52.74.75.79:8080/v1/get_player_stats?player_id=";
+    private String BASEURL = Constants.SCORE_BASE_URL+"/v1/get_player_stats?player_id=";
 
 
     private CricketPlayerMatchStatContentListener mContentListener = null;

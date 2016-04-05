@@ -40,19 +40,17 @@ public class ScoresContentHandler {
     public static final String PARAM_NEWS_IMAGE_DPI = "IMAGE_DPI";
     public static final String PARAM_NEWS_ID = "NEWS_ID";
     public static final String URL_REGISTER = "http://" + XMPPClient.SERVER_HOST + "/register?";
-    public static final String URL_NEWS = "http://52.76.74.188:8000/mixed?";
     private static final String URL_CREATE = "http://" + XMPPClient.SERVER_HOST + "/create?";
     private static final String URL_REQUEST_OTP = "http://" + XMPPClient.SERVER_HOST + "/create?";
     private static final String URL_NEAR_BY = "http://" + XMPPClient.SERVER_HOST + "/get_nearby_users?";
     private static final String URL_PARAMS_NEWS_IMAGE_DPI = "image_size";
     private static final String URL_PARAMS_NEWS_ID = "news_id";
-    private static final String SCORES_BASE_URL = BuildConfig.SCORES_BASE_URL;
     private static final String URL_PARAMS_FOR_LIST_OF_MATCHES = "v1/get_all_matches_list";
     private static final String URL_PARAMS_FOR_FOOTBALL_MATCH_DETAIL = "get_football_match_scores?match_id=";
     private static final String URL_PARAMS_FOR_CRICKET_MATCH_DETAIL = "v1/get_match_widget?season_key=%s&match_id=";
     private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "v1/get_match_commentary?season_key=%s&match_id=";
     private static final String URL_PARAMS_FOR_FOOTBALL_COMMENTARY = "get_football_commentary?match_id=";
-    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = "http://52.76.74.188:5600/get_football_player_profile?player_id=";
+    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = Constants.FOOTBALL_PLAYER_BASE_URL+"/get_football_player_profile?player_id=";
     private static final String URL_PARAMS_FOR_LEAGUE_FIXTURES = "get_football_league_specific_fixtures?league_id=";
     private static final String URL_PARAMS_FOR_FOOTBALL_TEAM_FIXTURES = "get_football_team_fixtures?team_id=";
     private static final String URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES = "v1/get_specific_fixtures?team_id=";
@@ -232,7 +230,7 @@ public class ScoresContentHandler {
 
     private void requestForNewsDetail(String imageDpi, String newsId, String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
-            StringBuilder urlBuilder = new StringBuilder(URL_NEWS);
+            StringBuilder urlBuilder = new StringBuilder(Constants.URL_NEWS_CONTENT);
             urlBuilder.append(URL_PARAMS_NEWS_IMAGE_DPI);
             urlBuilder.append("=");
             urlBuilder.append(imageDpi);
@@ -389,7 +387,7 @@ public class ScoresContentHandler {
     }
 
     private String generateURL(String parameters) {
-        StringBuilder stringBuilder = new StringBuilder(SCORES_BASE_URL);
+        StringBuilder stringBuilder = new StringBuilder(Constants.SCORE_BASE_URL);
         stringBuilder.append(parameters);
         return stringBuilder.toString();
     }

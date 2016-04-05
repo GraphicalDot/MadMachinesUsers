@@ -23,8 +23,8 @@ public class UpCommingFootballMatchTableHandler {
 
     private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
     private static Context mContext;
-    private String BASEURL = "http://52.74.75.79:8080/get_league_standings?league_id=";
-    private String STAFF_PICK_URL = "http://52.74.75.79:8080/v1/get_season_table?season_key=";
+    private String BASEURL = Constants.SCORE_BASE_URL+"/get_league_standings?league_id=";
+    private String STAFF_PICK_URL = Constants.SCORE_BASE_URL+"/v1/get_season_table?season_key=";
 
 
     private UpCommingFootballMatchTableContentListener mContentListener;
