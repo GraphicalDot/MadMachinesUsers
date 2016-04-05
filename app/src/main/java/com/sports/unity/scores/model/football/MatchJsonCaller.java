@@ -33,6 +33,21 @@ public class MatchJsonCaller extends JsonObjectCaller {
         return jsonObject.getString("result");
     }
 
+
+    public String getWinerTeam() throws JSONException {
+        if (jsonObject.isNull("winner_team")) {
+            return "";
+        }
+        return jsonObject.getString("winner_team");
+    }
+
+
+
+
+
+
+
+
     public String getTeams1Odds() {
         String odds = null;
         try {

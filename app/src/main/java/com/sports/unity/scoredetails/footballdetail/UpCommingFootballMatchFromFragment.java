@@ -220,9 +220,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                         }else{
                                             showErrorLayout(getView());
                                         }
-
                                        }
-
                                     if(!teamFromObject.isNull("team_points")){
                                         tvpointoffirstteam.setText(teamFromObject.getString("team_points"));}
                                     if(!teamFromObject.isNull("games_won")) {
@@ -241,7 +239,6 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                         }else{
                                             showErrorLayout(getView());
                                         }
-
 
                                     } if(!teamFromObject.isNull("team_points")){
                                         tvpointofsecondteam.setText(teamFromObject.getString("team_points"));}

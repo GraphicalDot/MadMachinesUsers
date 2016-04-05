@@ -353,7 +353,11 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                         JSONObject teamData= widgetTeamsFirst.getJSONObject(i);
                         if(awayTeam.equalsIgnoreCase(teamData.getString("team_name"))){
                             cricketMatchJsonCaller.setMatchWidgetAwayTeam(teamData);
-                        }else if(homeTeam.equalsIgnoreCase(teamData.getString("team_name"))){
+                        }
+
+
+
+                        if(homeTeam.equalsIgnoreCase(teamData.getString("team_name"))){
                             cricketMatchJsonCaller.setMatchWidgetHomeTeam(teamData);
 
                         }
@@ -368,7 +372,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                         JSONObject teamData= widgetTeamSecond.getJSONObject(i);
                         if(homeTeam.equalsIgnoreCase(teamData.getString("team_name"))){
                             cricketMatchJsonCaller.setMatchWidgetHomeTeam(teamData);
-                        }else if(awayTeam.equalsIgnoreCase(teamData.getString("team_name"))){
+                        }
+
+
+                        if(awayTeam.equalsIgnoreCase(teamData.getString("team_name"))){
                             cricketMatchJsonCaller.setMatchWidgetAwayTeam(teamData);
                         }
                     }
@@ -422,12 +429,19 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                             stringBuilder.append("/");
                             stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam1() != null ? cricketMatchJsonCaller.getWicketsTeam1() : "0");
 
-                            teamFirstOvers.setText("("+cricketMatchJsonCaller.getOversTeam1()!=null?cricketMatchJsonCaller.getOversTeam1():"0"+")");
+                         //   teamFirstOvers.setText("("+cricketMatchJsonCaller.getOversTeam1()!=null?cricketMatchJsonCaller.getOversTeam1():"0"+")");
 
                             textView = (TextView) findViewById(R.id.team1_score);
                             textView.setText(stringBuilder.toString());
 
                             textView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+
+                            StringBuilder stringBuilder1=new StringBuilder("");
+                            stringBuilder1.append("(");
+                            stringBuilder1.append(cricketMatchJsonCaller.getOversTeam1()!=null?cricketMatchJsonCaller.getOversTeam1():"0");
+                            stringBuilder1.append(")");
+                            teamFirstOvers.setText(stringBuilder1.toString());
+
                         }
 
                         {
@@ -435,10 +449,19 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                             stringBuilder.append(cricketMatchJsonCaller.getTeam2Score()!=null?cricketMatchJsonCaller.getTeam2Score():"0");
                             stringBuilder.append("/");
                             stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam2() != null ? cricketMatchJsonCaller.getWicketsTeam2() : "0");
-                            teamSecondOvers.setText("("+cricketMatchJsonCaller.getOversTeam2()!=null?cricketMatchJsonCaller.getOversTeam2():"0"+")");
+
+                           // teamSecondOvers.setText("("+cricketMatchJsonCaller.getOversTeam2()!=null?cricketMatchJsonCaller.getOversTeam2():"0"+")");
+
                             textView = (TextView) findViewById(R.id.team2_score);
                             textView.setText(stringBuilder.toString());
                             textView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
+
+                            StringBuilder stringBuilder1=new StringBuilder("");
+                            stringBuilder1.append("(");
+                            stringBuilder1.append(cricketMatchJsonCaller.getOversTeam2()!=null?cricketMatchJsonCaller.getOversTeam2():"0");
+                            stringBuilder1.append(")");
+                            teamSecondOvers.setText(stringBuilder1.toString());
+
                         }
 
                     } else {

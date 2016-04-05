@@ -4,7 +4,8 @@ package com.sports.unity.scoredetails;
  * Created by madmachines on 24/2/16.
  */
 public class BallDetail {
-   private  String value = ".";
+    private int ballId;
+    private  String value = ".";
     private int type= 0;
     private int fontColor;
     private int backGroundColor;
@@ -14,6 +15,14 @@ public class BallDetail {
     }
 
     public BallDetail() {
+    }
+
+    public int getBallId() {
+        return ballId;
+    }
+
+    public void setBallId(int ballId) {
+        this.ballId = ballId;
     }
 
     public void setValue(String value) {
