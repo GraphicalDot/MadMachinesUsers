@@ -23,7 +23,7 @@ public class CompletedFootballMatchStatHandler {
 
     private static final String REQUEST_TAG = "COMPLETED_FOOTABLL_MATCH_TAG";
     private static Context mContext;
-    private String BASEURL = "http://52.74.75.79:8080/get_match_stats?match_id=";
+    private String BASEURL = Constants.SCORE_BASE_URL+"/get_match_stats?match_id=";
 
     private CompletedFootballMatchContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();

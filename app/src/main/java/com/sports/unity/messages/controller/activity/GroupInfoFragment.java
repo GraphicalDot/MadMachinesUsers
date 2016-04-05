@@ -145,7 +145,8 @@ public class GroupInfoFragment extends Fragment {
         toolbarEdit.setText("Edit");
         toolbarEdit.setTextColor(getResources().getColor(R.color.app_theme_blue));
         toolbarEdit.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoRegular());
-        toolbarEdit.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+//        toolbarEdit.setVisibility(isAdmin ? View.VISIBLE : View.GONE);
+        toolbarEdit.setVisibility(View.GONE);
     }
 
     private void setListViewHeightBasedOnItems(ListView listView) {

@@ -29,7 +29,7 @@ import java.io.IOException;
  */
 public class XMPPClient {
 
-    public static String SERVER_HOST = "54.169.217.88"; //production server
+    public static String SERVER_HOST = Constants.XMPP_SERVER_BASE_URL;
 //    public static String SERVER_HOST = "52.74.142.219"; //staging server
 //    public static String SERVER_HOST = "192.168.1.143"; //local server
 

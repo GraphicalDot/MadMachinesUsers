@@ -433,8 +433,9 @@ public class UserUtil {
         return COUNTRY_CODE;
     }
 
-    public static String getStaffFlagUrl() {
-        return STAFF_FLAG;
+    public static String getStaffFlagUrl(Context context) {
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        return tinyDB.getString(TinyDB.KEY_STAFF_FLAG);
     }
 
     public static void setCountryCode(Context context, String countryCode) {

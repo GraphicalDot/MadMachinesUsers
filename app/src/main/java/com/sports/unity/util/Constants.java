@@ -1,5 +1,7 @@
 package com.sports.unity.util;
 
+import com.sports.unity.BuildConfig;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -7,6 +9,14 @@ import java.util.List;
  * Created by amandeep on 15/10/15.
  */
 public class Constants {
+
+    public static final String XMPP_SERVER_BASE_URL = BuildConfig.XMPP_SERVER_BASE_URL;
+    public static final String SCORE_BASE_URL = BuildConfig.SCORES_BASE_URL;
+    public static final String SEARCH_BASE_URL = BuildConfig.SEARCH_BASE_URL;
+    public static final String NEWS_BASE_URL = BuildConfig.NEWS_BASE_URL;
+    public static final String FOOTBALL_PLAYER_BASE_URL = BuildConfig.PLAYER_PROFILE_BASE_URL;
+
+    public static final String URL_NEWS_CONTENT = Constants.NEWS_BASE_URL+"/mixed?";
 
     public static final String GAME_KEY_CRICKET = "cricket";
     public static final String GAME_KEY_FOOTBALL = "football";
@@ -32,7 +42,6 @@ public class Constants {
     public static final String INTENT_KEY_FILENAME = "FILE_NAME";
     public static final String INTENT_KEY_MIMETYPE = "MIME_TYPE";
 
-    public static final String URL_NEWS_CONTENT = "http://52.76.74.188:8000/mixed?";
 
     public static final String REQUEST_PARAMETER_KEY_PHONE_NUMBER = "phone_number";
     public static final String REQUEST_PARAMETER_KEY_AUTH_CODE = "auth_code";

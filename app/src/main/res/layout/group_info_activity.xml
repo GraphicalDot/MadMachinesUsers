@@ -58,7 +58,9 @@
                     android:text="Created by you, 10 December 2016"
                     android:textColor="@color/gray4"
                     android:textSize="@dimen/font_size_very_small"
-                    android:textStyle="bold" />
+                    android:textStyle="bold"
+                    android:visibility="gone"
+                    />
             </LinearLayout>
 
             <LinearLayout

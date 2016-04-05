@@ -166,25 +166,27 @@ public class MatchListFragment extends Fragment {
     }
 
     private void handleStaffFavContent() {
-        String staffFavString = UserUtil.getStaffFlagUrl();
+        String staffFavString = UserUtil.getStaffFlagUrl(getActivity());
         if (null != staffFavString && !TextUtils.isEmpty(staffFavString)) {
             flagFavItem = FavouriteItemWrapper.getInstance(getActivity()).getFavListOfOthers(staffFavString);
             if (flagFavItem != null && flagFavItem.size() > 0) {
                 staffView.removeAllViews();
-                for (final FavouriteItem f : flagFavItem) {
+                for (FavouriteItem f : flagFavItem) {
                     LinearLayout scoreView = (LinearLayout) inflater.inflate(R.layout.score_staff_item, null);
                     ImageView flag = (ImageView) scoreView.findViewById(R.id.flag);
                     Glide.with(getActivity()).load(Uri.parse(f.getFlagImageUrl())).placeholder(R.drawable.ic_no_img).into(flag);
+                    final String jsonString = f.getJsonObject().toString();
                     scoreView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             Intent intent = new Intent(getContext(), TeamLeagueDetails.class);
-                            intent.putExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, f.getJsonObject().toString());
+                            intent.putExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, jsonString);
                             intent.putExtra(Constants.SPORTS_TYPE_STAFF, true);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                             startActivity(intent);
                         }
                     });
+                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
                     staffView.addView(scoreView);
                 }
                 staffView.requestLayout();

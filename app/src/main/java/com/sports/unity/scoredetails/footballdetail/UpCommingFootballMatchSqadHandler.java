@@ -23,9 +23,9 @@ public class UpCommingFootballMatchSqadHandler {
 
     private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
     private static Context mContext;
-    private String BASEURL = "http://52.74.75.79:8080/get_football_squads?team_1=";
+    private String BASEURL = Constants.SCORE_BASE_URL+"/get_football_squads?team_1=";
 
-    private String BASEURLFORFOTTBALLSQUAD = "http://52.74.75.79:8080/get_team_players?team_id=";
+    private String BASEURLFORFOTTBALLSQUAD = Constants.SCORE_BASE_URL+"/get_team_players?team_id=";
     private UpCommingFootballMatchSqadContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
