@@ -1,5 +1,6 @@
 package com.sports.unity.messages.controller.activity;
 
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -256,7 +257,10 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         refreshUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getPeopleAroundMe(latLong.latitude, latLong.longitude);
+                if(latLong!=null){
+                    getPeopleAroundMe(latLong.latitude, latLong.longitude);
+                }
+
             }
         });
     }
@@ -516,8 +520,28 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                 if(userLocation){
                     openMap(googleMap);
                 }else{
-                    Toast.makeText(PeopleAroundMeMap.this,R.string.location_turned_off_text,Toast.LENGTH_LONG).show();
-                    checkAndEnableLocation();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(PeopleAroundMeMap.this);
+                    builder.setTitle("Are You Sure Want To Enable Your Location?");
+
+                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            checkAndEnableLocation();
+                            /*dialog.dismiss();*/
+                        }
+
+                    });
+                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+
+                    });
+                    builder.show();
+                    //Toast.makeText(PeopleAroundMeMap.this,R.string.location_turned_off_text,Toast.LENGTH_LONG).show();
+
                 }
 
 
