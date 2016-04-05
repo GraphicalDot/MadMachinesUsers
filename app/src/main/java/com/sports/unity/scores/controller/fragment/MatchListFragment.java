@@ -174,7 +174,7 @@ public class MatchListFragment extends Fragment {
                 for (FavouriteItem f : flagFavItem) {
                     LinearLayout scoreView = (LinearLayout) inflater.inflate(R.layout.score_staff_item, null);
                     ImageView flag = (ImageView) scoreView.findViewById(R.id.flag);
-                    Glide.with(getActivity()).load(Uri.parse(f.getFlagImageUrl())).placeholder(R.drawable.ic_no_img).o.into(flag);
+                    Glide.with(getActivity()).load(Uri.parse(f.getFlagImageUrl())).placeholder(R.drawable.ic_no_img).into(flag);
                     final String jsonString = f.getJsonObject().toString();
                     scoreView.setOnClickListener(new View.OnClickListener() {
                         @Override
