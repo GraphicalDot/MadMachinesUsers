@@ -634,7 +634,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
 //        AlertDialog.Builder otherProfileBuilder = new AlertDialog.Builder(PeopleAroundMeMap.this);
 //        otherProfileBuilder.setView(popupProfile);
-        aDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+          aDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 
             @Override
             public void onCancel(DialogInterface dialog) {
