@@ -263,6 +263,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         StringBuilder stringBuilder = new StringBuilder();
 
         try {
+
             if (sportsType.equals(ScoresJsonParser.CRICKET)) {
                 cricketMatchJsonCaller.setJsonObject(matchScoreDetails);
 
@@ -276,7 +277,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 }
             } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
                 footballMatchJsonCaller.setJsonObject(matchScoreDetails);
-
                 /*stringBuilder.append(footballMatchJsonCaller.getHomeTeam());
                 stringBuilder.append(" vs ");
                 stringBuilder.append(footballMatchJsonCaller.getAwayTeam());*/
