@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
@@ -67,6 +68,42 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
 
     private static final String PLAYER_PROFILE_REQUEST_TAG = "playerProfileTag";
 
+    private ScoresContentHandler.ContentListener contentListener = new ScoresContentHandler.ContentListener() {
+
+        @Override
+        public void handleContent(String tag, String content, int responseCode) {
+            hideProgress();
+            if (responseCode == 200) {
+                try {
+                    JSONObject response = new JSONObject(content);
+                    if (response.getBoolean("success")) {
+                        populateData(response);
+                    } else {
+                        showErrorLayout();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                    showErrorLayout();
+                }
+            } else {
+                Toast.makeText(getApplicationContext(), "oops there was an error", Toast.LENGTH_SHORT).show();
+                showErrorLayout();
+            }
+        }
+    };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ScoresContentHandler.getInstance().addResponseListener(contentListener, REQUEST_LISTENER_KEY);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        ScoresContentHandler.getInstance().removeResponseListener(REQUEST_LISTENER_KEY);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -75,9 +112,9 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
         initView();
         setToolbar();
         {
-            PlayerProfileComponentListener playerProfileComponentListener = new PlayerProfileComponentListener(progressBar);
+//            PlayerProfileComponentListener playerProfileComponentListener = new PlayerProfileComponentListener(progressBar);
             ArrayList<CustomComponentListener> listeners = new ArrayList<>();
-            listeners.add(playerProfileComponentListener);
+//            listeners.add(playerProfileComponentListener);
             onComponentCreate(listeners, REQUEST_LISTENER_KEY);
         }
         setInitData();
@@ -96,7 +133,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
     }
 
     private void initView() {
-        try{
+        try {
             backImage = (ImageView) findViewById(R.id.back_img);
             playerProfileImage = (CircleImageView) findViewById(R.id.player_profile_image);
           /*  playerTagImage = (ImageView) findViewById(R.id.player_tag_image);*/
@@ -107,19 +144,20 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             squadNumber = (TextView) findViewById(R.id.squad_number);
             nationality = (TextView) findViewById(R.id.nationality_value);
             idSeason = (TextView) findViewById(R.id.id_current_season);
-            leagueImage= (ImageView) findViewById(R.id.ic_league_image);
+            leagueImage = (ImageView) findViewById(R.id.ic_league_image);
             tvNextGameName = (TextView) findViewById(R.id.tv_next_game_name);
             tvNextGameDetails = (TextView) findViewById(R.id.tv_next_game_name);
             tvNextGameVenue = (TextView) findViewById(R.id.next_game_venue);
             tvNextGameDate = (TextView) findViewById(R.id.tv_next_game_date);
             notificationImage = (ImageView) findViewById(R.id.notificationicon_image);
-            recyclerView= (RecyclerView) findViewById(R.id.rc_player_details);
-            recyclerView.setLayoutManager(new LinearLayoutManager(this , VERTICAL, false));
+            recyclerView = (RecyclerView) findViewById(R.id.rc_player_details);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this, VERTICAL, false));
             recyclerView.setNestedScrollingEnabled(false);
             mplayerScorecardAdapter = new PlayerScorecardAdapter(playerScoreCardDTOs);
             recyclerView.setAdapter(mplayerScorecardAdapter);
             progressBar = (ProgressBar) findViewById(R.id.progress);
             progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+            progressBar.setIndeterminate(true);
             backImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -128,9 +166,8 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
                 }
             });
             errorLayout = (LinearLayout) findViewById(R.id.error);
-            errorLayout.setVisibility(View.GONE);
             rootScrollBar = findViewById(R.id.root_scroll_bar);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -140,176 +177,119 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             HashMap<String, String> parameters = new HashMap<>();
             parameters.put(Constants.PLAYER_NAME, playerNameKey);
             parameters.put(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_FOOTBALL);
+            showProgress();
             ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_PLAYER_PROFILE, parameters, REQUEST_LISTENER_KEY, PLAYER_PROFILE_REQUEST_TAG);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
     }
-    private class PlayerProfileComponentListener extends CustomComponentListener {
 
-        private boolean success;
-
-        public PlayerProfileComponentListener(ProgressBar progressBar) {
-            super(PLAYER_PROFILE_REQUEST_TAG, progressBar, null);
-        }
-
-        @Override
-        public boolean handleContent(String tag, String content) {
-            boolean success = false;
-            try {
-                showProgress();
-                JSONObject response = new JSONObject(content);
-                if (response.getBoolean("success")) {
-                    this.success = true;
-                    Log.i("player profile", content);
-                    populateData(content);
-                } else {
-                    this.success = false;
-                    showErrorLayout();
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-                showErrorLayout();
-            }
-            success = true;
-            return success;
-        }
-
-        @Override
-        public void handleErrorContent(String tag) {
-
-        }
-
-        @Override
-        public void changeUI() {
-
-        }
-
-
-    }
+//    private class PlayerProfileComponentListener extends CustomComponentListener {
+//
+//        private boolean success;
+//
+//        public PlayerProfileComponentListener(ProgressBar progressBar) {
+//            super(PLAYER_PROFILE_REQUEST_TAG, progressBar, null);
+//        }
+//
+//        @Override
+//        public boolean handleContent(String tag, String content) {
+//            boolean success = false;
+//            hideProgress();
+//            try {
+//                JSONObject response = new JSONObject(content);
+//                if (response.getBoolean("success")) {
+//                    this.success = true;
+//                    Log.i("player profile", content);
+//                    populateData(response);
+//                } else {
+//                    this.success = false;
+//                    showErrorLayout();
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//                showErrorLayout();
+//            }
+//            success = true;
+//            return success;
+//        }
+//
+//        @Override
+//        public void handleErrorContent(String tag) {
+//
+//        }
+//
+//        @Override
+//        public void changeUI() {
+//
+//        }
+//
+//
+//    }
 
 
     private void getIntentExtras() {
         playerNameKey = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-       }
+    }
 
-    private void populateData(String content){
+    private void populateData(JSONObject jsonObject) {
         try {
-            hideProgress();
-            JSONObject jsonObject = new JSONObject(content);
 
+            JSONArray datArray = (JSONArray) jsonObject.get("data");
 
-
-            if(!jsonObject.isNull("data") ) {
-                JSONArray datArray = (JSONArray) jsonObject.get("data");
-
-                final  JSONObject dataObject = datArray.getJSONObject(0);
-                final JSONArray profileArray = dataObject.getJSONArray("profile");
-                final JSONObject profileData = profileArray.getJSONObject(0);
-                final JSONArray otherComptetionArray =  dataObject.getJSONArray("other_competitions");
-
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        try{
-                            if(profileData != null){
-
-                                if(!dataObject.isNull("name")){
-                                    playerName.setText(dataObject.getString("name"));
-                                }
-                                if(!profileData.isNull("Date of Birth")){
-                                    playerAge.setText(profileData.getString("Date of Birth"));
-                                }
-                                if(!profileData.isNull("nationality")){
-                                    nationality.setText(profileData.getString("nationality"));
-                                }
-                                if(!dataObject.isNull("player_image")){
-                                    Glide.with(PlayerProfileView.this).load(dataObject.getString("player_image")).placeholder(R.drawable.ic_user).into(playerProfileImage);
-                                }
-//                 /*   playerTagImage.setImageResource(R.drawable.ic_no_img);*/
-                   /* if(!dataObject.isNull("player_image")){
-                        Glide.with(this).load(dataObject.getString("player_image")).placeholder(R.drawable.ic_no_img).into(playerTagImage);
-                    }*/
-
-                                if(!dataObject.isNull("team")){
-                                    teamName.setText(dataObject.getString("team"));
-                                } else {
-                                    teamName.setText("NA");
-                                }
-                                PlayerScoreCardDTO dto;
-                                for (int i = 0;i<otherComptetionArray.length();i++){
-                                    JSONObject comtObject = otherComptetionArray.getJSONObject(i);
-                                    dto = new PlayerScoreCardDTO();
-                                    dto.setTeamName(comtObject.getString("team"));
-                                    dto.setLeagueName(comtObject.getString("league"));
-                                    dto.setNoOfAssists(comtObject.getString("assists"));
-                                    dto.setNoOfGames(comtObject.getString("games"));
-                                    dto.setNoOfgoals(comtObject.getString("goals"));
-                                    dto.setNoOfYellowCard(comtObject.getString("yellow_card"));
-                                    dto.setNoOfRedCard(comtObject.getString("red_card"));
-                                    playerScoreCardDTOs.add(dto);
-                                }
-                                mplayerScorecardAdapter.notifyDataSetChanged();
-                       /* if(!object.isNull("yellow_cards")){
-                            tvNumberOfYellowCard.setText(object.getString("yellow_cards"));
-                        }
-                        if(!object.isNull("red_cards")){
-                            tvNumberOfRedCard.setText(object.getString("red_cards"));
-                        }
-
-                        if(!object.isNull("assists")){
-                            tvNumberOfAssist.setText(object.getString("assists"));
-                        }
-                        if(!object.isNull("goals")){
-                            goalsScoredNumber.setText(object.getString("goals"));
-                        }
-
-                        if(!object.isNull("position")){
-                            positionValue.setText(object.getString("position"));
-                        }*/
-
-
-
-
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            showErrorLayout();
-                        }
-
-
-
-                    }
-
-                });
-
-
-
-            } else {
-                showErrorLayout();
+            JSONObject dataObject = datArray.getJSONObject(0);
+            JSONArray profileArray = dataObject.getJSONArray("profile");
+            JSONObject profileData = null;
+            if (profileArray.length() > 0) {
+                profileData = profileArray.getJSONObject(0);
+                playerAge.setText(profileData.getString("Date of Birth"));
             }
-        }catch (Exception ex){
+
+            JSONArray otherComptetionArray = dataObject.getJSONArray("other_competitions");
+
+            playerName.setText(dataObject.getString("name"));
+//                nationality.setText(profileData.getString("nationality"));
+            Glide.with(PlayerProfileView.this).load(dataObject.getString("player_image")).into(playerProfileImage);
+
+            teamName.setText(dataObject.getString("team"));
+
+            PlayerScoreCardDTO dto;
+            for (int i = 0; i < otherComptetionArray.length(); i++) {
+                JSONObject comtObject = otherComptetionArray.getJSONObject(i);
+                dto = new PlayerScoreCardDTO();
+                dto.setTeamName(comtObject.getString("team"));
+                dto.setLeagueName(comtObject.getString("league"));
+                dto.setNoOfAssists(comtObject.getString("assists"));
+                dto.setNoOfGames(comtObject.getString("games"));
+                dto.setNoOfgoals(comtObject.getString("goals"));
+                dto.setNoOfYellowCard(comtObject.getString("yellow_card"));
+                dto.setNoOfRedCard(comtObject.getString("red_card"));
+                playerScoreCardDTOs.add(dto);
+            }
+            mplayerScorecardAdapter.notifyDataSetChanged();
+
+        } catch (Exception ex) {
             ex.printStackTrace();
-            showErrorLayout();
+//            showErrorLayout();
         }
     }
 
 
     public void showProgress() {
         progressBar.setVisibility(View.VISIBLE);
-
+        rootScrollBar.setVisibility(View.GONE);
     }
+
     public void hideProgress() {
         progressBar.setVisibility(View.GONE);
-
+        rootScrollBar.setVisibility(View.VISIBLE);
     }
-
 
 
     private void showErrorLayout() {
