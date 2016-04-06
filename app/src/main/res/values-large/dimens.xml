@@ -136,6 +136,6 @@
     <dimen name="people_nearme_custom_location_height">60dp</dimen>
 
     <!-- margin completed match  summery-->
-    <dimen name="recent_card_height">70dp</dimen>
+    <dimen name="recent_card_height">80dp</dimen>
 
 </resources>
