@@ -23,11 +23,28 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <LinearLayout
+                <FrameLayout
                     android:id="@+id/staff_pick_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical" />
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <android.support.v4.view.ViewPager
+                        android:id="@+id/pager"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/profile_thumb_image_xlarge"
+                        android:layout_weight="1" />
+
+                    <RadioGroup
+                        android:id="@+id/radiogroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal|bottom"
+                        android:gravity="center_horizontal|bottom"
+                        android:orientation="horizontal"
+                        android:paddingBottom="@dimen/vertical_padding_very_very_small" />
+                </FrameLayout>
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_view_scores"

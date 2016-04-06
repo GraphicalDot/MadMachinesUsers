@@ -5,8 +5,6 @@ import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -538,7 +536,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             toolbar.setElevation(0);
         }
-        pager.enablePaging(true);
+        pager.setPagingEnabled(true);
     }
 
 
@@ -561,7 +559,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             toolbar.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));
         }
-        pager.enablePaging(false);
+        pager.setPagingEnabled(false);
     }
 
     public void notifyToContactFragment() {

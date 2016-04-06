@@ -37,7 +37,7 @@ public class ControlledSwipeViewPager extends ViewPager {
         }
     }
 
-    public void enablePaging(boolean isEnabled) {
+    public void setPagingEnabled(boolean isEnabled) {
         isSwipingEnabled = isEnabled;
     }
 }

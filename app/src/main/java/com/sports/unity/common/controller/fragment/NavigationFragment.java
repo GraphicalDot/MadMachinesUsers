@@ -68,7 +68,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
 
     private LayoutInflater inflater;
     private LinearLayout staffView;
-
+    private LinearLayout staffParent;
     private boolean isStaffInitialized;
 
     private StaffContentListener listener = new StaffContentListener();
@@ -189,6 +189,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
         rateUs.setOnClickListener(textViewClickListener);
         about.setOnClickListener(textViewClickListener);
         staffView = (LinearLayout) view.findViewById(R.id.staff_layout);
+        staffParent = (LinearLayout) view.findViewById(R.id.staff_parent);
     }
 
     private void initStaffView(final FavouriteItem staffFavouriteItem) {
@@ -199,7 +200,6 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
                 staffView.addView(staffPickView);
                 staffPickView.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
                 TextView staffName = (TextView) staffPickView.findViewById(R.id.ipl);
-                ;
                 ImageView staffFlag = (ImageView) getView().findViewById(R.id.flag);
                 String uri = staffFavouriteItem.getFlagImageUrl();
                 staffName.setText(staffFavouriteItem.getName());
@@ -485,6 +485,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
                 staffView.removeAllViews();
                 JSONArray array = object.getJSONArray("data");
                 if (array.length() > 0) {
+                    staffParent.setVisibility(View.VISIBLE);
                     for (int i = 0; i < array.length(); i++) {
                         JSONObject staffData = array.getJSONObject(i);
                         String name = staffData.getString("series_name");

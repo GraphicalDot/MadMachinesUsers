@@ -1,14 +1,12 @@
 package com.sports.unity.scores.controller.fragment;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -18,19 +16,22 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.MainActivity;
-import com.sports.unity.common.controller.TeamLeagueDetails;
+import com.sports.unity.common.controller.fragment.StaffPagerAdapter;
+import com.sports.unity.common.model.ControlledSwipeViewPager;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
@@ -78,7 +79,7 @@ public class MatchListFragment extends Fragment {
     private String scoreDetailsId = "";
     private FavouriteItem favouriteItem;
     private boolean isStaffPicked;
-    private LinearLayout staffView;
+    private FrameLayout staffView;
     private LayoutInflater inflater;
     private ArrayList<FavouriteItem> flagFavItem;
 
@@ -167,30 +168,53 @@ public class MatchListFragment extends Fragment {
 
     private void handleStaffFavContent() {
         String staffFavString = UserUtil.getStaffFlagUrl(getActivity());
+        ArrayList<FavouriteItem> favouriteItems = new ArrayList<FavouriteItem>();
         if (null != staffFavString && !TextUtils.isEmpty(staffFavString)) {
             flagFavItem = FavouriteItemWrapper.getInstance(getActivity()).getFavListOfOthers(staffFavString);
             if (flagFavItem != null && flagFavItem.size() > 0) {
-                staffView.removeAllViews();
                 for (FavouriteItem f : flagFavItem) {
-                    LinearLayout scoreView = (LinearLayout) inflater.inflate(R.layout.score_staff_item, null);
-                    ImageView flag = (ImageView) scoreView.findViewById(R.id.flag);
-                    Glide.with(getActivity()).load(Uri.parse(f.getFlagImageUrl())).placeholder(R.drawable.ic_no_img).into(flag);
-                    final String jsonString = f.getJsonObject().toString();
-                    scoreView.setOnClickListener(new View.OnClickListener() {
+                    final String id = f.getId();
+                    if (!TinyDB.getInstance(getActivity()).getBoolean(id, false)) {
+                        favouriteItems.add(f);
+                    }
+                }
+                if (favouriteItems.size() > 0) {
+                    staffView.setVisibility(View.VISIBLE);
+                    final RadioGroup radioGroup = (RadioGroup) getView().findViewById(R.id.radiogroup);
+                    radioGroup.removeAllViews();
+                    ViewPager pager = (ViewPager) getView().findViewById(R.id.pager);
+                    StaffPagerAdapter adapter = new StaffPagerAdapter(getActivity(), favouriteItems, inflater, radioGroup, staffView);
+                    pager.setAdapter(adapter);
+                    RadioGroup.LayoutParams params = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
+                    for (int i = 0; i < favouriteItems.size(); i++) {
+                        LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.staff_radio_btn, null);
+                        RadioButton radioButton = new RadioButton(getActivity());/*(RadioButton) layout.findViewById(R.id.radioButton);*/
+                        radioButton.setClickable(false);
+                        radioButton.setButtonDrawable(R.drawable.tour_icon);
+                        radioButton.setId(i);
+                        radioButton.setPadding(5, 0, 5, 0);
+                        if (i == 0) {
+                            radioButton.setChecked(true);
+                        }
+                        radioGroup.addView(radioButton, params);
+                    }
+                    pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
                         @Override
-                        public void onClick(View v) {
-                            Intent intent = new Intent(getContext(), TeamLeagueDetails.class);
-                            intent.putExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, jsonString);
-                            intent.putExtra(Constants.SPORTS_TYPE_STAFF, true);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                            startActivity(intent);
+                        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                        }
+
+                        @Override
+                        public void onPageSelected(int position) {
+                            radioGroup.check(position);
+                        }
+
+                        @Override
+                        public void onPageScrollStateChanged(int state) {
+
                         }
                     });
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    staffView.addView(scoreView);
                 }
-                staffView.requestLayout();
-                staffView.invalidate();
             }
         }
     }
@@ -223,7 +247,7 @@ public class MatchListFragment extends Fragment {
         mWraperRecyclerView.setFocusable(false);
         matchListWrapperAdapter = new MatchListWrapperAdapter(matchList, getActivity(), getContext());
         mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
-        staffView = (LinearLayout) view.findViewById(R.id.staff_pick_ll);
+        staffView = (FrameLayout) view.findViewById(R.id.staff_pick_ll);
 
         initErrorLayout(view);
         hideErrorLayout(view);
@@ -299,7 +323,9 @@ public class MatchListFragment extends Fragment {
                     if (!object.isNull("match_time") && Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(object.getString("type"))) {
                         epochTime = object.getLong("match_time");
                         day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
-                        leagueName = object.getString("series_name");
+                        if (!object.isNull("series_name")) {
+                            leagueName = object.getString("series_name");
+                        }
                         sportsType = object.getString("type");
                     } else {
                         epochTime = object.getLong("match_date_epoch");
@@ -366,9 +392,9 @@ public class MatchListFragment extends Fragment {
                 }
             }
             Collections.sort(matchList);
-           /* if (favouriteItem.getFilterType().equalsIgnoreCase(Constants.FILTER_TYPE_LEAGUE)) {
+            if (favouriteItem.getFilterType().equalsIgnoreCase(Constants.FILTER_TYPE_LEAGUE) || (isStaffPicked && favouriteItem.getSportsType().equalsIgnoreCase(Constants.SPORTS_TYPE_CRICKET))) {
                 matchListWrapperAdapter.setIsIndividualFixture();
-            }*/
+            }
             matchListWrapperAdapter.notifyDataSetChanged();
         }
         return success;

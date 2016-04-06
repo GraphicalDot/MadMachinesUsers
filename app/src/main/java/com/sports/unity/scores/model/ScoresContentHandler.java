@@ -54,7 +54,7 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_LEAGUE_FIXTURES = "get_football_league_specific_fixtures?league_id=";
     private static final String URL_PARAMS_FOR_FOOTBALL_TEAM_FIXTURES = "get_football_team_fixtures?team_id=";
     private static final String URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES = "v1/get_specific_fixtures?team_id=";
-    private static final String URL_PARAMS_FOR_CRICKET_LEAGUE_FIXTURES = "/v1/get_series_fixtures?season_key=";
+    private static final String URL_PARAMS_FOR_CRICKET_LEAGUE_FIXTURES = "/v2/get_series_fixtures?season_key=";
     private static final String URL_PARAMS_FOR_STAFF_LEAGUE = "/v1/get_major_tournament";
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
     private HashMap<String, ContentListener> mapOfResponseListeners = new HashMap<>();
