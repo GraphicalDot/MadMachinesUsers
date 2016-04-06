@@ -39,7 +39,7 @@ android {
             buildConfigField "String", "SEARCH_BASE_URL", "\"http://52.76.74.188:9000/\""
             buildConfigField "String", "NEWS_BASE_URL", "\"http://52.76.74.188:8000/\""
             buildConfigField "String", "PLAYER_PROFILE_BASE_URL", "\"http://52.76.74.188:5600/\""
-            buildConfigField "String", "XMPP_SERVER_BASE_URL", "\"54.169.217.88/\""
+            buildConfigField "String", "XMPP_SERVER_BASE_URL", "\"54.169.217.88\""
             buildConfigField "String", "CRITTERCISM_API_KEY", "\"b2c2518e6fe34bd88c7ac1e31deb7dd200555300\""
             resValue "string", "GOOGLE_API_KEY", "AIzaSyAtd8j1WX4Ekl1Jcz27E0jrJGfSi07uCb0"
         }

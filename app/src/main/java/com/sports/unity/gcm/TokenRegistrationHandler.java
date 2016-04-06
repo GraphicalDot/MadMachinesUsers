@@ -47,7 +47,7 @@ public class TokenRegistrationHandler {
     public static final String LOCATION_STATUS_KEY = "show_location_status";
     private static final String REQUEST_TAG = "request_tag";
     private static Context mContext;
-    private String BASE_URL = "http://"+Constants.XMPP_SERVER_BASE_URL;
+    private String BASE_URL = "http://"+Constants.XMPP_SERVER_BASE_URL+"/";
     private String SET_ANDROID_TOKEN = "set_android_token_and_return_user_matches";
     private String REMOVE_ANDROID_TOKEN ="remove_android_token";
     private static final  String  USER_REGISTER_MATCH ="user_register_match";
