@@ -564,9 +564,19 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
 //
     }
 
+
+
+
+
     @Override
     public void notifyParent() {
         matchListWrapperAdapter.notifyDataSetChanged();
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void refreshData() {
+       mSwipeRefreshLayout.setRefreshing(true);
     }
 
     private class ScoresContentListener implements ScoresContentHandler.ContentListener {

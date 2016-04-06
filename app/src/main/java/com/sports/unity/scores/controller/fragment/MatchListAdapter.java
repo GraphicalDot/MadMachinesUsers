@@ -425,6 +425,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                                     tokenRegistrationHandler.addListener(MatchListAdapter.this);
                                     tokenRegistrationHandler.registrerMatchUser(key, CommonUtil.getToken(activity));
 
+
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
