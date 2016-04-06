@@ -79,11 +79,12 @@
         android:layout_height="1dp"
         android:background="@color/gray3" />
     <RelativeLayout
+        android:id="@+id/cloack_timer"
         android:layout_marginTop="@dimen/timer_layout_margin_top"
         android:layout_width="wrap_content"
         android:layout_gravity="center"
-        android:visibility="gone"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="gone">
         <ImageView
             android:layout_width="40dp"
             android:layout_centerInParent="true"
