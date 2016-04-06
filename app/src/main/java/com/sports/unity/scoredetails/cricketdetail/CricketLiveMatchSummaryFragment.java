@@ -59,7 +59,12 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     private TextView tvSecondUpComingPlayerName;
     private TextView tvThirdUpComingPlayerName;
     private TextView tvFirstUpComingPlayerName;
-
+    private TextView  vifirsttv;
+    private TextView visecondtv;
+    private TextView vithirdtv;
+    private TextView vifourtv;
+    private TextView vifivetv;
+    private View[] dividerView=new View[6];
     private ImageView ivBowlerProfile;
     private TextView tvBowlerName;
     private TextView tvBowlerWRun;
@@ -124,6 +129,19 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
             tvBowlerEcon = (TextView) view.findViewById(R.id.tv_bowler_econ);
             tvBowlerOver = (TextView) view.findViewById(R.id.tv_bowler_over);
             swLivSummary = (SwipeRefreshLayout) view.findViewById(R.id.live_summary);
+            vifirsttv=(TextView) view.findViewById(R.id.vi_first_tv);
+            visecondtv=(TextView) view.findViewById(R.id.vi_second_tv);
+            vithirdtv=(TextView) view.findViewById(R.id.vi_third_tv);
+            vifourtv=(TextView) view.findViewById(R.id.vi_four_tv);
+            vifivetv=(TextView) view.findViewById(R.id.vi_five_tv);
+            dividerView[0]=(View) view.findViewById(R.id.vi_start);
+            dividerView[1]=(View) view.findViewById(R.id.vi_first);
+            dividerView[2]=(View) view.findViewById(R.id.vi_second);
+            dividerView[3]=(View) view.findViewById(R.id.vi_third);
+            dividerView[4]=(View) view.findViewById(R.id.vi_four);
+            dividerView[5]=(View) view.findViewById(R.id.vi_five);
+
+
 
             swLivSummary.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
@@ -179,7 +197,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     @Override
     public void handleContent(String content) {
         try {
-          // content = "{\"data\": [{\"status\": \"F\", \"home_team\": \"England\", \"away_team\": \"West Indies\", \"match_id\": \"35\", \"series_name\": \"T20I: World '16\", \"venue\": \"Eden Gardens\", \"summary\": {\"recent_over\": {\"19\": [{\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"2\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"3\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"4\"}], \"18\": [{\"event\": [\"\", \"\", \"4\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"2\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"3\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"4\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"5\"}, {\"event\": [\"\", \"\", \"0\"], \"ball_id\": \"6\"}]}, \"upcoming_batsmen\": [{\"player_id\": \"3376\", \"name\": \"D Ramdin\", \"player_image\": \"http://players.images.s3.amazonaws.com/3376.png\"}, {\"player_id\": \"8095\", \"name\": \"S Badree\", \"player_image\": \"http://players.images.s3.amazonaws.com/8095.png\"}, {\"player_id\": \"7165\", \"name\": \"SJ Benn\", \"player_image\": \"http://players.images.s3.amazonaws.com/7165.png\"}], \"current_partnership\": [{\"player_2_runs\": \"34\", \"player_1_runs\": \"20\", \"player_1_id\": \"2866\", \"player_1_image\": \"http://players.images.s3.amazonaws.com/2866.png\", \"player_1\": \"Samuels, MN\", \"player_2_balls\": \"10\", \"player_1_index\": \"1\", \"player_2_index\": \"2\", \"player_2\": \"Brathwaite, CR\", \"player_2_id\": \"15548\", \"player_1_balls\": \"16\", \"player_2_image\": \"http://players.images.s3.amazonaws.com/15548.png\"}], \"toss\": \"West Indies won the toss and elected to bowl\", \"man_of_the_match\": {\"player_id\": \"2866\", \"name\": \"Marlon Samuels\", \"batting\": {\"runs\": \"85\", \"balls\": \"66\", \"strike_rate\": \"128.0\", \"six\": \"2\"}, \"player_image\": \"http://players.images.s3.amazonaws.com/2866.png\"}, \"venue\": \"Eden Gardens\", \"umpires\": {\"first_umpire\": \"Dharmasena, HDPK (SLA)\", \"third_umpire\": \"Erasmus, M (SAF)\", \"referee\": \"Madugalle, RS (SLA)\", \"second_umpire\": \"Tucker, RJ (AUS)\"}, \"current_bowler\": {\"runs\": \"41\", \"name\": \"Stokes, BA\", \"wicket\": \"0\", \"player_id\": \"14482\", \"overs\": \"2.4\", \"player_image\": \"http://players.images.s3.amazonaws.com/14482.png\"}, \"last_wicket\": \"Sammy, DJG,2(c:Hales, AD and b:Willey, DJ)\"}, \"series_id\": \"5166\", \"match_time\": 1459690200, \"result\": \"West Indies won by 4 wickets\", \"start_date\": \"2016-04-03T23:30:00\"}], \"success\": true, \"error\": false}";
+           content = "{\"data\": [{\"status\": \"F\", \"home_team\": \"England\", \"away_team\": \"West Indies\", \"match_id\": \"35\", \"series_name\": \"T20I: World '16\", \"venue\": \"Eden Gardens\", \"summary\": {\"recent_over\": {\"19\": [{\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"2\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"3\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"4\"}], \"18\": [{\"event\": [\"\", \"\", \"4\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"2\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"3\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"4\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"5\"}, {\"event\": [\"\", \"\", \"0\"], \"ball_id\": \"6\"}]}, \"upcoming_batsmen\": [{\"player_id\": \"3376\", \"name\": \"D Ramdin\", \"player_image\": \"http://players.images.s3.amazonaws.com/3376.png\"}, {\"player_id\": \"8095\", \"name\": \"S Badree\", \"player_image\": \"http://players.images.s3.amazonaws.com/8095.png\"}, {\"player_id\": \"7165\", \"name\": \"SJ Benn\", \"player_image\": \"http://players.images.s3.amazonaws.com/7165.png\"}], \"current_partnership\": [{\"player_2_runs\": \"34\", \"player_1_runs\": \"20\", \"player_1_id\": \"2866\", \"player_1_image\": \"http://players.images.s3.amazonaws.com/2866.png\", \"player_1\": \"Samuels, MN\", \"player_2_balls\": \"10\", \"player_1_index\": \"1\", \"player_2_index\": \"2\", \"player_2\": \"Brathwaite, CR\", \"player_2_id\": \"15548\", \"player_1_balls\": \"16\", \"player_2_image\": \"http://players.images.s3.amazonaws.com/15548.png\"}], \"toss\": \"West Indies won the toss and elected to bowl\", \"man_of_the_match\": {\"player_id\": \"2866\", \"name\": \"Marlon Samuels\", \"batting\": {\"runs\": \"85\", \"balls\": \"66\", \"strike_rate\": \"128.0\", \"six\": \"2\"}, \"player_image\": \"http://players.images.s3.amazonaws.com/2866.png\"}, \"venue\": \"Eden Gardens\", \"umpires\": {\"first_umpire\": \"Dharmasena, HDPK (SLA)\", \"third_umpire\": \"Erasmus, M (SAF)\", \"referee\": \"Madugalle, RS (SLA)\", \"second_umpire\": \"Tucker, RJ (AUS)\"}, \"current_bowler\": {\"runs\": \"41\", \"name\": \"Stokes, BA\", \"wicket\": \"0\", \"player_id\": \"14482\", \"overs\": \"2.4\", \"player_image\": \"http://players.images.s3.amazonaws.com/14482.png\"}, \"last_wicket\": \"Sammy, DJG,2(c:Hales, AD and b:Willey, DJ)\"}, \"series_id\": \"5166\", \"match_time\": 1459690200, \"result\": \"West Indies won by 4 wickets\", \"start_date\": \"2016-04-03T23:30:00\"}], \"success\": true, \"error\": false}";
             showProgress();
             JSONObject object = new JSONObject(content);
             boolean success = object.getBoolean("success");
@@ -250,7 +268,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                 Iterator<String> recentOverKeys = recentOver.keys();
                 Integer keys[]= new Integer[2];
                 int arrayCount= 0;
-                int recentOverValue= 0;
+                final int recentOverValue;
                 while(recentOverKeys.hasNext()){
                     try{
                         keys[arrayCount++] = Integer.parseInt(recentOverKeys.next());
@@ -326,39 +344,52 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                          if (!balls[1].getValue().equals("0")) {
                                 drawable = getTextDrawable(balls[1].getValue(), balls[1].getFontColor(), balls[1].getBackGroundColor());
                                 ivFirstBall.setImageDrawable(drawable);
-                            } else {
+                               setFirstBallOver(balls, recentOverValue,1);
+
+                         } else {
                                 ivFirstBall.setImageResource(R.drawable.recent_dot_balls);
-                            }
+                             setFirstBallOver(balls, recentOverValue,1);
+                         }
                             if (!balls[2].getValue().equals("0")) {
                                 drawable = getTextDrawable(balls[2].getValue(), balls[2].getFontColor(), balls[2].getBackGroundColor());
                                 ivSecondBall.setImageDrawable(drawable);
+                                setFirstBallOver(balls, recentOverValue, 2);
                             } else {
                                 ivSecondBall.setImageResource(R.drawable.recent_dot_balls);
+                                setFirstBallOver(balls, recentOverValue, 2);
                             }
                             if (!balls[3].getValue().equals("0")) {
                                 drawable = getTextDrawable(balls[3].getValue(), balls[3].getFontColor(), balls[4].getBackGroundColor());
                                 ivThirdBall.setImageDrawable(drawable);
+                                setFirstBallOver(balls, recentOverValue,3);
                             } else {
                                 ivThirdBall.setImageResource(R.drawable.recent_dot_balls);
+                                setFirstBallOver(balls, recentOverValue, 3);
                             }
 
                             if (!balls[4].getValue().equals("0")) {
                                 drawable = getTextDrawable(balls[4].getValue(), balls[4].getFontColor(), balls[4].getBackGroundColor());
                                 ivFourthBall.setImageDrawable(drawable);
+                                setFirstBallOver(balls, recentOverValue, 4);
                             } else {
                                 ivFourthBall.setImageResource(R.drawable.recent_dot_balls);
+                                setFirstBallOver(balls, recentOverValue, 4);
                             }
                             if (!balls[5].getValue().equals("0")) {
                                 drawable = getTextDrawable(balls[5].getValue(), balls[5].getFontColor(), balls[5].getBackGroundColor());
                                 ivFifthBall.setImageDrawable(drawable);
+                                setFirstBallOver(balls, recentOverValue, 5);
                             } else {
                                 ivFifthBall.setImageResource(R.drawable.recent_dot_balls);
+                                setFirstBallOver(balls, recentOverValue, 5);
                             }
                             if (!balls[6].getValue().equals("0")) {
                                 drawable = getTextDrawable(balls[6].getValue(), balls[6].getFontColor(), balls[6].getBackGroundColor());
                                 ivSixthBall.setImageDrawable(drawable);
+                                setFirstBallOver(balls, recentOverValue, 6);
                             } else {
                                 ivSixthBall.setImageResource(R.drawable.recent_dot_balls);
+                                setFirstBallOver(balls, recentOverValue,6);
                             }
                             int playerFirstRuns = liveCricketMatchSummaryParser.getPlayeFirstRuns();
                             int playerSecondRuns = liveCricketMatchSummaryParser.getPlayeSecondRuns();
@@ -414,7 +445,15 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
         }
     }
 
-
+    private void setFirstBallOver(BallDetail[] balls, int recentOverValue, int index) {
+        if(balls[index].getBallId()==6){
+            dividerView[index].setVisibility(View.VISIBLE);
+            vifirsttv.setText(recentOverValue);
+        }else{
+            dividerView[index].setVisibility(View.INVISIBLE);
+            vifirsttv.setVisibility(View.INVISIBLE);
+        }
+    }
 
 
     private Drawable getTextDrawable(String text,int color, int backGroundColor){
