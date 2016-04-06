@@ -40,13 +40,13 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         setContentView(R.layout.activity_group_detail);
 
         String groupServerId = getIntent().getStringExtra("jid");
-        if( groupServerId != null ){
+        if (groupServerId != null) {
             isGroupEditing = true;
         } else {
             //nothing
         }
 
-        if( isGroupEditing ){
+        if (isGroupEditing) {
             addGroupInfoFragment();
         } else {
             addGroupCreateFragment();
@@ -60,11 +60,12 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
                 .add(R.id.fragment_container, groupCreateFragment).commit();
     }
 
-    private void addGroupInfoFragment(){
+    private void addGroupInfoFragment() {
         Bundle bundle = new Bundle();
         bundle.putString("name", getIntent().getStringExtra("name"));
         bundle.putString("profilePicture", getIntent().getStringExtra("profilePicture"));
         bundle.putString("jid", getIntent().getStringExtra("jid"));
+        bundle.putBoolean("blockStatus", getIntent().getBooleanExtra("blockStatus", false));
         bundle.putInt("chatID", getIntent().getIntExtra("chatID", SportsUnityDBHelper.DEFAULT_ENTRY_ID));
 
         GroupInfoFragment groupInfoFragment = new GroupInfoFragment();
@@ -94,7 +95,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
 
     public void moveToMembersListFragment(SportsUnityDBHelper.GroupParticipants groupParticipants) {
         ArrayList<String> addedMembers = new ArrayList<>();
-        for(Contacts contacts : groupParticipants.usersInGroup){
+        for (Contacts contacts : groupParticipants.usersInGroup) {
             addedMembers.add(contacts.jid);
         }
 
@@ -138,7 +139,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         title.setText(R.string.group_title_add_members);
 
         TextView actionView = (TextView) toolbar.findViewById(R.id.actionButton);
-        if( isGroupEditing ) {
+        if (isGroupEditing) {
             actionView.setText(R.string.done);
         } else {
             actionView.setText(R.string.create_group);
@@ -151,9 +152,9 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 ContactsFragment fragment = (ContactsFragment) fragmentManager.findFragmentByTag("as_member");
 
-                if( isGroupEditing ) {
+                if (isGroupEditing) {
                     ArrayList<Contacts> selectedMembersList = fragment.getSelectedMembersList();
-                    if(selectedMembersList.size() > 0){
+                    if (selectedMembersList.size() > 0) {
                         new AddNewMembers(fragment).execute();
                     } else {
                         Toast.makeText(getApplicationContext(), "Select at least one member, to add in group.", Toast.LENGTH_SHORT).show();
@@ -197,7 +198,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         @Override
         protected void onPostExecute(Boolean success) {
             progressDialog.dismiss();
-            if( success == true ){
+            if (success == true) {
                 finish();
             } else {
                 Toast.makeText(GroupDetailActivity.this, R.string.oops_try_again, Toast.LENGTH_SHORT).show();
@@ -230,14 +231,14 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         @Override
         protected Boolean doInBackground(Void... params) {
             String groupJid = getIntent().getStringExtra("jid");
-            boolean success = addMembers( groupJid, contactsFragment.getSelectedMembersList());
+            boolean success = addMembers(groupJid, contactsFragment.getSelectedMembersList());
             return success;
         }
 
         @Override
         protected void onPostExecute(Boolean success) {
             progressDialog.dismiss();
-            if( success ){
+            if (success) {
                 onBackPressed();
             } else {
                 Toast.makeText(GroupDetailActivity.this, R.string.oops_try_again, Toast.LENGTH_SHORT).show();
@@ -284,7 +285,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         }
 
         String groupImageAsBase64 = null;
-        if( groupImage != null ){
+        if (groupImage != null) {
             groupImageAsBase64 = Base64.encodeToString(groupImage, Base64.DEFAULT);
         }
 

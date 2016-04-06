@@ -110,6 +110,19 @@
                 android:orientation="horizontal"
                 android:weightSum="5">
 
+                <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                    android:id="@+id/group_exit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:paddingBottom="@dimen/vertical_padding_very_very_small"
+                    android:paddingLeft="@dimen/horizontal_padding_very_small"
+                    android:paddingRight="@dimen/horizontal_padding_very_small"
+                    android:paddingTop="@dimen/vertical_padding_very_very_small"
+                    android:text="@string/group_exit_string"
+                    android:textColor="@color/gray1"
+                    android:textSize="@dimen/font_size_small_xlarge"
+                    android:visibility="gone" />
 
                 <EditText
                     android:id="@+id/msg"

@@ -85,7 +85,7 @@ public class PubSubMessaging {
         //nothing
     }
 
-    public void initGroupChat(String groupJid){
+    public void initGroupChat(String groupJid) {
         //nothing
     }
 
@@ -106,7 +106,7 @@ public class PubSubMessaging {
 //        if( groupImage != null ) {
 //            form.setTitle(groupTitle + "~!~" + groupImage);
 //        } else {
-            form.setTitle(groupTitle);
+        form.setTitle(groupTitle);
 //        }
 
         form.addField("pubsub#notification_type", FormField.Type.text_single);
@@ -186,14 +186,14 @@ public class PubSubMessaging {
             int messageId = sportsUnityDBHelper.addMessage(message, SportsUnityDBHelper.MIME_TYPE_TEXT, from, true, time, stanzaId, null, null, chatID, SportsUnityDBHelper.DEFAULT_READ_STATUS);
             sportsUnityDBHelper.updateChatEntry(messageId, groupJid);
 
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             handleConnectionException(ex);
         }
     }
 
     public void sendMediaMessage(Context context, String contentChecksum, String thumbnailImageAsBase64, int messageId, String mimeType, String groupJid) {
-        try{
+        try {
             SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
             TinyDB tinyDB = TinyDB.getInstance(context);
 
@@ -216,7 +216,7 @@ public class PubSubMessaging {
             String stanzaId = publishItem(item, groupJid);
 
             sportsUnityDBHelper.updateMediaMessage_ContentUploaded(messageId, stanzaId, contentChecksum);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             handleConnectionException(ex);
         }
@@ -226,7 +226,7 @@ public class PubSubMessaging {
         TinyDB tinyDB = TinyDB.getInstance(context);
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
 
-        try{
+        try {
 //            LeafNode node = getLeafNode(groupJid);
 
             String from = tinyDB.getString(TinyDB.KEY_USER_JID);
@@ -241,15 +241,15 @@ public class PubSubMessaging {
             int messageId = sportsUnityDBHelper.addMessage(stickerAssetPath, SportsUnityDBHelper.MIME_TYPE_STICKER, from, true, time,
                     stanzaId, null, null, chatId, SportsUnityDBHelper.DEFAULT_READ_STATUS);
             sportsUnityDBHelper.updateChatEntry(messageId, groupJid);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             handleConnectionException(ex);
         }
     }
 
-    public void sendIntimationAboutMemberRemoved(Context context, String removedUserJid, String groupJid){
+    public void sendIntimationAboutMemberRemoved(Context context, String removedUserJid, String groupJid) {
         TinyDB tinyDB = TinyDB.getInstance(context);
-        try{
+        try {
             String from = tinyDB.getString(TinyDB.KEY_USER_JID);
 
             JSONObject jsonObject = new JSONObject();
@@ -263,15 +263,15 @@ public class PubSubMessaging {
             PayloadItem item = new PayloadItem(simplePayload);
 
             publishItem(item, groupJid);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             handleConnectionException(ex);
         }
     }
 
-    public void sendIntimationAboutAffiliationListChanged(Context context, String groupJid){
+    public void sendIntimationAboutAffiliationListChanged(Context context, String groupJid) {
         TinyDB tinyDB = TinyDB.getInstance(context);
-        try{
+        try {
             String from = tinyDB.getString(TinyDB.KEY_USER_JID);
 
             JSONObject jsonObject = new JSONObject();
@@ -284,7 +284,7 @@ public class PubSubMessaging {
             PayloadItem item = new PayloadItem(simplePayload);
 
             publishItem(item, groupJid);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             handleConnectionException(ex);
         }
@@ -302,19 +302,19 @@ public class PubSubMessaging {
 
         JSONObject messageJsonObject = null;
         try {
-            if( message.hasExtension("pubsub", "http://jabber.org/protocol/pubsub") ){
+            if (message.hasExtension("pubsub", "http://jabber.org/protocol/pubsub")) {
                 PubSubExtension pubSubExtension = message.getExtension("pubsub", "http://jabber.org/protocol/pubsub");
-                if( pubSubExtension.getExtensions().size() > 0 ){
+                if (pubSubExtension.getExtensions().size() > 0) {
                     Subscription subscription = (Subscription) pubSubExtension.getExtensions().get(0);
-                    if( subscription.getState().equals(Subscription.State.subscribed) ){
+                    if (subscription.getState().equals(Subscription.State.subscribed)) {
                         handleGroupInvitation(context, subscription.getNode());
-                    } else if( subscription.getState().equals(Subscription.State.none) ){
+                    } else if (subscription.getState().equals(Subscription.State.none)) {
                         handleGroupElimination(context, subscription.getNode());
                     }
                 } else {
                     //nothing
                 }
-            } else if( message.hasExtension("event", "http://jabber.org/protocol/pubsub#event") ) {
+            } else if (message.hasExtension("event", "http://jabber.org/protocol/pubsub#event")) {
                 EventElement eventElement = message.getExtension("event", "http://jabber.org/protocol/pubsub#event");
                 List<ExtensionElement> extensionElementList = eventElement.getExtensions();
                 if (extensionElementList.size() > 0) {
@@ -335,7 +335,7 @@ public class PubSubMessaging {
                         from = messageJsonObject.getString(MESSAGE_FROM);
 
                         TinyDB tinyDB = TinyDB.getInstance(context);
-                        if ( from.equals(tinyDB.getString(TinyDB.KEY_USER_JID)) ) {
+                        if (from.equals(tinyDB.getString(TinyDB.KEY_USER_JID))) {
                             //nothing
                         } else {
                             if (messageType == null || messageType.equals(USER_MESSAGE_TYPE)) {
@@ -370,7 +370,7 @@ public class PubSubMessaging {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         try {
             SportsUnityDBHelper.GroupParticipants groupParticipants = sportsUnityDBHelper.getGroupParticipants(chatId);
-            if( groupParticipants.usersInGroup.size() == 0 ) {
+            if (groupParticipants.usersInGroup.size() == 0) {
                 List<SPUAffiliation> spuAffiliationsList = PubSubUtil.getAffiliations(groupJid);
 
                 ArrayList<Integer> members = new ArrayList<>();
@@ -380,7 +380,7 @@ public class PubSubMessaging {
                 int contactId = 0;
                 for (SPUAffiliation affiliation : spuAffiliationsList) {
                     jid = affiliation.getJid();
-                    jid = jid.substring( 0, jid.indexOf("@mm.io"));
+                    jid = jid.substring(0, jid.indexOf("@mm.io"));
 
                     Contacts contacts = sportsUnityDBHelper.getContactByJid(jid);
                     if (contacts == null) {
@@ -407,31 +407,35 @@ public class PubSubMessaging {
             } else {
                 //nothing
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             handleConnectionException(ex);
         }
     }
 
-    public boolean removeFromGroup(String jid, String groupJID){
+    public boolean removeFromGroup(String jid, String groupJID) {
         boolean success = false;
         try {
             success = PubSubUtil.removeFromGroup(groupJID, jid);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
             handleConnectionException(ex);
         }
         return success;
     }
 
-    public void exitGroup(String jid, String groupJID){
+    public boolean exitGroup(String jid, String groupJID) {
+        boolean success = false;
         try {
             PubSubUtil.unsubscribe(jid, groupJID);
-        }catch (Exception ex){
+            success = true;
+        } catch (Exception ex) {
             ex.printStackTrace();
             handleConnectionException(ex);
         }
+        return success;
     }
+
 
     public void getNodeConfig(String nodeId) throws SmackException.NoResponseException, XMPPException.XMPPErrorException, SmackException.NotConnectedException {
         PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
@@ -440,11 +444,11 @@ public class PubSubMessaging {
         pubSubManager.getNode(nodeId);
     }
 
-    private void handleUserPubSubMessage(Context context, String from, String mimeType, String text, String time, String groupJID, String stanzaId){
+    private void handleUserPubSubMessage(Context context, String from, String mimeType, String text, String time, String groupJID, String stanzaId) {
         TinyDB tinyDB = TinyDB.getInstance(context);
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
 
-        if ( from.equals(tinyDB.getString(TinyDB.KEY_USER_JID)) ) {
+        if (from.equals(tinyDB.getString(TinyDB.KEY_USER_JID))) {
             //Do nothing
         } else {
             int chatId = XMPPService.getChatIdOrCreateIfNotExist(context, true, groupJID, false);
@@ -477,11 +481,11 @@ public class PubSubMessaging {
         }
     }
 
-    private void handleGroupInvitation(Context context, String groupJID){
+    private void handleGroupInvitation(Context context, String groupJID) {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         String subject = groupJID.substring(groupJID.indexOf("%") + 1, groupJID.indexOf("%%"));
         int chatId = sportsUnityDBHelper.getChatEntryID(groupJID);
-        if( chatId == SportsUnityDBHelper.DEFAULT_ENTRY_ID ) {
+        if (chatId == SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
             chatId = sportsUnityDBHelper.createGroupChatEntry(subject, null, groupJID);
             sportsUnityDBHelper.updateChatEntry(SportsUnityDBHelper.getDummyMessageRowId(), groupJID);
 
@@ -491,10 +495,10 @@ public class PubSubMessaging {
         }
     }
 
-    private void handleGroupElimination(Context context, String groupJID){
+    private void handleGroupElimination(Context context, String groupJID) {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         int chatId = sportsUnityDBHelper.getChatEntryID(groupJID);
-        if( chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID ) {
+        if (chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
             String currentUserJID = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
             int contactId = sportsUnityDBHelper.getContactIdFromJID(currentUserJID);
 
@@ -505,19 +509,19 @@ public class PubSubMessaging {
         }
     }
 
-    private void handleOtherMemberRemoved(Context context, String removedUserJid, String groupJid){
+    private void handleOtherMemberRemoved(Context context, String removedUserJid, String groupJid) {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         int chatId = sportsUnityDBHelper.getChatEntryID(groupJid);
-        if( chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID ) {
+        if (chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
             int contactId = sportsUnityDBHelper.getContactIdFromJID(removedUserJid);
             sportsUnityDBHelper.deleteGroupMember(chatId, contactId);
         }
     }
 
-    private void handleMembersAdded(Context context, String groupJid){
+    private void handleMembersAdded(Context context, String groupJid) {
         SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
         long chatId = sportsUnityDBHelper.getChatEntryID(groupJid);
-        if( chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID ) {
+        if (chatId != SportsUnityDBHelper.DEFAULT_ENTRY_ID) {
 //            loadAffiliations(context, chatId, groupJid);
         }
     }
@@ -573,16 +577,16 @@ public class PubSubMessaging {
         }
     }
 
-    private void handleConnectionException(Exception ex){
+    private void handleConnectionException(Exception ex) {
         //TODO
     }
 
     private String encodeSimpleMessagePayload(String message, String from, String groupJid, String time, String mimeType) {
-        return encodeHiddenMessagePayload( USER_MESSAGE_TYPE, message, from, groupJid, time, mimeType);
+        return encodeHiddenMessagePayload(USER_MESSAGE_TYPE, message, from, groupJid, time, mimeType);
     }
 
     private String encodeGroupInvitationMessagePayload(String from, String groupJid, String time) {
-        return encodeHiddenMessagePayload( GROUP_INVITATION_MESSAGE_TYPE, "", from, groupJid, time, "");
+        return encodeHiddenMessagePayload(GROUP_INVITATION_MESSAGE_TYPE, "", from, groupJid, time, "");
     }
 
     private String encodeHiddenMessagePayload(String messageType, String message, String from, String groupJid, String time, String mimeType) {
