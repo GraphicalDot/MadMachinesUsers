@@ -190,8 +190,8 @@ public class TokenRegistrationHandler {
         try{
             String url = getGeneratedUrl(USER_UNREGISTER_MATCH);
             JSONObject params = new JSONObject();
-            params.put(PARAM_USERNAME, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
-            params.put(PARAM_PASSWORD, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
+            params.put(USERNAME_KEY, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
+            params.put(PASSWORD_KEY, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
             params.put(REQUEST_PARAMETER_KEY_APK_VERSION, getBuildConfig());
             params.put(REQUEST_PARAMETER_KEY_UDID, getDeviceId(mContext));
             params.put(REQUEST_PARAMETER_KEY_MATCHID,matchUid);

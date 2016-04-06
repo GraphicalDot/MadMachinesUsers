@@ -390,11 +390,11 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     Log.i("FOOTBALMATCHSTATUS: ", footballMatchJsonCaller.getMatchStatus());
                     holder.notification.setVisibility(View.GONE);
                 } else {
-                    Log.i("FOOTBALMATCHs: ",footballMatchJsonCaller.getMatchStatus());
+
                     preferences  = PreferenceManager.getDefaultSharedPreferences(activity);
                     final String key = footballMatchJsonCaller.getMatchId()+"|"+footballMatchJsonCaller.getLeagueId();
                     String subsMatch = preferences.getString(key,"");
-                    if(!TextUtils.isEmpty(subsMatch) && key.equalsIgnoreCase(subsMatch)){
+                    if(key.equalsIgnoreCase(subsMatch) && !subsMatch.equals("")){
                         holder.notification.setImageResource(R.drawable.ic_notification_enable);
                         holder.notification.setVisibility(View.VISIBLE);
                         holder.notification.setOnClickListener(new View.OnClickListener() {
@@ -412,9 +412,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                             }
                         });
 
-
                     }else{
-
                         holder.notification.setImageResource(R.drawable.ic_notification_disabled);
                         holder.notification.setVisibility(View.VISIBLE);
                         holder.notification.setOnClickListener(new View.OnClickListener() {
@@ -795,13 +793,13 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         try {
 
             JSONObject object = new JSONObject(content);
-            if(object!=null){
-                if(200==object.getInt("status") && "success".equalsIgnoreCase(object.getString("info"))){
-
+            if(object!=null && !object.isNull("status") && 200==object.getInt("status")){
+                if( "success".equalsIgnoreCase(object.getString("info"))){
                     String key = matchId+"|"+seriesId;
                     SharedPreferences prefs  = PreferenceManager.getDefaultSharedPreferences(activity);
                     SharedPreferences.Editor editor = prefs.edit();
-                    if(TextUtils.isEmpty(prefs.getString(key,"")))
+                    String storedKey = prefs.getString(key,"");
+                    if(key.equalsIgnoreCase(storedKey))
                     {
                         editor.remove(key);
                     } else {

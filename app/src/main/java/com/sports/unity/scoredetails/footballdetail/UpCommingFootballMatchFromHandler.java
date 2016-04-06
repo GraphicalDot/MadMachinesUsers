@@ -9,6 +9,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.VolleyRequestHandler;
 
 import org.json.JSONObject;
@@ -70,15 +71,15 @@ public class UpCommingFootballMatchFromHandler {
     private void handleResponse(String response) {
         try{
 
+            if(mContentListener!=null){ mContentListener.handleContent(response);}
 
-                mContentListener.handleContent(response);
-
-        } catch (Exception e) {
+      } catch (Exception e) {
             e.printStackTrace();
         }
     }
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
+        if(mContentListener!=null){ mContentListener.handleContent(Constants.ERRORRESPONSE);}
     }
 
     public void addListener(UpCommingMatchFromContentListener contentListener) {
