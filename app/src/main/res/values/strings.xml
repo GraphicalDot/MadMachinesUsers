@@ -290,7 +290,7 @@ message to verify your mobile number.</string>
     <string name="app_version"> Version </string>
 
     <!--Sending invite related-->
-    <string name="download_sports_unity">Check out Sports Unity for your smartphone. Download it from https://goo.gl/mQUaiy</string>
+    <string name="download_sports_unity">Check out Sports Unity for your smartphone. Download it from http://www.sportsunity.co</string>
     <string name="search_title">Search</string>
     <string name="football_match__score_detail_fragment">Football Match Score Detail</string>
     <string name="summary">Summary</string>

@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.util.Log;
 
+import com.sports.unity.BuildConfig;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -43,8 +44,8 @@ public class FileOnCloudHandler {
     public static final int STATUS_UPLOAD_FAILED = 7;
 
 
-    private static final String CONTENT_CLOUD_URL = "http://" + XMPPClient.SERVER_HOST + "/media?";
-    private static final String CONTENT_PRESENT_URL = "http://" + XMPPClient.SERVER_HOST + "/media_present?";
+    private static final String CONTENT_CLOUD_URL = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/media?";
+    private static final String CONTENT_PRESENT_URL = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/media_present?";
 
     private static FileOnCloudHandler FILE_ON_CLOUD_HANDLER = null;
 

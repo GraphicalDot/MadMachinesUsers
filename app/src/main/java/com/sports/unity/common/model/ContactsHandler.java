@@ -7,9 +7,12 @@ import android.database.Cursor;
 import android.provider.ContactsContract;
 import android.util.Log;
 
+import com.sports.unity.BuildConfig;
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.XMPPManager.PubSubUtil;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
@@ -33,7 +36,7 @@ public class ContactsHandler {
 
     public static final String defaultStatus = "Invite to Sports Unity";
 
-    private static final String URL_REQUEST_CONTACT_JIDS = "http://" + XMPPClient.SERVER_HOST + "/get_contact_jids";
+    private static final String URL_REQUEST_CONTACT_JIDS = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/get_contact_jids";
 
     private static final int CONTACT_PENDING_ACTION_NONE = 1;
     private static final int CONTACT_PENDING_ACTION_COPY_LOCALLY = 3;
@@ -41,8 +44,9 @@ public class ContactsHandler {
     private static final int CONTACT_PENDING_ACTION_ADD_NEW_CONTACTS = 7;
     private static final int CONTACT_PENDING_ACTION_UPDATE_USER_FAVORITES = 11;
     private static final int CONTACT_PENDING_ACTION_UPDATE_VCARD = 17;
+    private static final int CONTACT_PENDING_ACTION_GET_GROUPS_LIST = 19;
 
-    private static final int CONTACT_PENDING_ACTION_DEFAULT_VALUE = CONTACT_PENDING_ACTION_COPY_LOCALLY * CONTACT_PENDING_ACTION_FETCH_JID;
+    private static final int CONTACT_PENDING_ACTION_DEFAULT_VALUE = CONTACT_PENDING_ACTION_COPY_LOCALLY * CONTACT_PENDING_ACTION_FETCH_JID * CONTACT_PENDING_ACTION_GET_GROUPS_LIST;
 
     private static ContactsHandler CONTACT_HANDLER = null;
 
@@ -101,8 +105,18 @@ public class ContactsHandler {
         }
     }
 
-    synchronized public void addCallToUpdateUserVCard(Context context) {
+    synchronized public void addCallToUpdateRequiredContactChat(Context context) {
         addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_UPDATE_VCARD);
+
+        if (!inProcess) {
+            process(context);
+        } else {
+            //nothing
+        }
+    }
+
+    synchronized public void addCallToGetSubscribedGroups(Context context) {
+        addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_GET_GROUPS_LIST);
 
         if (!inProcess) {
             process(context);
@@ -299,10 +313,22 @@ public class ContactsHandler {
         return makeHttpCallToFetchJID(context, request);
     }
 
-    private boolean updateRequiredUsersInfoFromVCard(Context context){
+    private boolean updateRequiredChatInfoFromServer(Context context){
         boolean success = false;
-        ArrayList<Contacts> jids = SportsUnityDBHelper.getInstance(context).getListOfJIDRequireUpdate();
-        success = updateContactInfoFromVCards(context, jids);
+
+        {
+            ArrayList<Contacts> contacts = SportsUnityDBHelper.getInstance(context).getListOfJIDRequireUpdate();
+            success = updateContactInfoFromServer(context, contacts);
+        }
+
+        /*
+         * Intentionally repeating same statements in below block, to handle newly added contacts in above block.
+         */
+        if( success ){
+            ArrayList<Contacts> contacts = SportsUnityDBHelper.getInstance(context).getListOfJIDRequireUpdate();
+            success = updateContactInfoFromServer(context, contacts);
+        }
+
         return success;
     }
 
@@ -345,7 +371,7 @@ public class ContactsHandler {
                         }
                     }
 
-                    addCallToUpdateUserVCard(context);
+                    addCallToUpdateRequiredContactChat(context);
 //                    updateMyContactInfoFromVCards(context, jids);
 
                     success = true;
@@ -377,17 +403,25 @@ public class ContactsHandler {
         return success;
     }
 
-    private boolean updateContactInfoFromVCards(Context context, ArrayList<Contacts> contacts){
+    private boolean updateContactInfoFromServer(Context context, ArrayList<Contacts> contacts){
         boolean success = true;
         try {
             Contacts contact = null;
             for (int index = 0; index < contacts.size(); index++) {
                 contact = contacts.get(index);
-                VCard vCard = UserProfileHandler.getInstance().loadVCardAndUpdateDB(context, contact.jid, contact.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS);
 
-                if( vCard == null ) {
-                    success = false;
-                    break;
+                boolean isGroupEntry = SportsUnityDBHelper.getInstance(context).isGroupEntry(contact.id);
+                if( isGroupEntry ){
+                    success = PubSubMessaging.getInstance().loadAffiliations(context, contact.id, contact.jid);
+                    if( ! success ){
+                        break;
+                    }
+                } else {
+                    VCard vCard = UserProfileHandler.getInstance().loadVCardAndUpdateDB(context, contact.jid, contact.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS);
+                    if (vCard == null) {
+                        success = false;
+                        break;
+                    }
                 }
             }
         }catch (Exception ex){
@@ -577,9 +611,9 @@ public class ContactsHandler {
 
                     onCompleteActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_UPDATE_USER_FAVORITES);
                 } else if (isPendingAction(pendingActions, CONTACT_PENDING_ACTION_UPDATE_VCARD)) {
-                    Log.d("ContactsHandler", "update user vcard");
+                    Log.d("ContactsHandler", "update contact/chat info");
 
-                    boolean success = updateRequiredUsersInfoFromVCard(context);
+                    boolean success = updateRequiredChatInfoFromServer(context);
                     if (success) {
                         //nothing
                     } else {
@@ -587,6 +621,23 @@ public class ContactsHandler {
                     }
 
                     onCompleteActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_UPDATE_VCARD);
+                } else if (isPendingAction(pendingActions, CONTACT_PENDING_ACTION_GET_GROUPS_LIST) ) {
+                    Log.d("ContactsHandler", "get group list");
+
+                    boolean success = false;
+                    try{
+                        PubSubUtil.getSubscribedNodes(context);
+                        success = true;
+                    }catch (Exception ex){
+                        ex.printStackTrace();
+                    }
+                    if (success) {
+                        addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_UPDATE_VCARD);
+                    } else {
+                        failedActions = addPendingAction(failedActions, CONTACT_PENDING_ACTION_GET_GROUPS_LIST);
+                    }
+
+                    onCompleteActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_GET_GROUPS_LIST);
                 }
             }
 

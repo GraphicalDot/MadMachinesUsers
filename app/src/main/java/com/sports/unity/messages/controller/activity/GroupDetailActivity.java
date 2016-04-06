@@ -144,6 +144,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         } else {
             actionView.setText(R.string.create_group);
         }
+        actionView.setVisibility(View.VISIBLE);
         actionView.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
         actionView.setOnClickListener(new View.OnClickListener() {
 

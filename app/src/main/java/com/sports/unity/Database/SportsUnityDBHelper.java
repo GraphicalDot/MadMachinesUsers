@@ -158,7 +158,12 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             values.put(GroupUserEntry.COLUMN_CONTACT_ID, id);
             values.put(GroupUserEntry.COLUMN_ADMIN, 0);
 
-            db.insert(GroupUserEntry.TABLE_NAME, null, values);
+            int rows = updateParticipantAsMember(id, chatId);
+            if( rows == 0 ) {
+                db.insert(GroupUserEntry.TABLE_NAME, null, values);
+            } else {
+                //nothing
+            }
         }
     }
 
@@ -443,7 +448,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactChatEntry.COLUMN_AVAILABLE_STATUS
         };
 
-        String selection = ContactChatEntry.COLUMN_UPDATE_REQUIRED + " == 1 " + " AND " + ContactChatEntry.COLUMN_GROUP_CHAT + " == 0 ";
+        String selection = ContactChatEntry.COLUMN_UPDATE_REQUIRED + " == 1 ";
         String[] selectionArgs = null;
 
         Cursor c = db.query( ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null );
@@ -1027,6 +1032,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         values.put(ContactChatEntry.COLUMN_IMAGE, image);
         values.put(ContactChatEntry.COLUMN_GROUP_CHAT, true);
         values.put(ContactChatEntry.COLUMN_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
+        values.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, true);
 
         return (int)db.insert(ContactChatEntry.TABLE_NAME, null, values);
     }
@@ -1183,6 +1189,23 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public boolean isGroupEntry(int chatId){
+        boolean groupEntry = false;
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String projection[] = { ContactChatEntry.COLUMN_GROUP_CHAT };
+        String selection = ContactChatEntry.COLUMN_ID + " LIKE ? ";
+        String[] selectionArgs = { String.valueOf(chatId) };
+
+        Cursor c = db.query( ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null );
+        if (c.moveToFirst()) {
+            groupEntry = c.getInt(0) == 1;
+        }
+        c.close();
+
+        return groupEntry;
+    }
+
     public ArrayList<String> getUserBlockedList() {
         ArrayList<String> userBlockedList = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
@@ -1254,6 +1277,18 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         }
     }
 
+    public int updateChatUpdateRequired(int chatId, boolean updateRequired) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, updateRequired);
+
+        String selection = ContactChatEntry.COLUMN_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(chatId)};
+
+        return db.update( ContactChatEntry.TABLE_NAME, values, selection, selectionArgs);
+    }
+
     public int updateUserBlockStatus(int contactId, boolean blockStatus) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -1295,8 +1330,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         Cursor c = db.query( ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null );
         if (c.moveToFirst()) {
-            boolean value = c.getInt(0) == 1;
-            return value;
+            block = c.getInt(0) == 1;
         }
         c.close();
 
@@ -1350,17 +1384,29 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return name;
     }
 
-    public void updateAdmin(ArrayList<Integer> selectedMembers, int chatId) {
+    public void updateParticipantAsAdmin(ArrayList<Integer> selectedMembers, int chatId) {
         for (Integer id : selectedMembers) {
-            updateAdmin(id, chatId);
+            updateParticipantAsAdmin(id, chatId);
         }
     }
 
-    public int updateAdmin(int contactId, int chatId) {
+    public int updateParticipantAsAdmin(int contactId, int chatId) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
         values.put(GroupUserEntry.COLUMN_ADMIN, 1);
+
+        String selection = GroupUserEntry.COLUMN_CONTACT_ID + " = ? and " + GroupUserEntry.COLUMN_CHAT_ID + " = ? ";
+        String[] selectionArgs = {String.valueOf(contactId), String.valueOf(chatId)};
+
+        return db.update(GroupUserEntry.TABLE_NAME, values, selection, selectionArgs);
+    }
+
+    public int updateParticipantAsMember(int contactId, int chatId) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(GroupUserEntry.COLUMN_ADMIN, 0);
 
         String selection = GroupUserEntry.COLUMN_CONTACT_ID + " = ? and " + GroupUserEntry.COLUMN_CHAT_ID + " = ? ";
         String[] selectionArgs = {String.valueOf(contactId), String.valueOf(chatId)};

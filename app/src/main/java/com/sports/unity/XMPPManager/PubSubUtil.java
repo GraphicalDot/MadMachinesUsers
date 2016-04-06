@@ -1,5 +1,10 @@
 package com.sports.unity.XMPPManager;
 
+import android.content.Context;
+import android.util.Log;
+
+import com.sports.unity.messages.controller.model.PubSubMessaging;
+
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
@@ -39,6 +44,18 @@ public class PubSubUtil {
         ProviderManager.addExtensionProvider( "affiliation", PubSubNamespace.OWNER.getXmlns(), new SPUAffiliationProvider());
         ProviderManager.addExtensionProvider( "pubsub", PubSubNamespace.BASIC.getXmlns(), new PubSubExtensionProvider());
 //        ProviderManager.addExtensionProvider( "subscription", "", new SubscriptionProvider());
+    }
+
+    public static void getSubscribedNodes(Context context) throws SmackException.NoResponseException, XMPPException.XMPPErrorException, SmackException.NotConnectedException {
+        PubSubManager pubSubManager = new PubSubManager(XMPPClient.getConnection());
+        List<Subscription> subscriptionList = pubSubManager.getSubscriptions();
+
+        for(Subscription subscription : subscriptionList){
+            if( subscription.getState() == Subscription.State.subscribed ){
+                PubSubMessaging.getInstance().handleCreationOfAlreadySubscribedGroup( context, subscription.getNode());
+            }
+        }
+
     }
 
     public static List<SPUAffiliation> getAffiliations(String nodeId) throws SmackException.NoResponseException, XMPPException.XMPPErrorException, SmackException.NotConnectedException {
