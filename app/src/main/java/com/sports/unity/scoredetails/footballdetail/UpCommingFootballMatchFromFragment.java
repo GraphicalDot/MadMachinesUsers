@@ -48,7 +48,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     private SwipeRefreshLayout commentaryrefresh;
     private TextView tvnamefirstteam;
     private TextView tvlastfivematchteamfirst;
-    private ImageView ivfirstmatchteamfirst;
+    private ImageView[] ivfirstmatchteamfirst  = new ImageView[5];;
     private ImageView ivsecondmatchteamfirst;
     private ImageView ivthirdmatchteamfirst;
     private ImageView ivforthmatchteamfirst;
@@ -65,7 +65,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     private TextView tvlossmatchoffirstteam;
     private TextView tvnamesecondteam;
     private TextView tvlastfivematchteamsecond;
-    private ImageView tvfirstmatchteamsecond;
+    private ImageView[] tvfirstmatchteamsecond = new ImageView[5];
     private ImageView tvsecondmatchteamsecond;
     private ImageView tvthirdmatchteamsecond;
     private ImageView tvforthmatchteamsecond;
@@ -103,7 +103,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         teamId2 = i.getStringExtra(INTENT_KEY_TEAM2_ID);
         upCommingFootballMatchFromHandler = UpCommingFootballMatchFromHandler.getInstance(context);
         upCommingFootballMatchFromHandler.addListener(this);
-        upCommingFootballMatchFromHandler.requestUpcommingMatchFrom(teamId1,teamId2,leagueId);
+        upCommingFootballMatchFromHandler.requestUpcommingMatchFrom(teamId1, teamId2, leagueId);
 
     }
     @Override
@@ -119,11 +119,11 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         initErrorLayout(view);
         tvnamefirstteam=(TextView)view.findViewById(R.id.tv_name_first_team);
         tvlastfivematchteamfirst=(TextView)view.findViewById(R.id.tv_last_five_match_team_first);
-        ivfirstmatchteamfirst=(ImageView)view.findViewById(R.id.iv_first_match_team_first);
-        ivsecondmatchteamfirst=(ImageView)view.findViewById(R.id.iv_second_match_team_first);
-        ivthirdmatchteamfirst=(ImageView)view.findViewById(R.id.iv_third_match_team_first);
-        ivforthmatchteamfirst=(ImageView)view.findViewById(R.id.iv_forth_match_team_first);
-        ivfifthmatchteamfirst=(ImageView)view.findViewById(R.id.iv_fifth_match_team_first);
+        ivfirstmatchteamfirst[0]=(ImageView)view.findViewById(R.id.iv_first_match_team_first);
+        ivfirstmatchteamfirst[1]=(ImageView)view.findViewById(R.id.iv_second_match_team_first);
+        ivfirstmatchteamfirst[2]=(ImageView)view.findViewById(R.id.iv_third_match_team_first);
+        ivfirstmatchteamfirst[3]=(ImageView)view.findViewById(R.id.iv_forth_match_team_first);
+        ivfirstmatchteamfirst[4]=(ImageView)view.findViewById(R.id.iv_fifth_match_team_first);
         firstview=(View)view.findViewById(R.id.first_view);
         tvfirstpremieradivision=(TextView)view.findViewById(R.id.tv_first_premiera_division);
         tvfirstpoint=(TextView)view.findViewById(R.id.tv_first_point);
@@ -136,11 +136,11 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         tvlossmatchoffirstteam=(TextView)view.findViewById(R.id.tv_loss_match_of_first_team);
         tvnamesecondteam=(TextView)view.findViewById(R.id.tv_name_second_team);
         tvlastfivematchteamsecond=(TextView)view.findViewById(R.id.tv_last_five_match_team_second);
-        tvfirstmatchteamsecond=(ImageView)view.findViewById(R.id.tv_first_match_team_second);
-        tvsecondmatchteamsecond=(ImageView)view.findViewById(R.id.tv_second_match_team_second);
-        tvthirdmatchteamsecond=(ImageView)view.findViewById(R.id.tv_third_match_team_second);
-        tvforthmatchteamsecond=(ImageView)view.findViewById(R.id.tv_forth_match_team_second);
-        tvfifthmatchteamsecond=(ImageView)view.findViewById(R.id.tv_fifth_match_team_second);
+        tvfirstmatchteamsecond[0]=(ImageView)view.findViewById(R.id.tv_first_match_team_second);
+        tvfirstmatchteamsecond[1]=(ImageView)view.findViewById(R.id.tv_second_match_team_second);
+        tvfirstmatchteamsecond[2]=(ImageView)view.findViewById(R.id.tv_third_match_team_second);
+        tvfirstmatchteamsecond[3]=(ImageView)view.findViewById(R.id.tv_forth_match_team_second);
+        tvfirstmatchteamsecond[4]=(ImageView)view.findViewById(R.id.tv_fifth_match_team_second);
         tvsecondpoint=(TextView)view.findViewById(R.id.tv_second_point);
         tvsecondwins=(TextView)view.findViewById(R.id.tv_second_wins);
         tvseconddraws=(TextView)view.findViewById(R.id.tv_second_draws);
@@ -168,7 +168,6 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                 JSONObject jsonObject = new JSONObject(object);
 
                 boolean success = jsonObject.getBoolean("success");
-              //  boolean error = jsonObject.getBoolean("error");
 
                 if( success ) {
 
@@ -203,6 +202,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         parentView.setVisibility(View.VISIBLE);
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         final JSONArray dataArray = jsonObject.getJSONArray("data");
+        hideProgressBar();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
@@ -268,27 +268,16 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     }
 
     private void initFromDataTeamSecond(String recentForm) {
-        tvfirstmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(0), getBallColor(recentForm.charAt(0))));
 
-        tvsecondmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(1), getBallColor(recentForm.charAt(1))));
-
-        tvthirdmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(2), getBallColor(recentForm.charAt(2))));
-
-        tvforthmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(3), getBallColor(recentForm.charAt(3))));
-
-        tvfifthmatchteamsecond.setImageDrawable(getBallColor("" + recentForm.charAt(4), getBallColor(recentForm.charAt(4))));
-    }
+        for(int i = 0; i<recentForm.length();i++){
+            tvfirstmatchteamsecond[i].setImageDrawable(getBallColor("" + recentForm.charAt(i), getBallColor(recentForm.charAt(i))));
+        }
+  }
 
     private void initializeTeamForms(String recentForm) {
-        ivfirstmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(0), getBallColor(recentForm.charAt(0))));
-
-        ivsecondmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(1), getBallColor(recentForm.charAt(1))));
-
-        ivthirdmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(2), getBallColor(recentForm.charAt(2))));
-
-        ivforthmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(3), getBallColor(recentForm.charAt(3))));
-
-        ivfifthmatchteamfirst.setImageDrawable(getBallColor("" + recentForm.charAt(4), getBallColor(recentForm.charAt(4))));
+        for(int i = 0; i<recentForm.length();i++){
+            ivfirstmatchteamfirst[i].setImageDrawable(getBallColor("" + recentForm.charAt(i), getBallColor(recentForm.charAt(i))));
+        }
     }
 
 

@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -77,6 +78,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private DonutProgress donutProgress;
     private ImageView refreshImage;
     private String seriesId;
+    private RelativeLayout cloackTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,7 +134,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     }
 
     private void initView() {
-
+        cloackTimer = (RelativeLayout) findViewById(R.id.cloack_timer);
+        donutProgress = (DonutProgress) findViewById(R.id.donut_progress);
         /*((TextView)findViewById(R.id.venue)).setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -152,7 +155,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             int numberOfFootballTabs = footballMatchtitles.length;
             String footballMatchtitlesupcommingTitles[] = {getString(R.string.table), getString(R.string.form), getString(R.string.squad)};
 
-            donutProgress = (DonutProgress) findViewById(R.id.donut_progress);
+
 
 
 
@@ -260,6 +263,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         StringBuilder stringBuilder = new StringBuilder();
 
         try {
+
             if (sportsType.equals(ScoresJsonParser.CRICKET)) {
                 cricketMatchJsonCaller.setJsonObject(matchScoreDetails);
 
@@ -273,7 +277,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 }
             } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
                 footballMatchJsonCaller.setJsonObject(matchScoreDetails);
-
                 /*stringBuilder.append(footballMatchJsonCaller.getHomeTeam());
                 stringBuilder.append(" vs ");
                 stringBuilder.append(footballMatchJsonCaller.getAwayTeam());*/
@@ -482,13 +485,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 ex.printStackTrace();
             }
         } else if ( sportsType.equals(ScoresJsonParser.FOOTBALL) ) {
-            footballMatchJsonCaller.setJsonObject(matchScoreDetails);
+             footballMatchJsonCaller.setJsonObject(matchScoreDetails);
+             cloackTimer.setVisibility(View.GONE);
 
-
-
-
-
-            {
+          {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.FILL_PARENT);
                 params.gravity = Gravity.CENTER;
                 ((ViewGroup) findViewById(R.id.flag1_parent_layout)).setLayoutParams(params);
@@ -552,17 +552,18 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     showNoCommentaries();
                 } else {
                     if( footballMatchJsonCaller.isLive() ){
-                        donutProgress.setVisibility(View.VISIBLE);
+                        cloackTimer.setVisibility(View.VISIBLE);
+                        /*donutProgress.setVisibility(View.VISIBLE);*/
                         Integer minute = 0;
                         try{
                             minute = Integer.parseInt(footballMatchJsonCaller.getMatchStatus());
                         }catch (Exception e ){
                             e.printStackTrace();
+                            minute = 0;
                         }
                         donutProgress.setProgress(minute);
                         enableAutoRefreshContent();
                     }
-
                     StringBuilder score = new StringBuilder();
                     score.append(footballMatchJsonCaller.getHomeTeamScore());
                     score.append(" - ");

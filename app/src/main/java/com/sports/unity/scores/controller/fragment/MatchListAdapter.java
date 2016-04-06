@@ -232,14 +232,15 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
                     ((ViewGroup) holder.odds.getParent()).setClickable(false);
                 }
-
+                Log.i("IPLMATCHS", "onBindViewHolder: "+cricketMatchJsonCaller.getStatus());
                 if("L".equalsIgnoreCase(cricketMatchJsonCaller.getStatus()) ||"N".equalsIgnoreCase(cricketMatchJsonCaller.getStatus()) )
                 {
                     preferences  = PreferenceManager.getDefaultSharedPreferences(activity);
-                    final String key = cricketMatchJsonCaller.getMatchId()+"|"+cricketMatchJsonCaller.getSeriesId().toString();
+                    final String key = cricketMatchJsonCaller.getMatchId()+"|"+cricketMatchJsonCaller.getSeriesId();
                     String subsMatch = preferences.getString(key,"");
-                    if(!TextUtils.isEmpty(subsMatch) && key.equalsIgnoreCase(subsMatch)){
+                    if(key.equalsIgnoreCase(subsMatch) && !subsMatch.equals("")){
                         holder.notification.setImageResource(R.drawable.ic_notification_enable);
+                        holder.notification.setVisibility(View.VISIBLE);
                         holder.notification.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -249,13 +250,11 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                                     tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
                                     tokenRegistrationHandler.addListener(MatchListAdapter.this);
                                     tokenRegistrationHandler.removeMatchUser(key);
-
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
                             }
                         });
-
 
                     }else{
                         holder.notification.setImageResource(R.drawable.ic_notification_disabled);
@@ -276,6 +275,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                                 }
                             }
                         });
+
+
                     }
 
                 } else{
@@ -810,6 +811,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     matchListWrapperNotify.notifyParent();
 
                 }
+            }else{
+                Toast.makeText(activity, R.string.match_not_exist,Toast.LENGTH_SHORT).show();
             }
         } catch (JSONException e) {
             e.printStackTrace();
