@@ -54,6 +54,27 @@
                         android:padding="@dimen/horizontal_padding_very_small"
                         android:weightSum="6">
 
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:paddingTop="@dimen/font_size_very_very_small"
+                            android:layout_height="match_parent">
+                            <View
+                                android:layout_centerHorizontal="true"
+                                android:id="@+id/vi_start"
+                                android:layout_width="@dimen/over_divider_width"
+                                android:layout_height="@dimen/over_divider_height"
+                                android:background="@color/gray3"
+                                />
+                            <TextView
+                                android:id="@+id/vi_start_tv"
+                                android:layout_below="@id/vi_start"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/gray1"
+                                android:textSize="@dimen/font_size_very_very_small"
+                                android:text=""/>
+                        </RelativeLayout>
+
                         <ImageView
                             android:id="@+id/iv_first_ball"
                             android:layout_width="@dimen/recent_ball_radius"
@@ -71,9 +92,10 @@
                                 android:id="@+id/vi_first"
                                 android:layout_width="@dimen/over_divider_width"
                                 android:layout_height="@dimen/over_divider_height"
-                                android:background="@color/gray1"
+                                android:background="@color/gray3"
                                 />
                             <TextView
+                                android:id="@+id/vi_first_tv"
                                 android:layout_below="@id/vi_first"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -98,9 +120,10 @@
                                 android:id="@+id/vi_second"
                                 android:layout_width="@dimen/over_divider_width"
                                 android:layout_height="@dimen/over_divider_height"
-                                android:background="@color/gray1"
+                                android:background="@color/gray3"
                                 />
                             <TextView
+                                android:id="@+id/vi_second_tv"
                                 android:layout_below="@id/vi_second"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -125,9 +148,10 @@
                                 android:id="@+id/vi_third"
                                 android:layout_width="@dimen/over_divider_width"
                                 android:layout_height="@dimen/over_divider_height"
-                                android:background="@color/gray1"
+                                android:background="@color/gray3"
                                 />
                             <TextView
+                                android:id="@+id/vi_third_tv"
                                 android:layout_below="@id/vi_third"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -152,9 +176,10 @@
                                 android:id="@+id/vi_four"
                                 android:layout_width="@dimen/over_divider_width"
                                 android:layout_height="@dimen/over_divider_height"
-                                android:background="@color/gray1"
+                                android:background="@color/gray3"
                                 />
                             <TextView
+                                android:id="@+id/vi_four_tv"
                                 android:layout_below="@id/vi_four"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -178,9 +203,10 @@
                                 android:id="@+id/vi_five"
                                 android:layout_width="@dimen/over_divider_width"
                                 android:layout_height="@dimen/over_divider_height"
-                                android:background="@color/gray1"
+                                android:background="@color/gray3"
                                 />
                             <TextView
+                                android:id="@+id/vi_five_tv"
                                 android:layout_below="@id/vi_five"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
