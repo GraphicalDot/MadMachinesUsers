@@ -86,7 +86,6 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
                     showErrorLayout();
                 }
             } else {
-                Toast.makeText(getApplicationContext(), "oops there was an error", Toast.LENGTH_SHORT).show();
                 showErrorLayout();
             }
         }
@@ -169,6 +168,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             rootScrollBar = findViewById(R.id.root_scroll_bar);
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(PlayerProfileView.this, "player has missing data", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -276,7 +276,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
 
         } catch (Exception ex) {
             ex.printStackTrace();
-//            showErrorLayout();
+            Toast.makeText(getApplicationContext(), "player has missing data", Toast.LENGTH_SHORT).show();
         }
     }
 
