@@ -25,7 +25,7 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 /**
  * Created by madmachines on 3/3/16.
  */
-public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapperAdapter.ViewHolder> implements  MatchListWrapperNotify{
+public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapperAdapter.ViewHolder> {
 
     private List<MatchListWrapperDTO> matchDay;
     private Activity activity;
@@ -96,12 +96,6 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         return matchDay.size();
     }
 
-    @Override
-    public void notifyParent() {
-        notifyDataSetChanged();
-    }
-
-
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         private TextView tvDayName;
@@ -122,7 +116,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             tvLeagueName = (TextView) view.findViewById(R.id.league_name);
             ivSportsIcon = (ImageView) view.findViewById(R.id.iv_league);
             rvChild = (RecyclerView) view.findViewById(R.id.child_rv);
-            mAdapter = new MatchListAdapter(new ArrayList<JSONObject>(), activity,MatchListWrapperAdapter.this);
+            mAdapter = new MatchListAdapter(new ArrayList<JSONObject>(), activity);
             rvChild.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
             rvChild.setNestedScrollingEnabled(false);
             rvChild.setAdapter(mAdapter);

@@ -52,7 +52,7 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 /**
  * Created by Edwin on 15/02/2015.
  */
-public class MatchListFragment extends Fragment {
+public class MatchListFragment extends Fragment implements MatchListWrapperNotify{
 
 //    private static final String liveScore = "http://52.74.142.219:8080/get_league_fixtures?league_id=1204&date=" + formattedDate;
 
@@ -562,6 +562,11 @@ public class MatchListFragment extends Fragment {
 //        String liveScore = "http://52.74.142.219:8080/get_league_fixtures?league_id=1204&date=" + formattedDate;
 //        String URL_UPCOMING_MATCHES = "http://52.74.142.219:8080/get_football_upcoming_fixtures";
 //
+    }
+
+    @Override
+    public void notifyParent() {
+        matchListWrapperAdapter.notifyDataSetChanged();
     }
 
     private class ScoresContentListener implements ScoresContentHandler.ContentListener {

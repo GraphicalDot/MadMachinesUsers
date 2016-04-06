@@ -81,10 +81,11 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     private String matchId;
     private MatchListWrapperNotify matchListWrapperNotify;
 
-    public MatchListAdapter(List<JSONObject> list, Activity activity, MatchListWrapperNotify matchListWrapperNotify) {
+    public MatchListAdapter(List<JSONObject> list, Activity activity) {
         this.list = list;
         this.activity = activity;
-        this.matchListWrapperNotify = matchListWrapperNotify;
+        matchListWrapperNotify = (MatchListWrapperNotify) activity;
+
 
     }
 
