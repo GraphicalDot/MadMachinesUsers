@@ -202,6 +202,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         parentView.setVisibility(View.VISIBLE);
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         final JSONArray dataArray = jsonObject.getJSONArray("data");
+        hideProgressBar();
         if (activity != null) {
             activity.runOnUiThread(new Runnable() {
                 @Override
