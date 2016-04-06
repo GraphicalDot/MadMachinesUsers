@@ -256,12 +256,20 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private void setTitle(){
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
         TextView title_text = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        ImageView imageViewRefresh = (ImageView) toolbar.findViewById(R.id.refresh);
+        imageViewRefresh.setVisibility(View.VISIBLE);
 
         StringBuilder stringBuilder = new StringBuilder();
 
         try {
+
             if (sportsType.equals(ScoresJsonParser.CRICKET)) {
                 cricketMatchJsonCaller.setJsonObject(matchScoreDetails);
+                if(matchScoreDetails != null){
+                    if((matchScoreDetails.getString("status").equalsIgnoreCase("F") )||(matchScoreDetails.getString("status").equalsIgnoreCase("N"))){
+                        imageViewRefresh.setVisibility(View.INVISIBLE);
+                    }
+                }
 
   /*              stringBuilder.append(cricketMatchJsonCaller.getTeam1());
                 stringBuilder.append(" vs ");
@@ -273,7 +281,11 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 }
             } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
                 footballMatchJsonCaller.setJsonObject(matchScoreDetails);
-
+                if(matchScoreDetails != null){
+                    if(!matchScoreDetails.getBoolean("live")){
+                        imageViewRefresh.setVisibility(View.INVISIBLE);
+                    }
+                }
                 /*stringBuilder.append(footballMatchJsonCaller.getHomeTeam());
                 stringBuilder.append(" vs ");
                 stringBuilder.append(footballMatchJsonCaller.getAwayTeam());*/
