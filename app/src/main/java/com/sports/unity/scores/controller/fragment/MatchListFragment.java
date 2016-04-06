@@ -221,7 +221,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
         mWraperRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getContext(), VERTICAL, false));
         mWraperRecyclerView.setNestedScrollingEnabled(false);
         mWraperRecyclerView.setFocusable(false);
-        matchListWrapperAdapter = new MatchListWrapperAdapter(matchList, getActivity(), getContext());
+        matchListWrapperAdapter = new MatchListWrapperAdapter(matchList, getActivity(), getContext(),this);
         mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
         staffView = (LinearLayout) view.findViewById(R.id.staff_pick_ll);
 
