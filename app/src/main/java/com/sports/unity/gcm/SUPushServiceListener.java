@@ -162,9 +162,8 @@ public class SUPushServiceListener extends GcmListenerService {
                                 .setColor(getResources().getColor(R.color.app_theme_blue))
                                 .setPriority(Notification.PRIORITY_HIGH)
                                 .setAutoCancel(true)
-                                .addAction(sportsTypeId, sportsType, shareIntent)
+                                .addAction(R.drawable.ic_share_white,getString(R.string.share), shareIntent)
                                 .addAction(R.drawable.ic_mute_notification, getString(R.string.mute_alerts), mpi);
-
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
                 stackBuilder.addParentStack(ScoreDetailActivity.class);
                 stackBuilder.addNextIntent(i);
@@ -194,34 +193,34 @@ public class SUPushServiceListener extends GcmListenerService {
                 drawable = R.drawable.ic_postpond;
                 break;
             case 2:
-                drawable = R.drawable.ic_match_started;
+                drawable = R.drawable.ic_lineups_confirmed;
                 break;
             case 3:
-                drawable = R.drawable.ic_wkt;
+                drawable = R.drawable.ic_match_started;
                 break;
             case 4:
-                drawable = R.drawable.ic_four;
+                drawable = R.drawable.ic_red_card;
                 break;
             case 5:
-                drawable = R.drawable.ic_six;
+                drawable = R.drawable.ic_yellow_card;
                 break;
             case 6:
-                drawable = R.drawable.ic_half_century;
+                drawable = R.drawable.ic_full_time;
                 break;
             case 7:
-                drawable = R.drawable.ic_century;
+                drawable = R.drawable.ic_goal;
                 break;
             case 8:
-                drawable = R.drawable.ic_no_img;
+                drawable = R.drawable.ic_goal;
                 break;
             case 9:
-                drawable = R.drawable.ic_win_no_flag_available;
+                drawable = R.drawable.ic_goal;
                 break;
             case 10:
-                drawable = R.drawable.ic_no_img;
+                drawable = R.drawable.ic_penalty_missed;
                 break;
             case 11:
-                drawable = R.drawable.ic_cricket_group;
+                drawable = R.drawable.ic_penalty_missed;
                 break;
         }
         return  drawable;
