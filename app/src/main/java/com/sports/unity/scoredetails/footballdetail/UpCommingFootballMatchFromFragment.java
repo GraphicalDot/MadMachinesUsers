@@ -175,11 +175,11 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                     renderDisplay(jsonObject);
 
                 } else {
-                    showErrorLayout(getView());
+                    showErrorLayout();
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
-                showErrorLayout(getView());
+                showErrorLayout();
             }
         }
     }
@@ -190,7 +190,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         }catch (Exception e){e.printStackTrace();}
     }
 
-    private void showErrorLayout(View view) {
+    private void showErrorLayout() {
 
         parentView.setVisibility(View.GONE);
         errorLayout.setVisibility(View.VISIBLE);
@@ -199,7 +199,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-        hideProgressBar();
+
         parentView.setVisibility(View.VISIBLE);
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         final JSONArray dataArray = jsonObject.getJSONArray("data");
@@ -218,7 +218,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                         if(recentForm !=null && recentForm.length()>0){
                                             initializeTeamForms(recentForm);
                                         }else{
-                                            showErrorLayout(getView());
+                                            showErrorLayout();
                                         }
                                        }
                                     if(!teamFromObject.isNull("team_points")){
@@ -237,7 +237,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                         if(recentForm !=null && recentForm.length()>0){
                                             initFromDataTeamSecond(recentForm);
                                         }else{
-                                            showErrorLayout(getView());
+                                            showErrorLayout();
                                         }
 
                                     } if(!teamFromObject.isNull("team_points")){
@@ -251,7 +251,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                         tvlossmatchofsecondteam.setText(teamFromObject.getString("games_lost"));}
 
                                 }else{
-                                    showErrorLayout(getView());
+                                    showErrorLayout();
                                 }
 
                             }
@@ -259,7 +259,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
 
                     } catch (Exception ex) {
                         ex.printStackTrace();
-                        showErrorLayout(getView());
+                        showErrorLayout();
                     }
                 }
             });

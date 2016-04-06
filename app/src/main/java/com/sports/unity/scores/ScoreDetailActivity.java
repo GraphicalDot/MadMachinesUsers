@@ -412,7 +412,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     TextView  team2Score = (TextView) findViewById(R.id.team2_score);
                     text1Score.setText(cricketMatchJsonCaller.getTeam1());
                     team2Score.setText(cricketMatchJsonCaller.getTeam2());
-
+                    refreshImage.setVisibility(View.GONE);
                } else {
 
                     TextView textView = (TextView) findViewById(R.id.team1_name);
@@ -423,9 +423,11 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     if(cricketMatchJsonCaller.getStatus().equalsIgnoreCase("L")){
 
                         tvCurrentScore.setVisibility(View.GONE);
+                        refreshImage.setVisibility(View.VISIBLE);
                     }else{
                         tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
                         tvCurrentScore.setVisibility(View.VISIBLE);
+                        refreshImage.setVisibility(View.GONE);
                     }
 
 

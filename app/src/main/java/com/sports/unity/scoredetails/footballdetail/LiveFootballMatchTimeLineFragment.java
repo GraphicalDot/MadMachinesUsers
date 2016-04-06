@@ -58,6 +58,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
     private LiveFootballMatchTimeLineHandler liveFootballMatchTimeLineHandler;
     private Timer timerToRefreshContent;
     private Context context;
+    private boolean autRefreshEnabled;
 
     public LiveFootballMatchTimeLineFragment() {
         // Required empty public constructor
@@ -74,6 +75,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
         matchStatus = i.getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
         this.context = context;
         getFootballmatchTimeLine();
+        enableAutoRefreshContent();
 
     }
     @Override
@@ -104,6 +106,25 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
         });
         
     }
+
+
+    private void enableAutoRefreshContent(){
+        timerToRefreshContent = new Timer();
+        if(autRefreshEnabled){
+            timerToRefreshContent.schedule(new TimerTask() {
+
+                @Override
+                public void run() {
+                    getFootballmatchTimeLine();
+                }
+
+            }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
+        }else{
+            timerToRefreshContent.cancel();
+        }
+
+    }
+
     private void  showProgressBar(){
         progressBar.setVisibility(View.VISIBLE);
     }
@@ -263,15 +284,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
         }
         return drawable;
     }
-       private void enableAutoRefreshContent(){
-        timerToRefreshContent = new Timer();
-        timerToRefreshContent.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                getFootballmatchTimeLine();
-            }
-        }, Constants.TIMEINMILISECOND,  Constants.TIMEINMILISECOND);
-    }
+
 
     private void getFootballmatchTimeLine() {
         liveFootballMatchTimeLineHandler = LiveFootballMatchTimeLineHandler.getInstance(context);
@@ -287,6 +300,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
     @Override
     public void onPause() {
         super.onPause();
+        autRefreshEnabled = false;
         if(liveFootballMatchTimeLineHandler != null){
             liveFootballMatchTimeLineHandler.addListener(null);
         }
@@ -297,6 +311,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
     public void onResume() {
         super.onResume();
         showProgressBar();
+        autRefreshEnabled = true;
         if(liveFootballMatchTimeLineHandler != null){
             liveFootballMatchTimeLineHandler.addListener(this);
 

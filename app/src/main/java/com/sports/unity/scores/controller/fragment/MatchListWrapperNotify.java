@@ -5,4 +5,5 @@ package com.sports.unity.scores.controller.fragment;
  */
 public interface MatchListWrapperNotify {
     void notifyParent();
+    void refreshData();
 }
