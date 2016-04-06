@@ -215,7 +215,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                     tvnamefirstteam.setText(teamFromObject.getString("team_name"));
                                     if(!teamFromObject.isNull("recent_form")){
                                         String recentForm = teamFromObject.getString("recent_form");
-                                        if(recentForm !=null){
+                                        if(recentForm !=null && recentForm.length()>0){
                                             initializeTeamForms(recentForm);
                                         }else{
                                             showErrorLayout(getView());
@@ -234,7 +234,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                     tvnamesecondteam.setText(teamFromObject.getString("team_name"));
                                     if(!teamFromObject.isNull("recent_form")) {
                                         String recentForm = teamFromObject.getString("recent_form");
-                                        if(recentForm !=null){
+                                        if(recentForm !=null && recentForm.length()>0){
                                             initFromDataTeamSecond(recentForm);
                                         }else{
                                             showErrorLayout(getView());
