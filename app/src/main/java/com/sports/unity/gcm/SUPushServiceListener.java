@@ -89,15 +89,53 @@ public class SUPushServiceListener extends GcmListenerService {
                     event = notification.getInt(GCMConstants.EVENT_ID);
                 }
                 Intent i =null;
-                if(sportsType!=null && matchiId!=null && seriesid!=null && matchStatus!=null && title!=null && content!=null && event!=0  ){
-                    i = new Intent(this, ScoreDetailActivity.class);
-                }else{
-                    i = new Intent(this, MainActivity.class);
+
+                int  drawableId = 0;
+
+
+                if(sportsType!=null){
+                    if(Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(sportsType)){
+
+                        drawableId= getDrawableIconCricket(event);
+                        if(matchiId!=null && seriesid!=null && matchStatus!=null && title!=null && content!=null && event!=0  ){
+                            i = new Intent(this, ScoreDetailActivity.class);
+                            i.putExtra(INTENT_KEY_TYPE, sportsType);
+                            i.putExtra(Constants.INTENT_KEY_ID, matchiId);
+                            i.putExtra(Constants.INTENT_KEY_SERIES, seriesid);
+                            i.putExtra(Constants.INTENT_KEY_MATCH_STATUS, matchStatus);
+                        }else{
+                            i = new Intent(this, MainActivity.class);
+                        }
+
+
+
+
+                    }else if(Constants.SPORTS_TYPE_FOOTBALL.equalsIgnoreCase(sportsType)){
+                        drawableId=  getDrawableIconFootball(event);
+                        if(matchiId!=null && seriesid!=null && matchStatus!=null && title!=null && content!=null && event!=0  ){
+                            i = new Intent(this, ScoreDetailActivity.class);
+                            i.putExtra(INTENT_KEY_TYPE, sportsType);
+                            i.putExtra(Constants.INTENT_KEY_ID, matchiId);
+                            i.putExtra(Constants.LEAGUE_NAME, seriesid);
+                            i.putExtra(Constants.INTENT_KEY_MATCH_STATUS, matchStatus);
+                            i.putExtra(Constants.INTENT_KEY_MATCH_LIVE, matchStatus.equalsIgnoreCase("L")?true:false);
+                        }else{
+                            i = new Intent(this, MainActivity.class);
+                        }
+
+
+                    }else{
+                        drawableId = 0;
+
+                    }
+
+
                 }
-                i.putExtra(INTENT_KEY_TYPE, sportsType);
-                i.putExtra(Constants.INTENT_KEY_ID, matchiId);
-                i.putExtra(Constants.INTENT_KEY_SERIES, seriesid);
-                i.putExtra(Constants.INTENT_KEY_MATCH_STATUS, matchStatus);
+
+
+
+
+
 
                 Intent muteIntent = new Intent(this,UnRegisterMatch.class);
                 muteIntent.putExtra(Constants.INTENT_KEY_ID,matchiId);
@@ -111,17 +149,7 @@ public class SUPushServiceListener extends GcmListenerService {
 
                 PendingIntent shareIntent = PendingIntent.getActivity(this,0,sharingIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
-                int  drawableId = 0;
 
-                if(Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(sportsType)){
-
-                    drawableId= getDrawableIconCricket(event);
-                }else if(Constants.SPORTS_TYPE_FOOTBALL.equalsIgnoreCase(sportsType)){
-                    drawableId=  getDrawableIconFootball(event);
-                }else{
-                    drawableId = 0;
-
-                }
                 Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), drawableId);
                 int sportsTypeId = getSportId(sportsType);
                  NotificationCompat.Builder mBuilder =
@@ -163,7 +191,7 @@ public class SUPushServiceListener extends GcmListenerService {
         int  drawable=0;
         switch (event) {
             case 1:
-                drawable = R.drawable.ic_toss;
+                drawable = R.drawable.ic_postpond;
                 break;
             case 2:
                 drawable = R.drawable.ic_match_started;
@@ -176,6 +204,24 @@ public class SUPushServiceListener extends GcmListenerService {
                 break;
             case 5:
                 drawable = R.drawable.ic_six;
+                break;
+            case 6:
+                drawable = R.drawable.ic_half_century;
+                break;
+            case 7:
+                drawable = R.drawable.ic_century;
+                break;
+            case 8:
+                drawable = R.drawable.ic_no_img;
+                break;
+            case 9:
+                drawable = R.drawable.ic_win_no_flag_available;
+                break;
+            case 10:
+                drawable = R.drawable.ic_no_img;
+                break;
+            case 11:
+                drawable = R.drawable.ic_cricket_group;
                 break;
         }
         return  drawable;
