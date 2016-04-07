@@ -30,6 +30,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by madmachines on 23/2/16.
@@ -49,6 +51,9 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private CompletedFootballMatchStatHandler completedFootballMatchStatHandler;
+    private boolean autRefreshEnabled;
+    private Timer timerToRefreshContent;
+    private Context context;
 
     public LiveFootballMatchStatFragment() {
         // Required empty public constructor
@@ -57,16 +62,23 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
+
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         baseWidth = (int) (metrics.widthPixels * .40);
         Intent i = getActivity().getIntent();
         matchName = i.getStringExtra(Constants.INTENT_KEY_MATCH_NAME);
         matchId = i.getStringExtra(Constants.INTENT_KEY_ID);
+        requestLiveMathStats();
+        enableAutoRefreshContent();
+
+    }
+
+    private void requestLiveMathStats() {
         completedFootballMatchStatHandler = CompletedFootballMatchStatHandler.getInstance(context);
         completedFootballMatchStatHandler.addListener(this);
         completedFootballMatchStatHandler.requestCompledFootabllMatchStat(matchId);
-
     }
 
     @Override
@@ -112,7 +124,22 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
 
 
     }
+    private void enableAutoRefreshContent(){
+        timerToRefreshContent = new Timer();
+        if(autRefreshEnabled){
+            timerToRefreshContent.schedule(new TimerTask() {
 
+                @Override
+                public void run() {
+                    requestLiveMathStats();
+                }
+
+            }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
+        }else{
+            timerToRefreshContent.cancel();
+        }
+
+    }
     private void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
     }
@@ -254,7 +281,9 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
 
     @Override
     public void onResume() {
+
         super.onResume();
+        autRefreshEnabled = false;
         if (completedFootballMatchStatHandler != null) {
             completedFootballMatchStatHandler.addListener(this);
         } else {
@@ -266,7 +295,9 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
 
     @Override
     public void onPause() {
+
         super.onPause();
+        autRefreshEnabled = true;
         if (completedFootballMatchStatHandler != null)
             completedFootballMatchStatHandler = null;
 

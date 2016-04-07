@@ -47,7 +47,7 @@ public class TokenRegistrationHandler {
     public static final String LOCATION_STATUS_KEY = "show_location_status";
     private static final String REQUEST_TAG = "request_tag";
     private static Context mContext;
-   private String BASE_URL = "http://"+Constants.XMPP_SERVER_BASE_URL;
+    private String BASE_URL = "http://"+Constants.XMPP_SERVER_BASE_URL+"/";
     private String SET_ANDROID_TOKEN = "set_android_token_and_return_user_matches";
     private String REMOVE_ANDROID_TOKEN ="remove_android_token";
     private static final  String  USER_REGISTER_MATCH ="user_register_match";
@@ -190,8 +190,8 @@ public class TokenRegistrationHandler {
         try{
             String url = getGeneratedUrl(USER_UNREGISTER_MATCH);
             JSONObject params = new JSONObject();
-            params.put(PARAM_USERNAME, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
-            params.put(PARAM_PASSWORD, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
+            params.put(USERNAME_KEY, TinyDB.getInstance(mContext).getString(KEY_USER_JID));
+            params.put(PASSWORD_KEY, TinyDB.getInstance(mContext).getString(KEY_PASSWORD));
             params.put(REQUEST_PARAMETER_KEY_APK_VERSION, getBuildConfig());
             params.put(REQUEST_PARAMETER_KEY_UDID, getDeviceId(mContext));
             params.put(REQUEST_PARAMETER_KEY_MATCHID,matchUid);
@@ -280,8 +280,6 @@ public class TokenRegistrationHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
 

@@ -30,7 +30,8 @@
             android:paddingLeft="@dimen/horizontal_padding_small"
             android:paddingRight="@dimen/horizontal_padding_small"
             android:scaleType="center"
-            android:src="@drawable/ic_refresh_white" />
+            android:src="@drawable/ic_refresh_white"
+            android:visibility="gone"/>
 
         <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
             android:id="@+id/toolbar_title"

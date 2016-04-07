@@ -61,7 +61,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             playerName = (TextView) findViewById(R.id.tv_player_name);
             playerNationName = (TextView) findViewById(R.id.tv_player_nation_name);
             mViewPager = (ViewPager) findViewById(R.id.cricket_player_pager);
-           // scrollView = (ScrollView) findViewById(R.id.scroll_view);
+            // scrollView = (ScrollView) findViewById(R.id.scroll_view);
 
             String cricketMatchPlayer[] = {getString(R.string.PLAYER_BIO), getString(R.string.PLAYER_STATS)};
             int numberOfplayerProfileTabs = cricketMatchPlayer.length;
@@ -120,33 +120,33 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
 
 
     public void setProfileInfo(final JSONObject object) {
-try {
-    final JSONObject playerInfo = object.getJSONObject("info");
-    runOnUiThread(new Runnable() {
-        @Override
-        public void run() {
+        try {
+            final JSONObject playerInfo = object.getJSONObject("info");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
 
 
-            try {
-                if (object != null) {
-                    if (!object.isNull("player_image")) {
-                        Log.i("run: ", object.getString("player_image"));
-                        Glide.with(PlayerCricketBioDataActivity.this).load(object.getString("player_image")).placeholder(R.drawable.ic_no_img).into(playerProfileImage);
-                    }
-                    if (!playerInfo.isNull("full_name")) {
-                        playerName.setText(playerInfo.getString("full_name"));
-                    }
-                    if (!object.isNull("team")) {
-                        playerNationName.setText(object.getString("team"));
+                    try {
+                        if (object != null) {
+                            if (!object.isNull("player_image")) {
+                                Log.i("run: ", object.getString("player_image"));
+                                Glide.with(PlayerCricketBioDataActivity.this).load(object.getString("player_image")).placeholder(R.drawable.ic_no_img).into(playerProfileImage);
+                            }
+                            if (!playerInfo.isNull("full_name")) {
+                                playerName.setText(playerInfo.getString("full_name"));
+                            }
+                            if (!object.isNull("team")) {
+                                playerNationName.setText(object.getString("team"));
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    });
+            });
 
-}
-catch (Exception e)
-{e.printStackTrace();}}
+        }
+        catch (Exception e)
+        {e.printStackTrace();}}
 }

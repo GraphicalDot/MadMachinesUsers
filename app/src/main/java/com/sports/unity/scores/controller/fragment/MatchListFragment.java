@@ -52,7 +52,7 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 /**
  * Created by Edwin on 15/02/2015.
  */
-public class MatchListFragment extends Fragment {
+public class MatchListFragment extends Fragment implements MatchListWrapperNotify{
 
 //    private static final String liveScore = "http://52.74.142.219:8080/get_league_fixtures?league_id=1204&date=" + formattedDate;
 
@@ -91,6 +91,7 @@ public class MatchListFragment extends Fragment {
             isStaffPicked = bundle.getBoolean(Constants.SPORTS_TYPE_STAFF, false);
             favouriteItem = new FavouriteItem(scoreDetailsId);
             scoreDetailsId = favouriteItem.getId();
+
         }
     }
 
@@ -219,9 +220,10 @@ public class MatchListFragment extends Fragment {
         mWraperRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_scores);
         mWraperRecyclerView.setNestedScrollingEnabled(false);
         mWraperRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getContext(), VERTICAL, false));
+
         mWraperRecyclerView.setNestedScrollingEnabled(false);
         mWraperRecyclerView.setFocusable(false);
-        matchListWrapperAdapter = new MatchListWrapperAdapter(matchList, getActivity(), getContext());
+        matchListWrapperAdapter = new MatchListWrapperAdapter(matchList, getActivity(), getContext(),this);
         mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
         staffView = (LinearLayout) view.findViewById(R.id.staff_pick_ll);
 
@@ -412,22 +414,29 @@ public class MatchListFragment extends Fragment {
             String leagueName = "";
             Map<String, Map<String, MatchListWrapperDTO>> daysMap = new HashMap<>();
             String sportsType = "";
+            int dayCount = 0;
+            int todayIndexPosition=0;
             for (int i = 0; i < matches.size(); i++) {
                 try {
                     JSONObject object = matches.get(i);
 
                     if (!object.isNull("match_time") && Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(object.getString("type"))) {
                         epochTime = object.getLong("match_time");
+                        Log.i("dayCount", "handleContent: "+dayCount);
                         day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
                         leagueName = object.getString("series_name");
                         sportsType = object.getString("type");
-                    } else {
+
+                      } else {
                         epochTime = object.getLong("match_date_epoch");
                         sportsType = object.getString("type");
-                        day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
-                        if (!object.isNull("league_name")) {
-                            leagueName = object.getString("league_name");
-                        }
+
+                            Log.i("dayCount", "handleContent: "+dayCount);
+                            day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
+                            if (!object.isNull("league_name")) {
+                                leagueName = object.getString("league_name");
+                            }
+
                     }
                     MatchListWrapperDTO dayGroupDto = null;
                     ArrayList<JSONObject> dayGroupList = null;
@@ -471,23 +480,45 @@ public class MatchListFragment extends Fragment {
             matchList.clear();
             Set<String> daySet = daysMap.keySet();
             Log.i("DAYMAP", "handleContent: " + daysMap);
+            int c =0;
             for (String dayKey : daySet) {
                 Map<String, MatchListWrapperDTO> leagueMaps = daysMap.get(dayKey);
                 Log.i("LEAGUEMAP", "handleContent: " + leagueMaps);
                 Set<String> keySet = leagueMaps.keySet();
 
                 for (String key : keySet) {
-                    int s = leagueMaps.get(key).getList().size();
+                    MatchListWrapperDTO tempDTO= leagueMaps.get(key);
+                    int s = tempDTO.getList().size();
+                    dayCount = DateUtil.getDayFromEpochTimeDayCount(tempDTO.getEpochTime() * 1000, getContext());
 
-                    if (s > 0) {
-                        matchList.add(leagueMaps.get(key));
+                    if((( dayCount<3 && dayCount>-3) ) && s > 0 ) {
+
+                            matchList.add(leagueMaps.get(key));
+
                     }
+                }
 
+
+            }
+
+
+
+
+
+            Collections.sort(matchList);
+            for(int i = 0 ; i<matchList.size();i++)
+            { MatchListWrapperDTO tempDTO= matchList.get(i);
+                dayCount = DateUtil.getDayFromEpochTimeDayCount(tempDTO.getEpochTime() * 1000, getContext());
+                if(dayCount == 0){
+                    todayIndexPosition= i;
+                    break;
                 }
             }
-            Collections.sort(matchList);
-            Log.i("MATCHLIST", "handleContent: " + matchList);
-            matchListWrapperAdapter.notifyDataSetChanged();
+            Log.i("todayIndexPosition", "handleContent: " + todayIndexPosition);
+             matchListWrapperAdapter.notifyDataSetChanged();
+           // mWraperRecyclerView.getLayoutManager().moveView(todayIndexPosition, 0);
+           // mWraperRecyclerView.getLayoutManager().scrollToPosition(todayIndexPosition);
+          //mWraperRecyclerView.getLayoutManager().moveView(0, todayIndexPosition);
         }
         return success;
     }
@@ -562,6 +593,21 @@ public class MatchListFragment extends Fragment {
 //        String liveScore = "http://52.74.142.219:8080/get_league_fixtures?league_id=1204&date=" + formattedDate;
 //        String URL_UPCOMING_MATCHES = "http://52.74.142.219:8080/get_football_upcoming_fixtures";
 //
+    }
+
+
+
+
+
+    @Override
+    public void notifyParent() {
+        matchListWrapperAdapter.notifyDataSetChanged();
+        mSwipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void refreshData() {
+       mSwipeRefreshLayout.setRefreshing(true);
     }
 
     private class ScoresContentListener implements ScoresContentHandler.ContentListener {

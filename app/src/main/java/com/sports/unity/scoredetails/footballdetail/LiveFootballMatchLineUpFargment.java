@@ -67,6 +67,7 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
     private View managerView;
     private View lineupView;
     private View subsView;
+    private boolean autRefreshEnabled;
 
 
     public LiveFootballMatchLineUpFargment() {
@@ -82,6 +83,7 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
         date = i.getStringExtra(INTENT_KEY_DATE);
         this.context = context;
         getFootballmatchLineUps();
+        enableAutoRefreshContent();
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -317,24 +319,30 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
 
     private void enableAutoRefreshContent(){
         timerToRefreshContent = new Timer();
-        timerToRefreshContent.schedule(new TimerTask() {
-          @Override
-            public void run() {
-                getFootballmatchLineUps();
-            }
-       }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
-    }
+        if(autRefreshEnabled){
+            timerToRefreshContent.schedule(new TimerTask() {
 
+                @Override
+                public void run() {
+                    getFootballmatchLineUps();
+                }
+
+            }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
+        }else{
+            timerToRefreshContent.cancel();
+        }
+
+    }
     private void getFootballmatchLineUps() {
         liveFootballMatchLineUpHandler = LiveFootballMatchLineUpHandler.getInstance(context);
         liveFootballMatchLineUpHandler.addListener(this);
         liveFootballMatchLineUpHandler.requestLiveMatchLineUp(matchId);
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        autRefreshEnabled = false;
         if (liveFootballMatchLineUpHandler != null) {
             liveFootballMatchLineUpHandler.addListener(this);
         } else {
@@ -346,7 +354,9 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
 
     @Override
     public void onPause() {
+
         super.onPause();
+        autRefreshEnabled = true;
         if (liveFootballMatchLineUpHandler != null)
             liveFootballMatchLineUpHandler = null;
 

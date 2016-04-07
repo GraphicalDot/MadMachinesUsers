@@ -104,6 +104,22 @@ public class DateUtil {
         with.setTimeInMillis(l);
         return TIME_FORMAT.format(with.getTime());
     }
+    public static int getDayFromEpochTimeDayCount(long l,Context context) {
+        String days = "";
+        Calendar to = Calendar.getInstance();
+        TimeZone tz = to.getTimeZone();
+        Calendar with = Calendar.getInstance();
+        with.setTimeZone(tz);
+        with.setTimeInMillis(l);
+        to.set(Calendar.YEAR, with.get(Calendar.YEAR));
+        int withDAY = with.get(Calendar.DAY_OF_YEAR);
+        int toDAY = to.get(Calendar.DAY_OF_YEAR);
+
+        int diffDay =  withDAY-toDAY   ;
+
+
+        return diffDay;
+    }
 
 
     public static String getDayFromEpochTime(long l,Context context) {

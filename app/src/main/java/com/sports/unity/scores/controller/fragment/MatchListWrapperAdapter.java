@@ -30,6 +30,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     private List<MatchListWrapperDTO> matchDay;
     private Activity activity;
     private Context context;
+    private MatchListWrapperNotify matchListWrapperNotify;
 
     public void setIsIndividualFixture() {
         this.isIndividualFixture = true;
@@ -37,10 +38,11 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
     private boolean isIndividualFixture = false;
 
-    public MatchListWrapperAdapter(List<MatchListWrapperDTO> matchDay, Activity activity, Context context) {
+    public MatchListWrapperAdapter(List<MatchListWrapperDTO> matchDay, Activity activity, Context context,MatchListWrapperNotify matchListWrapperNotify) {
         this.matchDay = matchDay;
         this.activity = activity;
         this.context = context;
+        this.matchListWrapperNotify = matchListWrapperNotify;
     }
 
 
@@ -96,7 +98,6 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         return matchDay.size();
     }
 
-
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         private TextView tvDayName;
@@ -117,7 +118,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             tvLeagueName = (TextView) view.findViewById(R.id.league_name);
             ivSportsIcon = (ImageView) view.findViewById(R.id.iv_league);
             rvChild = (RecyclerView) view.findViewById(R.id.child_rv);
-            mAdapter = new MatchListAdapter(new ArrayList<JSONObject>(), activity);
+            mAdapter = new MatchListAdapter(new ArrayList<JSONObject>(), activity,matchListWrapperNotify);
             rvChild.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
             rvChild.setNestedScrollingEnabled(false);
             rvChild.setAdapter(mAdapter);
