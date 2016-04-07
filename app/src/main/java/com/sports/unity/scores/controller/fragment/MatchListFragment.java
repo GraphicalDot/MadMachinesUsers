@@ -515,13 +515,13 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                 for (String key : keySet) {
                     MatchListWrapperDTO tempDTO= leagueMaps.get(key);
                     int s = tempDTO.getList().size();
-                    dayCount = DateUtil.getDayFromEpochTimeDayCount(tempDTO.getEpochTime() * 1000, getContext());
-
-                    if((( dayCount<3 && dayCount>-3) ) && s > 0 ) {
+                    //dayCount = DateUtil.getDayFromEpochTimeDayCount(tempDTO.getEpochTime() * 1000, getContext());
+                    matchList.add(leagueMaps.get(key));
+                    /*if((( dayCount<3 && dayCount>-3) ) && s > 0 ) {
 
                             matchList.add(leagueMaps.get(key));
 
-                    }
+                    }*/
                 }
 
 
@@ -532,14 +532,14 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
 
 
             Collections.sort(matchList);
-            for(int i = 0 ; i<matchList.size();i++)
+            /*for(int i = 0 ; i<matchList.size();i++)
             { MatchListWrapperDTO tempDTO= matchList.get(i);
                 dayCount = DateUtil.getDayFromEpochTimeDayCount(tempDTO.getEpochTime() * 1000, getContext());
                 if(dayCount == 0){
                     todayIndexPosition= i;
                     break;
                 }
-            }
+            }*/
             Log.i("todayIndexPosition", "handleContent: " + todayIndexPosition);
              matchListWrapperAdapter.notifyDataSetChanged();
            // mWraperRecyclerView.getLayoutManager().moveView(todayIndexPosition, 0);
