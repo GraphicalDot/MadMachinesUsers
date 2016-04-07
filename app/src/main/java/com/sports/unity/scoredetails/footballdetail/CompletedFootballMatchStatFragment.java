@@ -190,8 +190,14 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
                                             completeFootballMatchStatDTO.setIvRightStatus(teamSecondStatsObject.getString(key));
                                             int red = Integer.parseInt(teamFirstStatsObject.getString(key));
                                             int blue = Integer.parseInt(teamSecondStatsObject.getString(key));
-                                            completeFootballMatchStatDTO.setLeftGraphValue((baseWidth * red) / (red + blue));
-                                            completeFootballMatchStatDTO.setRightGraphValue((baseWidth * blue) / (red + blue));
+                                            int total = red+blue;
+                                            if(total==0){
+                                                completeFootballMatchStatDTO.setLeftGraphValue(0);
+                                                completeFootballMatchStatDTO.setRightGraphValue(0);
+                                            }else{
+                                                completeFootballMatchStatDTO.setLeftGraphValue((baseWidth * red) / (red + blue));
+                                                completeFootballMatchStatDTO.setRightGraphValue((baseWidth * blue) / (red + blue));
+                                            }
                                             map.put(getLabelValue(key), completeFootballMatchStatDTO);
                                         }
                                     }
