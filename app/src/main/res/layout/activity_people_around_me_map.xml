@@ -149,16 +149,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingLeft="@dimen/vertical_padding_very_small"
+                    android:layout_marginBottom="@dimen/horizontal_padding_large"
+
                     >
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/ic_my_location"
+                        android:layout_centerVertical="true"
                         android:id="@+id/my_location"
                         app:layout_widthPercent="5%"/>
 
-                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="My location"
@@ -166,17 +169,18 @@
                         android:layout_toRightOf="@+id/my_location"
                         app:layout_widthPercent="15%"
                         android:id="@+id/my_location_text"
-                        android:textSize="@dimen/font_size_very_small"/>
+                        android:textSize="@dimen/font_size_very_very_small"/>
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_widthPercent="5%"
+                        android:layout_centerVertical="true"
                         android:src="@drawable/ic_friends"
                         android:id="@+id/my_location_friends"
                         android:layout_toRightOf="@+id/my_location_text"/>
 
-                   <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                   <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Friends"
@@ -184,17 +188,18 @@
                     android:layout_toRightOf="@+id/my_location_friends"
                     app:layout_widthPercent="10%"
                     android:id="@+id/friends_text"
-                    android:textSize="@dimen/font_size_very_small"/>
+                    android:textSize="@dimen/font_size_very_very_small"/>
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_widthPercent="5%"
                         android:src="@drawable/ic_sports_unity_users"
+                        android:layout_centerVertical="true"
                         android:id="@+id/my_location_users"
                         android:layout_toRightOf="@+id/friends_text"/>
 
-                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Sports Unity users"
@@ -202,16 +207,18 @@
                         android:layout_toRightOf="@+id/my_location_users"
                         app:layout_widthPercent="22%"
                         android:id="@+id/users_text"
-                        android:textSize="@dimen/font_size_very_small"/>
+                        android:textSize="@dimen/font_size_very_very_small"/>
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:layout_widthPercent="5%"
+                        android:layout_centerVertical="true"
+
                         android:src="@drawable/ic_ppl_with_same_interest"
                         android:id="@+id/my_location_people_intrest"
                         android:layout_toRightOf="@+id/users_text"/>
 
-                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="People with same intrest"
@@ -219,7 +226,7 @@
                         android:layout_toRightOf="@+id/my_location_people_intrest"
                         app:layout_widthPercent="30%"
                         android:id="@+id/people_intrest_text"
-                        android:textSize="@dimen/font_size_very_small"/>
+                        android:textSize="@dimen/font_size_very_very_small"/>
 
 
                 </android.support.percent.PercentRelativeLayout>
