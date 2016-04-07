@@ -39,10 +39,10 @@ public class ScoresContentHandler {
 
     public static final String PARAM_NEWS_IMAGE_DPI = "IMAGE_DPI";
     public static final String PARAM_NEWS_ID = "NEWS_ID";
-    public static final String URL_REGISTER = "http://" + XMPPClient.SERVER_HOST + "/register?";
-    private static final String URL_CREATE = "http://" + XMPPClient.SERVER_HOST + "/create?";
-    private static final String URL_REQUEST_OTP = "http://" + XMPPClient.SERVER_HOST + "/create?";
-    private static final String URL_NEAR_BY = "http://" + XMPPClient.SERVER_HOST + "/get_nearby_users?";
+    public static final String URL_REGISTER = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/register?";
+    private static final String URL_CREATE = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/create?";
+    private static final String URL_REQUEST_OTP = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/create?";
+    private static final String URL_NEAR_BY = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/get_nearby_users?";
     private static final String URL_PARAMS_NEWS_IMAGE_DPI = "image_size";
     private static final String URL_PARAMS_NEWS_ID = "news_id";
     private static final String URL_PARAMS_FOR_LIST_OF_MATCHES = "v1/get_all_matches_list";
@@ -54,7 +54,7 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_LEAGUE_FIXTURES = "get_football_league_specific_fixtures?league_id=";
     private static final String URL_PARAMS_FOR_FOOTBALL_TEAM_FIXTURES = "get_football_team_fixtures?team_id=";
     private static final String URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES = "v1/get_specific_fixtures?team_id=";
-    private static final String URL_PARAMS_FOR_CRICKET_LEAGUE_FIXTURES = "/v1/get_series_fixtures?season_key=";
+    private static final String URL_PARAMS_FOR_CRICKET_LEAGUE_FIXTURES = "/v2/get_series_fixtures?season_key=";
     private static final String URL_PARAMS_FOR_STAFF_LEAGUE = "/v1/get_major_tournament";
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
     private HashMap<String, ContentListener> mapOfResponseListeners = new HashMap<>();

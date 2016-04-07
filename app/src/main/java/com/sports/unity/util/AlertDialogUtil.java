@@ -17,6 +17,7 @@ public class AlertDialogUtil {
     public static final int ACTION_CLEAR_ALL_MESSAGES = 2;
     public static final int ACTION_DELETE_ALL_CHAT = 3;
     public static final int ACTION_DELETE_CHAT = 4;
+    public static final int ACTION_EXIT_AND_DELETE_GROUP = 5;
 
     private int actionId = 0;
     private String dialogTitle = null;

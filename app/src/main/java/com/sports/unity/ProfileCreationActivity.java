@@ -75,7 +75,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
 
         @Override
         public void onClick(View v) {
-            if (!nameText.getText().toString().isEmpty()) {
+            if (!nameText.getText().toString().trim().isEmpty()) {
                 beforeAsyncCall();
 
                 userName = nameText.getText().toString();
@@ -268,6 +268,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
 
     private void moveOn() {
         UserUtil.setProfileCreated(this, true);
+        ContactsHandler.getInstance().addCallToProcessPendingActions(this);
 
         if (UserUtil.isSportsSelected()) {
             Intent intent = new Intent(ProfileCreationActivity.this, MainActivity.class);

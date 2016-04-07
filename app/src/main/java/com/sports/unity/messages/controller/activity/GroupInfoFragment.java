@@ -27,6 +27,7 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.PubSubUtil;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
+import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
@@ -35,6 +36,8 @@ import com.sports.unity.messages.controller.fragment.ContactsFragment;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
+import com.sports.unity.util.AlertDialogUtil;
+import com.sports.unity.util.NotificationHandler;
 
 import org.jivesoftware.smack.chat.Chat;
 
@@ -53,6 +56,7 @@ public class GroupInfoFragment extends Fragment {
     private String groupJID;
     private String name;
     private byte[] byteArray;
+    private boolean blockStatus;
 
     private SportsUnityDBHelper.GroupParticipants groupParticipants = null;
     private boolean isAdmin = false;
@@ -90,6 +94,7 @@ public class GroupInfoFragment extends Fragment {
         byteArray = bundle.getByteArray("profilePicture");
         groupJID = bundle.getString("jid");
         chatID = bundle.getInt("chatID");
+        blockStatus = bundle.getBoolean("blockStatus");
     }
 
     private void initViews(View view) {
@@ -98,6 +103,12 @@ public class GroupInfoFragment extends Fragment {
         TextView groupInfo = (TextView) view.findViewById(R.id.group_info);
         TextView groupCount = (TextView) view.findViewById(R.id.part_count);
         TextView delete = (TextView) view.findViewById(R.id.delete_group);
+
+        if (blockStatus) {
+            delete.setText("DELETE GROUP");
+        } else {
+            delete.setText("EXIT AND DELETE GROUP");
+        }
 
         groupName.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoCondensedBold());
         groupInfo.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoRegular());
@@ -118,20 +129,21 @@ public class GroupInfoFragment extends Fragment {
         participantsList.setAdapter(new GroupParticipantsAdapter(getContext(), groupParticipants.usersInGroup, groupParticipants.adminJids, isAdmin));
         participantsList.setOnItemClickListener(eventListener);
         setListViewHeightBasedOnItems(participantsList);
+        delete.setOnClickListener(onExitAndDeleteListener);
     }
 
-    private void initToolbar(){
+    private void initToolbar() {
 //        Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.toolbar_group_info);
         Toolbar toolbar = (Toolbar) getActivity().findViewById(R.id.tool_bar);
         toolbar.setBackgroundColor(getResources().getColor(android.R.color.white));
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
 
-        TextView title = (TextView)toolbar.findViewById(R.id.title);
+        TextView title = (TextView) toolbar.findViewById(R.id.title);
         title.setTextColor(getResources().getColor(android.R.color.black));
         title.setVisibility(View.GONE);
 
-        ((ImageView)toolbar.findViewById(R.id.backarrow)).setImageResource(R.drawable.ic_menu_back_blk);
+        ((ImageView) toolbar.findViewById(R.id.backarrow)).setImageResource(R.drawable.ic_menu_back_blk);
 
         toolbar.findViewById(R.id.backarrow).setOnClickListener(new View.OnClickListener() {
 
@@ -175,7 +187,7 @@ public class GroupInfoFragment extends Fragment {
         String[] options = null;
         String currentUserJID = TinyDB.getInstance(getContext()).getString(TinyDB.KEY_USER_JID);
 
-        if( contacts.jid.equals(currentUserJID) ) {
+        if (contacts.jid.equals(currentUserJID)) {
             options = new String[]{"View Contact"};
         } else {
             if (isAdmin) {
@@ -204,16 +216,16 @@ public class GroupInfoFragment extends Fragment {
         builder.create().show();
     }
 
-    private void showAddMemberFragment(){
+    private void showAddMemberFragment() {
         GroupDetailActivity groupDetailActivity = ((GroupDetailActivity) getActivity());
         groupDetailActivity.moveToMembersListFragment(groupParticipants);
     }
 
-    private void viewUserProfile(Contacts contacts){
-        ChatScreenActivity.viewProfile(getActivity(), false, contacts.id, contacts.image, contacts.getName(), contacts.jid, contacts.status, false, contacts.availableStatus);
+    private void viewUserProfile(Contacts contacts) {
+        ChatScreenActivity.viewProfile(getActivity(), false, contacts.id, contacts.image, contacts.getName(), contacts.jid, contacts.status, false, contacts.availableStatus, blockStatus);
     }
 
-    private void openChat(Contacts contacts){
+    private void openChat(Contacts contacts) {
         String jid = contacts.jid;
         String name = contacts.getName();
         int contactId = contacts.id;
@@ -224,16 +236,63 @@ public class GroupInfoFragment extends Fragment {
         startActivity(chatScreenIntent);
     }
 
+    View.OnClickListener onExitAndDeleteListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            String positiveButtonTitle = "";
+            String negativeButtonTitle = "CANCEL";
+            String dialogTitle = "";
+            if (blockStatus) {
+                positiveButtonTitle = "DELETE";
+                dialogTitle = "Are you Sure you want to delete this group?";
+            } else {
+                positiveButtonTitle = "EXIT AND DELETE";
+                dialogTitle = "Are you Sure you want to exit and delete this group?";
+            }
+            DialogInterface.OnClickListener clickListener = new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (blockStatus) {
+                        deleteGroup();
+                    } else {
+                        exitAndDeleteGroup();
+                    }
+                }
+            };
+            new AlertDialogUtil(AlertDialogUtil.ACTION_EXIT_AND_DELETE_GROUP, dialogTitle, positiveButtonTitle, negativeButtonTitle, getActivity(), clickListener).show();
+        }
+    };
+
+    private void exitAndDeleteGroup() {
+        boolean success = exitGroup();
+        if (success) {
+            deleteGroup();
+        }
+    }
+
+    private void deleteGroup() {
+        SportsUnityDBHelper.getInstance(getContext()).deleteGroup(chatID);
+        NotificationHandler.getInstance(getActivity().getApplicationContext()).clearNotificationMessages(String.valueOf(chatID));
+        Intent I = new Intent(getActivity(), MainActivity.class);
+        I.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(I);
+    }
+
+    private boolean exitGroup() {
+        String currentUserJID = TinyDB.getInstance(getContext()).getString(TinyDB.KEY_USER_JID);
+        return PubSubMessaging.getInstance().exitGroup(currentUserJID + "@mm.io", groupJID);
+    }
+
     class EventListener implements AdapterView.OnItemClickListener {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            GroupParticipantsAdapter adapter = (GroupParticipantsAdapter)parent.getAdapter();
+            GroupParticipantsAdapter adapter = (GroupParticipantsAdapter) parent.getAdapter();
             ArrayList<Contacts> adapterList = adapter.getAllMembers();
 
             Contacts contacts = adapterList.get(position);
-            if( contacts != null ) {
-                if ( contacts.id == -1) {
+            if (contacts != null) {
+                if (contacts.id == -1) {
                     showAddMemberFragment();
                 } else {
                     showDialogWindow(contacts);
@@ -275,16 +334,16 @@ public class GroupInfoFragment extends Fragment {
         @Override
         protected void onPostExecute(Boolean success) {
             progressDialog.dismiss();
-            if( success == true ){
+            if (success == true) {
                 SportsUnityDBHelper.getInstance(GroupInfoFragment.this.getActivity()).deleteGroupMember(chatID, contactId);
             } else {
                 Toast.makeText(GroupInfoFragment.this.getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
             }
         }
 
-        private boolean removeUserFromGroup(){
+        private boolean removeUserFromGroup() {
             boolean success = PubSubMessaging.getInstance().removeFromGroup(jid + "@mm.io", groupJID);
-            if( success ) {
+            if (success) {
                 PubSubMessaging.getInstance().sendIntimationAboutMemberRemoved(getContext(), jid, groupJID);
             }
             return success;

@@ -70,7 +70,7 @@ public class ViewPagerAdapterForTeamAndLeagueDetails extends FragmentStatePagerA
             fragment.setArguments(bundle);
 
         } else if (position == 2) {
-            if (isStaffPicked) {
+            if (isStaffPicked && favouriteItem.getSportsType().equals(Constants.SPORTS_TYPE_CRICKET)) {
                 Bundle bundle = new Bundle();
                 bundle.putString(Constants.INTENT_KEY_ID, favouriteItem.getJsonObject().toString());
                 fragment = new StaffPickedFragment();

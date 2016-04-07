@@ -68,7 +68,7 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
             Chats chatObject = chatList.get(position);
 
             int tag = 0;
-            if ( ! chatObject.isGroupChat ) {
+            if (!chatObject.isGroupChat) {
                 tag = 0;
             } else {
                 tag = 1;
@@ -177,17 +177,17 @@ public class OthersFragment extends Fragment implements OnSearchViewQueryListene
                 switch (position) {
                     case 0:
                         Contacts contacts = SportsUnityDBHelper.getInstance(getActivity().getApplicationContext()).getContact(chatObject.id);
-                        if ( ! chatObject.isGroupChat ) {
+                        if (!chatObject.isGroupChat) {
                             ChatScreenActivity.viewProfile(getActivity(), chatObject.isGroupChat, chatObject.id, chatObject.image, chatObject.name,
-                                    chatObject.jid, contacts.status, true, contacts.availableStatus);
+                                    chatObject.jid, contacts.status, true, contacts.availableStatus, chatObject.block);
                         } else {
                             ChatScreenActivity.viewProfile(getActivity(), chatObject.isGroupChat, chatObject.id, chatObject.image, chatObject.name,
-                                    chatObject.jid, contacts.status, true, contacts.availableStatus);
+                                    chatObject.jid, contacts.status, true, contacts.availableStatus, chatObject.block);
                         }
                         alert.dismiss();
                         break;
                     case 1:
-                        if ( ! chatObject.isGroupChat ) {
+                        if (!chatObject.isGroupChat) {
                             deleteSingleChat(chatObject);
                         } else {
                             /*

@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sports.unity.BuildConfig;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.FontTypeface;
@@ -26,7 +27,7 @@ public class SelectSportsActivity extends CustomAppCompatActivity {
     private ArrayList<String> sports = new ArrayList<String>();
     private boolean isResultRequired;
     private Thread sendInterestsThread = null;
-    private String base_url = "http://" + XMPPClient.SERVER_HOST + "/set_user_interests?username=";
+    private String base_url = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/set_user_interests?username=";
     private String urlToRequest = "";
     /*For future use: to add all the sports
      in sports selection screen*/

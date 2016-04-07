@@ -27,6 +27,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -98,8 +99,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         return intent;
     }
 
-    public static void viewProfile(Activity activity, boolean isGroupChat, int chatId, byte[] profilePicture, String name, String jid, String chatStatus, boolean otherChat, int contactAvailableStatus) {
-        if ( ! isGroupChat ) {
+    public static void viewProfile(Activity activity, boolean isGroupChat, int chatId, byte[] profilePicture, String name, String jid, String chatStatus, boolean otherChat, int contactAvailableStatus, boolean blockStatus) {
+        if (!isGroupChat) {
             Intent intent = new Intent(activity, UserProfileActivity.class);
             intent.putExtra("name", name);
             intent.putExtra("profilePicture", profilePicture);
@@ -113,6 +114,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             intent.putExtra("name", name);
             intent.putExtra("profilePicture", profilePicture);
             intent.putExtra("jid", jid);
+            intent.putExtra("blockStatus", blockStatus);
             intent.putExtra("chatID", chatId);
             activity.startActivityForResult(intent, Constants.REQUEST_CODE_VIEW_PROFILE);
         }
@@ -138,6 +140,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     private Chat chat;
     private TextView status;
     private ImageView back;
+    private boolean blockStatus;
 
     private ViewGroup parentLayout;
     private CircleImageView userPic;
@@ -395,15 +398,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         chatKeyboardHelper.checkKeyboardHeight();
         toolbarActionsForChatScreen = ToolbarActionsForChatScreen.getInstance(this);
 
+        mSend = (Button) findViewById(R.id.send);
+        mSend.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
+
         getIntentExtras();
         clearUnreadCount();
         initToolbar();
         hideStatusIfUserBlocked();
         initAddBlockView();
         final Handler mHandler = new Handler();
-
-        mSend = (Button) findViewById(R.id.send);
-        mSend.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
 
 //        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
 //            Log.d("dmax", "Already Connected CHat");
@@ -447,14 +450,29 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void hideStatusIfUserBlocked() {
-        boolean blockStatus = getIntent().getBooleanExtra("blockStatus", false);
-        if (blockStatus) {
-            status.setVisibility(View.GONE);
+        blockStatus = getIntent().getBooleanExtra("blockStatus", false);
+        if (isGroupChat) {
+            if (blockStatus) {
+                LinearLayout mediaButtonsLayout = (LinearLayout) findViewById(R.id.send_media_action_buttons);
+                mediaButtonsLayout.setVisibility(View.GONE);
+                mSend.setVisibility(View.GONE);
+                messageText.setVisibility(View.GONE);
+                TextView groupExitMessage = (TextView) findViewById(R.id.group_exit_text);
+                groupExitMessage.setVisibility(View.VISIBLE);
+            } else {
+                //do nothing
+            }
+            blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus, this, status);
         } else {
-            status.setVisibility(View.VISIBLE);
+            if (blockStatus) {
+                status.setVisibility(View.GONE);
+            } else {
+                status.setVisibility(View.VISIBLE);
+            }
+            blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus, this, status);
+            disableChatIfUserBlocked();
         }
-        blockUnblockUserHelper = new BlockUnblockUserHelper(blockStatus, this, status);
-        disableChatIfUserBlocked();
+
     }
 
     private void checkForwardMessageQueue() {
@@ -552,7 +570,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void getChatThread() {
-        if ( isGroupChat == false ) {
+        if (isGroupChat == false) {
             ChatManager chatManager = ChatManager.getInstanceFor(XMPPClient.getConnection());
             chat = chatManager.getThreadChat(jabberId + "@mm.io");
             if (chat == null) {
@@ -579,7 +597,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             public void onClick(View v) {
                 int contactStatus = ChatScreenActivity.this.getIntent().getIntExtra(INTENT_KEY_CONTACT_AVAILABLE_STATUS, Contacts.AVAILABLE_NOT);
                 String status = ChatScreenActivity.this.getIntent().getStringExtra(INTENT_KEY_USER_STATUS);
-                viewProfile(ChatScreenActivity.this, isGroupChat, chatID, userImageBytes, jabberName, jabberId, status,  otherChat, contactStatus);
+                viewProfile(ChatScreenActivity.this, isGroupChat, chatID, userImageBytes, jabberName, jabberId, status, otherChat, contactStatus, blockStatus);
             }
         });
 
@@ -679,10 +697,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         String s = "";
         SportsUnityDBHelper.GroupParticipants participants = sportsUnityDBHelper.getGroupParticipants(chatID);
         ArrayList<Contacts> users = participants.usersInGroup;
-        if( users != null && users.size() > 1 ) {
+        if (users != null && users.size() > 1) {
             Contacts contacts = users.get(0);
             s += contacts.getName();
-            for (int index=1;index<users.size();index++) {
+            for (int index = 1; index < users.size(); index++) {
                 s += ", ";
                 s += users.get(index).getName();
             }
@@ -757,7 +775,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         otherChat = getIntent().getBooleanExtra(INTENT_KEY_NEARBY_CHAT, false);
         availableStatus = getIntent().getIntExtra(Constants.INTENT_KEY_USER_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
 
-        if ( ! isGroupChat ) {
+        if (!isGroupChat) {
             if (XMPPClient.getInstance().isConnectionAuthenticated()) {
                 createRosterEntry();
             } else {
@@ -978,7 +996,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         getMenuInflater().inflate(R.menu.menu_chat_screen, menu);
         this.menu = menu;
 
-        if( isGroupChat ) {
+        if (isGroupChat) {
             MenuItem viewContactItem = menu.findItem(R.id.action_view_contact);
             viewContactItem.setTitle("View Group");
 
@@ -1036,7 +1054,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         if (id == R.id.action_view_contact) {
             int contactStatus = ChatScreenActivity.this.getIntent().getIntExtra(INTENT_KEY_CONTACT_AVAILABLE_STATUS, Contacts.AVAILABLE_NOT);
             String status = ChatScreenActivity.this.getIntent().getStringExtra(INTENT_KEY_USER_STATUS);
-            viewProfile(ChatScreenActivity.this, isGroupChat, chatID, userImageBytes, jabberName, jabberId, status, otherChat, contactStatus);
+            viewProfile(ChatScreenActivity.this, isGroupChat, chatID, userImageBytes, jabberName, jabberId, status, otherChat, contactStatus, blockStatus);
             return true;
         } else if (id == R.id.action_block_user) {
             blockUnblockUserHelper.onMenuItemSelected(this, chatID, jabberId, menu);

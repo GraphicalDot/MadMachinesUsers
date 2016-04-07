@@ -290,7 +290,7 @@ message to verify your mobile number.</string>
     <string name="app_version"> Version </string>
 
     <!--Sending invite related-->
-    <string name="download_sports_unity">Check out Sports Unity for your smartphone. Download it from https://goo.gl/mQUaiy</string>
+    <string name="download_sports_unity">Check out Sports Unity for your smartphone. Download it from http://www.sportsunity.co</string>
     <string name="search_title">Search</string>
     <string name="football_match__score_detail_fragment">Football Match Score Detail</string>
     <string name="summary">Summary</string>
@@ -387,7 +387,7 @@ message to verify your mobile number.</string>
 
 
     <!-- group related strings-->
-    <string name="exit_group">DELETE AND EXIT GROUP</string>
+    <string name="exit_group">EXIT AND DELETE GROUP</string>
     <string name="add_friends">Add Friends</string>
     <string name="add_msg">People you add will not see previous conversations</string>
     <string name="participant_count">%1$d OF 50</string>
@@ -425,6 +425,7 @@ message to verify your mobile number.</string>
     <string name="share">SHARE</string>
     <string name="staff_picked">Sports Unity Staff Picked</string>
     <string name="ipl">Nothing to show</string>
+    <string name="group_exit_string">You can\'t send messages to this group because you are no longer a participant.</string>
     <plurals name="file_count">
         <item quantity="one">%d file was not sent, file size was too large</item>
         <item quantity="other">%d files were not sent, file sizes were too large</item>
