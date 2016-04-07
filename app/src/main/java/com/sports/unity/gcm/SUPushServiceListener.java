@@ -8,20 +8,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.widget.RemoteViews;
 
 import com.google.android.gms.gcm.GcmListenerService;
-import com.google.gson.Gson;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.Constants;
-import com.sports.unity.util.SPORTSENUM;
-import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -190,37 +185,37 @@ public class SUPushServiceListener extends GcmListenerService {
         int  drawable=0;
         switch (event) {
             case 1:
-                drawable = R.drawable.ic_postpond;
+                drawable = R.drawable.ic_postpond_notification;
                 break;
             case 2:
-                drawable = R.drawable.ic_lineups_confirmed;
+                drawable = R.drawable.ic_lineups_confirmed_notification;
                 break;
             case 3:
                 drawable = R.drawable.ic_match_started;
                 break;
             case 4:
-                drawable = R.drawable.ic_red_card;
+                drawable = R.drawable.ic_red_card_notification;
                 break;
             case 5:
-                drawable = R.drawable.ic_yellow_card;
+                drawable = R.drawable.ic_yellow_card_notification;
                 break;
             case 6:
-                drawable = R.drawable.ic_full_time;
+                drawable = R.drawable.ic_full_time_notification;
                 break;
             case 7:
-                drawable = R.drawable.ic_goal;
+                drawable = R.drawable.ic_goal_notification;
                 break;
             case 8:
-                drawable = R.drawable.ic_goal;
+                drawable = R.drawable.ic_goal_notification;
                 break;
             case 9:
-                drawable = R.drawable.ic_goal;
+                drawable = R.drawable.ic_goal_notification;
                 break;
             case 10:
-                drawable = R.drawable.ic_penalty_missed;
+                drawable = R.drawable.ic_penalty_missed_notification;
                 break;
             case 11:
-                drawable = R.drawable.ic_penalty_missed;
+                drawable = R.drawable.ic_penalty_missed_notification;
                 break;
         }
         return  drawable;
