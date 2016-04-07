@@ -192,173 +192,6 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     @Override
     public void handleContent(String content) {
         try {
-           content = "{\n" +
-                   "  \"data\": [\n" +
-                   "    {\n" +
-                   "      \"status\": \"F\",\n" +
-                   "      \"home_team\": \"England\",\n" +
-                   "      \"away_team\": \"West Indies\",\n" +
-                   "      \"match_id\": \"35\",\n" +
-                   "      \"series_name\": \"T20I: World '16\",\n" +
-                   "      \"venue\": \"Eden Gardens\",\n" +
-                   "      \"summary\": {\n" +
-                   "        \"recent_over\": {\n" +
-                   "          \"18\": [\n" +
-                   "            {\n" +
-                   "              \"event\": [\n" +
-                   "                \"\",\n" +
-                   "                \"\",\n" +
-                   "                \"4\"\n" +
-                   "              ],\n" +
-                   "              \"ball_id\": \"1\"\n" +
-                   "            },\n" +
-                   "            {\n" +
-                   "              \"event\": [\n" +
-                   "                \"\",\n" +
-                   "                \"\",\n" +
-                   "                \"1\"\n" +
-                   "              ],\n" +
-                   "              \"ball_id\": \"2\"\n" +
-                   "            },\n" +
-                   "            {\n" +
-                   "              \"event\": [\n" +
-                   "                \"\",\n" +
-                   "                \"\",\n" +
-                   "                \"1\"\n" +
-                   "              ],\n" +
-                   "              \"ball_id\": \"3\"\n" +
-                   "            },\n" +
-                   "            {\n" +
-                   "              \"event\": [\n" +
-                   "                \"\",\n" +
-                   "                \"\",\n" +
-                   "                \"1\"\n" +
-                   "              ],\n" +
-                   "              \"ball_id\": \"4\"\n" +
-                   "            },\n" +
-                   "            {\n" +
-                   "              \"event\": [\n" +
-                   "                \"\",\n" +
-                   "                \"\",\n" +
-                   "                \"1\"\n" +
-                   "              ],\n" +
-                   "              \"ball_id\": \"5\"\n" +
-                   "            },\n" +
-                   "            {\n" +
-                   "              \"event\": [\n" +
-                   "                \"\",\n" +
-                   "                \"\",\n" +
-                   "                \"0\"\n" +
-                   "              ],\n" +
-                   "              \"ball_id\": \"6\"\n" +
-                   "            }\n" +
-                   "          ],\n" +
-                   "          \"19\": [\n" +
-                   "            {\n" +
-                   "              \"event\": [\n" +
-                   "                \"\",\n" +
-                   "                \"\",\n" +
-                   "                \"6\"\n" +
-                   "              ],\n" +
-                   "              \"ball_id\": \"1\"\n" +
-                   "            },\n" +
-                   "            {\n" +
-                   "              \"event\": [\n" +
-                   "                1,\n" +
-                   "                \"\",\n" +
-                   "                \"6\"\n" +
-                   "              ],\n" +
-                   "              \"ball_id\": \"2\"\n" +
-                   "            },\n" +
-                   "            {\n" +
-                   "              \"event\": [\n" +
-                   "                \"w\",\n" +
-                   "                \"\",\n" +
-                   "                \"6\"\n" +
-                   "              ],\n" +
-                   "              \"ball_id\": \"3\"\n" +
-                   "            },\n" +
-                   "            {\n" +
-                   "              \"event\": [\n" +
-                   "                \"\",\n" +
-                   "                \"\",\n" +
-                   "                \"6\"\n" +
-                   "              ],\n" +
-                   "              \"ball_id\": \"4\"\n" +
-                   "            }\n" +
-                   "          ]\n" +
-                   "        },\n" +
-                   "        \"upcoming_batsmen\": [\n" +
-                   "          {\n" +
-                   "            \"player_id\": \"3376\",\n" +
-                   "            \"name\": \"D Ramdin\",\n" +
-                   "            \"player_image\": \"http://players.images.s3.amazonaws.com/3376.png\"\n" +
-                   "          },\n" +
-                   "          {\n" +
-                   "            \"player_id\": \"8095\",\n" +
-                   "            \"name\": \"S Badree\",\n" +
-                   "            \"player_image\": \"http://players.images.s3.amazonaws.com/8095.png\"\n" +
-                   "          },\n" +
-                   "          {\n" +
-                   "            \"player_id\": \"7165\",\n" +
-                   "            \"name\": \"SJ Benn\",\n" +
-                   "            \"player_image\": \"http://players.images.s3.amazonaws.com/7165.png\"\n" +
-                   "          }\n" +
-                   "        ],\n" +
-                   "        \"current_partnership\": [\n" +
-                   "          {\n" +
-                   "            \"player_2_runs\": \"34\",\n" +
-                   "            \"player_1_runs\": \"20\",\n" +
-                   "            \"player_1_id\": \"2866\",\n" +
-                   "            \"player_1_image\": \"http://players.images.s3.amazonaws.com/2866.png\",\n" +
-                   "            \"player_1\": \"Samuels, MN\",\n" +
-                   "            \"player_2_balls\": \"10\",\n" +
-                   "            \"player_1_index\": \"1\",\n" +
-                   "            \"player_2_index\": \"2\",\n" +
-                   "            \"player_2\": \"Brathwaite, CR\",\n" +
-                   "            \"player_2_id\": \"15548\",\n" +
-                   "            \"player_1_balls\": \"16\",\n" +
-                   "            \"player_2_image\": \"http://players.images.s3.amazonaws.com/15548.png\"\n" +
-                   "          }\n" +
-                   "        ],\n" +
-                   "        \"toss\": \"West Indies won the toss and elected to bowl\",\n" +
-                   "        \"man_of_the_match\": {\n" +
-                   "          \"player_id\": \"2866\",\n" +
-                   "          \"name\": \"Marlon Samuels\",\n" +
-                   "          \"batting\": {\n" +
-                   "            \"runs\": \"85\",\n" +
-                   "            \"balls\": \"66\",\n" +
-                   "            \"strike_rate\": \"128.0\",\n" +
-                   "            \"six\": \"2\"\n" +
-                   "          },\n" +
-                   "          \"player_image\": \"http://players.images.s3.amazonaws.com/2866.png\"\n" +
-                   "        },\n" +
-                   "        \"venue\": \"Eden Gardens\",\n" +
-                   "        \"umpires\": {\n" +
-                   "          \"first_umpire\": \"Dharmasena, HDPK (SLA)\",\n" +
-                   "          \"third_umpire\": \"Erasmus, M (SAF)\",\n" +
-                   "          \"referee\": \"Madugalle, RS (SLA)\",\n" +
-                   "          \"second_umpire\": \"Tucker, RJ (AUS)\"\n" +
-                   "        },\n" +
-                   "        \"current_bowler\": {\n" +
-                   "          \"runs\": \"41\",\n" +
-                   "          \"name\": \"Stokes, BA\",\n" +
-                   "          \"wicket\": \"0\",\n" +
-                   "          \"player_id\": \"14482\",\n" +
-                   "          \"overs\": \"2.4\",\n" +
-                   "          \"player_image\": \"http://players.images.s3.amazonaws.com/14482.png\"\n" +
-                   "        },\n" +
-                   "        \"last_wicket\": \"Sammy, DJG,2(c:Hales, AD and b:Willey, DJ)\"\n" +
-                   "      },\n" +
-                   "      \"series_id\": \"5166\",\n" +
-                   "      \"match_time\": 1459690200,\n" +
-                   "      \"result\": \"West Indies won by 4 wickets\",\n" +
-                   "      \"start_date\": \"2016-04-03T23:30:00\"\n" +
-                   "    }\n" +
-                   "  ],\n" +
-                   "  \"success\": true,\n" +
-                   "  \"error\": false\n" +
-                   "}";
             showProgress();
             JSONObject object = new JSONObject(content);
             boolean success = object.getBoolean("success");
@@ -473,14 +306,14 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                     BallDetail curBall = null;
                     JSONObject object = ballsStack.pop();
 
-                        int ballId = object.getInt("ball_id");
+                    int ballId = object.getInt("ball_id");
                     JSONArray eventArray = object.getJSONArray("event");
                     String event = eventArray.getString(0);
                     String wicket = eventArray.getString(1);
                     String run = eventArray.getString(2);
                     if (wicket!=null && !wicket.equals("")) {
                         curBall = getResolveBall(wicket);
-                    } else if(event!=null && !event.equals("")) {
+                    }else if(event!=null && !event.equals("")) {
                         curBall = getResolveBall(event);
                     }else  {
                         curBall = getResolveBall(run);
@@ -497,16 +330,18 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                         try {
                             Drawable drawable = null;
                             int count = 0;
+
                          if (!balls[0].getValue().equals("0")) {
                                 drawable = getTextDrawable(balls[count].getValue(), balls[count].getFontColor(), balls[count].getBackGroundColor());
                                 ivFirstBall.setImageDrawable(drawable);
-                               setBallOverWise(balls, count);
+                                setBallOverWise(balls, count);
 
                          } else {
                                 ivFirstBall.setImageResource(R.drawable.recent_dot_balls);
-                             setBallOverWise(balls, count);
+                                 setBallOverWise(balls, count);
                          }
                             count++;
+
                             if (!balls[count].getValue().equals("0")) {
                                 drawable = getTextDrawable(balls[count].getValue(), balls[count].getFontColor(), balls[count].getBackGroundColor());
                                 ivSecondBall.setImageDrawable(drawable);
@@ -611,7 +446,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     }
 
     private void setBallOverWise(BallDetail[] balls, int index) {
-        if(balls[index].getBallId()==6){
+        if(balls[index].getBallId()==1){
             dividerView[index].setVisibility(View.VISIBLE);
             vifirsttv[index].setText(recentOverValue);
         }else{
@@ -675,7 +510,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
                 ballDetail.setBackGroundColor(getBallColor(R.color.app_theme_blue));
                 break;
-            case "e1,wd":
+            case "wd":
                 ballDetail.setValue("WD");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
                 ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));

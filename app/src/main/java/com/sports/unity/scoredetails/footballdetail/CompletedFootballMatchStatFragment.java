@@ -39,7 +39,7 @@ import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
 public class CompletedFootballMatchStatFragment extends Fragment implements CompletedFootballMatchStatHandler.CompletedFootballMatchContentListener {
 
 
-    String matchName = "";
+    private String matchName = "";
     private ProgressBar progressBar;
     private String matchId;
     private RecyclerView rvFootballMatchStat;
