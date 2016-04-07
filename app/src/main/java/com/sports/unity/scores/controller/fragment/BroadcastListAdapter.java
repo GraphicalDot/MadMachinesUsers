@@ -75,13 +75,12 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
 
         try {
             if(list != null ) {
-                CommentriesModel previousObject = null;
+
+                CommentriesModel nextObject = null;
                 CommentriesModel jsonObject = list.get(position);
-                if(position>0){
-                     previousObject = list.get(position-1);
+                if(position<getItemCount()){
+                    nextObject = list.get(position+1) ;
                 }
-
-
                 if (sportsType.equals(ScoresJsonParser.CRICKET)) {
 
                     if(jsonObject.getComment() != null) {
@@ -115,7 +114,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
 
                     }
                     LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.lvDivider .getLayoutParams();
-                    if(jsonObject.getOver().contains(".1") && !previousObject.getOver().contains(".1")){
+                    if(jsonObject.getOver().contains(".1") && !nextObject.getOver().contains(".1")){
                         params.height = 3;
                         //holder.lvDivider.setBackground();
 
