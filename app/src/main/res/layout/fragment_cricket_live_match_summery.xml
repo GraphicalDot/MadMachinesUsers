@@ -390,7 +390,7 @@
                             android:orientation="horizontal">
 
 
-                            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                 android:id="@+id/tv_first_player_run_on_ball"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -399,7 +399,7 @@
                                 android:gravity="left"
                                 android:textSize="@dimen/font_size_very_small" />
 
-                            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                 android:id="@+id/tv_partnership_record"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -410,7 +410,7 @@
                                 android:textColor="@color/dark_blue"
                                 android:textSize="@dimen/font_size_very_small" />
 
-                            <com.sports.unity.common.view.CustomRobotoRegularTextView
+                            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                 android:id="@+id/tv_second_player_run_on_ball"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

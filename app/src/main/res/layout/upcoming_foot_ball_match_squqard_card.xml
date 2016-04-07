@@ -15,7 +15,7 @@
         android:text=""
         android:textColor="@color/news_static"
         android:textSize="@dimen/font_size_small_medium"
-        android:visibility="gone" />
+       android:visibility="gone" />
 
     <android.support.percent.PercentRelativeLayout
         android:id="@+id/football_layout"
@@ -27,7 +27,7 @@
             android:id="@+id/ll_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            card:layout_widthPercent="40%">
+            card:layout_widthPercent="34%">
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_player_name"
@@ -58,7 +58,7 @@
             android:text=""
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
-            card:layout_widthPercent="12%" />
+            card:layout_widthPercent="10%" />
 
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:id="@+id/tv_pl"
@@ -69,7 +69,7 @@
             android:text=""
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
-            card:layout_widthPercent="12%" />
+            card:layout_widthPercent="10%" />
 
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:id="@+id/tv_gol"
@@ -80,10 +80,10 @@
             android:text=""
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
-            card:layout_widthPercent="12%" />
+            card:layout_widthPercent="10%" />
 
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-            android:id="@+id/tv_yellow_card"
+            android:id="@+id/tv_assist"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toRightOf="@id/tv_gol"
@@ -91,7 +91,18 @@
             android:text=""
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
-            card:layout_widthPercent="12%" />
+            card:layout_widthPercent="10%" />
+
+        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            android:id="@+id/tv_yellow_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tv_assist"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/news_static"
+            android:textSize="@dimen/font_size_small_medium"
+            card:layout_widthPercent="10%" />
 
         <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:id="@+id/tv_red_card"
@@ -102,7 +113,9 @@
             android:text=""
             android:textColor="@color/news_static"
             android:textSize="@dimen/font_size_small_medium"
-            card:layout_widthPercent="12%" />
+            card:layout_widthPercent="10%" />
+
+
     </android.support.percent.PercentRelativeLayout>
 
     <View

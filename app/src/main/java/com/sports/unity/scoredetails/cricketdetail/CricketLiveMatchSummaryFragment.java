@@ -25,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.Stack;
 import java.util.Timer;
@@ -191,7 +192,173 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     @Override
     public void handleContent(String content) {
         try {
-           content = "{\"data\": [{\"status\": \"F\", \"home_team\": \"England\", \"away_team\": \"West Indies\", \"match_id\": \"35\", \"series_name\": \"T20I: World '16\", \"venue\": \"Eden Gardens\", \"summary\": {\"recent_over\": {\"19\": [{\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"2\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"3\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"4\"}], \"18\": [{\"event\": [\"\", \"\", \"4\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"2\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"3\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"4\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"5\"}, {\"event\": [\"\", \"\", \"0\"], \"ball_id\": \"6\"}]}, \"upcoming_batsmen\": [{\"player_id\": \"3376\", \"name\": \"D Ramdin\", \"player_image\": \"http://players.images.s3.amazonaws.com/3376.png\"}, {\"player_id\": \"8095\", \"name\": \"S Badree\", \"player_image\": \"http://players.images.s3.amazonaws.com/8095.png\"}, {\"player_id\": \"7165\", \"name\": \"SJ Benn\", \"player_image\": \"http://players.images.s3.amazonaws.com/7165.png\"}], \"current_partnership\": [{\"player_2_runs\": \"34\", \"player_1_runs\": \"20\", \"player_1_id\": \"2866\", \"player_1_image\": \"http://players.images.s3.amazonaws.com/2866.png\", \"player_1\": \"Samuels, MN\", \"player_2_balls\": \"10\", \"player_1_index\": \"1\", \"player_2_index\": \"2\", \"player_2\": \"Brathwaite, CR\", \"player_2_id\": \"15548\", \"player_1_balls\": \"16\", \"player_2_image\": \"http://players.images.s3.amazonaws.com/15548.png\"}], \"toss\": \"West Indies won the toss and elected to bowl\", \"man_of_the_match\": {\"player_id\": \"2866\", \"name\": \"Marlon Samuels\", \"batting\": {\"runs\": \"85\", \"balls\": \"66\", \"strike_rate\": \"128.0\", \"six\": \"2\"}, \"player_image\": \"http://players.images.s3.amazonaws.com/2866.png\"}, \"venue\": \"Eden Gardens\", \"umpires\": {\"first_umpire\": \"Dharmasena, HDPK (SLA)\", \"third_umpire\": \"Erasmus, M (SAF)\", \"referee\": \"Madugalle, RS (SLA)\", \"second_umpire\": \"Tucker, RJ (AUS)\"}, \"current_bowler\": {\"runs\": \"41\", \"name\": \"Stokes, BA\", \"wicket\": \"0\", \"player_id\": \"14482\", \"overs\": \"2.4\", \"player_image\": \"http://players.images.s3.amazonaws.com/14482.png\"}, \"last_wicket\": \"Sammy, DJG,2(c:Hales, AD and b:Willey, DJ)\"}, \"series_id\": \"5166\", \"match_time\": 1459690200, \"result\": \"West Indies won by 4 wickets\", \"start_date\": \"2016-04-03T23:30:00\"}], \"success\": true, \"error\": false}";
+           content = "{\n" +
+                   "  \"data\": [\n" +
+                   "    {\n" +
+                   "      \"status\": \"F\",\n" +
+                   "      \"home_team\": \"England\",\n" +
+                   "      \"away_team\": \"West Indies\",\n" +
+                   "      \"match_id\": \"35\",\n" +
+                   "      \"series_name\": \"T20I: World '16\",\n" +
+                   "      \"venue\": \"Eden Gardens\",\n" +
+                   "      \"summary\": {\n" +
+                   "        \"recent_over\": {\n" +
+                   "          \"18\": [\n" +
+                   "            {\n" +
+                   "              \"event\": [\n" +
+                   "                \"\",\n" +
+                   "                \"\",\n" +
+                   "                \"4\"\n" +
+                   "              ],\n" +
+                   "              \"ball_id\": \"1\"\n" +
+                   "            },\n" +
+                   "            {\n" +
+                   "              \"event\": [\n" +
+                   "                \"\",\n" +
+                   "                \"\",\n" +
+                   "                \"1\"\n" +
+                   "              ],\n" +
+                   "              \"ball_id\": \"2\"\n" +
+                   "            },\n" +
+                   "            {\n" +
+                   "              \"event\": [\n" +
+                   "                \"\",\n" +
+                   "                \"\",\n" +
+                   "                \"1\"\n" +
+                   "              ],\n" +
+                   "              \"ball_id\": \"3\"\n" +
+                   "            },\n" +
+                   "            {\n" +
+                   "              \"event\": [\n" +
+                   "                \"\",\n" +
+                   "                \"\",\n" +
+                   "                \"1\"\n" +
+                   "              ],\n" +
+                   "              \"ball_id\": \"4\"\n" +
+                   "            },\n" +
+                   "            {\n" +
+                   "              \"event\": [\n" +
+                   "                \"\",\n" +
+                   "                \"\",\n" +
+                   "                \"1\"\n" +
+                   "              ],\n" +
+                   "              \"ball_id\": \"5\"\n" +
+                   "            },\n" +
+                   "            {\n" +
+                   "              \"event\": [\n" +
+                   "                \"\",\n" +
+                   "                \"\",\n" +
+                   "                \"0\"\n" +
+                   "              ],\n" +
+                   "              \"ball_id\": \"6\"\n" +
+                   "            }\n" +
+                   "          ],\n" +
+                   "          \"19\": [\n" +
+                   "            {\n" +
+                   "              \"event\": [\n" +
+                   "                \"\",\n" +
+                   "                \"\",\n" +
+                   "                \"6\"\n" +
+                   "              ],\n" +
+                   "              \"ball_id\": \"1\"\n" +
+                   "            },\n" +
+                   "            {\n" +
+                   "              \"event\": [\n" +
+                   "                1,\n" +
+                   "                \"\",\n" +
+                   "                \"6\"\n" +
+                   "              ],\n" +
+                   "              \"ball_id\": \"2\"\n" +
+                   "            },\n" +
+                   "            {\n" +
+                   "              \"event\": [\n" +
+                   "                \"w\",\n" +
+                   "                \"\",\n" +
+                   "                \"6\"\n" +
+                   "              ],\n" +
+                   "              \"ball_id\": \"3\"\n" +
+                   "            },\n" +
+                   "            {\n" +
+                   "              \"event\": [\n" +
+                   "                \"\",\n" +
+                   "                \"\",\n" +
+                   "                \"6\"\n" +
+                   "              ],\n" +
+                   "              \"ball_id\": \"4\"\n" +
+                   "            }\n" +
+                   "          ]\n" +
+                   "        },\n" +
+                   "        \"upcoming_batsmen\": [\n" +
+                   "          {\n" +
+                   "            \"player_id\": \"3376\",\n" +
+                   "            \"name\": \"D Ramdin\",\n" +
+                   "            \"player_image\": \"http://players.images.s3.amazonaws.com/3376.png\"\n" +
+                   "          },\n" +
+                   "          {\n" +
+                   "            \"player_id\": \"8095\",\n" +
+                   "            \"name\": \"S Badree\",\n" +
+                   "            \"player_image\": \"http://players.images.s3.amazonaws.com/8095.png\"\n" +
+                   "          },\n" +
+                   "          {\n" +
+                   "            \"player_id\": \"7165\",\n" +
+                   "            \"name\": \"SJ Benn\",\n" +
+                   "            \"player_image\": \"http://players.images.s3.amazonaws.com/7165.png\"\n" +
+                   "          }\n" +
+                   "        ],\n" +
+                   "        \"current_partnership\": [\n" +
+                   "          {\n" +
+                   "            \"player_2_runs\": \"34\",\n" +
+                   "            \"player_1_runs\": \"20\",\n" +
+                   "            \"player_1_id\": \"2866\",\n" +
+                   "            \"player_1_image\": \"http://players.images.s3.amazonaws.com/2866.png\",\n" +
+                   "            \"player_1\": \"Samuels, MN\",\n" +
+                   "            \"player_2_balls\": \"10\",\n" +
+                   "            \"player_1_index\": \"1\",\n" +
+                   "            \"player_2_index\": \"2\",\n" +
+                   "            \"player_2\": \"Brathwaite, CR\",\n" +
+                   "            \"player_2_id\": \"15548\",\n" +
+                   "            \"player_1_balls\": \"16\",\n" +
+                   "            \"player_2_image\": \"http://players.images.s3.amazonaws.com/15548.png\"\n" +
+                   "          }\n" +
+                   "        ],\n" +
+                   "        \"toss\": \"West Indies won the toss and elected to bowl\",\n" +
+                   "        \"man_of_the_match\": {\n" +
+                   "          \"player_id\": \"2866\",\n" +
+                   "          \"name\": \"Marlon Samuels\",\n" +
+                   "          \"batting\": {\n" +
+                   "            \"runs\": \"85\",\n" +
+                   "            \"balls\": \"66\",\n" +
+                   "            \"strike_rate\": \"128.0\",\n" +
+                   "            \"six\": \"2\"\n" +
+                   "          },\n" +
+                   "          \"player_image\": \"http://players.images.s3.amazonaws.com/2866.png\"\n" +
+                   "        },\n" +
+                   "        \"venue\": \"Eden Gardens\",\n" +
+                   "        \"umpires\": {\n" +
+                   "          \"first_umpire\": \"Dharmasena, HDPK (SLA)\",\n" +
+                   "          \"third_umpire\": \"Erasmus, M (SAF)\",\n" +
+                   "          \"referee\": \"Madugalle, RS (SLA)\",\n" +
+                   "          \"second_umpire\": \"Tucker, RJ (AUS)\"\n" +
+                   "        },\n" +
+                   "        \"current_bowler\": {\n" +
+                   "          \"runs\": \"41\",\n" +
+                   "          \"name\": \"Stokes, BA\",\n" +
+                   "          \"wicket\": \"0\",\n" +
+                   "          \"player_id\": \"14482\",\n" +
+                   "          \"overs\": \"2.4\",\n" +
+                   "          \"player_image\": \"http://players.images.s3.amazonaws.com/14482.png\"\n" +
+                   "        },\n" +
+                   "        \"last_wicket\": \"Sammy, DJG,2(c:Hales, AD and b:Willey, DJ)\"\n" +
+                   "      },\n" +
+                   "      \"series_id\": \"5166\",\n" +
+                   "      \"match_time\": 1459690200,\n" +
+                   "      \"result\": \"West Indies won by 4 wickets\",\n" +
+                   "      \"start_date\": \"2016-04-03T23:30:00\"\n" +
+                   "    }\n" +
+                   "  ],\n" +
+                   "  \"success\": true,\n" +
+                   "  \"error\": false\n" +
+                   "}";
             showProgress();
             JSONObject object = new JSONObject(content);
             boolean success = object.getBoolean("success");
@@ -391,16 +558,21 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
                             tvFirstPlayerName.setText(liveCricketMatchSummaryParser.getPlayeFirstName());
                             tvSecondPlayerName.setText(liveCricketMatchSummaryParser.getPlayeSecondName());
+                            DecimalFormat formate = new DecimalFormat();
+                            formate.setMinimumFractionDigits(2);
+                            formate.setMaximumFractionDigits(2);
                             if (playerFirstBalls == 0) {
                                 tvFirstPlayerRunRate.setText(0 + "");
                             } else {
-                                tvFirstPlayerRunRate.setText((playerFirstRuns * 100 / playerFirstBalls) + "");
+
+
+                                tvFirstPlayerRunRate.setText("SR" + " " + formate.format(playerFirstRuns * 100 / (float) playerFirstBalls) + "");
                             }
                             if (playerSecondBalls == 0) {
                                 tvSecondPlayerRunRate.setText(0 + "");
 
                             } else {
-                                tvSecondPlayerRunRate.setText((playerSecondRuns * 100 / playerSecondBalls) + "");
+                                tvSecondPlayerRunRate.setText("SR" + " " + formate.format(playerSecondRuns * 100 /(float) playerSecondBalls) + "");
                             }
                             tvFirstPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeFirstRuns() + "(" + liveCricketMatchSummaryParser.getPlayeFirstBalls() + ")");
                             Glide.with(getContext()).load(liveCricketMatchSummaryParser.getPlayerFirstImage()).placeholder(R.drawable.ic_no_img).into(ivFirstPlayer);
