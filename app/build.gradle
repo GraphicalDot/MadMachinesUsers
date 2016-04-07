@@ -4,7 +4,7 @@ android {
     buildToolsVersion '23.0.2'
     defaultConfig {
         applicationId 'co.sports.unity'
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 23
         versionCode 2
         multiDexEnabled true
@@ -44,6 +44,11 @@ android {
             buildConfigField "String", "XMPP_SERVER_BASE_URL", "\"52.79.152.87\""
             buildConfigField "String", "CRITTERCISM_API_KEY", "\"b2c2518e6fe34bd88c7ac1e31deb7dd200555300\""
             resValue "string", "GOOGLE_API_KEY", "AIzaSyAtd8j1WX4Ekl1Jcz27E0jrJGfSi07uCb0"
+            minSdkVersion 19
+            applicationId 'co.sports.unity'
+            targetSdkVersion 23
+            versionCode 2
+            versionName '1.0'
         }
     }
     packagingOptions {
@@ -91,7 +96,7 @@ dependencies {
     compile 'org.solovyev.android.views:linear-layout-manager:0.5@aar'
     compile 'com.google.android.gms:play-services-ads:8.4.0'
     compile 'com.google.android.gms:play-services-identity:8.4.0'
-    compile "com.mixpanel.android:mixpanel-android:4.+"
+    compile 'com.mixpanel.android:mixpanel-android:4.+'
     compile 'com.google.android.gms:play-services-analytics:8.4.0'
 }
 
