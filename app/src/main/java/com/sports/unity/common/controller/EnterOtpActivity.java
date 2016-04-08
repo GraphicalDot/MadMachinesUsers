@@ -142,7 +142,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                         String message = currentMessage.getDisplayMessageBody();
 
                         try {
-                            if (senderNum.contains("SPORTU") || message.toLowerCase().contains("Welcome to Sports Unity App.".toLowerCase())) {
+                            if (senderNum.contains("SPORTU") || message.toLowerCase().contains("Sports Unity".toLowerCase())) {
                                 otpWaitingDialog.cancel();
                                 String str = message.replaceAll("\\D+", "");
                                 otpEditText.setText(str);

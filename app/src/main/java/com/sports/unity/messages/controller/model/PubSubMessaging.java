@@ -424,6 +424,8 @@ public class PubSubMessaging {
         boolean success = false;
         try {
             PubSubUtil.unsubscribe(jid, groupJID);
+
+            //TODO make call to let other members know.
             success = true;
         } catch (Exception ex) {
             ex.printStackTrace();

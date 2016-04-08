@@ -573,8 +573,10 @@ public class FavouriteContentHandler {
                                 item.setName(s);
                                 s = obj.getString("league_id");
                                 item.setId(s);
-                                s = obj.getString("flag_image");
-                                item.setFlagImageUrl(s);
+                                if (!obj.isNull("flag_image")) {
+                                    s = obj.getString("flag_image");
+                                    item.setFlagImageUrl(s);
+                                }
                                 item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                 item.setFilterType(Constants.FILTER_TYPE_LEAGUE);
                                 if (savedFavList.contains(item)) {
@@ -593,8 +595,10 @@ public class FavouriteContentHandler {
                                 item.setName(s);
                                 s = obj.getString("team_id");
                                 item.setId(s);
-                                s = obj.getString("flag_image");
-                                item.setFlagImageUrl(s);
+                                if (!obj.isNull("flag_image")) {
+                                    s = obj.getString("flag_image");
+                                    item.setFlagImageUrl(s);
+                                }
                                 item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                 item.setFilterType(Constants.FILTER_TYPE_TEAM);
                                 if (savedFavList.contains(item)) {
@@ -677,8 +681,10 @@ public class FavouriteContentHandler {
                                     item.setName(s);
                                     s = obj.getString("league_id");
                                     item.setId(s);
-                                    s = obj.getString("flag_image");
-                                    item.setFlagImageUrl(s);
+                                    if (!obj.isNull("flag_image")) {
+                                        s = obj.getString("flag_image");
+                                        item.setFlagImageUrl(s);
+                                    }
                                     item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                     item.setFilterType(Constants.FILTER_TYPE_LEAGUE);
                                     if (savedFavList.contains(item)) {
@@ -739,8 +745,10 @@ public class FavouriteContentHandler {
                                     item.setName(s);
                                     s = obj.getString("team_id");
                                     item.setId(s);
-                                    s = obj.getString("flag_image");
-                                    item.setFlagImageUrl(s);
+                                    if (!obj.isNull("flag_image")) {
+                                        s = obj.getString("flag_image");
+                                        item.setFlagImageUrl(s);
+                                    }
                                     item.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
                                     item.setFilterType(Constants.FILTER_TYPE_TEAM);
                                     if (savedFavList.contains(item)) {
