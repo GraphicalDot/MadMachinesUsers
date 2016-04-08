@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -138,7 +139,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     private boolean userLocation;
     private TokenRegistrationHandler tokenRegistrationHandler;
     private ViewPager mViewPager;
-    private PeopleAroundMeAdapter peopleAroundMeAdapter;
     private PeopleAroundMeViewPagerAdapter peopleAroundMeViewPagerAdapter;
 
 
@@ -215,9 +215,9 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         bindAutoComplete();
         userPrivacyUpdate();
 
-        int tab_index = 0;
+       int tab_index = 0;
         mViewPager = (ViewPager) findViewById(R.id.pager);
-        String peopleAroundMeTitles[] = {getString(R.string.summary), getString(R.string.commentary), getString(R.string.scorecard)};
+        String peopleAroundMeTitles[] = {getString(R.string.friends_tab), getString(R.string.su_users_tab), getString(R.string.need_heading_tab)};
         int peopleAroundMeTabs = peopleAroundMeTitles.length;
 
         peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs);
@@ -541,7 +541,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             public void onMapReady(GoogleMap googleMap) {
 
                 if(userLocation){
-                    openMap(googleMap);
+                    //openMap(googleMap);
                 }else{
                     AlertDialog.Builder builder = new AlertDialog.Builder(PeopleAroundActivity.this);
                     builder.setTitle("Are You Sure Want To Enable Your Location?");
@@ -891,7 +891,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             //nothing
         }
         userPrivacyUpdate();
-        loadMap();
+       // loadMap();
     }
 
     public void hideSoftKeyboard() {

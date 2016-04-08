@@ -8,4 +8,6 @@
     <string name="game_details">Game Details</string>
     <string name="request_code">1</string>
     <string name="mute_alerts">MUTE ALERTS</string>
+    <string name="su_users_tab">SU USERS</string>
+    <string name="need_heading_tab">NEED HEADING</string>
 </resources>
