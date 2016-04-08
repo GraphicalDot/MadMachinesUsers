@@ -159,11 +159,11 @@
 
     <dimen name="football_match_stats_width">32dp</dimen>
     <dimen name="football_match_stats_height">32dp</dimen>
-<!--football player information-->
+    <!--football player information-->
 
     <dimen name="football_timeline_images_width">24dp</dimen>
     <dimen name="football_timeline_images_height">24dp</dimen>
-<!--football timeline images-->
+    <!--football timeline images-->
 
     <dimen name="icon_football_info">16dp</dimen>
     <!--score card-->

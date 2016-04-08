@@ -430,4 +430,5 @@ message to verify your mobile number.</string>
         <item quantity="one">%d file was not sent, file size was too large</item>
         <item quantity="other">%d files were not sent, file sizes were too large</item>
     </plurals>
+    <string name="title_activity_people_around">PeopleAroundActivity</string>
 </resources>
