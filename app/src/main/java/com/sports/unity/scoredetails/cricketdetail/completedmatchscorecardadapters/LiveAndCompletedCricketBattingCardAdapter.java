@@ -22,19 +22,19 @@ public class LiveAndCompletedCricketBattingCardAdapter extends RecyclerView.Adap
     private final List<LiveAndCompletedCricketBattingCardDTO> mValues;
     private Context context;
 
-    public LiveAndCompletedCricketBattingCardAdapter(List<LiveAndCompletedCricketBattingCardDTO> mValues,Context context) {
+    public LiveAndCompletedCricketBattingCardAdapter(List<LiveAndCompletedCricketBattingCardDTO> mValues, Context context) {
         this.mValues = mValues;
         this.context = context;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_live_cricket_batting_card,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_live_cricket_batting_card, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.dto = mValues.get(position);
         holder.tvPlayerName.setText(holder.dto.getTvPlayerName());
         holder.tvPlayerRun.setText(holder.dto.getTvPlayerRun());
@@ -48,21 +48,19 @@ public class LiveAndCompletedCricketBattingCardAdapter extends RecyclerView.Adap
             @Override
             public void onClick(View v) {
 
-                    try {
-
-                        Intent i = new Intent(context, PlayerCricketBioDataActivity.class);
-                        i.putExtra(Constants.INTENT_KEY_ID, playerId);
-                        v.getContext().startActivity(i);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
+                try {
+                    Intent intent = PlayerCricketBioDataActivity.createIntent(v.getContext(), playerId, holder.tvPlayerName.getText().toString());
+//                        Intent i = new Intent(context, PlayerCricketBioDataActivity.class);
+//                        i.putExtra(Constants.INTENT_KEY_ID, playerId);
+                    v.getContext().startActivity(intent);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
+            }
 
 
         });
-
-
 
 
     }
@@ -73,8 +71,7 @@ public class LiveAndCompletedCricketBattingCardAdapter extends RecyclerView.Adap
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder
-    {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         private TextView tvPlayerName;
         private TextView tvPlayerRun;

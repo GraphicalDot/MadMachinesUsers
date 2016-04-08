@@ -50,7 +50,8 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_CRICKET_MATCH_DETAIL = "v1/get_match_widget?season_key=%s&match_id=";
     private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "v1/get_match_commentary?season_key=%s&match_id=";
     private static final String URL_PARAMS_FOR_FOOTBALL_COMMENTARY = "get_football_commentary?match_id=";
-    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = Constants.FOOTBALL_PLAYER_BASE_URL+"/get_football_player_profile?player_id=";
+    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = Constants.FOOTBALL_PLAYER_BASE_URL + "/get_football_player_profile?player_id=";
+    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_CRICKET = Constants.SCORE_BASE_URL + "/v1/get_player_stats?player_id=";
     private static final String URL_PARAMS_FOR_LEAGUE_FIXTURES = "get_football_league_specific_fixtures?league_id=";
     private static final String URL_PARAMS_FOR_FOOTBALL_TEAM_FIXTURES = "get_football_team_fixtures?team_id=";
     private static final String URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES = "v1/get_specific_fixtures?team_id=";
@@ -429,9 +430,14 @@ public class ScoresContentHandler {
 
     private void requestPlayerProfile(String sportType, String playerName, String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
-            String url = URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL + URLEncoder.encode(playerName);
-            Log.i("requestPlayerProfile: ", url);
-            requestContent(requestTag, listenerKey, url);
+            String url = null;
+            if (sportType.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                url = URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL + URLEncoder.encode(playerName);
+                requestContent(requestTag, listenerKey, url);
+            } else if (sportType.equals(Constants.SPORTS_TYPE_CRICKET)) {
+                url = URL_PARAMS_FOR_PLAYER_PROFILE_CRICKET + URLEncoder.encode(playerName);
+                requestContent(requestTag, listenerKey, url);
+            }
         }
     }
 

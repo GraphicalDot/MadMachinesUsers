@@ -23,7 +23,7 @@ import org.json.JSONObject;
 /**
  * Created by madmachines on 15/2/16.
  */
-public class CricketPlayerBioFragment extends Fragment implements CricketPlayerbioHandler.CricketPlayerbioContentListener {
+public class CricketPlayerBioFragment extends Fragment {
 
     private TextView tvPlayerbirthOfPlace;
     private TextView tvPlayerDateOfBirth;
@@ -32,9 +32,10 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     private TextView tvPlayerMajorTeam;
     private ProgressBar progressBar;
     private LinearLayout linearLayoutBio;
-    private  CricketPlayerbioHandler cricketPlayerbioHandler;
-    private  String playerId;
+    private CricketPlayerbioHandler cricketPlayerbioHandler;
+    private String playerId;
     private Context context;
+
     public CricketPlayerBioFragment() {
         super();
     }
@@ -43,21 +44,37 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        playerId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-        //playerId = "4429";
-        cricketPlayerbioHandler = CricketPlayerbioHandler.getInstance(context);
-        cricketPlayerbioHandler.addListener(this);
-        cricketPlayerbioHandler.requestData(playerId);
+//        playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
+//        cricketPlayerbioHandler = CricketPlayerbioHandler.getInstance(context);
+//        cricketPlayerbioHandler.addListener(this);
+//        cricketPlayerbioHandler.requestData(playerId);
 
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_player_cricket_bio, container, false);
         initView(view);
+        populateData(view);
         return view;
     }
+
+    private void populateData(View view) {
+        if (getArguments().getString("content") != null) {
+            try {
+                JSONObject jsonObject = new JSONObject(getArguments().getString("content"));
+                renderDisplay(jsonObject);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                showErrorLayout(view);
+            }
+        } else {
+            showErrorLayout(view);
+        }
+    }
+
     private void initView(View view) {
         linearLayoutBio = (LinearLayout) view.findViewById(R.id.ll_bio_layout);
         tvPlayerDateOfBirth = (TextView) view.findViewById(R.id.tv_player_date_of_birth);
@@ -65,38 +82,15 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
         tvPlayerBowingStyle = (TextView) view.findViewById(R.id.tv_player_bowing_style);
         tvPlayerMajorTeam = (TextView) view.findViewById(R.id.tv_player_major_team);
         tvPlayerbirthOfPlace = (TextView) view.findViewById(R.id.tv_player_birth_of_place);
-        initProgress(view);
+
+        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+        progressBar.setIndeterminate(true);
+//        initProgress(view);
         initErrorLayout(view);
 
     }
 
-    @Override
-    public void handleContent(String content) {
-        try {
-            showProgress();
-            JSONObject jsonObject = new JSONObject(content);
-
-            boolean success = jsonObject.getBoolean("success");
-            boolean error = jsonObject.getBoolean("error");
-
-            if( success ) {
-                linearLayoutBio.setVisibility(View.VISIBLE);
-                renderDisplay(jsonObject);
-
-            } else {
-                linearLayoutBio.setVisibility(View.GONE);
-                showErrorLayout(getView());
-                Toast.makeText(getActivity(), R.string.player_details_not_exists, Toast.LENGTH_SHORT).show();
-
-            }
-        }catch (Exception ex){
-            linearLayoutBio.setVisibility(View.GONE);
-            ex.printStackTrace();
-            showErrorLayout(getView());
-            Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-
-        }
-    }
     private void initErrorLayout(View view) {
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.GONE);
@@ -104,91 +98,27 @@ public class CricketPlayerBioFragment extends Fragment implements CricketPlayerb
     }
 
     private void showErrorLayout(View view) {
-
-            LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-            errorLayout.setVisibility(View.VISIBLE);
+        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        errorLayout.setVisibility(View.VISIBLE);
+        linearLayoutBio.setVisibility(View.GONE);
     }
-    private void initProgress(View view) {
-         progressBar = (ProgressBar) view.findViewById(R.id.progress);
-         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
-    }
-    public void showProgress() {
-    progressBar.setVisibility(View.VISIBLE);
 
-    }
-    public void hideProgress() {
+    public void renderDisplay(JSONObject jsonObject) {
+        linearLayoutBio.setVisibility(View.VISIBLE);
+        try {
+            JSONArray dataArray = jsonObject.getJSONArray("data");
+            JSONObject dataObject = dataArray.getJSONObject(0);
+            JSONObject playerInfo = dataObject.getJSONObject("info");
 
-
-        progressBar.setVisibility(View.GONE);
-
-    }
-    private void renderDisplay(JSONObject jsonObject) throws JSONException {
-
-        final JSONArray dataArray = jsonObject.getJSONArray("data");
-        final JSONObject dataObject = dataArray.getJSONObject(0);
-        final JSONObject playerInfo = dataObject.getJSONObject("info");
-        PlayerCricketBioDataActivity activity = (PlayerCricketBioDataActivity) getActivity();
-        hideProgress();
-        if (activity != null) {
-            activity.setProfileInfo(dataObject);
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-
-                      if (!playerInfo.isNull("born")) {
-                          try{
-                              tvPlayerDateOfBirth.setText(DateUtil.getFormattedDateDDMMYYYY(playerInfo.getString("Born")));
-                          }catch (Exception e){
-                              tvPlayerDateOfBirth.setText(playerInfo.getString("born"));
-                          }
-
-                        }
-                        if (!playerInfo.isNull("batting_style")) {
-                            tvPlayerbattingStyle.setText(playerInfo.getString("batting_style"));
-                        }
-                        if (!playerInfo.isNull("bowling_style")) {
-                            tvPlayerBowingStyle.setText(playerInfo.getString("bowling_style"));
-                        }
-                        if (!playerInfo.isNull("birth_place")) {
-                            tvPlayerbirthOfPlace.setText(playerInfo.getString("birth_place"));
-                        }
-
-                        if (!dataObject.isNull("team")) {
-                            tvPlayerMajorTeam.setText(dataObject.getString("team"));
-
-                        }
-
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        showErrorLayout(getView());
-                    }
-                }
-            });
+            tvPlayerDateOfBirth.setText(DateUtil.getFormattedDateDDMMYYYY(playerInfo.getString("born")));
+            tvPlayerbattingStyle.setText(playerInfo.getString("batting_style"));
+            tvPlayerBowingStyle.setText(playerInfo.getString("bowling_style"));
+            tvPlayerbirthOfPlace.setText(playerInfo.getString("birth_place"));
+            tvPlayerMajorTeam.setText(dataObject.getString("team"));
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
 
     }
 
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if(cricketPlayerbioHandler != null){
-            cricketPlayerbioHandler.addListener(null);
-        }
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        showProgress();
-        if(cricketPlayerbioHandler != null){
-            cricketPlayerbioHandler.addListener(this);
-
-        }else {
-            cricketPlayerbioHandler= CricketPlayerbioHandler.getInstance(context);
-        }
-        cricketPlayerbioHandler.requestData(playerId);
-    }
 }
