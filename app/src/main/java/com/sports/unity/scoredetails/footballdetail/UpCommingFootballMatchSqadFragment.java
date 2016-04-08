@@ -279,6 +279,9 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
         if (!playerObject.isNull("yellow_cards")) {
             dto.setTvyellowcard(playerObject.getString("yellow_cards"));
         }
+        if(!playerObject.isNull("assists")){
+            dto.setAssist(playerObject.getString("assists"));
+        }
     }
 
     private void getCricketSquadDetails(UpCommingFootballMatchSquadDTO dto, JSONObject playerObject) throws JSONException {

@@ -239,7 +239,6 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                         }else{
                                             showErrorLayout();
                                         }
-
                                     } if(!teamFromObject.isNull("team_points")){
                                         tvpointofsecondteam.setText(teamFromObject.getString("team_points"));}
                                     if(!teamFromObject.isNull("games_won")){

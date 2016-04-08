@@ -64,4 +64,30 @@ public class FootballMatchJsonCaller extends MatchJsonCaller {
         return jsonObject.getString("away_team_id");
     }
 
+    public String getTeams1Odds() {
+        String odds = null;
+        try {
+            if (!jsonObject.isNull("team_1_odds"))
+                odds = jsonObject.getString("team_1_odds");
+            else
+                odds = "";
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
+        return odds;
+    }
+
+    public String getTeams2Odds() throws JSONException {
+        String odds = null;
+        try {
+            if (!jsonObject.isNull("team_2_odds"))
+                odds = jsonObject.getString("team_2_odds");
+            else
+                odds = "";
+        } catch (JSONException ex) {
+            ex.printStackTrace();
+        }
+        return odds;
+    }
+
 }

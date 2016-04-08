@@ -25,6 +25,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.Stack;
 import java.util.Timer;
@@ -191,7 +192,6 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     @Override
     public void handleContent(String content) {
         try {
-           //content = "{\"data\": [{\"status\": \"F\", \"home_team\": \"England\", \"away_team\": \"West Indies\", \"match_id\": \"35\", \"series_name\": \"T20I: World '16\", \"venue\": \"Eden Gardens\", \"summary\": {\"recent_over\": {\"19\": [{\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"2\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"3\"}, {\"event\": [\"\", \"\", \"6\"], \"ball_id\": \"4\"}], \"18\": [{\"event\": [\"\", \"\", \"4\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"2\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"3\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"4\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"5\"}, {\"event\": [\"\", \"\", \"0\"], \"ball_id\": \"6\"}]}, \"upcoming_batsmen\": [{\"player_id\": \"3376\", \"name\": \"D Ramdin\", \"player_image\": \"http://players.images.s3.amazonaws.com/3376.png\"}, {\"player_id\": \"8095\", \"name\": \"S Badree\", \"player_image\": \"http://players.images.s3.amazonaws.com/8095.png\"}, {\"player_id\": \"7165\", \"name\": \"SJ Benn\", \"player_image\": \"http://players.images.s3.amazonaws.com/7165.png\"}], \"current_partnership\": [{\"player_2_runs\": \"34\", \"player_1_runs\": \"20\", \"player_1_id\": \"2866\", \"player_1_image\": \"http://players.images.s3.amazonaws.com/2866.png\", \"player_1\": \"Samuels, MN\", \"player_2_balls\": \"10\", \"player_1_index\": \"1\", \"player_2_index\": \"2\", \"player_2\": \"Brathwaite, CR\", \"player_2_id\": \"15548\", \"player_1_balls\": \"16\", \"player_2_image\": \"http://players.images.s3.amazonaws.com/15548.png\"}], \"toss\": \"West Indies won the toss and elected to bowl\", \"man_of_the_match\": {\"player_id\": \"2866\", \"name\": \"Marlon Samuels\", \"batting\": {\"runs\": \"85\", \"balls\": \"66\", \"strike_rate\": \"128.0\", \"six\": \"2\"}, \"player_image\": \"http://players.images.s3.amazonaws.com/2866.png\"}, \"venue\": \"Eden Gardens\", \"umpires\": {\"first_umpire\": \"Dharmasena, HDPK (SLA)\", \"third_umpire\": \"Erasmus, M (SAF)\", \"referee\": \"Madugalle, RS (SLA)\", \"second_umpire\": \"Tucker, RJ (AUS)\"}, \"current_bowler\": {\"runs\": \"41\", \"name\": \"Stokes, BA\", \"wicket\": \"0\", \"player_id\": \"14482\", \"overs\": \"2.4\", \"player_image\": \"http://players.images.s3.amazonaws.com/14482.png\"}, \"last_wicket\": \"Sammy, DJG,2(c:Hales, AD and b:Willey, DJ)\"}, \"series_id\": \"5166\", \"match_time\": 1459690200, \"result\": \"West Indies won by 4 wickets\", \"start_date\": \"2016-04-03T23:30:00\"}], \"success\": true, \"error\": false}";
             showProgress();
             JSONObject object = new JSONObject(content);
             boolean success = object.getBoolean("success");
@@ -306,19 +306,14 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                     BallDetail curBall = null;
                     JSONObject object = ballsStack.pop();
 
-                        int ballId = object.getInt("ball_id");
-
-
+                    int ballId = object.getInt("ball_id");
                     JSONArray eventArray = object.getJSONArray("event");
                     String event = eventArray.getString(0);
                     String wicket = eventArray.getString(1);
                     String run = eventArray.getString(2);
-
-
-
                     if (wicket!=null && !wicket.equals("")) {
                         curBall = getResolveBall(wicket);
-                    } else if(event!=null && !event.equals("")) {
+                    }else if(event!=null && !event.equals("")) {
                         curBall = getResolveBall(event);
                     }else  {
                         curBall = getResolveBall(run);
@@ -326,7 +321,6 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                     curBall.setBallId(ballId);
                     balls[ballIndex] = curBall;
                     ballIndex--;
-
                 }
                 hideProgress();
             if (activity != null) {
@@ -336,16 +330,18 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                         try {
                             Drawable drawable = null;
                             int count = 0;
+
                          if (!balls[0].getValue().equals("0")) {
                                 drawable = getTextDrawable(balls[count].getValue(), balls[count].getFontColor(), balls[count].getBackGroundColor());
                                 ivFirstBall.setImageDrawable(drawable);
-                               setBallOverWise(balls, count);
+                                setBallOverWise(balls, count);
 
                          } else {
                                 ivFirstBall.setImageResource(R.drawable.recent_dot_balls);
-                             setBallOverWise(balls, count);
+                                 setBallOverWise(balls, count);
                          }
                             count++;
+
                             if (!balls[count].getValue().equals("0")) {
                                 drawable = getTextDrawable(balls[count].getValue(), balls[count].getFontColor(), balls[count].getBackGroundColor());
                                 ivSecondBall.setImageDrawable(drawable);
@@ -397,16 +393,21 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
                             tvFirstPlayerName.setText(liveCricketMatchSummaryParser.getPlayeFirstName());
                             tvSecondPlayerName.setText(liveCricketMatchSummaryParser.getPlayeSecondName());
+                            DecimalFormat formate = new DecimalFormat();
+                            formate.setMinimumFractionDigits(2);
+                            formate.setMaximumFractionDigits(2);
                             if (playerFirstBalls == 0) {
                                 tvFirstPlayerRunRate.setText(0 + "");
                             } else {
-                                tvFirstPlayerRunRate.setText((playerFirstRuns * 100 / playerFirstBalls) + "");
+
+
+                                tvFirstPlayerRunRate.setText("SR" + " " + formate.format(playerFirstRuns * 100 / (float) playerFirstBalls) + "");
                             }
                             if (playerSecondBalls == 0) {
                                 tvSecondPlayerRunRate.setText(0 + "");
 
                             } else {
-                                tvSecondPlayerRunRate.setText((playerSecondRuns * 100 / playerSecondBalls) + "");
+                                tvSecondPlayerRunRate.setText("SR" + " " + formate.format(playerSecondRuns * 100 /(float) playerSecondBalls) + "");
                             }
                             tvFirstPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeFirstRuns() + "(" + liveCricketMatchSummaryParser.getPlayeFirstBalls() + ")");
                             Glide.with(getContext()).load(liveCricketMatchSummaryParser.getPlayerFirstImage()).placeholder(R.drawable.ic_no_img).into(ivFirstPlayer);
@@ -445,7 +446,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     }
 
     private void setBallOverWise(BallDetail[] balls, int index) {
-        if(balls[index].getBallId()==6){
+        if(balls[index].getBallId()==1){
             dividerView[index].setVisibility(View.VISIBLE);
             vifirsttv[index].setText(recentOverValue);
         }else{
@@ -509,7 +510,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
                 ballDetail.setBackGroundColor(getBallColor(R.color.app_theme_blue));
                 break;
-            case "e1,wd":
+            case "wd":
                 ballDetail.setValue("WD");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
                 ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));

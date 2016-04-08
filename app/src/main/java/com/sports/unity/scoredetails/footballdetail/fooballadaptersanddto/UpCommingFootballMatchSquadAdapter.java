@@ -65,6 +65,7 @@ public class UpCommingFootballMatchSquadAdapter extends RecyclerView.Adapter<UpC
                 holder.tvgol.setText(holder.dto.getTvgol());
                 holder.tvyellowcard.setText(holder.dto.getTvyellowcard());
                 holder.tvredcard.setText(holder.dto.getTvredcard());
+                holder.tvAssist.setText(holder.dto.getAssist());
             } else {
                 holder.footballLayout.setVisibility(View.GONE);
                 holder.cricketPlayerName.setVisibility(View.VISIBLE);
@@ -102,6 +103,7 @@ public class UpCommingFootballMatchSquadAdapter extends RecyclerView.Adapter<UpC
         private TextView tvgol;
         private TextView tvyellowcard;
         private TextView tvredcard;
+        private TextView tvAssist;
         public UpCommingFootballMatchSquadDTO dto;
         private PercentRelativeLayout footballLayout;
 
@@ -117,6 +119,7 @@ public class UpCommingFootballMatchSquadAdapter extends RecyclerView.Adapter<UpC
             tvredcard = (TextView) view.findViewById(R.id.tv_red_card);
             cricketPlayerName = (TextView) view.findViewById(R.id.cricket_player_name);
             footballLayout = (PercentRelativeLayout) view.findViewById(R.id.football_layout);
+            tvAssist = (TextView) view.findViewById(R.id.tv_assist);
         }
     }
 

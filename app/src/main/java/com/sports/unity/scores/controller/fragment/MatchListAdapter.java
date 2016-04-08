@@ -726,6 +726,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
                     team1.setText(cricketMatchJsonCaller.getTeam1());
                     team2.setText(cricketMatchJsonCaller.getTeam2());
+                    bet1.setText(matchJsonCaller.getTeams1Odds());
+                    bet2.setText(matchJsonCaller.getTeams2Odds());
                 } else if (matchJsonCaller.getType().equals(ScoresJsonParser.FOOTBALL)) {
                     footballMatchJsonCaller.setJsonObject(jsonObject);
 
@@ -734,9 +736,10 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
                     team1.setText(footballMatchJsonCaller.getHomeTeam());
                     team2.setText(footballMatchJsonCaller.getAwayTeam());
+                    bet1.setText(footballMatchJsonCaller.getTeams1Odds());
+                    bet2.setText(footballMatchJsonCaller.getTeams2Odds());
                 }
-                bet1.setText(matchJsonCaller.getTeams1Odds());
-                bet2.setText(matchJsonCaller.getTeams2Odds());
+
             }catch (Exception ex){
                 ex.printStackTrace();
             }

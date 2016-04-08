@@ -15,6 +15,7 @@ public class UpCommingFootballMatchSquadDTO {
     private String tvgol;
     private String tvyellowcard;
     private String tvredcard;
+    private String assist;
 
     public String getId() {
         return id;
@@ -78,5 +79,14 @@ public class UpCommingFootballMatchSquadDTO {
 
     public void setTvredcard(String tvredcard) {
         this.tvredcard = tvredcard;
+    }
+
+
+    public String getAssist() {
+        return assist;
+    }
+
+    public void setAssist(String assist) {
+        this.assist = assist;
     }
 }

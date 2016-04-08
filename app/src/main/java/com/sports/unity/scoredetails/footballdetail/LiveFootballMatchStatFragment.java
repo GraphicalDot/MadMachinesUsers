@@ -156,8 +156,6 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
                 showProgressBar();
                 JSONObject jsonObject = new JSONObject(object);
                 boolean success = jsonObject.getBoolean("success");
-                boolean error = jsonObject.getBoolean("error");
-
                 if (success) {
 
                     renderDisplay(jsonObject);
@@ -216,17 +214,16 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
                                             completeFootballMatchStatDTO.setIvRightStatus(teamSecondStatsObject.getString(key));
 
                                             int red = Integer.parseInt(teamFirstStatsObject.getString(key));
-                                            if(red==0){
-                                                red = 1;
-                                            }
                                             int blue = Integer.parseInt(teamSecondStatsObject.getString(key));
-                                            if(blue==0){
-                                                blue = 1;
+                                            int total = red+blue;
+                                            if(total==0){
+                                                completeFootballMatchStatDTO.setLeftGraphValue(0);
+                                                completeFootballMatchStatDTO.setRightGraphValue(0);
+                                            }else{
+                                                completeFootballMatchStatDTO.setLeftGraphValue((baseWidth * red) / (red + blue));
+                                                completeFootballMatchStatDTO.setRightGraphValue((baseWidth * blue) / (red + blue));
                                             }
-                                            completeFootballMatchStatDTO.setLeftGraphValue((baseWidth * red) / (red + blue));
-                                            completeFootballMatchStatDTO.setRightGraphValue((baseWidth * blue) / (red + blue));
-                                            //Log.i("MatchStatFragment: ", completeFootballMatchStatDTO.toString());
-                                          //  list.add(completeFootballMatchStatDTO);
+
                                             map.put(getLabelValue(key),completeFootballMatchStatDTO);
                                         }
                                     }
