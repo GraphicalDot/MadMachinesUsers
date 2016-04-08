@@ -259,8 +259,9 @@
 
         <activity
             android:name=".peoplearound.PeopleAroundActivity"
-            android:label="@string/title_activity_people_around"
-            android:theme="@style/AppTheme"></activity>
+            android:launchMode="singleTop"
+            android:screenOrientation="portrait" >
+        </activity>
     </application>
 
 </manifest>
