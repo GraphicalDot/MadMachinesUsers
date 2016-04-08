@@ -227,7 +227,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
                     ((ViewGroup) holder.odds.getParent()).setClickable(false);
                 }
-                Log.i("IPLMATCHS", "onBindViewHolder: " + cricketMatchJsonCaller.getStatus());
                 if ("L".equalsIgnoreCase(cricketMatchJsonCaller.getStatus()) || "N".equalsIgnoreCase(cricketMatchJsonCaller.getStatus())) {
                     preferences = PreferenceManager.getDefaultSharedPreferences(activity);
                     final String key = cricketMatchJsonCaller.getMatchId() + "|" + cricketMatchJsonCaller.getSeriesId();
@@ -375,7 +374,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
 
                 if ("Completed".equals(holder.matchDay.getText())) {
-                    Log.i("FOOTBALMATCHSTATUS: ", footballMatchJsonCaller.getMatchStatus());
                     holder.notification.setVisibility(View.GONE);
                 } else {
 

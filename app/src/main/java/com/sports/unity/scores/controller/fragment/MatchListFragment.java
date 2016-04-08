@@ -138,7 +138,6 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
 
                 @Override
                 public void run() {
-                    Log.i("List of Matches", "Swipe Refresh Call");
 
                     requestContent();
                     mSwipeRefreshLayout.setRefreshing(true);
@@ -155,8 +154,6 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
 
         addResponseListener();
         if (matches.size() == 0) {
-            Log.i("List of Matches", "Through Resume");
-
             showProgress(getView());
             requestContent();
         }
@@ -267,8 +264,6 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
 
                     @Override
                     public void run() {
-                        Log.i("List of Matches", "Swipe Refresh Call");
-
                         requestContent();
                         mSwipeRefreshLayout.setRefreshing(true);
                     }
@@ -299,7 +294,6 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
     }
 
     private void renderContent() {
-        Log.i("List of Matches", "Render Content");
 
         matchListWrapperAdapter.notifyDataSetChanged();
     }
@@ -341,16 +335,12 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                     ArrayList<JSONObject> dayGroupList = null;
                     Map<String, MatchListWrapperDTO> leagueMapTemp = null;
                     if (daysMap.containsKey(day)) {
-                        Log.i("League Name", "handleContent: " + leagueName);
-                        Log.i("Day Name", "handleContent: " + day);
                         leagueMapTemp = daysMap.get(day);
 
                         if (leagueMapTemp.containsKey(leagueName)) {
-                            Log.d("imax", "setting daygroup");
                             dayGroupDto = leagueMapTemp.get(leagueName);
                             dayGroupList = dayGroupDto.getList();
                         } else {
-                            Log.d("imax", "resetting current daygroup");
                             dayGroupDto = new MatchListWrapperDTO();
                             dayGroupList = new ArrayList<>();
 
@@ -378,10 +368,8 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
             }
             matchList.clear();
             Set<String> daySet = daysMap.keySet();
-            Log.i("DAYMAP", "handleContent: " + daysMap);
             for (String dayKey : daySet) {
                 Map<String, MatchListWrapperDTO> leagueMaps = daysMap.get(dayKey);
-                Log.i("LEAGUEMAP", "handleContent: " + leagueMaps);
                 Set<String> keySet = leagueMaps.keySet();
 
                 for (String key : keySet) {
@@ -403,7 +391,6 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
     }
 
     private boolean handleContent(String content) {
-        Log.i("List of Matches", "Handle Content");
         boolean success = false;
         matchList.clear();
         matches.clear();
@@ -448,7 +435,6 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
 
                     if (!object.isNull("match_time") && Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(object.getString("type"))) {
                         epochTime = object.getLong("match_time");
-                        Log.i("dayCount", "handleContent: "+dayCount);
                         day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
                         leagueName = object.getString("series_name");
                         sportsType = object.getString("type");
@@ -457,7 +443,6 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                         epochTime = object.getLong("match_date_epoch");
                         sportsType = object.getString("type");
 
-                            Log.i("dayCount", "handleContent: "+dayCount);
                             day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
                             if (!object.isNull("league_name")) {
                                 leagueName = object.getString("league_name");
@@ -468,16 +453,12 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                     ArrayList<JSONObject> dayGroupList = null;
                     Map<String, MatchListWrapperDTO> leagueMapTemp = null;
                     if (daysMap.containsKey(day)) {
-                        Log.i("League Name", "handleContent: " + leagueName);
-                        Log.i("Day Name", "handleContent: " + day);
                         leagueMapTemp = daysMap.get(day);
 
                         if (leagueMapTemp.containsKey(leagueName)) {
-                            Log.d("imax", "setting daygroup");
                             dayGroupDto = leagueMapTemp.get(leagueName);
                             dayGroupList = dayGroupDto.getList();
                         } else {
-                            Log.d("imax", "resetting current daygroup");
                             dayGroupDto = new MatchListWrapperDTO();
                             dayGroupList = new ArrayList<>();
 
@@ -505,11 +486,9 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
             }
             matchList.clear();
             Set<String> daySet = daysMap.keySet();
-            Log.i("DAYMAP", "handleContent: " + daysMap);
             int c =0;
             for (String dayKey : daySet) {
                 Map<String, MatchListWrapperDTO> leagueMaps = daysMap.get(dayKey);
-                Log.i("LEAGUEMAP", "handleContent: " + leagueMaps);
                 Set<String> keySet = leagueMaps.keySet();
 
                 for (String key : keySet) {
@@ -539,7 +518,6 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                     break;
                 }
             }*/
-            Log.i("todayIndexPosition", "handleContent: " + todayIndexPosition);
              matchListWrapperAdapter.notifyDataSetChanged();
            // mWraperRecyclerView.getLayoutManager().moveView(todayIndexPosition, 0);
            // mWraperRecyclerView.getLayoutManager().scrollToPosition(todayIndexPosition);
@@ -651,11 +629,9 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                         hideErrorLayout(MatchListFragment.this.getView());
                         MatchListFragment.this.renderContent();
                     } else {
-                        Log.i("List of Matches", "Error In Handling Content");
                         showErrorLayout(MatchListFragment.this.getView());
                     }
                 } else {
-                    Log.i("List of Matches", "Error In Response");
                     showErrorLayout(MatchListFragment.this.getView());
                 }
 

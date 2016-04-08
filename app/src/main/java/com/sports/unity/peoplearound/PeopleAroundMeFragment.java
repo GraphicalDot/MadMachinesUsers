@@ -1,6 +1,7 @@
 package com.sports.unity.peoplearound;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,13 +13,21 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
 import com.sports.unity.R;
+import com.sports.unity.peoplearound.dto.PeopleAroundMeDTO;
+
+import org.solovyev.android.views.llm.LinearLayoutManager;
+
+import java.util.ArrayList;
+
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class PeopleAroundMeFragment extends Fragment {
 
-private RecyclerView recyclerview;
+    private ArrayList<PeopleAroundMeDTO> peoples = new java.util.ArrayList<>();
+    private RecyclerView recyclerview;
 
     public PeopleAroundMeFragment() {
         // Required empty public constructor
@@ -38,6 +47,8 @@ private RecyclerView recyclerview;
     private void initViews(View v) {
 
         recyclerview=(RecyclerView) v.findViewById(R.id.recyclerview);
+        recyclerview.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
+        recyclerview.setNestedScrollingEnabled(false);
 
     }
 
@@ -70,10 +81,6 @@ private RecyclerView recyclerview;
         progressBar.setVisibility(View.GONE);
     }
 
-
-    public void handleContent() {
-
-    }
 
     @Override
     public void onResume() {

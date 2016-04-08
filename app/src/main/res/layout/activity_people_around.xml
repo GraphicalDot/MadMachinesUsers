@@ -2,10 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@android:color/white"
     android:orientation="vertical"
-    tools:context="com.sports.unity.messages.controller.activity.PeopleAroundMeMap">
+    >
 
     <include
         android:id="@+id/tool_bar_map"
@@ -44,61 +43,75 @@
         android:layout_weight="1">
 
     </com.sports.unity.common.model.ControlledSwipeViewPager>
+    <FrameLayout
+        android:id="@+id/fl_custom_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/textColorPrimary"
+        android:visibility="gone">
+        <fragment
+            android:id="@+id/custom_location"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/people_nearme_custom_location_height" />
+    </FrameLayout>
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/mapButtons"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom">
+            android:layout_alignParentRight="true"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/vertical_padding_small"
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_small">
 
-            <LinearLayout
-                android:id="@+id/mapButtons"
+            <ImageView
+                android:id="@+id/myLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:orientation="vertical"
-                android:paddingBottom="@dimen/vertical_padding_small"
-                android:paddingLeft="@dimen/horizontal_padding_small"
-                android:paddingRight="@dimen/horizontal_padding_small">
+                android:src="@drawable/ic_my_loc" />
 
-                <ImageView
-                    android:id="@+id/myLocation"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_my_loc" />
+        </LinearLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/mapButtons"
+            android:layout_gravity="bottom"
+            android:background="@android:color/white"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_small">
+            <TextView
+                android:id="@+id/distance_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/mapButtons"
-                android:layout_gravity="bottom"
-                android:background="@android:color/white"
-                android:orientation="vertical"
-                android:paddingLeft="@dimen/horizontal_padding_small"
-                android:paddingRight="@dimen/horizontal_padding_small">
-                <TextView
-                    android:id="@+id/distance_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:paddingTop="@dimen/vertical_padding_very_very_small"
-                    android:text="@string/people_around_you"
-                    android:textColor="@color/news_static"
-                    android:textSize="@dimen/font_size_very_small" />
+                android:gravity="center_horizontal"
+                android:paddingTop="@dimen/vertical_padding_very_very_small"
+                android:text="@string/people_around_you"
+                android:textColor="@color/news_static"
+                android:textSize="@dimen/font_size_very_small" />
 
-                <com.sports.unity.messages.controller.viewhelper.DiscreteSeekBar
-                    android:id="@+id/distance_seekbar"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:paddingBottom="@dimen/vertical_padding_small"
-                    android:paddingLeft="@dimen/vertical_padding_medium"
-                    android:paddingRight="@dimen/vertical_padding_medium"
-                    android:paddingTop="@dimen/vertical_padding_small"
-                    android:layout_marginBottom="10dp"
-                    android:progressDrawable="@drawable/seekbar_drawable"
-                    android:thumb="@drawable/ic_distance_slider_01" />
-            </LinearLayout>
-        </RelativeLayout>
+            <com.sports.unity.messages.controller.viewhelper.DiscreteSeekBar
+                android:id="@+id/distance_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:paddingBottom="@dimen/vertical_padding_small"
+                android:paddingLeft="@dimen/vertical_padding_medium"
+                android:paddingRight="@dimen/vertical_padding_medium"
+                android:paddingTop="@dimen/vertical_padding_small"
+                android:layout_marginBottom="10dp"
+                android:progressDrawable="@drawable/seekbar_drawable"
+                android:thumb="@drawable/ic_distance_slider_01" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
 </LinearLayout>

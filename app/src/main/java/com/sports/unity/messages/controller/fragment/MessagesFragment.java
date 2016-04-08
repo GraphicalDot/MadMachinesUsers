@@ -35,6 +35,7 @@ import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.messages.controller.activity.GroupDetailActivity;
 import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.viewhelper.OnSearchViewQueryListener;
+import com.sports.unity.peoplearound.PeopleAroundActivity;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.Constants;
@@ -181,7 +182,7 @@ public class MessagesFragment extends Fragment implements View.OnClickListener, 
 
     private void startPeopleAroundMeActivity() {
 
-        Intent intent = new Intent(getActivity(), PeopleAroundMeMap.class);
+        Intent intent = new Intent(getActivity(), PeopleAroundActivity.class);
         startActivity(intent);
     }
 

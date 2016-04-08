@@ -118,7 +118,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
     private NearByUserJsonCaller nearByUserJsonCaller = new NearByUserJsonCaller();
 
-    private GoogleMap map;
+    //private GoogleMap map;
     private LatLng latLong;
     private String sportSelection = SPORT_SELECTION_FOOTBALL;
 
@@ -148,10 +148,9 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         public void handleContent(String tag, String content, int responseCode) {
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLong);
-            icon.setImageResource(R.drawable.ic_marker_my_location);
             clusterIconGenerator.setBackground(icon.getDrawable());
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(clusterIconGenerator.makeIcon("")));
-            map.addMarker(markerOptions);
+            //map.addMarker(markerOptions);
             if (tag.equals(REQUEST_TAG)) {
                 if (responseCode == 200) {
                     if (dialog.isShowing()) {
@@ -159,11 +158,10 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                     }
                     peoplesNearMe = ScoresJsonParser.parseListOfNearByUsers(content);
                     List<Person> people = peoplesNearMe.getPersons();
-                    if (people.size() > 1) {
-                        plotMarkers(people, sportSelection);
-                    } else {
+
+                    if(people.size()==0){
                         // map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
-                        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
+                      /*  map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));*/
                         LayoutInflater inflater = PeopleAroundActivity.this.getLayoutInflater();
                         View view = inflater.inflate(R.layout.chat_other_profile_layout, null);
 //                        AlertDialog.Builder otherProfileBuilder = new AlertDialog.Builder(PeopleAroundMeMap.this);
@@ -176,7 +174,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                         aDialog.show();
                         populateProfilePopup(null, view, null, 0, null, null);
                     }
-
                 } else {
                     if (dialog != null) {
                         if (dialog.isShowing())
@@ -210,8 +207,8 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         initToolbar();
         // openMap();
         InitSeekbar();
-        setsportSelectionButtons();
-        setCustomButtonsForNavigationAndUsers();
+       // setsportSelectionButtons();
+        //setCustomButtonsForNavigationAndUsers();
         bindAutoComplete();
         userPrivacyUpdate();
 
@@ -223,10 +220,24 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs);
         mViewPager.setAdapter(peopleAroundMeViewPagerAdapter);
         tab_index = getIntent().getIntExtra("tab_index", 1);
-        mViewPager.setCurrentItem(tab_index);
-        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
+        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         tabs.setDistributeEvenly(true);
         tabs.setTabTextColor(R.color.filter_tab_selector);
+        // Setting Custom Color for the Scroll bar indicator of the Tab View
+        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.app_theme_blue);
+            }
+        });
+        // Setting the ViewPager For the SlidingTabsLayout
+        tabs.setViewPager(mViewPager);
+
+        //set news pager as default
+
+        mViewPager.setCurrentItem(tab_index);
+
+
     }
 
     private void userPrivacyUpdate() {
@@ -250,7 +261,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                 titleCity.setText(place.getName());
                 latLong = place.getLatLng();
                 //getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
-                map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
+                //map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
                 // getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
             }
 
@@ -280,7 +291,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         refreshUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(latLong!=null){
+                if (latLong != null) {
                     getPeopleAroundMe(latLong.latitude, latLong.longitude);
                 }
 
@@ -288,41 +299,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         });
     }
 
-    private void setsportSelectionButtons() {
-        final Button cricket = (Button) findViewById(R.id.people_cricket_interest);
-        final Button football = (Button) findViewById(R.id.people_football_interest);
-        cricket.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
-        football.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
-        football.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                map.clear();
-                LinearLayout sportSwitchLAyout = (LinearLayout) findViewById(R.id.switch_sports);
-                sportSwitchLAyout.setBackground(getResources().getDrawable(R.drawable.btn_s1_focused));
-                sportSelection = SPORT_SELECTION_FOOTBALL;
-                football.setTextColor(Color.WHITE);
-                cricket.setTextColor(getResources().getColor(R.color.app_theme_blue));
-                if (peoplesNearMe != null) {
-                    plotMarkers(peoplesNearMe.getPersons(), sportSelection);
-                }
-            }
-        });
 
-        cricket.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                map.clear();
-                LinearLayout sportSwitchLAyout = (LinearLayout) findViewById(R.id.switch_sports);
-                sportSwitchLAyout.setBackground(getResources().getDrawable(R.drawable.btn_s2_focused));
-                sportSelection = SPORT_SELECTION_CRICKET;
-                cricket.setTextColor(Color.WHITE);
-                football.setTextColor(getResources().getColor(R.color.app_theme_blue));
-                if (peoplesNearMe != null) {
-                    plotMarkers(peoplesNearMe.getPersons(), sportSelection);
-                }
-            }
-        });
-    }
 
     private void InitSeekbar() {
         TextView distanceText = (TextView) findViewById(R.id.distance_text);
@@ -348,33 +325,33 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_01));
                     radius = 1000;
 
-                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                    //map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
 
                 } else if (progress >= 0 * stepRange + stepRange / 2 && progress <= 0 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(1 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_05));
                     radius = 5000;
-                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                    //map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else if (progress >= 1 * stepRange + stepRange / 2 && progress <= 1 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(2 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_20));
                     radius = 20000;
-                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                    //map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else if (progress >= 2 * stepRange + stepRange / 2 && progress <= 2 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(3 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_30));
                     radius = 30000;
-                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                    // map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else {
                     seekBar.setProgress(4 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_40));
                     radius = 40000;
 
-                    map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                    //map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 }
 
@@ -383,101 +360,9 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         });
     }
 
-    private int calculateZoomLevel(int radius) {
-        int zoomLevel = 0;
-        Circle circle = map.addCircle(new CircleOptions().center(latLong).radius(radius).strokeColor(Color.TRANSPARENT));
-        circle.setVisible(true);
-        if (circle != null) {
-            double r = circle.getRadius();
-            double scale = r / 500;
-            zoomLevel = (int) (16 - Math.log(scale) / Math.log(2));
-        }
-        Log.i("zoomlevel", String.valueOf(zoomLevel));
-        return zoomLevel;
-    }
-
     private void fetchUsersNearByWithNewRadius() {
         getPeopleAroundMe(latLong.latitude, latLong.longitude);
     }
-
-    private void plotMarkers(List<Person> persons, String sportSelection) {
-        ArrayList<Marker> markers = new ArrayList<>();
-        Log.i("plottingmarkers", "true");
-        mClusterManager.clearItems();
-        mClusterManager.addItems(persons);
-        mClusterManager.cluster();
-//        for (Person person : persons) {
-//            MarkerOptions markerOption = new MarkerOptions();
-//            markerOption.position(person.getPosition());
-//            if (friend) {
-//                markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_my_friends));
-//            } else {
-//                markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_marker_su_users));
-//            }
-//            Marker marker = null;
-//            if (person.getUsername().equalsIgnoreCase(getInstance(getApplicationContext()).getString(KEY_USERNAME))) {
-//                if (sportSelection.equalsIgnoreCase(SPORT_SELECTION_FOOTBALL)) {
-//                    markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mrkr_fball));
-//                } else {
-//                    markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mrkr_cri));
-//                }
-//                marker = map.addMarker(markerOption);
-//                marker.setDraggable(true);
-//            } else {
-//                marker = map.addMarker(markerOption);
-//            }
-//
-//            markers.add(marker);
-//            mClusterManager.addItem(person);
-//        }
-//        for (JSONObject user : users) {
-//            nearByUserJsonCaller.setJsonObject(user);
-//            try {
-//                String interests = nearByUserJsonCaller.getInterests();
-//                if (interests.contains(sportSelection)) {
-//                    double latitude = nearByUserJsonCaller.getLatitude();
-//                    double longitude = nearByUserJsonCaller.getLongitude();
-//                    MarkerOptions markerOption = new MarkerOptions().position(new LatLng(latitude, longitude));
-//                    if (sportSelection.equals(SPORT_SELECTION_FOOTBALL)) {
-//                        markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mrkr_fball));
-//                    } else {
-//                        markerOption.icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_mrkr_cri));
-//                    }
-//                    markerOption.snippet(nearByUserJsonCaller.getUsername() + "," + nearByUserJsonCaller.getDistance());
-//                    if (nearByUserJsonCaller.getUsername().equals(getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME))) {
-//                        //nothing
-//                    } else {
-//                        Marker marker = map.addMarker(markerOption);
-//                        markers.add(marker);
-//                    }
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-        animateCamera(markers);
-    }
-
-    private void animateCamera(ArrayList<Marker> markers) {
-        if (markers != null) {
-            int counter = 0;
-            LatLngBounds.Builder builder = new LatLngBounds.Builder();
-            for (Marker marker : markers) {
-                builder.include(marker.getPosition());
-                counter++;
-            }
-            if (counter > 0) {
-                LatLngBounds bounds = builder.build();
-                int padding = 10; // offset from edges of the map in pixels
-                CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
-                map.animateCamera(cu);
-                makeText(PeopleAroundActivity.this, markers.size() + " people around you", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-
-    }
-
 
     private void initToolbar() {
         toolbar = (Toolbar) findViewById(R.id.tool_bar_map);
@@ -540,9 +425,9 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             @Override
             public void onMapReady(GoogleMap googleMap) {
 
-                if(userLocation){
+                if (userLocation) {
                     //openMap(googleMap);
-                }else{
+                } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(PeopleAroundActivity.this);
                     builder.setTitle("Are You Sure Want To Enable Your Location?");
 
@@ -568,51 +453,10 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                 }
 
 
-
             }
         });
     }
 
-    private void openMap(final GoogleMap googleMap) {
-        map = googleMap;
-        map.setOnMarkerDragListener(new GoogleMap.OnMarkerDragListener() {
-            @Override
-            public void onMarkerDragStart(Marker marker) {
-
-            }
-
-            @Override
-            public void onMarkerDrag(Marker marker) {
-
-            }
-
-            @Override
-            public void onMarkerDragEnd(Marker marker) {
-                LatLng position = marker.getPosition();
-                getPeopleAroundMe(position.latitude, position.longitude);
-            }
-        });
-        map.getUiSettings().setZoomGesturesEnabled(true);
-        try {
-            map.setMyLocationEnabled(false);
-        } catch (SecurityException ex) {
-
-        }
-        mClusterManager = new ClusterManager<Person>(getApplicationContext(), map);
-        map.setOnCameraChangeListener(mClusterManager);
-        map.setOnMarkerClickListener(mClusterManager);
-        mClusterManager.setRenderer(new CustomClusterRenderer(PeopleAroundActivity.this, map, mClusterManager));
-        mClusterManager.setOnClusterItemClickListener(this);
-        hideLocationbutton();
-        map.setTrafficEnabled(false);
-        double latitude = getInstance(getApplicationContext()).getDouble(KEY_CURRENT_LATITUDE, 0.0);
-        double longitude = getInstance(getApplicationContext()).getDouble(KEY_CURRENT_LONGITUDE, 0.0);
-        latLong = new LatLng(latitude, longitude);
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, calculateZoomLevel(radius)));
-        if (checkIfGPSEnabled()) {
-            getPeopleAroundMe(latitude, longitude);
-        }
-    }
 
 
     private void hideLocationbutton() {
@@ -626,7 +470,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         ProgressBar progressBar = new ProgressBar(this);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
 
-        map.clear();
         mClusterManager.clearItems();
         dialog = ProgressDialog.show(PeopleAroundActivity.this, "",
                 "fetching...", true);
@@ -864,16 +707,16 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LATITUDE, location.getLatitude());
             getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LONGITUDE, location.getLongitude());
             latLong = new LatLng(location.getLatitude(), location.getLongitude());
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
+           // map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
             new FetchAndDisplayCurrentAddress(location).execute();
             getPeopleAroundMe(latLong.latitude, latLong.longitude);
         }
 
     }
 
-    private float getcurrentZoom() {
+    /*private float getcurrentZoom() {
         return map.getCameraPosition().zoom;
-    }
+    }*/
 
     @Override
     protected void onResume() {
