@@ -67,7 +67,6 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.NearByUserJsonCaller;
 import com.sports.unity.messages.controller.model.PeoplesNearMe;
 import com.sports.unity.messages.controller.model.Person;
-import com.sports.unity.peoplearound.adapters.PeopleAroundMeAdapter;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
@@ -138,7 +137,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     private TokenRegistrationHandler tokenRegistrationHandler;
     private ViewPager mViewPager;
     private PeopleAroundMeViewPagerAdapter peopleAroundMeViewPagerAdapter;
-    private List<Person> people;
+    private ArrayList<Person> people;
 
 
     @Override
@@ -162,7 +161,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         String peopleAroundMeTitles[] = {getString(R.string.friends_tab), getString(R.string.su_users_tab), getString(R.string.need_heading_tab)};
         int peopleAroundMeTabs = peopleAroundMeTitles.length;
 
-        peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs ,people);
+        peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs, people);
         mViewPager.setAdapter(peopleAroundMeViewPagerAdapter);
         tab_index = getIntent().getIntExtra("tab_index", 1);
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
@@ -195,6 +194,10 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                     }
                     peoplesNearMe = ScoresJsonParser.parseListOfNearByUsers(content);
                     people = peoplesNearMe.getPersons();
+
+
+
+
 
                     if(people.size()==0){
                         // map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));

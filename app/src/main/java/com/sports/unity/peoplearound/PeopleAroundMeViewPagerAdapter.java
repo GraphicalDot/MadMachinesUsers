@@ -31,7 +31,7 @@ public class PeopleAroundMeViewPagerAdapter extends FragmentStatePagerAdapter  {
 
         private String titles[];
         private int numberOfTabs;
-        private List<Person> people;
+    private ArrayList<Person> people;
 
 
 
@@ -54,6 +54,9 @@ public class PeopleAroundMeViewPagerAdapter extends FragmentStatePagerAdapter  {
             } else {
                 fragment = new PeopleAroundMeFragment();
             }
+            Bundle cmBundel = new Bundle();
+            cmBundel.putParcelableArrayList("peoples", people);
+            fragment.setArguments(cmBundel);
             return fragment;
         }
 

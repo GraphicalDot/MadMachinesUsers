@@ -1,5 +1,8 @@
 package com.sports.unity.messages.controller.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
@@ -9,13 +12,34 @@ import java.util.List;
 /**
  * Created by manish on 02/03/16.
  */
-public class Person implements ClusterItem {
+public class Person implements ClusterItem, Parcelable {
     private String username;
     private double distance;
     private LatLng position;
     private boolean friend;
     private boolean commonInterest;
     private List<String> interests = new ArrayList<>();
+
+    protected Person(Parcel in) {
+        username = in.readString();
+        distance = in.readDouble();
+        position = in.readParcelable(LatLng.class.getClassLoader());
+        friend = in.readByte() != 0;
+        commonInterest = in.readByte() != 0;
+        interests = in.createStringArrayList();
+    }
+
+    public static final Creator<Person> CREATOR = new Creator<Person>() {
+        @Override
+        public Person createFromParcel(Parcel in) {
+            return new Person(in);
+        }
+
+        @Override
+        public Person[] newArray(int size) {
+            return new Person[size];
+        }
+    };
 
     public List<String> getInterests() {
         return interests;
@@ -61,5 +85,20 @@ public class Person implements ClusterItem {
 
     public void setPosition(LatLng position) {
         this.position = position;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(username);
+        dest.writeDouble(distance);
+        dest.writeParcelable(position, flags);
+        dest.writeByte((byte) (friend ? 1 : 0));
+        dest.writeByte((byte) (commonInterest ? 1 : 0));
+        dest.writeStringList(interests);
     }
 }

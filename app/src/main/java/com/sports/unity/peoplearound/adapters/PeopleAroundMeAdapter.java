@@ -10,11 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sports.unity.R;
-import com.sports.unity.peoplearound.dto.PeopleAroundMeDTO;
-import com.sports.unity.playerprofile.cricket.PlayerCricketBioDataActivity;
-import com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters.LiveAndCompletedCricketBattingCardDTO;
-import com.sports.unity.util.Constants;
+import com.sports.unity.messages.controller.model.Person;
 
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,11 +21,11 @@ import java.util.List;
  */
 public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAdapter.ViewHolder> {
 
-    private final List<PeopleAroundMeDTO> mValues;
+    private ArrayList<Person> people;
     private Context context;
 
-    public PeopleAroundMeAdapter(List<PeopleAroundMeDTO> mValues,Context context) {
-        this.mValues = mValues;
+    public PeopleAroundMeAdapter(ArrayList<Person> people,Context context) {
+        this.people = people;
         this.context = context;
     }
 
@@ -38,7 +37,7 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.dto = mValues.get(position);
+        holder.dto = people.get(position);
 
 
 
@@ -46,7 +45,7 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return people.size();
     }
 
 
@@ -59,7 +58,7 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
 
         public final View mView;
 
-        public PeopleAroundMeDTO dto;
+        public Person dto;
 
         public ViewHolder(View view) {
             super(view);

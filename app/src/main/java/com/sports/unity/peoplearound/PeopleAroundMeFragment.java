@@ -12,9 +12,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.google.android.gms.plus.People;
 import com.sports.unity.R;
-import com.sports.unity.peoplearound.dto.PeopleAroundMeDTO;
-
+import com.sports.unity.messages.controller.model.Person;
+import com.sports.unity.peoplearound.adapters.PeopleAroundMeAdapter;
 import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
@@ -26,12 +27,25 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
  */
 public class PeopleAroundMeFragment extends Fragment {
 
-    private ArrayList<PeopleAroundMeDTO> peoples = new java.util.ArrayList<>();
+    private ArrayList<Person> peoples = new ArrayList<>();
     private RecyclerView recyclerview;
+    private PeopleAroundMeAdapter mAdapter;
+    private Context context;
 
     public PeopleAroundMeFragment() {
         // Required empty public constructor
     }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+
+    }
+
+
+
+
 
 
     @Override
@@ -39,6 +53,8 @@ public class PeopleAroundMeFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_people_around_me, container, false);
+        Bundle b = getArguments();
+        peoples = b.getParcelableArrayList("peoples");
         initViews(v);
         return v;
     }
@@ -48,6 +64,7 @@ public class PeopleAroundMeFragment extends Fragment {
 
         recyclerview=(RecyclerView) v.findViewById(R.id.recyclerview);
         recyclerview.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
+        mAdapter = new PeopleAroundMeAdapter(peoples,context);
         recyclerview.setNestedScrollingEnabled(false);
 
     }
@@ -92,10 +109,6 @@ public class PeopleAroundMeFragment extends Fragment {
         super.onPause();
     }
 
-        @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
 
-    }
 
 }
