@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sports.unity.R;
@@ -51,12 +52,20 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
 
     public class ViewHolder extends RecyclerView.ViewHolder
     {
+
+        public TextView tvfriendname;
+        public TextView tvfrienddistance;
+        public ImageView ivfriendimg;
+
         public final View mView;
 
         public PeopleAroundMeDTO dto;
 
         public ViewHolder(View view) {
             super(view);
+            tvfriendname=(TextView) view.findViewById(R.id.tv_friend_name);
+            tvfrienddistance=(TextView) view.findViewById(R.id.tv_friend_distance);
+            ivfriendimg=(ImageView) view.findViewById(R.id.iv_friend_img);
             mView = view;
 
         }

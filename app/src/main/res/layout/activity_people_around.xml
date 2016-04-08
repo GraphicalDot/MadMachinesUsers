@@ -77,7 +77,6 @@
                 android:orientation="vertical"
                 android:paddingLeft="@dimen/horizontal_padding_small"
                 android:paddingRight="@dimen/horizontal_padding_small">
-
                 <TextView
                     android:id="@+id/distance_text"
                     android:layout_width="match_parent"

@@ -431,4 +431,7 @@ message to verify your mobile number.</string>
         <item quantity="other">%d files were not sent, file sizes were too large</item>
     </plurals>
     <string name="title_activity_people_around">PeopleAroundActivity</string>
+    <string name="friends_tab">FRIENDS</string>
+    <string name="su_users_tab">SU USERS</string>
+    <string name="need_heading_tab">NEED HEADING</string>
 </resources>

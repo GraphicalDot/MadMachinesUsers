@@ -14,9 +14,9 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -58,7 +58,7 @@ import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
-import com.sports.unity.common.view.CustomVolleyCallerActivity;
+import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.gcm.TokenRegistrationHandler;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.activity.CustomClusterRenderer;
@@ -67,6 +67,7 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.NearByUserJsonCaller;
 import com.sports.unity.messages.controller.model.PeoplesNearMe;
 import com.sports.unity.messages.controller.model.Person;
+import com.sports.unity.peoplearound.adapters.PeopleAroundMeAdapter;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
@@ -136,6 +137,11 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     private PeoplesNearMe peoplesNearMe;
     private ClusterManager<Person> mClusterManager;
     private boolean userLocation;
+    private TokenRegistrationHandler tokenRegistrationHandler;
+    private ViewPager mViewPager;
+    private PeopleAroundMeViewPagerAdapter peopleAroundMeViewPagerAdapter;
+
+
     private ScoresContentHandler.ContentListener contentListener = new ScoresContentHandler.ContentListener() {
 
         @Override
@@ -185,13 +191,12 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         }
 
     };
-    private TokenRegistrationHandler tokenRegistrationHandler;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_people_around_me_map);
+        setContentView(R.layout.activity_people_around);
         this.customLocation = false;
         aDialog = new Dialog(PeopleAroundActivity.this);
         aDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -209,6 +214,19 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         setCustomButtonsForNavigationAndUsers();
         bindAutoComplete();
         userPrivacyUpdate();
+
+       int tab_index = 0;
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        String peopleAroundMeTitles[] = {getString(R.string.friends_tab), getString(R.string.su_users_tab), getString(R.string.need_heading_tab)};
+        int peopleAroundMeTabs = peopleAroundMeTitles.length;
+
+        peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs);
+        mViewPager.setAdapter(peopleAroundMeViewPagerAdapter);
+        tab_index = getIntent().getIntExtra("tab_index", 1);
+        mViewPager.setCurrentItem(tab_index);
+        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
+        tabs.setDistributeEvenly(true);
+        tabs.setTabTextColor(R.color.filter_tab_selector);
     }
 
     private void userPrivacyUpdate() {
@@ -523,7 +541,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             public void onMapReady(GoogleMap googleMap) {
 
                 if(userLocation){
-                    openMap(googleMap);
+                    //openMap(googleMap);
                 }else{
                     AlertDialog.Builder builder = new AlertDialog.Builder(PeopleAroundActivity.this);
                     builder.setTitle("Are You Sure Want To Enable Your Location?");
@@ -873,7 +891,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             //nothing
         }
         userPrivacyUpdate();
-        loadMap();
+       // loadMap();
     }
 
     public void hideSoftKeyboard() {
