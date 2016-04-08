@@ -22,7 +22,7 @@ import java.util.ArrayList;
 /**
  * Created by madmachines on 8/4/16.
  */
-public class PeopleAroundMeViewPager extends FragmentStatePagerAdapter  {
+public class PeopleAroundMeViewPagerAdapter extends FragmentStatePagerAdapter  {
 
 
 
@@ -32,7 +32,7 @@ public class PeopleAroundMeViewPager extends FragmentStatePagerAdapter  {
 
 
 
-        public PeopleAroundMeViewPager(FragmentManager fm, String[] titles, int numberOfTabs) {
+        public PeopleAroundMeViewPagerAdapter(FragmentManager fm, String[] titles, int numberOfTabs) {
             super(fm);
             this.titles = titles;
             this.numberOfTabs = numberOfTabs;
