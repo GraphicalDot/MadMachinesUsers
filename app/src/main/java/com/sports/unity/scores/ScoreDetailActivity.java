@@ -1,6 +1,7 @@
 package com.sports.unity.scores;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -235,6 +236,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             llMatchDetailLinear = findViewById(R.id.ll_match_detail_linear);
             tvMatchTime = (TextView) findViewById(R.id.tv_match_time);
             getTvMatchDay = (TextView) findViewById(R.id.tv_game_day);
+            getTvMatchDay.setTextColor(getResources().getColor(R.color.score_light_grey));
         }catch (Exception e){
             Log.i("Exception Occured", "initView: ");
             Toast.makeText(this,"Error Occured",Toast.LENGTH_LONG);
@@ -551,17 +553,27 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     showNoCommentaries();
                 } else {
                     if( footballMatchJsonCaller.isLive() ){
-                        cloackTimer.setVisibility(View.VISIBLE);
+                       // cloackTimer.setVisibility(View.VISIBLE);
                         /*donutProgress.setVisibility(View.VISIBLE);*/
-                        Integer minute = 0;
+                        String timer;
+                        String FORMAT = "%02d:%02d";
+                        int hours=0;
+                        int minute=0;
+                        getTvMatchDay.setTextColor(getResources().getColor(R.color.app_theme_blue));
+                        Integer counter = 0;
                         try{
-                            minute = Integer.parseInt(footballMatchJsonCaller.getMatchStatus());
+                            counter = Integer.parseInt(footballMatchJsonCaller.getMatchStatus());
+                            hours = counter/60;
+                            minute = counter%60;
+
                         }catch (Exception e ){
                             e.printStackTrace();
-                            minute = 0;
+                            counter = 0;
                         }
-                        donutProgress.setProgress(minute);
-                        enableAutoRefreshContent();
+                        timer  = String.format(FORMAT,hours,minute);
+                        //donutProgress.setProgress(minute);
+                        //enableAutoRefreshContent();
+                        getTvMatchDay.setText(timer);
                     }
                     StringBuilder score = new StringBuilder();
                     score.append(footballMatchJsonCaller.getHomeTeamScore());
