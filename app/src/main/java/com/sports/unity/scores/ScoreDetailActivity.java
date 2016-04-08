@@ -294,7 +294,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         }
 
     }
-
     private void renderComments(){
         Log.i("Score Detail", "Render Comments");
         //mRecyclerView.getAdapter().notifyDataSetChanged();
