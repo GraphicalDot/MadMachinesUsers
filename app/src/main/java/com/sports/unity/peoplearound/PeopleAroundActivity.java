@@ -112,13 +112,11 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     private static final String SPORT_SELECTION_FOOTBALL = "football";
     private static final String SPORT_SELECTION_CRICKET = "cricket";
 
-    private IconGenerator clusterIconGenerator;
-    private ImageView icon;
+
     private Dialog aDialog = null;
 
     private NearByUserJsonCaller nearByUserJsonCaller = new NearByUserJsonCaller();
 
-    //private GoogleMap map;
     private LatLng latLong;
     private String sportSelection = SPORT_SELECTION_FOOTBALL;
 
@@ -142,15 +140,53 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     private PeopleAroundMeViewPagerAdapter peopleAroundMeViewPagerAdapter;
 
 
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_people_around);
+        this.customLocation = false;
+        aDialog = new Dialog(PeopleAroundActivity.this);
+        aDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        locManager = LocManager.getInstance(getApplicationContext());
+        locManager.buildApiClient();
+        hideSoftKeyboard();
+        initToolbar();
+        InitSeekbar();
+        bindAutoComplete();
+        userPrivacyUpdate();
+        getLocation();
+        getPeopleAroundMe(latLong.latitude,latLong.longitude);
+        int tab_index = 0;
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        String peopleAroundMeTitles[] = {getString(R.string.friends_tab), getString(R.string.su_users_tab), getString(R.string.need_heading_tab)};
+        int peopleAroundMeTabs = peopleAroundMeTitles.length;
+
+        peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs);
+        mViewPager.setAdapter(peopleAroundMeViewPagerAdapter);
+        tab_index = getIntent().getIntExtra("tab_index", 1);
+        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
+        tabs.setDistributeEvenly(true);
+        tabs.setTabTextColor(R.color.filter_tab_selector);
+        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
+            @Override
+            public int getIndicatorColor(int position) {
+                return getResources().getColor(R.color.app_theme_blue);
+            }
+        });
+        tabs.setViewPager(mViewPager);
+        mViewPager.setCurrentItem(tab_index);
+
+   }
+
+
+
     private ScoresContentHandler.ContentListener contentListener = new ScoresContentHandler.ContentListener() {
 
         @Override
         public void handleContent(String tag, String content, int responseCode) {
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLong);
-            clusterIconGenerator.setBackground(icon.getDrawable());
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(clusterIconGenerator.makeIcon("")));
-            //map.addMarker(markerOptions);
+
             if (tag.equals(REQUEST_TAG)) {
                 if (responseCode == 200) {
                     if (dialog.isShowing()) {
@@ -160,8 +196,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                     List<Person> people = peoplesNearMe.getPersons();
 
                     if(people.size()==0){
-                        // map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
-                      /*  map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));*/
                         LayoutInflater inflater = PeopleAroundActivity.this.getLayoutInflater();
                         View view = inflater.inflate(R.layout.chat_other_profile_layout, null);
 //                        AlertDialog.Builder otherProfileBuilder = new AlertDialog.Builder(PeopleAroundMeMap.this);
@@ -190,55 +224,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     };
 
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_people_around);
-        this.customLocation = false;
-        aDialog = new Dialog(PeopleAroundActivity.this);
-        aDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        this.clusterIconGenerator = new IconGenerator(getApplicationContext());
-        View view = getLayoutInflater().inflate(R.layout.cluster_view, null);
-        icon = (ImageView) view.findViewById(R.id.cluster_icon);
-        this.clusterIconGenerator.setContentView(view);
-        locManager = LocManager.getInstance(getApplicationContext());
-        locManager.buildApiClient();
-        hideSoftKeyboard();
-        initToolbar();
-        // openMap();
-        InitSeekbar();
-       // setsportSelectionButtons();
-        //setCustomButtonsForNavigationAndUsers();
-        bindAutoComplete();
-        userPrivacyUpdate();
-
-       int tab_index = 0;
-        mViewPager = (ViewPager) findViewById(R.id.pager);
-        String peopleAroundMeTitles[] = {getString(R.string.friends_tab), getString(R.string.su_users_tab), getString(R.string.need_heading_tab)};
-        int peopleAroundMeTabs = peopleAroundMeTitles.length;
-
-        peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs);
-        mViewPager.setAdapter(peopleAroundMeViewPagerAdapter);
-        tab_index = getIntent().getIntExtra("tab_index", 1);
-        SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
-        tabs.setDistributeEvenly(true);
-        tabs.setTabTextColor(R.color.filter_tab_selector);
-        // Setting Custom Color for the Scroll bar indicator of the Tab View
-        tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
-            @Override
-            public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.app_theme_blue);
-            }
-        });
-        // Setting the ViewPager For the SlidingTabsLayout
-        tabs.setViewPager(mViewPager);
-
-        //set news pager as default
-
-        mViewPager.setCurrentItem(tab_index);
-
-
-    }
 
     private void userPrivacyUpdate() {
         userLocation = UserUtil.isShowToAllLocation();
@@ -260,9 +245,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                 titleAddress.setText(place.getAddress());
                 titleCity.setText(place.getName());
                 latLong = place.getLatLng();
-                //getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
-                //map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
-                // getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
+                getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
             }
 
             @Override
@@ -324,15 +307,12 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                     seekBar.setProgress(0);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_01));
                     radius = 1000;
-
-                    //map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
 
                 } else if (progress >= 0 * stepRange + stepRange / 2 && progress <= 0 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(1 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_05));
                     radius = 5000;
-                    //map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else if (progress >= 1 * stepRange + stepRange / 2 && progress <= 1 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(2 * stepRange);
@@ -448,8 +428,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
                     });
                     builder.show();
-                    //Toast.makeText(PeopleAroundMeMap.this,R.string.location_turned_off_text,Toast.LENGTH_LONG).show();
-
                 }
 
 
@@ -459,11 +437,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
 
 
-    private void hideLocationbutton() {
-        View mapView = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getView();
-        View btnMyLocation = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
-        btnMyLocation.setVisibility(View.INVISIBLE);
-    }
 
     private void getPeopleAroundMe(double latitude, double longitude) {
 
