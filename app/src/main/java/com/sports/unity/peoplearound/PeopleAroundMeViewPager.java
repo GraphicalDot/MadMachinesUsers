@@ -44,11 +44,11 @@ public class PeopleAroundMeViewPager extends FragmentStatePagerAdapter  {
 
             Fragment fragment = null;
             if (position == 0) {
-
+               fragment = new PeopleAroundMeFragment();
             } else if (position == 1) {
-
+                fragment = new PeopleAroundMeFragment();
             } else {
-
+                fragment = new PeopleAroundMeFragment();
             }
             return fragment;
         }
