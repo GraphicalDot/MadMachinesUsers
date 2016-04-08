@@ -117,6 +117,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
     private NearByUserJsonCaller nearByUserJsonCaller = new NearByUserJsonCaller();
 
+    //private GoogleMap map;
     private LatLng latLong;
     private String sportSelection = SPORT_SELECTION_FOOTBALL;
 
@@ -138,6 +139,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     private TokenRegistrationHandler tokenRegistrationHandler;
     private ViewPager mViewPager;
     private PeopleAroundMeViewPagerAdapter peopleAroundMeViewPagerAdapter;
+    private List<Person> people;
 
 
     @Override
@@ -193,9 +195,11 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                         dialog.dismiss();
                     }
                     peoplesNearMe = ScoresJsonParser.parseListOfNearByUsers(content);
-                    List<Person> people = peoplesNearMe.getPersons();
+                    people = peoplesNearMe.getPersons();
 
                     if(people.size()==0){
+                        // map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                      /*  map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));*/
                         LayoutInflater inflater = PeopleAroundActivity.this.getLayoutInflater();
                         View view = inflater.inflate(R.layout.chat_other_profile_layout, null);
 //                        AlertDialog.Builder otherProfileBuilder = new AlertDialog.Builder(PeopleAroundMeMap.this);
@@ -307,12 +311,15 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                     seekBar.setProgress(0);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_01));
                     radius = 1000;
+
+                    //map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
 
                 } else if (progress >= 0 * stepRange + stepRange / 2 && progress <= 0 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(1 * stepRange);
                     seekBar.setThumb(getResources().getDrawable(R.drawable.ic_distance_slider_05));
                     radius = 5000;
+                    //map.animateCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                     fetchUsersNearByWithNewRadius();
                 } else if (progress >= 1 * stepRange + stepRange / 2 && progress <= 1 * stepRange + stepRange / 2 + stepRange) {
                     seekBar.setProgress(2 * stepRange);
@@ -428,6 +435,8 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
                     });
                     builder.show();
+                    //Toast.makeText(PeopleAroundMeMap.this,R.string.location_turned_off_text,Toast.LENGTH_LONG).show();
+
                 }
 
 
@@ -437,6 +446,11 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
 
 
+    private void hideLocationbutton() {
+        View mapView = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getView();
+        View btnMyLocation = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+        btnMyLocation.setVisibility(View.INVISIBLE);
+    }
 
     private void getPeopleAroundMe(double latitude, double longitude) {
 
