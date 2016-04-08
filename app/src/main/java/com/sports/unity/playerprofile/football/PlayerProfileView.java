@@ -245,12 +245,10 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
 
             JSONObject dataObject = datArray.getJSONObject(0);
             JSONArray profileArray = dataObject.getJSONArray("profile");
-            JSONObject profileData = null;
-            if (profileArray.length() > 0) {
-                profileData = profileArray.getJSONObject(0);
-                playerAge.setText(profileData.getString("Date of Birth"));
-            }
-
+                playerAge.setText(dataObject.getString("Age"));
+                squadNumber.setText(dataObject.getString("Jersey"));
+                nationality.setText(dataObject.getString("Nationality"));
+                positionValue.setText(dataObject.getString("Position"));
             JSONArray otherComptetionArray = dataObject.getJSONArray("other_competitions");
 
             playerName.setText(dataObject.getString("name"));
