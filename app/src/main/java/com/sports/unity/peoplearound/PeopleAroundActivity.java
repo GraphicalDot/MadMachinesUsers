@@ -134,7 +134,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     private ProgressDialog dialog = null;
 
     private PeoplesNearMe peoplesNearMe;
-    private ClusterManager<Person> mClusterManager;
     private boolean userLocation;
     private TokenRegistrationHandler tokenRegistrationHandler;
     private ViewPager mViewPager;
@@ -163,7 +162,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         String peopleAroundMeTitles[] = {getString(R.string.friends_tab), getString(R.string.su_users_tab), getString(R.string.need_heading_tab)};
         int peopleAroundMeTabs = peopleAroundMeTitles.length;
 
-        peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs);
+        peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs ,people);
         mViewPager.setAdapter(peopleAroundMeViewPagerAdapter);
         tab_index = getIntent().getIntExtra("tab_index", 1);
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
@@ -209,7 +208,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 //                        aDialog.show();
                         aDialog.setContentView(R.layout.chat_other_profile_layout);
                         aDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        aDialog.show();
+                        //aDialog.show();
                         populateProfilePopup(null, view, null, 0, null, null);
                     }
                 } else {
@@ -457,7 +456,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         ProgressBar progressBar = new ProgressBar(this);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
 
-        mClusterManager.clearItems();
         dialog = ProgressDialog.show(PeopleAroundActivity.this, "",
                 "fetching...", true);
         dialog.setIndeterminateDrawable(progressBar.getIndeterminateDrawable());
