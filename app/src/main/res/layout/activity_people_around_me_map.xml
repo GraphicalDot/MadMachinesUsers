@@ -13,40 +13,80 @@
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:minHeight="?android:attr/actionBarSize" />
-    <View
-        android:id="@+id/seperator"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/tool_bar"
-        android:background="@color/tab_seperator" />
 
-    <com.sports.unity.common.view.SlidingTabLayout
-        android:id="@+id/tabs"
+
+    <FrameLayout
+        android:id="@+id/area_map"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/seperator"
-        android:background="@color/app_theme_blue"
-        android:elevation="@dimen/toolbar_elevation" />
+        android:layout_height="match_parent">
 
-    <View
-        android:id="@+id/view"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/tabs"
-        android:background="@color/ColorPrimary" />
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/people_around_me" />
 
-    <com.sports.unity.common.model.ControlledSwipeViewPager
-        android:id="@+id/pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/view"
-        android:layout_weight="1">
 
-    </com.sports.unity.common.model.ControlledSwipeViewPager>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/map_sport_selection_button_height"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="@android:color/transparent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/switch_sports"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_s1_focused">
+
+                <Button
+                    android:id="@+id/people_football_interest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:text="FOOTBALL"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/font_size_small_large" />
+
+                <Button
+                    android:id="@+id/people_cricket_interest"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:text="CRICKET"
+                    android:textColor="@color/app_theme_blue"
+                    android:textSize="@dimen/font_size_small_large" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/fl_custom_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/textColorPrimary"
+            android:visibility="gone">
+            <fragment
+                android:id="@+id/custom_location"
+                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/people_nearme_custom_location_height" />
+        </FrameLayout>
+
+
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom">
+
             <LinearLayout
                 android:id="@+id/mapButtons"
                 android:layout_width="wrap_content"
@@ -56,6 +96,13 @@
                 android:paddingBottom="@dimen/vertical_padding_small"
                 android:paddingLeft="@dimen/horizontal_padding_small"
                 android:paddingRight="@dimen/horizontal_padding_small">
+
+                <ImageView
+                    android:id="@+id/refreshUsers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="@dimen/vertical_padding_very_small"
+                    android:src="@drawable/ic_refresh" />
 
                 <ImageView
                     android:id="@+id/myLocation"
@@ -70,7 +117,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/mapButtons"
                 android:layout_gravity="bottom"
-                android:background="@color/gray3"
+                android:background="@android:color/white"
                 android:orientation="vertical"
                 android:paddingLeft="@dimen/horizontal_padding_small"
                 android:paddingRight="@dimen/horizontal_padding_small">
@@ -98,8 +145,96 @@
                     android:progressDrawable="@drawable/seekbar_drawable"
                     android:thumb="@drawable/ic_distance_slider_01" />
 
+                <android.support.percent.PercentRelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingLeft="@dimen/vertical_padding_very_small"
+                    android:layout_marginBottom="@dimen/horizontal_padding_small"
+
+                    >
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_my_location"
+                        android:layout_centerVertical="true"
+                        android:id="@+id/my_location"
+                        app:layout_widthPercent="5%"/>
+
+                    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="My location"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/my_location"
+                        app:layout_widthPercent="15%"
+                        android:id="@+id/my_location_text"
+                        android:textSize="@dimen/font_size_very_very_small"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_widthPercent="5%"
+                        android:layout_centerVertical="true"
+                        android:src="@drawable/ic_friends"
+                        android:id="@+id/my_location_friends"
+                        android:layout_toRightOf="@+id/my_location_text"/>
+
+                   <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Friends"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@+id/my_location_friends"
+                    app:layout_widthPercent="10%"
+                    android:id="@+id/friends_text"
+                    android:textSize="@dimen/font_size_very_very_small"/>
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_widthPercent="5%"
+                        android:src="@drawable/ic_sports_unity_users"
+                        android:layout_centerVertical="true"
+                        android:id="@+id/my_location_users"
+                        android:layout_toRightOf="@+id/friends_text"/>
+
+                    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sports Unity users"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/my_location_users"
+                        app:layout_widthPercent="22%"
+                        android:id="@+id/users_text"
+                        android:textSize="@dimen/font_size_very_very_small"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_widthPercent="5%"
+                        android:layout_centerVertical="true"
+
+                        android:src="@drawable/ic_ppl_with_same_interest"
+                        android:id="@+id/my_location_people_intrest"
+                        android:layout_toRightOf="@+id/users_text"/>
+
+                    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="People with same intrest"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/my_location_people_intrest"
+                        app:layout_widthPercent="30%"
+                        android:id="@+id/people_intrest_text"
+                        android:textSize="@dimen/font_size_very_very_small"/>
+
+
+                </android.support.percent.PercentRelativeLayout>
 
             </LinearLayout>
         </RelativeLayout>
+
+
+    </FrameLayout>
 
 </LinearLayout>

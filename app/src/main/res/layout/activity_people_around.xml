@@ -1,35 +1,105 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    tools:context="com.sports.unity.peoplearound.PeopleAroundActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    tools:context="com.sports.unity.messages.controller.activity.PeopleAroundMeMap">
 
-    <android.support.design.widget.AppBarLayout
+    <include
+        android:id="@+id/tool_bar_map"
+        layout="@layout/toolbar_people_around_me"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:minHeight="?android:attr/actionBarSize" />
+
+    <View
+        android:id="@+id/seperator"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/tool_bar"
+        android:background="@color/tab_seperator" />
+
+    <com.sports.unity.common.view.SlidingTabLayout
+        android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_below="@id/seperator"
+        android:background="@color/app_theme_blue"
+        android:elevation="@dimen/toolbar_elevation" />
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    <View
+        android:id="@+id/view"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/tabs"
+        android:background="@color/ColorPrimary" />
 
-    </android.support.design.widget.AppBarLayout>
+    <com.sports.unity.common.model.ControlledSwipeViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/view"
+        android:layout_weight="1">
 
-    <include layout="@layout/content_people_around" />
+    </com.sports.unity.common.model.ControlledSwipeViewPager>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_dialog_email" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom">
 
-</android.support.design.widget.CoordinatorLayout>
+            <LinearLayout
+                android:id="@+id/mapButtons"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:orientation="vertical"
+                android:paddingBottom="@dimen/vertical_padding_small"
+                android:paddingLeft="@dimen/horizontal_padding_small"
+                android:paddingRight="@dimen/horizontal_padding_small">
+
+                <ImageView
+                    android:id="@+id/myLocation"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_my_loc" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/mapButtons"
+                android:layout_gravity="bottom"
+                android:background="@android:color/white"
+                android:orientation="vertical"
+                android:paddingLeft="@dimen/horizontal_padding_small"
+                android:paddingRight="@dimen/horizontal_padding_small">
+
+                <TextView
+                    android:id="@+id/distance_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:paddingTop="@dimen/vertical_padding_very_very_small"
+                    android:text="@string/people_around_you"
+                    android:textColor="@color/news_static"
+                    android:textSize="@dimen/font_size_very_small" />
+
+                <com.sports.unity.messages.controller.viewhelper.DiscreteSeekBar
+                    android:id="@+id/distance_seekbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:paddingBottom="@dimen/vertical_padding_small"
+                    android:paddingLeft="@dimen/vertical_padding_medium"
+                    android:paddingRight="@dimen/vertical_padding_medium"
+                    android:paddingTop="@dimen/vertical_padding_small"
+                    android:layout_marginBottom="10dp"
+                    android:progressDrawable="@drawable/seekbar_drawable"
+                    android:thumb="@drawable/ic_distance_slider_01" />
+            </LinearLayout>
+        </RelativeLayout>
+</LinearLayout>
