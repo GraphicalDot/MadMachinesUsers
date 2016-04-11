@@ -32,7 +32,7 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
     private Context context;
     String userName;
 
-    public PeopleAroundMeAdapter(ArrayList<Person> people,Context context) {
+    public PeopleAroundMeAdapter(ArrayList<Person> people, Context context) {
         this.people = people;
         this.context = context;
     }
@@ -47,7 +47,7 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
     public void onBindViewHolder(ViewHolder holder, int position) {
 
         holder.dto = people.get(position);
-        userName = holder.dto.getUsername()+ "@mm.io";
+        userName = holder.dto.getUsername();
         holder.tvfriendname.setText(holder.dto.getName());
         int distance = holder.dto.getDistance();
         if (distance > 1000) {
@@ -59,13 +59,13 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
         Glide.with(context).load(holder.dto.getUsername()).placeholder(R.drawable.ic_no_img).into(holder.ivfriendimg);
 
 
-
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Contacts contact = SportsUnityDBHelper.getInstance(context).getContactByJid(userName);
                 if (contact == null) {
                     //createContact(userName, context, vCard);
+                    createContact(userName, context, null);
                     contact = SportsUnityDBHelper.getInstance(context).getContactByJid(userName);
                     moveToChatActivity(contact, false);
                 } else {
@@ -76,22 +76,13 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
     }
 
 
-
-
-
-
-
-
-
-
     @Override
     public int getItemCount() {
         return people.size();
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder
-    {
+    public class ViewHolder extends RecyclerView.ViewHolder {
 
         public TextView tvfriendname;
         public TextView tvfrienddistance;
@@ -104,9 +95,9 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            tvfriendname=(TextView) view.findViewById(R.id.tv_friend_name);
-            tvfrienddistance=(TextView) view.findViewById(R.id.tv_friend_distance);
-            ivfriendimg=(ImageView) view.findViewById(R.id.iv_friend_img);
+            tvfriendname = (TextView) view.findViewById(R.id.tv_friend_name);
+            tvfrienddistance = (TextView) view.findViewById(R.id.tv_friend_distance);
+            ivfriendimg = (ImageView) view.findViewById(R.id.iv_friend_img);
 
 
         }
@@ -122,10 +113,12 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
         Intent intent = ChatScreenActivity.createChatScreenIntent(context, false, contact.jid, name, contact.id, userPicture, blockStatus, othersChat, contact.availableStatus, contact.status);
         context.startActivity(intent);
     }
+
     private boolean createContact(String jid, Context context, VCard vCard) {
         boolean success = false;
-        SportsUnityDBHelper.getInstance(context).addToContacts(vCard.getNickName(), null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
-        SportsUnityDBHelper.getInstance(context).updateContacts(jid, vCard.getAvatar(), vCard.getMiddleName());
+        byte[] emptyAvatar = new byte[0];
+        SportsUnityDBHelper.getInstance(context).addToContacts("nickname", null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
+        SportsUnityDBHelper.getInstance(context).updateContacts(jid, emptyAvatar, "middlename");
         return success;
     }
 }
