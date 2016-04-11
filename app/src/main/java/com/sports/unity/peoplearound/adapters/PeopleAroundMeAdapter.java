@@ -41,11 +41,7 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
         holder.dto = people.get(position);
         holder.tvfriendname.setText(holder.dto.getUsername());
         holder.tvfrienddistance.setText(holder.dto.getDistance());
-        Glide.with(context).load(holder.dto).placeholder(R.drawable.ic_no_img).into(holder.ivfriendimg);
-
-
-
-
+        Glide.with(context).load(holder.dto.getUsername()).placeholder(R.drawable.ic_no_img).into(holder.ivfriendimg);
     }
 
     @Override
@@ -67,10 +63,11 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
 
         public ViewHolder(View view) {
             super(view);
+            mView = view;
             tvfriendname=(TextView) view.findViewById(R.id.tv_friend_name);
             tvfrienddistance=(TextView) view.findViewById(R.id.tv_friend_distance);
             ivfriendimg=(ImageView) view.findViewById(R.id.iv_friend_img);
-            mView = view;
+
 
         }
     }

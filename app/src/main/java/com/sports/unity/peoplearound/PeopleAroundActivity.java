@@ -136,6 +136,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         aDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         locManager = LocManager.getInstance(getApplicationContext());
         locManager.buildApiClient();
+        setCustomButtonsForNavigationAndUsers();
         hideSoftKeyboard();
         initToolbar();
         InitSeekbar();
@@ -148,7 +149,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         String peopleAroundMeTitles[] = {getString(R.string.friends_tab), getString(R.string.su_users_tab), getString(R.string.need_heading_tab)};
         int peopleAroundMeTabs = peopleAroundMeTitles.length;
 
-        peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs, people);
+        peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs);
         mViewPager.setAdapter(peopleAroundMeViewPagerAdapter);
         tab_index = getIntent().getIntExtra("tab_index", 1);
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
@@ -187,7 +188,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
                     if(fragment instanceof DataNotifier) {
                         DataNotifier listner = (DataNotifier)fragment;
-                        listner.notifyPeoples();
+                        listner.notifyPeoples(people);
                     }
                     if (dialog != null) {
                         if (dialog.isShowing())
@@ -254,8 +255,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             }
         });
     }
-
-
     private void setCustomButtonsForNavigationAndUsers() {
         ImageView myLocation = (ImageView) findViewById(R.id.myLocation);
         myLocation.setOnClickListener(new View.OnClickListener() {
@@ -268,7 +267,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                 }
             }
         });
-        ImageView refreshUsers = (ImageView) findViewById(R.id.refreshUsers);
+        /*ImageView refreshUsers = (ImageView) findViewById(R.id.refreshUsers);
         refreshUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -277,7 +276,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                 }
 
             }
-        });
+        });*/
     }
 
 
