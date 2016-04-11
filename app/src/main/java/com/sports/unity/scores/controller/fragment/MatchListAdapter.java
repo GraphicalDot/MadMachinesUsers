@@ -321,7 +321,21 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                         holder.liveText.setVisibility(View.VISIBLE);
                         holder.matchDay.setVisibility(View.GONE);
                         holder.matchMinutes.setVisibility(View.GONE);
-                        holder.liveText.setText(footballMatchJsonCaller.getMatchStatus());
+                        String timer;
+                        String FORMAT = Constants.FOOTBALL_TIMER;
+                        int hours=0;
+                        int minute=0;
+                        Integer counter = 0;
+                        try{
+                            counter = Integer.parseInt(footballMatchJsonCaller.getMatchStatus());
+                            hours = counter/60;
+                            minute = counter%60;
+
+                        }catch (Exception e ){
+                            e.printStackTrace();
+                        }
+                        timer  = String.format(FORMAT,hours,minute);
+                        holder.liveText.setText(timer);
 
                     } else {
                         holder.matchDay.setText("Completed");

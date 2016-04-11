@@ -122,4 +122,5 @@ public class Constants {
     public static final String CHECK_LOCATION = "location";
     public static final String SENT_TOKEN_TO_SERVER = "token_sent_to_server";
     public static final String INTENT_KEY_PLAYER_NAME = "player_name";
+    public static final String FOOTBALL_TIMER = "%02d:%02d";
 }
