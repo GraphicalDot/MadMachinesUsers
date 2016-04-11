@@ -66,6 +66,7 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
         recyclerview.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
         mAdapter = new PeopleAroundMeAdapter(peoples,context);
         recyclerview.setNestedScrollingEnabled(false);
+        mAdapter.notifyDataSetChanged();
 
     }
 
