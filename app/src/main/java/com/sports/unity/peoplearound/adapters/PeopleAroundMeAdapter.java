@@ -56,7 +56,7 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
         } else {
             holder.tvfrienddistance.setText(String.valueOf(distance) + " mts ");
         }
-        Glide.with(context).load(holder.dto.getUsername()).placeholder(R.drawable.ic_no_img).into(holder.ivfriendimg);
+        Glide.with(context).load(holder.dto.getUsername()).placeholder(R.drawable.ic_user).into(holder.ivfriendimg);
 
 
 
