@@ -427,13 +427,11 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                     if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("F") ||cricketMatchJsonCaller.getStatus().equalsIgnoreCase("L") ) {
 
-
-
                         {
                             StringBuilder stringBuilder = new StringBuilder("");
-                            stringBuilder.append(cricketMatchJsonCaller.getTeam1Score()!=null?cricketMatchJsonCaller.getTeam1Score():"0");
+                            stringBuilder.append(cricketMatchJsonCaller.getTeam1Score());
                             stringBuilder.append("/");
-                            stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam1() != null ? cricketMatchJsonCaller.getWicketsTeam1() : "0");
+                            stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam1());
 
                          //   teamFirstOvers.setText("("+cricketMatchJsonCaller.getOversTeam1()!=null?cricketMatchJsonCaller.getOversTeam1():"0"+")");
 
@@ -444,7 +442,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                             StringBuilder stringBuilder1=new StringBuilder("");
                             stringBuilder1.append("(");
-                            stringBuilder1.append(cricketMatchJsonCaller.getOversTeam1()!=null?cricketMatchJsonCaller.getOversTeam1():"0");
+                            stringBuilder1.append(cricketMatchJsonCaller.getOversTeam1());
                             stringBuilder1.append(")");
                             teamFirstOvers.setText(stringBuilder1.toString());
 
@@ -452,9 +450,9 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                         {
                             StringBuilder stringBuilder = new StringBuilder("");
-                            stringBuilder.append(cricketMatchJsonCaller.getTeam2Score()!=null?cricketMatchJsonCaller.getTeam2Score():"0");
+                            stringBuilder.append(cricketMatchJsonCaller.getTeam2Score());
                             stringBuilder.append("/");
-                            stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam2() != null ? cricketMatchJsonCaller.getWicketsTeam2() : "0");
+                            stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam2());
 
                            // teamSecondOvers.setText("("+cricketMatchJsonCaller.getOversTeam2()!=null?cricketMatchJsonCaller.getOversTeam2():"0"+")");
 
@@ -464,7 +462,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                             StringBuilder stringBuilder1=new StringBuilder("");
                             stringBuilder1.append("(");
-                            stringBuilder1.append(cricketMatchJsonCaller.getOversTeam2()!=null?cricketMatchJsonCaller.getOversTeam2():"0");
+                            stringBuilder1.append(cricketMatchJsonCaller.getOversTeam2());
                             stringBuilder1.append(")");
                             teamSecondOvers.setText(stringBuilder1.toString());
 
