@@ -556,7 +556,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                        // cloackTimer.setVisibility(View.VISIBLE);
                         /*donutProgress.setVisibility(View.VISIBLE);*/
                         String timer;
-                        String FORMAT = "%02d:%02d";
+                        String FORMAT = Constants.FOOTBALL_TIMER;
                         int hours=0;
                         int minute=0;
                         getTvMatchDay.setTextColor(getResources().getColor(R.color.app_theme_blue));

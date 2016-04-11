@@ -28,7 +28,7 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
  */
 public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
 
-    private ArrayList<Person> peoples = new ArrayList<>();
+    private ArrayList<Person> peoples ;
     private RecyclerView recyclerview;
     private PeopleAroundMeAdapter mAdapter;
     private Context context;
@@ -61,10 +61,11 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
 
 
     private void initViews(View v) {
-
+        peoples = getArguments().getParcelableArrayList(Constants.PARAM_PEOPLES);
         recyclerview=(RecyclerView) v.findViewById(R.id.recyclerview);
         mAdapter = new PeopleAroundMeAdapter(peoples,context);
         recyclerview.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
+        recyclerview.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
 
     }
@@ -111,14 +112,13 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
 
 
     @Override
-    public void notifyPeoples(ArrayList<Person> peoples) {
-        this.peoples = peoples;
+    public void notifyPeoples() {
         Log.i("notifyPeoples", "notifyPeoples: " + peoples);
-        if(mAdapter==null){
-            mAdapter = new PeopleAroundMeAdapter(peoples,context);
-
+        if(mAdapter!=null){
+            recyclerview.postInvalidate();
+            mAdapter.notifyDataSetChanged();
 
         }
-        mAdapter.notifyDataSetChanged();
+
     }
 }

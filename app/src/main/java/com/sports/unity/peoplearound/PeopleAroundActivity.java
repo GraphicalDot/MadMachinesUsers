@@ -90,7 +90,7 @@ import static com.sports.unity.util.CommonUtil.getDeviceId;
 import static com.sports.unity.util.Constants.REQUEST_PARAMETER_KEY_APK_VERSION;
 import static com.sports.unity.util.Constants.REQUEST_PARAMETER_KEY_UDID;
 
-public class PeopleAroundActivity extends AppCompatActivity implements PeopleService,TokenRegistrationHandler.TokenRegistrationContentListener , ClusterManager.OnClusterClickListener<Person>, ClusterManager.OnClusterItemClickListener<Person>{
+public class PeopleAroundActivity extends AppCompatActivity implements PeopleService,TokenRegistrationHandler.TokenRegistrationContentListener {
 
     private static final String REQUEST_LISTENER_KEY = "nearby_key";
     private static final String REQUEST_TAG = "nearby_tag";
@@ -123,7 +123,11 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     private TokenRegistrationHandler tokenRegistrationHandler;
     private ViewPager mViewPager;
     private PeopleAroundMeViewPagerAdapter peopleAroundMeViewPagerAdapter;
-    private ArrayList<Person> people;
+
+    private ArrayList<Person> peopleFriends = new ArrayList<>();
+    private ArrayList<Person> peopleSU = new ArrayList<>();
+    private ArrayList<Person> peopleNeedHeading = new ArrayList<>();
+
 
 
 
@@ -149,7 +153,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         String peopleAroundMeTitles[] = {getString(R.string.friends_tab), getString(R.string.su_users_tab), getString(R.string.need_heading_tab)};
         int peopleAroundMeTabs = peopleAroundMeTitles.length;
 
-        peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs);
+        peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs,peopleFriends,peopleSU,peopleNeedHeading);
         mViewPager.setAdapter(peopleAroundMeViewPagerAdapter);
         tab_index = getIntent().getIntExtra("tab_index", 1);
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
@@ -181,15 +185,33 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                         dialog.dismiss();
                     }
                     peoplesNearMe = ScoresJsonParser.parseListOfNearByUsers(content);
-                    people = peoplesNearMe.getPersons();
+                      ArrayList<Person> people = peoplesNearMe.getPersons();
+                    peopleFriends.clear();
+                    peopleSU.clear();
+                    peopleNeedHeading.clear();
 
-                    Fragment
-                        fragment= peopleAroundMeViewPagerAdapter.getItem(mViewPager.getCurrentItem());
+                    for(Person person : people){
+                     if(person.isFriend()){
+                         peopleFriends.add(person);
 
-                    if(fragment instanceof DataNotifier) {
-                        DataNotifier listner = (DataNotifier)fragment;
-                        listner.notifyPeoples(people);
+                     }else if(person.isCommonInterest()){
+                         peopleNeedHeading.add(person);
+                     }else{
+                         peopleSU.add(person);
+                     }
                     }
+                  //  int count = peopleAroundMeViewPagerAdapter.getCount();
+                    //getSupportFragmentManager().getFragments();
+                    for(Fragment fragment: getSupportFragmentManager().getFragments()){
+//                        Fragment
+//                                fragment= peopleAroundMeViewPagerAdapter.getItem(i);
+
+                        if(fragment instanceof DataNotifier) {
+                            DataNotifier listner = (DataNotifier)fragment;
+                            listner.notifyPeoples();
+                        }
+                    }
+
                     if (dialog != null) {
                         if (dialog.isShowing())
                             dialog.dismiss();
@@ -476,6 +498,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
     }
 
+
     private void populateProfilePopup(final VCard vCard, View popupProfile, final String jid, int distance, String info, Person person) {
 
         CircleImageView imageview = (CircleImageView) aDialog.findViewById(R.id.user_pic);
@@ -696,16 +719,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         populateProfilePopup(vCard, view, jid, distance, null, person);
     }
 
-    @Override
-    public boolean onClusterClick(Cluster<Person> cluster) {
-
-        return false;
-    }
-
-    @Override
-    public boolean onClusterItemClick(Person person) {
-        return showProfile(person);
-    }
 
     @Override
     protected void onStart() {
