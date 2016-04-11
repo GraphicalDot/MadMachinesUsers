@@ -2,26 +2,39 @@ package com.sports.unity.peoplearound.adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.ContactsHandler;
+import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.Person;
 
 
+import org.jivesoftware.smack.SmackException;
+import org.jivesoftware.smack.XMPPException;
+import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
+import static android.view.View.GONE;
 
 /**
  * Created by madmachines on 8/4/16.
@@ -58,6 +71,8 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
         } else {
             holder.tvfrienddistance.setText(String.valueOf(distance) + " mts ");
         }
+
+        new GetVcardForUser(holder.dto);
         Glide.with(context).load(holder.dto.getUsername()).placeholder(R.drawable.ic_user).into(holder.ivfriendimg);
 
 
@@ -67,7 +82,8 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
                 Contacts contact = SportsUnityDBHelper.getInstance(context).getContactByJid(userName);
                 if (contact == null) {
                     //createContact(userName, context, vCard);
-                    createContact(userName, context, null,name);
+                    //new GetVcardForUser();
+                    createContact(userName, context, null, name);
                     contact = SportsUnityDBHelper.getInstance(context).getContactByJid(userName);
                     moveToChatActivity(contact, false);
                 } else {
@@ -123,4 +139,48 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
         SportsUnityDBHelper.getInstance(context).updateContacts(jid, emptyAvatar, "middlename");
         return success;
     }
+
+    private class GetVcardForUser extends AsyncTask<String, Void, VCard> {
+        private boolean success = false;
+        private String jid = null;
+
+        private Person person;
+
+        public GetVcardForUser(Person person) {
+            this.person = person;
+        }
+
+        @Override
+        protected VCard doInBackground(String... param) {
+            XMPPTCPConnection connection = XMPPClient.getInstance().getConnection();
+            VCard card = new VCard();
+            try {
+                jid = param[0];
+                if (connection.isAuthenticated()) {
+                    card.load(connection, jid + "@mm.io");
+                    success = true;
+                } else {
+                    success = false;
+                }
+            } catch (XMPPException e) {
+                e.printStackTrace();
+            } catch (SmackException e) {
+                e.printStackTrace();
+            }
+            return card;
+        }
+
+        @Override
+        protected void onPostExecute(VCard vCard) {
+            if (success) {
+                Log.i( "onPostExecute: ",vCard.toString());
+            } else {
+                Log.i( "onPostExecute: ","Error Response");
+            }
+        }
+
+    }
+
+
+
 }

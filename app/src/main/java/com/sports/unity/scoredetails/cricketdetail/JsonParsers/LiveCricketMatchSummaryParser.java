@@ -31,6 +31,9 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
         this.yetToBat = yetToBat;
     }
     public JSONObject getCurentBowler() throws JSONException {
+        if(cricketSummary.isNull("current_bowler")){
+            return  new JSONObject();
+        }
         return cricketSummary.getJSONObject("current_bowler");
     }
     public JSONArray getCurrentPartnership() throws JSONException {

@@ -144,7 +144,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         hideSoftKeyboard();
         initToolbar();
         InitSeekbar();
-        bindAutoComplete();
+       // bindAutoComplete();
         userPrivacyUpdate();
         getLocation();
        // getPeopleAroundMe(latLong.latitude, latLong.longitude);
