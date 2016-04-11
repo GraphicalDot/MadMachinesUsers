@@ -515,7 +515,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     private void setUpcommingMatchScoreCard(ViewHolder holder) throws JSONException {
         //holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
         holder.matchDay.setText(cricketMatchJsonCaller.getMatchName());
-        holder.liveText.setText("Upcomming");
+        holder.liveText.setText("Upcoming");
         holder.t1score.setVisibility(View.GONE);
         holder.t2score.setVisibility(View.GONE);
         holder.team1Overs.setVisibility(View.GONE);
