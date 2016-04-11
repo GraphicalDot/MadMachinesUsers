@@ -34,18 +34,6 @@
         android:layout_height="1dp"
         android:layout_below="@id/tabs"
         android:background="@color/ColorPrimary" />
-    <FrameLayout
-        android:id="@+id/fl_custom_location"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/textColorPrimary"
-        android:visibility="gone">
-        <fragment
-            android:id="@+id/custom_location"
-            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/people_nearme_custom_location_height" />
-    </FrameLayout>
 
 
 
@@ -58,22 +46,30 @@
 
     </com.sports.unity.common.model.ControlledSwipeViewPager>
 
-
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/myLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:backgroundTint="@color/ColorPrimary"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@drawable/ic_my_loc"  />
-
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:visibility="visible">
+
+        <LinearLayout
+            android:id="@+id/mapButtons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/vertical_padding_small"
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_small">
+
+            <ImageView
+                android:id="@+id/myLocation"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_my_loc" />
+
+        </LinearLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
