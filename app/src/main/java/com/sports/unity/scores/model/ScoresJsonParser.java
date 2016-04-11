@@ -106,6 +106,7 @@ public class ScoresJsonParser {
                     Person p = new Person();
                     p.setUsername(personObject.getString("username"));
                     p.setDistance(personObject.getInt("distance"));
+                    p.setName(personObject.getString("name"));
                     p.setPosition(new LatLng(personObject.getDouble("lat"), personObject.getDouble("lng")));
                     String friendship_status = personObject.getString("friendship_status");
                     if (!personObject.isNull("interests") && personObject.getJSONArray("interests").length() > 0) {

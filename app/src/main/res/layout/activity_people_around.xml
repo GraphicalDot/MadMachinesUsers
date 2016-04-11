@@ -35,6 +35,8 @@
         android:layout_below="@id/tabs"
         android:background="@color/ColorPrimary" />
 
+
+
     <com.sports.unity.common.model.ControlledSwipeViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
@@ -43,6 +45,7 @@
         android:layout_weight="1">
 
     </com.sports.unity.common.model.ControlledSwipeViewPager>
+
     <FrameLayout
         android:id="@+id/fl_custom_location"
         android:layout_width="match_parent"
@@ -55,6 +58,7 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/people_nearme_custom_location_height" />
     </FrameLayout>
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

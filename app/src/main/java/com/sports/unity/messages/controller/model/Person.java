@@ -18,6 +18,7 @@ public class Person implements  Parcelable, ClusterItem {
     private LatLng position;
     private boolean friend;
     private boolean commonInterest;
+    private String name;
     private List<String> interests = new ArrayList<>();
     public Person(){
 
@@ -86,6 +87,15 @@ public class Person implements  Parcelable, ClusterItem {
 
     public void setPosition(LatLng position) {
         this.position = position;
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
