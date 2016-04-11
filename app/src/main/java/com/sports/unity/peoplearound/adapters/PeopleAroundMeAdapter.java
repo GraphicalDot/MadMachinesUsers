@@ -65,7 +65,7 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
             public void onClick(View v) {
                 Contacts contact = SportsUnityDBHelper.getInstance(context).getContactByJid(userName);
                 if (contact == null) {
-                    //createContact(jid, context, vCard);
+                    //createContact(userName, context, vCard);
                     contact = SportsUnityDBHelper.getInstance(context).getContactByJid(userName);
                     moveToChatActivity(contact, false);
                 } else {
@@ -116,7 +116,6 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
         String name = contact.getName();
         int contactId = contact.id;
         byte[] userPicture = contact.image;
-        boolean nearbyChat = false;
         boolean blockStatus = SportsUnityDBHelper.getInstance(context).isChatBlocked(contactId);
         boolean othersChat = contact.isOthers();
 
