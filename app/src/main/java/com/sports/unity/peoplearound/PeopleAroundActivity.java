@@ -278,7 +278,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         });
     }
     private void setCustomButtonsForNavigationAndUsers() {
-        ImageView myLocation = (ImageView) findViewById(R.id.myLocation);
+        View myLocation = findViewById(R.id.myLocation);
         myLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
