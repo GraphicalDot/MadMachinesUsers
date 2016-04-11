@@ -31,6 +31,7 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
     private ArrayList<Person> people;
     private Context context;
     String userName;
+    String name;
 
     public PeopleAroundMeAdapter(ArrayList<Person> people, Context context) {
         this.people = people;
@@ -48,6 +49,7 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
 
         holder.dto = people.get(position);
         userName = holder.dto.getUsername();
+        name = holder.dto.getName();
         holder.tvfriendname.setText(holder.dto.getName());
         int distance = holder.dto.getDistance();
         if (distance > 1000) {
@@ -65,7 +67,7 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
                 Contacts contact = SportsUnityDBHelper.getInstance(context).getContactByJid(userName);
                 if (contact == null) {
                     //createContact(userName, context, vCard);
-                    createContact(userName, context, null);
+                    createContact(userName, context, null,name);
                     contact = SportsUnityDBHelper.getInstance(context).getContactByJid(userName);
                     moveToChatActivity(contact, false);
                 } else {
@@ -114,10 +116,10 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
         context.startActivity(intent);
     }
 
-    private boolean createContact(String jid, Context context, VCard vCard) {
+    private boolean createContact(String jid, Context context, VCard vCard,String name) {
         boolean success = false;
         byte[] emptyAvatar = new byte[0];
-        SportsUnityDBHelper.getInstance(context).addToContacts("nickname", null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
+        SportsUnityDBHelper.getInstance(context).addToContacts(name, null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
         SportsUnityDBHelper.getInstance(context).updateContacts(jid, emptyAvatar, "middlename");
         return success;
     }
