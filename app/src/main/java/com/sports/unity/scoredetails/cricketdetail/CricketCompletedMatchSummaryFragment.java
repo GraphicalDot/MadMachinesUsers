@@ -55,6 +55,8 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
     private LinearLayout errorLayout;
     private String seriesId;
     private CompletedCricketMatchSummaryParser cricketMatchSummaryParser;
+    private TextView playedBallTag;
+    private  TextView playerStrikeRate;
     //private CricketMatchJsonCaller cricketMatchJsonCaller;
 
     public CricketCompletedMatchSummaryFragment() {
@@ -97,6 +99,8 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
         tvTossWinTeam = (TextView) view.findViewById(R.id.tv_toss_win_team);
         tvUmpiresName = (TextView) view.findViewById(R.id.tv_umpires_name);
         tvMatchReferee = (TextView) view.findViewById(R.id.tv_match_referee);
+        playedBallTag = (TextView) view.findViewById(R.id.tv_player_ball_tag);
+        playerStrikeRate = (TextView) view.findViewById(R.id.tv_player_sr_t);
         tvSeriesName.setText(matchName);
         tvTossWinTeam.setText(toss);
         initProgress(view);
@@ -200,6 +204,10 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
                 cricketMatchSummaryParser.setBatting(batting);
                 final JSONObject umpire = cricketMatchSummaryParser.getUmpireDetails();
                 cricketMatchSummaryParser.setUmpire(umpire);
+                final JSONObject bowling = cricketMatchSummaryParser.getBowlingDetails();
+                if(bowling != null){
+                    cricketMatchSummaryParser.setBowling(bowling);
+                }
                 if (activity != null) {
 
                     activity.runOnUiThread(new Runnable() {
@@ -210,8 +218,19 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
                                 Glide.with(getContext()).load(cricketMatchSummaryParser.getPlayerImage()).placeholder(R.drawable.ic_no_img).into(ivPlayerProfileView);
                                 playerName.setText(cricketMatchSummaryParser.getPlayerName());
                                 tvPlayerRun.setText(cricketMatchSummaryParser.getruns());
-                                tvPlayerPlayedBall.setText(cricketMatchSummaryParser.getBalls());
-                                tvPlayerStrike_Rate.setText(cricketMatchSummaryParser.getstrikerate());
+                                if(cricketMatchSummaryParser.getBalls().trim().equalsIgnoreCase("0".trim())){
+                                    playedBallTag.setText("WICKET");
+                                    playerStrikeRate.setText("ECO");
+                                    tvPlayerPlayedBall.setText(cricketMatchSummaryParser.getBowling().getString("wickets"));
+                                    tvPlayerStrike_Rate.setText(cricketMatchSummaryParser.getBowling().getString("economy"));
+                                }else
+                                {
+                                    playedBallTag.setText("BALL");
+                                    playerStrikeRate.setText("SR");
+                                    tvPlayerPlayedBall.setText(cricketMatchSummaryParser.getBalls());
+                                    tvPlayerStrike_Rate.setText(cricketMatchSummaryParser.getstrikerate());
+                                }
+
                                 tvMatchDate.setText(DateUtil.getFormattedDate(date));
                                 tvTossWinTeam.setText(toss);
                                 tvSeriesName.setText(matchName);
@@ -230,12 +249,6 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
             showErrorLayout();
         }
     }
-
-
-
-
-
-
     private void setComplatedCricketSummary(JSONObject jsonObject, JSONObject manOftheMatch, JSONObject statObject) throws JSONException {
         Log.i("run: ", jsonObject.toString());
         if( manOftheMatch != null &&  !manOftheMatch.isNull("image")){
