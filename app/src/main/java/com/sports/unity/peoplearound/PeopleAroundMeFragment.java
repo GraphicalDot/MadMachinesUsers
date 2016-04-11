@@ -1,7 +1,6 @@
 package com.sports.unity.peoplearound;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,10 +11,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
-import com.google.android.gms.plus.People;
 import com.sports.unity.R;
 import com.sports.unity.messages.controller.model.Person;
 import com.sports.unity.peoplearound.adapters.PeopleAroundMeAdapter;
+
 import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;

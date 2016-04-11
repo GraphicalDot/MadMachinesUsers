@@ -1,6 +1,5 @@
 package com.sports.unity.peoplearound;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -16,7 +15,6 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +23,6 @@ import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -35,21 +32,10 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
-import com.google.maps.android.ui.IconGenerator;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -61,7 +47,6 @@ import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.gcm.TokenRegistrationHandler;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
-import com.sports.unity.messages.controller.activity.CustomClusterRenderer;
 import com.sports.unity.messages.controller.activity.PeopleService;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.NearByUserJsonCaller;
@@ -80,7 +65,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -155,7 +139,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         bindAutoComplete();
         userPrivacyUpdate();
         getLocation();
-        getPeopleAroundMe(latLong.latitude, latLong.longitude);
+       // getPeopleAroundMe(latLong.latitude, latLong.longitude);
         int tab_index = 0;
         mViewPager = (ViewPager) findViewById(R.id.pager);
         String peopleAroundMeTitles[] = {getString(R.string.friends_tab), getString(R.string.su_users_tab), getString(R.string.need_heading_tab)};
@@ -176,7 +160,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         tabs.setViewPager(mViewPager);
         mViewPager.setCurrentItem(tab_index);
 
-   }
+    }
 
 
 
@@ -194,30 +178,24 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                     }
                     peoplesNearMe = ScoresJsonParser.parseListOfNearByUsers(content);
                     people = peoplesNearMe.getPersons();
-
-
-
-
-
-                    if(people.size()==0){
-                        if (dialog != null) {
-                            if (dialog.isShowing())
-                                dialog.dismiss();
-                        }
-                        // map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
+                    if (dialog != null) {
+                        if (dialog.isShowing())
+                            dialog.dismiss();
+                    }
+                    // map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                       /*  map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));*/
-                        LayoutInflater inflater = PeopleAroundActivity.this.getLayoutInflater();
-                        View view = inflater.inflate(R.layout.chat_other_profile_layout, null);
+                    LayoutInflater inflater = PeopleAroundActivity.this.getLayoutInflater();
+                    View view = inflater.inflate(R.layout.chat_other_profile_layout, null);
 //                        AlertDialog.Builder otherProfileBuilder = new AlertDialog.Builder(PeopleAroundMeMap.this);
 //                        otherProfileBuilder.setView(view);
 //                        aDialog = otherProfileBuilder.create();
 //                        aDialog.getWindow().setBackgroundDra'getDrawable(int)' is deprecated more... (Ctrl+wable(new ColorDrawable(Color.TRANSPARENT));
 //                        aDialog.show();
-                        aDialog.setContentView(R.layout.chat_other_profile_layout);
-                        aDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-                        //aDialog.show();
-                        populateProfilePopup(null, view, null, 0, null, null);
-                    }
+                    aDialog.setContentView(R.layout.chat_other_profile_layout);
+                    aDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                    //aDialog.show();
+                    populateProfilePopup(null, view, null, 0, null, null);
+
                 } else {
                     if (dialog != null) {
                         if (dialog.isShowing())
@@ -376,10 +354,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             public void onClick(View v) {
                 Intent i = getIntent();
 
-
-                //  makeText(getApplicationContext(), "Privacy Policy work in progress", LENGTH_LONG).show();
-
-
                 checkAndEnableLocation();
 
             }
@@ -413,50 +387,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         titleCity.setText(getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_STATE));
     }
 
-    private void loadMap() {
-        ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap googleMap) {
-
-                if (userLocation) {
-                    //openMap(googleMap);
-                } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(PeopleAroundActivity.this);
-                    builder.setTitle("Are You Sure Want To Enable Your Location?");
-
-                    builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            checkAndEnableLocation();
-                            /*dialog.dismiss();*/
-                        }
-
-                    });
-                    builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-
-                    });
-                    builder.show();
-                    //Toast.makeText(PeopleAroundMeMap.this,R.string.location_turned_off_text,Toast.LENGTH_LONG).show();
-
-                }
-
-
-            }
-        });
-    }
-
-
-
-    private void hideLocationbutton() {
-        View mapView = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getView();
-        View btnMyLocation = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
-        btnMyLocation.setVisibility(View.INVISIBLE);
-    }
 
     private void getPeopleAroundMe(double latitude, double longitude) {
 
@@ -586,8 +516,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             byte[] image = vCard.getAvatar();
             if (image != null) {
                 imageview.setImageBitmap(BitmapFactory.decodeByteArray(image, 0, image.length));
-            } else {
-                // nothing
             }
             if (distance > 1000) {
                 float dist = distance /= 1000;
@@ -699,7 +627,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LATITUDE, location.getLatitude());
             getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LONGITUDE, location.getLongitude());
             latLong = new LatLng(location.getLatitude(), location.getLongitude());
-           // map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
+            // map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
             new FetchAndDisplayCurrentAddress(location).execute();
             getPeopleAroundMe(latLong.latitude, latLong.longitude);
         }
@@ -726,7 +654,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             //nothing
         }
         userPrivacyUpdate();
-       // loadMap();
+        // loadMap();
     }
 
     public void hideSoftKeyboard() {
@@ -831,7 +759,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             this.distance = distance;
             this.person = person;
         }
-
         @Override
         protected VCard doInBackground(String... param) {
             XMPPTCPConnection connection = XMPPClient.getInstance().getConnection();
@@ -851,7 +778,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             }
             return card;
         }
-
         @Override
         protected void onPostExecute(VCard vCard) {
             if (success) {
