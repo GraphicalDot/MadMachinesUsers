@@ -150,11 +150,11 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         tab_index = getIntent().getIntExtra("tab_index", 1);
         SlidingTabLayout tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         tabs.setDistributeEvenly(true);
-        tabs.setTabTextColor(R.color.filter_tab_selector);
+        //tabs.setTabTextColor(R.color.filter_tab_selector);
         tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
             @Override
             public int getIndicatorColor(int position) {
-                return getResources().getColor(R.color.app_theme_blue);
+                return getResources().getColor(R.color.ColorPrimary);
             }
         });
         tabs.setViewPager(mViewPager);
