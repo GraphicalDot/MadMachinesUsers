@@ -24,7 +24,7 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PeopleAroundMeFragment extends Fragment {
+public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
 
     private ArrayList<Person> peoples = new ArrayList<>();
     private RecyclerView recyclerview;
@@ -55,6 +55,7 @@ public class PeopleAroundMeFragment extends Fragment {
         Bundle b = getArguments();
         peoples = b.getParcelableArrayList("peoples");
         initViews(v);
+        initProgress(v);
         return v;
     }
 
@@ -109,5 +110,8 @@ public class PeopleAroundMeFragment extends Fragment {
     }
 
 
-
+    @Override
+    public void notifyPeoples() {
+        mAdapter.notifyDataSetChanged();
+    }
 }

@@ -13,6 +13,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -52,6 +53,7 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.NearByUserJsonCaller;
 import com.sports.unity.messages.controller.model.PeoplesNearMe;
 import com.sports.unity.messages.controller.model.Person;
+import com.sports.unity.scores.DataServiceContract;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
@@ -124,6 +126,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     private ArrayList<Person> people;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -178,6 +181,14 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                     }
                     peoplesNearMe = ScoresJsonParser.parseListOfNearByUsers(content);
                     people = peoplesNearMe.getPersons();
+
+                    Fragment
+                        fragment= peopleAroundMeViewPagerAdapter.getItem(mViewPager.getCurrentItem());
+
+                    if(fragment instanceof DataNotifier) {
+                        DataNotifier listner = (DataNotifier)fragment;
+                        listner.notifyPeoples();
+                    }
                     if (dialog != null) {
                         if (dialog.isShowing())
                             dialog.dismiss();
@@ -210,7 +221,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         }
 
     };
-
 
 
     private void userPrivacyUpdate() {
