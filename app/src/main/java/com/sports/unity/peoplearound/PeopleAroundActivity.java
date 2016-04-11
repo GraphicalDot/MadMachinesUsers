@@ -155,7 +155,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         bindAutoComplete();
         userPrivacyUpdate();
         getLocation();
-        getPeopleAroundMe(latLong.latitude,latLong.longitude);
+        getPeopleAroundMe(latLong.latitude, latLong.longitude);
         int tab_index = 0;
         mViewPager = (ViewPager) findViewById(R.id.pager);
         String peopleAroundMeTitles[] = {getString(R.string.friends_tab), getString(R.string.su_users_tab), getString(R.string.need_heading_tab)};
@@ -200,6 +200,10 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
 
                     if(people.size()==0){
+                        if (dialog != null) {
+                            if (dialog.isShowing())
+                                dialog.dismiss();
+                        }
                         // map.moveCamera(CameraUpdateFactory.zoomTo(calculateZoomLevel(radius)));
                       /*  map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));*/
                         LayoutInflater inflater = PeopleAroundActivity.this.getLayoutInflater();
@@ -512,7 +516,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         aDialog.findViewById(R.id.progressBarProfile).setVisibility(VISIBLE);
 
 //        int distance = (int) Math.round(Double.parseDouble(marker.getSnippet().substring(marker.getSnippet().indexOf(",") + 1, marker.getSnippet().length())));
-        int distance = (int) (person.getDistance());
+        int distance = person.getDistance();
         new GetVcardForUser(popupProfile, distance, person).execute(person.getUsername());
 
     }

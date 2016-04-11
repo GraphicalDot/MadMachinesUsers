@@ -14,15 +14,17 @@ import java.util.List;
  */
 public class Person implements ClusterItem, Parcelable {
     private String username;
-    private double distance;
+    private Integer distance;
     private LatLng position;
     private boolean friend;
     private boolean commonInterest;
     private List<String> interests = new ArrayList<>();
+    public Person(){
 
+    }
     protected Person(Parcel in) {
         username = in.readString();
-        distance = in.readDouble();
+        distance = in.readInt();
         position = in.readParcelable(LatLng.class.getClassLoader());
         friend = in.readByte() != 0;
         commonInterest = in.readByte() != 0;
@@ -54,11 +56,11 @@ public class Person implements ClusterItem, Parcelable {
         this.username = username;
     }
 
-    public double getDistance() {
+    public int getDistance() {
         return distance;
     }
 
-    public void setDistance(double distance) {
+    public void setDistance(Integer distance) {
         this.distance = distance;
     }
 

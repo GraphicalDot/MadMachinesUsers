@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.messages.controller.model.Person;
 
@@ -38,6 +39,10 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.dto = people.get(position);
+        holder.tvfriendname.setText(holder.dto.getUsername());
+        holder.tvfrienddistance.setText(holder.dto.getDistance());
+        Glide.with(context).load(holder.dto).placeholder(R.drawable.ic_no_img).into(holder.ivfriendimg);
+
 
 
 

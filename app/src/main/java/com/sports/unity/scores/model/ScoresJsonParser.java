@@ -6,7 +6,6 @@ import com.sports.unity.common.model.MatchDay;
 import com.sports.unity.messages.controller.model.PeoplesNearMe;
 import com.sports.unity.messages.controller.model.Person;
 import com.sports.unity.scoredetails.CommentriesModel;
-import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -106,7 +105,7 @@ public class ScoresJsonParser {
                     JSONObject personObject = array.getJSONObject(index);
                     Person p = new Person();
                     p.setUsername(personObject.getString("username"));
-                    p.setDistance(personObject.getDouble("distance"));
+                    p.setDistance(personObject.getInt("distance"));
                     p.setPosition(new LatLng(personObject.getDouble("lat"), personObject.getDouble("lng")));
                     String friendship_status = personObject.getString("friendship_status");
                     if (!personObject.isNull("interests") && personObject.getJSONArray("interests").length() > 0) {
