@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by manish on 02/03/16.
  */
-public class Person implements ClusterItem, Parcelable {
+public class Person implements  Parcelable, ClusterItem {
     private String username;
     private Integer distance;
     private LatLng position;
@@ -80,7 +80,6 @@ public class Person implements ClusterItem, Parcelable {
         this.commonInterest = commonInterest;
     }
 
-    @Override
     public LatLng getPosition() {
         return position;
     }

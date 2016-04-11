@@ -6,20 +6,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.sports.unity.messages.controller.model.Person;
-import com.sports.unity.scoredetails.CommentaryFragment;
-import com.sports.unity.scoredetails.CommentriesModel;
-import com.sports.unity.scoredetails.UpcommingMatchCommentaryFragment;
-import com.sports.unity.scoredetails.cricketdetail.CompletedMatchScoreCardFragment;
-import com.sports.unity.scoredetails.cricketdetail.CricketCompletedMatchSummaryFragment;
-import com.sports.unity.scoredetails.cricketdetail.CricketLiveMatchSummaryFragment;
-import com.sports.unity.scoredetails.cricketdetail.CricketUpcomingMatchScoreCardFragment;
-import com.sports.unity.scoredetails.cricketdetail.CricketUpcomingMatchSummaryFragment;
-import com.sports.unity.scoredetails.cricketdetail.LiveCricketMatchScoreCardFragment;
-import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by madmachines on 8/4/16.
@@ -31,32 +20,36 @@ public class PeopleAroundMeViewPagerAdapter extends FragmentStatePagerAdapter  {
 
         private String titles[];
         private int numberOfTabs;
-    private ArrayList<Person> people;
+        private ArrayList<Person> peopleFriends;
+        private ArrayList<Person> peopleSU;
+        private ArrayList<Person> peopleNeedHeading ;
 
 
 
-        public PeopleAroundMeViewPagerAdapter(FragmentManager fm, String[] titles, int numberOfTabs,ArrayList<Person> people) {
-            super(fm);
-            this.titles = titles;
-            this.numberOfTabs = numberOfTabs;
-            this.people = people;
 
-        }
 
-        @Override
+    public PeopleAroundMeViewPagerAdapter(FragmentManager fm, String[] titles, int numberOfTabs, ArrayList<Person> peopleFriends, ArrayList<Person> peopleSU, ArrayList<Person> peopleNeedHeading) {
+        super(fm);
+        this.titles = titles;
+        this.numberOfTabs = numberOfTabs;
+        this.peopleFriends = peopleFriends;
+        this.peopleSU = peopleSU;
+        this.peopleNeedHeading = peopleNeedHeading;
+    }
+
+    @Override
         public Fragment getItem(int position) {
 
-            Fragment fragment = null;
+            Fragment fragment = new PeopleAroundMeFragment();
+            Bundle bundle = new Bundle();
             if (position == 0) {
-               fragment = new PeopleAroundMeFragment();
+                bundle.putParcelableArrayList(Constants.PARAM_PEOPLES,peopleFriends);
             } else if (position == 1) {
-                fragment = new PeopleAroundMeFragment();
+                bundle.putParcelableArrayList(Constants.PARAM_PEOPLES,peopleSU);
             } else {
-                fragment = new PeopleAroundMeFragment();
+                bundle.putParcelableArrayList(Constants.PARAM_PEOPLES,peopleNeedHeading);
             }
-            Bundle cmBundel = new Bundle();
-            cmBundel.putParcelableArrayList("peoples", people);
-            fragment.setArguments(cmBundel);
+        fragment.setArguments(bundle);
             return fragment;
         }
 

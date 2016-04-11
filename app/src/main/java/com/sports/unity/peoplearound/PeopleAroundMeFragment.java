@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,7 @@ import android.widget.ProgressBar;
 import com.sports.unity.R;
 import com.sports.unity.messages.controller.model.Person;
 import com.sports.unity.peoplearound.adapters.PeopleAroundMeAdapter;
+import com.sports.unity.util.Constants;
 
 import org.solovyev.android.views.llm.LinearLayoutManager;
 
@@ -26,7 +28,7 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
  */
 public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
 
-    private ArrayList<Person> peoples = new ArrayList<>();
+    private ArrayList<Person> peoples ;
     private RecyclerView recyclerview;
     private PeopleAroundMeAdapter mAdapter;
     private Context context;
@@ -52,8 +54,6 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_people_around_me, container, false);
-        Bundle b = getArguments();
-        peoples = b.getParcelableArrayList("peoples");
         initViews(v);
         initProgress(v);
         return v;
@@ -61,11 +61,11 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
 
 
     private void initViews(View v) {
-
+        peoples = getArguments().getParcelableArrayList(Constants.PARAM_PEOPLES);
         recyclerview=(RecyclerView) v.findViewById(R.id.recyclerview);
-        recyclerview.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
         mAdapter = new PeopleAroundMeAdapter(peoples,context);
-        recyclerview.setNestedScrollingEnabled(false);
+        recyclerview.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
+        recyclerview.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
 
     }
@@ -113,6 +113,12 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
 
     @Override
     public void notifyPeoples() {
-        mAdapter.notifyDataSetChanged();
+        Log.i("notifyPeoples", "notifyPeoples: " + peoples);
+        if(mAdapter!=null){
+            recyclerview.postInvalidate();
+            mAdapter.notifyDataSetChanged();
+
+        }
+
     }
 }

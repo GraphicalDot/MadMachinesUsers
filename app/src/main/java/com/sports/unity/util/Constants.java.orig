@@ -122,6 +122,9 @@ public class Constants {
     public static final String CHECK_LOCATION = "location";
     public static final String SENT_TOKEN_TO_SERVER = "token_sent_to_server";
     public static final String INTENT_KEY_PLAYER_NAME = "player_name";
+<<<<<<< HEAD
     public static final String PARAM_PEOPLES = "peoples";
+=======
     public static final String FOOTBALL_TIMER = "%02d:%02d";
+>>>>>>> 58f4ad5685e8c7ea069c3bed4de78caadf44200d
 }
