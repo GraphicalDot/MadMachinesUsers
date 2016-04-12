@@ -237,6 +237,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             tvMatchTime = (TextView) findViewById(R.id.tv_match_time);
             getTvMatchDay = (TextView) findViewById(R.id.tv_game_day);
             getTvMatchDay.setTextColor(getResources().getColor(R.color.score_light_grey));
+            Typeface tf = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
+            getTvMatchDay.setTypeface(tf);
         }catch (Exception e){
             Log.i("Exception Occured", "initView: ");
             Toast.makeText(this,"Error Occured",Toast.LENGTH_LONG);
@@ -558,6 +560,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                         int hours=0;
                         int minute=0;
                         getTvMatchDay.setTextColor(getResources().getColor(R.color.app_theme_blue));
+                        Typeface tf = Typeface.createFromAsset(getAssets(), "RobotoCondensed-Bold.ttf");
+                        getTvMatchDay.setTypeface(tf);
                         Integer counter = 0;
                         try{
                             counter = Integer.parseInt(footballMatchJsonCaller.getMatchStatus());
