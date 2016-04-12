@@ -495,9 +495,9 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         holder.team2Overs.setVisibility(View.VISIBLE);
         holder.t1score.setVisibility(View.VISIBLE);
         holder.t2score.setVisibility(View.VISIBLE);
-        holder.liveText.setText(R.string.live);
+        holder.liveText.setText( cricketMatchJsonCaller.getMatchName());
         holder.liveText.setVisibility(View.VISIBLE);
-        holder.matchDay.setText(cricketMatchJsonCaller.getMatchName());
+        holder.matchDay.setText(R.string.live);
         StringBuilder stringBuilder = new StringBuilder("");
         stringBuilder.append(cricketMatchJsonCaller.getTeam1Score() != null ? cricketMatchJsonCaller.getTeam1Score() : "0");
         stringBuilder.append("/");
@@ -514,8 +514,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
     private void setUpcommingMatchScoreCard(ViewHolder holder) throws JSONException {
         //holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
-        holder.matchDay.setText(cricketMatchJsonCaller.getMatchName());
-        holder.liveText.setText("Upcoming");
+        holder.matchDay.setText("Upcoming");
+        holder.liveText.setText(cricketMatchJsonCaller.getMatchName());
         holder.t1score.setVisibility(View.GONE);
         holder.t2score.setVisibility(View.GONE);
         holder.team1Overs.setVisibility(View.GONE);
@@ -524,8 +524,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     }
 
     private void SetCompletedMatchScoreCard(ViewHolder holder) throws JSONException {
-        holder.matchDay.setText(cricketMatchJsonCaller.getMatchName());
-        holder.liveText.setText("Completed");
+        holder.matchDay.setText("Completed");
+        holder.liveText.setText(cricketMatchJsonCaller.getMatchName());
         holder.liveText.setVisibility(View.VISIBLE);
         holder.t1score.setVisibility(View.VISIBLE);
         holder.t2score.setVisibility(View.VISIBLE);
@@ -600,7 +600,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
             intent.putExtra(Constants.INTENT_KEY_MATCH_NAME, matchName);
             intent.putExtra(Constants.INTENT_KEY_DATE, date);
             intent.putExtra(Constants.LEAGUE_NAME, leagueName);
-
 
             activity.startActivity(intent);
 
@@ -691,7 +690,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
             LayoutInflater inflater = activity.getLayoutInflater();
             final View popupOdds = inflater.inflate(R.layout.betfair_dialog_layout, null);
-
             final AlertDialog.Builder oddsBuilder = new AlertDialog.Builder(activity);
             oddsBuilder.setView(popupOdds);
 

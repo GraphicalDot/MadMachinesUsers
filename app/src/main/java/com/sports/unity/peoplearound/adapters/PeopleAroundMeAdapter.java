@@ -43,8 +43,7 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
 
     private ArrayList<Person> people;
     private Context context;
-    String userName;
-    String name;
+
 
     public PeopleAroundMeAdapter(ArrayList<Person> people, Context context) {
         this.people = people;
@@ -59,9 +58,11 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-
+        final String userName ;
+        final String name;
         holder.dto = people.get(position);
         userName = holder.dto.getUsername();
+        Log.i( "USERNAME: ",userName);
         name = holder.dto.getName();
         holder.tvfriendname.setText(holder.dto.getName());
         int distance = holder.dto.getDistance();
@@ -77,6 +78,7 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
 
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
                 Contacts contact = SportsUnityDBHelper.getInstance(context).getContactByJid(userName);
@@ -92,7 +94,6 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
             }
         });
     }
-
 
     @Override
     public int getItemCount() {
