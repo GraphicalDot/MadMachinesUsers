@@ -32,6 +32,7 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
     private RecyclerView recyclerview;
     private PeopleAroundMeAdapter mAdapter;
     private Context context;
+    private ProgressBar progressBar;
 
     public PeopleAroundMeFragment() {
         // Required empty public constructor
@@ -89,13 +90,12 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
 
     public void showProgress(View view) {
 
-            ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+            progressBar = (ProgressBar) view.findViewById(R.id.progress);
             progressBar.setVisibility(View.VISIBLE);
 
     }
 
-    private void hideProgress(View view) {
-        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+    private void hideProgress() {
         progressBar.setVisibility(View.GONE);
     }
 
@@ -117,7 +117,6 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
         if(mAdapter!=null){
             recyclerview.postInvalidate();
             mAdapter.notifyDataSetChanged();
-
         }
 
     }

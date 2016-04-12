@@ -9,15 +9,14 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         >
-
-
         <LinearLayout
             android:id="@+id/manager_root"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:background="@drawable/round_edge_black_box"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
