@@ -234,7 +234,7 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
                                 tvMatchDate.setText(DateUtil.getFormattedDate(date));
                                 tvTossWinTeam.setText(toss);
                                 tvSeriesName.setText(matchName);
-                                tvUmpiresName.setText(cricketMatchSummaryParser.getFirstUmpire());
+                                tvUmpiresName.setText(cricketMatchSummaryParser.getFirstUmpire()+", "+cricketMatchSummaryParser.secondFirstUmpire());
                                 tvMatchReferee.setText(cricketMatchSummaryParser.getRefree());
                             } catch (Exception ex) {
                                 ex.printStackTrace();

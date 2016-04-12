@@ -111,13 +111,12 @@ public class CompletedCricketMatchSummaryParser extends JsonObjectCaller {
     public String getFirstUmpire() throws  JSONException{
         if(!umpires.isNull("first_umpire")){
             return umpires.getString("first_umpire");
-        }else{return  "";}
+        }else{return  "N/A";}
     }
-
     public String getRefree() throws  JSONException{
         if(!umpires.isNull("referee")){
             return umpires.getString("referee");
-        }else{return  "";}
+        }else{return  "N/A";}
     }
     public String getPlayerImage() throws  JSONException{
         if(!manOfTheMatch.isNull("player_image")){
@@ -140,4 +139,11 @@ public class CompletedCricketMatchSummaryParser extends JsonObjectCaller {
     public void setBowling(JSONObject bowling) {
         this.bowling = bowling;
     }
+
+    public String secondFirstUmpire() throws  JSONException{
+        if(!umpires.isNull("second_umpire")){
+            return umpires.getString("second_umpire");
+        }else{return  "N/A";}
+    }
+
 }
