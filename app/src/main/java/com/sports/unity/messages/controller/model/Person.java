@@ -116,6 +116,7 @@ public class Person implements  Parcelable, ClusterItem ,Comparable<Person>{
 
     @Override
     public int compareTo(Person another) {
+
         return this.getDistance()-another.getDistance();
     }
 }
