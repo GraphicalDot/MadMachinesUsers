@@ -257,7 +257,7 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         refreshUsers.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(latLong!=null){
+                if (latLong != null) {
                     getPeopleAroundMe(latLong.latitude, latLong.longitude);
                 }
 
@@ -517,9 +517,9 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
             @Override
             public void onMapReady(GoogleMap googleMap) {
 
-                if(userLocation){
+                if (userLocation) {
                     openMap(googleMap);
-                }else{
+                } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(PeopleAroundMeMap.this);
                     builder.setTitle("Are You Sure Want To Enable Your Location?");
 
@@ -543,7 +543,6 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
                     //Toast.makeText(PeopleAroundMeMap.this,R.string.location_turned_off_text,Toast.LENGTH_LONG).show();
 
                 }
-
 
 
             }
@@ -871,6 +870,14 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         loadMap();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i("onPaused", "called");
+        dismissDialog();
+        ScoresContentHandler.getInstance().removeResponseListener(REQUEST_LISTENER_KEY);
+    }
+
     public void hideSoftKeyboard() {
         if (getCurrentFocus() != null) {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
@@ -882,13 +889,6 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
         if (aDialog != null && aDialog.isShowing()) {
             aDialog.cancel();
         }
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Log.i("onPaused", "called");
-        dismissDialog();
-        ScoresContentHandler.getInstance().removeResponseListener(REQUEST_LISTENER_KEY);
     }
 
     private void onUnSuccessfulVcardRetrieval(View view, Person person) {
