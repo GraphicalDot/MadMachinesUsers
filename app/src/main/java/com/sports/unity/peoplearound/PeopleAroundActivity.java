@@ -281,7 +281,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         });
     }
     private void setCustomButtonsForNavigationAndUsers() {
-        FloatingActionButton myLocation = (FloatingActionButton)findViewById(R.id.myLocation);
+       /* FloatingActionButton myLocation = (FloatingActionButton)findViewById(R.id.myLocation);
         myLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -291,7 +291,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                     getLocation();
                 }
             }
-        });
+        });*/
         /*ImageView refreshUsers = (ImageView) findViewById(R.id.refreshUsers);
         refreshUsers.setOnClickListener(new View.OnClickListener() {
             @Override

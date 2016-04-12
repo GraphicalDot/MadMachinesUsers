@@ -1,5 +1,4 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:fab="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
@@ -11,19 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
         android:minHeight="?android:attr/actionBarSize" />
-    <FrameLayout
-        android:id="@+id/fl_custom_location"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/textColorPrimary"
-        android:visibility="gone">
-        <fragment
-            android:id="@+id/custom_location"
-            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/people_nearme_custom_location_height" />
-    </FrameLayout>
-
 
     <View
         android:id="@+id/seperator"
@@ -48,6 +34,18 @@
         android:layout_height="1dp"
         android:layout_below="@id/tabs"
         android:background="@color/ColorPrimary" />
+    <FrameLayout
+        android:id="@+id/fl_custom_location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/textColorPrimary"
+        android:visibility="gone">
+        <fragment
+            android:id="@+id/custom_location"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/people_nearme_custom_location_height" />
+    </FrameLayout>
 
     <com.sports.unity.common.model.ControlledSwipeViewPager
         android:id="@+id/pager"
@@ -55,18 +53,6 @@
         android:layout_height="wrap_content"
         android:layout_weight="1">
     </com.sports.unity.common.model.ControlledSwipeViewPager>
-    <com.github.clans.fab.FloatingActionButton
-        android:id="@+id/myLocation"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="8dp"
-        android:src="@drawable/ic_my_loc"
-        fab:fab_colorPressed="@color/app_theme_blue"
-        fab:fab_colorRipple="@color/ColorPrimary"
-        fab:fab_colorNormal="@color/ColorPrimary"/>
-
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
