@@ -431,7 +431,6 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
             for (int k = 0; k < teamBFallWicketArray.length(); k++) {
                 JSONObject fallOfWicketObject = teamBFallWicketArray.getJSONObject(k);
                 LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets = CricketMatchScoreCardUtil.getLiveAndCompletedCricketFallOfWicketCardDTO(cricketMatchScoreJsonParser, k, fallOfWicketObject);
-
                 teamBFallOfWicketCardList.add(fallOfWickets);
             }
             }
