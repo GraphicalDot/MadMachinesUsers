@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -505,7 +504,6 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
                         }
                         initStaffView(staffFavouriteItem);
                         FavouriteItem item = new FavouriteItem(staffFavouriteItem.getJsonObject().toString());
-                        Log.d("max", "On saving>> " + item.getId());
                         item.setFlagImageUrl(flagUrl);
                         flagItem.add(item);
 
@@ -514,9 +512,10 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
                     for (FavouriteItem f : flagItem) {
                         jsonArray.put(f.getJsonObject());
                     }
-                    Log.d("max", "On saving>> " + jsonArray.toString());
-                    UserUtil.setStaffFlagUrl(getActivity(), jsonArray.toString());
+                    UserUtil.setStaffSelectedData(getActivity(), jsonArray.toString());
                     isStaffInitialized = true;
+                } else {
+                    UserUtil.setStaffSelectedData(getActivity(), "");
                 }
             }
         } catch (JSONException e) {

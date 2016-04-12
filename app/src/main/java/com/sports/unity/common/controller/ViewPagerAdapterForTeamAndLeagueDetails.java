@@ -23,11 +23,9 @@ public class ViewPagerAdapterForTeamAndLeagueDetails extends FragmentStatePagerA
     private int numberOfTabs;
     private boolean enabled = true;
     private FavouriteItem favouriteItem;
-    private String titlesLeague[] = {"Table", "Fixture", "News"};
-    private String titlesTeam[] = {"News", "Fixture", "Table", "Squad"};
-    private String[] footballLeagueTitle = {"News", "Fixture", "Table"};
-    private String[] footballTeamTitle = {"News", "Fixture", "Squad"};
-    private String[] cricketTeamTitle = {"News", "Fixture", "Squad"};
+    private String[] footballLeagueTitle = {"News", "Fixtures", "Table"};
+    private String[] footballTeamTitle = {"News", "Fixtures", "Squad"};
+    private String[] cricketTeamTitle = {"News", "Fixtures", "Squad"};
     private boolean isStaffPicked;
 
     public ViewPagerAdapterForTeamAndLeagueDetails(FragmentManager fm, FavouriteItem f, boolean isStaffPicked) {
