@@ -67,6 +67,7 @@ import org.jivesoftware.smackx.vcardtemp.packet.VCard;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -142,7 +143,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         aDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         locManager = LocManager.getInstance(getApplicationContext());
         locManager.buildApiClient();
-        setCustomButtonsForNavigationAndUsers();
+       // setCustomButtonsForNavigationAndUsers();
         hideSoftKeyboard();
         initToolbar();
         InitSeekbar();
@@ -191,7 +192,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                     peopleFriends.clear();
                     peopleSU.clear();
                     peopleNeedHeading.clear();
-
+                    Collections.sort(people);
                     for(Person person : people){
                      if(person.isFriend()){
                          peopleFriends.add(person);
@@ -201,6 +202,9 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                      }else{
                          peopleSU.add(person);
                      }
+
+
+
 
                     }
                   //  int count = peopleAroundMeViewPagerAdapter.getCount();
@@ -280,8 +284,8 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             }
         });
     }
-    private void setCustomButtonsForNavigationAndUsers() {
-       /* FloatingActionButton myLocation = (FloatingActionButton)findViewById(R.id.myLocation);
+    public void setCustomButtonsForNavigationAndUsers() {
+       /*FloatingActionButton myLocation = (FloatingActionButton)findViewById(R.id.myLocation);
         myLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -595,7 +599,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         startActivity(intent);
     }
 
-    private boolean checkIfGPSEnabled() {
+    public boolean checkIfGPSEnabled() {
         boolean succcess = false;
         LocationManager lm = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
         boolean gps_enabled = false;
@@ -659,7 +663,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
     }
 
-    private void getLocation() {
+    public void getLocation() {
         Log.i("gettingLocation", "true");
         Location location = locManager.getLocation();
         if (location != null) {

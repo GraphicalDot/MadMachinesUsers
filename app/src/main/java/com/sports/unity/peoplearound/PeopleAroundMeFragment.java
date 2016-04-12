@@ -1,6 +1,7 @@
 package com.sports.unity.peoplearound;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.sports.unity.R;
 import com.sports.unity.messages.controller.model.Person;
 import com.sports.unity.peoplearound.adapters.PeopleAroundMeAdapter;
@@ -33,6 +35,10 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
     private PeopleAroundMeAdapter mAdapter;
     private Context context;
     private ProgressBar progressBar;
+    private boolean customLocation;
+    private FloatingActionButton myLocation;
+    private View emptyView;
+
 
     public PeopleAroundMeFragment() {
         // Required empty public constructor
@@ -62,6 +68,9 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
 
 
     private void initViews(View v) {
+        customLocation = false;
+        emptyView = v.findViewById(R.id.data_exist);
+        myLocation = (FloatingActionButton) v.findViewById(R.id.myLocation);
         peoples = getArguments().getParcelableArrayList(Constants.PARAM_PEOPLES);
         recyclerview=(RecyclerView) v.findViewById(R.id.recyclerview);
         mAdapter = new PeopleAroundMeAdapter(peoples,context);
@@ -114,9 +123,37 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
     @Override
     public void notifyPeoples() {
         Log.i("notifyPeoples", "notifyPeoples: " + peoples);
+
+
         if(mAdapter!=null){
+        if(peoples.size()==0){
+            recyclerview.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+        }else{
+            recyclerview.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
             recyclerview.postInvalidate();
             mAdapter.notifyDataSetChanged();
+           final  PeopleAroundActivity activity  = (PeopleAroundActivity) getActivity();
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    myLocation.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                             customLocation = activity.checkIfGPSEnabled();
+                            if(customLocation){
+                                activity.getLocation();
+                            }
+
+                        }
+                    });
+                }});
+
+
+
         }
 
     }

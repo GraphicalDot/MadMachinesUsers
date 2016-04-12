@@ -7,7 +7,8 @@
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
     <com.github.clans.fab.FloatingActionButton
         android:id="@+id/myLocation"
         android:layout_width="wrap_content"
@@ -32,4 +33,28 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="gone"/>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/data_exist"
+        android:visibility="visible">
+
+        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            android:id="@+id/tv_empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:paddingBottom="@dimen/vertical_padding_large"
+            android:paddingLeft="@dimen/horizontal_padding_large"
+            android:paddingRight="@dimen/horizontal_padding_large"
+            android:paddingTop="@dimen/vertical_padding_large"
+            android:text="Users Data Not Exist"
+            android:textColor="@color/gray1"
+            android:textSize="@dimen/font_size_large"
+            />
+    </RelativeLayout>
+
 </FrameLayout>

@@ -153,6 +153,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
                 cricketMatchJsonCaller.setMatchWidgetAwayTeam(null);
                 cricketMatchJsonCaller.setMatchWidgetHomeTeam(null);
+                footballMatchJsonCaller.setJsonObject(null);
 
                 /*if(cricketMatchJsonCaller.getTeams1Odds()== null && cricketMatchJsonCaller.getTeams1Odds()==null){
                     holder.odds.setVisibility(View.INVISIBLE);
@@ -287,6 +288,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 holder.team1Overs.setVisibility(View.GONE);
                 holder.team2Overs.setVisibility(View.GONE);
                 footballMatchJsonCaller.setJsonObject(matchJsonObject);
+                cricketMatchJsonCaller.setJsonObject(null);
 
                 /*if(footballMatchJsonCaller.getTeams1Odds() == null && footballMatchJsonCaller.getTeams1Odds() == null){
                     holder.odds.setVisibility(View.INVISIBLE);
@@ -393,7 +395,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                             holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
                         }
                     }
-                } else {
                 }
 
 
@@ -411,6 +412,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                             @Override
                             public void onClick(View v) {
                                 try {
+
                                     seriesId = footballMatchJsonCaller.getLeagueId();
                                     matchId = footballMatchJsonCaller.getMatchId().toString();
                                     tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
@@ -421,7 +423,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                                 }
                             }
                         });
-
                     } else {
                         holder.notification.setImageResource(R.drawable.ic_notification_disabled);
                         holder.notification.setVisibility(View.VISIBLE);
@@ -429,13 +430,12 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                             @Override
                             public void onClick(View v) {
                                 try {
+
                                     seriesId = footballMatchJsonCaller.getLeagueId();
                                     matchId = footballMatchJsonCaller.getMatchId().toString();
                                     tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
                                     tokenRegistrationHandler.addListener(MatchListAdapter.this);
                                     tokenRegistrationHandler.registrerMatchUser(key, CommonUtil.getToken(activity));
-
-
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -542,8 +542,8 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         holder.t2score.setVisibility(View.VISIBLE);
         holder.team1Overs.setVisibility(View.VISIBLE);
         holder.team2Overs.setVisibility(View.VISIBLE);
-        holder.team1Overs.setText(cricketMatchJsonCaller.getOversTeam1()+" OVS");
-        holder.team2Overs.setText(cricketMatchJsonCaller.getOversTeam2()+ " OVS");
+        holder.team1Overs.setText(cricketMatchJsonCaller.getOversTeam1() + " OVS");
+        holder.team2Overs.setText(cricketMatchJsonCaller.getOversTeam2() + " OVS");
         holder.t1score.setText(cricketMatchJsonCaller.getTeam1Score() + "/" + cricketMatchJsonCaller.getWicketsTeam1());
         holder.t2score.setText(cricketMatchJsonCaller.getTeam2Score() + "/" + cricketMatchJsonCaller.getWicketsTeam2());
         //holder.matchDay.setText("Completed");
