@@ -152,7 +152,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
        // getPeopleAroundMe(latLong.latitude, latLong.longitude);
         int tab_index = 0;
         mViewPager = (ViewPager) findViewById(R.id.pager);
-        String peopleAroundMeTitles[] = {getString(R.string.friends_tab), getString(R.string.su_users_tab), getString(R.string.need_heading_tab)};
+        String peopleAroundMeTitles[] = {getString(R.string.friends_tab), getString(R.string.su_users_tab), getString(R.string.same_interest)};
         int peopleAroundMeTabs = peopleAroundMeTitles.length;
 
         peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs,peopleFriends,peopleSU,peopleNeedHeading);
@@ -398,12 +398,12 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                 findViewById(R.id.fl_custom_location).setVisibility(VISIBLE);
             }
         });
-        /*toolbar.findViewById(R.id.refresh).setOnClickListener(new View.OnClickListener() {
+        toolbar.findViewById(R.id.refresh).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getLocation();
             }
-        });*/
+        });
     }
 
     private void checkAndEnableLocation() {
