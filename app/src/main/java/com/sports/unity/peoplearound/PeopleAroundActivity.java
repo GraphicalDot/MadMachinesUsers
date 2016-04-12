@@ -29,6 +29,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -280,7 +281,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         });
     }
     private void setCustomButtonsForNavigationAndUsers() {
-        View myLocation = findViewById(R.id.myLocation);
+        FloatingActionButton myLocation = (FloatingActionButton)findViewById(R.id.myLocation);
         myLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
