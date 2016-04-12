@@ -109,26 +109,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
         setContentView(R.layout.activity_player_profile_view);
         getIntentExtras();
         initView();
-        setToolbar();
-        {
-//            PlayerProfileComponentListener playerProfileComponentListener = new PlayerProfileComponentListener(progressBar);
-            ArrayList<CustomComponentListener> listeners = new ArrayList<>();
-//            listeners.add(playerProfileComponentListener);
-            onComponentCreate(listeners, REQUEST_LISTENER_KEY);
-        }
         setInitData();
-    }
-
-    private void setToolbar() {
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        /*ImageView back = (ImageView) toolbar.findViewById(R.id.backarrow);
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });*/
     }
 
     private void initView() {
@@ -190,50 +171,6 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
         return true;
     }
 
-//    private class PlayerProfileComponentListener extends CustomComponentListener {
-//
-//        private boolean success;
-//
-//        public PlayerProfileComponentListener(ProgressBar progressBar) {
-//            super(PLAYER_PROFILE_REQUEST_TAG, progressBar, null);
-//        }
-//
-//        @Override
-//        public boolean handleContent(String tag, String content) {
-//            boolean success = false;
-//            hideProgress();
-//            try {
-//                JSONObject response = new JSONObject(content);
-//                if (response.getBoolean("success")) {
-//                    this.success = true;
-//                    Log.i("player profile", content);
-//                    populateData(response);
-//                } else {
-//                    this.success = false;
-//                    showErrorLayout();
-//                }
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//                showErrorLayout();
-//            }
-//            success = true;
-//            return success;
-//        }
-//
-//        @Override
-//        public void handleErrorContent(String tag) {
-//
-//        }
-//
-//        @Override
-//        public void changeUI() {
-//
-//        }
-//
-//
-//    }
-
-
     private void getIntentExtras() {
         playerNameKey = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
     }
@@ -244,17 +181,14 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             JSONArray datArray = (JSONArray) jsonObject.get("data");
 
             JSONObject dataObject = datArray.getJSONObject(0);
-            JSONArray profileArray = dataObject.getJSONArray("profile");
-            JSONObject profileData = null;
-            if (profileArray.length() > 0) {
-                profileData = profileArray.getJSONObject(0);
-                playerAge.setText(profileData.getString("Date of Birth"));
-            }
-
             JSONArray otherComptetionArray = dataObject.getJSONArray("other_competitions");
 
             playerName.setText(dataObject.getString("name"));
-//                nationality.setText(profileData.getString("nationality"));
+            nationality.setText(dataObject.getString("Nationality"));
+            positionValue.setText(dataObject.getString("Position"));
+            squadNumber.setText(dataObject.getString("Jersey"));
+            playerAge.setText(dataObject.getString("Age"));
+
             Glide.with(PlayerProfileView.this).load(dataObject.getString("player_image")).into(playerProfileImage);
 
             teamName.setText(dataObject.getString("team"));
