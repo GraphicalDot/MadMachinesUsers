@@ -1,24 +1,32 @@
 package com.sports.unity.common.controller;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.telephony.gsm.SmsMessage;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -420,19 +428,50 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
     private void displayOtpWaitingDialog() {
 
-        AlertDialog.Builder build = new AlertDialog.Builder(EnterOtpActivity.this);
-        build.setMessage("Waiting to automatically detect an SMS.");
-        build.setNegativeButton("Enter Manually", new DialogInterface.OnClickListener() {
+        final int lennghtInMillis = 60 * 1000;
 
-            public void onClick(DialogInterface dialog, int id) {
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.otp_dialog, (ViewGroup) findViewById(R.id.your_dialog_root_element));
 
-                unRegisterSmsBroadcastReceiver();
+        ArrayList<String> countryDetails = CommonUtil.getCountryDetailsByCountryCode(EnterOtpActivity.this, UserUtil.getCountryCode());
+        String countryCode = countryDetails.get(0);
+        final TextView seekMessage = (TextView) layout.findViewById(R.id.seek_msg);
+        TextView phNo = (TextView) layout.findViewById(R.id.ph_no);
+        phNo.setText("+" + countryCode + " " + getPhoneNumber());
 
-            }
-        });
 
-        otpWaitingDialog = build.create();
+        final ProgressBar mProgressBar = (ProgressBar) layout.findViewById(R.id.progressbar);
+        mProgressBar.setMax(lennghtInMillis / 1000);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mProgressBar.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.app_theme_blue)));
+        } else {
+            mProgressBar.getProgressDrawable().setColorFilter(
+                    getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.SRC_IN);
+        }
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this)
+                .setView(layout);
+        otpWaitingDialog = builder.create();
         otpWaitingDialog.show();
-    }
+        otpWaitingDialog.setCancelable(false);
+        otpWaitingDialog.setCanceledOnTouchOutside(false);
 
+
+        CountDownTimer mCountDownTimer = new CountDownTimer(lennghtInMillis, 1000) {
+            private boolean warned = false;
+
+            @Override
+            public void onTick(long millisUntilFinished) {
+                int progress = (int) ((lennghtInMillis - millisUntilFinished) / 1000);
+                mProgressBar.setProgress(progress);
+                seekMessage.setText("Your SMS should arive within " + millisUntilFinished / 1000 + " second.");
+            }
+
+            @Override
+            public void onFinish() {
+                otpWaitingDialog.dismiss();
+                unRegisterSmsBroadcastReceiver();
+            }
+        }.start();
+    }
 }
