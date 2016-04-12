@@ -31,6 +31,7 @@ import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
 import com.sports.unity.scores.model.football.FootballMatchJsonCaller;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
 
@@ -215,6 +216,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 }
             });
             refreshImage = (ImageView) findViewById(R.id.refresh);
+            refreshImage.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
 
             refreshImage.setOnClickListener(new View.OnClickListener(){
 
