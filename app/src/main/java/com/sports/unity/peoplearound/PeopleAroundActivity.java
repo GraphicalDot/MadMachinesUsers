@@ -398,12 +398,12 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                 findViewById(R.id.fl_custom_location).setVisibility(VISIBLE);
             }
         });
-        toolbar.findViewById(R.id.refresh).setOnClickListener(new View.OnClickListener() {
+        /*toolbar.findViewById(R.id.refresh).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getLocation();
             }
-        });
+        });*/
     }
 
     private void checkAndEnableLocation() {

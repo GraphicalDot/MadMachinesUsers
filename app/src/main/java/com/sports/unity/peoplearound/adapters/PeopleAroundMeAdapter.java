@@ -73,7 +73,7 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
             holder.tvfrienddistance.setText(String.valueOf(distance) + " mts ");
         }
 
-
+        new GetVcardForUser(holder.dto);
         Glide.with(context).load(holder.dto.getUsername()).placeholder(R.drawable.ic_user).into(holder.ivfriendimg);
 
 
@@ -84,7 +84,7 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
                 Contacts contact = SportsUnityDBHelper.getInstance(context).getContactByJid(userName);
                 if (contact == null) {
                     //createContact(userName, context, vCard);
-                    createContact(userName, context,name);
+                    createContact(userName, context,null,name);
                     contact = SportsUnityDBHelper.getInstance(context).getContactByJid(userName);
                     moveToChatActivity(contact, false);
                 } else {
@@ -122,25 +122,64 @@ public class PeopleAroundMeAdapter extends RecyclerView.Adapter<PeopleAroundMeAd
     }
 
     private void moveToChatActivity(Contacts contact, boolean contactAvailable) {
+        String name = contact.getName();
         int contactId = contact.id;
         byte[] userPicture = contact.image;
         boolean blockStatus = SportsUnityDBHelper.getInstance(context).isChatBlocked(contactId);
         boolean othersChat = contact.isOthers();
 
-        Intent intent = ChatScreenActivity.createChatScreenIntent(context, false, contact.jid, contact.getName(), contact.id, userPicture, blockStatus, othersChat, contact.availableStatus, contact.status);
+        Intent intent = ChatScreenActivity.createChatScreenIntent(context, false, contact.jid, name, contact.id, userPicture, blockStatus, othersChat, contact.availableStatus, contact.status);
         context.startActivity(intent);
     }
 
-    private boolean createContact(String jid, Context context,String name) {
+    private boolean createContact(String jid, Context context, VCard vCard,String name) {
         boolean success = false;
         byte[] emptyAvatar = new byte[0];
         SportsUnityDBHelper.getInstance(context).addToContacts(name, null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
-        SportsUnityDBHelper.getInstance(context).updateContacts(jid, emptyAvatar, name);
+        SportsUnityDBHelper.getInstance(context).updateContacts(jid, emptyAvatar, "middlename");
         return success;
     }
 
+    private class GetVcardForUser extends AsyncTask<String, Void, VCard> {
+        private boolean success = false;
+        private String jid = null;
 
+        private Person person;
 
+        public GetVcardForUser(Person person) {
+            this.person = person;
+        }
+
+        @Override
+        protected VCard doInBackground(String... param) {
+            XMPPTCPConnection connection = XMPPClient.getInstance().getConnection();
+            VCard card = new VCard();
+            try {
+                jid = param[0];
+                if (connection.isAuthenticated()) {
+                    card.load(connection, jid + "@mm.io");
+                    success = true;
+                } else {
+                    success = false;
+                }
+            } catch (XMPPException e) {
+                e.printStackTrace();
+            } catch (SmackException e) {
+                e.printStackTrace();
+            }
+            return card;
+        }
+
+        @Override
+        protected void onPostExecute(VCard vCard) {
+            if (success) {
+                Log.i( "onPostExecute: ",vCard.toString());
+            } else {
+                Log.i( "onPostExecute: ","Error Response");
+            }
+        }
+
+    }
 
 
 
