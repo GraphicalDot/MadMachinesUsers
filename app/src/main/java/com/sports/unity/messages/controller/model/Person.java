@@ -7,12 +7,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterItem;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * Created by manish on 02/03/16.
  */
-public class Person implements  Parcelable, ClusterItem {
+public class Person implements  Parcelable, ClusterItem ,Comparable<Person>{
     private String username;
     private Integer distance;
     private LatLng position;
@@ -111,5 +112,10 @@ public class Person implements  Parcelable, ClusterItem {
         dest.writeByte((byte) (friend ? 1 : 0));
         dest.writeByte((byte) (commonInterest ? 1 : 0));
         dest.writeStringList(interests);
+    }
+
+    @Override
+    public int compareTo(Person another) {
+        return this.getDistance()-another.getDistance();
     }
 }

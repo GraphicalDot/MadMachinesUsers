@@ -212,8 +212,6 @@ public class UserProfileHandler {
 
                 };
                 userThreadTask.start();
-            } else {
-                //nothing
             }
         } else {
             requestStatus = REQUEST_STATUS_ALREADY_EXIST;
