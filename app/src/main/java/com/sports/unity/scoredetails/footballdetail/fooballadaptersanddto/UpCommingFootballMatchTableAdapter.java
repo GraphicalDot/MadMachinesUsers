@@ -147,18 +147,28 @@ public class UpCommingFootballMatchTableAdapter extends RecyclerView.Adapter<Rec
 
         }
 
-
+        holder.mView.setTag(position);
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                FavouriteItem f = new FavouriteItem();
-//                f.setName(dto.getTvTeamName());
-//                f.setId(dto.getTeamId());
-//                f.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
-//                f.setFilterType(Constants.FILTER_TYPE_TEAM);
-//                Intent intent = new Intent(context, TeamLeagueDetails.class);
-//                intent.putExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, f.getJsonObject().toString());
-//                context.startActivity(intent);
+                Integer position = (Integer)v.getTag();
+                if( position != null ) {
+                    UpCommngFootbalMatchTableDTO dto = getItemFromHashMap(position);
+
+                    if( dto.getViewType() == 0 ) {
+                        FavouriteItem f = new FavouriteItem();
+                        f.setName(dto.getTvTeamName());
+                        f.setId(dto.getTeamId());
+                        f.setSportsType(Constants.SPORTS_TYPE_FOOTBALL);
+                        f.setFilterType(Constants.FILTER_TYPE_TEAM);
+
+                        Intent intent = new Intent(context, TeamLeagueDetails.class);
+                        intent.putExtra(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, f.getJsonObject().toString());
+                        context.startActivity(intent);
+                    } else {
+                        //nothing
+                    }
+                }
             }
         });
     }
