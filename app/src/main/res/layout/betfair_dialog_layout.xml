@@ -14,7 +14,6 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="horizontal"
-        android:paddingBottom="@dimen/vertical_padding_very_small"
         android:paddingLeft="@dimen/horizontal_padding_very_small"
         android:paddingRight="@dimen/horizontal_padding_very_small"
         android:paddingTop="@dimen/vertical_padding_very_small">
@@ -39,6 +38,7 @@
             android:src="@drawable/ic_close_blk" />
     </LinearLayout>
     <TextView
+        android:paddingRight="@dimen/horizontal_padding_medium"
         android:id="@+id/value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
