@@ -288,7 +288,6 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
                             } else {
                                 holder.notification.setVisibility(View.GONE);
-                                holder.odds.setVisibility(View.GONE);
                             }
 
 
@@ -301,7 +300,6 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             Log.i("FOOTBALMATCH: ", key);
                             if ("FT".equalsIgnoreCase(footballMatchJsonCaller.getMatchStatus())) {
                                 Log.i("FOOTBALMATCHSTATUS: ", footballMatchJsonCaller.getMatchStatus());
-                                holder.odds.setVisibility(View.GONE);
                                 holder.notification.setVisibility(View.GONE);
                             } else {
 
@@ -399,7 +397,6 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
                                 } else {
                                     holder.matchDay.setText("Completed");
-                                    holder.odds.setVisibility(View.GONE);
                                     holder.liveText.setVisibility(View.GONE);
                                 }
                                 holder.t1score.setVisibility(View.VISIBLE);
@@ -430,8 +427,6 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
                             String result = matchJsonCaller.getResult();
                             if (holder.matchDay.getText().equals("Completed")) {
-                                holder.odds.setVisibility(View.GONE);
-                                ((ViewGroup) holder.odds.getParent()).setClickable(false);
                                 if (result != null || result != "") {
                                     if (result.equals("home_team")) {
                                         holder.team1.setTextColor(activity.getResources().getColor(R.color.app_theme_blue));
