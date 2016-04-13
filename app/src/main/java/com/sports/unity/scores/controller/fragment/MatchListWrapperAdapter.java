@@ -319,7 +319,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                                 tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
                                                 tokenRegistrationHandler.addListener(MatchListWrapperAdapter.this);
 
-                                                Toast.makeText(context,"Key :- "+ tempKey,Toast.LENGTH_LONG).show();
+                                               // Toast.makeText(context,"Key :- "+ tempKey,Toast.LENGTH_LONG).show();
 
 
                                                 tokenRegistrationHandler.removeMatchUser(key);
@@ -340,7 +340,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                                 tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
                                                 tokenRegistrationHandler.addListener(MatchListWrapperAdapter.this);
 
-                                                Toast.makeText(context,"Key :- "+ tempKey,Toast.LENGTH_LONG).show();
+                                               // Toast.makeText(context,"Key :- "+ tempKey,Toast.LENGTH_LONG).show();
 
                                                 tokenRegistrationHandler.registrerMatchUser(key, CommonUtil.getToken(activity));
 
@@ -496,7 +496,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             if (object != null && !object.isNull("status") && 200 == object.getInt("status")) {
                 if ("success".equalsIgnoreCase(object.getString("info"))) {
 
-                    Toast.makeText(context,"Key :- "+tempKey,Toast.LENGTH_LONG).show();
+                   // Toast.makeText(context,"Key :- "+tempKey,Toast.LENGTH_LONG).show();
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
                     SharedPreferences.Editor editor = prefs.edit();
                     String storedKey = prefs.getString(tempKey, "");
