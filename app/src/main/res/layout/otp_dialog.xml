@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/your_dialog_root_element"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginBottom="@dimen/activity_vertical_margin_small"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin_small"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:padding="@dimen/activity_vertical_margin_small">
+
+    <com.sports.unity.common.view.CustomRobotoRegularTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SMS Verification"
+        android:textSize="@dimen/font_size_large" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin_small"
+        android:gravity="center"
+        android:text="Waiting to  automatically detect \n an SMS sent to "
+        android:textColor="@color/gray2" />
+
+    <com.sports.unity.common.view.CustomRobotoRegularTextView
+        android:id="@+id/ph_no"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin_small"
+        android:layout_marginTop="@dimen/activity_vertical_margin_small"
+        android:gravity="center"
+        android:text="+91 9876543210"
+        android:textSize="@dimen/font_size_large" />
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_height="@dimen/horizontal_padding_very_very_small"
+        android:background="@color/gray3"></ProgressBar>
+
+    <TextView
+        android:id="@+id/seek_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/activity_vertical_margin_small"
+        android:layout_marginTop="@dimen/activity_vertical_margin_small"
+        android:gravity="center"
+        android:text="Your SMS should arive within 60 second."
+        android:textColor="@color/gray2" />
+
+</LinearLayout>

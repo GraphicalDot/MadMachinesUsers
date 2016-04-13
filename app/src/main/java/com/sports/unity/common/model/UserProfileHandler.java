@@ -6,11 +6,9 @@ import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
@@ -21,29 +19,30 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.sports.unity.BuildConfig;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.messages.controller.model.Contacts;
-import com.sports.unity.util.ImageUtil;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.ThreadTask;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by Mad on 2/12/2016.
@@ -60,6 +59,8 @@ public class UserProfileHandler {
     public static int REQUEST_STATUS_QUEUED = 1;
     public static int REQUEST_STATUS_ALREADY_EXIST = 2;
     public static int REQUEST_STATUS_FAILED = 3;
+
+    private String SET_USER_INFO_URL = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/set_user_info?";
 
     private static UserProfileHandler USER_PROFILE_HANDLER;
 
@@ -189,17 +190,34 @@ public class UserProfileHandler {
                         Boolean success = false;
                         try {
                             Contacts userContact = (Contacts) object;
+                            try {
+                                String password = TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD);
+                                JSONObject jsonObject = new JSONObject();
+                                jsonObject.put("username", userContact.jid);
+                                jsonObject.put("password", password);
+                                jsonObject.put("name", userContact.getName());
+                                jsonObject.put("apk_version", CommonUtil.getBuildConfig());
+                                jsonObject.put("udid", CommonUtil.getDeviceId(context));
 
-                            VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
-                            VCard vCard = new VCard();
-                            vCard.setNickName(userContact.getName());
-                            vCard.setAvatar(userContact.image);
-                            vCard.setMiddleName(userContact.status);
-                            vCard.setJabberId(XMPPClient.getConnection().getUser());
-                            manager.saveVCard(vCard);
+                                success = submitUserInfo(jsonObject.toString());
+                            }catch (Exception ex){
+                                ex.printStackTrace();
+                            }
 
-                            success = true;
-                            saveLoginUserDetail(this.context, userContact);
+                            if( success ) {
+                                success = false;
+
+                                VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
+                                VCard vCard = new VCard();
+                                vCard.setNickName(userContact.getName());
+                                vCard.setAvatar(userContact.image);
+                                vCard.setMiddleName(userContact.status);
+                                vCard.setJabberId(XMPPClient.getConnection().getUser());
+                                manager.saveVCard(vCard);
+
+                                success = true;
+                                saveLoginUserDetail(this.context, userContact);
+                            }
                         } catch (SmackException.NoResponseException e) {
                             e.printStackTrace();
                         } catch (XMPPException.XMPPErrorException e) {
@@ -217,6 +235,43 @@ public class UserProfileHandler {
             requestStatus = REQUEST_STATUS_ALREADY_EXIST;
         }
         return requestStatus;
+    }
+
+    public boolean submitUserInfo(String jsonString){
+        boolean success = false;
+        HttpURLConnection httpURLConnection = null;
+        ByteArrayInputStream byteArrayInputStream = null;
+        try {
+            URL sendInterests = new URL(SET_USER_INFO_URL);
+            httpURLConnection = (HttpURLConnection) sendInterests.openConnection();
+            httpURLConnection.setConnectTimeout(15000);
+            httpURLConnection.setDoInput(false);
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setRequestMethod("POST");
+
+            byteArrayInputStream = new ByteArrayInputStream(jsonString.getBytes());
+            OutputStream outputStream = httpURLConnection.getOutputStream();
+
+            byte chunk[] = new byte[4096];
+            int read = 0;
+            while ((read = byteArrayInputStream.read(chunk) ) != -1) {
+                outputStream.write(chunk, 0, read);
+            }
+
+            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                success = true;
+            } else {
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                httpURLConnection.disconnect();
+            } catch (Exception ex) {
+            }
+        }
+        return success;
     }
 
     public boolean submitUserFavorites(Context context){

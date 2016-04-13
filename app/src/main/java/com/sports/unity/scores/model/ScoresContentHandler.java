@@ -28,6 +28,7 @@ public class ScoresContentHandler {
     public static final String CALL_NAME_MATCH_COMMENTARIES = "MATCH_COMMENTARIES";
     public static final String CALL_NAME_NEAR_BY_USERS = "NEAR_BY_USERS";
     public static final String CALL_NAME_PLAYER_PROFILE = "PLAYER_PROFILE";
+    public static final String CALL_NAME_LEAGUE_TABLE = "LEAGUE_TABLE";
     public static final String PARAM_SPORTS_TYPE = "SPORTS_TYPE";
     public static final String PARAM_ID = "ID";
     public static final String PARAM_SERIESID = "series_id";
@@ -50,12 +51,14 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_CRICKET_MATCH_DETAIL = "v1/get_match_widget?season_key=%s&match_id=";
     private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "v1/get_match_commentary?season_key=%s&match_id=";
     private static final String URL_PARAMS_FOR_FOOTBALL_COMMENTARY = "get_football_commentary?match_id=";
-    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = Constants.FOOTBALL_PLAYER_BASE_URL+"/get_football_player_profile?player_id=";
+    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = Constants.FOOTBALL_PLAYER_BASE_URL + "/get_football_player_profile?player_id=";
+    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_CRICKET = Constants.SCORE_BASE_URL + "/v1/get_player_stats?player_id=";
     private static final String URL_PARAMS_FOR_LEAGUE_FIXTURES = "get_football_league_specific_fixtures?league_id=";
     private static final String URL_PARAMS_FOR_FOOTBALL_TEAM_FIXTURES = "get_football_team_fixtures?team_id=";
     private static final String URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES = "v1/get_specific_fixtures?team_id=";
     private static final String URL_PARAMS_FOR_CRICKET_LEAGUE_FIXTURES = "/v2/get_series_fixtures?season_key=";
     private static final String URL_PARAMS_FOR_STAFF_LEAGUE = "/v1/get_major_tournament";
+    private static final String URL_PARAMS_FOR_LEAGUE_TABLE = Constants.SCORE_BASE_URL + "/get_league_standings?league_id=";
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
     private HashMap<String, ContentListener> mapOfResponseListeners = new HashMap<>();
     private HashMap<String, String> requestInProcess_RequestTagAndListenerKey = new HashMap<>();
@@ -162,18 +165,26 @@ public class ScoresContentHandler {
         } else if (callName.equals(CALL_NAME_MATCH_COMMENTARIES)) {
             String seriesId = parameters.get(PARAM_SERIESID);
             String matchId = parameters.get(PARAM_ID);
-//<<<<<<< HEAD
             String sportsType = parameters.get(PARAM_SPORTS_TYPE);
-//            requestCommentaryOnMatch(sportsType, matchId, requestListenerKey, requestTag);
-//=======
-//            String sportsType = parameters.get(Constants.SPORTS_TYPE);
             requestCommentaryOnMatch(sportsType, matchId, seriesId, requestListenerKey, requestTag);
         } else if (callName.equals(CALL_NAME_PLAYER_PROFILE)) {
             String playerName = parameters.get(Constants.PLAYER_NAME);
             String sportsType = parameters.get(Constants.SPORTS_TYPE);
             requestPlayerProfile(sportsType, playerName, requestListenerKey, requestTag);
+        } else if (callName.equals(CALL_NAME_LEAGUE_TABLE)) {
+            String leagueId = parameters.get(Constants.LEAGUE_NAME); // league name returns leagueId here
+            String sportsType = parameters.get(Constants.SPORTS_TYPE);
+            requestLeagueTable(sportsType, leagueId, requestListenerKey, requestTag);
         }
 
+    }
+
+    private void requestLeagueTable(String sportsType, String leagueId, String requestListenerKey, String requestTag) {
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
+            StringBuilder stringBuilder = new StringBuilder(URL_PARAMS_FOR_LEAGUE_TABLE);
+            stringBuilder.append(leagueId);
+            requestContent(requestTag, requestListenerKey, stringBuilder.toString());
+        }
     }
 
     public void requestCall(String callName, Object requestContent, String requestListenerKey, String requestTag, Context context) {
@@ -417,9 +428,14 @@ public class ScoresContentHandler {
 
     private void requestPlayerProfile(String sportType, String playerName, String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
-            String url = URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL + URLEncoder.encode(playerName);
-            Log.i("requestPlayerProfile: ", url);
-            requestContent(requestTag, listenerKey, url);
+            String url = null;
+            if (sportType.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                url = URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL + URLEncoder.encode(playerName);
+                requestContent(requestTag, listenerKey, url);
+            } else if (sportType.equals(Constants.SPORTS_TYPE_CRICKET)) {
+                url = URL_PARAMS_FOR_PLAYER_PROFILE_CRICKET + URLEncoder.encode(playerName);
+                requestContent(requestTag, listenerKey, url);
+            }
         }
     }
 

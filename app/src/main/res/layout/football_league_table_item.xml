@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
+    android:paddingTop="@dimen/vertical_padding_very_very_small"
+    android:paddingBottom="@dimen/vertical_padding_very_very_small"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        >
 
         <View
             android:id="@+id/ll_live_team"
@@ -32,7 +34,8 @@
                 android:text=""
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_small_medium"
-                card_view:layout_widthPercent="5%" />
+                android:visibility="visible"
+                card_view:layout_widthPercent="26%" />
 
             <ImageView
                 android:id="@+id/iv_team_profile_image"
@@ -41,7 +44,8 @@
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/tv_serial_number"
                 android:foregroundGravity="center"
-                card_view:layout_widthPercent="8%" />
+                android:visibility="gone"
+                card_view:layout_widthPercent="0%" />
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_team_name"
@@ -54,7 +58,7 @@
                 android:text=""
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_small_medium"
-                card_view:layout_widthPercent="33%" />
+                card_view:layout_widthPercent="20%" />
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/tv_p"
@@ -63,7 +67,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/tv_team_name"
                 android:gravity="right"
-                android:text=""
+                android:text="P"
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_small_medium"
                 card_view:layout_widthPercent="7%" />
@@ -75,7 +79,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/tv_p"
                 android:gravity="right"
-                android:text=""
+                android:text="W"
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_small_medium"
                 card_view:layout_widthPercent="12%" />
@@ -87,7 +91,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/tv_w"
                 android:gravity="right"
-                android:text=""
+                android:text="D"
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_small_medium"
                 card_view:layout_widthPercent="10%" />
@@ -99,7 +103,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/tv_d"
                 android:gravity="right"
-                android:text=""
+                android:text="L"
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_small_medium"
                 card_view:layout_widthPercent="10%" />
@@ -111,15 +115,10 @@
                 android:layout_centerVertical="true"
                 android:layout_toRightOf="@id/tv_l"
                 android:gravity="right"
-                android:text=""
+                android:text="Pts"
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_small_medium"
                 card_view:layout_widthPercent="15%" />
         </android.support.percent.PercentRelativeLayout>
     </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/gray3"></View>
 </LinearLayout>

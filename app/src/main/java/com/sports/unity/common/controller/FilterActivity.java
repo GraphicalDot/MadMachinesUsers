@@ -282,9 +282,10 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
                 intent.putExtra(Constants.INTENT_KEY_PLAYER_NAME, playerName);
                 startActivity(intent);
             } else {
-                Intent intent = new Intent(FilterActivity.this, PlayerCricketBioDataActivity.class);
-                intent.putExtra(Constants.INTENT_KEY_ID, playerId);
-                intent.putExtra(Constants.INTENT_KEY_PLAYER_NAME, playerName);
+                Intent intent = PlayerCricketBioDataActivity.createIntent(getApplicationContext(), playerId, playerName);
+//                Intent intent = new Intent(FilterActivity.this, PlayerCricketBioDataActivity.class);
+//                intent.putExtra(Constants.INTENT_KEY_ID, playerId);
+//                intent.putExtra(Constants.INTENT_KEY_PLAYER_NAME, playerName);
                 startActivity(intent);
             }
         }

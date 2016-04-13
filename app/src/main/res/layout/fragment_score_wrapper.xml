@@ -5,88 +5,90 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/gray3"
-    android:paddingTop="1dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingTop="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
         <View
+            android:id="@+id/sep_top"
             android:layout_width="match_parent"
-            android:background="@color/gray4"
             android:layout_height="0.3dp"
-            android:id="@+id/sep_top">
-        </View>
+            android:background="@color/gray4"></View>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/news_background"
-                android:orientation="vertical"
-                >
+                android:orientation="vertical">
 
                 <com.sports.unity.common.view.CustomRobotoSlabRegularTextView
-                    android:padding="@dimen/vertical_padding_very_very_small"
                     android:id="@+id/id_day_name"
                     android:layout_width="wrap_content"
-                    android:textColor="@color/gray1"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:padding="@dimen/vertical_padding_very_very_small"
                     android:text=""
                     android:textAppearance="?attr/textAppearanceListItem"
-                    />
+                    android:textColor="@color/gray1" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="@dimen/horizontal_padding_very_very_small"
+                android:orientation="horizontal"
                 android:paddingLeft="@dimen/horizontal_padding_very_small"
-                android:orientation="horizontal">
+                android:paddingTop="@dimen/horizontal_padding_very_very_small">
+
                 <RelativeLayout
+                    android:id="@+id/league_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:id="@+id/league_layout">
+                    android:gravity="center">
+
                     <ImageView
                         android:id="@+id/iv_league"
                         android:layout_width="16dp"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerInParent="true"
                         android:layout_height="16dp"
-                        />
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerInParent="true" />
+
                     <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
-                        android:paddingStart="@dimen/horizontal_padding_very_very_small"
-                        android:layout_toRightOf="@id/iv_league"
                         android:id="@+id/league_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
+                        android:layout_toRightOf="@id/iv_league"
                         android:paddingLeft="@dimen/vertical_padding_very_small"
+                        android:paddingStart="@dimen/horizontal_padding_very_very_small"
                         android:singleLine="true"
-                        android:textColor="@color/app_theme_blue"
-                        android:textSize="@dimen/font_size_small_medium"
                         android:text="USA"
-                        />
+                        android:textColor="@color/app_theme_blue"
+                        android:textSize="@dimen/font_size_small_medium" />
                 </RelativeLayout>
             </LinearLayout>
-            <android.support.v7.widget.RecyclerView
+
+            <include
                 android:id="@+id/child_rv"
+                layout="@layout/score_card"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:listitem="@layout/fragment_score_card"
-                card:layoutManager="com.sports.unity.common.view.CustomLinearLayoutManager"/>
+                android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
+
     <View
         android:id="@+id/sep_bottom"
         android:layout_width="match_parent"
-        android:background="@color/gray4"
-        android:layout_height="0.3dp">
+        android:layout_height="0.3dp"
+        android:background="@color/gray4">
 
     </View>
 </LinearLayout>

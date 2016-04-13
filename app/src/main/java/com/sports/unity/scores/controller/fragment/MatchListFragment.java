@@ -5,8 +5,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -16,18 +16,13 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.controller.MainActivity;
-import com.sports.unity.common.controller.fragment.StaffPagerAdapter;
-import com.sports.unity.common.model.ControlledSwipeViewPager;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
@@ -48,12 +43,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
-
 /**
  * Created by Edwin on 15/02/2015.
  */
-public class MatchListFragment extends Fragment implements MatchListWrapperNotify{
+public class MatchListFragment extends Fragment implements MatchListWrapperNotify {
 
 //    private static final String liveScore = "http://52.74.142.219:8080/get_league_fixtures?league_id=1204&date=" + formattedDate;
 
@@ -79,9 +72,9 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
     private String scoreDetailsId = "";
     private FavouriteItem favouriteItem;
     private boolean isStaffPicked;
-    private FrameLayout staffView;
     private LayoutInflater inflater;
     private ArrayList<FavouriteItem> flagFavItem;
+    ArrayList<MatchListWrapperItem> dataItem = new ArrayList<MatchListWrapperItem>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -157,15 +150,12 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
             showProgress(getView());
             requestContent();
         }
-        if (getActivity() instanceof MainActivity) {
-            handleStaffFavContent();
-        }
         handleIfSportsChanged();
 
     }
 
-    private void handleStaffFavContent() {
-        String staffFavString = UserUtil.getStaffFlagUrl(getActivity());
+    private boolean handleStaffFavContent() {
+        String staffFavString = UserUtil.getStaffSelectedData(getActivity());
         ArrayList<FavouriteItem> favouriteItems = new ArrayList<FavouriteItem>();
         if (null != staffFavString && !TextUtils.isEmpty(staffFavString)) {
             flagFavItem = FavouriteItemWrapper.getInstance(getActivity()).getFavListOfOthers(staffFavString);
@@ -177,44 +167,11 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                     }
                 }
                 if (favouriteItems.size() > 0) {
-                    staffView.setVisibility(View.VISIBLE);
-                    final RadioGroup radioGroup = (RadioGroup) getView().findViewById(R.id.radiogroup);
-                    radioGroup.removeAllViews();
-                    ViewPager pager = (ViewPager) getView().findViewById(R.id.pager);
-                    StaffPagerAdapter adapter = new StaffPagerAdapter(getActivity(), favouriteItems, inflater, radioGroup, staffView);
-                    pager.setAdapter(adapter);
-                    RadioGroup.LayoutParams params = new RadioGroup.LayoutParams(RadioGroup.LayoutParams.WRAP_CONTENT, RadioGroup.LayoutParams.WRAP_CONTENT);
-                    for (int i = 0; i < favouriteItems.size(); i++) {
-                        LinearLayout layout = (LinearLayout) inflater.inflate(R.layout.staff_radio_btn, null);
-                        RadioButton radioButton = new RadioButton(getActivity());/*(RadioButton) layout.findViewById(R.id.radioButton);*/
-                        radioButton.setClickable(false);
-                        radioButton.setButtonDrawable(R.drawable.tour_icon);
-                        radioButton.setId(i);
-                        radioButton.setPadding(5, 0, 5, 0);
-                        if (i == 0) {
-                            radioButton.setChecked(true);
-                        }
-                        radioGroup.addView(radioButton, params);
-                    }
-                    pager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-                        @Override
-                        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-
-                        }
-
-                        @Override
-                        public void onPageSelected(int position) {
-                            radioGroup.check(position);
-                        }
-
-                        @Override
-                        public void onPageScrollStateChanged(int state) {
-
-                        }
-                    });
+                    return true;
                 }
             }
         }
+        return false;
     }
 
 
@@ -239,14 +196,16 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
         mRecyclerView.setLayoutManager(mLayoutManager);*/
 
         mWraperRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view_scores);
-        mWraperRecyclerView.setNestedScrollingEnabled(false);
-        mWraperRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getContext(), VERTICAL, false));
-
-        mWraperRecyclerView.setNestedScrollingEnabled(false);
+        mWraperRecyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager manager = new LinearLayoutManager(getActivity());
+        mWraperRecyclerView.setLayoutManager(manager);
         mWraperRecyclerView.setFocusable(false);
-        matchListWrapperAdapter = new MatchListWrapperAdapter(matchList, getActivity(), getContext(),this);
+        boolean shouldShowBanner = false;
+        if (getActivity() instanceof MainActivity) {
+            shouldShowBanner = handleStaffFavContent();
+        }
+        matchListWrapperAdapter = new MatchListWrapperAdapter(dataItem, getActivity(), getContext(), this, shouldShowBanner);
         mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
-        staffView = (FrameLayout) view.findViewById(R.id.staff_pick_ll);
 
         initErrorLayout(view);
         hideErrorLayout(view);
@@ -295,10 +254,14 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
 
     private void renderContent() {
 
-        matchListWrapperAdapter.notifyDataSetChanged();
+        int pos = matchListWrapperAdapter.notifyAdapter();
+        if (!mSwipeRefreshLayout.isRefreshing()) {
+            LinearLayoutManager manager = (LinearLayoutManager) mWraperRecyclerView.getLayoutManager();
+            manager.scrollToPosition(pos);
+        }
     }
 
-    private boolean handleContentForSquad(String content) {
+    private boolean handleContentForIndividuals(String content) {
         boolean success = false;
         matchList.clear();
         matches.clear();
@@ -381,11 +344,22 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
 
                 }
             }
-            Collections.sort(matchList);
+            dataItem.clear();
+            for (MatchListWrapperDTO f : matchList) {
+
+                ArrayList<JSONObject> object = f.getList();
+                for (JSONObject jsonObject : object) {
+                    MatchListWrapperItem wrapperItem = new MatchListWrapperItem(f);
+                    wrapperItem.setJsonObject(jsonObject);
+                    dataItem.add(wrapperItem);
+                }
+            }
+
+
+            Collections.sort(dataItem);
             if (favouriteItem.getFilterType().equalsIgnoreCase(Constants.FILTER_TYPE_LEAGUE) || (isStaffPicked && favouriteItem.getSportsType().equalsIgnoreCase(Constants.SPORTS_TYPE_CRICKET))) {
                 matchListWrapperAdapter.setIsIndividualFixture();
             }
-            matchListWrapperAdapter.notifyDataSetChanged();
         }
         return success;
     }
@@ -428,7 +402,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
             Map<String, Map<String, MatchListWrapperDTO>> daysMap = new HashMap<>();
             String sportsType = "";
             int dayCount = 0;
-            int todayIndexPosition=0;
+            int todayIndexPosition = 0;
             for (int i = 0; i < matches.size(); i++) {
                 try {
                     JSONObject object = matches.get(i);
@@ -439,14 +413,13 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                         leagueName = object.getString("series_name");
                         sportsType = object.getString("type");
 
-                      } else {
+                    } else {
                         epochTime = object.getLong("match_date_epoch");
                         sportsType = object.getString("type");
-
-                            day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
-                            if (!object.isNull("league_name")) {
-                                leagueName = object.getString("league_name");
-                            }
+                        day = DateUtil.getDayFromEpochTime(epochTime * 1000, getContext());
+                        if (!object.isNull("league_name")) {
+                            leagueName = object.getString("league_name");
+                        }
 
                     }
                     MatchListWrapperDTO dayGroupDto = null;
@@ -486,30 +459,36 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
             }
             matchList.clear();
             Set<String> daySet = daysMap.keySet();
-            int c =0;
+            int c = 0;
             for (String dayKey : daySet) {
                 Map<String, MatchListWrapperDTO> leagueMaps = daysMap.get(dayKey);
                 Set<String> keySet = leagueMaps.keySet();
-
                 for (String key : keySet) {
-                    MatchListWrapperDTO tempDTO= leagueMaps.get(key);
+                    MatchListWrapperDTO tempDTO = leagueMaps.get(key);
                     int s = tempDTO.getList().size();
                     dayCount = DateUtil.getDayFromEpochTimeDayCount(tempDTO.getEpochTime() * 1000, getContext());
-                    if((( dayCount<3 && dayCount>-3) ) && s > 0 ) {
+                    if (((dayCount < 3 && dayCount > -3)) && s > 0) {
 
-                            matchList.add(leagueMaps.get(key));
+                        matchList.add(leagueMaps.get(key));
 
                     }
                 }
 
 
             }
+            dataItem.clear();
+            for (MatchListWrapperDTO f : matchList) {
+
+                ArrayList<JSONObject> object = f.getList();
+                for (JSONObject jsonObject : object) {
+                    MatchListWrapperItem wrapperItem = new MatchListWrapperItem(f);
+                    wrapperItem.setJsonObject(jsonObject);
+                    dataItem.add(wrapperItem);
+                }
+            }
 
 
-
-
-
-            Collections.sort(matchList);
+            Collections.sort(dataItem);
             /*for(int i = 0 ; i<matchList.size();i++)
             { MatchListWrapperDTO tempDTO= matchList.get(i);
                 dayCount = DateUtil.getDayFromEpochTimeDayCount(tempDTO.getEpochTime() * 1000, getContext());
@@ -518,10 +497,9 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                     break;
                 }
             }*/
-             matchListWrapperAdapter.notifyDataSetChanged();
-           // mWraperRecyclerView.getLayoutManager().moveView(todayIndexPosition, 0);
-           // mWraperRecyclerView.getLayoutManager().scrollToPosition(todayIndexPosition);
-          //mWraperRecyclerView.getLayoutManager().moveView(0, todayIndexPosition);
+            // mWraperRecyclerView.getLayoutManager().moveView(todayIndexPosition, 0);
+            // mWraperRecyclerView.getLayoutManager().scrollToPosition(todayIndexPosition);
+            //mWraperRecyclerView.getLayoutManager().moveView(0, todayIndexPosition);
         }
         return success;
     }
@@ -599,18 +577,15 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
     }
 
 
-
-
-
     @Override
     public void notifyParent() {
-        matchListWrapperAdapter.notifyDataSetChanged();
+        matchListWrapperAdapter.notifyAdapter();
         mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     public void refreshData() {
-       mSwipeRefreshLayout.setRefreshing(true);
+        mSwipeRefreshLayout.setRefreshing(true);
     }
 
     private class ScoresContentListener implements ScoresContentHandler.ContentListener {
@@ -623,7 +598,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                     if (TextUtils.isEmpty(scoreDetailsId)) {
                         success = MatchListFragment.this.handleContent(content);
                     } else {
-                        success = MatchListFragment.this.handleContentForSquad(content);
+                        success = MatchListFragment.this.handleContentForIndividuals(content);
                     }
                     if (success) {
                         hideErrorLayout(MatchListFragment.this.getView());

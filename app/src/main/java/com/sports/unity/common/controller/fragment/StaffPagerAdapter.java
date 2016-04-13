@@ -4,27 +4,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RadioGroup;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.TeamLeagueDetails;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.scores.controller.fragment.MatchListWrapperAdapter;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
-import java.util.zip.Inflater;
 
 /**
  * Created by Mad on 06-Apr-16.
@@ -32,17 +28,15 @@ import java.util.zip.Inflater;
 public class StaffPagerAdapter extends PagerAdapter {
     private Context context;
     private ArrayList<FavouriteItem> data;
-    private LayoutInflater inflater;
     private RadioGroup radioGroup;
-    private FrameLayout staffView;
     private boolean isDeleted = false;
+    private MatchListWrapperAdapter adapter;
 
-    public StaffPagerAdapter(Context context, ArrayList<FavouriteItem> data, LayoutInflater inflater, RadioGroup radioGroup, FrameLayout staffView) {
+    public StaffPagerAdapter(Context context, ArrayList<FavouriteItem> data, RadioGroup radioGroup, MatchListWrapperAdapter adapter) {
         this.context = context;
         this.data = data;
-        this.inflater = inflater;
         this.radioGroup = radioGroup;
-        this.staffView = staffView;
+        this.adapter = adapter;
     }
 
     @Override
@@ -62,7 +56,7 @@ public class StaffPagerAdapter extends PagerAdapter {
 
     @Override
     public Object instantiateItem(final ViewGroup container, final int position) {
-        final FrameLayout scoreView = (FrameLayout) inflater.inflate(R.layout.score_staff_item, null);
+        final FrameLayout scoreView = (FrameLayout) LayoutInflater.from(context).inflate(R.layout.score_staff_item, null);
         ImageView flag = (ImageView) scoreView.findViewById(R.id.flag);
         ImageView closeBtn = (ImageView) scoreView.findViewById(R.id.close);
         closeBtn.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, false));
@@ -74,10 +68,7 @@ public class StaffPagerAdapter extends PagerAdapter {
                     radioGroup.removeView(radioGroup.findViewById(data.size() - 1));
                     data.remove(position);
                     isDeleted = true;
-                    // destroyItem(container, position, scoreView);
                     StaffPagerAdapter.this.notifyDataSetChanged();
-                    notifyDataSetChanged();
-                    staffView.invalidate();
                     if (position == 0) {
                         radioGroup.check(0);
                     } else if (position == data.size()) {
@@ -85,15 +76,12 @@ public class StaffPagerAdapter extends PagerAdapter {
                     } else {
                         radioGroup.check(position);
                     }
-
-                    radioGroup.requestLayout();
-                    radioGroup.invalidate();
                 } else {
-                    staffView.setVisibility(View.GONE);
+                    adapter.removeStaffBanner();
                 }
             }
         });
-        Glide.with(context).load(Uri.parse(data.get(position).getFlagImageUrl())).placeholder(R.drawable.ic_no_img).into(flag);
+        Glide.with(context).load(Uri.parse(data.get(position).getFlagImageUrl())).placeholder(R.drawable.empty_banner).into(flag);
         scoreView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

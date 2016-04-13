@@ -8,6 +8,7 @@ import android.widget.TextView;
  */
 public class UpCommngFootbalMatchTableDTO  {
 
+    private int viewType = 0;
     private String ivTeamProfileImage;
     private String tvTeamName;
     private String tvP;
@@ -15,6 +16,15 @@ public class UpCommngFootbalMatchTableDTO  {
     private String tvD;
     private String tvL;
     private String tvPts;
+    private String rank;
+
+    public void setViewType(int viewType) {
+        this.viewType = viewType;
+    }
+
+    public int getViewType() {
+        return viewType;
+    }
 
     public String getTeamId() {
         return teamId;
@@ -82,5 +92,12 @@ public class UpCommngFootbalMatchTableDTO  {
         this.tvPts = tvPts;
     }
 
+    public String getRank() {
+        return rank;
+    }
+
+    public void setRank(String rank) {
+        this.rank = rank;
+    }
 
 }

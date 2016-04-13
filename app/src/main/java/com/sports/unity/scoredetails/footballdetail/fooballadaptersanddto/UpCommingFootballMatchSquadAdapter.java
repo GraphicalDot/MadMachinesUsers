@@ -74,9 +74,10 @@ public class UpCommingFootballMatchSquadAdapter extends RecyclerView.Adapter<UpC
                 holder.cricketPlayerName.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent i = new Intent(context, PlayerCricketBioDataActivity.class);
-                        i.putExtra(Constants.INTENT_KEY_ID, id);
-                        context.startActivity(i);
+                        Intent intent = PlayerCricketBioDataActivity.createIntent(v.getContext(), id, ((TextView) v).getText().toString());
+//                        Intent i = new Intent(context, PlayerCricketBioDataActivity.class);
+//                        i.putExtra(Constants.INTENT_KEY_ID, id);
+                        context.startActivity(intent);
                     }
                 });
             }

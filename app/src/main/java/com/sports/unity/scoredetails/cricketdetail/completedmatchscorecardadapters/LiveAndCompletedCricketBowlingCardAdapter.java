@@ -22,14 +22,14 @@ public class LiveAndCompletedCricketBowlingCardAdapter extends RecyclerView.Adap
     private final List<LiveAndCompletedCricketBowlingCardDTO> mValues;
     private Context context;
 
-    public LiveAndCompletedCricketBowlingCardAdapter(List<LiveAndCompletedCricketBowlingCardDTO> mValues,Context context) {
+    public LiveAndCompletedCricketBowlingCardAdapter(List<LiveAndCompletedCricketBowlingCardDTO> mValues, Context context) {
         this.mValues = mValues;
         this.context = context;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_live_cricket_bowling_card,parent,false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.fragment_live_cricket_bowling_card, parent, false);
         return new ViewHolder(view);
     }
 
@@ -48,10 +48,10 @@ public class LiveAndCompletedCricketBowlingCardAdapter extends RecyclerView.Adap
             public void onClick(View v) {
 
                 try {
-
-                    Intent i = new Intent(context, PlayerCricketBioDataActivity.class);
-                    i.putExtra(Constants.INTENT_KEY_ID, playerId);
-                    v.getContext().startActivity(i);
+                    Intent intent = PlayerCricketBioDataActivity.createIntent(v.getContext(), playerId, ((TextView) v).getText().toString());
+//                        Intent i = new Intent(context, PlayerCricketBioDataActivity.class);
+//                        i.putExtra(Constants.INTENT_KEY_ID, playerId);
+                    v.getContext().startActivity(intent);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -70,8 +70,7 @@ public class LiveAndCompletedCricketBowlingCardAdapter extends RecyclerView.Adap
     }
 
 
-    public class ViewHolder extends RecyclerView.ViewHolder
-    {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         private TextView tvBowlerName;
         private TextView tvOver;

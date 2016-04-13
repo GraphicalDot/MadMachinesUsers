@@ -1,5 +1,13 @@
 apply plugin: 'com.android.application'
 android {
+    signingConfigs {
+        config {
+            keyAlias 'sportsunityalias'
+            keyPassword 'info12345'
+            storeFile file('/home/amandeep/Downloads/sportsunitykeystore.jks')
+            storePassword 'info12345'
+        }
+    }
     compileSdkVersion 23
     buildToolsVersion '23.0.2'
     defaultConfig {
@@ -16,12 +24,12 @@ android {
         incremental true
         javaMaxHeapSize "2g"
     }
-
     buildTypes {
         release {
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
         }
     }
     productFlavors {
@@ -47,7 +55,7 @@ android {
             minSdkVersion 19
             applicationId 'co.sports.unity'
             targetSdkVersion 23
-            versionCode 2
+            versionCode 8
             versionName '1.0'
         }
     }
