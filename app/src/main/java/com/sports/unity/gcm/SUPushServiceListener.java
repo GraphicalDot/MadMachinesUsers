@@ -127,13 +127,7 @@ public class SUPushServiceListener extends GcmListenerService {
 
                 }
 
-
-
-
-
-
-
-                Intent muteIntent = new Intent(this,UnRegisterMatch.class);
+               Intent muteIntent = new Intent(this,UnRegisterMatch.class);
                 muteIntent.putExtra(Constants.INTENT_KEY_ID,matchiId);
                 muteIntent.putExtra(Constants.INTENT_KEY_SERIES,seriesid);
                 PendingIntent mpi = PendingIntent.getService(this,0,muteIntent,PendingIntent.FLAG_UPDATE_CURRENT) ;

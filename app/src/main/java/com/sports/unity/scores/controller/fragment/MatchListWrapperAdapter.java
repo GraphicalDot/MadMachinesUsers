@@ -95,7 +95,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     };*/
     private TokenRegistrationHandler tokenRegistrationHandler;
     private SharedPreferences preferences;
-   private String tempKey;
+    private String tempKey;
     private boolean shouldShowHeader = false;
 
     public MatchListWrapperAdapter(List<MatchListWrapperItem> matchDay, Activity activity, Context context, MatchListWrapperNotify matchListWrapperNotify, boolean shouldShowHeader) {
@@ -296,7 +296,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                         } else if (matchJsonCaller.getType().equals(ScoresJsonParser.FOOTBALL)) {
                             holder.team1Overs.setVisibility(View.GONE);
                             holder.team2Overs.setVisibility(View.GONE);
-                            Log.i("FOOTBALL JSON OBJECT: ", matchJsonObject.toString());
+
                             footballMatchJsonCaller.setJsonObject(matchJsonObject);
                             final String key = footballMatchJsonCaller.getMatchId().toString() + "|" + footballMatchJsonCaller.getLeagueId();
                             Log.i("FOOTBALMATCH: ", key);
@@ -319,7 +319,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                                 tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
                                                 tokenRegistrationHandler.addListener(MatchListWrapperAdapter.this);
 
-                                               // Toast.makeText(context,"Key :- "+ tempKey,Toast.LENGTH_LONG).show();
+                                                // Toast.makeText(context,"Key :- "+ tempKey,Toast.LENGTH_LONG).show();
 
 
                                                 tokenRegistrationHandler.removeMatchUser(key);
@@ -340,7 +340,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                                 tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
                                                 tokenRegistrationHandler.addListener(MatchListWrapperAdapter.this);
 
-                                               // Toast.makeText(context,"Key :- "+ tempKey,Toast.LENGTH_LONG).show();
+                                                // Toast.makeText(context,"Key :- "+ tempKey,Toast.LENGTH_LONG).show();
 
                                                 tokenRegistrationHandler.registrerMatchUser(key, CommonUtil.getToken(activity));
 
@@ -496,7 +496,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             if (object != null && !object.isNull("status") && 200 == object.getInt("status")) {
                 if ("success".equalsIgnoreCase(object.getString("info"))) {
 
-                   // Toast.makeText(context,"Key :- "+tempKey,Toast.LENGTH_LONG).show();
+                    // Toast.makeText(context,"Key :- "+tempKey,Toast.LENGTH_LONG).show();
                     SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(activity);
                     SharedPreferences.Editor editor = prefs.edit();
                     String storedKey = prefs.getString(tempKey, "");
