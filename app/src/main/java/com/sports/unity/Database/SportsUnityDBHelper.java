@@ -448,7 +448,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactChatEntry.COLUMN_AVAILABLE_STATUS
         };
 
-        String selection = ContactChatEntry.COLUMN_UPDATE_REQUIRED + " == 1 ";
+        String selection = ContactChatEntry.COLUMN_UPDATE_REQUIRED + " == 1 AND  " + ContactChatEntry.COLUMN_JID + " is not null ";
         String[] selectionArgs = null;
 
         Cursor c = db.query( ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null );
