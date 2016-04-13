@@ -369,7 +369,12 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     }
 
     private void fetchUsersNearByWithNewRadius() {
-        getPeopleAroundMe(latLong.latitude, latLong.longitude);
+        if(latLong!=null){
+            getPeopleAroundMe(latLong.latitude, latLong.longitude);
+        }else{
+            getLocation();
+        }
+
     }
 
     private void initToolbar() {

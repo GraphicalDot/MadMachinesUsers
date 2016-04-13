@@ -448,7 +448,7 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
     private void setBallOverWise(BallDetail[] balls, int index) {
         if(balls[index].getBallId()==1){
             dividerView[index].setVisibility(View.VISIBLE);
-            vifirsttv[index].setText(recentOverValue + " OVS");
+            vifirsttv[index].setText(recentOverValue + " ovs");
         }else{
             dividerView[index].setVisibility(View.INVISIBLE);
             vifirsttv[index].setVisibility(View.INVISIBLE);
