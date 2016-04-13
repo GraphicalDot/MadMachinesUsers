@@ -134,8 +134,8 @@ public class SUPushServiceListener extends GcmListenerService {
 
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, title);
-                sharingIntent.putExtra(Intent.EXTRA_TEXT, content);
+                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, title + " " + content);
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, title+" "+content);
 
                 PendingIntent shareIntent = PendingIntent.getActivity(this,0,sharingIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 

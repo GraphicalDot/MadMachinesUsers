@@ -84,14 +84,12 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         }
 
     };
-
     /*private View.OnClickListener matchAlertListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View view) {
             handleMatchAlert(view);
         }
-
     };*/
     private TokenRegistrationHandler tokenRegistrationHandler;
     private SharedPreferences preferences;
