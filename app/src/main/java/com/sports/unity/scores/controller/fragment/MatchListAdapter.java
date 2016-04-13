@@ -193,7 +193,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                             cricketMatchJsonCaller.setMatchWidgetHomeTeam(teamData);
 
                         }
-
                     }
                 }
                 if (widgetTeamSecond != null) {
@@ -396,14 +395,17 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                         }
                     }
                 }
+                Log.d( "Key Renders: ", footballMatchJsonCaller.getMatchId() + "|" + footballMatchJsonCaller.getLeagueId());
 
-
-                if ("Completed".equals(holder.matchDay.getText())) {
+                /*if ("Completed".equals(holder.matchDay.getText())) {
                     holder.notification.setVisibility(View.GONE);
                 } else {
 
                     preferences = PreferenceManager.getDefaultSharedPreferences(activity);
                     final String key = footballMatchJsonCaller.getMatchId() + "|" + footballMatchJsonCaller.getLeagueId();
+                    Log.i("MATCH ID: ",footballMatchJsonCaller.getMatchId()+" ");
+                    Log.i("SERIES ID: ",footballMatchJsonCaller.getLeagueId()+" ");
+                    Log.i("MATCH KEY: ",key);
                     String subsMatch = preferences.getString(key, "");
                     if (key.equalsIgnoreCase(subsMatch) && !subsMatch.equals("")) {
                         holder.notification.setImageResource(R.drawable.ic_notification_enable);
@@ -445,7 +447,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
                     }
 
-                }
+                }*/
 
             }
 
@@ -742,16 +744,13 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     bet2.setText(matchJsonCaller.getTeams2Odds());
                 } else if (matchJsonCaller.getType().equals(ScoresJsonParser.FOOTBALL)) {
                     footballMatchJsonCaller.setJsonObject(jsonObject);
-
                     Glide.with(activity).load(footballMatchJsonCaller.getHomeTeamFlag()).placeholder(R.drawable.ic_no_img).into(flag1);
                     Glide.with(activity).load(footballMatchJsonCaller.getAwayTeamFlag()).placeholder(R.drawable.ic_no_img).into(flag2);
-
                     team1.setText(footballMatchJsonCaller.getHomeTeam());
                     team2.setText(footballMatchJsonCaller.getAwayTeam());
                     bet1.setText(footballMatchJsonCaller.getTeams1Odds());
                     bet2.setText(footballMatchJsonCaller.getTeams2Odds());
                 }
-
             }catch (Exception ex){
                 ex.printStackTrace();
             }

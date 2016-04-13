@@ -818,6 +818,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
         @Override
         public void changeUI() {
+
             if (successfulResponse) {
                 ScoreDetailActivity.this.renderComments();
             } else {

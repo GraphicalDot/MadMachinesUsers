@@ -252,7 +252,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
     };
 
-
     private void userPrivacyUpdate() {
         userLocation = UserUtil.isShowToAllLocation();
         tokenRegistrationHandler = TokenRegistrationHandler.getInstance(getApplicationContext());
