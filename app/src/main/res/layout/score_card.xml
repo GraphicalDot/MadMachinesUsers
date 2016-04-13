@@ -138,6 +138,7 @@
                                 android:layout_alignParentRight="true"
                                 android:id="@+id/ll_score_second"
                                 perc:layout_widthPercent="35%"
+                                android:layout_centerVertical="true"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical">
