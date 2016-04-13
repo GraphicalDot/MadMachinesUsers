@@ -132,6 +132,7 @@ public class SUPushServiceListener extends GcmListenerService {
 
 
 
+
                 Intent muteIntent = new Intent(this,UnRegisterMatch.class);
                 muteIntent.putExtra(Constants.INTENT_KEY_ID,matchiId);
                 muteIntent.putExtra(Constants.INTENT_KEY_SERIES,seriesid);
@@ -146,7 +147,7 @@ public class SUPushServiceListener extends GcmListenerService {
 
 
                 Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), drawableId);
-                int sportsTypeId = getSportId(sportsType);
+                //int sportsTypeId = getSportId(sportsType);
                  NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(this)
                                 .setVisibility(Notification.VISIBILITY_PUBLIC)
@@ -163,8 +164,7 @@ public class SUPushServiceListener extends GcmListenerService {
                 stackBuilder.addParentStack(ScoreDetailActivity.class);
                 stackBuilder.addNextIntent(i);
                 PendingIntent resultPendingIntent =
-                        stackBuilder.getPendingIntent(
-                                0,
+                        stackBuilder.getPendingIntent(0,
                                 PendingIntent.FLAG_UPDATE_CURRENT
                         );
                 mBuilder.setContentIntent(resultPendingIntent);
