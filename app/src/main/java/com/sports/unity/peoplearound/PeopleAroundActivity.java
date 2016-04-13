@@ -252,7 +252,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
     };
 
-
     private void userPrivacyUpdate() {
         userLocation = UserUtil.isShowToAllLocation();
         tokenRegistrationHandler = TokenRegistrationHandler.getInstance(getApplicationContext());
@@ -370,7 +369,12 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     }
 
     private void fetchUsersNearByWithNewRadius() {
-        getPeopleAroundMe(latLong.latitude, latLong.longitude);
+        if(latLong!=null){
+            getPeopleAroundMe(latLong.latitude, latLong.longitude);
+        }else{
+            getLocation();
+        }
+
     }
 
     private void initToolbar() {

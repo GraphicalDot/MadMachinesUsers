@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
+import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.ViewPagerCricketScoreDetailAdapter;
 import com.sports.unity.common.controller.ViewPagerFootballScoreDetailAdapter;
 import com.sports.unity.common.model.FontTypeface;
@@ -260,6 +261,17 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private void setToolbar() {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        ImageView backArrow = (ImageView) toolbar.findViewById(R.id.back_img);
+        backArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(ScoreDetailActivity.this, MainActivity.class);
+                i.putExtra("tab_index",0);
+                startActivity(i);
+            }
+        });
+
+
     }
 
     private void setTitle(){
@@ -806,6 +818,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
         @Override
         public void changeUI() {
+
             if (successfulResponse) {
                 ScoreDetailActivity.this.renderComments();
             } else {

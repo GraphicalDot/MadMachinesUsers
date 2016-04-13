@@ -57,7 +57,7 @@
 
                             <TextView
                                 android:id="@+id/team1"
-                                perc:layout_widthPercent="65%"
+                                perc:layout_widthPercent="57%"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentLeft="true"
@@ -70,7 +70,7 @@
                                 />
                             <LinearLayout
                                 android:id="@+id/ll_first_score"
-                                perc:layout_widthPercent="35%"
+                                perc:layout_widthPercent="43%"
                                 android:layout_width="0dp"
                                 android:layout_centerVertical="true"
                                 android:layout_alignParentRight="true"
@@ -123,7 +123,7 @@
                             android:layout_height="match_parent">
                             <TextView
                                 android:id="@+id/team2"
-                                perc:layout_widthPercent="65%"
+                                perc:layout_widthPercent="57%"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentLeft="true"
@@ -137,7 +137,8 @@
                             <LinearLayout
                                 android:layout_alignParentRight="true"
                                 android:id="@+id/ll_score_second"
-                                perc:layout_widthPercent="35%"
+                                perc:layout_widthPercent="43%"
+                                android:layout_centerVertical="true"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:orientation="vertical">

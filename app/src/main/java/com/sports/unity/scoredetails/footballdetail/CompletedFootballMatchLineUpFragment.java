@@ -108,7 +108,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         rvLineup.setNestedScrollingEnabled(false);
         completeFootballSubstituteUpAdapter = new CompleteFootballLineUpAdapter(substitutesList ,getContext());
         rvSubstitutes.setAdapter(completeFootballSubstituteUpAdapter);
-        manageRootView = view.findViewById(R.id.manager_root);
+        manageRootView = view.findViewById(R.id.parent_layout);
         manageRootView.setVisibility(View.GONE);
         layoutLineUpView  = view.findViewById(R.id.layout_line_up);
         layoutLineUpView.setVisibility(View.GONE);
@@ -313,84 +313,6 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
         return playerOn;
     }
 
-    private void getMatchEventsFirst(JSONArray matchEventsArray ,String playerName,CompleteFootballLineUpDTO completeFootballLineUpDTO) {
-        String event = null;
-        try{
-            if(playerName != null){
-                for(int i = 0;i<matchEventsArray.length();i++){
-                    JSONObject eventObject = matchEventsArray.getJSONObject(i);
-                    if(!eventObject.isNull("player_name")) {
-                        if (playerName.equals(eventObject.getString("player_name"))) {
-                            if (!eventObject.isNull("event")) {
-
-                                event = eventObject.getString("event");
-
-                                if (event != null) {
-                                    if ("goals".equalsIgnoreCase(event)) {
-                                        completeFootballLineUpDTO.setGoal(event);
-                                    }
-
-
-                                    if("yellowcards".equalsIgnoreCase(event)) {
-                                        completeFootballLineUpDTO.setCardType(event);
-                                    }
-
-                                    if("redcards".equalsIgnoreCase(event)) {
-                                        completeFootballLineUpDTO.setCardType(event);
-                                    }
-
-
-                                }
-                          }
-                        }
-                    }
-                }
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-    }
-    private void getMatchEventsSecond(JSONArray matchEventsArray ,String playerName,CompleteFootballLineUpDTO completeFootballLineUpDTO) {
-        String event = null;
-        try{
-            if(playerName != null){
-                for(int i = 0;i<matchEventsArray.length();i++){
-                    JSONObject eventObject = matchEventsArray.getJSONObject(i);
-                    if(!eventObject.isNull("player_name")) {
-                        if (playerName.equals(eventObject.getString("player_name"))) {
-                            if (!eventObject.isNull("event")) {
-
-                                event = eventObject.getString("event");
-
-                                if (event != null) {
-                                    if ("goals".equalsIgnoreCase(event)) {
-                                        completeFootballLineUpDTO.setGoalSecond(event);
-                                    }
-
-
-                                    if("yellowcards".equalsIgnoreCase(event)) {
-                                        completeFootballLineUpDTO.setCardTypeSecond(event);
-                                    }
-
-                                    if("redcards".equalsIgnoreCase(event)) {
-                                        completeFootballLineUpDTO.setCardTypeSecond(event);
-                                    }
-
-
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-    }
 
     @Override
     public void onResume() {

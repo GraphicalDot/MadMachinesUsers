@@ -127,26 +127,21 @@ public class SUPushServiceListener extends GcmListenerService {
 
                 }
 
-
-
-
-
-
-                Intent muteIntent = new Intent(this,UnRegisterMatch.class);
+               Intent muteIntent = new Intent(this,UnRegisterMatch.class);
                 muteIntent.putExtra(Constants.INTENT_KEY_ID,matchiId);
                 muteIntent.putExtra(Constants.INTENT_KEY_SERIES,seriesid);
                 PendingIntent mpi = PendingIntent.getService(this,0,muteIntent,PendingIntent.FLAG_UPDATE_CURRENT) ;
 
                 Intent sharingIntent = new Intent(Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");
-                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, title);
-                sharingIntent.putExtra(Intent.EXTRA_TEXT, content);
+                sharingIntent.putExtra(Intent.EXTRA_SUBJECT, title + " " + content);
+                sharingIntent.putExtra(Intent.EXTRA_TEXT, title+" "+content);
 
                 PendingIntent shareIntent = PendingIntent.getActivity(this,0,sharingIntent,PendingIntent.FLAG_UPDATE_CURRENT);
 
 
                 Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), drawableId);
-                int sportsTypeId = getSportId(sportsType);
+                //int sportsTypeId = getSportId(sportsType);
                  NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(this)
                                 .setVisibility(Notification.VISIBILITY_PUBLIC)
@@ -163,8 +158,7 @@ public class SUPushServiceListener extends GcmListenerService {
                 stackBuilder.addParentStack(ScoreDetailActivity.class);
                 stackBuilder.addNextIntent(i);
                 PendingIntent resultPendingIntent =
-                        stackBuilder.getPendingIntent(
-                                0,
+                        stackBuilder.getPendingIntent(0,
                                 PendingIntent.FLAG_UPDATE_CURRENT
                         );
                 mBuilder.setContentIntent(resultPendingIntent);
