@@ -153,6 +153,13 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 cricketMatchJsonCaller.setJsonObject(matchJsonObject);
                 cricketMatchJsonCaller.setMatchWidgetAwayTeam(null);
                 cricketMatchJsonCaller.setMatchWidgetHomeTeam(null);
+                footballMatchJsonCaller.setJsonObject(null);
+
+                /*if(cricketMatchJsonCaller.getTeams1Odds()== null && cricketMatchJsonCaller.getTeams1Odds()==null){
+                    holder.odds.setVisibility(View.INVISIBLE);
+                }else{
+                    holder.odds.setVisibility(View.VISIBLE);
+                }*/
 
                 JSONObject widgetTeamsObject = cricketMatchJsonCaller.getTeamsWiget();
                 JSONArray widgetTeamsFirst = null;
@@ -217,7 +224,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 }
 
 
-                if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {
+                if (!matchJsonCaller.getTeams1Odds().equals("") && !matchJsonCaller.getTeams2Odds().equals("")) {
                     holder.odds.setVisibility(View.VISIBLE);
                     ((ViewGroup) holder.odds.getParent()).setTag(position);
                     ((ViewGroup) holder.odds.getParent()).setClickable(true);
@@ -227,7 +234,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
 
                     ((ViewGroup) holder.odds.getParent()).setClickable(false);
                 }
-                Log.i("IPLMATCHS", "onBindViewHolder: " + cricketMatchJsonCaller.getStatus());
                 if ("L".equalsIgnoreCase(cricketMatchJsonCaller.getStatus()) || "N".equalsIgnoreCase(cricketMatchJsonCaller.getStatus())) {
                     preferences = PreferenceManager.getDefaultSharedPreferences(activity);
                     final String key = cricketMatchJsonCaller.getMatchId() + "|" + cricketMatchJsonCaller.getSeriesId();
@@ -282,8 +288,13 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 holder.team1Overs.setVisibility(View.GONE);
                 holder.team2Overs.setVisibility(View.GONE);
                 footballMatchJsonCaller.setJsonObject(matchJsonObject);
+                cricketMatchJsonCaller.setJsonObject(null);
 
-
+                /*if(footballMatchJsonCaller.getTeams1Odds() == null && footballMatchJsonCaller.getTeams1Odds() == null){
+                    holder.odds.setVisibility(View.INVISIBLE);
+                }else{
+                    holder.odds.setVisibility(View.VISIBLE);
+                }*/
                 Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000)));
                 String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
                 String day = (String) android.text.format.DateFormat.format("dd", date);
@@ -322,7 +333,21 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                         holder.liveText.setVisibility(View.VISIBLE);
                         holder.matchDay.setVisibility(View.GONE);
                         holder.matchMinutes.setVisibility(View.GONE);
-                        holder.liveText.setText(footballMatchJsonCaller.getMatchStatus());
+                        String timer;
+                        String FORMAT = Constants.FOOTBALL_TIMER;
+                        int hours=0;
+                        int minute=0;
+                        Integer counter = 0;
+                        try{
+                            counter = Integer.parseInt(footballMatchJsonCaller.getMatchStatus());
+                            hours = counter/60;
+                            minute = counter%60;
+
+                        }catch (Exception e ){
+                            e.printStackTrace();
+                        }
+                        timer  = String.format(FORMAT,hours,minute);
+                        holder.liveText.setText(timer);
 
                     } else {
                         holder.matchDay.setText("Completed");
@@ -334,7 +359,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                     holder.t2score.setText(footballMatchJsonCaller.getAwayTeamScore());
                 }
 
-                if (matchJsonCaller.getTeams1Odds() != null && matchJsonCaller.getTeams2Odds() != null) {
+                if (!footballMatchJsonCaller.getTeams1Odds().equals("") && !footballMatchJsonCaller.getTeams2Odds().equals("")) {
                     holder.odds.setVisibility(View.VISIBLE);
 
                     ((ViewGroup) holder.odds.getParent()).setTag(position);
@@ -370,12 +395,10 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                             holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
                         }
                     }
-                } else {
                 }
 
 
                 if ("Completed".equals(holder.matchDay.getText())) {
-                    Log.i("FOOTBALMATCHSTATUS: ", footballMatchJsonCaller.getMatchStatus());
                     holder.notification.setVisibility(View.GONE);
                 } else {
 
@@ -389,6 +412,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                             @Override
                             public void onClick(View v) {
                                 try {
+
                                     seriesId = footballMatchJsonCaller.getLeagueId();
                                     matchId = footballMatchJsonCaller.getMatchId().toString();
                                     tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
@@ -399,7 +423,6 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                                 }
                             }
                         });
-
                     } else {
                         holder.notification.setImageResource(R.drawable.ic_notification_disabled);
                         holder.notification.setVisibility(View.VISIBLE);
@@ -407,13 +430,12 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                             @Override
                             public void onClick(View v) {
                                 try {
+
                                     seriesId = footballMatchJsonCaller.getLeagueId();
                                     matchId = footballMatchJsonCaller.getMatchId().toString();
                                     tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
                                     tokenRegistrationHandler.addListener(MatchListAdapter.this);
                                     tokenRegistrationHandler.registrerMatchUser(key, CommonUtil.getToken(activity));
-
-
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -483,27 +505,27 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
         holder.team2Overs.setVisibility(View.VISIBLE);
         holder.t1score.setVisibility(View.VISIBLE);
         holder.t2score.setVisibility(View.VISIBLE);
-        holder.liveText.setText(R.string.live);
+        holder.liveText.setText( cricketMatchJsonCaller.getMatchName());
         holder.liveText.setVisibility(View.VISIBLE);
-        holder.matchDay.setText(cricketMatchJsonCaller.getMatchName());
+        holder.matchDay.setText(R.string.live);
         StringBuilder stringBuilder = new StringBuilder("");
-        stringBuilder.append(cricketMatchJsonCaller.getTeam1Score() != null ? cricketMatchJsonCaller.getTeam1Score() : "0");
+        stringBuilder.append(cricketMatchJsonCaller.getTeam1Score() );
         stringBuilder.append("/");
-        stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam1() != null ? cricketMatchJsonCaller.getWicketsTeam1() : "0");
+        stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam1());
         holder.t1score.setText(stringBuilder.toString());
-        holder.team1Overs.setText(cricketMatchJsonCaller.getOversTeam1() != null ? cricketMatchJsonCaller.getOversTeam1() : "0" + "ovs");
+        holder.team1Overs.setText(cricketMatchJsonCaller.getOversTeam1()  + "OVS");
         stringBuilder = new StringBuilder("");
-        stringBuilder.append(cricketMatchJsonCaller.getTeam2Score() != null ? cricketMatchJsonCaller.getTeam2Score() : "0");
+        stringBuilder.append(cricketMatchJsonCaller.getTeam2Score() );
         stringBuilder.append("/");
-        stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam2() != null ? cricketMatchJsonCaller.getWicketsTeam2() : "0");
+        stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam2() );
         holder.t2score.setText(stringBuilder.toString());
-        holder.team2Overs.setText(cricketMatchJsonCaller.getOversTeam2() != null ? cricketMatchJsonCaller.getOversTeam2() : "0" + "ovs");
+        holder.team2Overs.setText(cricketMatchJsonCaller.getOversTeam2()  + "OVS");
     }
 
     private void setUpcommingMatchScoreCard(ViewHolder holder) throws JSONException {
         //holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
-        holder.matchDay.setText(cricketMatchJsonCaller.getMatchName());
-        holder.liveText.setText("Upcomming");
+        holder.matchDay.setText("Upcoming");
+        holder.liveText.setText(cricketMatchJsonCaller.getMatchName());
         holder.t1score.setVisibility(View.GONE);
         holder.t2score.setVisibility(View.GONE);
         holder.team1Overs.setVisibility(View.GONE);
@@ -512,13 +534,16 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
     }
 
     private void SetCompletedMatchScoreCard(ViewHolder holder) throws JSONException {
-        holder.matchDay.setText(cricketMatchJsonCaller.getMatchName());
-        holder.liveText.setText("Completed");
+        holder.matchDay.setText("Completed");
+        holder.liveText.setText(cricketMatchJsonCaller.getMatchName());
+
         holder.liveText.setVisibility(View.VISIBLE);
         holder.t1score.setVisibility(View.VISIBLE);
         holder.t2score.setVisibility(View.VISIBLE);
-        holder.team1Overs.setVisibility(View.GONE);
-        holder.team2Overs.setVisibility(View.GONE);
+        holder.team1Overs.setVisibility(View.VISIBLE);
+        holder.team2Overs.setVisibility(View.VISIBLE);
+        holder.team1Overs.setText(cricketMatchJsonCaller.getOversTeam1() + " OVS");
+        holder.team2Overs.setText(cricketMatchJsonCaller.getOversTeam2() + " OVS");
         holder.t1score.setText(cricketMatchJsonCaller.getTeam1Score() + "/" + cricketMatchJsonCaller.getWicketsTeam1());
         holder.t2score.setText(cricketMatchJsonCaller.getTeam2Score() + "/" + cricketMatchJsonCaller.getWicketsTeam2());
         //holder.matchDay.setText("Completed");

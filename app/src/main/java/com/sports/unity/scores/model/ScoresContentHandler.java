@@ -362,11 +362,8 @@ public class ScoresContentHandler {
             VolleyRequestHandler.getInstance().addToRequestQueue(request);
 
             requestInProcess_RequestTagAndListenerKey.put(requestTag, listenerKey);
-        } else {
-            //nothing
         }
     }
-//<<<<<<< HEAD
 
     private void requestContent(String requestTag, String listenerKey, String url, String requestBody) {
         if (url != null) {
@@ -374,12 +371,7 @@ public class ScoresContentHandler {
 
             VolleyTagRequest request = new VolleyTagRequest(requestTag, url, requestBody, responseListener);
             request.setRetryPolicy(new DefaultRetryPolicy(Constants.CONNECTION_READ_TIME_OUT, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-//=======
-//
-//    private void requestContent(String requestTag, String listenerKey, String url){
-//        if( url != null ) {
-//            VolleyTagRequest request = new VolleyTagRequest( requestTag, url, responseListener);
-//>>>>>>> team2_dev_branch
+
             VolleyRequestHandler.getInstance().addToRequestQueue(request);
 
             requestInProcess_RequestTagAndListenerKey.put(requestTag, listenerKey);
@@ -403,13 +395,9 @@ public class ScoresContentHandler {
         requestInProcess_RequestTagAndListenerKey.clear();
     }
 
-    //<<<<<<< HEAD
     public void requestFavouriteContent(String url, String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
-//=======
-//    public void requestFavouriteContent(String url,String listenerKey, String requestTag){
-//        if( ! requestInProcess_RequestTagAndListenerKey.containsKey(requestTag) ){
-//>>>>>>> team2_dev_branch
+
             requestContent(requestTag, listenerKey, url);
         }
     }
@@ -437,7 +425,7 @@ public class ScoresContentHandler {
 
     public interface ContentListener {
 
-        public void handleContent(String tag, String content, int responseCode);
+        void handleContent(String tag, String content, int responseCode);
 
     }
 

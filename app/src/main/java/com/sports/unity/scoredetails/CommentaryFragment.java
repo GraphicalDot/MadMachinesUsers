@@ -26,13 +26,13 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class CommentaryFragment extends Fragment implements FragementInterface<CommentriesModel>, DataServiceContract, ErrorContract {
-    private RecyclerView mRecyclerView;
+
     private ArrayList<CommentriesModel> commentaries = new ArrayList<>();
 
     private String sportsType;
     private String matchId;
     Handler h = new Handler();
-
+    private RecyclerView mRecyclerView;
     private BroadcastListAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
     private DataServiceContract dataServiceContract;

@@ -49,6 +49,7 @@ import com.sports.unity.messages.controller.activity.GroupDetailActivity;
 import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.gcm.RegistrationIntentService;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.peoplearound.PeopleAroundActivity;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.LocManager;
@@ -190,11 +191,13 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             @Override
             public void onClick(View v) {
                 if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-                    Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
+                   // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
+                    Intent intent = new Intent(MainActivity.this, PeopleAroundActivity.class);
                     startActivity(intent);
                 } else {
                     if (PermissionUtil.getInstance().requestPermission(MainActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)), getResources().getString(R.string.location_permission_message), Constants.REQUEST_CODE_LOCATION_PERMISSION)) {
-                        Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
+                       // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
+                        Intent intent = new Intent(MainActivity.this, PeopleAroundActivity.class);
                         startActivity(intent);
                     }
                 }

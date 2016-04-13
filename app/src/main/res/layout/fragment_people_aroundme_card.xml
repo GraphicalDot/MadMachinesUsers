@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:padding="@dimen/horizontal_padding_very_small"
+    android:layout_height="wrap_content">
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/iv_friend_img"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/ic_user"/>
+    <LinearLayout
+        android:layout_centerInParent="true"
+        android:layout_toRightOf="@id/iv_friend_img"
+        android:paddingLeft="@dimen/vertical_padding_very_small"
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            android:id="@+id/tv_friend_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_very_small"
+            android:text="This is demo text"
+            android:textColor="@color/news_static"/>
+        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+            android:id="@+id/tv_friend_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/font_size_very_very_small"
+            android:text="This is demo text"
+            android:textColor="@color/gray1"/>
+    </LinearLayout>
+</RelativeLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray3"></View>
+</LinearLayout>

@@ -749,7 +749,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                 userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
             }
 
-        } else if (userImageBytes != null) {
+        } else if (null != userImageBytes) {
             userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
         }
 

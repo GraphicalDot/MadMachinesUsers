@@ -365,8 +365,8 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                 tvExtraRunTeamFirst.setText("Extras " + cricketMatchScoreJsonParser.getExtra(teamFirstInnings[k]));
                 tvTotalRunFirstTeam.setText(cricketMatchScoreJsonParser.getTeamRuns(teamFirstInnings[k]));
                 tvRunRateFirstTeam.setText(cricketMatchScoreJsonParser.getTeamRunsRate(teamFirstInnings[k]));
-                tvTeamFirstNameAndScore.setText(teamNameFirst + " " + cricketMatchScoreJsonParser.getTeamRuns(teamFirstInnings[k]) + "/" + cricketMatchScoreJsonParser.getTeamWicket(teamFirstInnings[k]));
-                tvFirstTeamInning.setText(teamNameFirst+ " Innings");
+                tvTeamFirstNameAndScore.setText((teamNameFirst==null?"Yet To Bat":teamNameFirst)+ " " + cricketMatchScoreJsonParser.getTeamRuns(teamFirstInnings[k]) + "/" + cricketMatchScoreJsonParser.getTeamWicket(teamFirstInnings[k]));
+                tvFirstTeamInning.setText(teamNameFirst==null?"Yet To Bat":teamNameFirst+ " Innings");
             }
             if (teamABattingArray != null) {
                 for (i = 0; i < teamABattingArray.length(); i++) {
@@ -409,8 +409,8 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                 tvExtraRunTeamSecond.setText("Extras " + cricketMatchScoreJsonParser.getExtra(teamSecondInnings[k]));
                 tvTotalRunSecondTeam.setText(cricketMatchScoreJsonParser.getTeamRuns(teamSecondInnings[k]));
                 tvRunRateSecondTeam.setText(cricketMatchScoreJsonParser.getTeamRunsRate(teamSecondInnings[k]));
-                tvTeamSecondNameAndScore.setText(teamNameSecond + " " + cricketMatchScoreJsonParser.getTeamRuns(teamSecondInnings[k]) + "/" + cricketMatchScoreJsonParser.getTeamWicket(teamSecondInnings[k]));
-                tvSecondTeamInning.setText(teamNameSecond + " Innings");
+                tvTeamSecondNameAndScore.setText((teamNameSecond==null?"Yet To Bat":teamNameSecond) + " " + cricketMatchScoreJsonParser.getTeamRuns(teamSecondInnings[k]) + "/" + cricketMatchScoreJsonParser.getTeamWicket(teamSecondInnings[k]));
+                tvSecondTeamInning.setText(teamNameSecond==null?"Yet To Bat":teamNameSecond + " Innings");
             }
             if(teamBBattingArray!=null){
             for ( i = 0; i < teamBBattingArray.length(); i++) {
@@ -431,7 +431,6 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
             for (int k = 0; k < teamBFallWicketArray.length(); k++) {
                 JSONObject fallOfWicketObject = teamBFallWicketArray.getJSONObject(k);
                 LiveAndCompletedCricketFallOfWicketCardDTO fallOfWickets = CricketMatchScoreCardUtil.getLiveAndCompletedCricketFallOfWicketCardDTO(cricketMatchScoreJsonParser, k, fallOfWicketObject);
-
                 teamBFallOfWicketCardList.add(fallOfWickets);
             }
             }

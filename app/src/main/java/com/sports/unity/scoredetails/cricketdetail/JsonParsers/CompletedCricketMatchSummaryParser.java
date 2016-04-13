@@ -1,5 +1,6 @@
 package com.sports.unity.scoredetails.cricketdetail.JsonParsers;
 
+import com.google.gson.JsonObject;
 import com.sports.unity.util.JsonObjectCaller;
 
 import org.json.JSONException;
@@ -13,6 +14,10 @@ public class CompletedCricketMatchSummaryParser extends JsonObjectCaller {
     private JSONObject manOfTheMatch;
     private JSONObject batting;
     private JSONObject umpires;
+
+
+
+    private JSONObject bowling;
     public JSONObject getMatchSummary() throws JSONException {
         return jsonObject.getJSONObject("summary");
     }
@@ -62,12 +67,13 @@ public class CompletedCricketMatchSummaryParser extends JsonObjectCaller {
 
     public String getruns() throws JSONException{
 
-        if (!batting.isNull("runs")){
+        if (!batting.isNull("runs") && batting.getInt("runs")>0){
             return batting.getString("runs");
         }
         else
         {
-            return "";
+
+            return bowling.getString("runs") ;
         }
     }
 
@@ -105,18 +111,39 @@ public class CompletedCricketMatchSummaryParser extends JsonObjectCaller {
     public String getFirstUmpire() throws  JSONException{
         if(!umpires.isNull("first_umpire")){
             return umpires.getString("first_umpire");
-        }else{return  "";}
+        }else{return  "N/A";}
     }
-
     public String getRefree() throws  JSONException{
         if(!umpires.isNull("referee")){
             return umpires.getString("referee");
-        }else{return  "";}
+        }else{return  "N/A";}
     }
     public String getPlayerImage() throws  JSONException{
         if(!manOfTheMatch.isNull("player_image")){
             return manOfTheMatch.getString("player_image");
         }else{return  "";}
+    }
+
+    public JSONObject getBowlingDetails()throws JSONException
+    {
+        if(batting.getInt("runs")==0){
+            return manOfTheMatch.getJSONObject("bowling");
+        }
+        return null;
+
+    }
+    public JSONObject getBowling() {
+        return bowling;
+    }
+
+    public void setBowling(JSONObject bowling) {
+        this.bowling = bowling;
+    }
+
+    public String secondFirstUmpire() throws  JSONException{
+        if(!umpires.isNull("second_umpire")){
+            return umpires.getString("second_umpire");
+        }else{return  "N/A";}
     }
 
 }

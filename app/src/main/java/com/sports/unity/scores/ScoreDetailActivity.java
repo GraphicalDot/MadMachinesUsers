@@ -1,6 +1,7 @@
 package com.sports.unity.scores;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -235,6 +236,9 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             llMatchDetailLinear = findViewById(R.id.ll_match_detail_linear);
             tvMatchTime = (TextView) findViewById(R.id.tv_match_time);
             getTvMatchDay = (TextView) findViewById(R.id.tv_game_day);
+            getTvMatchDay.setTextColor(getResources().getColor(R.color.score_light_grey));
+            Typeface tf = Typeface.createFromAsset(getAssets(), "Roboto-Regular.ttf");
+            getTvMatchDay.setTypeface(tf);
         }catch (Exception e){
             Log.i("Exception Occured", "initView: ");
             Toast.makeText(this,"Error Occured",Toast.LENGTH_LONG);
@@ -294,7 +298,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         }
 
     }
-
     private void renderComments(){
         Log.i("Score Detail", "Render Comments");
         //mRecyclerView.getAdapter().notifyDataSetChanged();
@@ -397,7 +400,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                 if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("N") ) {
 
                     tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
-                    tvCurrentScore.setText(DateUtil.getDaysDiffrence(cricketMatchJsonCaller.getMatchDate(), this));
+                    tvCurrentScore.setText(DateUtil.getDayFromEpochTime((Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000), this));
                     showNoCommentaries();
                     TextView  text1Score = (TextView) findViewById(R.id.team1_score);
                     TextView  team2Score = (TextView) findViewById(R.id.team2_score);
@@ -426,13 +429,11 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                     if ( cricketMatchJsonCaller.getStatus().equalsIgnoreCase("F") ||cricketMatchJsonCaller.getStatus().equalsIgnoreCase("L") ) {
 
-
-
                         {
                             StringBuilder stringBuilder = new StringBuilder("");
-                            stringBuilder.append(cricketMatchJsonCaller.getTeam1Score()!=null?cricketMatchJsonCaller.getTeam1Score():"0");
+                            stringBuilder.append(cricketMatchJsonCaller.getTeam1Score());
                             stringBuilder.append("/");
-                            stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam1() != null ? cricketMatchJsonCaller.getWicketsTeam1() : "0");
+                            stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam1());
 
                          //   teamFirstOvers.setText("("+cricketMatchJsonCaller.getOversTeam1()!=null?cricketMatchJsonCaller.getOversTeam1():"0"+")");
 
@@ -443,7 +444,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                             StringBuilder stringBuilder1=new StringBuilder("");
                             stringBuilder1.append("(");
-                            stringBuilder1.append(cricketMatchJsonCaller.getOversTeam1()!=null?cricketMatchJsonCaller.getOversTeam1():"0");
+                            stringBuilder1.append(cricketMatchJsonCaller.getOversTeam1());
                             stringBuilder1.append(")");
                             teamFirstOvers.setText(stringBuilder1.toString());
 
@@ -451,9 +452,9 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                         {
                             StringBuilder stringBuilder = new StringBuilder("");
-                            stringBuilder.append(cricketMatchJsonCaller.getTeam2Score()!=null?cricketMatchJsonCaller.getTeam2Score():"0");
+                            stringBuilder.append(cricketMatchJsonCaller.getTeam2Score());
                             stringBuilder.append("/");
-                            stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam2() != null ? cricketMatchJsonCaller.getWicketsTeam2() : "0");
+                            stringBuilder.append(cricketMatchJsonCaller.getWicketsTeam2());
 
                            // teamSecondOvers.setText("("+cricketMatchJsonCaller.getOversTeam2()!=null?cricketMatchJsonCaller.getOversTeam2():"0"+")");
 
@@ -463,7 +464,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
                             StringBuilder stringBuilder1=new StringBuilder("");
                             stringBuilder1.append("(");
-                            stringBuilder1.append(cricketMatchJsonCaller.getOversTeam2()!=null?cricketMatchJsonCaller.getOversTeam2():"0");
+                            stringBuilder1.append(cricketMatchJsonCaller.getOversTeam2());
                             stringBuilder1.append(")");
                             teamSecondOvers.setText(stringBuilder1.toString());
 
@@ -552,17 +553,29 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                     showNoCommentaries();
                 } else {
                     if( footballMatchJsonCaller.isLive() ){
-                        cloackTimer.setVisibility(View.VISIBLE);
+                       // cloackTimer.setVisibility(View.VISIBLE);
                         /*donutProgress.setVisibility(View.VISIBLE);*/
-                        Integer minute = 0;
+                        String timer;
+                        String FORMAT = Constants.FOOTBALL_TIMER;
+                        int hours=0;
+                        int minute=0;
+                        getTvMatchDay.setTextColor(getResources().getColor(R.color.app_theme_blue));
+                        Typeface tf = Typeface.createFromAsset(getAssets(), "RobotoCondensed-Bold.ttf");
+                        getTvMatchDay.setTypeface(tf);
+                        Integer counter = 0;
                         try{
-                            minute = Integer.parseInt(footballMatchJsonCaller.getMatchStatus());
+                            counter = Integer.parseInt(footballMatchJsonCaller.getMatchStatus());
+                            hours = counter/60;
+                            minute = counter%60;
+
                         }catch (Exception e ){
                             e.printStackTrace();
-                            minute = 0;
+                            counter = 0;
                         }
-                        donutProgress.setProgress(minute);
-                        enableAutoRefreshContent();
+                        timer  = String.format(FORMAT,hours,minute);
+                        //donutProgress.setProgress(minute);
+                        //enableAutoRefreshContent();
+                        getTvMatchDay.setText(timer);
                     }
                     StringBuilder score = new StringBuilder();
                     score.append(footballMatchJsonCaller.getHomeTeamScore());

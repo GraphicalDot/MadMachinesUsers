@@ -52,7 +52,6 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
             super(v);
 
             view = v;
-
             broadcast = (TextView) v.findViewById(R.id.broadcast);
             commentTime = (TextView) v.findViewById(R.id.comment_time);
             commentImage  = (ImageView) v.findViewById(R.id.comment_image);

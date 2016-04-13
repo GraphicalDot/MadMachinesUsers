@@ -1,0 +1,60 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fab="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".peoplearound.PeopleAroundMeFragment">
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+    <com.github.clans.fab.FloatingActionButton
+        android:id="@+id/myLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:src="@drawable/ic_my_loc"
+        fab:fab_colorPressed="@color/app_theme_blue"
+        fab:fab_colorRipple="@color/ColorPrimary"
+        fab:fab_colorNormal="@color/ColorPrimary"/>
+    <include
+        android:id="@+id/error"
+        layout="@layout/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"/>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/data_exist"
+        android:visibility="visible">
+
+        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            android:id="@+id/tv_empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:paddingBottom="@dimen/vertical_padding_large"
+            android:paddingLeft="@dimen/horizontal_padding_large"
+            android:paddingRight="@dimen/horizontal_padding_large"
+            android:paddingTop="@dimen/vertical_padding_large"
+            android:text="Users Data Not Exist"
+            android:textColor="@color/gray1"
+            android:textSize="@dimen/font_size_large"
+            />
+    </RelativeLayout>
+
+</FrameLayout>

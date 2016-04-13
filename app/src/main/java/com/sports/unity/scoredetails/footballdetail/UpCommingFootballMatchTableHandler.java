@@ -89,7 +89,9 @@ public class UpCommingFootballMatchTableHandler {
     private void handleResponse(String response) {
         try {
             Log.i("Score Card", "handleResponse: ");
+            if(mContentListener!=null){
             mContentListener.handleContent(response);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -101,7 +103,10 @@ public class UpCommingFootballMatchTableHandler {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
         try {
             Log.i("Score Card", "handleResponse: ");
-            mContentListener.handleContent(Constants.ERRORRESPONSE);
+            if(mContentListener!=null){
+                mContentListener.handleContent(Constants.ERRORRESPONSE);
+            }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
