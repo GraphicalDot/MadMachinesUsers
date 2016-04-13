@@ -434,5 +434,5 @@ message to verify your mobile number.</string>
     <string name="friends_tab">FRIENDS</string>
     <string name="su_users_tab">SU USERS</string>
     <string name="need_heading_tab">NEED HEADING</string>
-    <string name="same_interest">SAME INTEREST</string>
-</resources>
+    <string name="same_interest">SIMILAR USERS</string>
+</resources>    
