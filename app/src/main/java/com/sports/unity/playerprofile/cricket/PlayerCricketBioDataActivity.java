@@ -175,7 +175,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
                 JSONObject dataObject = jsonArray.getJSONObject(0);
 
                 if (dataObject.getString("player_image") != null) {
-                    Glide.with(PlayerCricketBioDataActivity.this).load(dataObject.getString("player_image")).into(playerProfileImage);
+                    Glide.with(PlayerCricketBioDataActivity.this).load(dataObject.getString("player_image")).placeholder(R.drawable.ic_user).dontAnimate().into(playerProfileImage);
                 }
 
                 JSONObject playerInfo = dataObject.getJSONObject("info");

@@ -189,7 +189,7 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             squadNumber.setText(dataObject.getString("Jersey"));
             playerAge.setText(dataObject.getString("Age"));
 
-            Glide.with(PlayerProfileView.this).load(dataObject.getString("player_image")).into(playerProfileImage);
+            Glide.with(PlayerProfileView.this).load(dataObject.getString("player_image")).placeholder(R.drawable.ic_user).dontAnimate().into(playerProfileImage);
 
             teamName.setText(dataObject.getString("team"));
 
