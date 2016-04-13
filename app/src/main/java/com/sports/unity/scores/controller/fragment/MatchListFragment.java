@@ -48,33 +48,27 @@ import java.util.Set;
  */
 public class MatchListFragment extends Fragment implements MatchListWrapperNotify {
 
-//    private static final String liveScore = "http://52.74.142.219:8080/get_league_fixtures?league_id=1204&date=" + formattedDate;
-
     private static final String LIST_LISTENER_KEY = "list_listener";
     private static final String LIST_OF_MATCHES_REQUEST_TAG = "list_request_tag";
 
-    //private RecyclerView mRecyclerView;
-    private MatchListAdapter mAdapter;
     private SwipeRefreshLayout mSwipeRefreshLayout;
+    private MatchListWrapperAdapter matchListWrapperAdapter;
+    private RecyclerView mWraperRecyclerView;
 
     private ArrayList<JSONObject> matches = new ArrayList<>();
-
     private ScoresContentListener contentListener = new ScoresContentListener();
-
 
     private int sportsSelectedNum = 0;
     private ArrayList<String> sportSelected;
-    private MatchListWrapperAdapter matchListWrapperAdapter;
-    private RecyclerView mWraperRecyclerView;
     private List<MatchListWrapperDTO> matchList = new ArrayList<>();
 
     private Bundle bundle;
     private String scoreDetailsId = "";
     private FavouriteItem favouriteItem;
     private boolean isStaffPicked;
-    private LayoutInflater inflater;
+
     private ArrayList<FavouriteItem> flagFavItem;
-    ArrayList<MatchListWrapperItem> dataItem = new ArrayList<MatchListWrapperItem>();
+    private ArrayList<MatchListWrapperItem> dataItem = new ArrayList<MatchListWrapperItem>();
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -92,7 +86,6 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        this.inflater = inflater;
         View view = inflater.inflate(com.sports.unity.R.layout.fragment_match_list, container, false);
         initView(view);
         if (UserUtil.getScoreFilterSportsSelected() != null) {
@@ -174,7 +167,6 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
         return false;
     }
 
-
     @Override
     public void onPause() {
         super.onPause();
@@ -204,7 +196,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
         if (getActivity() instanceof MainActivity) {
             shouldShowBanner = handleStaffFavContent();
         }
-        matchListWrapperAdapter = new MatchListWrapperAdapter(dataItem, getActivity(), getContext(), this, shouldShowBanner);
+        matchListWrapperAdapter = new MatchListWrapperAdapter(dataItem, getActivity(), this, shouldShowBanner);
         mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
 
         initErrorLayout(view);
@@ -253,7 +245,6 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
     }
 
     private void renderContent() {
-
         int pos = matchListWrapperAdapter.notifyAdapter();
         if (!mSwipeRefreshLayout.isRefreshing()) {
             LinearLayoutManager manager = (LinearLayoutManager) mWraperRecyclerView.getLayoutManager();
@@ -620,4 +611,5 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 }

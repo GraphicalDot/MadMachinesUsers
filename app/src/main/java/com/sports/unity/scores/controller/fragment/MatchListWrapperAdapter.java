@@ -59,16 +59,11 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
     private List<MatchListWrapperItem> matchDay;
     private Activity activity;
-    private Context context;
     private MatchListWrapperNotify matchListWrapperNotify;
-    private int pos = 0;
     private ArrayList<FavouriteItem> flagFavItem;
 
-    public void setIsIndividualFixture() {
-        this.isIndividualFixture = true;
-    }
-
     private boolean isIndividualFixture = false;
+    private long dummyBannerEpochTime = -99;
 
     private MatchJsonCaller matchJsonCaller = new MatchJsonCaller();
     private FootballMatchJsonCaller footballMatchJsonCaller = new FootballMatchJsonCaller();
@@ -99,10 +94,9 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     private String matchId;
     private boolean shouldShowHeader = false;
 
-    public MatchListWrapperAdapter(List<MatchListWrapperItem> matchDay, Activity activity, Context context, MatchListWrapperNotify matchListWrapperNotify, boolean shouldShowHeader) {
+    public MatchListWrapperAdapter(List<MatchListWrapperItem> matchDay, Activity activity, MatchListWrapperNotify matchListWrapperNotify, boolean shouldShowHeader) {
         this.matchDay = matchDay;
         this.activity = activity;
-        this.context = context;
         this.matchListWrapperNotify = matchListWrapperNotify;
         this.shouldShowHeader = shouldShowHeader;
     }
@@ -112,7 +106,6 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
         if (viewType == 0) {
-
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.staff_banner_layout, parent, false);
             return new ViewHolder(view, true);
         } else {
@@ -129,9 +122,9 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                 handleStaffFavContent(holder);
             } else {
                 {
-                    if (shouldShowHeader && position > pos) {
-                        position = position - 1;
-                    }
+//                    if (shouldShowHeader && position > pos) {
+//                        position = position - 1;
+//                    }
                     MatchListWrapperItem previousDTO = null;
                     if (position == 0) {
                         previousDTO = matchDay.get(position);
@@ -474,7 +467,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
     @Override
     public int getItemViewType(int position) {
-        if (shouldShowHeader && position == pos) {
+        if ( matchDay.get(position).getEpochTime() == dummyBannerEpochTime) {
             return 0;
         } else {
             return 1;
@@ -483,7 +476,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
     @Override
     public int getItemCount() {
-        return matchDay.size();
+        int count = matchDay.size();
+        return count;
     }
 
     @Override
@@ -514,6 +508,9 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         }
     }
 
+    public void setIsIndividualFixture() {
+        this.isIndividualFixture = true;
+    }
 
     private void setCommonDetails(ViewHolder holder, String homeTeam, String awayTeam) throws JSONException {
         holder.team1.setText(homeTeam);
@@ -887,16 +884,28 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
     public void removeStaffBanner() {
         shouldShowHeader = false;
-        pos = 0;
+        for (int i = 0; i < matchDay.size(); i++) {
+            MatchListWrapperItem item = matchDay.get(i);
+            if( item.getEpochTime() == dummyBannerEpochTime ){
+                matchDay.remove(i);
+            }
+        }
         this.notifyDataSetChanged();
     }
 
     public int notifyAdapter() {
-        if (matchDay.size() > 0 && shouldShowHeader) {
+        int pos = 0;
+        if (matchDay.size() > 0 ) {
             try {
                 for (int i = 0; i < matchDay.size(); i++) {
                     if (matchDay.get(i).getDay().equalsIgnoreCase("Today")) {
                         pos = i;
+                        if( shouldShowHeader ) {
+                            MatchListWrapperItem bannerDummyItem = new MatchListWrapperItem();
+                            bannerDummyItem.setDay("Yesterday");
+                            bannerDummyItem.setEpochTime(Long.valueOf(dummyBannerEpochTime));
+                            matchDay.add(i, bannerDummyItem);
+                        }
                         break;
                     }
                 }
@@ -907,4 +916,5 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         this.notifyDataSetChanged();
         return pos;
     }
+
 }
