@@ -78,7 +78,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
                 CommentriesModel nextObject = null;
                 CommentriesModel jsonObject = list.get(position);
                 if(position<getItemCount()){
-                    nextObject = list.get(position+1) ;
+                    nextObject = list.get(position) ;
                 }
                 if (sportsType.equals(ScoresJsonParser.CRICKET)) {
 
@@ -123,8 +123,8 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
                     holder.lvDivider.setLayoutParams(params);
 
                 } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
-                    holder.broadcast.setText(Html.fromHtml(jsonObject.getComment()));
-                    holder.commentTime.setText(Html.fromHtml(jsonObject.getMinute()));
+                    holder.broadcast.setText(jsonObject.getComment());
+                    holder.commentTime.setText(jsonObject.getMinute());
                 }
             }
         }catch (Exception ex){
