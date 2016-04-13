@@ -90,6 +90,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     private RelativeLayout team1ScoreDetails;
     private RelativeLayout team2ScoreDetails;
     private String seriesId;
+    private boolean autRefreshEnabled = false;
 
     public LiveCricketMatchScoreCardFragment() {
         super();
@@ -102,6 +103,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         seriesId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_SERIES);
         this.context = context;
         matchScoreCrad();
+        enableAutoRefreshContent();
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -227,16 +229,20 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
 
     private void enableAutoRefreshContent(){
         timerToRefreshContent = new Timer();
-        timerToRefreshContent.schedule(new TimerTask() {
+        if(autRefreshEnabled){
+            timerToRefreshContent.schedule(new TimerTask() {
 
-            @Override
-            public void run() {
-                matchScoreCrad();
-            }
+                @Override
+                public void run() {
+                    matchScoreCrad();
+                }
 
-        }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
+            }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
+        }else{
+            timerToRefreshContent.cancel();
+        }
+
     }
-
     private void matchScoreCrad() {
         livedMatchScoreCardHandler = LivedMatchScoreCardHandler.getInstance(context);
         livedMatchScoreCardHandler.addListener(this);
@@ -456,6 +462,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     @Override
     public void onPause() {
         super.onPause();
+        autRefreshEnabled = false;
         if(livedMatchScoreCardHandler != null){
             livedMatchScoreCardHandler.addListener(null);
         }
@@ -473,5 +480,6 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
             livedMatchScoreCardHandler= LivedMatchScoreCardHandler.getInstance(getContext());
         }
         livedMatchScoreCardHandler.requestMatchScoreCard(seriesId,matchId);
+        autRefreshEnabled = true;
     }
 }
