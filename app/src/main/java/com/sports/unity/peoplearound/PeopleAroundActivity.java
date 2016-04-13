@@ -405,7 +405,10 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         toolbar.findViewById(R.id.refresh).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getPeopleAroundMe(latLong.latitude, latLong.longitude);
+                if(latLong!=null){
+                    getPeopleAroundMe(latLong.latitude, latLong.longitude);
+                }else{getLocation();}
+
             }
         });
     }
