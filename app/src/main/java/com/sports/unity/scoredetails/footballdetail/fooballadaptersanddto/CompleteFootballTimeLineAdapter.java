@@ -61,7 +61,7 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
             }else {
                 holder.tvTimeInterval.setVisibility(View.GONE);
                 holder.upperDotView.setVisibility(View.GONE);
-                holder.upperDotView.setVisibility(View.INVISIBLE);
+                holder.upperDotView.setVisibility(View.GONE);
             }
            if(getItemCount()-1== position){
                 holder.gameStartImage.setVisibility(View.VISIBLE);
