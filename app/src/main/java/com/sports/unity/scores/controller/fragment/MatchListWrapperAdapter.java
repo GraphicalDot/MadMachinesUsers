@@ -217,6 +217,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             // f completed
                             if (cricketMatchJsonCaller.getStatus().equalsIgnoreCase("F")) {
                                 SetCompletedMatchScoreCard(holder);
+                                holder.odds.setVisibility(View.GONE);
                                 // N means Match Not started
                             } else if (cricketMatchJsonCaller.getStatus().equalsIgnoreCase("N") || TextUtils.isEmpty(cricketMatchJsonCaller.getStatus())) {
                                 setUpcommingMatchScoreCard(holder);
@@ -281,6 +282,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
                             } else {
                                 holder.notification.setVisibility(View.GONE);
+                                holder.odds.setVisibility(View.GONE);
                             }
 
 
@@ -294,6 +296,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             if ("FT".equalsIgnoreCase(footballMatchJsonCaller.getMatchStatus())) {
                                 Log.i("FOOTBALMATCHSTATUS: ", footballMatchJsonCaller.getMatchStatus());
                                 holder.notification.setVisibility(View.GONE);
+                                holder.odds.setVisibility(View.GONE);
                             } else {
 
                                 preferences = PreferenceManager.getDefaultSharedPreferences(activity);
@@ -383,14 +386,31 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             } else {
                                 if (footballMatchJsonCaller.isLive()) {
                                     //holder.matchMinutes.setText(footballMatchJsonCaller.getMatchStatus());
-                                    holder.liveText.setVisibility(View.VISIBLE);
-                                    holder.matchDay.setVisibility(View.GONE);
-                                    holder.matchMinutes.setVisibility(View.GONE);
-                                    holder.liveText.setText(footballMatchJsonCaller.getMatchStatus());
+                                    holder.liveText.setVisibility(View.GONE);
+                                    holder.matchDay.setVisibility(View.VISIBLE);
+                                    holder.matchMinutes.setVisibility(View.VISIBLE);
+
+                                    String timer;
+                                    String FORMAT = Constants.FOOTBALL_TIMER;
+                                    int hours=0;
+                                    int minute=0;
+                                    Integer counter = 0;
+                                    try{
+                                        counter = Integer.parseInt(footballMatchJsonCaller.getMatchStatus());
+                                        hours = counter/60;
+                                        minute = counter%60;
+
+                                    }catch (Exception e ){
+                                        e.printStackTrace();
+                                    }
+                                    timer  = String.format(FORMAT,hours,minute);
+                                    holder.matchMinutes.setText(timer);
+                                    holder.matchDay.setText("LIVE");
 
                                 } else {
                                     holder.matchDay.setText("Completed");
                                     holder.liveText.setVisibility(View.GONE);
+                                    holder.odds.setVisibility(View.GONE);
                                 }
                                 holder.t1score.setVisibility(View.VISIBLE);
                                 holder.t2score.setVisibility(View.VISIBLE);
