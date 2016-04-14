@@ -899,6 +899,13 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         if (matchDay.size() > 0 ) {
             try {
                 for (int i = 0; i < matchDay.size(); i++) {
+                    MatchListWrapperItem item = matchDay.get(i);
+                    if( item.getEpochTime() == dummyBannerEpochTime ){
+                        matchDay.remove(i);
+                    }
+                }
+
+                for (int i = 0; i < matchDay.size(); i++) {
                     if (matchDay.get(i).getDay().equalsIgnoreCase("Today")) {
                         pos = i;
                         if( shouldShowHeader ) {
