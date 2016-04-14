@@ -749,7 +749,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                 userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
             }
 
-        } else if (null != userImageBytes) {
+        } else if (userImageBytes!=null) {
             userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
         }
 
@@ -1218,7 +1218,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     @Override
     public void onInternetStateChanged(boolean connected) {
-
     }
 
     @Override

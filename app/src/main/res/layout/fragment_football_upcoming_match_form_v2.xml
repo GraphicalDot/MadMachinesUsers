@@ -27,7 +27,7 @@
         android:paddingLeft="@dimen/horizontal_padding_large"
         android:paddingRight="@dimen/horizontal_padding_large"
         android:paddingTop="@dimen/vertical_padding_large"
-        android:text="Forms not available for this League"
+        android:text="Information not available"
         android:textColor="@color/gray1"
         android:textSize="@dimen/font_size_large"
         android:visibility="gone"/>
