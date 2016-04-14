@@ -557,9 +557,9 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         holder.team2Overs.setVisibility(View.VISIBLE);
         holder.t1score.setVisibility(View.VISIBLE);
         holder.t2score.setVisibility(View.VISIBLE);
-        holder.liveText.setText(R.string.live);
+        holder.liveText.setText(cricketMatchJsonCaller.getMatchName());
         holder.liveText.setVisibility(View.VISIBLE);
-        holder.matchDay.setText(cricketMatchJsonCaller.getMatchName());
+        holder.matchDay.setText(R.string.live);
         StringBuilder stringBuilder = new StringBuilder("");
         stringBuilder.append(cricketMatchJsonCaller.getTeam1Score() );
         stringBuilder.append("/");
@@ -576,8 +576,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
     private void setUpcommingMatchScoreCard(ViewHolder holder) throws JSONException {
         //holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
-        holder.matchDay.setText(cricketMatchJsonCaller.getMatchName());
-        holder.liveText.setText("Upcoming");
+        holder.matchDay.setText("Upcoming");
+        holder.liveText.setText(cricketMatchJsonCaller.getMatchName());
         holder.t1score.setVisibility(View.GONE);
         holder.t2score.setVisibility(View.GONE);
         holder.team1Overs.setVisibility(View.GONE);
@@ -586,8 +586,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     }
 
     private void SetCompletedMatchScoreCard(ViewHolder holder) throws JSONException {
-        holder.matchDay.setText(cricketMatchJsonCaller.getMatchName());
-        holder.liveText.setText("Completed");
+        holder.matchDay.setText("Completed");
+        holder.liveText.setText(cricketMatchJsonCaller.getMatchName());
         holder.liveText.setVisibility(View.VISIBLE);
         holder.t1score.setVisibility(View.VISIBLE);
         holder.t2score.setVisibility(View.VISIBLE);
