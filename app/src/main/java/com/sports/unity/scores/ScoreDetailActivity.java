@@ -27,6 +27,7 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.view.DonutProgress;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.scoredetails.CommentaryFragment;
 import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scores.controller.fragment.MatchListAdapter;
 import com.sports.unity.scores.model.ScoresContentHandler;
@@ -648,12 +649,23 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             
             success = true;
             Fragment fragment= null;
+            Fragment currentFragment = null;
             if(sportsType.equals(ScoresJsonParser.CRICKET)) {
-                fragment= cricketScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
+                fragment =cricketScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
+                currentFragment =  new CommentaryFragment();
+                Bundle cmBundel = new Bundle();
+                cmBundel.putString(Constants.INTENT_KEY_TYPE, ScoresJsonParser.CRICKET);
+                cmBundel.putParcelableArrayList("commentries", commentaries);
+                fragment.setArguments(cmBundel);
+                         getSupportFragmentManager()
+                        .beginTransaction()
+                        .detach(fragment)
+                        .attach(currentFragment)
+                        .commit();
             } else {
                 fragment = footballScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
             }
-            if(fragment instanceof DataServiceContract) {
+            if(currentFragment instanceof DataServiceContract) {
                 DataServiceContract listner = (DataServiceContract)fragment;
                 listner.dataChanged();
             }
