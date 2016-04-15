@@ -214,13 +214,15 @@
                         </LinearLayout>
 
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                           android:orientation="horizontal"
+                           >
 
                             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:gravity="right"
                                 android:text="@string/run_rate"
                                 android:textColor="@color/news_static"
                                 android:textSize="@dimen/font_size_small_medium" />
@@ -229,6 +231,7 @@
                                 android:id="@+id/tv_run_rate_first_team"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:gravity="right"
                                 android:text=""
                                 android:textColor="@color/score_light_grey"
                                 android:textSize="@dimen/font_size_small_medium" />
@@ -569,7 +572,8 @@
 
                         <LinearLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal">
 
                             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                 android:layout_width="wrap_content"
