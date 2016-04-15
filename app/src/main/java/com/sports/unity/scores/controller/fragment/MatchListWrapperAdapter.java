@@ -453,6 +453,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                         holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
                                     }
                                 }
+                                holder.odds.setVisibility(View.GONE);
                             } else {
                             }
 
