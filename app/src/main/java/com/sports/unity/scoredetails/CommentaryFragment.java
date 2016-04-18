@@ -49,7 +49,7 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
             dataServiceContract = (DataServiceContract)context;
             dataServiceContract.requestData(0);
         }
-       dataChanged();
+      /* dataChanged();*/
     }
 
     @Override
@@ -73,6 +73,7 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getContext(), VERTICAL, false));
+        mRecyclerView.setNestedScrollingEnabled(false);
         mAdapter = new BroadcastListAdapter(sportsType, commentaries, getContext());
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();

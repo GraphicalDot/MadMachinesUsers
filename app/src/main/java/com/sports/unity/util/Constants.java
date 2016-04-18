@@ -124,4 +124,5 @@ public class Constants {
     public static final String INTENT_KEY_PLAYER_NAME = "player_name";
     public static final String PARAM_PEOPLES = "peoples";
     public static final String FOOTBALL_TIMER = "%02d:%02d";
+    public static final String APP_NOTIFICATION = "general";
 }
