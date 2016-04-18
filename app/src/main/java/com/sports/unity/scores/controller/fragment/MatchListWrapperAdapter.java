@@ -719,8 +719,6 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
             JSONObject jsonObject = matchDay.get(position).getJsonObject();
             matchJsonCaller.setJsonObject(jsonObject);
-
-
             LayoutInflater inflater = activity.getLayoutInflater();
             final View popupOdds = inflater.inflate(R.layout.betfair_dialog_layout, null);
 
@@ -729,7 +727,17 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
             final AlertDialog oddsDialog = oddsBuilder.create();
             oddsDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            oddsDialog.show();
+            try {
+                if(jsonObject.getString("status").equalsIgnoreCase("F") || jsonObject.getString("status").equalsIgnoreCase("FT")){
+
+                }else{
+                    oddsDialog.show();
+                }
+            } catch (Exception e){
+                Log.i("Match status check",e.toString());
+            }
+
+
 
             ImageView flag1 = (ImageView) popupOdds.findViewById(R.id.flag1);
             ImageView flag2 = (ImageView) popupOdds.findViewById(R.id.flag2);
