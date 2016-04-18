@@ -92,7 +92,6 @@
                                 android:text=""
                                 android:textColor="@color/news_static"
                                 android:textSize="@dimen/font_size_small_medium" />
-
                             <com.sports.unity.common.view.CustomRobotoRegularTextView
                                 android:paddingLeft="@dimen/horizontal_padding_very_very_small"
                                 android:id="@+id/tv_match_over"

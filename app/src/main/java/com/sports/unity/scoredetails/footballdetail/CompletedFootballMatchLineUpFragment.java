@@ -196,7 +196,7 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                             int tempLength = length/2;
                             for (int i = 0; i < length/2; i++) {
                                 try {
-                                    JSONObject teamSecondObject  = subsArray.getJSONObject(i);
+                                    JSONObject  teamSecondObject = subsArray.getJSONObject(i);
                                     JSONObject teamFirstObject = subsArray.getJSONObject(tempLength);
                                     completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
                                     setPlayerDetails(completeFootballLineUpDTO, teamFirstObject, substitutionsArray, matchEventsArray);
@@ -204,7 +204,6 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                                     substitutesList.add(completeFootballLineUpDTO);
                                     tempLength++;
                                 }catch (Exception e){e.printStackTrace();}
-
                             }
                             length = teamsObjectArray.length();
                             tempLength = length/2;
