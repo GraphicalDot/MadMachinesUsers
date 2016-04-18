@@ -96,21 +96,9 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
     public void dataChanged() {
         try{
             if(mRecyclerView !=null) {
-                h.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
                         mRecyclerView.postInvalidate();
                         mAdapter.notifyDataSetChanged();
                         swipeRefreshLayout.setRefreshing(false);
-                    }
-                },1000);
-//                getActivity().runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//                    }
-//                });
-
             }
         }catch (Exception e){e.printStackTrace();}
 

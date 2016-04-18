@@ -752,10 +752,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             if(object!=null && !object.isNull("status") ){
 
                 if(200 == object.getInt("status") && !object.isNull("info") && object.getString("info").equalsIgnoreCase("Success")){
-                    Toast.makeText(this,R.string.privacy_policy_status_success,Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(this,R.string.privacy_policy_status,Toast.LENGTH_SHORT).show();
-
                 }
 
             }

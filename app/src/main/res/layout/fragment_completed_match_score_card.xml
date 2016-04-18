@@ -39,7 +39,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:gravity="left"
-                        android:text="Yet To Batting"
+                        android:text=""
                         android:textColor="@color/news_static"
                         android:textSize="@dimen/font_size_small_large" />
                     <ImageView
@@ -89,7 +89,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="left"
-                                android:text="Yet To Batting"
+                                android:text=""
                                 android:textColor="@color/news_static"
                                 android:textSize="@dimen/font_size_small_medium" />
 
@@ -394,7 +394,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="left"
-                        android:text="Yet To Batting"
+                        android:text=""
                         android:textColor="@color/news_static"
                         android:textSize="@dimen/font_size_small_large"  />
                     <ImageView
@@ -445,7 +445,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:gravity="left"
-                                android:text="Yet To Batting"
+                                android:text=""
                                 android:textColor="@color/news_static"
                                 android:textSize="@dimen/font_size_small_medium"/>
 
