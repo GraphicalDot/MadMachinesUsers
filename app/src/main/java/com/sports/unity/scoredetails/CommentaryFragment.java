@@ -22,6 +22,8 @@ import com.sports.unity.util.Constants;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -70,12 +72,10 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
         // ((TextView)view.findViewById(R.id.venue)).setTypeface(FontTypeface.getInstance(getContext()).getRobotoCondensedBold());
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
-        mRecyclerView.setHasFixedSize(false);
-
+        mRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getContext(), VERTICAL, false));
         mAdapter = new BroadcastListAdapter(sportsType, commentaries, getContext());
         mRecyclerView.setAdapter(mAdapter);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter.notifyDataSetChanged();
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.commentary_refresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
