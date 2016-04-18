@@ -142,9 +142,9 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:gravity="center"
-                                android:text=""
+                                android:text="31"
                                 android:textColor="@color/Very_dark_gray"
-                                android:textSize="@dimen/font_size_very_small" />
+                                android:textSize="@dimen/font_size_small_large" />
 
                             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                 android:id="@+id/position_value"
@@ -154,7 +154,7 @@
                                 android:gravity="center"
                                 android:text=""
                                 android:textColor="@color/Very_dark_gray"
-                                android:textSize="@dimen/font_size_very_small" />
+                                android:textSize="@dimen/font_size_small_large" />
 
                             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                 android:id="@+id/squad_number"
@@ -164,7 +164,7 @@
                                 android:gravity="center"
                                 android:text=""
                                 android:textColor="#1a1a1a"
-                                android:textSize="@dimen/font_size_very_small" />
+                                android:textSize="@dimen/font_size_small_large" />
 
                             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                                 android:id="@+id/nationality_value"
@@ -174,7 +174,7 @@
                                 android:gravity="center"
                                 android:text=""
                                 android:textColor="@color/Very_dark_gray"
-                                android:textSize="@dimen/font_size_very_small" />
+                                android:textSize="@dimen/font_size_small_large" />
                         </TableRow>
 
                         <TableRow>
