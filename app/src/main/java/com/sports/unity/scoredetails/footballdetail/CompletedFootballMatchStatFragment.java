@@ -165,58 +165,61 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         if (!jsonObject.isNull("data")) {
             final JSONArray dataArray = jsonObject.getJSONArray("data");
-            final JSONObject teamSecondStatsObject = dataArray.getJSONObject(0);
-            final JSONObject teamFirstStatsObject = dataArray.getJSONObject(1);
+            if(dataArray.length()!=0){
+                final JSONObject teamSecondStatsObject = dataArray.getJSONObject(0);
+                final JSONObject teamFirstStatsObject = dataArray.getJSONObject(1);
 
-            final Iterator<String> keysSetItr = teamFirstStatsObject.keys();
-            hideProgressBar();
-            swipeRefreshLayout.setRefreshing(false);
+                final Iterator<String> keysSetItr = teamFirstStatsObject.keys();
+                hideProgressBar();
+                swipeRefreshLayout.setRefreshing(false);
 
-            if (activity != null) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
+                if (activity != null) {
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
 
-                            CompleteFootballMatchStatDTO completeFootballMatchStatDTO = null;
-                            while (keysSetItr.hasNext()) {
-                                String key = keysSetItr.next();
-                                try {
-                                    if (getLabelValue(key) != null) {
-                                        if (!(key.equals("match_id") || key.equals("team"))) {
-                                            completeFootballMatchStatDTO = new CompleteFootballMatchStatDTO();
-                                            completeFootballMatchStatDTO.setTvLable(getLabelValue(key));
-                                            completeFootballMatchStatDTO.setIvLeftStatus(teamFirstStatsObject.getString(key));
-                                            completeFootballMatchStatDTO.setIvRightStatus(teamSecondStatsObject.getString(key));
-                                            int red = Integer.parseInt(teamFirstStatsObject.getString(key));
-                                            int blue = Integer.parseInt(teamSecondStatsObject.getString(key));
-                                            int total = red+blue;
-                                            if(total==0){
-                                                completeFootballMatchStatDTO.setLeftGraphValue(0);
-                                                completeFootballMatchStatDTO.setRightGraphValue(0);
-                                            }else{
-                                                completeFootballMatchStatDTO.setLeftGraphValue((baseWidth * red) / (red + blue));
-                                                completeFootballMatchStatDTO.setRightGraphValue((baseWidth * blue) / (red + blue));
+                                CompleteFootballMatchStatDTO completeFootballMatchStatDTO = null;
+                                while (keysSetItr.hasNext()) {
+                                    String key = keysSetItr.next();
+                                    try {
+                                        if (getLabelValue(key) != null) {
+                                            if (!(key.equals("match_id") || key.equals("team"))) {
+                                                completeFootballMatchStatDTO = new CompleteFootballMatchStatDTO();
+                                                completeFootballMatchStatDTO.setTvLable(getLabelValue(key));
+                                                completeFootballMatchStatDTO.setIvLeftStatus(teamFirstStatsObject.getString(key));
+                                                completeFootballMatchStatDTO.setIvRightStatus(teamSecondStatsObject.getString(key));
+                                                int red = Integer.parseInt(teamFirstStatsObject.getString(key));
+                                                int blue = Integer.parseInt(teamSecondStatsObject.getString(key));
+                                                int total = red + blue;
+                                                if (total == 0) {
+                                                    completeFootballMatchStatDTO.setLeftGraphValue(0);
+                                                    completeFootballMatchStatDTO.setRightGraphValue(0);
+                                                } else {
+                                                    completeFootballMatchStatDTO.setLeftGraphValue((baseWidth * red) / (red + blue));
+                                                    completeFootballMatchStatDTO.setRightGraphValue((baseWidth * blue) / (red + blue));
+                                                }
+                                                map.put(getLabelValue(key), completeFootballMatchStatDTO);
                                             }
-                                            map.put(getLabelValue(key), completeFootballMatchStatDTO);
                                         }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
                                     }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
                                 }
+
+                                completeFootballMatchStatAdapter.notifyDataSetChanged();
+
+
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                                showErrorLayout(getView());
                             }
-
-                            completeFootballMatchStatAdapter.notifyDataSetChanged();
-
-
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                            showErrorLayout(getView());
                         }
-                    }
-                });
+                    });
+                }
+            }else{
+                showErrorLayout(getView());
             }
-
         } else {
             showErrorLayout(getView());
         }

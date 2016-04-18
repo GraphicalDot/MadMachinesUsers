@@ -44,16 +44,16 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
 
         Fragment fragment = null;
         if (position == 0) {
-            if(matchStatus.equalsIgnoreCase("N")){
+            if(matchStatus.equalsIgnoreCase("N")|| matchStatus.trim().equalsIgnoreCase("")){
                 fragment = new CricketUpcomingMatchSummaryFragment();
             }else if(matchStatus.equalsIgnoreCase("L")){
                 fragment = new CricketLiveMatchSummaryFragment();
             } else  {
                 fragment = new CricketCompletedMatchSummaryFragment();
             }
-           //fragment = new CricketLiveMatchSummaryFragment();
+            //fragment = new CricketLiveMatchSummaryFragment();
         } else if (position == 1) {
-            if(matchStatus.equalsIgnoreCase("N")){
+            if(matchStatus.equalsIgnoreCase("N") || matchStatus.trim().equalsIgnoreCase("")){
                 fragment = new UpcommingMatchCommentaryFragment();
             } else {
                 fragment = new CommentaryFragment();
@@ -63,7 +63,7 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
                 fragment.setArguments(cmBundel);
             }
         } else {
-            if(matchStatus.equalsIgnoreCase("N")){
+            if(matchStatus.equalsIgnoreCase("N") || matchStatus.trim().equalsIgnoreCase("")){
                 fragment = new CricketUpcomingMatchScoreCardFragment();
             }else if(matchStatus.equalsIgnoreCase("L")){
                 fragment = new LiveCricketMatchScoreCardFragment();}

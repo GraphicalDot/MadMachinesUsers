@@ -860,12 +860,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
         @Override
         public void changeUI() {
-
-            if (successfulResponse) {
-                ScoreDetailActivity.this.renderComments();
-            } else {
-                Log.i("Score Detail", "Error In Handling Content");
-                showNoCommentaries();
+            ScoreDetailActivity.this.setTitle();
+            boolean requestCommentaries = ScoreDetailActivity.this.renderScores();
+            if( requestCommentaries ){
+                ScoreDetailActivity.this.requestMatchCommentaries();
             }
         }
     }
