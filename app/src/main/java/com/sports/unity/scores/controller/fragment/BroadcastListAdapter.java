@@ -30,8 +30,6 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
     private ArrayList<CommentriesModel> list;
 
     private String sportsType;
-   // private MatchCommentaryJsonCaller jsonCaller = new MatchCommentaryJsonCaller();
-
     public BroadcastListAdapter(String sportsType, ArrayList<CommentriesModel> list, Context activity) {
         this.sportsType = sportsType;
         this.list = list;
@@ -57,8 +55,6 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
             commentImage  = (ImageView) v.findViewById(R.id.comment_image);
             lvDivider = v.findViewById(R.id.lv_divider);
             backGroundColor = (LinearLayout) v.findViewById(R.id.back_ground_color);
-            /*commentTime.setTypeface(FontTypeface.getInstance(view.getContext()).getRobotoCondensedBold());
-            broadcast.setTypeface(FontTypeface.getInstance(view.getContext()).getRobotoMedium());*/
         }
     }
 
@@ -70,8 +66,6 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
 
     @Override
     public void onBindViewHolder(BroadcastListAdapter.ViewHolder holder, int position) {
-       //jsonCaller.setJsonObject(jsonObject);
-
         try {
             if(list != null ) {
 

@@ -189,8 +189,8 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
                                 JSONObject teamFirstObject = subsArray.getJSONObject(i);
                                 JSONObject teamSecondObject = subsArray.getJSONObject(tempLength);
                                 completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
-                                setPlayerDetails(completeFootballLineUpDTO, teamFirstObject, substitutionsArray, matchEventsArray);
-                                setSecondTeamDetails(completeFootballLineUpDTO, teamSecondObject, matchEventsArray, substitutionsArray);
+                                setPlayerDetails(completeFootballLineUpDTO, teamSecondObject, substitutionsArray, matchEventsArray);
+                                setSecondTeamDetails(completeFootballLineUpDTO, teamFirstObject, matchEventsArray, substitutionsArray);
                                 substitutesList.add(completeFootballLineUpDTO);
                                 tempLength++;
                             }catch (Exception e){e.printStackTrace();}
@@ -203,8 +203,8 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
                                 JSONObject teamFirstObject = teamsObjectArray.getJSONObject(i);
                                 JSONObject teamSecondObject = teamsObjectArray.getJSONObject(tempLength);
                                 completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
-                                setTeamFirstLineUps(completeFootballLineUpDTO, teamFirstObject, matchEventsArray, substitutionsArray);
-                                setTeamSecondLineDetails(completeFootballLineUpDTO, teamSecondObject, matchEventsArray, substitutionsArray);
+                                setTeamFirstLineUps(completeFootballLineUpDTO, teamSecondObject, matchEventsArray, substitutionsArray);
+                                setTeamSecondLineDetails(completeFootballLineUpDTO, teamFirstObject, matchEventsArray, substitutionsArray);
                                 lineUpList.add(completeFootballLineUpDTO);
                                 tempLength++;
                             }catch (Exception e){
