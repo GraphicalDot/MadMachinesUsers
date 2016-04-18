@@ -49,7 +49,7 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
             dataServiceContract = (DataServiceContract)context;
             dataServiceContract.requestData(0);
         }
-       /*dataChanged();*/
+       dataChanged();
     }
 
     @Override
@@ -99,7 +99,7 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
                 h.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                       /* mRecyclerView.postInvalidate();*/
+                        mRecyclerView.postInvalidate();
                         mAdapter.notifyDataSetChanged();
                         swipeRefreshLayout.setRefreshing(false);
                     }
