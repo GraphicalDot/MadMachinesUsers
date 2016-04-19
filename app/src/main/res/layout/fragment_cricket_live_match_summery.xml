@@ -52,7 +52,7 @@
                         android:layout_height="@dimen/recent_card_height"
                         android:orientation="horizontal"
                         android:padding="@dimen/horizontal_padding_very_small"
-                        android:weightSum="12">
+                        android:weightSum="13">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -68,7 +68,7 @@
                                 android:layout_width="@dimen/over_divider_width"
                                 android:layout_height="@dimen/over_divider_height"
                                 android:layout_gravity="center_horizontal"
-                                android:background="@color/gray3"
+                                android:background="@color/gray4"
 
                                 />
                             <TextView
@@ -261,6 +261,35 @@
                             android:layout_height="@dimen/recent_ball_radius"
                             android:layout_weight="1"
                             android:src="@drawable/recent_balls" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:paddingTop="@dimen/font_size_very_very_small"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:visibility="invisible"
+                            >
+                            <View
+                                android:layout_centerHorizontal="true"
+                                android:id="@+id/vi_six"
+                                android:layout_width="@dimen/over_divider_width"
+                                android:layout_height="@dimen/over_divider_height"
+                                android:layout_gravity="center_horizontal"
+                                android:background="@color/gray4"
+
+                                />
+                            <TextView
+                                android:id="@+id/vi_six_tv"
+                                android:layout_below="@id/vi_five"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/gray1"
+                                android:layout_gravity="center"
+                                android:textSize="@dimen/font_size_very_very_small"
+                                android:text=""
+                                />
+                        </LinearLayout>
                     </LinearLayout>
 
 
