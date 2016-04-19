@@ -23,14 +23,17 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.ProgressBar;
 
+import com.github.clans.fab.FloatingActionButton;
 import com.sports.unity.R;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.messages.controller.activity.NativeCameraActivity;
 import com.sports.unity.messages.controller.model.Stickers;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 
@@ -282,13 +285,24 @@ public class ChatKeyboardHelper {
     }
 
 
-    public void tapOnGallery(Activity activity) {
+    public void tapOnGallery(final Activity activity) {
         ViewGroup viewGroup = (ViewGroup) popupWindow.getContentView().findViewById(R.id.popup_window_gallery);
         int visibility = viewGroup.getVisibility();
 
         final RecyclerView gallery = (RecyclerView) viewGroup.findViewById(com.sports.unity.R.id.my_recycler_view);
         gallery.setHasFixedSize(true);
-
+        final FloatingActionButton imageView = (FloatingActionButton) viewGroup.findViewById(R.id.btn_gallery);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                toggleSystemKeyboard(parentLayout, activity.getApplicationContext());
+                hideAllInputLayouts();
+                Intent i = new Intent(Intent.ACTION_PICK);
+                i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+                i.setType("image/*,video/*");
+                activity.startActivityForResult(i, Constants.REQUEST_CODE_PICK_IMAGE);
+            }
+        });
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false);
         gallery.setLayoutManager(mLayoutManager);
 
@@ -374,8 +388,8 @@ public class ChatKeyboardHelper {
 
     public void disableOrEnableKeyboardAndMediaButtons(boolean blockStatus, Activity activity) {
 
-        EditText text= (EditText) activity.findViewById(R.id.msg);
-        Button btn= (Button) activity.findViewById(R.id.msgbtn);
+        EditText text = (EditText) activity.findViewById(R.id.msg);
+        Button btn = (Button) activity.findViewById(R.id.msgbtn);
         if (blockStatus) {
             text.setVisibility(View.GONE);
             btn.setVisibility(View.VISIBLE);

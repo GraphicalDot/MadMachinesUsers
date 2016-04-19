@@ -26,7 +26,6 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
 
     private int[] sportsCategoryLayoutID = new int[]{R.id.cricket, R.id.football};
     private boolean[] checkedFlag = new boolean[]{false, false};
-    private boolean[] visibility = new boolean[]{false, false};
     private LinearLayout teamFilter, leagueFilter, playerFilter;
     private ViewPagerAdapterForFilter adapter;
     private ViewPager pager;
@@ -48,7 +47,6 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
     }
 
     private void initCheckedFlagList() {
-        ArrayList<String> sportsSelected = UserUtil.getSportsSelected();
         ArrayList<String> filter = new ArrayList<String>();
         if (originActivity.equals(Constants.SCORE_ACTIVITY)) {
             filter = UserUtil.getScoreFilterSportsSelected();
@@ -60,12 +58,6 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
         }
         if (filter.contains(Constants.GAME_KEY_FOOTBALL)) {
             checkedFlag[1] = true;
-        }
-        if (sportsSelected.contains(Constants.GAME_KEY_CRICKET)) {
-            visibility[0] = true;
-        }
-        if (sportsSelected.contains(Constants.GAME_KEY_FOOTBALL)) {
-            visibility[1] = true;
         }
     }
 
@@ -179,16 +171,11 @@ public class FilterActivity extends CustomAppCompatActivity implements PlayerPro
 
     private void initCheckBox(int layoutId, boolean checked, int index) {
         LinearLayout layout = (LinearLayout) findViewById(layoutId);
-        if (visibility[index]) {
-            layout.setVisibility(View.VISIBLE);
-            layout.setTag(index);
+        layout.setTag(index);
 
-            initTextViewBasedOnCheckFlag(layout, checked);
-            CheckBox checkbox = (CheckBox) layout.getChildAt(2);
-            checkbox.setChecked(checked);
-        } else {
-            layout.setVisibility(View.GONE);
-        }
+        initTextViewBasedOnCheckFlag(layout, checked);
+        CheckBox checkbox = (CheckBox) layout.getChildAt(2);
+        checkbox.setChecked(checked);
     }
 
     private void initTextViewBasedOnCheckFlag(LinearLayout layout, boolean checked) {
