@@ -104,7 +104,7 @@
                                 android:layout_width="@dimen/over_divider_width"
                                 android:layout_height="@dimen/over_divider_height"
                                 android:layout_gravity="center_horizontal"
-                                android:background="@color/gray3"
+                                android:background="@color/gray4"
                                 />
                             <TextView
                                 android:id="@+id/vi_first_tv"
@@ -138,7 +138,7 @@
                                 android:layout_width="@dimen/over_divider_width"
                                 android:layout_height="@dimen/over_divider_height"
                                 android:layout_gravity="center_horizontal"
-                                android:background="@color/gray3"
+                                android:background="@color/gray4"
                                 />
                             <TextView
                                 android:id="@+id/vi_second_tv"
@@ -172,7 +172,7 @@
                                 android:layout_width="@dimen/over_divider_width"
                                 android:layout_height="@dimen/over_divider_height"
                                 android:layout_gravity="center_horizontal"
-                                android:background="@color/gray3"
+                                android:background="@color/gray4"
 
                                 />
                             <TextView
@@ -207,7 +207,7 @@
                                 android:layout_width="@dimen/over_divider_width"
                                 android:layout_height="@dimen/over_divider_height"
                                 android:layout_gravity="center_horizontal"
-                                android:background="@color/gray3"
+                                android:background="@color/gray4"
 
                                 />
                             <TextView
@@ -241,7 +241,7 @@
                                 android:layout_width="@dimen/over_divider_width"
                                 android:layout_height="@dimen/over_divider_height"
                                 android:layout_gravity="center_horizontal"
-                                android:background="@color/gray3"
+                                android:background="@color/gray4"
 
                                 />
                             <TextView

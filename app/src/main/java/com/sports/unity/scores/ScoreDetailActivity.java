@@ -680,8 +680,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             Fragment fragment= null;
             Fragment currentFragment = null;
             if(sportsType.equals(ScoresJsonParser.CRICKET)) {
-                fragment =cricketScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
-                currentFragment =  new CommentaryFragment();
+                fragment = cricketScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
+                /*currentFragment =  new CommentaryFragment();
                 Bundle cmBundel = new Bundle();
                 cmBundel.putString(Constants.INTENT_KEY_TYPE, ScoresJsonParser.CRICKET);
                 cmBundel.putParcelableArrayList("commentries", commentaries);
@@ -690,11 +690,11 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                         .beginTransaction()
                         .detach(fragment)
                         .attach(currentFragment)
-                        .commit();
+                        .commit();*/
             } else {
                 fragment = footballScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
             }
-            if(currentFragment instanceof DataServiceContract) {
+            if(fragment instanceof DataServiceContract) {
                 DataServiceContract listner = (DataServiceContract)fragment;
                 listner.dataChanged();
             }

@@ -204,6 +204,7 @@ public class CompletedFootballMatchStatFragment extends Fragment implements Comp
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
+                                        showErrorLayout(getView());
                                     }
                                 }
 

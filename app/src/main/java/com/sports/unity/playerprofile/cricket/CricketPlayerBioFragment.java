@@ -44,11 +44,6 @@ public class CricketPlayerBioFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-//        playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-//        cricketPlayerbioHandler = CricketPlayerbioHandler.getInstance(context);
-//        cricketPlayerbioHandler.addListener(this);
-//        cricketPlayerbioHandler.requestData(playerId);
-
     }
 
     @Override
@@ -86,7 +81,6 @@ public class CricketPlayerBioFragment extends Fragment {
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         progressBar.setIndeterminate(true);
-//        initProgress(view);
         initErrorLayout(view);
 
     }

@@ -1,5 +1,7 @@
 package com.sports.unity.scoredetails;
 
+import android.graphics.drawable.Drawable;
+
 /**
  * Created by madmachines on 24/2/16.
  */
@@ -9,6 +11,7 @@ public class BallDetail {
     private int type= 0;
     private int fontColor;
     private int backGroundColor;
+    private Drawable drawable;
 
     public String getValue() {
         return value;
@@ -51,5 +54,13 @@ public class BallDetail {
 
     public void setBackGroundColor(int backGroundColor) {
         this.backGroundColor = backGroundColor;
+    }
+
+    public Drawable getDrawable() {
+        return drawable;
+    }
+
+    public void setDrawable(Drawable drawable) {
+        this.drawable = drawable;
     }
 }
