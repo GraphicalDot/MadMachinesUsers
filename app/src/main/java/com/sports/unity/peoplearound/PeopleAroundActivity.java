@@ -202,10 +202,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                      }else{
                          peopleSU.add(person);
                      }
-
-
-
-
                     }
                   //  int count = peopleAroundMeViewPagerAdapter.getCount();
                     //getSupportFragmentManager().getFragments();

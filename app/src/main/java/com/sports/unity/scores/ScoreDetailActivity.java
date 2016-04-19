@@ -5,21 +5,16 @@ import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,9 +24,7 @@ import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.ViewPagerCricketScoreDetailAdapter;
 import com.sports.unity.common.controller.ViewPagerFootballScoreDetailAdapter;
 import com.sports.unity.common.model.FontTypeface;
-import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
-import com.sports.unity.common.view.DonutProgress;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.scoredetails.CommentaryFragment;
 import com.sports.unity.scoredetails.CommentriesModel;
@@ -85,10 +78,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private TextView teamSecondOvers;
     private TextView tvMatchTime;
     private TextView getTvMatchDay;
-    private DonutProgress donutProgress;
     private ImageView refreshImage;
     private String seriesId;
-    private RelativeLayout cloackTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,9 +135,9 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     }
 
     private void initView() {
-        cloackTimer = (RelativeLayout) findViewById(R.id.cloack_timer);
+       /* cloackTimer = (RelativeLayout) findViewById(R.id.cloack_timer);
         donutProgress = (DonutProgress) findViewById(R.id.donut_progress);
-
+*/
         /*((TextView)findViewById(R.id.venue)).setTypeface(FontTypeface.getInstance(this).getRobotoCondensedBold());
 
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
@@ -266,11 +257,18 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     }
 //>>>>>>> team2_dev_branch
 
-   /* private void displayMatchTimer(Integer currenttime) {
+    private void displayMatchTimer(Integer currenttime) {
 
 
         final ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.progressbar);
-        mProgressBar.setMax(90);
+
+        if(currenttime>90 && currenttime<=105){
+            mProgressBar.setMax(105);
+        }else if(currenttime>105 && currenttime<=120){
+            mProgressBar.setMax(120);
+        }else{
+            mProgressBar.setMax(90);
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mProgressBar.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.app_theme_blue)));
         } else {
@@ -281,7 +279,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
         mProgressBar.setProgress(currenttime);
 
-    }*/
+    }
 
 
 
@@ -530,7 +528,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             }
         } else if ( sportsType.equals(ScoresJsonParser.FOOTBALL) ) {
              footballMatchJsonCaller.setJsonObject(matchScoreDetails);
-             cloackTimer.setVisibility(View.GONE);
+            /* cloackTimer.setVisibility(View.GONE);*/
 
           {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.FILL_PARENT);
@@ -609,7 +607,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                         Integer counter = 0;
                         try{
                             counter = Integer.parseInt(footballMatchJsonCaller.getMatchStatus());
-                           // displayMatchTimer(counter);
+                             displayMatchTimer(counter);
                             hours = counter/60;
                             minute = counter%60;
 

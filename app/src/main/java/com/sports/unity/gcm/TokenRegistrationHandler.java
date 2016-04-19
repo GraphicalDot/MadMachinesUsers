@@ -298,8 +298,6 @@ public class TokenRegistrationHandler {
 
     }
 
-
-
     private void handleErrorResponse(VolleyError volleyError) {
         try{
             Log.i("Score Card", "handleResponse: "+volleyError.getMessage());
