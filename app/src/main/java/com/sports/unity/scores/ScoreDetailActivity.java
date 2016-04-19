@@ -80,6 +80,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private TextView getTvMatchDay;
     private ImageView refreshImage;
     private String seriesId;
+    private  ProgressBar mProgressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -260,7 +261,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     private void displayMatchTimer(Integer currenttime) {
 
 
-        final ProgressBar mProgressBar = (ProgressBar) findViewById(R.id.progressbar);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressbar);
 
         if(currenttime>90 && currenttime<=105){
             mProgressBar.setMax(105);
@@ -528,7 +529,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             }
         } else if ( sportsType.equals(ScoresJsonParser.FOOTBALL) ) {
              footballMatchJsonCaller.setJsonObject(matchScoreDetails);
-            /* cloackTimer.setVisibility(View.GONE);*/
+             mProgressBar.setVisibility(View.INVISIBLE);
 
           {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.FILL_PARENT);
@@ -606,7 +607,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
                         getTvMatchDay.setTypeface(tf);
                         Integer counter = 0;
                         try{
-                            counter = Integer.parseInt(footballMatchJsonCaller.getMatchStatus());
+                             counter = Integer.parseInt(footballMatchJsonCaller.getMatchStatus());
                              displayMatchTimer(counter);
                             hours = counter/60;
                             minute = counter%60;
@@ -764,8 +765,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         }
         return success;
     }
-
-
 
     private class ScoreDetailComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
 
