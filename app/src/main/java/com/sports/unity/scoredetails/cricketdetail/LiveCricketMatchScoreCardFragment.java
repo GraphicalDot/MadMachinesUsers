@@ -103,6 +103,7 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
         seriesId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_SERIES);
         this.context = context;
         matchScoreCrad();
+        autRefreshEnabled = true;
         enableAutoRefreshContent();
     }
     @Override
@@ -246,7 +247,8 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     private void matchScoreCrad() {
         livedMatchScoreCardHandler = LivedMatchScoreCardHandler.getInstance(context);
         livedMatchScoreCardHandler.addListener(this);
-        livedMatchScoreCardHandler.requestMatchScoreCard(seriesId,matchId);
+        livedMatchScoreCardHandler.requestMatchScoreCard(seriesId, matchId);
+        autRefreshEnabled = true;
     }
 
 
@@ -352,13 +354,6 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
                 teamSecondInnings[i++] = cricketMatchScoreJsonParser.getTeamSecondInnings(teamSecond, key);
             }
         }
-       /* tvFirstTeamInning.setText(cricketMatchScoreJsonParser.getHomeTeam().contains(teamNameFirst)?cricketMatchScoreJsonParser.getHomeTeam():cricketMatchScoreJsonParser.getAwayTeam()+" Innings");
-        tvSecondTeamInning.setText(cricketMatchScoreJsonParser.getAwayTeam().contains(teamNameSecond)?cricketMatchScoreJsonParser.getAwayTeam():cricketMatchScoreJsonParser.getHomeTeam()+" Innings");
-      */  /* String teamsShortName = "";
-        if (!dataObject.isNull("short_name")) {
-            teamsShortName = dataObject.getString("short_name");
-        }
-        String teamNamesArray[] = teamsShortName.split(" ");*/
         JSONArray teamABattingArray = null;
         JSONArray teamABowlingArray = null;
         JSONArray teamAFallWicketArray = null;
@@ -463,23 +458,25 @@ public class LiveCricketMatchScoreCardFragment extends Fragment implements Lived
     public void onPause() {
         super.onPause();
         autRefreshEnabled = false;
+        enableAutoRefreshContent();
         if(livedMatchScoreCardHandler != null){
             livedMatchScoreCardHandler.addListener(null);
         }
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
         showProgress();
+        autRefreshEnabled =true;
         if(livedMatchScoreCardHandler != null){
             livedMatchScoreCardHandler.addListener(this);
 
         }else {
             livedMatchScoreCardHandler= LivedMatchScoreCardHandler.getInstance(getContext());
         }
-        livedMatchScoreCardHandler.requestMatchScoreCard(seriesId,matchId);
-        autRefreshEnabled = true;
+        matchScoreCrad();
+        enableAutoRefreshContent();
+
     }
 }
