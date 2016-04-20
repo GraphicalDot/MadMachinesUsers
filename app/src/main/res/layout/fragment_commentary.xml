@@ -12,28 +12,38 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
           tools:listitem="@layout/score_broadcast_item"
+            />
+    <include layout="@layout/error_layout"
+        android:id="@+id/error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        />
 
-            />
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            />
-        <include layout="@layout/error_layout"
-            android:id="@+id/error"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
-        <TextView
-            android:id="@+id/no_comments"
-            android:text="No Comments"
-            android:textSize="@dimen/font_size_large"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone"
-            />
+    <TextView
+        android:id="@+id/no_comments"
+        android:text="No Comments"
+        android:textSize="@dimen/font_size_large"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        />
 </android.support.v4.widget.SwipeRefreshLayout>
+    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+        android:id="@+id/tv_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:paddingBottom="@dimen/vertical_padding_large"
+        android:paddingLeft="@dimen/horizontal_padding_large"
+        android:paddingRight="@dimen/horizontal_padding_large"
+        android:paddingTop="@dimen/vertical_padding_large"
+        android:text="Scorecard not available for this match yet"
+        android:textColor="@color/gray1"
+        android:textSize="@dimen/font_size_large"
+        android:visibility="gone"/>
+
 
 </FrameLayout>
