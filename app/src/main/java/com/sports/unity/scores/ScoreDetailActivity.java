@@ -50,7 +50,7 @@ import java.util.TimerTask;
 
 import static com.sports.unity.util.Constants.INTENT_KEY_TYPE;
 
-public class ScoreDetailActivity extends CustomVolleyCallerActivity implements DataServiceContract {
+public class ScoreDetailActivity extends CustomVolleyCallerActivity implements DataRequestService {
 
     private static final String REQUEST_LISTENER_KEY = "score_detail_listener";
     private static final String SCORE_DETAIL_REQUEST_TAG = "score_detail_request_tag";
@@ -746,11 +746,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
     }
 
     @Override
-    public void dataChanged() {
-
-    }
-
-    @Override
     public void requestData(int methodType) {
         if(methodType== 0 ){
             requestMatchCommentaries();
@@ -823,7 +818,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             successfulResponse = ScoreDetailActivity.this.handleCommentaries(content);
             return true;
         }
-
         @Override
         public void handleErrorContent(String tag) {
 

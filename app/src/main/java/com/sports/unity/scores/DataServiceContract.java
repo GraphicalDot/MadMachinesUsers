@@ -5,5 +5,5 @@ package com.sports.unity.scores;
  */
 public interface DataServiceContract {
     void dataChanged();
-    void requestData(int methodType);
+
 }

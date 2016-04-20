@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sports.unity.R;
+import com.sports.unity.scores.DataRequestService;
 import com.sports.unity.scores.DataServiceContract;
 import com.sports.unity.scores.ErrorContract;
 import com.sports.unity.scores.controller.fragment.BroadcastListAdapter;
@@ -37,7 +38,7 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
     private RecyclerView mRecyclerView;
     private BroadcastListAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private DataServiceContract dataServiceContract;
+    private DataRequestService dataServiceContract;
     public CommentaryFragment() {
         // Required empty public constructor
     }
@@ -46,7 +47,7 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
         super.onAttach(context);
         if(context instanceof DataServiceContract)
         {
-            dataServiceContract = (DataServiceContract)context;
+            dataServiceContract = (DataRequestService)context;
             dataServiceContract.requestData(0);
         }
        dataChanged();
@@ -106,10 +107,6 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
 
     }
 
-   @Override
-    public void requestData(int methodType) {
-
-    }
 
     @Override
     public void errorHandle() {
