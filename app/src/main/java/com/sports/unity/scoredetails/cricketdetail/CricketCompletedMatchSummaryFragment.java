@@ -225,7 +225,7 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
                         public void run() {
                             try {
                                 Log.i("run: ", jsonObject.toString());
-                                Glide.with(getContext()).load(cricketMatchSummaryParser.getPlayerImage()).placeholder(R.drawable.ic_no_img).into(ivPlayerProfileView);
+                                Glide.with(getContext()).load(cricketMatchSummaryParser.getPlayerImage()).placeholder(R.drawable.ic_user).into(ivPlayerProfileView);
                                 playerName.setText(cricketMatchSummaryParser.getPlayerName());
                                 tvPlayerRun.setText(cricketMatchSummaryParser.getruns());
                                 if(cricketMatchSummaryParser.getBalls().trim().equalsIgnoreCase("0".trim())){
@@ -263,8 +263,8 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
     private void setComplatedCricketSummary(JSONObject jsonObject, JSONObject manOftheMatch, JSONObject statObject) throws JSONException {
         Log.i("run: ", jsonObject.toString());
         if (manOftheMatch != null && !manOftheMatch.isNull("image")) {
-            Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivPlayerProfileView);
-            Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_no_img).into(ivCountryImage);
+            Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_user).into(ivPlayerProfileView);
+            Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_user).into(ivCountryImage);
         }
         if (manOftheMatch != null && !manOftheMatch.isNull("name")) {
             playerName.setText(manOftheMatch.getString("name"));

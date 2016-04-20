@@ -196,22 +196,21 @@ public class CompletedFootballMatchLineUpFragment extends Fragment implements Co
                             int tempLength = length/2;
                             for (int i = 0; i < length/2; i++) {
                                 try {
-                                    JSONObject teamFirstObject = subsArray.getJSONObject(i);
-                                    JSONObject teamSecondObject = subsArray.getJSONObject(tempLength);
+                                    JSONObject  teamSecondObject = subsArray.getJSONObject(i);
+                                    JSONObject teamFirstObject = subsArray.getJSONObject(tempLength);
                                     completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
                                     setPlayerDetails(completeFootballLineUpDTO, teamFirstObject, substitutionsArray, matchEventsArray);
                                     setSecondTeamDetails(completeFootballLineUpDTO, teamSecondObject, matchEventsArray, substitutionsArray);
                                     substitutesList.add(completeFootballLineUpDTO);
                                     tempLength++;
                                 }catch (Exception e){e.printStackTrace();}
-
                             }
                             length = teamsObjectArray.length();
                             tempLength = length/2;
                             for (int i = 0; i < length/2; i++) {
                                 try{
-                                    JSONObject teamFirstObject = teamsObjectArray.getJSONObject(i);
-                                    JSONObject teamSecondObject = teamsObjectArray.getJSONObject(tempLength);
+                                    JSONObject teamSecondObject = teamsObjectArray.getJSONObject(i);
+                                    JSONObject teamFirstObject = teamsObjectArray.getJSONObject(tempLength);
                                     completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
                                     setTeamFirstLineUps(completeFootballLineUpDTO, teamFirstObject, matchEventsArray, substitutionsArray);
                                     setTeamSecondLineDetails(completeFootballLineUpDTO, teamSecondObject, matchEventsArray, substitutionsArray);

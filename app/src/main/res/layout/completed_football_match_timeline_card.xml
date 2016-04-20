@@ -91,7 +91,7 @@
                 android:id="@+id/iv_upper"
                 android:layout_width="1dp"
                 android:layout_centerHorizontal="true"
-                android:layout_height="@dimen/horizontal_padding_large"
+                android:layout_height="@dimen/horizontal_padding_small"
                 android:background="@color/gray4"
                 />
             <de.hdodenhof.circleimageview.CircleImageView
@@ -105,7 +105,7 @@
                 android:id="@+id/iv_blow"
                 android:layout_below="@id/iv_time_line_image"
                 android:layout_width="1dp"
-                android:layout_height="@dimen/horizontal_padding_large"
+                android:layout_height="@dimen/horizontal_padding_small"
                 android:layout_centerHorizontal="true"
                 android:background="@color/gray4"
                 />

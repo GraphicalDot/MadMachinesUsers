@@ -62,6 +62,8 @@ public class SUPushServiceListener extends GcmListenerService {
                     int sportsId = notification.getInt(GCMConstants.SPORTS_ID);
                     if(sportsId==1 || sportsId==2){
                         sportsType = sportsId == 1 ? Constants.SPORTS_TYPE_CRICKET : Constants.SPORTS_TYPE_FOOTBALL;
+                    }else{
+                        sportsType = Constants.APP_NOTIFICATION;
                     }
                 }
                 if (!notification.isNull(GCMConstants.MATCH_ID)) {
@@ -127,7 +129,7 @@ public class SUPushServiceListener extends GcmListenerService {
 
                 }
 
-               Intent muteIntent = new Intent(this,UnRegisterMatch.class);
+                Intent muteIntent = new Intent(this,UnRegisterMatch.class);
                 muteIntent.putExtra(Constants.INTENT_KEY_ID,matchiId);
                 muteIntent.putExtra(Constants.INTENT_KEY_SERIES,seriesid);
                 PendingIntent mpi = PendingIntent.getService(this,0,muteIntent,PendingIntent.FLAG_UPDATE_CURRENT) ;
@@ -142,18 +144,38 @@ public class SUPushServiceListener extends GcmListenerService {
 
                 Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), drawableId);
                 //int sportsTypeId = getSportId(sportsType);
-                 NotificationCompat.Builder mBuilder =
-                        new NotificationCompat.Builder(this)
-                                .setVisibility(Notification.VISIBILITY_PUBLIC)
-                                .setSmallIcon(R.drawable.ic_stat_notification)
-                                .setLargeIcon(largeIcon)
-                                .setContentTitle(title)
-                                .setContentText(content)
-                                .setColor(getResources().getColor(R.color.app_theme_blue))
-                                .setPriority(Notification.PRIORITY_HIGH)
-                                .setAutoCancel(true)
-                                .addAction(R.drawable.ic_share_white,getString(R.string.share), shareIntent)
-                                .addAction(R.drawable.ic_mute_notification, getString(R.string.mute_alerts), mpi);
+                NotificationCompat.Builder mBuilder = null;
+                if(Constants.SPORTS_TYPE_CRICKET.equalsIgnoreCase(sportsType) || Constants.SPORTS_TYPE_FOOTBALL.equalsIgnoreCase(sportsType)){
+                    mBuilder =
+                            new NotificationCompat.Builder(this)
+                                    .setVisibility(Notification.VISIBILITY_PUBLIC)
+                                    .setSmallIcon(R.drawable.ic_stat_notification)
+                                    .setLargeIcon(largeIcon)
+                                    .setContentTitle(title)
+                                    .setContentText(content)
+                                    .setColor(getResources().getColor(R.color.app_theme_blue))
+                                    .setPriority(Notification.PRIORITY_HIGH)
+                                    .setAutoCancel(true)
+                                    .addAction(R.drawable.ic_share_white,getString(R.string.share), shareIntent)
+                                    .addAction(R.drawable.ic_mute_notification, getString(R.string.mute_alerts), mpi);
+                }else{
+                    largeIcon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_century);
+                    mBuilder =
+                            new NotificationCompat.Builder(this)
+                                    .setVisibility(Notification.VISIBILITY_PUBLIC)
+                                    .setSmallIcon(R.drawable.ic_no_img)
+                                    .setLargeIcon(largeIcon)
+                                    .setContentTitle(title)
+                                    .setContentText(content)
+                                    .setColor(getResources().getColor(R.color.app_theme_blue))
+                                    .setPriority(Notification.PRIORITY_HIGH)
+                                    .setAutoCancel(true)
+                                    ;
+                }
+
+
+
+
                 TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
                 stackBuilder.addParentStack(ScoreDetailActivity.class);
                 stackBuilder.addNextIntent(i);

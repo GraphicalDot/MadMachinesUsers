@@ -217,6 +217,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             // f completed
                             if (cricketMatchJsonCaller.getStatus().equalsIgnoreCase("F")) {
                                 SetCompletedMatchScoreCard(holder);
+                                holder.odds.setVisibility(View.GONE);
                                 // N means Match Not started
                             } else if (cricketMatchJsonCaller.getStatus().equalsIgnoreCase("N") || TextUtils.isEmpty(cricketMatchJsonCaller.getStatus())) {
                                 setUpcommingMatchScoreCard(holder);
@@ -281,6 +282,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
                             } else {
                                 holder.notification.setVisibility(View.GONE);
+                                holder.odds.setVisibility(View.GONE);
                             }
 
 
@@ -294,6 +296,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             if ("FT".equalsIgnoreCase(footballMatchJsonCaller.getMatchStatus())) {
                                 Log.i("FOOTBALMATCHSTATUS: ", footballMatchJsonCaller.getMatchStatus());
                                 holder.notification.setVisibility(View.GONE);
+                                holder.odds.setVisibility(View.GONE);
                             } else {
 
                                 preferences = PreferenceManager.getDefaultSharedPreferences(activity);
@@ -383,14 +386,31 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             } else {
                                 if (footballMatchJsonCaller.isLive()) {
                                     //holder.matchMinutes.setText(footballMatchJsonCaller.getMatchStatus());
-                                    holder.liveText.setVisibility(View.VISIBLE);
-                                    holder.matchDay.setVisibility(View.GONE);
-                                    holder.matchMinutes.setVisibility(View.GONE);
-                                    holder.liveText.setText(footballMatchJsonCaller.getMatchStatus());
+                                    holder.liveText.setVisibility(View.GONE);
+                                    holder.matchDay.setVisibility(View.VISIBLE);
+                                    holder.matchMinutes.setVisibility(View.VISIBLE);
+
+                                    String timer;
+                                    String FORMAT = Constants.FOOTBALL_TIMER;
+                                    int hours=0;
+                                    int minute=0;
+                                    Integer counter = 0;
+                                    try{
+                                        counter = Integer.parseInt(footballMatchJsonCaller.getMatchStatus());
+                                        hours = counter/60;
+                                        minute = counter%60;
+
+                                    }catch (Exception e ){
+                                        e.printStackTrace();
+                                    }
+                                    timer  = String.format(FORMAT,hours,minute);
+                                    holder.matchMinutes.setText(timer);
+                                    holder.matchDay.setText("LIVE");
 
                                 } else {
                                     holder.matchDay.setText("Completed");
                                     holder.liveText.setVisibility(View.GONE);
+                                    holder.odds.setVisibility(View.GONE);
                                 }
                                 holder.t1score.setVisibility(View.VISIBLE);
                                 holder.t2score.setVisibility(View.VISIBLE);
@@ -433,6 +453,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                         holder.t2score.setTypeface(FontTypeface.getInstance(activity).getRobotoCondensedBold());
                                     }
                                 }
+                                holder.odds.setVisibility(View.GONE);
                             } else {
                             }
 
@@ -537,9 +558,9 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         holder.team2Overs.setVisibility(View.VISIBLE);
         holder.t1score.setVisibility(View.VISIBLE);
         holder.t2score.setVisibility(View.VISIBLE);
-        holder.liveText.setText(R.string.live);
+        holder.liveText.setText(cricketMatchJsonCaller.getMatchName());
         holder.liveText.setVisibility(View.VISIBLE);
-        holder.matchDay.setText(cricketMatchJsonCaller.getMatchName());
+        holder.matchDay.setText(R.string.live);
         StringBuilder stringBuilder = new StringBuilder("");
         stringBuilder.append(cricketMatchJsonCaller.getTeam1Score() );
         stringBuilder.append("/");
@@ -556,8 +577,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
     private void setUpcommingMatchScoreCard(ViewHolder holder) throws JSONException {
         //holder.matchDay.setText(cricketMatchJsonCaller.getMatchNumber());
-        holder.matchDay.setText(cricketMatchJsonCaller.getMatchName());
-        holder.liveText.setText("Upcoming");
+        holder.matchDay.setText("Upcoming");
+        holder.liveText.setText(cricketMatchJsonCaller.getMatchName());
         holder.t1score.setVisibility(View.GONE);
         holder.t2score.setVisibility(View.GONE);
         holder.team1Overs.setVisibility(View.GONE);
@@ -566,8 +587,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     }
 
     private void SetCompletedMatchScoreCard(ViewHolder holder) throws JSONException {
-        holder.matchDay.setText(cricketMatchJsonCaller.getMatchName());
-        holder.liveText.setText("Completed");
+        holder.matchDay.setText("Completed");
+        holder.liveText.setText(cricketMatchJsonCaller.getMatchName());
         holder.liveText.setVisibility(View.VISIBLE);
         holder.t1score.setVisibility(View.VISIBLE);
         holder.t2score.setVisibility(View.VISIBLE);
@@ -616,7 +637,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                 matchStatus = cricketMatchJsonCaller.getStatus();
                 toss = cricketMatchJsonCaller.getToss();
                 matchName = cricketMatchJsonCaller.getMatchNumber() + ", " + cricketMatchJsonCaller.getTeam1() + " v " + cricketMatchJsonCaller.getTeam2();
-                date = cricketMatchJsonCaller.getMatchDate();
+                date = DateUtil.getDateFromEpochTime(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000);
                 seriesId = cricketMatchJsonCaller.getSeriesId();
                 leagueName = cricketMatchJsonCaller.getSeriesName();
             } else if (type.equalsIgnoreCase(ScoresJsonParser.FOOTBALL)) {
@@ -698,8 +719,6 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
             JSONObject jsonObject = matchDay.get(position).getJsonObject();
             matchJsonCaller.setJsonObject(jsonObject);
-
-
             LayoutInflater inflater = activity.getLayoutInflater();
             final View popupOdds = inflater.inflate(R.layout.betfair_dialog_layout, null);
 
@@ -708,7 +727,17 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
             final AlertDialog oddsDialog = oddsBuilder.create();
             oddsDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            oddsDialog.show();
+            try {
+                if(jsonObject.getString("status").equalsIgnoreCase("F") || jsonObject.getString("status").equalsIgnoreCase("FT")){
+
+                }else{
+                    oddsDialog.show();
+                }
+            } catch (Exception e){
+                Log.i("Match status check",e.toString());
+            }
+
+
 
             ImageView flag1 = (ImageView) popupOdds.findViewById(R.id.flag1);
             ImageView flag2 = (ImageView) popupOdds.findViewById(R.id.flag2);

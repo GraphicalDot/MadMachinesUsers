@@ -78,7 +78,7 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:background="@color/gray3" />
-    <RelativeLayout
+    <!--<RelativeLayout
         android:id="@+id/cloack_timer"
         android:layout_marginTop="@dimen/timer_layout_margin_top"
         android:layout_width="wrap_content"
@@ -105,7 +105,7 @@
             custom:donut_progress="0"
             custom:donut_circle_starting_degree="-90"
             />
-    </RelativeLayout>
+    </RelativeLayout>-->
 
         <FrameLayout
             android:layout_width="match_parent"
@@ -199,6 +199,16 @@
                     android:textColor="@color/score_light_grey"
                     android:textSize="@dimen/font_size_small_medium"
                     />
+                <ProgressBar
+                    android:id="@+id/progressbar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="fill_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_height="@dimen/horizontal_padding_very_very_small"
+                    android:background="@color/gray3"
+                    android:visibility="gone">
+                </ProgressBar>
+
             </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"

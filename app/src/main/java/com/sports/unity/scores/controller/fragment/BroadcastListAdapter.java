@@ -30,8 +30,6 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
     private ArrayList<CommentriesModel> list;
 
     private String sportsType;
-   // private MatchCommentaryJsonCaller jsonCaller = new MatchCommentaryJsonCaller();
-
     public BroadcastListAdapter(String sportsType, ArrayList<CommentriesModel> list, Context activity) {
         this.sportsType = sportsType;
         this.list = list;
@@ -57,8 +55,6 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
             commentImage  = (ImageView) v.findViewById(R.id.comment_image);
             lvDivider = v.findViewById(R.id.lv_divider);
             backGroundColor = (LinearLayout) v.findViewById(R.id.back_ground_color);
-            /*commentTime.setTypeface(FontTypeface.getInstance(view.getContext()).getRobotoCondensedBold());
-            broadcast.setTypeface(FontTypeface.getInstance(view.getContext()).getRobotoMedium());*/
         }
     }
 
@@ -70,17 +66,24 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
 
     @Override
     public void onBindViewHolder(BroadcastListAdapter.ViewHolder holder, int position) {
-       //jsonCaller.setJsonObject(jsonObject);
-
         try {
             if(list != null ) {
 
                 CommentriesModel nextObject = null;
                 CommentriesModel jsonObject = list.get(position);
-                if(position<getItemCount()){
-                    nextObject = list.get(position) ;
-                }
+
                 if (sportsType.equals(ScoresJsonParser.CRICKET)) {
+                    if(position+1<getItemCount()){
+                        nextObject = list.get(position+1) ;
+                    }
+                    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.lvDivider .getLayoutParams();
+                    if(jsonObject.getOver().contains(".1") && !nextObject.getOver().contains(".1") && position<getItemCount()){
+                        params.height = 3;
+
+                    }else{
+                        params.height = 1;
+                    }
+                    holder.lvDivider.setLayoutParams(params);
 
                     if(jsonObject.getComment() != null) {
                         holder.broadcast.setText(Html.fromHtml(jsonObject.getComment()));
@@ -100,10 +103,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
 
                     }
 
-
-
-
-                    if("-1.0".equalsIgnoreCase(jsonObject.getOver())){
+                if("-1.0".equalsIgnoreCase(jsonObject.getOver())){
                         holder.commentImage.setImageResource(R.drawable.commentary_icon);
                         holder.commentTime.setVisibility(View.GONE);
                     }else{
@@ -112,15 +112,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
                         holder.commentTime.setText(jsonObject.getOver());
 
                     }
-                    LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) holder.lvDivider .getLayoutParams();
-                    if(jsonObject.getOver().contains(".1") && !nextObject.getOver().contains(".1")){
-                        params.height = 3;
-                        //holder.lvDivider.setBackground();
 
-                    }else{
-                        params.height = 1;
-                    }
-                    holder.lvDivider.setLayoutParams(params);
 
                 } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
                     holder.broadcast.setText(jsonObject.getComment());

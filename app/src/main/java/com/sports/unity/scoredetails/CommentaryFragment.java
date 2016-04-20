@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.sports.unity.R;
+import com.sports.unity.scores.DataRequestService;
 import com.sports.unity.scores.DataServiceContract;
 import com.sports.unity.scores.ErrorContract;
 import com.sports.unity.scores.controller.fragment.BroadcastListAdapter;
@@ -21,6 +22,8 @@ import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -35,19 +38,21 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
     private RecyclerView mRecyclerView;
     private BroadcastListAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private DataServiceContract dataServiceContract;
+    private DataRequestService dataRequestService;
+    private Context context;
     public CommentaryFragment() {
         // Required empty public constructor
     }
    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+       this.context = context;
+
         if(context instanceof DataServiceContract)
         {
-            dataServiceContract = (DataServiceContract)context;
-            dataServiceContract.requestData(0);
+            dataRequestService = (DataRequestService)context;
+            dataRequestService.requestData(0);
         }
-       dataChanged();
     }
 
     @Override
@@ -70,18 +75,17 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
         // ((TextView)view.findViewById(R.id.venue)).setTypeface(FontTypeface.getInstance(getContext()).getRobotoCondensedBold());
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
-        mRecyclerView.setHasFixedSize(false);
-
+        mRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getContext(), VERTICAL, false));
+        mRecyclerView.setNestedScrollingEnabled(false);
         mAdapter = new BroadcastListAdapter(sportsType, commentaries, getContext());
         mRecyclerView.setAdapter(mAdapter);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getContext());
-        mRecyclerView.setLayoutManager(mLayoutManager);
+        mAdapter.notifyDataSetChanged();
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.commentary_refresh);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (dataServiceContract != null) {
-                    dataServiceContract.requestData(0);
+                if (dataRequestService != null) {
+                    dataRequestService.requestData(0);
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }
@@ -96,31 +100,15 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
     public void dataChanged() {
         try{
             if(mRecyclerView !=null) {
-                h.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        mRecyclerView.postInvalidate();
+                       mRecyclerView.postInvalidate();
                         mAdapter.notifyDataSetChanged();
                         swipeRefreshLayout.setRefreshing(false);
-                    }
-                },1000);
-//                getActivity().runOnUiThread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//                    }
-//                });
-
             }
         }catch (Exception e){e.printStackTrace();}
 
 
     }
 
-   @Override
-    public void requestData(int methodType) {
-
-    }
 
     @Override
     public void errorHandle() {

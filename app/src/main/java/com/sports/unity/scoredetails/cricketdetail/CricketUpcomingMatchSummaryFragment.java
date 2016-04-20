@@ -53,7 +53,6 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
         cricketUpcomingMatchSummaryHandler = CricketUpcomingMatchSummaryHandler.getInstance(context);
         cricketUpcomingMatchSummaryHandler.addListener(this);
         cricketUpcomingMatchSummaryHandler.requestCricketUpcommingMatchSummary(matchId);
-
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -140,7 +139,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
             tvMatchName.setText("Information is not Available");
         }
         if (date != null && !date.equalsIgnoreCase("")) {
-            tvMatchDate.setText(DateUtil.getFormattedDate(date));
+            tvMatchDate.setText(date);
         } else {
             tvMatchName.setText("Information is not Available");
         }

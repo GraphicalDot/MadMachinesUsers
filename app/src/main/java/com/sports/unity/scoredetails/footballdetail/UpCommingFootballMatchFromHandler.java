@@ -21,9 +21,10 @@ import java.util.HashSet;
  */
 public class UpCommingFootballMatchFromHandler {
 
-    private static final String REQUEST_TAG = "COMPLETED_CRICKET_MATCH_TAG";
+    private static final String REQUEST_TAG = "UPCOMING_FOOTBALL_MATCH_FORM";
     private static Context mContext;
-    private String BASEURL = " http://52.74.75.79:8080/get_team_form?team_1=%s&team_2=%s&league_id=%s";
+
+    private String BASEURL =Constants.SCORE_BASE_URL+"get_team_form?team_1=%s&team_2=%s&league_id=%s";
 
     private UpCommingMatchFromContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
@@ -48,7 +49,6 @@ public class UpCommingFootballMatchFromHandler {
             requestInProcess.remove(REQUEST_TAG);
             UpCommingFootballMatchFromHandler.this.handleResponse(s);
         }
-
         @Override
         public void onErrorResponse(VolleyError volleyError) {
             requestInProcess.remove(REQUEST_TAG);
@@ -60,7 +60,7 @@ public class UpCommingFootballMatchFromHandler {
         Log.i("Score Detail", "Request Score Details");
 
        String  url = String.format(BASEURL,teamFirst,teamSecond,leagueId);
-        Log.i("Score Detail", "Request Score Details");
+        Log.i("FootballForm", "Request Score Details"+url);
         StringRequest stringRequest = null;
        // RequestQueue queue = Volley.newRequestQueue(mContext);
         stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);

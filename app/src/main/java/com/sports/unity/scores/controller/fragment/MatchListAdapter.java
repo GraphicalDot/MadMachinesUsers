@@ -589,7 +589,7 @@ public class MatchListAdapter extends RecyclerView.Adapter<MatchListAdapter.View
                 matchStatus = cricketMatchJsonCaller.getStatus();
                 toss = cricketMatchJsonCaller.getToss();
                 matchName = cricketMatchJsonCaller.getMatchNumber() + ", " + cricketMatchJsonCaller.getTeam1() + " v " + cricketMatchJsonCaller.getTeam2();
-                date = cricketMatchJsonCaller.getMatchDate();
+                date = DateUtil.getDateFromEpochTime(cricketMatchJsonCaller.getMatchDateTimeEpoch() * 1000);
                 seriesId = cricketMatchJsonCaller.getSeriesId();
                 leagueName = cricketMatchJsonCaller.getSeriesName();
             } else if (type.equalsIgnoreCase(ScoresJsonParser.FOOTBALL)) {

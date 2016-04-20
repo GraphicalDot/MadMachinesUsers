@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.sports.unity.R;
@@ -49,10 +50,6 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     private TextView tvnamefirstteam;
     private TextView tvlastfivematchteamfirst;
     private ImageView[] ivfirstmatchteamfirst  = new ImageView[5];;
-    private ImageView ivsecondmatchteamfirst;
-    private ImageView ivthirdmatchteamfirst;
-    private ImageView ivforthmatchteamfirst;
-    private ImageView ivfifthmatchteamfirst;
     private View firstview;
     private TextView tvfirstpremieradivision;
     private TextView tvfirstpoint;
@@ -66,14 +63,8 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     private TextView tvnamesecondteam;
     private TextView tvlastfivematchteamsecond;
     private ImageView[] tvfirstmatchteamsecond = new ImageView[5];
-    private ImageView tvsecondmatchteamsecond;
-    private ImageView tvthirdmatchteamsecond;
-    private ImageView tvforthmatchteamsecond;
-    private ImageView tvfifthmatchteamsecond;
-    private TextView tvsecondpoint;
-    private TextView tvsecondwins;
-    private TextView tvseconddraws;
-    private TextView tvsecondloss;
+
+
     private TextView tvpointofsecondteam;
     private TextView tvwinmatchofsecondteam;
     private TextView tvdrawmatchofsecondteam;
@@ -84,6 +75,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     private LinearLayout errorLayout;
     private UpCommingFootballMatchFromHandler upCommingFootballMatchFromHandler;
     private Context context;
+    private View emptyView;
 
     public UpCommingFootballMatchFromFragment() {
         // Required empty public constructor
@@ -141,16 +133,13 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         tvfirstmatchteamsecond[2]=(ImageView)view.findViewById(R.id.tv_third_match_team_second);
         tvfirstmatchteamsecond[3]=(ImageView)view.findViewById(R.id.tv_forth_match_team_second);
         tvfirstmatchteamsecond[4]=(ImageView)view.findViewById(R.id.tv_fifth_match_team_second);
-        tvsecondpoint=(TextView)view.findViewById(R.id.tv_second_point);
-        tvsecondwins=(TextView)view.findViewById(R.id.tv_second_wins);
-        tvseconddraws=(TextView)view.findViewById(R.id.tv_second_draws);
-        tvsecondloss=(TextView)view.findViewById(R.id.tv_second_loss);
         tvpointofsecondteam=(TextView)view.findViewById(R.id.tv_point_of_second_team);
         tvwinmatchofsecondteam=(TextView)view.findViewById(R.id.tv_win_match_of_second_team);
         tvdrawmatchofsecondteam=(TextView)view.findViewById(R.id.tv_draw_match_of_second_team);
         tvlossmatchofsecondteam=(TextView)view.findViewById(R.id.tv_loss_match_of_second_team);
         parentView = view.findViewById(R.id.root_layout);
         commentaryrefresh=(SwipeRefreshLayout)view.findViewById(R.id.commentary_refresh);
+        emptyView = view.findViewById(R.id.tv_empty_view);
 
     }
     private void  showProgressBar(){
@@ -197,9 +186,19 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
 
     }
 
+    private void showDataNotExists() {
+
+        parentView.setVisibility(View.GONE);
+        emptyView.setVisibility(View.VISIBLE);
+
+
+    }
+
+
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
 
         parentView.setVisibility(View.VISIBLE);
+        emptyView.setVisibility(View.GONE);
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         final JSONArray dataArray = jsonObject.getJSONArray("data");
         hideProgressBar();
@@ -218,7 +217,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                         if(recentForm !=null && recentForm.length()>0){
                                             initializeTeamForms(recentForm);
                                         }else{
-                                            showErrorLayout();
+                                            showDataNotExists();
                                         }
                                        }
                                     if(!teamFromObject.isNull("team_points")){
@@ -237,7 +236,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                         if(recentForm !=null && recentForm.length()>0){
                                             initFromDataTeamSecond(recentForm);
                                         }else{
-                                            showErrorLayout();
+                                            showDataNotExists();
                                         }
                                     } if(!teamFromObject.isNull("team_points")){
                                         tvpointofsecondteam.setText(teamFromObject.getString("team_points"));}
@@ -250,7 +249,7 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
                                         tvlossmatchofsecondteam.setText(teamFromObject.getString("games_lost"));}
 
                                 }else{
-                                    showErrorLayout();
+                                    showDataNotExists();
                                 }
 
                             }

@@ -149,7 +149,7 @@ public class DateUtil {
 
         return days;
     }
-    public static String getDateFromEpochTime(long l) {
+    public static String getDateTimeTimeFromEpochTime(long l) {
         String days = "";
         Calendar to = Calendar.getInstance();
         TimeZone tz = to.getTimeZone();
@@ -178,6 +178,24 @@ public class DateUtil {
         days = DATE_TIME_FORMAT.format(utilDate);
         return days;
     }
+
+
+    public static String getDateFromEpochTime(long l) {
+        String days = "";
+        Calendar to = Calendar.getInstance();
+        TimeZone tz = to.getTimeZone();
+        Calendar with = Calendar.getInstance();
+        with.setTimeInMillis(l);
+        with.setTimeZone(tz);
+
+        to.set(Calendar.YEAR, with.get(Calendar.YEAR));
+        Date utilDate = with.getTime();
+        days = DATE_FORMAT.format(utilDate);
+        return days;
+    }
+
+
+
 
     public static String getFormattedDateDDMMYYYY(String oldDate){
 

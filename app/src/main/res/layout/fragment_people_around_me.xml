@@ -51,7 +51,9 @@
             android:paddingLeft="@dimen/horizontal_padding_large"
             android:paddingRight="@dimen/horizontal_padding_large"
             android:paddingTop="@dimen/vertical_padding_large"
-            android:text="Users Data Not Exist"
+            android:text="We didn't find anyone :(
+Try broadening your search
+by increasing the radius)"
             android:textColor="@color/gray1"
             android:textSize="@dimen/font_size_large"
             />

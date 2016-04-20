@@ -20,9 +20,9 @@ import com.sports.unity.common.model.FontTypeface;
 
 
 public class SlidingTabLayout extends HorizontalScrollView {
-
     private static final int TITLE_OFFSET_DIPS = 24;
     private static final int TAB_VIEW_PADDING_DIPS = 16;
+    private static final int TAB_VIEW_PADDING_LEFT_RIGHT_DIPS = 0;
     private static final int TAB_VIEW_TEXT_SIZE_SP = 14;
     private final SlidingTabStrip mTabStrip;
     private int mTitleOffset;
@@ -140,7 +140,8 @@ public class SlidingTabLayout extends HorizontalScrollView {
         textView.setAllCaps(true);
 
         int padding = (int) (TAB_VIEW_PADDING_DIPS * getResources().getDisplayMetrics().density);
-        textView.setPadding(padding, padding, padding, padding);
+        textView.setPadding(TAB_VIEW_PADDING_LEFT_RIGHT_DIPS, padding, TAB_VIEW_PADDING_LEFT_RIGHT_DIPS, padding);
+        textView.setSingleLine(true);
 
         return textView;
     }
@@ -160,7 +161,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 tabTitleView = (TextView) tabView.findViewById(mTabViewTextViewId);
 
                 int padding = (int) (TAB_VIEW_PADDING_DIPS * getResources().getDisplayMetrics().density);
-                tabView.setPadding(padding, padding, padding, padding);
+                tabView.setPadding(TAB_VIEW_PADDING_LEFT_RIGHT_DIPS, padding, TAB_VIEW_PADDING_LEFT_RIGHT_DIPS, padding);
 
             }
 
