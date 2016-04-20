@@ -62,7 +62,7 @@ public class NavListAdapter extends BaseExpandableListAdapter {
                 e.printStackTrace();
             }
             if (uri != null) {
-                Glide.with(act).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).into(iv);
+                Glide.with(act).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).dontAnimate().into(iv);
             } else {
                 iv.setVisibility(View.VISIBLE);
                 iv.setImageResource(R.drawable.ic_no_img);
