@@ -208,20 +208,18 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipeRefreshLayout);
         mSwipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.app_theme_blue));
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-
             @Override
             public void onRefresh() {
                 new Handler().post(new Runnable() {
-
                     @Override
                     public void run() {
-                        requestContent();
                         mSwipeRefreshLayout.setRefreshing(true);
+                        requestContent();
+
                     }
 
                 });
             }
-
         });
     }
 
@@ -571,7 +569,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
     @Override
     public void notifyParent() {
         matchListWrapperAdapter.notifyAdapter();
-        mSwipeRefreshLayout.setRefreshing(false);
+        //mSwipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

@@ -57,7 +57,6 @@ public class LivedMatchScoreCardHandler {
             LivedMatchScoreCardHandler.this.handleErrorResponse(volleyError);
         }
     };
-
     public void requestMatchScoreCard(String seriesId ,String matchId) {
         Log.i("Score Detail", "Request Score Details");
 
