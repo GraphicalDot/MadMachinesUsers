@@ -56,14 +56,13 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
     private MatchCommentaryFragmentHandler matchCommentaryFragmentHandler;
     private String matchId;
     private String seriesId;
-    private RelativeLayout team1ScoreDetails;
-    private RelativeLayout team2ScoreDetails;
     private String sportsType;
-    private ProgressBar progressBar;
+
     private String matchStatus;
     private  Timer timerToRefreshContent;
     private  boolean reloadFlag;
-
+    private View tvEmptyView;
+    private  LinearLayout errorLayout;
 
     public MatchCommentaryFragment() {
         // Required empty public constructor
@@ -119,13 +118,11 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
 
         View view = inflater.inflate(R.layout.fragment_commentary, container, false);
         initView(view);
-        initProgress(view);
+
         return view;
     }
 
     private void initView(View view) {
-        // ((TextView)view.findViewById(R.id.venue)).setTypeface(FontTypeface.getInstance(getContext()).getRobotoCondensedBold());
-
         mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
         mRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(getContext(), VERTICAL, false));
         mRecyclerView.setNestedScrollingEnabled(false);
@@ -133,6 +130,8 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
         mRecyclerView.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.commentary_refresh);
+        swipeRefreshLayout.setRefreshing(true);
+        tvEmptyView = view.findViewById(R.id.tv_empty_view);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -140,47 +139,31 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
                 getCommentary();
             }
         });
-
-
+        errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        errorLayout.setVisibility(View.GONE);
     }
 
 
-    private void initProgress(View view) {
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
 
-    }
-    public void showProgress() {
-        progressBar.setVisibility(View.VISIBLE);
-
-    }
-    public void hideProgress() {
-        progressBar.setVisibility(View.GONE);
-
-    }
     @Override
     public void handleContent(String content) {
         {
-            showProgress();
+
             try {
                 ArrayList<CommentriesModel> list = ScoresJsonParser.parseListOfMatchCommentaries(content);
                 if( list.size()>0 ) {
                     renderDisplay(list);
+                    swipeRefreshLayout.setVisibility(View.VISIBLE);
+                    swipeRefreshLayout.setRefreshing(false);
                 } else {
+                    tvEmptyView.setVisibility(View.VISIBLE);
 
-                    showErrorLayout(getView());
                 }
             }catch (Exception ex){
                 ex.printStackTrace();
                 showErrorLayout(getView());
             }
         }
-    }
-
-    private void initErrorLayout(View view) {
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.GONE);
-
     }
 
     private void showErrorLayout(View view) {
@@ -193,9 +176,7 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
     private void renderDisplay(final ArrayList<CommentriesModel> list) throws JSONException {
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         commentaries.clear();
-
-
-            hideProgress();
+        tvEmptyView.setVisibility(View.GONE);
             if (activity != null) {
                 activity.runOnUiThread(new Runnable() {
                     @Override
@@ -211,7 +192,6 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
                     }
                 });
             }
-
     }
 
     @Override
@@ -227,11 +207,10 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
     @Override
     public void onResume() {
         super.onResume();
-        showProgress();
+        swipeRefreshLayout.setRefreshing(true);
         reloadFlag = true;
         if(matchCommentaryFragmentHandler != null){
             matchCommentaryFragmentHandler.addListener(this);
-
         }else {
             matchCommentaryFragmentHandler= MatchCommentaryFragmentHandler.getInstance(getContext());
         }

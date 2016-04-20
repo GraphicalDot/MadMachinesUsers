@@ -19,21 +19,14 @@
         android:background="@color/tab_seperator" />
 
 
-
     <com.sports.unity.common.view.SlidingTabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/seperator"
         android:background="@color/app_theme_blue"
-        android:elevation="@dimen/toolbar_elevation" />
-
-    <View
-        android:id="@+id/view"
-        android:layout_width="fill_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/tabs"
-        android:background="@color/ColorPrimary" />
+        android:elevation="@dimen/toolbar_elevation"
+        />
     <FrameLayout
         android:id="@+id/fl_custom_location"
         android:layout_width="match_parent"
@@ -46,6 +39,14 @@
             android:layout_width="match_parent"
             android:layout_height="@dimen/people_nearme_custom_location_height" />
     </FrameLayout>
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/tabs"
+        android:background="@color/ColorPrimary" />
+
 
     <com.sports.unity.common.model.ControlledSwipeViewPager
         android:id="@+id/pager"
@@ -89,9 +90,7 @@
                 android:layout_marginBottom="10dp"
                 android:progressDrawable="@drawable/seekbar_drawable"
                 android:thumb="@drawable/ic_distance_slider_01" />
-
         </LinearLayout>
-
     </RelativeLayout>
     <include
         android:id="@+id/error"

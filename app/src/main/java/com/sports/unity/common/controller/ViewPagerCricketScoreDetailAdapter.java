@@ -1,13 +1,10 @@
 package com.sports.unity.common.controller;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.sports.unity.scoredetails.CommentaryFragment;
 import com.sports.unity.scoredetails.CommentriesModel;
-import com.sports.unity.scoredetails.UpcommingMatchCommentaryFragment;
 import com.sports.unity.scoredetails.commentary.MatchCommentaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CompletedMatchScoreCardFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketCompletedMatchSummaryFragment;
@@ -15,8 +12,6 @@ import com.sports.unity.scoredetails.cricketdetail.CricketLiveMatchSummaryFragme
 import com.sports.unity.scoredetails.cricketdetail.CricketUpcomingMatchScoreCardFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketUpcomingMatchSummaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.LiveCricketMatchScoreCardFragment;
-import com.sports.unity.scores.model.ScoresJsonParser;
-import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 
@@ -54,11 +49,9 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
             }
             //fragment = new CricketLiveMatchSummaryFragment();
         } else if (position == 1) {
-            if(matchStatus.equalsIgnoreCase("N") || matchStatus.trim().equalsIgnoreCase("")){
-                fragment = new UpcommingMatchCommentaryFragment();
-            } else {
+
                 fragment = new MatchCommentaryFragment();
-            }
+
         } else {
             if(matchStatus.equalsIgnoreCase("N") || matchStatus.trim().equalsIgnoreCase("")){
                 fragment = new CricketUpcomingMatchScoreCardFragment();
