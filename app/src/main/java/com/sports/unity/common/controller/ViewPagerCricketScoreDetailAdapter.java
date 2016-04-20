@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.sports.unity.scoredetails.CommentaryFragment;
 import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scoredetails.UpcommingMatchCommentaryFragment;
+import com.sports.unity.scoredetails.commentary.MatchCommentaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CompletedMatchScoreCardFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketCompletedMatchSummaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketLiveMatchSummaryFragment;
@@ -56,11 +57,7 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
             if(matchStatus.equalsIgnoreCase("N") || matchStatus.trim().equalsIgnoreCase("")){
                 fragment = new UpcommingMatchCommentaryFragment();
             } else {
-                fragment = new CommentaryFragment();
-                Bundle cmBundel = new Bundle();
-                cmBundel.putString(Constants.INTENT_KEY_TYPE, ScoresJsonParser.CRICKET);
-                cmBundel.putParcelableArrayList("commentries", commentries);
-                fragment.setArguments(cmBundel);
+                fragment = new MatchCommentaryFragment();
             }
         } else {
             if(matchStatus.equalsIgnoreCase("N") || matchStatus.trim().equalsIgnoreCase("")){

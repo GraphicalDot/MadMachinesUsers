@@ -38,19 +38,21 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
     private RecyclerView mRecyclerView;
     private BroadcastListAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private DataRequestService dataServiceContract;
+    private DataRequestService dataRequestService;
+    private Context context;
     public CommentaryFragment() {
         // Required empty public constructor
     }
    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+       this.context = context;
+
         if(context instanceof DataServiceContract)
         {
-            dataServiceContract = (DataRequestService)context;
-            dataServiceContract.requestData(0);
+            dataRequestService = (DataRequestService)context;
+            dataRequestService.requestData(0);
         }
-       dataChanged();
     }
 
     @Override
@@ -82,8 +84,8 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (dataServiceContract != null) {
-                    dataServiceContract.requestData(0);
+                if (dataRequestService != null) {
+                    dataRequestService.requestData(0);
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }
@@ -98,7 +100,7 @@ public class CommentaryFragment extends Fragment implements FragementInterface<C
     public void dataChanged() {
         try{
             if(mRecyclerView !=null) {
-                       /* mRecyclerView.postInvalidate();*/
+                       mRecyclerView.postInvalidate();
                         mAdapter.notifyDataSetChanged();
                         swipeRefreshLayout.setRefreshing(false);
             }

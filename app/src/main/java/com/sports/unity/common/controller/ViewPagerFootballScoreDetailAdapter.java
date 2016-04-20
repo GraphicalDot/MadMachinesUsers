@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 
 import com.sports.unity.scoredetails.CommentaryFragment;
 import com.sports.unity.scoredetails.CommentriesModel;
+import com.sports.unity.scoredetails.commentary.MatchCommentaryFragment;
 import com.sports.unity.scoredetails.footballdetail.CompletedFootballMatchLineUpFragment;
 import com.sports.unity.scoredetails.footballdetail.CompletedFootballMatchStatFragment;
 import com.sports.unity.scoredetails.footballdetail.CompletedFootballMatchTimeLineFragment;
@@ -60,11 +61,8 @@ public class ViewPagerFootballScoreDetailAdapter extends FragmentStatePagerAdapt
             }
         }else {
             if (position == 0) {
-                fragment = new CommentaryFragment();
-                Bundle cmBundel = new Bundle();
-                cmBundel.putString(Constants.INTENT_KEY_TYPE, ScoresJsonParser.FOOTBALL);
-                cmBundel.putParcelableArrayList("commentries", commentries);
-                fragment.setArguments(cmBundel);
+                fragment = new MatchCommentaryFragment();
+
             } else if (position == 1) {
                 if(isLive){
                     fragment = new LiveFootballMatchStatFragment();

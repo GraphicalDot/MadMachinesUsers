@@ -95,13 +95,13 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             LinearLayout errorLayout = (LinearLayout) findViewById(R.id.error);
             errorLayout.setVisibility(View.GONE);
             ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
-
+            mProgressBar = (ProgressBar) findViewById(R.id.progressbar);
             ScoreDetailComponentListener scoreDetailComponentListener = new ScoreDetailComponentListener(progressBar, errorLayout);
-            MatchCommentariesComponentListener matchCommentariesComponentListener = new MatchCommentariesComponentListener(progressBar, errorLayout);
+           // MatchCommentariesComponentListener matchCommentariesComponentListener = new MatchCommentariesComponentListener(progressBar, errorLayout);
             ArrayList<CustomComponentListener> listeners = new ArrayList<>();
             listeners.add(scoreDetailComponentListener);
-            listeners.add(matchCommentariesComponentListener);
-           onComponentCreate(listeners, REQUEST_LISTENER_KEY);
+            //listeners.add(matchCommentariesComponentListener);
+            onComponentCreate(listeners, REQUEST_LISTENER_KEY);
         }
     }
 
@@ -259,11 +259,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 //>>>>>>> team2_dev_branch
 
     private void displayMatchTimer(Integer currenttime) {
-
-
-        mProgressBar = (ProgressBar) findViewById(R.id.progressbar);
-
-        if(currenttime>90 && currenttime<=105){
+      if(currenttime>90 && currenttime<=105){
             mProgressBar.setMax(105);
         }else if(currenttime>105 && currenttime<=120){
             mProgressBar.setMax(120);
@@ -339,10 +335,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         }
 
     }
-    private void renderComments(){
-        Log.i("Score Detail", "Render Comments");
-        //mRecyclerView.getAdapter().notifyDataSetChanged();
-    }
+
 
     private boolean renderScores(){
         Log.i("Score Detail", "Render Scores");
@@ -529,7 +522,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             }
         } else if ( sportsType.equals(ScoresJsonParser.FOOTBALL) ) {
              footballMatchJsonCaller.setJsonObject(matchScoreDetails);
-             mProgressBar.setVisibility(View.INVISIBLE);
+            // mProgressBar.setVisibility(View.INVISIBLE);
 
           {
                 LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.FILL_PARENT);
@@ -678,19 +671,8 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             
             success = true;
             Fragment fragment= null;
-            Fragment currentFragment = null;
             if(sportsType.equals(ScoresJsonParser.CRICKET)) {
                 fragment = cricketScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
-                /*currentFragment =  new CommentaryFragment();
-                Bundle cmBundel = new Bundle();
-                cmBundel.putString(Constants.INTENT_KEY_TYPE, ScoresJsonParser.CRICKET);
-                cmBundel.putParcelableArrayList("commentries", commentaries);
-                fragment.setArguments(cmBundel);
-                         getSupportFragmentManager()
-                        .beginTransaction()
-                        .detach(fragment)
-                        .attach(currentFragment)
-                        .commit();*/
             } else {
                 fragment = footballScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
             }
@@ -745,12 +727,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         }
     }
 
-    @Override
-    public void requestData(int methodType) {
-        if(methodType== 0 ){
-            requestMatchCommentaries();
-        }
-    }
 
     private boolean handleScoreCard(String content){
         Log.i("Score Detail", "Handle Content");
@@ -804,17 +780,25 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             }
         }
     }
+    @Override
+    public void requestData(int methodType) {
+        if(methodType== 0 ){
+            ScoreDetailActivity.this.requestMatchCommentaries();
+
+        }
+    }
 
     private class MatchCommentariesComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
 
         private boolean successfulResponse = false;
 
         public MatchCommentariesComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
-            super( LIST_OF_COMMENTARIES_REQUEST_TAG, progressBar, errorLayout);
+            super(LIST_OF_COMMENTARIES_REQUEST_TAG, progressBar, errorLayout);
         }
 
         @Override
         public boolean handleContent(String tag, String content) {
+            changeUI();
             successfulResponse = ScoreDetailActivity.this.handleCommentaries(content);
             return true;
         }
@@ -851,11 +835,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
 
         @Override
         public void changeUI() {
-            ScoreDetailActivity.this.setTitle();
-            boolean requestCommentaries = ScoreDetailActivity.this.renderScores();
-            if( requestCommentaries ){
-                ScoreDetailActivity.this.requestMatchCommentaries();
-            }
+            ScoreDetailActivity.this.requestMatchCommentaries();
         }
     }
 
