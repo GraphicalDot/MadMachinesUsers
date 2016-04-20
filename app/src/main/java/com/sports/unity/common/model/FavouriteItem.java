@@ -3,13 +3,10 @@ package com.sports.unity.common.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Comparator;
-import java.util.Objects;
-
 /**
  * Model class which contains all the info of single favourite item e.g. Name, ID, Flag Url, Sports Type and filter type.
  */
-public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<FavouriteItem> {
+public class FavouriteItem implements Comparable<FavouriteItem> {
     private String name;
     private boolean isChecked;
     private String id;
@@ -193,18 +190,13 @@ public class FavouriteItem implements Comparator<FavouriteItem>, Comparable<Favo
 
     @Override
     public int compareTo(FavouriteItem another) {
-        return this.name.compareTo(another.getName());
-    }
-
-    @Override
-    public int compare(FavouriteItem lhs, FavouriteItem rhs) {
-        return lhs.getName().compareTo(rhs.getName());
+        return this.getId().compareTo(another.getId());
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof FavouriteItem) {
-            return this.getName().equals(((FavouriteItem) o).getName());
+            return this.getId().equals(((FavouriteItem) o).getId());
         }
         return false;
     }

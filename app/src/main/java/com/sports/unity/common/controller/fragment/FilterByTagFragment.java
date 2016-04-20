@@ -17,12 +17,15 @@ import com.sports.unity.common.controller.AdvancedFilterActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.FavouriteContentHandler;
 import com.sports.unity.common.model.FavouriteItem;
+import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
+import java.util.List;
 
 /**
  * Created by Mad on 12/28/2015.
@@ -34,6 +37,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     private Bundle bundle;
     private String SPORTS_FILTER_TYPE, SPORTS_TYPE;
     private FavouriteContentHandler favouriteContentHandler;
+    private FavouriteItemWrapper favouriteItemWrapper;
     private FilterRecycleAdapter itemAdapter;
     ArrayList<FavouriteItem> searchList;
     private boolean isSearchRequested;
@@ -43,12 +47,28 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     private final String errorMessage = "Something went wrong";
     private final String noResultMessage = "No result found";
 
+    private List<FavouriteItem> savedFootballLeagues;
+    private List<FavouriteItem> savedFootballTeams;
+    private List<FavouriteItem> savedFootballPlayers;
+    private List<FavouriteItem> savedCricketTeams;
+    private List<FavouriteItem> savedCricketPlayers;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         bundle = getArguments();
 
+        favouriteItemWrapper = FavouriteItemWrapper.getInstance(getActivity());
+
         favouriteContentHandler = FavouriteContentHandler.getInstance(getActivity());
+
+        if (UserUtil.isFilterCompleted()) {
+            savedFootballLeagues = favouriteItemWrapper.getFootballLeagues();
+            savedFootballTeams = favouriteItemWrapper.getFootballTeams();
+            savedFootballPlayers = favouriteItemWrapper.getFootballPlayers();
+            savedCricketTeams = favouriteItemWrapper.getCricketTeams();
+            savedCricketPlayers = favouriteItemWrapper.getCricketPlayers();
+        }
 
         SPORTS_FILTER_TYPE = bundle.getString(Constants.SPORTS_FILTER_TYPE);
         SPORTS_TYPE = bundle.getString(Constants.SPORTS_TYPE);
@@ -94,9 +114,9 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     private void initViews(View view) {
         LinearLayout textPlayer = (LinearLayout) view.findViewById(R.id.text);
 
-        if(!SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_PLAYER)) {
+        if (!SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_PLAYER)) {
             textPlayer.setVisibility(View.GONE);
-        }else {
+        } else {
             //nothing
         }
 
@@ -132,23 +152,62 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
 
             if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_CRICKET)) {
                 itemDataSet = favouriteContentHandler.getFavCricketTeams();
+                if (UserUtil.isFilterCompleted()) {
+                    for (FavouriteItem f : savedCricketTeams) {
+                        if (!itemDataSet.contains(f)) {
+                            itemDataSet.add(f);
+                        }
+                    }
+                }
 
             } else if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
                 itemDataSet = favouriteContentHandler.getFavFootballTeams();
+                if (UserUtil.isFilterCompleted()) {
+                    for (FavouriteItem f : savedFootballTeams) {
+                        if (!itemDataSet.contains(f)) {
+                            itemDataSet.add(f);
+                        }
+                    }
+                }
+
             }
 
         } else if (SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_PLAYER)) {
 
             if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_CRICKET)) {
                 itemDataSet = favouriteContentHandler.getFavCricketPlayers();
+                if (UserUtil.isFilterCompleted()) {
+                    for (FavouriteItem f : savedCricketPlayers) {
+                        if (!itemDataSet.contains(f)) {
+                            itemDataSet.add(f);
+                        }
+                    }
+                }
+
 
             } else if (SPORTS_TYPE.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
                 itemDataSet = favouriteContentHandler.getFavFootballPlayers();
+                if (UserUtil.isFilterCompleted()) {
+                    for (FavouriteItem f : savedFootballPlayers) {
+                        if (!itemDataSet.contains(f)) {
+                            itemDataSet.add(f);
+                        }
+                    }
+                }
+
 
             }
 
         } else if (SPORTS_FILTER_TYPE.equals(Constants.FILTER_TYPE_LEAGUE)) {
             itemDataSet = favouriteContentHandler.getFavFootballLeagues();
+            if (UserUtil.isFilterCompleted()) {
+                for (FavouriteItem f : savedFootballLeagues) {
+                    if (!itemDataSet.contains(f)) {
+                        itemDataSet.add(f);
+                    }
+                }
+            }
+
 
         }
         if (itemDataSet == null || itemDataSet.size() <= 0) {
@@ -165,6 +224,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
      */
     private void displayContent() {
         hideErrorLayout();
+        Collections.sort(itemDataSet);
         filterRecyclerView.setVisibility(View.VISIBLE);
         itemAdapter = new FilterRecycleAdapter(getActivity(), itemDataSet);
         filterRecyclerView.setAdapter(itemAdapter);
