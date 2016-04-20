@@ -1,6 +1,7 @@
 package com.sports.unity.scoredetails.commentary;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -39,6 +40,8 @@ import org.solovyev.android.views.llm.LinearLayoutManager;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
@@ -57,6 +60,10 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
     private RelativeLayout team2ScoreDetails;
     private String sportsType;
     private ProgressBar progressBar;
+    private String matchStatus;
+    private  Timer timerToRefreshContent;
+    private  boolean reloadFlag;
+
 
     public MatchCommentaryFragment() {
         // Required empty public constructor
@@ -65,9 +72,11 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        matchId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-        seriesId=  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_SERIES);
-        sportsType = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_TYPE);
+        Intent i = getActivity().getIntent();
+        matchId =  i.getStringExtra(Constants.INTENT_KEY_ID);
+        seriesId=  i.getStringExtra(Constants.INTENT_KEY_SERIES);
+        sportsType = i.getStringExtra(Constants.INTENT_KEY_TYPE);
+        matchStatus= i.getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
         mContext = context;
         getCommentary();
     }
@@ -76,6 +85,32 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
         matchCommentaryFragmentHandler = MatchCommentaryFragmentHandler.getInstance(mContext);
         matchCommentaryFragmentHandler.addListener(this);
         matchCommentaryFragmentHandler.requestMatchCommentary(seriesId, matchId, sportsType);
+        if(matchStatus.equalsIgnoreCase("L")){
+            reloadCommentary();
+        }
+    }
+
+
+
+
+
+
+    private void reloadCommentary() {
+        timerToRefreshContent = new Timer();
+        if(reloadFlag){
+            timerToRefreshContent.schedule(new TimerTask() {
+
+                @Override
+                public void run() {
+                    getCommentary();
+                }
+
+            }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
+
+        }else{
+            timerToRefreshContent.cancel();
+        }
+
     }
 
     @Override
@@ -101,6 +136,7 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                swipeRefreshLayout.setRefreshing(true);
                 getCommentary();
             }
         });
@@ -156,7 +192,7 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
 
     private void renderDisplay(final ArrayList<CommentriesModel> list) throws JSONException {
         ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-      commentaries.clear();
+        commentaries.clear();
 
 
             hideProgress();
@@ -167,6 +203,7 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
                         try {
                             commentaries.addAll(list);
                             mAdapter.notifyDataSetChanged();
+                            swipeRefreshLayout.setRefreshing(false);
                         } catch (Exception ex) {
                             ex.printStackTrace();
                             showErrorLayout(getView());
@@ -180,6 +217,7 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
     @Override
     public void onPause() {
         super.onPause();
+        reloadFlag = false;
         if(matchCommentaryFragmentHandler != null){
             matchCommentaryFragmentHandler.addListener(null);
         }
@@ -190,6 +228,7 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
     public void onResume() {
         super.onResume();
         showProgress();
+        reloadFlag = true;
         if(matchCommentaryFragmentHandler != null){
             matchCommentaryFragmentHandler.addListener(this);
 
@@ -198,4 +237,8 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
         }
         getCommentary();
     }
+
+
+
+
 }
