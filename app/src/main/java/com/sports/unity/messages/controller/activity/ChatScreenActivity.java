@@ -2,15 +2,18 @@ package com.sports.unity.messages.controller.activity;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
@@ -32,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.ChatScreenApplication;
+import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -57,7 +61,9 @@ import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.FileOnCloudHandler;
 import com.sports.unity.util.GlobalEventHandler;
+import com.sports.unity.util.ImageUtil;
 import com.sports.unity.util.NotificationHandler;
+import com.sports.unity.util.ThreadTask;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPConnection;
@@ -67,6 +73,8 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smackx.chatstates.ChatState;
 
+import java.io.File;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -980,7 +988,143 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                 } else {
                     userPic.setImageResource(R.drawable.ic_user);
                 }
+            } else if (requestCode == Constants.REQUEST_CODE_PICK_IMAGE) {
+                handleResultForSendMedia(data);
             }
+        }
+    }
+
+    private void handleResultForSendMedia(Intent data) {
+        if (data.getClipData() == null) {
+            handleSingleMediaFile(data);
+        } else {
+            handleMultipleMediaFiles(data);
+        }
+
+    }
+
+    private void handleSingleMediaFile(Intent data) {
+        int filesNotSent = 0;
+        final Uri URI = data.getData();
+        long filesize = ImageUtil.getFileSize(getApplicationContext(), URI, URI.getScheme());
+        String path = null;
+        if (ImageUtil.getMimeType(URI).equals("image")) {
+            if (filesize > 5120 && filesize <= 10485760) {
+                path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Images.Media.DATA);
+                sendMediaFile(URI, path);
+            } else {
+                filesNotSent++;
+            }
+        } else if (ImageUtil.getMimeType(URI).equals("video")) {
+            if (filesize > 51200 && filesize <= 10485760) {
+                path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Video.Media.DATA);
+                sendMediaFile(URI, path);
+            } else {
+                filesNotSent++;
+            }
+        }
+        if (filesNotSent > 0) {
+            Toast.makeText(ChatScreenActivity.this, "Sorry file not sent! File size was too large", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void handleMultipleMediaFiles(Intent data) {
+        int filesNotSent = 0;
+        if (data.getClipData() != null) {
+            ClipData mClipData = data.getClipData();
+            ArrayList<Uri> URIs = new ArrayList<Uri>();
+            for (int i = 0; i < mClipData.getItemCount(); i++) {
+                ClipData.Item item = mClipData.getItemAt(i);
+                Uri uri = item.getUri();
+                URIs.add(uri);
+            }
+            if (URIs != null) {
+                if (URIs.size() > 10) {
+
+                    Toast.makeText(getApplicationContext(), "Can't share more than 10 items", Toast.LENGTH_LONG).show();
+                    this.finish();
+
+                } else {
+                    for (Uri URI : URIs) {
+
+                        long filesize = ImageUtil.getFileSize(getApplicationContext(), URI, URI.getScheme());
+                        String path = null;
+                        if (ImageUtil.getMimeType(URI).equals("image")) {
+                            if (filesize > 5120 && filesize <= 10485760) {
+                                path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Images.Media.DATA);
+                                sendMediaFile(URI, path);
+                            } else {
+                                filesNotSent++;
+                            }
+                        } else if (ImageUtil.getMimeType(URI).equals("video")) {
+                            if (filesize > 51200 && filesize <= 10485760) {
+                                path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Video.Media.DATA);
+                                sendMediaFile(URI, path);
+                            } else {
+                                filesNotSent++;
+                            }
+                        }
+                    }
+
+                    if (filesNotSent > 0) {
+                        Toast.makeText(ChatScreenActivity.this, "Sorry " + filesNotSent + " were not sent ! File size was too large", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        }
+    }
+
+    private void sendMediaFile(final Uri URI, final String file) {
+        final int screenHeight = getResources().getDisplayMetrics().heightPixels;
+        final int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        try {
+            new ThreadTask(null) {
+
+                private String thumbnailImage = null;
+                private boolean hasVideoContent = false;
+
+                @Override
+                public Object process() {
+                    hasVideoContent = ImageUtil.getMimeType(URI).equals("video");
+
+                    String fileName = null;
+                    try {
+                        if (!hasVideoContent) {
+                            fileName = DBUtil.getUniqueFileName(SportsUnityDBHelper.MIME_TYPE_IMAGE, false);
+                            this.object = ImageUtil.getCompressedBytes(file, screenHeight, screenWidth);
+
+                            DBUtil.writeContentToExternalFileStorage(ChatScreenActivity.this, fileName, (byte[]) this.object, SportsUnityDBHelper.MIME_TYPE_IMAGE);
+                            thumbnailImage = PersonalMessaging.createThumbnailImageAsBase64(ChatScreenActivity.this, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName);
+                        } else {
+                            fileName = DBUtil.getUniqueFileName(SportsUnityDBHelper.MIME_TYPE_VIDEO, false);
+                            this.object = fileName;
+                            DBUtil.writeContentToExternalFileStorage(ChatScreenActivity.this, file, fileName, SportsUnityDBHelper.MIME_TYPE_VIDEO);
+                            thumbnailImage = PersonalMessaging.createThumbnailImageAsBase64(ChatScreenActivity.this, SportsUnityDBHelper.MIME_TYPE_VIDEO, fileName);
+
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    return fileName;
+                }
+
+                @Override
+                public void postAction(Object object) {
+                    String fileName = (String) object;
+                    Object mediaContent = this.object;
+
+                    if (!hasVideoContent) {
+                        ActivityActionHandler.getInstance().dispatchSendMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_IMAGE, fileName, thumbnailImage, mediaContent);
+                    } else {
+                        ActivityActionHandler.getInstance().dispatchSendMediaEvent(ActivityActionHandler.CHAT_SCREEN_KEY, SportsUnityDBHelper.MIME_TYPE_VIDEO, fileName, thumbnailImage, mediaContent);
+                    }
+                }
+
+            }.start();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+
+            Toast.makeText(this, "Something went wrong.", Toast.LENGTH_SHORT).show();
         }
     }
 

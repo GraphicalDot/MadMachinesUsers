@@ -63,7 +63,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     private ArrayList<FavouriteItem> flagFavItem;
 
     private boolean isIndividualFixture = false;
-    private long dummyBannerEpochTime = -99;
+    private final long dummyBannerEpochTime = -99;
 
     private MatchJsonCaller matchJsonCaller = new MatchJsonCaller();
     private FootballMatchJsonCaller footballMatchJsonCaller = new FootballMatchJsonCaller();
@@ -118,38 +118,57 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             if (getItemViewType(position) == 0) {
                 handleStaffFavContent(holder);
             } else {
+                MatchListWrapperItem dto = matchDay.get(position);
                 {
-//                    if (shouldShowHeader && position > pos) {
-//                        position = position - 1;
-//                    }
-                    MatchListWrapperItem previousDTO = null;
-                    if (position == 0) {
-                        previousDTO = matchDay.get(position);
-                    } else {
-                        previousDTO = matchDay.get(position - 1);
+                    boolean isMatchOfNewLeague = false;
+                    boolean isMatchOfNewDay = false;
+                    {
+                        MatchListWrapperItem previousDTO = null;
+                        if (position == 0) {
+                            previousDTO = matchDay.get(position);
+                        } else {
+                            previousDTO = matchDay.get(position - 1);
+                        }
+                        if (previousDTO.getDay().equalsIgnoreCase(dto.getDay()) && (position != 0)) {
+                            isMatchOfNewDay = false;
+                        } else {
+                            isMatchOfNewDay = true;
+                        }
+                        if ( previousDTO.getLeagueName().equalsIgnoreCase(dto.getLeagueName()) && position != 0 ) {
+                            isMatchOfNewLeague = false;
+                        } else {
+                            isMatchOfNewLeague = true;
+                        }
                     }
 
-                    MatchListWrapperItem dto = matchDay.get(position);
-                    if (previousDTO.getDay().equalsIgnoreCase(dto.getDay()) && (position != 0)) {
-                        holder.tvDayName.setVisibility(View.GONE);
-                    } else {
+                    if (isMatchOfNewDay) {
                         holder.tvDayName.setVisibility(View.VISIBLE);
                         holder.tvDayName.setText(dto.getDay());
+                    } else {
+                        holder.tvDayName.setVisibility(View.GONE);
                     }
 
-                    if (!isIndividualFixture) {
+                    if ( isMatchOfNewDay || isMatchOfNewLeague ) {
                         holder.tvLeagueName.setText(dto.getLeagueName());
+
+                        if (dto.getSportsType().equals(Constants.SPORTS_TYPE_CRICKET)) {
+                            holder.ivSportsIcon.setImageResource(R.drawable.ic_cricket_group);
+                        } else {
+                            holder.ivSportsIcon.setImageResource(R.drawable.ic_football_group);
+                        }
+
+                        holder.leagueLayout.setVisibility(View.VISIBLE);
                     } else {
                         holder.leagueLayout.setVisibility(View.GONE);
+                    }
+
+                    if( position != 0 && (isMatchOfNewDay == true || isMatchOfNewLeague == true) ){
+                        holder.sepTop.setVisibility(View.VISIBLE);
+                        holder.sepBottom.setVisibility(View.VISIBLE);
+                    } else {
                         holder.sepTop.setVisibility(View.GONE);
                         holder.sepBottom.setVisibility(View.GONE);
                     }
-                    if (dto.getSportsType().equals(Constants.SPORTS_TYPE_CRICKET)) {
-                        holder.ivSportsIcon.setImageResource(R.drawable.ic_cricket_group);
-                    } else {
-                        holder.ivSportsIcon.setImageResource(R.drawable.ic_football_group);
-                    }
-
 
                     JSONObject matchJsonObject = dto.getJsonObject();
                     try {
@@ -914,12 +933,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
     public void removeStaffBanner() {
         shouldShowHeader = false;
-        for (int i = 0; i < matchDay.size(); i++) {
-            MatchListWrapperItem item = matchDay.get(i);
-            if( item.getEpochTime() == dummyBannerEpochTime ){
-                matchDay.remove(i);
-            }
-        }
+        removeBannerMatchObject();
         this.notifyDataSetChanged();
     }
 
@@ -927,6 +941,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         int pos = 0;
         if (matchDay.size() > 0 ) {
             try {
+                removeBannerMatchObject();
+
                 for (int i = 0; i < matchDay.size(); i++) {
                     MatchListWrapperItem item = matchDay.get(i);
                     if( item.getEpochTime() == dummyBannerEpochTime ){
@@ -941,6 +957,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             MatchListWrapperItem bannerDummyItem = new MatchListWrapperItem();
                             bannerDummyItem.setDay("Yesterday");
                             bannerDummyItem.setEpochTime(Long.valueOf(dummyBannerEpochTime));
+                            bannerDummyItem.setLeagueName("dummy");
                             matchDay.add(i, bannerDummyItem);
                         }
                         break;
@@ -952,6 +969,16 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         }
         this.notifyDataSetChanged();
         return pos;
+    }
+
+    private void removeBannerMatchObject(){
+        for (int i = 0; i < matchDay.size(); i++) {
+            MatchListWrapperItem item = matchDay.get(i);
+            if( item.getEpochTime() == dummyBannerEpochTime ){
+                matchDay.remove(i);
+                break;
+            }
+        }
     }
 
 }

@@ -10,7 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_margin="@dimen/vertical_padding_very_very_small"
+        android:layout_marginLeft="@dimen/vertical_padding_very_very_small"
+        android:layout_marginRight="@dimen/vertical_padding_very_very_small"
         card_view:cardCornerRadius="@dimen/card_edge_curve_radius">
 
         <LinearLayout

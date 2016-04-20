@@ -27,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLConnection;
 
 /**
  * Created by amandeep on 13/1/16.
@@ -46,9 +47,9 @@ public class ImageUtil {
                     Uri selectedImageUri = data.getData();
                     Log.d("Image Util", "Un-Accessible Selected Image Uri " + selectedImageUri);
 
-                    if( selectedImageUri.getScheme().equalsIgnoreCase("file") ){
+                    if (selectedImageUri.getScheme().equalsIgnoreCase("file")) {
                         selectedImageFilePath = selectedImageUri.getPath();
-                    } else if( selectedImageUri.getScheme().equalsIgnoreCase("content") ) {
+                    } else if (selectedImageUri.getScheme().equalsIgnoreCase("content")) {
                         selectedImageFilePath = ImageUtil.getRealPathFromURI(selectedImageUri, context);
                     }
 
@@ -68,7 +69,7 @@ public class ImageUtil {
                 } else {
                     success = false;
                 }
-            }catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -79,31 +80,31 @@ public class ImageUtil {
         return compressedContent;
     }
 
-    public static String getBaseEncoded_ThumbnailImage(Context context, String fileName){
+    public static String getBaseEncoded_ThumbnailImage(Context context, String fileName) {
         byte[] content = null;
         String encodedImage = null;
         try {
             Bitmap scaledBitmap = getScaledBitmap(fileName, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height));
             Bitmap blurBitmap = blur(context, scaledBitmap);
-            Bitmap croppedBitmap = getCroppedBitmap( blurBitmap, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height));
+            Bitmap croppedBitmap = getCroppedBitmap(blurBitmap, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height));
             content = getCompressedBytes(croppedBitmap, 50);
             encodedImage = Base64.encodeToString(content, Base64.DEFAULT);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return encodedImage;
     }
 
-    public static String getBaseEncoded_ThumbnailImage(Context context, Bitmap bitmap){
+    public static String getBaseEncoded_ThumbnailImage(Context context, Bitmap bitmap) {
         byte[] content = null;
         String encodedImage = null;
         try {
             Bitmap scaledBitmap = getScaledBitmap(bitmap, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height));
             Bitmap blurBitmap = blur(context, scaledBitmap);
-            Bitmap croppedBitmap = getCroppedBitmap( blurBitmap, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height));
+            Bitmap croppedBitmap = getCroppedBitmap(blurBitmap, context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_width), context.getResources().getDimensionPixelSize(R.dimen.media_msg_content_height));
             content = getCompressedBytes(croppedBitmap, 50);
             encodedImage = Base64.encodeToString(content, Base64.DEFAULT);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return encodedImage;
@@ -161,8 +162,8 @@ public class ImageUtil {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
 
-        float scaleByHeight = requiredHeight > 0 ? (float)requiredHeight/height : 1;
-        float scaleByWidth = requiredWidth > 0 ? (float)requiredWidth/width : 1;
+        float scaleByHeight = requiredHeight > 0 ? (float) requiredHeight / height : 1;
+        float scaleByWidth = requiredWidth > 0 ? (float) requiredWidth / width : 1;
         float scaleFactor = requiredWidth < requiredHeight ? scaleByWidth : scaleByHeight;
 
         Matrix matrix = new Matrix();
@@ -182,23 +183,23 @@ public class ImageUtil {
 
     public static Bitmap getCroppedBitmap(Bitmap bitmap, int requiredWidth, int requiredHeight) throws Exception {
         int width = bitmap.getWidth();
-        if( requiredWidth > width ){
+        if (requiredWidth > width) {
             requiredWidth = width;
         }
 
         int height = bitmap.getHeight();
-        if( requiredHeight > height ){
+        if (requiredHeight > height) {
             requiredHeight = height;
         }
 
         int topOffset = 0;
-        if( requiredHeight > 0 ){
-            topOffset = (height-requiredHeight)/2;
+        if (requiredHeight > 0) {
+            topOffset = (height - requiredHeight) / 2;
         }
 
         int leftOffset = 0;
-        if( requiredWidth > 0 ){
-            leftOffset = (width-requiredWidth)/2;
+        if (requiredWidth > 0) {
+            leftOffset = (width - requiredWidth) / 2;
         }
 
         Bitmap croppedBmp = Bitmap.createBitmap(bitmap, leftOffset, topOffset, requiredWidth, requiredHeight);
@@ -283,19 +284,19 @@ public class ImageUtil {
 //        return decodeSampleImage( new File(getRealPathFromURI(uri, context)), width, height);
 //    }
 
-    private static int calculateInSampleSize( BitmapFactory.Options options, int reqWidth, int reqHeight) {
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         int sampleScaleSize = 1;
 
         int maxLimit = 800;
-        if( reqWidth > maxLimit || reqHeight > maxLimit ) {
-            if ( reqWidth > reqHeight ) {
-                float ratio = reqWidth/reqHeight;
+        if (reqWidth > maxLimit || reqHeight > maxLimit) {
+            if (reqWidth > reqHeight) {
+                float ratio = reqWidth / reqHeight;
                 reqWidth = maxLimit;
-                reqHeight = (int)(maxLimit / ratio);
+                reqHeight = (int) (maxLimit / ratio);
             } else {
-                float ratio = reqHeight/reqWidth;
+                float ratio = reqHeight / reqWidth;
                 reqHeight = maxLimit;
-                reqWidth = (int)(maxLimit / ratio);
+                reqWidth = (int) (maxLimit / ratio);
             }
         }
 
@@ -323,7 +324,7 @@ public class ImageUtil {
 
     private static Bitmap rotateImage(Bitmap bitmap, int degree) {
         Bitmap rotatedBitmap = null;
-        if( bitmap != null ) {
+        if (bitmap != null) {
             Matrix matrix = new Matrix();
             matrix.postRotate(degree);
             rotatedBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
@@ -337,7 +338,7 @@ public class ImageUtil {
     public static String getRealPathFromURI(Uri uri, Context context) {
         String path = null;
         Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-        if( cursor != null ) {
+        if (cursor != null) {
             cursor.moveToFirst();
             int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
             path = cursor.getString(idx);
@@ -352,11 +353,11 @@ public class ImageUtil {
         return Uri.parse(path);
     }
 
-    public static byte[] getCompressedBytes(Bitmap bitmap){
+    public static byte[] getCompressedBytes(Bitmap bitmap) {
         return getCompressedBytes(bitmap, 100);
     }
 
-    public static byte[] getCompressedBytes(Bitmap bitmap, int quality){
+    public static byte[] getCompressedBytes(Bitmap bitmap, int quality) {
         byte[] bytes = null;
         ByteArrayOutputStream byteArrayOutputStream = null;
         try {
@@ -364,30 +365,87 @@ public class ImageUtil {
             bitmap.compress(Bitmap.CompressFormat.JPEG, quality, byteArrayOutputStream);
 
             bytes = byteArrayOutputStream.toByteArray();
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
-        }finally {
-            try{
+        } finally {
+            try {
                 byteArrayOutputStream.close();
-            }catch (Exception ex){}
+            } catch (Exception ex) {
+            }
         }
 
         return bytes;
     }
 
-    public static Bitmap getCompressedBitmap(Bitmap bitmap){
+    public static Bitmap getCompressedBitmap(Bitmap bitmap) {
         return getCompressedBitmap(bitmap, 100);
     }
 
-    public static Bitmap getCompressedBitmap(Bitmap bitmap, int quality){
+    public static Bitmap getCompressedBitmap(Bitmap bitmap, int quality) {
         Bitmap compressedBitmap = null;
         byte[] content = getCompressedBytes(bitmap, quality);
-        if( content != null ) {
+        if (content != null) {
             compressedBitmap = BitmapFactory.decodeByteArray(content, 0, content.length);
         }
         return compressedBitmap;
     }
 
+    public static final String getPathforURI(Context context, Uri URI, String metaData) {
+        String path = "";
+        if (URI.getScheme().equals("content")) {
+            path = ImageUtil.getFilePathFromURI(context, URI, metaData);
+        } else if (URI.getScheme().equals("file")) {
+            path = URI.getPath();
+        }
+        return path;
+    }
 
+    public static final long getFileSize(Context context, Uri URI, String scheme) {
+        String path = null;
+        if (scheme.equals("content")) {
+            if (getMimeType(URI).equals("image")) {
+                path = getFilePathFromURI(context, URI, MediaStore.Images.Media.DATA);
+            } else if (getMimeType(URI).equals("audio")) {
+                path = getFilePathFromURI(context, URI, MediaStore.Audio.Media.DATA);
+            } else if (getMimeType(URI).equals("video")) {
+                path = getFilePathFromURI(context, URI, MediaStore.Video.Media.DATA);
+            }
+        } else if (scheme.equals("file")) {
+            path = URI.getPath();
+        }
+        File f = new File(path);
+        long fileSizeInBytes = f.length();
+        return fileSizeInBytes;
+    }
+
+    public static final String getFilePathFromURI(Context context, Uri contentUri, String meta) {
+        String[] proj = {meta};
+        Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
+        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        Log.i("filepath", cursor.getString(column_index));
+        return cursor.getString(column_index);
+    }
+
+    public static final String getMimeType(Uri URI) {
+        String mimeType = null;
+        if (URI != null) {
+            String scheme = URI.getScheme();
+            if (scheme.equals("content")) {
+                if (URI.getPath().contains("image")) {
+                    mimeType = "image";
+                } else if (URI.getPath().contains("video")) {
+                    mimeType = "video";
+                } else if (URI.getPath().contains("audio")) {
+                    mimeType = "audio";
+                }
+            } else if (scheme.equals("file")) {
+                String contentType = URLConnection.guessContentTypeFromName(URI.getPath());
+                mimeType = contentType.substring(0, contentType.indexOf("/"));
+            }
+        }
+        Log.i("URI", mimeType);
+        return mimeType;
+    }
 
 }

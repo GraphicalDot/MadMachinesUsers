@@ -1,8 +1,6 @@
 package com.sports.unity.common.model;
 
 import android.content.Context;
-import android.net.Uri;
-import android.util.Log;
 
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -13,6 +11,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -232,10 +231,10 @@ public class FavouriteItemWrapper {
         Collections.sort(savedFootballTeams);
         ArrayList<FavouriteItem> savedTeams = new ArrayList<FavouriteItem>();
 
-        if (UserUtil.getSportsSelected()!=null && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
+        if (UserUtil.getSportsSelected() != null && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_CRICKET)) {
             savedTeams.addAll(savedCricketTeams);
         }
-        if (UserUtil.getSportsSelected()!=null && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
+        if (UserUtil.getSportsSelected() != null && UserUtil.getSportsSelected().contains(Constants.GAME_KEY_FOOTBALL)) {
             savedTeams.addAll(savedFootballTeams);
         }
         return savedTeams;
@@ -293,7 +292,12 @@ public class FavouriteItemWrapper {
             }*/
             savedSports.add(f);
         }
-        Collections.sort(savedSports);
+        Collections.sort(savedSports, new Comparator<FavouriteItem>() {
+            @Override
+            public int compare(FavouriteItem lhs, FavouriteItem rhs) {
+                return lhs.getName().compareTo(rhs.getName());
+            }
+        });
         return savedSports;
     }
 
