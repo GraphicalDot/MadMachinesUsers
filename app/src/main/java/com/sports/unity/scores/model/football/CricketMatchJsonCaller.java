@@ -28,6 +28,32 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         return jsonObject.getString("away_team");
     }
 
+    public String getTeam1Short() throws JSONException {
+        String value = null;
+        if( jsonObject.has("home_team_short_name") ){
+            value = jsonObject.getString("home_team_short_name");
+        } else {
+            value = getTeam1();
+            if(value.length() > 3 ){
+                value = value.substring(0, 3).toUpperCase();
+            }
+        }
+        return value;
+    }
+
+    public String getTeam2Short() throws JSONException {
+        String value = null;
+        if( jsonObject.has("away_team_short_name") ){
+            value = jsonObject.getString("away_team_short_name");
+        } else {
+            value = getTeam2();
+            if(value.length() > 3 ){
+                value = value.substring(0, 3).toUpperCase();
+            }
+        }
+        return value;
+    }
+
     public String getMatchId() throws JSONException {
         return jsonObject.getString("match_id");
     }
