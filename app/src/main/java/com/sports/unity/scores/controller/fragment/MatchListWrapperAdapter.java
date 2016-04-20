@@ -148,7 +148,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                         holder.tvDayName.setVisibility(View.GONE);
                     }
 
-                    if ( isMatchOfNewLeague ) {
+                    if ( isMatchOfNewDay || isMatchOfNewLeague ) {
                         holder.tvLeagueName.setText(dto.getLeagueName());
 
                         if (dto.getSportsType().equals(Constants.SPORTS_TYPE_CRICKET)) {

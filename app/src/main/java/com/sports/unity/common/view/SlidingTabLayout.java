@@ -5,6 +5,7 @@ import android.graphics.Typeface;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -29,12 +30,13 @@ public class SlidingTabLayout extends HorizontalScrollView {
 
     private int mTabViewLayoutId;
     private int mTabViewTextViewId;
-    private boolean mDistributeEvenly;
 
     private ViewPager mViewPager;
     private SparseArray<String> mContentDescriptions = new SparseArray<String>();
     private ViewPager.OnPageChangeListener mViewPagerPageChangeListener;
     private int colorSelectorId = com.sports.unity.R.color.selector;
+
+    private boolean allCaps = true;
 
     public SlidingTabLayout(Context context) {
         this(context, null);
@@ -70,7 +72,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
     }
 
     public void setDistributeEvenly(boolean distributeEvenly) {
-        mDistributeEvenly = distributeEvenly;
+        mTabStrip.setDistributeEvenly(distributeEvenly);
     }
 
     /**
@@ -121,6 +123,10 @@ public class SlidingTabLayout extends HorizontalScrollView {
         this.colorSelectorId = colorSelectorId;
     }
 
+    public void setAllCaps(boolean allCaps) {
+        this.allCaps = allCaps;
+    }
+
     /**
      * Create a default view to be used for tabs. This is called if a custom tab view is not set via
      * {@link #setCustomTabView(int, int)}.
@@ -137,7 +143,6 @@ public class SlidingTabLayout extends HorizontalScrollView {
         getContext().getTheme().resolveAttribute(android.R.attr.selectableItemBackground,
                 outValue, true);
         textView.setBackgroundResource(outValue.resourceId);
-        textView.setAllCaps(true);
 
         int padding = (int) (TAB_VIEW_PADDING_DIPS * getResources().getDisplayMetrics().density);
         textView.setPadding(padding, padding, padding, padding);
@@ -180,11 +185,11 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 tabTitleView = (TextView) tabView;
             }
 
-            if (mDistributeEvenly) {
-                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) tabView.getLayoutParams();
-                lp.width = 0;
-                lp.weight = 1;
-            }
+//            if (mDistributeEvenly) {
+//                LinearLayout.LayoutParams lp = (LinearLayout.LayoutParams) tabView.getLayoutParams();
+//                lp.width = 0;
+//                lp.weight = 1;
+//            }
 
             tabTitleView.setText(adapter.getPageTitle(i));
             tabView.setOnClickListener(tabClickListener);
@@ -201,6 +206,11 @@ public class SlidingTabLayout extends HorizontalScrollView {
             tabTitleView.setTextColor(getResources().getColorStateList(colorSelectorId));
             tabTitleView.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "RobotoCondensed-Regular.ttf"));
             tabTitleView.setTextSize(TAB_VIEW_TEXT_SIZE_SP);
+
+            tabTitleView.setSingleLine(true);
+            if ( allCaps ) {
+                tabTitleView.setAllCaps(true);
+            }
         }
     }
 

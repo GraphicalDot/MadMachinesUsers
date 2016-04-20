@@ -192,7 +192,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             }
             // Assiging the Sliding Tab Layout View
             SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
-            tabs.setDistributeEvenly(true); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
+            tabs.setDistributeEvenly(false); // To make the Tabs Fixed set this true, This makes the tabs Space Evenly in Available width
             tabs.setTabTextColor(R.color.filter_tab_selector);
 //            tabs.setCustomTabView(R.layout.sliding_tab_layout, R.id.title_text);
             tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {

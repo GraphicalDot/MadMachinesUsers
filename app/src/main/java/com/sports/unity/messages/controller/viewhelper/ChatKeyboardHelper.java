@@ -465,6 +465,7 @@ public class ChatKeyboardHelper {
             pager.setAdapter(new AdapterForEmoji(context));
 
             tabs.setDistributeEvenly(true);
+            tabs.setAllCaps(false);
             tabs.setCustomTabColorizer(new SlidingTabLayout.TabColorizer() {
 
                 @Override
