@@ -144,6 +144,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
             requestContent();
         }
         handleIfSportsChanged();
+        mWraperRecyclerView.getAdapter().notifyDataSetChanged();
 
     }
 
