@@ -41,22 +41,31 @@
         android:id="@+id/data_exist"
         android:visibility="visible">
 
-        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+        <LinearLayout
             android:id="@+id/tv_empty_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:gravity="center"
-            android:paddingBottom="@dimen/vertical_padding_large"
             android:paddingLeft="@dimen/horizontal_padding_large"
             android:paddingRight="@dimen/horizontal_padding_large"
-            android:paddingTop="@dimen/vertical_padding_large"
-            android:text="We didn't find anyone :(
-Try broadening your search
-by increasing the radius)"
-            android:textColor="@color/gray1"
-            android:textSize="@dimen/font_size_large"
-            />
+            android:orientation="vertical"
+            android:gravity="center">
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray5"
+                android:textSize="@dimen/font_size_large"
+                android:text="@string/pam_search_title"
+                />
+            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/pam_search_descraotion"
+                android:textColor="@color/gray1"
+                android:textSize="@dimen/font_size_large"
+                />
+        </LinearLayout>
+
     </RelativeLayout>
 
 </FrameLayout>
