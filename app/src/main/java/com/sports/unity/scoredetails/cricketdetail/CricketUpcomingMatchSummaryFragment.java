@@ -134,6 +134,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
 
     private void initData() {
         if (matchName != null && !matchName.equalsIgnoreCase("")) {
+            matchName=   matchName.replace(",","");
             tvMatchName.setText(matchName);
         } else {
             tvMatchName.setText("Information is not Available");

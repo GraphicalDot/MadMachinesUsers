@@ -61,7 +61,6 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.NearByUserJsonCaller;
 import com.sports.unity.messages.controller.model.PeoplesNearMe;
 import com.sports.unity.messages.controller.model.Person;
-import com.sports.unity.scores.DataServiceContract;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;

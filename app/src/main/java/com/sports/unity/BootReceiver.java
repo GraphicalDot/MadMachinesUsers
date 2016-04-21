@@ -11,6 +11,7 @@ import com.sports.unity.XMPPManager.XMPPService;
  */
 public class BootReceiver extends BroadcastReceiver {
 
+
     @Override
     public void onReceive(Context context, Intent intent) {
         XMPPService.startService(context);
