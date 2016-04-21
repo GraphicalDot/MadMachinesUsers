@@ -16,7 +16,7 @@ public class Constants {
     public static final String NEWS_BASE_URL = BuildConfig.NEWS_BASE_URL;
     public static final String FOOTBALL_PLAYER_BASE_URL = BuildConfig.PLAYER_PROFILE_BASE_URL;
 
-    public static final String URL_NEWS_CONTENT = Constants.NEWS_BASE_URL+"/mixed?";
+    public static final String URL_NEWS_CONTENT = Constants.NEWS_BASE_URL + "/mixed?";
 
     public static final String GAME_KEY_CRICKET = "cricket";
     public static final String GAME_KEY_FOOTBALL = "football";
@@ -89,6 +89,7 @@ public class Constants {
 
     public static final String IS_OWN_PROFILE = "is_own_profile";
     public static final String INTENT_TEAM_LEAGUE_DETAIL_EXTRA = "team_league_detail_extra";
+    public static final int REQUEST_CODE_PICK_IMAGE = 2201;
     public static final int REQUEST_CODE_SCORE = 1298;
     public static final int REQUEST_CODE_NEWS = 1397;
     public static final int REQUEST_CODE_EDIT_SPORT = 1496;

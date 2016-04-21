@@ -105,7 +105,7 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
 
                 Uri URI = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
 
-                long filesize = getFileSize(URI, URI.getScheme());
+                long filesize = ImageUtil.getFileSize(getApplicationContext(), URI, URI.getScheme());
 
                 if (filesize > 51200 && filesize <= 10485760) {
 
@@ -122,7 +122,7 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
 
             if (intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM).size() > 10) {
 
-                Toast.makeText(getApplicationContext(), "Can't share more than 10 items", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Can't send more than 10 items at once", Toast.LENGTH_LONG).show();
                 this.finish();
 
             } else {
@@ -161,10 +161,10 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
         if (URI != null) {
             Log.i("URI", URI.toString());
             String filename = DBUtil.getUniqueFileName(SportsUnityDBHelper.MIME_TYPE_AUDIO, false);
-            if (getMimeType(URI).contains("image")) {
+            if (ImageUtil.getMimeType(URI).contains("image")) {
                 try {
 
-                    String path = getPathforURI(URI, MediaStore.Images.Media.DATA);
+                    String path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Images.Media.DATA);
                     byte[] content = ImageUtil.getCompressedBytes(path, screenHeight, screenWidth);
                     DBUtil.writeContentToExternalFileStorage(getApplicationContext(), filename, content, SportsUnityDBHelper.MIME_TYPE_IMAGE);
                     dataList.add(new ShareableData(SportsUnityDBHelper.MIME_TYPE_IMAGE, "", filename));
@@ -173,16 +173,16 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
                     e.printStackTrace();
                 }
 
-            } else if (getMimeType(URI).contains("audio")) {
+            } else if (ImageUtil.getMimeType(URI).contains("audio")) {
 
-                String path = getPathforURI(URI, MediaStore.Audio.Media.DATA);
+                String path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Audio.Media.DATA);
                 byte[] content = getByteArrayFromPath(path);
                 DBUtil.writeContentToExternalFileStorage(getApplicationContext(), filename, content, SportsUnityDBHelper.MIME_TYPE_AUDIO);
                 dataList.add(new ShareableData(SportsUnityDBHelper.MIME_TYPE_AUDIO, "", filename));
 
-            } else if (getMimeType(URI).contains("video")) {
+            } else if (ImageUtil.getMimeType(URI).contains("video")) {
 
-                String path = getPathforURI(URI, MediaStore.Video.Media.DATA);
+                String path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Video.Media.DATA);
                 byte[] content = getByteArrayFromPath(path);
                 DBUtil.writeContentToExternalFileStorage(getApplicationContext(), filename, content, SportsUnityDBHelper.MIME_TYPE_VIDEO);
                 dataList.add(new ShareableData(SportsUnityDBHelper.MIME_TYPE_VIDEO, "", filename));
@@ -195,22 +195,12 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
         }
     }
 
-    private String getPathforURI(Uri URI, String metaData) {
-        String path = "";
-        if (URI.getScheme().equals("content")) {
-            path = getFilePathFromURI(getApplicationContext(), URI, metaData);
-        } else if (URI.getScheme().equals("file")) {
-            path = URI.getPath();
-        }
-        return path;
-    }
-
     private void handleSendMultipleItems(Intent intent, ArrayList<ShareableData> dataList) {
         ArrayList<Uri> URIs = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         if (URIs != null) {
             for (Uri URI : URIs) {
 
-                long filesize = getFileSize(URI, URI.getScheme());
+                long filesize = ImageUtil.getFileSize(getApplicationContext(), URI, URI.getScheme());
 
                 if (filesize > 51200 && filesize <= 10485760) {
 
@@ -225,44 +215,6 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
         }
     }
 
-    private String getMimeType(Uri URI) {
-        String mimeType = null;
-        if (URI != null) {
-            String scheme = URI.getScheme();
-            if (scheme.equals("content")) {
-                if (URI.getPath().contains("image")) {
-                    mimeType = "image";
-                } else if (URI.getPath().contains("video")) {
-                    mimeType = "video";
-                } else if (URI.getPath().contains("audio")) {
-                    mimeType = "audio";
-                }
-            } else if (scheme.equals("file")) {
-                String contentType = URLConnection.guessContentTypeFromName(URI.getPath());
-                mimeType = contentType.substring(0, contentType.indexOf("/"));
-            }
-        }
-        Log.i("URI", mimeType);
-        return mimeType;
-    }
-
-    private long getFileSize(Uri URI, String scheme) {
-        String path = null;
-        if (scheme.equals("content")) {
-            if (getMimeType(URI).equals("image")) {
-                path = getFilePathFromURI(getApplicationContext(), URI, MediaStore.Images.Media.DATA);
-            } else if (getMimeType(URI).equals("audio")) {
-                path = getFilePathFromURI(getApplicationContext(), URI, MediaStore.Audio.Media.DATA);
-            } else if (getMimeType(URI).equals("video")) {
-                path = getFilePathFromURI(getApplicationContext(), URI, MediaStore.Video.Media.DATA);
-            }
-        } else if (scheme.equals("file")) {
-            path = URI.getPath();
-        }
-        File f = new File(path);
-        long fileSizeInBytes = f.length();
-        return fileSizeInBytes;
-    }
 
     private static byte[] getByteArrayFromPath(String path) {
         File file = new File(path);
@@ -293,15 +245,6 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
             }
         }
         return content;
-    }
-
-    public static String getFilePathFromURI(Context context, Uri contentUri, String meta) {
-        String[] proj = {meta};
-        Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-        cursor.moveToFirst();
-        Log.i("filepath", cursor.getString(column_index));
-        return cursor.getString(column_index);
     }
 
 

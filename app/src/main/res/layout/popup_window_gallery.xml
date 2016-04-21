@@ -1,16 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/popup_window_gallery"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
-    android:id="@+id/popup_window_gallery"
     android:visibility="gone">
 
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/my_recycler_view"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        android:background="@android:color/white">
 
-</RelativeLayout>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/my_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+        <com.github.clans.fab.FloatingActionButton
+            android:id="@+id/btn_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="@dimen/vertical_padding_small"
+            android:layout_marginLeft="@dimen/horizontal_padding_small"
+            android:src="@drawable/ic_gallery_btn"
+            app:fab_colorNormal="@color/app_theme_blue"
+            app:fab_colorPressed="@color/app_theme_blue"
+            app:fab_size="normal"
+            app:rippleColor="@android:color/white" />
+    </RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>

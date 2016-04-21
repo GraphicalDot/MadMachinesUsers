@@ -5,9 +5,15 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.util.Size;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 public class SlidingTabStrip extends LinearLayout {
@@ -27,6 +33,8 @@ public class SlidingTabStrip extends LinearLayout {
 
     private int mSelectedPosition;
     private float mSelectionOffset;
+
+    private boolean mDistributeEvenly = false;
 
     private SlidingTabLayout.TabColorizer mCustomTabColorizer;
     private final SimpleTabColorizer mDefaultTabColorizer;
@@ -75,6 +83,51 @@ public class SlidingTabStrip extends LinearLayout {
         mSelectedPosition = position;
         mSelectionOffset = positionOffset;
         invalidate();
+    }
+
+    public void setDistributeEvenly(boolean evenly) {
+        this.mDistributeEvenly = evenly;
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        int childViewCount = getChildCount();
+
+        if( childViewCount > 0 ) {
+            WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point point = new Point();
+            display.getSize(point);
+
+            int screenWidth = point.x;
+            int totalUsedWidth = 0;
+            for (int index = 0; index < childViewCount; index++) {
+                View childView = getChildAt(index);
+                measureChild(childView, widthMeasureSpec, heightMeasureSpec);
+                totalUsedWidth += childView.getMeasuredWidth();
+            }
+
+            int extraSpace = 0;
+            if (totalUsedWidth < screenWidth) {
+                int equallyDistributedWidth = screenWidth / childViewCount;
+                extraSpace = screenWidth - totalUsedWidth;
+                extraSpace = extraSpace / childViewCount;
+
+                for (int index = 0; index < childViewCount; index++) {
+                    View childView = getChildAt(index);
+                    ViewGroup.LayoutParams params = childView.getLayoutParams();
+                    if (mDistributeEvenly) {
+                        params.width = equallyDistributedWidth;
+                    } else {
+                        params.width = childView.getMeasuredWidth() + extraSpace;
+                    }
+                }
+            } else {
+                //nothing
+            }
+        }
+
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     @Override

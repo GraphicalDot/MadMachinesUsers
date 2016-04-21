@@ -134,7 +134,7 @@ public class XMPPService extends Service {
         if (chatCount > 1) {
             pendingIntent = getPendingIntentForMainActivity(context);
         } else if (chatCount == 1) {
-            if( isGroupChat ){
+            if (isGroupChat) {
                 String groupName = groupServerId.substring(groupServerId.indexOf("%") + 1, groupServerId.indexOf("%%"));
                 pendingIntent = getPendingIntentForChatActivity(context, isGroupChat, groupName, groupServerId, chatId, null, false, availabilityStatus, userStatus);
             } else {
@@ -217,6 +217,15 @@ public class XMPPService extends Service {
         backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivities(context, NotificationHandler.NOTIFICATION_ID, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
+        return pendingIntent;
+    }
+
+    public static PendingIntent getPendingIntentForScoreDetailActivity(Context context, Intent scoreDetailIntent) {
+        Intent backIntent = new Intent(context, MainActivity.class);
+        backIntent.putExtra("tab_index", 0);
+        backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivities(context, NotificationHandler.NOTIFICATION_ID, new Intent[]{backIntent, scoreDetailIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
         return pendingIntent;
     }
 
@@ -447,7 +456,7 @@ public class XMPPService extends Service {
 
                 PersonalMessaging.getInstance(XMPPService.this).updateBlockList(XMPPService.this);
 
-                GlobalEventHandler.getInstance().xmppServerConnected(true,connection);
+                GlobalEventHandler.getInstance().xmppServerConnected(true, connection);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -457,14 +466,14 @@ public class XMPPService extends Service {
         public void connectionClosed() {
             Log.i("connection", "closed");
 
-            GlobalEventHandler.getInstance().xmppServerConnected(false,null);
+            GlobalEventHandler.getInstance().xmppServerConnected(false, null);
         }
 
         @Override
         public void connectionClosedOnError(Exception e) {
             Log.i("connection", "closed on error");
 
-            GlobalEventHandler.getInstance().xmppServerConnected(false,null);
+            GlobalEventHandler.getInstance().xmppServerConnected(false, null);
         }
 
         @Override
@@ -506,7 +515,7 @@ public class XMPPService extends Service {
                 } else {
                     String body = message.getBody();
                     String jid = body.substring(0, body.indexOf('|'));
-                    String gmtEpoch = body.substring( body.indexOf('|')+1);
+                    String gmtEpoch = body.substring(body.indexOf('|') + 1);
                     int days = CommonUtil.getTimeDifference(Long.parseLong(gmtEpoch));
                     if (days > 0) {
                         if (days == 1) {
