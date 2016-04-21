@@ -45,6 +45,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -256,14 +257,9 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                     holder.notification.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            try {
-                                                tempKey = key;
-                                                tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
-                                                tokenRegistrationHandler.addListener(MatchListWrapperAdapter.this);
-                                                tokenRegistrationHandler.removeMatchUser(key);
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
+
+                                            removeMatchNotification(key);
+
                                         }
                                     });
 
@@ -273,16 +269,11 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                     holder.notification.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            try {
-                                                tempKey = key;
-                                                tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
-                                                tokenRegistrationHandler.addListener(MatchListWrapperAdapter.this);
-                                                tokenRegistrationHandler.registrerMatchUser(key, CommonUtil.getToken(activity));
+
+                                            registerNotificationMatch(key);
 
 
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
+
                                         }
                                     });
 
@@ -395,15 +386,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                     holder.notification.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            try {
-//                                                seriesId = footballMatchJsonCaller.getLeagueId();
-//                                                matchId = footballMatchJsonCaller.getMatchId().toString();
-                                                tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
-                                                tokenRegistrationHandler.addListener(MatchListWrapperAdapter.this);
-                                                tokenRegistrationHandler.removeMatchUser(key);
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
+                                              removeMatchNotification(key);
                                         }
                                     });
 
@@ -413,22 +396,11 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                     holder.notification.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
-                                            try {
-//                                                seriesId = footballMatchJsonCaller.getLeagueId();
-//                                                matchId = footballMatchJsonCaller.getMatchId().toString();
-                                                tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
-                                                tokenRegistrationHandler.addListener(MatchListWrapperAdapter.this);
-                                                tokenRegistrationHandler.registrerMatchUser(key, CommonUtil.getToken(activity));
 
-
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        }
+                                             registerNotificationMatch(key);
+                                      }
                                     });
-
-
-                                }
+                              }
 
                             }
 
@@ -453,6 +425,27 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             e.printStackTrace();
         }
 
+    }
+
+    private void registerNotificationMatch(String key) {
+        try{
+            tempKey = key;
+            tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
+            tokenRegistrationHandler.addListener(MatchListWrapperAdapter.this);
+            tokenRegistrationHandler.registrerMatchUser(key, CommonUtil.getToken(activity));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    private void removeMatchNotification(String key) {
+        try {
+            tempKey = key;
+            tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
+            tokenRegistrationHandler.addListener(MatchListWrapperAdapter.this);
+            tokenRegistrationHandler.removeMatchUser(key);
+        }catch (Exception e){e.printStackTrace();}
     }
 
 
@@ -892,7 +885,6 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                 holder.radioGroup.check(position);
                             }
                         }
-
                         @Override
                         public void onPageScrollStateChanged(int state) {
 
