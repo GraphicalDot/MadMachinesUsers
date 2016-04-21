@@ -36,11 +36,13 @@ public class FavouriteItemWrapper {
     private List<FavouriteItem> savedCricketTeams;
     private List<FavouriteItem> savedCricketPlayers;
     private List<FavouriteItem> savedFavlist;
+    private JSONArray favIdsArray;
 
     /**
      * Private constructor so that no one can instantiate this class.
      */
     private FavouriteItemWrapper(Context context) {
+        favIdsArray = new JSONArray();
         savedFootballLeagues = new ArrayList<FavouriteItem>();
         savedFootballLeagues = new ArrayList<FavouriteItem>();
         savedFootballTeams = new ArrayList<FavouriteItem>();
@@ -61,20 +63,15 @@ public class FavouriteItemWrapper {
                 String filterType = object.getString(this.filterType);
                 item.setSportsType(sportsType);
                 item.setFilterType(filterType);
-
-                try {
-                    if (!object.isNull(this.flag)) {
-                        item.setFlagImageUrl(object.getString(this.flag));
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (!object.isNull(this.flag)) {
+                    item.setFlagImageUrl(object.getString(this.flag));
                 }
-                try {
-                    item.setId(object.getString(this.id));
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (!object.isNull(this.id)) {
+                    String id = object.getString(this.id);
+                    item.setId(id);
+                    favIdsArray.put(id);
                 }
+
                 favouriteItems.add(item);
 
                 if (sportsType.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
@@ -141,6 +138,7 @@ public class FavouriteItemWrapper {
      */
     private void updateFavList(ArrayList<FavouriteItem> favouriteItems) {
         {
+            favIdsArray = new JSONArray();
             savedFootballLeagues = new ArrayList<FavouriteItem>();
             savedFootballTeams = new ArrayList<FavouriteItem>();
             savedFootballPlayers = new ArrayList<FavouriteItem>();
@@ -149,7 +147,7 @@ public class FavouriteItemWrapper {
             savedFavlist = new ArrayList<>(favouriteItems);
             Collections.sort(savedFavlist);
             for (FavouriteItem f : favouriteItems) {
-
+                favIdsArray.put(f.getId());
                 if (f.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
                     if (f.getFilterType().equals(Constants.FILTER_TYPE_LEAGUE)) {
                         savedFootballLeagues.add(f);
@@ -363,5 +361,15 @@ public class FavouriteItemWrapper {
     public String getSavedFavouritesAsJsonString(Context context) {
         TinyDB tinyDB = TinyDB.getInstance(context);
         return tinyDB.getString(TinyDB.FAVOURITE_FILTERS);
+    }
+
+    /**
+     * This method gives you all the ids of user favourite.
+     *
+     * @return Json String of all user favourites.
+     */
+
+    public String getAllFavouriteIds() {
+        return favIdsArray.toString();
     }
 }
