@@ -515,11 +515,12 @@ public class CricketLiveMatchSummaryFragment extends Fragment implements  Cricke
 
     private int getBallColor(int id) {
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                 return getContext().getResources().getColor(id, getActivity().getTheme());
             } else {
                 return getContext().getResources().getColor(id);
-            }
+            }*/
+        return getContext().getResources().getColor(id);
     }
 
 
