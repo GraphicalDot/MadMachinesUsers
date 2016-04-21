@@ -31,6 +31,7 @@ public final class SportsUnityContract {
         public static final String COLUMN_UNREAD_COUNT = "unread_count";
         public static final String COLUMN_MUTE_CONVERSATION = "mute_conversation";
         public static final String COLUMN_GROUP_CHAT = "group_chat";
+        public static final String COLUMN_ROSTER_ENTRY = "roster_entry";
 
 //        public static final String COLUMN_CHAT_ID = "chat_id";
 //        public static final String COLUMN_GROUP_SERVER_ID = "group_server_id";
