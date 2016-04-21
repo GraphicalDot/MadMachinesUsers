@@ -19,20 +19,22 @@
         android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
-        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+
+        <TextView
             android:id="@+id/tv_friend_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColor="@android:color/black"
             android:textSize="@dimen/font_size_small_large"
             android:text="This is demo text"
-            android:textColor="@color/news_static"/>
-        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+           />
+        <TextView
             android:id="@+id/tv_friend_distance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="@dimen/font_size_very_small"
             android:text="This is demo text"
-            android:textColor="@color/gray1"/>
+            android:textColor="@color/last_msg"/>
     </LinearLayout>
 </RelativeLayout>
     <View
