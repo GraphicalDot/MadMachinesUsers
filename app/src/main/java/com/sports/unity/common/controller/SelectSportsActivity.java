@@ -1,5 +1,6 @@
 package com.sports.unity.common.controller;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -13,11 +14,19 @@ import android.widget.Toast;
 import com.sports.unity.BuildConfig;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.ByteArrayInputStream;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -27,8 +36,6 @@ public class SelectSportsActivity extends CustomAppCompatActivity {
     private ArrayList<String> sports = new ArrayList<String>();
     private boolean isResultRequired;
     private Thread sendInterestsThread = null;
-    private String base_url = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/set_user_interests?username=";
-    private String urlToRequest = "";
     /*For future use: to add all the sports
      in sports selection screen*/
     /*private Integer[] mThumbIds = {
@@ -169,7 +176,6 @@ public class SelectSportsActivity extends CustomAppCompatActivity {
 
 
     private void moveOn() {
-        executeThreadToUpdateInterests();
         UserUtil.setSportsSelected(SelectSportsActivity.this, sports);
         UserUtil.setScoreFilterSportsSelected(SelectSportsActivity.this, new ArrayList<String>(sports));
         UserUtil.setNewsFilterSportsSelected(SelectSportsActivity.this, new ArrayList<String>(sports));
@@ -194,53 +200,6 @@ public class SelectSportsActivity extends CustomAppCompatActivity {
             super.onBackPressed();
         }
 
-    }
-
-    private void executeThreadToUpdateInterests() {
-        if (sendInterestsThread != null && sendInterestsThread.isAlive()) {
-
-        } else {
-            sendInterestsThread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    sendInterests();
-                }
-            });
-            sendInterestsThread.start();
-        }
-    }
-
-    private void sendInterests() {
-        urlToRequest = "";
-        HttpURLConnection httpURLConnection = null;
-        String interests = "";
-        if (sports != null || sports.size() > 0)
-            for (String sport :
-                    sports) {
-                interests += "&interests=" + sport.toLowerCase();
-            }
-        urlToRequest = base_url + TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_USERNAME) + interests;
-        Log.i("urltorequest", urlToRequest);
-        try {
-            URL sendInterests = new URL(urlToRequest);
-            httpURLConnection = (HttpURLConnection) sendInterests.openConnection();
-            httpURLConnection.setConnectTimeout(15000);
-            httpURLConnection.setDoInput(false);
-            httpURLConnection.setRequestMethod("GET");
-
-            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                Log.i("Interest Sent", " true ");
-            } else {
-                Log.i("Interest Sent", " false ");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                httpURLConnection.disconnect();
-            } catch (Exception ex) {
-            }
-        }
     }
 
     @Override

@@ -29,27 +29,39 @@ public class FavouriteItemWrapper {
     public static final String name = "obj_name";
     public static final String id = "obj_id";
     public static final String flag = "obj_flag";
-    public static FavouriteItemWrapper favouriteItemWrapper;
+
+    private static FavouriteItemWrapper favouriteItemWrapper;
+
+    /**
+     * Static constructor to instantiate {@link #FavouriteItemWrapper} class.
+     *
+     * @return single instance of {@link #FavouriteItemWrapper}.
+     */
+    public static FavouriteItemWrapper getInstance(Context context) {
+        if (favouriteItemWrapper == null) {
+            favouriteItemWrapper = new FavouriteItemWrapper(context);
+        }
+        return favouriteItemWrapper;
+    }
+
     private List<FavouriteItem> savedFootballLeagues;
     private List<FavouriteItem> savedFootballTeams;
     private List<FavouriteItem> savedFootballPlayers;
     private List<FavouriteItem> savedCricketTeams;
     private List<FavouriteItem> savedCricketPlayers;
-    private List<FavouriteItem> savedFavlist;
-    private JSONArray favIdsArray;
+    private List<FavouriteItem> savedAllFavorites;
 
     /**
      * Private constructor so that no one can instantiate this class.
      */
     private FavouriteItemWrapper(Context context) {
-        favIdsArray = new JSONArray();
         savedFootballLeagues = new ArrayList<FavouriteItem>();
         savedFootballLeagues = new ArrayList<FavouriteItem>();
         savedFootballTeams = new ArrayList<FavouriteItem>();
         savedFootballPlayers = new ArrayList<FavouriteItem>();
         savedCricketTeams = new ArrayList<FavouriteItem>();
         savedCricketPlayers = new ArrayList<FavouriteItem>();
-        savedFavlist = new ArrayList<FavouriteItem>();
+        savedAllFavorites = new ArrayList<FavouriteItem>();
         List<FavouriteItem> favouriteItems = new ArrayList<FavouriteItem>();
         TinyDB tinyDB = TinyDB.getInstance(context);
         String favItem = tinyDB.getString(TinyDB.FAVOURITE_FILTERS);
@@ -69,7 +81,6 @@ public class FavouriteItemWrapper {
                 if (!object.isNull(this.id)) {
                     String id = object.getString(this.id);
                     item.setId(id);
-                    favIdsArray.put(id);
                 }
 
                 favouriteItems.add(item);
@@ -96,19 +107,7 @@ public class FavouriteItemWrapper {
             e.printStackTrace();
         }
         Collections.sort(favouriteItems);
-        savedFavlist.addAll(favouriteItems);
-    }
-
-    /**
-     * Static constructor to instantiate {@link #FavouriteItemWrapper} class.
-     *
-     * @return single instance of {@link #FavouriteItemWrapper}.
-     */
-    public static FavouriteItemWrapper getInstance(Context context) {
-        if (favouriteItemWrapper == null) {
-            favouriteItemWrapper = new FavouriteItemWrapper(context);
-        }
-        return favouriteItemWrapper;
+        savedAllFavorites.addAll(favouriteItems);
     }
 
     /**
@@ -138,16 +137,14 @@ public class FavouriteItemWrapper {
      */
     private void updateFavList(ArrayList<FavouriteItem> favouriteItems) {
         {
-            favIdsArray = new JSONArray();
             savedFootballLeagues = new ArrayList<FavouriteItem>();
             savedFootballTeams = new ArrayList<FavouriteItem>();
             savedFootballPlayers = new ArrayList<FavouriteItem>();
             savedCricketTeams = new ArrayList<FavouriteItem>();
             savedCricketPlayers = new ArrayList<FavouriteItem>();
-            savedFavlist = new ArrayList<>(favouriteItems);
-            Collections.sort(savedFavlist);
+            savedAllFavorites = new ArrayList<>(favouriteItems);
+            Collections.sort(savedAllFavorites);
             for (FavouriteItem f : favouriteItems) {
-                favIdsArray.put(f.getId());
                 if (f.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
                     if (f.getFilterType().equals(Constants.FILTER_TYPE_LEAGUE)) {
                         savedFootballLeagues.add(f);
@@ -216,7 +213,7 @@ public class FavouriteItemWrapper {
      * @return ArrayList of {@link FavouriteItem}
      */
     public ArrayList<FavouriteItem> getFavList() {
-        return new ArrayList<FavouriteItem>(savedFavlist);
+        return new ArrayList<FavouriteItem>(savedAllFavorites);
     }
 
     /**
@@ -369,7 +366,11 @@ public class FavouriteItemWrapper {
      * @return Json String of all user favourites.
      */
 
-    public String getAllFavouriteIds() {
-        return favIdsArray.toString();
+    public JSONArray getAllInterestsAsJsonArray() throws Exception {
+        JSONArray interests = new JSONArray();
+        for(FavouriteItem item : savedAllFavorites){
+            interests.put(item.getId());
+        }
+        return interests;
     }
 }
