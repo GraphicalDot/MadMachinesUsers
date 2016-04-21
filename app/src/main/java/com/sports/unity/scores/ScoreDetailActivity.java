@@ -5,7 +5,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
@@ -21,13 +20,11 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
-import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.ViewPagerCricketScoreDetailAdapter;
 import com.sports.unity.common.controller.ViewPagerFootballScoreDetailAdapter;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.view.SlidingTabLayout;
-import com.sports.unity.scoredetails.CommentaryFragment;
 import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scores.controller.fragment.MatchListAdapter;
 import com.sports.unity.scores.model.ScoresContentHandler;
@@ -51,11 +48,10 @@ import java.util.TimerTask;
 
 import static com.sports.unity.util.Constants.INTENT_KEY_TYPE;
 
-public class ScoreDetailActivity extends CustomVolleyCallerActivity implements DataRequestService {
+public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
     private static final String REQUEST_LISTENER_KEY = "score_detail_listener";
     private static final String SCORE_DETAIL_REQUEST_TAG = "score_detail_request_tag";
-    private static final String LIST_OF_COMMENTARIES_REQUEST_TAG = "list_commentaries_request_tag";
     private CricketMatchJsonCaller cricketMatchJsonCaller = new CricketMatchJsonCaller();
     private FootballMatchJsonCaller footballMatchJsonCaller = new FootballMatchJsonCaller();
 
@@ -657,10 +653,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
             } else {
                 fragment = footballScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
             }
-            if (fragment instanceof DataServiceContract) {
-                DataServiceContract listner = (DataServiceContract) fragment;
-                listner.dataChanged();
-            }
         }
         return success;
     }
@@ -687,15 +679,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         requestContent(ScoresContentHandler.CALL_NAME_MATCH_DETAIL, parameters, SCORE_DETAIL_REQUEST_TAG);
     }
 
-    private void requestMatchCommentaries() {
-        Log.i("Score Detail", "Request Commentaries");
-
-        HashMap<String, String> parameters = new HashMap<>();
-        parameters.put(ScoresContentHandler.PARAM_SPORTS_TYPE, sportsType);
-        parameters.put(ScoresContentHandler.PARAM_ID, matchId);
-        parameters.put(ScoresContentHandler.PARAM_SERIESID, seriesId);
-        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCH_COMMENTARIES, parameters, REQUEST_LISTENER_KEY, LIST_OF_COMMENTARIES_REQUEST_TAG);
-    }
 
 
     private void showProgress(boolean force) {
@@ -752,72 +735,12 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity implements D
         @Override
         public void changeUI() {
             ScoreDetailActivity.this.setTitle();
-            boolean requestCommentaries = ScoreDetailActivity.this.renderScores();
-            if (requestCommentaries) {
-                ScoreDetailActivity.this.requestMatchCommentaries();
-            }
+            ScoreDetailActivity.this.renderScores();
         }
     }
     
-    @Override
-    public void requestData(int methodType) {
-        if(methodType== 0 ){
-            ScoreDetailActivity.this.requestMatchCommentaries();
 
-        }
-    }
 
-    private class MatchCommentariesComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
-
-        private boolean successfulResponse = false;
-
-        public MatchCommentariesComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
-            super(LIST_OF_COMMENTARIES_REQUEST_TAG, progressBar, errorLayout);
-        }
-
-        @Override
-        public boolean handleContent(String tag, String content) {
-            changeUI();
-            successfulResponse = ScoreDetailActivity.this.handleCommentaries(content);
-            return true;
-        }
-
-        @Override
-        public void handleErrorContent(String tag) {
-
-        }
-
-        @Override
-        protected void hideErrorLayout() {
-            super.hideErrorLayout();
-
-//            ScoreDetailActivity.this.findViewById(R.id.no_comments).setVisibility(View.GONE);
-        }
-
-        @Override
-        protected void showErrorLayout() {
-            Fragment fragment = null;
-            if (sportsType.equals(ScoresJsonParser.CRICKET)) {
-                fragment = cricketScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
-            } else {
-                fragment = footballScoreDetailAdapter.getItem(mViewPager.getCurrentItem());
-            }
-            if (fragment instanceof ErrorContract) {
-                ErrorContract contract = (ErrorContract) fragment;
-                contract.errorHandle();
-            }
-            if (commentaries.size() == 0) {
-                super.showErrorLayout();
-            } else {
-                //Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        public void changeUI() {
-            ScoreDetailActivity.this.requestMatchCommentaries();
-        }
-    }
 
 
 }

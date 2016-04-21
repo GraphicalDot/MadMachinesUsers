@@ -1,11 +1,9 @@
 package com.sports.unity.common.controller;
 
-import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import com.sports.unity.scoredetails.CommentaryFragment;
 import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scoredetails.commentary.MatchCommentaryFragment;
 import com.sports.unity.scoredetails.footballdetail.CompletedFootballMatchLineUpFragment;
@@ -17,8 +15,6 @@ import com.sports.unity.scoredetails.footballdetail.LiveFootballMatchTimeLineFra
 import com.sports.unity.scoredetails.footballdetail.UpCommingFootballMatchFromFragment;
 import com.sports.unity.scoredetails.footballdetail.UpCommingFootballMatchSqadFragment;
 import com.sports.unity.scoredetails.footballdetail.UpCommingFootballMatchTableFargment;
-import com.sports.unity.scores.model.ScoresJsonParser;
-import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 

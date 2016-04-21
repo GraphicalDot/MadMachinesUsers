@@ -29,6 +29,8 @@
         android:layout_gravity="center"
         android:visibility="gone"
         />
+
+
 </android.support.v4.widget.SwipeRefreshLayout>
     <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
         android:id="@+id/tv_empty_view"
@@ -44,6 +46,5 @@
         android:textColor="@color/gray1"
         android:textSize="@dimen/font_size_large"
         android:visibility="gone"/>
-
 
 </FrameLayout>

@@ -3,43 +3,24 @@ package com.sports.unity.scoredetails.commentary;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.scoredetails.CommentriesModel;
-import com.sports.unity.scoredetails.cricketdetail.CricketMatchScoreCardUtil;
-import com.sports.unity.scoredetails.cricketdetail.JsonParsers.CricketMatchScoreJsonParser;
-import com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters.LiveAndCompletedCricketBattingCardAdapter;
-import com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters.LiveAndCompletedCricketBattingCardDTO;
-import com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters.LiveAndCompletedCricketBowlingCardAdapter;
-import com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters.LiveAndCompletedCricketBowlingCardDTO;
-import com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters.LiveAndCompletedCricketFallOfWicketAdapter;
-import com.sports.unity.scoredetails.cricketdetail.completedmatchscorecardadapters.LiveAndCompletedCricketFallOfWicketCardDTO;
-import com.sports.unity.scores.DataRequestService;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.scores.controller.fragment.BroadcastListAdapter;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
 
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -51,7 +32,6 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
     private RecyclerView mRecyclerView;
     private BroadcastListAdapter mAdapter;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private DataRequestService dataRequestService;
     private Context mContext;
     private MatchCommentaryFragmentHandler matchCommentaryFragmentHandler;
     private String matchId;

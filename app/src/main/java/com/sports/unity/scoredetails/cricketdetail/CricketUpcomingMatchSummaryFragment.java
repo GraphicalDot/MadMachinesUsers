@@ -119,7 +119,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
                 @Override
                 public void run() {
                     try {
-                        //JSONArray dataArray = jsonObject.getJSONArray("data");
+
                         Log.i("run: ", jsonObject.toString());
                         initData();
                     } catch (Exception ex) {
