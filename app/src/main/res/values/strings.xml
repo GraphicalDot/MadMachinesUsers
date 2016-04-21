@@ -379,7 +379,7 @@ message to verify your mobile number.</string>
     <string name="T20_s">T20s</string>
     <string name="match_not_exist">This match does not exists</string>
     <string name="commentary_not_exist">Commentary not available for this match yet</string>
-    <string name="scorecard_not_exist">Scorecard not exists yet</string>
+    <string name="scorecard_not_exist">Scorecard not available for this match yet</string>
     <string name="table">TABLE</string>
     <string name="form">FORM</string>
     <string name="squad">SQUAD</string>
@@ -435,4 +435,6 @@ message to verify your mobile number.</string>
     <string name="su_users_tab">SU USERS</string>
     <string name="need_heading_tab">NEED HEADING</string>
     <string name="same_interest">SIMILAR USERS</string>
+    <string name="pam_search_title">We didn\'t find anyone:(</string>
+    <string name="pam_search_descraotion">Try broadening your search by increasing the radius</string>
 </resources>    

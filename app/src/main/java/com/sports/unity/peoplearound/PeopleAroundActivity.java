@@ -17,8 +17,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.inputmethod.InputMethodManager;
@@ -29,13 +32,19 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.github.clans.fab.FloatingActionButton;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
@@ -52,6 +61,7 @@ import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.NearByUserJsonCaller;
 import com.sports.unity.messages.controller.model.PeoplesNearMe;
 import com.sports.unity.messages.controller.model.Person;
+import com.sports.unity.scores.DataServiceContract;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
@@ -89,7 +99,7 @@ import static com.sports.unity.util.CommonUtil.getDeviceId;
 import static com.sports.unity.util.Constants.REQUEST_PARAMETER_KEY_APK_VERSION;
 import static com.sports.unity.util.Constants.REQUEST_PARAMETER_KEY_UDID;
 
-public class PeopleAroundActivity extends AppCompatActivity implements PeopleService,TokenRegistrationHandler.TokenRegistrationContentListener {
+public class PeopleAroundActivity extends AppCompatActivity implements PeopleService,TokenRegistrationHandler.TokenRegistrationContentListener ,PlaceSelectionListener{
 
     private static final String REQUEST_LISTENER_KEY = "nearby_key";
     private static final String REQUEST_TAG = "nearby_tag";
@@ -129,6 +139,10 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     private  ImageView refreshButton;
 
 
+    private static final String LOG_TAG = "PlaceSelectionListener";
+    private static final LatLngBounds BOUNDS_MOUNTAIN_VIEW = new LatLngBounds(
+            new LatLng(37.398160, -122.180831), new LatLng(37.430610, -121.972090));
+    private static final int REQUEST_SELECT_PLACE = 1000;
 
 
     @Override
@@ -144,7 +158,8 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         hideSoftKeyboard();
         initToolbar();
         InitSeekbar();
-        bindAutoComplete();
+
+        //bindAutoComplete();
         userPrivacyUpdate();
         getLocation();
        // getPeopleAroundMe(latLong.latitude, latLong.longitude);
@@ -252,7 +267,40 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         tokenRegistrationHandler.setUserPrivacyPolicy(userLocation);
     }
 
-    private void bindAutoComplete() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /*private void bindAutoComplete() {
         PlaceAutocompleteFragment fragment = (PlaceAutocompleteFragment) getFragmentManager()
                 .findFragmentById(R.id.custom_location);
         fragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -275,7 +323,9 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                 Toast.makeText(getApplicationContext(), getText(R.string.oops_try_again), LENGTH_LONG).show();
             }
         });
-    }
+    }*/
+
+
     public void setCustomButtonsForNavigationAndUsers() {
        /*FloatingActionButton myLocation = (FloatingActionButton)findViewById(R.id.myLocation);
         myLocation.setOnClickListener(new View.OnClickListener() {
@@ -396,15 +446,26 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         toolbar.findViewById(R.id.myaddress).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                findViewById(R.id.fl_custom_location).setVisibility(VISIBLE);
+                try {
+                    Intent intent = new PlaceAutocomplete.IntentBuilder
+                            (PlaceAutocomplete.MODE_OVERLAY)
+                            .setBoundsBias(BOUNDS_MOUNTAIN_VIEW)
+                            .build(PeopleAroundActivity.this);
+                    startActivityForResult(intent, Constants.REQUEST_CODE_LOCATION_PERMISSION);
+                } catch (GooglePlayServicesRepairableException |
+                        GooglePlayServicesNotAvailableException e) {
+                    e.printStackTrace();
+                }
             }
         });
         toolbar.findViewById(R.id.refresh).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(latLong!=null){
+                if (latLong != null) {
                     getPeopleAroundMe(latLong.latitude, latLong.longitude);
-                }else{getLocation();}
+                } else {
+                    getLocation();
+                }
 
             }
         });
@@ -416,7 +477,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         startActivity(intent);
     }
 
-    @Override
+    /*@Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         Log.d("After Permission" + intent, "onActivityResult: " + requestCode);
         if (requestCode == Constants.REQUEST_CODE_LOCATION_PERMISSION) {
@@ -425,6 +486,26 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             }
         }
     }
+*/
+
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == Constants.REQUEST_CODE_LOCATION_PERMISSION) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                this.onPlaceSelected(place);
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                this.onError(status);
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+
+
+
     private void setCurrentAddressOnToolbar(TextView titleAddress, TextView titleCity) {
         titleAddress.setText(getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_LOCATION));
         titleCity.setText(getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_STATE));
@@ -817,6 +898,27 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             }
         }
 
+    }
+
+
+    @Override
+    public void onPlaceSelected(Place place) {
+        customLocation = true;
+        getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LATITUDE, place.getLatLng().latitude);
+        getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LONGITUDE, place.getLatLng().longitude);
+        titleAddress.setText(place.getAddress());
+        titleCity.setText(place.getName());
+        latLong = place.getLatLng();
+        getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
+    }
+
+
+
+    @Override
+    public void onError(Status status) {
+        Log.e(LOG_TAG, "onError: Status = " + status.toString());
+        Toast.makeText(this, "Place selection failed: " + status.getStatusMessage(),
+                Toast.LENGTH_SHORT).show();
     }
 
 }
