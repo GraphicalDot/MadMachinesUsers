@@ -193,4 +193,7 @@
     <dimen name="recent_card_height">50dp</dimen>
     <dimen name="over_divider_height">10dp</dimen>
     <dimen name="over_divider_width">1dp</dimen>
+
+    <!--MatchList score progress related-->
+    <dimen name="progress_bar_width">30dp</dimen>
 </resources>
