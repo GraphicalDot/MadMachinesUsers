@@ -1,9 +1,9 @@
 package com.sports.unity.XMPPManager;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
-import com.sports.unity.util.GlobalEventListener;
 import com.sports.unity.util.ThreadTask;
 
 import org.jivesoftware.smack.XMPPConnection;
@@ -46,9 +46,8 @@ public class RosterHandler {
 
                 @Override
                 public void postAction(Object object) {
-
+                    //do nothing
                 }
-
             };
             threadTask.start();
         }
@@ -59,7 +58,10 @@ public class RosterHandler {
 
         @Override
         public void entriesAdded(Collection<String> addresses) {
-
+            for (String address :
+                    addresses) {
+                Log.i("address", address);
+            }
         }
 
         @Override
@@ -105,24 +107,17 @@ public class RosterHandler {
     }
 
     private void addEntriesToRoster(ArrayList<String> userJIDs) {
-        if ( ! roster.isLoaded() ) {
-//            try {
-//                roster.reloadAndWait();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
+        if (!roster.isLoaded()) {
+            //do nothing
         } else {
-            if (userJIDs.size() > 0) {
-                for (String jid : userJIDs) {
-                    try {
-                        roster.createEntry(jid.concat("@mm.io"), null, null);
-                        SportsUnityDBHelper.getInstance(context).updateRosterEntryinDatabase(jid, true);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            for (String jid : userJIDs) {
+                try {
+                    roster.createEntry(jid.concat("@mm.io"), null, null);
+                    SportsUnityDBHelper.getInstance(context).updateRosterEntryinDatabase(jid, true);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }
     }
-
 }
