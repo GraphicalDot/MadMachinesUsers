@@ -25,6 +25,9 @@ import static com.sports.unity.Database.SportsUnityContract.GroupUserEntry;
  */
 public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
+    public static final int DATABASE_VERSION = 2;
+    public static final String DATABASE_NAME = "spu.db";
+
     public static final int DEFAULT_ENTRY_ID = -1;
     public static final int DEFAULT_ENTRY_ID_FOR_GROUP = -2;
 
@@ -40,9 +43,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
     public static final String MIME_TYPE_AUDIO = "a";
 
     public static final int DEFAULT_GET_ALL_CHAT_LIST = -1;
-
-    public static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "spu.db";
 
     private static final String COMMA_SEP = ",";
 
@@ -143,11 +143,22 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        db.execSQL(DROP_CONTACT_CHAT_TABLE);
-        db.execSQL(DROP_MESSAGE_TABLE);
-        db.execSQL(DROP_GROUP_USER_TABLE);
 
-        onCreate(db);
+        if( oldVersion == 1 ){
+            db.execSQL("ALTER TABLE " + ContactChatEntry.TABLE_NAME + " ADD COLUMN " + ContactChatEntry.COLUMN_ROSTER_ENTRY + " BOOLEAN DEFAULT 0");
+            oldVersion++;
+        }
+//        if( oldVersion == 2 ){
+//
+//            oldVersion++;
+//        }
+
+
+//        db.execSQL(DROP_CONTACT_CHAT_TABLE);
+//        db.execSQL(DROP_MESSAGE_TABLE);
+//        db.execSQL(DROP_GROUP_USER_TABLE);
+//
+//        onCreate(db);
     }
 
     public void createGroupUserEntry(int chatId, ArrayList<Integer> selectedMembers) {
@@ -210,13 +221,18 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         String[] projection = {ContactChatEntry.COLUMN_JID};
 
-        String selection = ContactChatEntry.COLUMN_ROSTER_ENTRY + " LIKE ? AND " + ContactChatEntry.COLUMN_JID + " IS NOT NULL ";
-        String[] selectionArgs = {String.valueOf("0")};
+        String selection = ContactChatEntry.COLUMN_ROSTER_ENTRY + " LIKE ? " +
+                "AND " + ContactChatEntry.COLUMN_JID + " IS NOT NULL " +
+                "AND " + ContactChatEntry.COLUMN_AVAILABLE_STATUS + " = ? " +
+               "AND " + ContactChatEntry.COLUMN_GROUP_CHAT + " = ? " ;
+        String[] selectionArgs = { String.valueOf("0"), String.valueOf(Contacts.AVAILABLE_BY_MY_CONTACTS), String.valueOf("0") };
 
         Cursor c = db.query(ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
         ArrayList<String> jids = new ArrayList<>();
         if (c.moveToFirst()) {
-            jids.add(c.getString(0));
+            do {
+                jids.add(c.getString(0));
+            } while (c.moveToNext());
         }
         c.close();
         return jids;
