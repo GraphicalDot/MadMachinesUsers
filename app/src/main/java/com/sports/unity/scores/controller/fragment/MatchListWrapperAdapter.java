@@ -918,7 +918,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                 notification = (ImageView) rvChild.findViewById(R.id.notification);
                 matchName = (TextView) rvChild.findViewById(R.id.match_name);
                 favIcon = (ImageView) rvChild.findViewById(R.id.star_fav);
-                matchProgressBar = (ProgressBar) rvChild.findViewById(R.id.progress);
+                matchProgressBar = (ProgressBar) rvChild.findViewById(R.id.match_progress);
             }
 
         }

@@ -73,9 +73,9 @@
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="@dimen/progress_bar_width"
                         android:layout_height="4dp"
-                        android:max="90"
                         android:layout_below="@+id/team_score"
                         android:layout_centerHorizontal="true"
+                        android:max="90"
                         android:progress="0"
                         android:progressDrawable="@drawable/progress_drawable" />
 
@@ -99,8 +99,7 @@
                         android:gravity="center"
                         android:text="@string/live"
                         android:textColor="@color/app_theme_blue"
-                        android:textSize="@dimen/font_size_small_large"
-                        android:visibility="gone" />
+                        android:textSize="@dimen/font_size_small_large" />
                 </RelativeLayout>
 
 
