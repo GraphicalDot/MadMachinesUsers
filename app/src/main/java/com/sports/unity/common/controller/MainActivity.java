@@ -73,7 +73,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
     NavigationFragment navigationFragment;
 
-    private XMPPTCPConnection con;
     private SportsUnityDBHelper sportsUnityDBHelper;
     public SearchView searchView;
     LocManager locManager;
@@ -112,9 +111,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         initViews();
         setNavigation(savedInstanceState);
 
-        con = XMPPClient.getConnection();
         sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
-
         locManager = LocManager.getInstance(getApplicationContext());
         locManager.buildApiClient();
 

@@ -447,7 +447,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
                                 preferences = PreferenceManager.getDefaultSharedPreferences(activity);
                                 final String key = footballMatchJsonCaller.getMatchId() + "|" + footballMatchJsonCaller.getLeagueId();
-                                String subsMatch = preferences.getString(key, "");
+                                final String subsMatch = preferences.getString(key, "");
                                 if (key.equalsIgnoreCase(subsMatch) && !subsMatch.equals("")) {
                                     holder.notification.setImageResource(R.drawable.ic_notification_enable);
                                     holder.notification.setVisibility(View.VISIBLE);
@@ -455,6 +455,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                         @Override
                                         public void onClick(View v) {
                                             try {
+                                                tempKey = key;
 //                                                seriesId = footballMatchJsonCaller.getLeagueId();
 //                                                matchId = footballMatchJsonCaller.getMatchId().toString();
                                                 tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
@@ -473,6 +474,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                         @Override
                                         public void onClick(View v) {
                                             try {
+                                                tempKey = key;
 //                                                seriesId = footballMatchJsonCaller.getLeagueId();
 //                                                matchId = footballMatchJsonCaller.getMatchId().toString();
                                                 tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);

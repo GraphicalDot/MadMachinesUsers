@@ -39,6 +39,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -447,6 +448,9 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                     e.printStackTrace();
                 }
             }
+
+//            enterDummyContent(daysMap);
+
             matchList.clear();
             Set<String> daySet = daysMap.keySet();
             int c = 0;
@@ -458,13 +462,10 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                     int s = tempDTO.getList().size();
                     dayCount = DateUtil.getDayFromEpochTimeDayCount(tempDTO.getEpochTime() * 1000, getContext());
                     if (((dayCount < 3 && dayCount > -3)) && s > 0) {
-
+                        leagueMaps.get(key).reorderList();
                         matchList.add(leagueMaps.get(key));
-
                     }
                 }
-
-
             }
             dataItem.clear();
             for (MatchListWrapperDTO f : matchList) {
@@ -493,6 +494,19 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
         }
         return success;
     }
+
+//    private void enterDummyContent(Map<String, Map<String, MatchListWrapperDTO>> daysMap){
+//        Map<String, MatchListWrapperDTO> dto = daysMap.get("Today");
+//
+//        MatchListWrapperDTO.count = 0;
+//        Iterator<String> leaguesIterator = dto.keySet().iterator();
+//        while( leaguesIterator.hasNext() ){
+//            String league = leaguesIterator.next();
+//            MatchListWrapperDTO matchListWrapperDTO = dto.get(league);
+//            matchListWrapperDTO.createDummyContent();
+//        }
+//
+//    }
 
     private void initErrorLayout(View view) {
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);

@@ -13,12 +13,14 @@ public class MatchListWrapperItem implements Comparable<MatchListWrapperItem> {
     private JSONObject object;
     private Long epochTime;
     private String sportsType;
+    private String status;
 
     public MatchListWrapperItem(MatchListWrapperDTO dto) {
         this.setDay(dto.getDay());
         this.setEpochTime(dto.getEpochTime());
         this.setSportsType(dto.getSportsType());
         this.setLeagueName(dto.getLeagueName());
+        this.status = dto.getStatus();
     }
 
     public MatchListWrapperItem() {
@@ -64,9 +66,31 @@ public class MatchListWrapperItem implements Comparable<MatchListWrapperItem> {
         this.sportsType = sportsType;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
     @Override
     public int compareTo(MatchListWrapperItem another) {
-        return this.epochTime.compareTo(another.epochTime);
+        int compare = 0;
+        if( day.equalsIgnoreCase(another.getDay()) && day.equalsIgnoreCase("today") ){
+            if( "f".equalsIgnoreCase(status) || "ft".equalsIgnoreCase(status) ){
+                if( "f".equalsIgnoreCase(another.getStatus()) || "ft".equalsIgnoreCase(another.getStatus()) ){
+                    compare = this.epochTime.compareTo(another.getEpochTime());
+                } else {
+                    compare = 1;
+                }
+            } else {
+                if( "f".equalsIgnoreCase(another.getStatus()) || "ft".equalsIgnoreCase(another.getStatus()) ) {
+                    compare = -1;
+                } else {
+                    compare = this.epochTime.compareTo(another.getEpochTime());
+                }
+            }
+        } else {
+            compare = this.epochTime.compareTo(another.getEpochTime());
+        }
+        return compare;
     }
 
     @Override

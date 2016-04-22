@@ -143,16 +143,14 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        switch (oldVersion) {
+            case 1: {
+                db.execSQL("ALTER TABLE " + ContactChatEntry.TABLE_NAME + " ADD COLUMN " + ContactChatEntry.COLUMN_ROSTER_ENTRY + " BOOLEAN DEFAULT 0");
+            }
+            case 2: {
 
-        if( oldVersion == 1 ){
-            db.execSQL("ALTER TABLE " + ContactChatEntry.TABLE_NAME + " ADD COLUMN " + ContactChatEntry.COLUMN_ROSTER_ENTRY + " BOOLEAN DEFAULT 0");
-            oldVersion++;
+            }
         }
-//        if( oldVersion == 2 ){
-//
-//            oldVersion++;
-//        }
-
 
 //        db.execSQL(DROP_CONTACT_CHAT_TABLE);
 //        db.execSQL(DROP_MESSAGE_TABLE);
