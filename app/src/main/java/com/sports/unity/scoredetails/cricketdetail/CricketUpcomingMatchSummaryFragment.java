@@ -119,7 +119,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
                 @Override
                 public void run() {
                     try {
-                        //JSONArray dataArray = jsonObject.getJSONArray("data");
+
                         Log.i("run: ", jsonObject.toString());
                         initData();
                     } catch (Exception ex) {
@@ -134,6 +134,7 @@ public class CricketUpcomingMatchSummaryFragment extends Fragment implements Cri
 
     private void initData() {
         if (matchName != null && !matchName.equalsIgnoreCase("")) {
+            matchName=   matchName.replace(",","");
             tvMatchName.setText(matchName);
         } else {
             tvMatchName.setText("Information is not Available");

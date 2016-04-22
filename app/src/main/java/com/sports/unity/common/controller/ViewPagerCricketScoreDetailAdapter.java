@@ -47,7 +47,7 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
             } else  {
                 fragment = new CricketCompletedMatchSummaryFragment();
             }
-            //fragment = new CricketLiveMatchSummaryFragment();
+           // fragment = new CricketLiveMatchSummaryFragment();
         } else if (position == 1) {
 
                 fragment = new MatchCommentaryFragment();

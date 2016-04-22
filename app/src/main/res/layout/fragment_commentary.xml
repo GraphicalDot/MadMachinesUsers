@@ -29,6 +29,8 @@
         android:layout_gravity="center"
         android:visibility="gone"
         />
+
+
 </android.support.v4.widget.SwipeRefreshLayout>
     <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
         android:id="@+id/tv_empty_view"
@@ -40,10 +42,9 @@
         android:paddingLeft="@dimen/horizontal_padding_large"
         android:paddingRight="@dimen/horizontal_padding_large"
         android:paddingTop="@dimen/vertical_padding_large"
-        android:text="Scorecard not available for this match yet"
+        android:text="@string/commentary_not_exist"
         android:textColor="@color/gray1"
         android:textSize="@dimen/font_size_large"
         android:visibility="gone"/>
-
 
 </FrameLayout>
