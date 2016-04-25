@@ -78,12 +78,9 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_commentary, container, false);
         initView(view);
-
         return view;
     }
 
@@ -107,7 +104,6 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
         errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.GONE);
     }
-
 
     @Override
     public void handleContent(String content) {

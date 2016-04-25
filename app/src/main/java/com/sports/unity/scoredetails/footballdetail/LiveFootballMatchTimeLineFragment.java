@@ -45,20 +45,20 @@ import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveFootballMatchTimeLineHandler.LiveMatchContentListener{
 
     private RecyclerView recyclerView;
-    String toss = "";
-    String matchName="";
-    String date = "";
+    private String toss = "";
+    private String matchName="";
+    private String date = "";
     private String matchId;
     private String matchStatus;
+
     private SwipeRefreshLayout swTimeLineRefresh;
-    private TextView nocomments;
     private ProgressBar progressBar;
+
     private CompleteFootballTimeLineAdapter completeFootballTimeLineAdapter;
     private List<CompleteFootballTimeLineDTO> list = new ArrayList<>();
-    private LiveFootballMatchTimeLineHandler liveFootballMatchTimeLineHandler;
+
     private Timer timerToRefreshContent;
     private Context context;
-    private boolean autRefreshEnabled;
 
     public LiveFootballMatchTimeLineFragment() {
         // Required empty public constructor
@@ -74,17 +74,15 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
         date = i.getStringExtra(INTENT_KEY_DATE);
         matchStatus = i.getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
         this.context = context;
-        getFootballmatchTimeLine();
-        enableAutoRefreshContent();
-
     }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_football_match_timeline, container, false);
         initView(view);
         return view;
     }
+
     private void initView(View view) {
         recyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
@@ -98,39 +96,41 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
         swTimeLineRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (liveFootballMatchTimeLineHandler != null) {
-                    liveFootballMatchTimeLineHandler.requestLiveMatchTimeLine(matchId);
-                    swTimeLineRefresh.setRefreshing(false);
-                }
+                getFootballmatchTimeLine();
+                swTimeLineRefresh.setRefreshing(false);
             }
         });
         
     }
 
+    private void startTimer() {
+        cancelTimer();
 
-    private void enableAutoRefreshContent(){
         timerToRefreshContent = new Timer();
-        if(autRefreshEnabled){
-            timerToRefreshContent.schedule(new TimerTask() {
+        timerToRefreshContent.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                getFootballmatchTimeLine();
+            }
+        }, 0, Constants.TIMEINMILISECOND);
+    }
 
-                @Override
-                public void run() {
-                    getFootballmatchTimeLine();
-                }
-
-            }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
-        }else{
+    private void cancelTimer() {
+        if (timerToRefreshContent != null) {
             timerToRefreshContent.cancel();
+            timerToRefreshContent.purge();
+            timerToRefreshContent = null;
         }
-
     }
 
     private void  showProgressBar(){
         progressBar.setVisibility(View.VISIBLE);
     }
+
     private void  hideProgressBar(){
         progressBar.setVisibility(View.GONE);
     }
+
     @Override
     public void handleContent(String object) {
         {
@@ -154,6 +154,7 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
             }
         }
     }
+
     private void initErrorLayout(View view) {
         try {
             LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
@@ -162,14 +163,12 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
     }
 
     private void showErrorLayout(View view) {
-
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.VISIBLE);
-
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-       list.clear();
+        list.clear();
         hideProgressBar();
         {
             ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
@@ -285,42 +284,26 @@ public class LiveFootballMatchTimeLineFragment extends Fragment implements LiveF
         return drawable;
     }
 
-
     private void getFootballmatchTimeLine() {
-        liveFootballMatchTimeLineHandler = LiveFootballMatchTimeLineHandler.getInstance(context);
-        liveFootballMatchTimeLineHandler.addListener(this);
-        liveFootballMatchTimeLineHandler.requestLiveMatchTimeLine(matchId);
-
-
-
+        LiveFootballMatchTimeLineHandler.getInstance(context).requestLiveMatchTimeLine(matchId);
     }
-
-
 
     @Override
     public void onPause() {
         super.onPause();
-        autRefreshEnabled = false;
-        if(liveFootballMatchTimeLineHandler != null){
-            liveFootballMatchTimeLineHandler.addListener(null);
-        }
 
+        cancelTimer();
+        LiveFootballMatchTimeLineHandler.getInstance(context).addListener(null);
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
         showProgressBar();
-        autRefreshEnabled = true;
-        if(liveFootballMatchTimeLineHandler != null){
-            liveFootballMatchTimeLineHandler.addListener(this);
 
-        }else {
-            liveFootballMatchTimeLineHandler = LiveFootballMatchTimeLineHandler.getInstance(context);
-
-        }
-        liveFootballMatchTimeLineHandler.requestLiveMatchTimeLine(matchId);
+        LiveFootballMatchTimeLineHandler.getInstance(context).addListener(this);
+        startTimer();
     }
-
 
 }

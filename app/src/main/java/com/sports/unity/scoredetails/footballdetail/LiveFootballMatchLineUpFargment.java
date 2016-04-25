@@ -44,31 +44,31 @@ import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
  */
 public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFootballMatchLineUpHandler.LiveMatchContentListener {
 
-    private ProgressBar progressBar;
-
-   private  String matchName="";
-    private String date = "";
     private TextView tvCaptainFirst;
     private TextView tvCaptainSecond;
     private View tvCarlesPayol;
     private TextView tvlineup;
-
     private TextView tvsubstitutes;
+
+    private ProgressBar progressBar;
     private RecyclerView rvLineup;
     private RecyclerView rvSubstitutes;
     private CompleteFootballLineUpAdapter completeFootballLineUpAdapter;
-    private List<CompleteFootballLineUpDTO> lineUpList = new ArrayList<>();
     private CompleteFootballLineUpAdapter completeFootballSubstituteUpAdapter;
+
+    private List<CompleteFootballLineUpDTO> lineUpList = new ArrayList<>();
     private List<CompleteFootballLineUpDTO> substitutesList = new ArrayList<>();
+
     private Timer timerToRefreshContent;
-    private LiveFootballMatchLineUpHandler liveFootballMatchLineUpHandler;
+
     private String matchId;
+    private String matchName="";
+    private String date = "";
+
     private Context context;
     private View managerView;
     private View lineupView;
     private View subsView;
-    private boolean autRefreshEnabled;
-
 
     public LiveFootballMatchLineUpFargment() {
         // Required empty public constructor
@@ -82,16 +82,15 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
         matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
         date = i.getStringExtra(INTENT_KEY_DATE);
         this.context = context;
-        getFootballmatchLineUps();
-        enableAutoRefreshContent();
     }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_football_live_match_lineups, container, false);
         initView(view);
         return view;
     }
+
     private void initView(View view) {
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
@@ -111,15 +110,36 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
         managerView = view.findViewById(R.id.manager_root);
         lineupView = view.findViewById(R.id.layout_line_up);
         subsView = view.findViewById(R.id.layout_substitutes);
-
-
     }
+
+    private void startTimer() {
+        cancelTimer();
+
+        timerToRefreshContent = new Timer();
+        timerToRefreshContent.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                getFootballmatchLineUps();
+            }
+        }, 0, Constants.TIMEINMILISECOND);
+    }
+
+    private void cancelTimer() {
+        if (timerToRefreshContent != null) {
+            timerToRefreshContent.cancel();
+            timerToRefreshContent.purge();
+            timerToRefreshContent = null;
+        }
+    }
+
     private void  showProgressBar(){
         progressBar.setVisibility(View.VISIBLE);
     }
+
     private void  hideProgressBar(){
         progressBar.setVisibility(View.GONE);
     }
+
     @Override
     public void handleContent(String object) {
         {
@@ -145,6 +165,7 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
             }
         }
     }
+
     private void initErrorLayout(View view) {
         try {
             LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
@@ -153,13 +174,11 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
     }
 
     private void showErrorLayout(View view) {
-
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.VISIBLE);
         managerView.setVisibility(View.GONE);
         lineupView.setVisibility(View.GONE);
         subsView.setVisibility(View.GONE);
-
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
@@ -183,8 +202,8 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
 
                         CompleteFootballLineUpDTO completeFootballLineUpDTO = null;
                         int length = subsArray.length();
-                        int tempLength = length/2;
-                        for (int i = 0; i < length/2; i++) {
+                        int tempLength = length / 2;
+                        for (int i = 0; i < length / 2; i++) {
                             try {
                                 JSONObject teamFirstObject = subsArray.getJSONObject(i);
                                 JSONObject teamSecondObject = subsArray.getJSONObject(tempLength);
@@ -193,13 +212,15 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
                                 setSecondTeamDetails(completeFootballLineUpDTO, teamFirstObject, matchEventsArray, substitutionsArray);
                                 substitutesList.add(completeFootballLineUpDTO);
                                 tempLength++;
-                            }catch (Exception e){e.printStackTrace();}
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
 
                         }
                         length = teamsObjectArray.length();
-                        tempLength = length/2;
-                        for (int i = 0; i < length/2; i++) {
-                            try{
+                        tempLength = length / 2;
+                        for (int i = 0; i < length / 2; i++) {
+                            try {
                                 JSONObject teamFirstObject = teamsObjectArray.getJSONObject(i);
                                 JSONObject teamSecondObject = teamsObjectArray.getJSONObject(tempLength);
                                 completeFootballLineUpDTO = new CompleteFootballLineUpDTO();
@@ -207,7 +228,7 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
                                 setTeamSecondLineDetails(completeFootballLineUpDTO, teamFirstObject, matchEventsArray, substitutionsArray);
                                 lineUpList.add(completeFootballLineUpDTO);
                                 tempLength++;
-                            }catch (Exception e){
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
 
@@ -223,6 +244,7 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
         }
 
     }
+
     private void setTeamSecondLineDetails(CompleteFootballLineUpDTO completeFootballLineUpDTO, JSONObject teamSecondObject, JSONArray matchEventsArray, JSONArray substitutionsArray) throws JSONException {
         completeFootballLineUpDTO.setPlayerNameSecond(teamSecondObject.getString("name"));
         completeFootballLineUpDTO.setPlayerPostionNumberSecond(teamSecondObject.getString("jersey_number"));
@@ -315,50 +337,24 @@ public class LiveFootballMatchLineUpFargment extends Fragment implements LiveFoo
         return event;
     }
 
-
-
-    private void enableAutoRefreshContent(){
-        timerToRefreshContent = new Timer();
-        if(autRefreshEnabled){
-            timerToRefreshContent.schedule(new TimerTask() {
-
-                @Override
-                public void run() {
-                    getFootballmatchLineUps();
-                }
-
-            }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
-        }else{
-            timerToRefreshContent.cancel();
-        }
-
-    }
     private void getFootballmatchLineUps() {
-        liveFootballMatchLineUpHandler = LiveFootballMatchLineUpHandler.getInstance(context);
-        liveFootballMatchLineUpHandler.addListener(this);
-        liveFootballMatchLineUpHandler.requestLiveMatchLineUp(matchId);
+        LiveFootballMatchLineUpHandler.getInstance(context).requestLiveMatchLineUp(matchId);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        autRefreshEnabled = false;
-        if (liveFootballMatchLineUpHandler != null) {
-            liveFootballMatchLineUpHandler.addListener(this);
-        } else {
-            liveFootballMatchLineUpHandler = LiveFootballMatchLineUpHandler.getInstance(context);
-            liveFootballMatchLineUpHandler.addListener(this);
-        }
-        liveFootballMatchLineUpHandler.requestLiveMatchLineUp(matchId);
+
+        LiveFootballMatchLineUpHandler.getInstance(context).addListener(this);
+        startTimer();
     }
 
     @Override
     public void onPause() {
-
         super.onPause();
-        autRefreshEnabled = true;
-        if (liveFootballMatchLineUpHandler != null)
-            liveFootballMatchLineUpHandler = null;
 
+        cancelTimer();
+        LiveFootballMatchLineUpHandler.getInstance(context).addListener(null);
     }
+
 }
