@@ -26,7 +26,7 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.scoredetails.CommentriesModel;
-import com.sports.unity.scores.controller.fragment.MatchListAdapter;
+import com.sports.unity.scores.controller.fragment.MatchListWrapperAdapter;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
@@ -534,10 +534,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
                 Date date = new Date(new java.text.SimpleDateFormat("MM/dd/yyyy").format(new java.util.Date(Long.valueOf(footballMatchJsonCaller.getMatchDateEpoch()) * 1000)));
                 String dayOfTheWeek = (String) android.text.format.DateFormat.format("EEEE", date);
                 String day = (String) android.text.format.DateFormat.format("dd", date);
-                String month = MatchListAdapter.getMonth((String) android.text.format.DateFormat.format("MMM", date));
+                String month = MatchListWrapperAdapter.getMonth((String) android.text.format.DateFormat.format("MMM", date));
                 String isttime = null;
                 try {
-                    isttime = MatchListAdapter.getLocalTime(footballMatchJsonCaller.getMatchTime()).substring(0, 5);
+                    isttime = MatchListWrapperAdapter.getLocalTime(footballMatchJsonCaller.getMatchTime()).substring(0, 5);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

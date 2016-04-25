@@ -25,12 +25,14 @@ import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 import com.sports.unity.util.ThreadTask;
 
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smackx.vcardtemp.VCardManager;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
@@ -61,6 +63,7 @@ public class UserProfileHandler {
     public static int REQUEST_STATUS_FAILED = 3;
 
     private String SET_USER_INFO_URL = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/set_user_info?";
+    private static final String SET_USER_INTEREST = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/set_user_interests?";
 
     private static UserProfileHandler USER_PROFILE_HANDLER;
 
@@ -244,7 +247,7 @@ public class UserProfileHandler {
         try {
             URL sendInterests = new URL(SET_USER_INFO_URL);
             httpURLConnection = (HttpURLConnection) sendInterests.openConnection();
-            httpURLConnection.setConnectTimeout(15000);
+            httpURLConnection.setConnectTimeout(Constants.CONNECTION_TIME_OUT);
             httpURLConnection.setDoInput(false);
             httpURLConnection.setDoOutput(true);
             httpURLConnection.setRequestMethod("POST");
@@ -277,18 +280,24 @@ public class UserProfileHandler {
     public boolean submitUserFavorites(Context context){
         boolean success = false;
         try {
-            if (UserUtil.isFilterCompleted() && XMPPClient.getConnection() != null) {
-                VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
-                VCard vCard = new VCard();
-                vCard.load(XMPPClient.getConnection());
-                vCard.setField("fav_list", TinyDB.getInstance(context).getString(TinyDB.FAVOURITE_FILTERS));
-                manager.saveVCard(vCard);
+            success = sendInterests(context);
 
-                success = true;
-                UserUtil.setFavouriteVcardUpdated(context, true);
-            } else {
+            if( success ) {
                 success = false;
-                UserUtil.setFavouriteVcardUpdated(context, false);
+
+                if (UserUtil.isFilterCompleted() && XMPPClient.getConnection() != null) {
+                    VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
+                    VCard vCard = new VCard();
+                    vCard.load(XMPPClient.getConnection());
+                    vCard.setField("fav_list", TinyDB.getInstance(context).getString(TinyDB.FAVOURITE_FILTERS));
+                    manager.saveVCard(vCard);
+
+                    success = true;
+                    UserUtil.setFavouriteVcardUpdated(context, true);
+                } else {
+                    success = false;
+                    UserUtil.setFavouriteVcardUpdated(context, false);
+                }
             }
         } catch (SmackException.NoResponseException e) {
             e.printStackTrace();
@@ -309,7 +318,7 @@ public class UserProfileHandler {
     }
 
     private void saveLoginUserDetail(Context context, Contacts loginUserDetail){
-        int count = SportsUnityDBHelper.getInstance(context).updateContacts( loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.getName(), loginUserDetail.image, loginUserDetail.status, Contacts.AVAILABLE_NOT);
+        int count = SportsUnityDBHelper.getInstance(context).updateContacts(loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.getName(), loginUserDetail.image, loginUserDetail.status, Contacts.AVAILABLE_NOT);
         if( count == 0 ) {
             SportsUnityDBHelper.getInstance(context).addToContacts(loginUserDetail.getName(), loginUserDetail.phoneNumber, loginUserDetail.jid, loginUserDetail.status, loginUserDetail.image, Contacts.AVAILABLE_NOT);
         }
@@ -456,6 +465,66 @@ public class UserProfileHandler {
         }
 
         return requestStatus;
+    }
+
+    private static boolean sendInterests(Context context) {
+        boolean  success = false;
+        String jsonContent = null;
+        try {
+            JSONArray interests = FavouriteItemWrapper.getInstance(context).getAllInterestsAsJsonArray();
+
+            String password = TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD);
+            String userJID = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("username", userJID);
+            jsonObject.put("password", password);
+            jsonObject.put("interests", interests);
+            jsonObject.put("apk_version", CommonUtil.getBuildConfig());
+            jsonObject.put("udid", CommonUtil.getDeviceId(context));
+
+            jsonContent = jsonObject.toString();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        if( jsonContent != null ) {
+            HttpURLConnection httpURLConnection = null;
+            ByteArrayInputStream byteArrayInputStream = null;
+            try {
+                URL sendInterests = new URL(SET_USER_INTEREST);
+                httpURLConnection = (HttpURLConnection) sendInterests.openConnection();
+                httpURLConnection.setConnectTimeout(Constants.CONNECTION_TIME_OUT);
+                httpURLConnection.setDoInput(false);
+                httpURLConnection.setRequestMethod("POST");
+
+                byteArrayInputStream = new ByteArrayInputStream(jsonContent.getBytes());
+                OutputStream outputStream = httpURLConnection.getOutputStream();
+
+                byte chunk[] = new byte[4096];
+                int read = 0;
+                while ((read = byteArrayInputStream.read(chunk) ) != -1) {
+                    outputStream.write(chunk, 0, read);
+                }
+
+                if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    success = true;
+                } else {
+                    //nothing
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    httpURLConnection.disconnect();
+                } catch (Exception ex) {
+                }
+            }
+        } else {
+            //nothing
+        }
+
+        return success;
     }
 
     public static class ProfileDetail {

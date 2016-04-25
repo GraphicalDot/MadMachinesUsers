@@ -418,29 +418,8 @@ public class XMPPService extends Service {
         public void connected(XMPPConnection connection) {
             Log.i("XMPP Connection", "connected");
             if (UserUtil.isProfileCreated()) {
+                RosterHandler.getInstance(XMPPService.this.getApplicationContext()).loadRoster(connection);
                 XMPPClient.getInstance().authenticateConnection(XMPPService.this);
-                /*Roster.getInstanceFor(connection).setSubscriptionMode(Roster.SubscriptionMode.accept_all);
-                Roster.getInstanceFor(connection).addRosterListener(new RosterListener() {
-                    @Override
-                    public void entriesAdded(Collection<String> addresses) {
-
-                    }
-
-                    @Override
-                    public void entriesUpdated(Collection<String> addresses) {
-
-                    }
-
-                    @Override
-                    public void entriesDeleted(Collection<String> addresses) {
-
-                    }
-
-                    @Override
-                    public void presenceChanged(Presence presence) {
-                        Log.d("max","User-->"+presence.getFrom()+"<<status>>"+presence.getStatus());
-                    }
-                });*/
             } else {
                 //nothing
             }
@@ -455,7 +434,6 @@ public class XMPPService extends Service {
                 attachChatRelatedListeners((XMPPTCPConnection) connection);
 
                 PersonalMessaging.getInstance(XMPPService.this).updateBlockList(XMPPService.this);
-
                 GlobalEventHandler.getInstance().xmppServerConnected(true, connection);
             } catch (Exception ex) {
                 ex.printStackTrace();

@@ -132,6 +132,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private void handleNextClick() {
         FavouriteItemWrapper.getInstance(this).saveList(this, favList);
         if (isSingleUse) {
+            beforeExitingActivity();
             setResult(RESULT_OK, getIntent());
             finish();
         } else if (fragmentNum < sportsSelected.size()) {
@@ -148,9 +149,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             if (pager.getCurrentItem() < pager.getAdapter().getCount() - 1) {
                 pager.setCurrentItem(pager.getCurrentItem() + 1);
             } else {
-                UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
-
-                ContactsHandler.getInstance().addCallToUpdateUserFavorites(getApplicationContext());
+                beforeExitingActivity();
                 if (isResultRequired) {
                     setResult(RESULT_OK, getIntent());
                     finish();
@@ -160,7 +159,11 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             }
         }
         closeSearch();
+    }
 
+    private void beforeExitingActivity(){
+        UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
+        ContactsHandler.getInstance().addCallToUpdateUserFavorites(getApplicationContext());
     }
 
     private void onBack() {
@@ -189,7 +192,6 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
             }
         }
     }
-
 
 //    private void enableNotificationsWhenSettingUpFirstTime() {
 //

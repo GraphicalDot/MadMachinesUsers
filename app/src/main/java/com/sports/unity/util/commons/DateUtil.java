@@ -1,6 +1,7 @@
 package com.sports.unity.util.commons;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.sports.unity.R;
 import com.sports.unity.common.model.Match;
@@ -102,6 +103,8 @@ public class DateUtil {
 
         Calendar with = Calendar.getInstance();
         with.setTimeInMillis(l);
+        Log.d("##########", with.toString());
+
         return TIME_FORMAT.format(with.getTime());
     }
     public static int getDayFromEpochTimeDayCount(long l,Context context) {

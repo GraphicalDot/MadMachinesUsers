@@ -29,13 +29,27 @@ public class FavouriteItemWrapper {
     public static final String name = "obj_name";
     public static final String id = "obj_id";
     public static final String flag = "obj_flag";
-    public static FavouriteItemWrapper favouriteItemWrapper;
+
+    private static FavouriteItemWrapper favouriteItemWrapper;
+
+    /**
+     * Static constructor to instantiate {@link #FavouriteItemWrapper} class.
+     *
+     * @return single instance of {@link #FavouriteItemWrapper}.
+     */
+    public static FavouriteItemWrapper getInstance(Context context) {
+        if (favouriteItemWrapper == null) {
+            favouriteItemWrapper = new FavouriteItemWrapper(context);
+        }
+        return favouriteItemWrapper;
+    }
+
     private List<FavouriteItem> savedFootballLeagues;
     private List<FavouriteItem> savedFootballTeams;
     private List<FavouriteItem> savedFootballPlayers;
     private List<FavouriteItem> savedCricketTeams;
     private List<FavouriteItem> savedCricketPlayers;
-    private List<FavouriteItem> savedFavlist;
+    private List<FavouriteItem> savedAllFavorites;
 
     /**
      * Private constructor so that no one can instantiate this class.
@@ -47,7 +61,7 @@ public class FavouriteItemWrapper {
         savedFootballPlayers = new ArrayList<FavouriteItem>();
         savedCricketTeams = new ArrayList<FavouriteItem>();
         savedCricketPlayers = new ArrayList<FavouriteItem>();
-        savedFavlist = new ArrayList<FavouriteItem>();
+        savedAllFavorites = new ArrayList<FavouriteItem>();
         List<FavouriteItem> favouriteItems = new ArrayList<FavouriteItem>();
         TinyDB tinyDB = TinyDB.getInstance(context);
         String favItem = tinyDB.getString(TinyDB.FAVOURITE_FILTERS);
@@ -61,20 +75,14 @@ public class FavouriteItemWrapper {
                 String filterType = object.getString(this.filterType);
                 item.setSportsType(sportsType);
                 item.setFilterType(filterType);
-
-                try {
-                    if (!object.isNull(this.flag)) {
-                        item.setFlagImageUrl(object.getString(this.flag));
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (!object.isNull(this.flag)) {
+                    item.setFlagImageUrl(object.getString(this.flag));
                 }
-                try {
-                    item.setId(object.getString(this.id));
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (!object.isNull(this.id)) {
+                    String id = object.getString(this.id);
+                    item.setId(id);
                 }
+
                 favouriteItems.add(item);
 
                 if (sportsType.equals(Constants.SPORTS_TYPE_FOOTBALL)) {
@@ -99,19 +107,7 @@ public class FavouriteItemWrapper {
             e.printStackTrace();
         }
         Collections.sort(favouriteItems);
-        savedFavlist.addAll(favouriteItems);
-    }
-
-    /**
-     * Static constructor to instantiate {@link #FavouriteItemWrapper} class.
-     *
-     * @return single instance of {@link #FavouriteItemWrapper}.
-     */
-    public static FavouriteItemWrapper getInstance(Context context) {
-        if (favouriteItemWrapper == null) {
-            favouriteItemWrapper = new FavouriteItemWrapper(context);
-        }
-        return favouriteItemWrapper;
+        savedAllFavorites.addAll(favouriteItems);
     }
 
     /**
@@ -146,10 +142,9 @@ public class FavouriteItemWrapper {
             savedFootballPlayers = new ArrayList<FavouriteItem>();
             savedCricketTeams = new ArrayList<FavouriteItem>();
             savedCricketPlayers = new ArrayList<FavouriteItem>();
-            savedFavlist = new ArrayList<>(favouriteItems);
-            Collections.sort(savedFavlist);
+            savedAllFavorites = new ArrayList<>(favouriteItems);
+            Collections.sort(savedAllFavorites);
             for (FavouriteItem f : favouriteItems) {
-
                 if (f.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
                     if (f.getFilterType().equals(Constants.FILTER_TYPE_LEAGUE)) {
                         savedFootballLeagues.add(f);
@@ -218,7 +213,7 @@ public class FavouriteItemWrapper {
      * @return ArrayList of {@link FavouriteItem}
      */
     public ArrayList<FavouriteItem> getFavList() {
-        return new ArrayList<FavouriteItem>(savedFavlist);
+        return new ArrayList<FavouriteItem>(savedAllFavorites);
     }
 
     /**
@@ -363,5 +358,19 @@ public class FavouriteItemWrapper {
     public String getSavedFavouritesAsJsonString(Context context) {
         TinyDB tinyDB = TinyDB.getInstance(context);
         return tinyDB.getString(TinyDB.FAVOURITE_FILTERS);
+    }
+
+    /**
+     * This method gives you all the ids of user favourite.
+     *
+     * @return Json String of all user favourites.
+     */
+
+    public JSONArray getAllInterestsAsJsonArray() throws Exception {
+        JSONArray interests = new JSONArray();
+        for(FavouriteItem item : savedAllFavorites){
+            interests.put(item.getId());
+        }
+        return interests;
     }
 }

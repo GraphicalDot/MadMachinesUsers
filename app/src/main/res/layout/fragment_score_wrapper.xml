@@ -13,12 +13,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <!--<View-->
-            <!--android:id="@+id/sep_top"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="0.3dp"-->
-            <!--android:background="@color/gray4"></View>-->
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -29,8 +23,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/news_background"
                 android:orientation="vertical"
-                android:layout_marginLeft="@dimen/horizontal_padding_very_very_small"
-                android:layout_marginRight="@dimen/horizontal_padding_very_very_small">
+                >
 
                 <com.sports.unity.common.view.CustomRobotoSlabRegularTextView
                     android:id="@+id/id_day_name"
@@ -48,19 +41,21 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:paddingLeft="@dimen/horizontal_padding_very_small"
-                android:paddingTop="@dimen/horizontal_padding_very_very_small"
-                android:paddingBottom="@dimen/horizontal_padding_very_very_small">
+                >
 
                 <RelativeLayout
                     android:id="@+id/league_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:paddingTop="@dimen/horizontal_padding_very_very_small"
+                    android:paddingBottom="@dimen/horizontal_padding_very_very_small"
                     android:gravity="center">
 
                     <ImageView
                         android:id="@+id/iv_league"
                         android:layout_width="16dp"
                         android:layout_height="16dp"
+
                         android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true" />
 
@@ -87,11 +82,4 @@
         </LinearLayout>
     </LinearLayout>
 
-    <!--<View-->
-        <!--android:id="@+id/sep_bottom"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="0.3dp"-->
-        <!--android:background="@color/gray4">-->
-
-    <!--</View>-->
 </LinearLayout>

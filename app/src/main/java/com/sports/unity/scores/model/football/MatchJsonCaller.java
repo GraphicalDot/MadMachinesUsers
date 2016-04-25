@@ -42,12 +42,6 @@ public class MatchJsonCaller extends JsonObjectCaller {
     }
 
 
-
-
-
-
-
-
     public String getTeams1Odds() {
         String odds = "";
         try {

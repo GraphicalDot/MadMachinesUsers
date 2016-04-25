@@ -28,6 +28,14 @@ public class CricketMatchJsonCaller extends MatchJsonCaller {
         return jsonObject.getString("away_team");
     }
 
+    public String getTeam1Id() throws JSONException {
+        return jsonObject.getString("home_team_id");
+    }
+
+    public String getTeam2Id() throws JSONException {
+        return jsonObject.getString("away_team_id");
+    }
+    
     public String getTeam1Short() throws JSONException {
         String value = null;
         if( jsonObject.has("home_team_short_name") ){
