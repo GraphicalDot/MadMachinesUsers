@@ -22,26 +22,35 @@ import java.util.HashSet;
 public class CricketLiveMatchSummaryHandler {
 
     private static final String REQUEST_TAG = "LIVE_SUMMARY_TAG";
-    private static Context mContext;
-    private String BASEURL = Constants.SCORE_BASE_URL+"/v1/get_cricket_match_summary?season_key=%s&match_id=%s";
+    private Context mContext;
+    private static final String BASEURL = Constants.SCORE_BASE_URL + "/v1/get_cricket_match_summary?season_key=%s&match_id=%s";
 
     private LiveCricketMatchSummaryContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
+    private static CricketLiveMatchSummaryHandler completedMatchScoreCardHandler = null;
+
+    public CricketLiveMatchSummaryHandler(Context context) {
+        this.mContext = context;
+    }
+
     public static CricketLiveMatchSummaryHandler getInstance(Context context) {
-        CricketLiveMatchSummaryHandler completedMatchScoreCardHandler = null;
-        completedMatchScoreCardHandler = new CricketLiveMatchSummaryHandler();
-        mContext = context;
+        if (completedMatchScoreCardHandler == null) {
+            completedMatchScoreCardHandler = new CricketLiveMatchSummaryHandler(context);
+        }
         return completedMatchScoreCardHandler;
     }
+
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
+
     public interface LiveCricketMatchSummaryContentListener {
 
         void handleContent(String content);
 
     }
+
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
 
         @Override
@@ -57,28 +66,29 @@ public class CricketLiveMatchSummaryHandler {
         }
     };
 
-    public void requestLiveMatchSummary(String seriesId,String matchId) {
+    public void requestLiveMatchSummary(String seriesId, String matchId) {
         Log.i("Score Detail", "Request Score Details");
-        String url = String.format(BASEURL, seriesId,matchId);
+        String url = String.format(BASEURL, seriesId, matchId);
         StringRequest stringRequest = null;
         //RequestQueue queue = Volley.newRequestQueue(mContext);
-        stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
+        stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent, responseListener_ForLoadContent);
         VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
         VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
 
         requestInProcess.add(REQUEST_TAG);
     }
+
     private void handleResponse(String response) {
 
-        try{
-            if(response!=null){
+        try {
+            if (response != null) {
                 JSONObject jsonObject = new JSONObject(response);
                 Log.i("Summary", "handleResponse: ");
-                if(jsonObject.getBoolean("success")){
-                    Log.i("Score Card",response);
+                if (jsonObject.getBoolean("success")) {
+                    Log.i("Score Card", response);
                     mContentListener.handleContent(response);
                 }
-            }else{
+            } else {
                 mContentListener.handleContent(Constants.ERRORRESPONSE);
             }
 
@@ -87,11 +97,11 @@ public class CricketLiveMatchSummaryHandler {
         }
 
 
-
     }
+
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
-        try{
+        try {
             Log.i("Score Card", "handleResponse: ");
             mContentListener.handleContent(Constants.ERRORRESPONSE);
         } catch (Exception e) {
@@ -99,6 +109,7 @@ public class CricketLiveMatchSummaryHandler {
         }
 
     }
+
     public void addListener(LiveCricketMatchSummaryContentListener contentListener) {
         mContentListener = contentListener;
     }
