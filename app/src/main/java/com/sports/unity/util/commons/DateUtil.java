@@ -100,10 +100,8 @@ public class DateUtil {
     }
 
     public static String getMatchTime(long l) {
-
         Calendar with = Calendar.getInstance();
         with.setTimeInMillis(l);
-        Log.d("##########", with.toString());
 
         return TIME_FORMAT.format(with.getTime());
     }
