@@ -366,17 +366,27 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                     holder.matchProgressBar.setVisibility(View.VISIBLE);
                                     holder.matchMinutes.setText(footballMatchJsonCaller.getMatchStatus() + "'");
                                     String time = footballMatchJsonCaller.getMatchStatus();
-                                    time.replace("'", "");
                                     try {
                                         int progress = (int) (Integer.parseInt(time));
+                                        if (progress > 90 && progress <= 105) {
+                                            holder.matchProgressBar.setMax(105);
+                                        } else if (progress > 105 && progress <= 120) {
+                                            holder.matchProgressBar.setMax(120);
+                                        } else {
+                                            holder.matchProgressBar.setMax(90);
+                                        }
                                         holder.matchProgressBar.setProgress(progress);
 
                                     } catch (Exception e) {
                                         e.printStackTrace();
-                                        if (time.toLowerCase().contains("half")) {
+                                        if (time.equalsIgnoreCase("HT")) {
+                                            holder.matchMinutes.setText(footballMatchJsonCaller.getMatchStatus());
+                                            holder.matchProgressBar.setMax(90);
                                             holder.matchProgressBar.setProgress(45);
-                                        } else if (time.toLowerCase().contains("full")) {
-                                            holder.matchProgressBar.setProgress(90);
+                                        } else if (time.equalsIgnoreCase("FT")) {
+                                            holder.matchMinutes.setText(footballMatchJsonCaller.getMatchStatus());
+                                            holder.matchProgressBar.setMax(90);
+                                            holder.matchProgressBar.setProgress(holder.matchProgressBar.getMax());
                                         }
                                     }
                                     holder.liveText.setVisibility(View.GONE);
@@ -417,7 +427,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                 }
                             }
 
-                            if (footballMatchJsonCaller.getTeams1Odds() != null && footballMatchJsonCaller.getTeams2Odds() != null) {
+                            if (!footballMatchJsonCaller.getTeams1Odds().equals("") && !footballMatchJsonCaller.getTeams2Odds().equals("")) {
                                 holder.odds.setVisibility(View.VISIBLE);
                                 ((ViewGroup) holder.odds.getParent()).setTag(position);
                                 ((ViewGroup) holder.odds.getParent()).setClickable(true);

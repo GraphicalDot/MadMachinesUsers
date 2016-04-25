@@ -39,9 +39,9 @@
         android:id="@+id/progressbar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="fill_parent"
+        android:layout_height="@dimen/progress_bar_height"
         android:layout_gravity="center_vertical"
-        android:layout_height="@dimen/horizontal_padding_very_very_small"
-        android:background="@color/gray3"></ProgressBar>
+        android:progressDrawable="@drawable/progress_drawable"></ProgressBar>
 
     <TextView
         android:id="@+id/seek_msg"

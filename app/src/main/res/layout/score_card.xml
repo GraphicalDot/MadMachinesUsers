@@ -69,7 +69,7 @@
                     android:id="@+id/match_progress"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="@dimen/progress_bar_width"
-                    android:layout_height="4dp"
+                    android:layout_height="@dimen/progress_bar_height"
                     android:layout_below="@+id/minutes"
                     android:layout_centerHorizontal="true"
                     android:max="90"
