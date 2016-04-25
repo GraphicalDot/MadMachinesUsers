@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,56 +103,38 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
             }
         });
         errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.GONE);
     }
 
     @Override
     public void handleContent(String content) {
-        {
-
+        if (content.equals(Constants.ERRORRESPONSE)) {
+            showErrorLayout();
+        } else {
             try {
                 ArrayList<CommentriesModel> list = ScoresJsonParser.parseListOfMatchCommentaries(content);
                 if (list.size() > 0) {
-                    renderDisplay(list);
-                    swipeRefreshLayout.setVisibility(View.VISIBLE);
                     swipeRefreshLayout.setRefreshing(false);
+                    renderDisplay(list);
                 } else {
                     tvEmptyView.setVisibility(View.VISIBLE);
-
                 }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                showErrorLayout(getView());
+            } catch (Exception e) {
+                e.printStackTrace();
+                showErrorLayout();
             }
         }
     }
 
-    private void showErrorLayout(View view) {
-
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+    private void showErrorLayout() {
         errorLayout.setVisibility(View.VISIBLE);
-
     }
 
     private void renderDisplay(final ArrayList<CommentriesModel> list) throws JSONException {
-        ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
         commentaries.clear();
         tvEmptyView.setVisibility(View.GONE);
-        if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        commentaries.addAll(list);
-                        mAdapter.notifyDataSetChanged();
-                        swipeRefreshLayout.setRefreshing(false);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        showErrorLayout(getView());
-                    }
-                }
-            });
-        }
+        commentaries.addAll(list);
+        mAdapter.notifyDataSetChanged();
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
@@ -167,6 +150,8 @@ public class MatchCommentaryFragment extends Fragment implements MatchCommentary
         MatchCommentaryFragmentHandler.getInstance(mContext).addListener(this);
         if (matchStatus.equalsIgnoreCase("L")) {
             startTimer();
+        } else {
+            getCommentary();
         }
     }
 
