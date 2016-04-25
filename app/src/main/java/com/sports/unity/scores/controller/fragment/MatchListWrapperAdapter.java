@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.preference.PreferenceManager;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -290,21 +291,22 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                         public void onClick(View v) {
 
                                             registerNotificationMatch(key);
-                                      }
+                                        }
                                     });
-                               }
+                                }
 
                             } else {
                                 holder.notification.setVisibility(View.GONE);
                                 holder.odds.setVisibility(View.GONE);
                             }
-                       } else if (matchJsonCaller.getType().equals(ScoresJsonParser.FOOTBALL)) {
+                        } else if (matchJsonCaller.getType().equals(ScoresJsonParser.FOOTBALL)) {
                             footballMatchJsonCaller.setJsonObject(matchJsonObject);
                             cricketMatchJsonCaller.setJsonObject(null);
 
-                            String isttime = null;
+
+                            String isTime = null;
                             try {
-                                isttime = getLocalTime(footballMatchJsonCaller.getMatchTime()).substring(0, 5);
+                                isTime = getLocalTime(footballMatchJsonCaller.getMatchTime()).substring(0, 5);
                             } catch (ParseException e) {
                                 e.printStackTrace();
                             }
@@ -329,6 +331,10 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             holder.team1Overs.setVisibility(View.GONE);
                             holder.team2Overs.setVisibility(View.GONE);
 
+                            holder.matchMinutes.setVisibility(View.GONE);
+                            holder.matchProgressBar.setProgress(0);
+                            holder.matchProgressBar.setVisibility(View.GONE);
+
                             holder.venue.setText(footballMatchJsonCaller.getStadium());
                             holder.date.setVisibility(View.GONE);
 
@@ -345,16 +351,15 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                     holder.liveText.setVisibility(View.GONE);
                                     holder.team_score.setVisibility(View.GONE);
                                     holder.date.setVisibility(View.VISIBLE);
-                                    holder.date.setText(isttime);
+                                    holder.date.setText(isTime);
                                 } else {
                                     // holder.matchDay.setText("Upcoming");
                                     holder.matchDay.setVisibility(View.GONE);
                                     holder.liveText.setVisibility(View.GONE);
                                     holder.team_score.setVisibility(View.GONE);
                                     holder.date.setVisibility(View.VISIBLE);
-                                    holder.date.setText(isttime);
+                                    holder.date.setText(isTime);
                                 }
-
                             } else {
                                 if (footballMatchJsonCaller.isLive()) {
                                     holder.matchMinutes.setVisibility(View.VISIBLE);
@@ -484,12 +489,12 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     }
 
     private void registerNotificationMatch(String key) {
-        try{
+        try {
             tempKey = key;
             tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
             tokenRegistrationHandler.addListener(MatchListWrapperAdapter.this);
             tokenRegistrationHandler.registrerMatchUser(key, CommonUtil.getToken(activity));
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -501,7 +506,9 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             tokenRegistrationHandler = TokenRegistrationHandler.getInstance(activity);
             tokenRegistrationHandler.addListener(MatchListWrapperAdapter.this);
             tokenRegistrationHandler.removeMatchUser(key);
-        }catch (Exception e){e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -782,7 +789,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             final AlertDialog oddsDialog = oddsBuilder.create();
             oddsDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             try {
-                if (jsonObject.getString("status").equalsIgnoreCase("F") || jsonObject.getString("status").equalsIgnoreCase("FT")) {
+                if (matchDay.get(position).getStatus().equalsIgnoreCase("F") || matchDay.get(position).getStatus().equalsIgnoreCase("FT")) {
 
                 } else {
                     oddsDialog.show();
@@ -852,7 +859,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         public View mView = null;
         private TextView tvDayName;
         private TextView tvLeagueName;
-        private LinearLayout rvChild;
+        private CardView rvChild;
         private ImageView ivSportsIcon;
         private RelativeLayout leagueLayout;
 
@@ -888,7 +895,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                 leagueLayout = (RelativeLayout) view.findViewById(R.id.league_layout);
                 tvLeagueName = (TextView) view.findViewById(R.id.league_name);
                 ivSportsIcon = (ImageView) view.findViewById(R.id.iv_league);
-                rvChild = (LinearLayout) view.findViewById(R.id.child_rv);
+                rvChild = (CardView) view.findViewById(R.id.child_rv);
                 t1flag = (ImageView) rvChild.findViewById(R.id.t1flag);
                 team1 = (TextView) rvChild.findViewById(R.id.team1);
                 team_score = (TextView) rvChild.findViewById(R.id.team_score);
