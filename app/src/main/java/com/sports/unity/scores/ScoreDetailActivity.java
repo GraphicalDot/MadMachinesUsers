@@ -598,6 +598,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
                         getTvMatchDay.setText(time + "'");
                         try {
                             int progress = (int) (Integer.parseInt(time));
+                            mProgressBar.setVisibility(View.VISIBLE);
                             if (progress > 90 && progress <= 105) {
                                 mProgressBar.setMax(105);
                             } else if (progress > 105 && progress <= 120) {

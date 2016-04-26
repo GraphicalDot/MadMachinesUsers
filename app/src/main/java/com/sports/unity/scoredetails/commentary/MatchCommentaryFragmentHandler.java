@@ -18,19 +18,21 @@ import java.util.HashSet;
  */
 public class MatchCommentaryFragmentHandler {
     private static final String REQUEST_TAG = "MATCH_COMMENTARY_TAG";
-    private static Context mContext;
-    private String BASEURL = Constants.SCORE_BASE_URL;
+
     private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "v1/get_match_commentary?season_key=%s&match_id=%s";
     private static final String URL_PARAMS_FOR_FOOTBALL_COMMENTARY = "get_football_commentary?match_id=%s";
+    private static final String BASEURL = Constants.SCORE_BASE_URL;
+
+    private static MatchCommentaryFragmentHandler matchCommentaryFragmentHandler = null;
 
     private CommentaryListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
     public static MatchCommentaryFragmentHandler getInstance(Context context) {
-        mContext = context;
-        MatchCommentaryFragmentHandler completedMatchScoreCardHandler = null;
-        completedMatchScoreCardHandler = new MatchCommentaryFragmentHandler();
-        return completedMatchScoreCardHandler;
+        if( matchCommentaryFragmentHandler == null ) {
+            matchCommentaryFragmentHandler = new MatchCommentaryFragmentHandler();
+        }
+        return matchCommentaryFragmentHandler;
     }
 
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
@@ -64,11 +66,11 @@ public class MatchCommentaryFragmentHandler {
         Log.i("Score Detail", "Request Score Details");
         String url = null;
         if (sportsType.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
-            BASEURL = BASEURL + URL_PARAMS_FOR_CRICKET_COMMENTARY;
-            url = String.format(BASEURL, seriesId, matchId);
+            url = BASEURL + URL_PARAMS_FOR_CRICKET_COMMENTARY;
+            url = String.format(url, seriesId, matchId);
         } else if (sportsType.equalsIgnoreCase(ScoresJsonParser.FOOTBALL)) {
-            BASEURL = BASEURL + URL_PARAMS_FOR_FOOTBALL_COMMENTARY;
-            url = String.format(BASEURL, matchId);
+            url = BASEURL + URL_PARAMS_FOR_FOOTBALL_COMMENTARY;
+            url = String.format(url, matchId);
         }
 
         StringRequest stringRequest = null;

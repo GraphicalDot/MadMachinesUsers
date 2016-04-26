@@ -20,27 +20,31 @@ import java.util.HashSet;
  * Created by madmachines on 23/2/16.
  */
 public class CompletedFootballMatchStatHandler {
-
     private static final String REQUEST_TAG = "COMPLETED_FOOTABLL_MATCH_TAG";
-    private static Context mContext;
-    private String BASEURL = Constants.SCORE_BASE_URL+"/get_match_stats?match_id=";
+    private static final String BASEURL = Constants.SCORE_BASE_URL+"/get_match_stats?match_id=";
+
+    private static CompletedFootballMatchStatHandler completedFootballMatchStatHandler = null;
 
     private CompletedFootballMatchContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
     public static CompletedFootballMatchStatHandler getInstance(Context context) {
-        mContext = context;
-        CompletedFootballMatchStatHandler completedMatchScoreCardHandler =  new CompletedFootballMatchStatHandler();
-        return completedMatchScoreCardHandler;
+        if( completedFootballMatchStatHandler == null ) {
+            completedFootballMatchStatHandler = new CompletedFootballMatchStatHandler();
+        }
+        return completedFootballMatchStatHandler;
     }
+
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
+
     public interface CompletedFootballMatchContentListener {
 
         void handleContent(String content);
 
     }
+
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
 
         @Override
@@ -69,18 +73,15 @@ public class CompletedFootballMatchStatHandler {
     }
     private void handleResponse(String response) {
         try{
-
             Log.i("Score Card", "handleResponse: ");
-
+            if( mContentListener != null ) {
                 mContentListener.handleContent(response);
-
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
-
     }
+
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
         try{

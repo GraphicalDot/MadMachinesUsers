@@ -23,19 +23,24 @@ public class LiveFootballMatchLineUpHandler {
 
     private static final String REQUEST_TAG = "LIVE_FOOTBALL_MATCH_TAG";
     private static Context mContext;
-    private String BASEURL = Constants.SCORE_BASE_URL+"/get_match_squads?match_id=";
+    private static final String BASEURL = Constants.SCORE_BASE_URL+"/get_match_squads?match_id=";
+
+    private static LiveFootballMatchLineUpHandler liveFootballMatchLineUpHandler = null;
 
     private LiveMatchContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
     public static LiveFootballMatchLineUpHandler getInstance(Context context) {
-        mContext = context;
-        LiveFootballMatchLineUpHandler completedMatchScoreCardHandler = new LiveFootballMatchLineUpHandler();
-        return completedMatchScoreCardHandler;
+        if( liveFootballMatchLineUpHandler == null ) {
+            liveFootballMatchLineUpHandler = new LiveFootballMatchLineUpHandler();
+        }
+        return liveFootballMatchLineUpHandler;
     }
+
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
+
     public interface LiveMatchContentListener {
 
         void handleContent(String object);
