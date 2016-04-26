@@ -23,26 +23,34 @@ import java.util.HashSet;
  */
 public class LivedMatchScoreCardHandler {
     private static final String REQUEST_TAG = "LIVE_CRICKET_MATCH_TAG";
-    private static Context mContext;
-    private String BASEURL = Constants.SCORE_BASE_URL+"/v1/get_match_scorecard?season_key=%s&match_id=%s";
+    private Context mContext;
+    private static final String BASEURL = Constants.SCORE_BASE_URL + "/v1/get_match_scorecard?season_key=%s&match_id=%s";
+    private static LivedMatchScoreCardHandler livedMatchScoreCardHandler = null;
 
     private LiveMatchContentListener mContentListener;
     private HashSet<String> requestInProcess = new HashSet<>();
 
+    public LivedMatchScoreCardHandler(Context context) {
+        this.mContext = context;
+    }
+
     public static LivedMatchScoreCardHandler getInstance(Context context) {
-        LivedMatchScoreCardHandler livedMatchScoreCardHandler = null;
-        livedMatchScoreCardHandler = new LivedMatchScoreCardHandler();
-        mContext = context;
+        if (livedMatchScoreCardHandler == null) {
+            livedMatchScoreCardHandler = new LivedMatchScoreCardHandler(context);
+        }
         return livedMatchScoreCardHandler;
     }
+
     private interface ResponseListener extends Response.Listener<String>, Response.ErrorListener {
 
     }
+
     public interface LiveMatchContentListener {
 
         void handleContent(String content);
 
     }
+
     private ResponseListener responseListener_ForLoadContent = new ResponseListener() {
 
         @Override
@@ -57,35 +65,36 @@ public class LivedMatchScoreCardHandler {
             LivedMatchScoreCardHandler.this.handleErrorResponse(volleyError);
         }
     };
-    public void requestMatchScoreCard(String seriesId ,String matchId) {
-        Log.i("Score Detail", "Request Score Details");
 
-        String url = String.format(BASEURL,seriesId,matchId);
+    public void requestMatchScoreCard(String seriesId, String matchId) {
+        Log.i("Score Detail", "Request Score Details");
+        String url = String.format(BASEURL, seriesId, matchId);
         StringRequest stringRequest = null;
-        stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent,responseListener_ForLoadContent);
+        stringRequest = new StringRequest(Request.Method.GET, url, responseListener_ForLoadContent, responseListener_ForLoadContent);
         VolleyRequestHandler.getInstance().addToRequestQueue(stringRequest);
 
         requestInProcess.add(REQUEST_TAG);
     }
+
     private void handleResponse(String response) {
 
-        try{
+        try {
 
             Log.i("Score Card", "handleResponse: ");
 
-                mContentListener.handleContent(response);
+            mContentListener.handleContent(response);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
-
     }
+
     private void handleErrorResponse(VolleyError volleyError) {
         Log.i("News Content Handler", "Error Response " + volleyError.getMessage());
 
-        try{
+        try {
             Log.i("Score Card", "handleResponse: ");
             mContentListener.handleContent(Constants.ERRORRESPONSE);
         } catch (Exception e) {
@@ -93,7 +102,7 @@ public class LivedMatchScoreCardHandler {
         }
 
 
-         }
+    }
 
     public void addListener(LiveMatchContentListener contentListener) {
         mContentListener = contentListener;

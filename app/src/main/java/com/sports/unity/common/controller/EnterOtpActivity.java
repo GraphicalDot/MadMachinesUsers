@@ -442,12 +442,6 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
         final ProgressBar mProgressBar = (ProgressBar) layout.findViewById(R.id.progressbar);
         mProgressBar.setMax(lennghtInMillis / 1000);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mProgressBar.setProgressTintList(ColorStateList.valueOf(getResources().getColor(R.color.app_theme_blue)));
-        } else {
-            mProgressBar.getProgressDrawable().setColorFilter(
-                    getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.SRC_IN);
-        }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this)
                 .setView(layout);

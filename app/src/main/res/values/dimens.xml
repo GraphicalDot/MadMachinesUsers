@@ -196,4 +196,5 @@
 
     <!--MatchList score progress related-->
     <dimen name="progress_bar_width">30dp</dimen>
+    <dimen name="progress_bar_height">3dp</dimen>
 </resources>

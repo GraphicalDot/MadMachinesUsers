@@ -24,7 +24,7 @@ public class CricketCompletedMatchSummaryHandler {
     private static final String REQUEST_TAG = "COMPLETED_SUMMARY_TAG";
     private static Context mContext;
     //private String url = "http://52.74.75.79:8080/get_cricket_match_summary?match_key=";
-    private String BASEURL = Constants.SCORE_BASE_URL+"/v1/get_cricket_match_summary?season_key=%s&match_id=%s";
+    private final String BASEURL = Constants.SCORE_BASE_URL+"/v1/get_cricket_match_summary?season_key=%s&match_id=%s";
 
     private CricketCompletedMatchSummaryContentListener mcontentListener;
     private HashSet<String> requestInProcess = new HashSet<>();

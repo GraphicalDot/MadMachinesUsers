@@ -50,8 +50,7 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
     private int baseWidth;
 
     private SwipeRefreshLayout swipeRefreshLayout;
-    private CompletedFootballMatchStatHandler completedFootballMatchStatHandler;
-    private boolean autRefreshEnabled;
+
     private Timer timerToRefreshContent;
     private Context context;
 
@@ -67,35 +66,21 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
         DisplayMetrics metrics = new DisplayMetrics();
         getActivity().getWindowManager().getDefaultDisplay().getMetrics(metrics);
         baseWidth = (int) (metrics.widthPixels * .40);
+
         Intent i = getActivity().getIntent();
         matchName = i.getStringExtra(Constants.INTENT_KEY_MATCH_NAME);
         matchId = i.getStringExtra(Constants.INTENT_KEY_ID);
-        requestLiveMathStats();
-        enableAutoRefreshContent();
-
-    }
-
-    private void requestLiveMathStats() {
-        completedFootballMatchStatHandler = CompletedFootballMatchStatHandler.getInstance(context);
-        completedFootballMatchStatHandler.addListener(this);
-        completedFootballMatchStatHandler.requestCompledFootabllMatchStat(matchId);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_completed_football_match_stats, container, false);
         initView(view);
-
-
         return view;
     }
 
     private void initView(View view) {
         try {
-
             rvFootballMatchStat = (RecyclerView) view.findViewById(R.id.rv_football_match_stat);
             //rvFootballMatchStat.setHasFixedSize(true);
             rvFootballMatchStat.setNestedScrollingEnabled(false);
@@ -110,36 +95,39 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
-                    if (completedFootballMatchStatHandler != null) {
-                        completedFootballMatchStatHandler.requestCompledFootabllMatchStat(matchId);
-                        swipeRefreshLayout.setRefreshing(true);
-                    }
+                    requestLiveMathStats();
+                    swipeRefreshLayout.setRefreshing(true);
                 }
             });
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
-    private void enableAutoRefreshContent(){
+
+    private void startTimer() {
+        cancelTimer();
+
         timerToRefreshContent = new Timer();
-        if(autRefreshEnabled){
-            timerToRefreshContent.schedule(new TimerTask() {
-
-                @Override
-                public void run() {
-                    requestLiveMathStats();
-                }
-
-            }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
-        }else{
-            timerToRefreshContent.cancel();
-        }
-
+        timerToRefreshContent.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                requestLiveMathStats();
+            }
+        }, 0, Constants.TIMEINMILISECOND);
     }
+
+    private void cancelTimer() {
+        if (timerToRefreshContent != null) {
+            timerToRefreshContent.cancel();
+            timerToRefreshContent.purge();
+            timerToRefreshContent = null;
+        }
+    }
+
+    private void requestLiveMathStats() {
+        CompletedFootballMatchStatHandler.getInstance(context).requestCompledFootabllMatchStat(matchId);
+    }
+
     private void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
     }
@@ -150,22 +138,19 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
 
     @Override
     public void handleContent(String object) {
-        {
+        try {
+            showProgressBar();
+            JSONObject jsonObject = new JSONObject(object);
+            boolean success = jsonObject.getBoolean("success");
+            if (success) {
 
-            try {
-                showProgressBar();
-                JSONObject jsonObject = new JSONObject(object);
-                boolean success = jsonObject.getBoolean("success");
-                if (success) {
-
-                    renderDisplay(jsonObject);
-                } else {
-                    showErrorLayout(getView());
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                renderDisplay(jsonObject);
+            } else {
                 showErrorLayout(getView());
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            showErrorLayout(getView());
         }
     }
 
@@ -179,10 +164,8 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
     }
 
     private void showErrorLayout(View view) {
-
         LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.VISIBLE);
-
     }
 
     private void renderDisplay(final JSONObject jsonObject) throws JSONException {
@@ -278,25 +261,18 @@ public class LiveFootballMatchStatFragment extends Fragment implements Completed
 
     @Override
     public void onResume() {
-
         super.onResume();
-        autRefreshEnabled = false;
-        if (completedFootballMatchStatHandler != null) {
-            completedFootballMatchStatHandler.addListener(this);
-        } else {
-            completedFootballMatchStatHandler = CompletedFootballMatchStatHandler.getInstance(getContext());
-            completedFootballMatchStatHandler.addListener(this);
-        }
-        completedFootballMatchStatHandler.requestCompledFootabllMatchStat(matchId);
+
+        CompletedFootballMatchStatHandler.getInstance(getContext()).addListener(this);
+        startTimer();
     }
 
     @Override
     public void onPause() {
-
         super.onPause();
-        autRefreshEnabled = true;
-        if (completedFootballMatchStatHandler != null)
-            completedFootballMatchStatHandler = null;
 
+        cancelTimer();
+        CompletedFootballMatchStatHandler.getInstance(getContext()).addListener(null);
     }
+
 }
