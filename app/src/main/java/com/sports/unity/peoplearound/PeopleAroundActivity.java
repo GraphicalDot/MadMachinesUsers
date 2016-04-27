@@ -189,8 +189,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             tabs.setVisibility(View.VISIBLE);
             if (tag.equals(REQUEST_TAG)) {
                 if (responseCode == 200) {
-
-
                     peoplesNearMe = ScoresJsonParser.parseListOfNearByUsers(content);
                     ArrayList<Person> people = peoplesNearMe.getPersons();
                     peopleFriends.clear();
@@ -224,58 +222,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         tokenRegistrationHandler.addListener(this);
         tokenRegistrationHandler.setUserPrivacyPolicy(userLocation);
     }
-
-  /*private void bindAutoComplete() {
-        PlaceAutocompleteFragment fragment = (PlaceAutocompleteFragment) getFragmentManager()
-                .findFragmentById(R.id.custom_location);
-        fragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                customLocation = true;
-                findViewById(R.id.fl_custom_location).setVisibility(GONE);
-                getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LATITUDE, place.getLatLng().latitude);
-                getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LONGITUDE, place.getLatLng().longitude);
-                titleAddress.setText(place.getAddress());
-                titleCity.setText(place.getName());
-                latLong = place.getLatLng();
-                getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
-            }
-
-            @Override
-            public void onError(Status status) {
-                customLocation = false;
-                findViewById(R.id.fl_custom_location).setVisibility(GONE);
-                Toast.makeText(getApplicationContext(), getText(R.string.oops_try_again), LENGTH_LONG).show();
-            }
-        });
-    }*/
-
-
-    public void setCustomButtonsForNavigationAndUsers() {
-       /*FloatingActionButton myLocation = (FloatingActionButton)findViewById(R.id.myLocation);
-        myLocation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                customLocation = false;
-                boolean success = checkIfGPSEnabled();
-                if (success) {
-                    getLocation();
-                }
-            }
-        });*/
-        /*ImageView refreshUsers = (ImageView) findViewById(R.id.refreshUsers);
-        refreshUsers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (latLong != null) {
-                    getPeopleAroundMe(latLong.latitude, latLong.longitude);
-                }
-
-            }
-        });*/
-    }
-
-
 
     private void InitSeekbar() {
         TextView distanceText = (TextView) findViewById(R.id.distance_text);
