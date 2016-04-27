@@ -48,7 +48,10 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-
+        if(context instanceof  DataRequestService){
+            DataRequestService dataRequestService = (DataRequestService) context;
+            dataRequestService.dataRequest();
+        }
     }
 
 
@@ -63,6 +66,7 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
         View v = inflater.inflate(R.layout.fragment_people_around_me, container, false);
         initViews(v);
         initProgress(v);
+
         return v;
     }
 
@@ -77,6 +81,8 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
         recyclerview.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
         recyclerview.setAdapter(mAdapter);
         mAdapter.notifyDataSetChanged();
+
+        hideProgress();
 
     }
 
@@ -93,7 +99,7 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
     }
 
     private void initProgress(View view) {
-        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
+        progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
     }
 
@@ -105,13 +111,21 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
     }
 
     private void hideProgress() {
-        progressBar.setVisibility(View.GONE);
+        if(progressBar!=null){
+
+            progressBar.setVisibility(View.GONE);
+        }
+
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
+        if(context instanceof  DataRequestService){
+            DataRequestService dataRequestService = (DataRequestService) context;
+            dataRequestService.dataRequest();
+        }
     }
 
     @Override
@@ -119,20 +133,13 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
         super.onPause();
     }
 
-
     @Override
     public void notifyPeoples() {
         Log.i("notifyPeoples", "notifyPeoples: " + peoples);
 
 
         if(mAdapter!=null){
-        if(peoples.size()==0){
-            recyclerview.setVisibility(View.GONE);
-            emptyView.setVisibility(View.VISIBLE);
-        }else{
-            recyclerview.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.GONE);
-        }
+            renderUsers();
             recyclerview.postInvalidate();
             mAdapter.notifyDataSetChanged();
            final  PeopleAroundActivity activity  = (PeopleAroundActivity) getActivity();
@@ -157,4 +164,25 @@ public class PeopleAroundMeFragment extends Fragment implements DataNotifier {
         }
 
     }
+
+    private void renderUsers() {
+        hideProgress();
+        if(peoples.size()==0){
+            recyclerview.setVisibility(View.GONE);
+            emptyView.setVisibility(View.VISIBLE);
+
+        }else{
+            recyclerview.setVisibility(View.VISIBLE);
+            emptyView.setVisibility(View.GONE);
+        }
+
+    }
+
+    public  interface DataRequestService{
+        void dataRequest();
+        void cancelRequest();
+    }
+
+
+
 }

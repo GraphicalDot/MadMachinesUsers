@@ -98,6 +98,7 @@ public class NewsContentHandler {
 
         @Override
         public void onResponse(String s) {
+
             requestInProcess.remove(REQUEST_CONTENT_TAG);
             NewsContentHandler.this.handleResponse(s);
         }
