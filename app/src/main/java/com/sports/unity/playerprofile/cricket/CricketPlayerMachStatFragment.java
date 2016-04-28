@@ -36,7 +36,7 @@ import static android.view.View.VISIBLE;
 /**
  * Created by madmachines on 15/2/16.
  */
-public class CricketPlayerMachStatFragment extends Fragment {
+public class CricketPlayerMachStatFragment extends Fragment implements  IDataRequestService{
     Map<String, String> battingTestsmatchMap = new HashMap<String, String>();
     Map<String, String> battingOdisMap = new HashMap<String, String>();
     Map<String, String> battingT20sMap = new HashMap<String, String>();
@@ -358,4 +358,12 @@ public class CricketPlayerMachStatFragment extends Fragment {
 
     }
 
+    @Override
+    public void renderData(JSONObject jsonObject) {
+        try {
+            renderDisplay(jsonObject);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -23,7 +23,7 @@ import org.json.JSONObject;
 /**
  * Created by madmachines on 15/2/16.
  */
-public class CricketPlayerBioFragment extends Fragment {
+public class CricketPlayerBioFragment extends Fragment  implements  IDataRequestService{
 
     private TextView tvPlayerbirthOfPlace;
     private TextView tvPlayerDateOfBirth;
@@ -115,4 +115,8 @@ public class CricketPlayerBioFragment extends Fragment {
 
     }
 
+    @Override
+    public void renderData(JSONObject jsonObject) {
+        renderDisplay(jsonObject);
+    }
 }

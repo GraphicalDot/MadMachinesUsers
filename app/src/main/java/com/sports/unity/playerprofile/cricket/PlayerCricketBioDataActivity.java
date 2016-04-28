@@ -3,8 +3,10 @@ package com.sports.unity.playerprofile.cricket;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
@@ -16,7 +18,9 @@ import com.sports.unity.R;
 import com.sports.unity.common.view.CustomViewPager;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.common.viewhelper.VolleyCallComponentHelper;
+import com.sports.unity.peoplearound.DataNotifier;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
 
@@ -32,6 +36,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
 
     private static final String REQUEST_LISTENER_KEY = "PLAYER_PROFILE_SCREEN_LISTENER";
     private static final String PLAYER_PROFILE_REQUEST_TAG = "CRICKET_PLAYER_BIO_TAG";
+    private JSONObject playerProfileBio;
 
     public static Intent createIntent(Context context, String playerId, String playerName) {
         Intent intent = new Intent(context, PlayerCricketBioDataActivity.class);
@@ -69,8 +74,7 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
 
     @Override
     public VolleyCallComponentHelper getVolleyCallComponentHelper() {
-        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper( REQUEST_LISTENER_KEY, null);
-//        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper( REQUEST_LISTENER_KEY, new NewsDetailComponentListener(progressBar, null));
+        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper( REQUEST_LISTENER_KEY, new PlayerCricketBioComponentListener(progressBar, null));
         return volleyCallComponentHelper;
     }
 
@@ -196,4 +200,64 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             //do nothing
         }
     }
+
+
+
+    private boolean handlePlayerCricketBioResponse(String response){
+        boolean success = false;
+        try{
+            JSONObject responseJson = new JSONObject(response);
+            if( responseJson.getBoolean("success") ){
+                playerProfileBio = responseJson.getJSONObject("result");
+
+                success = true;
+            } else {
+                success = false;
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return success;
+    }
+    private class PlayerCricketBioComponentListener extends CustomComponentListener {
+
+        public PlayerCricketBioComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
+            super( PLAYER_PROFILE_REQUEST_TAG, progressBar, errorLayout);
+        }
+
+        @Override
+        public void handleErrorContent(String tag) {
+            //nothing
+        }
+
+        @Override
+        public boolean handleContent(String tag, String content) {
+            return PlayerCricketBioDataActivity.this.handlePlayerCricketBioResponse(content);
+        }
+
+        @Override
+        public void changeUI(String tag) {
+            boolean success = renderResponse();
+            if( ! success ){
+                showErrorLayout();
+            } else {
+                //nothing
+            }
+        }
+
+    }
+
+    private boolean renderResponse() {
+        boolean success = false;
+        if (playerProfileBio != null) {
+            for(Fragment fragment: getSupportFragmentManager().getFragments()){
+                if(fragment instanceof IDataRequestService) {
+                    IDataRequestService listner = (IDataRequestService)fragment;
+                    listner.renderData(playerProfileBio);
+                }
+            }
+        }
+        return  success;
+    }
+
 }
