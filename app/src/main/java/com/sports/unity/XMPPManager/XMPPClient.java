@@ -7,6 +7,7 @@ import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
+import com.sports.unity.util.GlobalEventHandler;
 
 import org.jivesoftware.smack.ConnectionConfiguration;
 import org.jivesoftware.smack.ConnectionListener;
@@ -18,6 +19,8 @@ import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.provider.ProviderManager;
+import org.jivesoftware.smack.sasl.SASLErrorException;
+import org.jivesoftware.smack.sasl.packet.SaslStreamElements;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnectionConfiguration;
 import org.joda.time.DateTime;
@@ -111,7 +114,11 @@ public class XMPPClient {
             addCustomExtensions();
 
             if (success) {
-                ReadReceiptManager.getInstanceFor(connection);
+                if( connection != null && connection.isConnected() ) {
+                    ReadReceiptManager.getInstanceFor(connection);
+                } else {
+                    success = false;
+                }
             } else {
 
             }
@@ -147,6 +154,19 @@ public class XMPPClient {
                     success = true;
 
                     //PubSubMessaging.getInstance(context).getJoinedGroups(context);
+                } catch (SASLErrorException e) {
+                    Log.d("#####", "" + e.getMessage() + "saslerror> " + e.getSASLFailure());
+                    if (e.getMessage().equals("SASLError using SCRAM-SHA-1: bad-auth")) {
+                        try {
+                            ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(connection);
+                            reconnectionManager.disableAutomaticReconnection();
+                            XMPPClient.getInstance().closeConnection();
+                        } catch (Exception conException) {
+                            conException.printStackTrace();
+                        }
+                        GlobalEventHandler.getInstance().onConnectionReplaced(e);
+                    }
+                    e.printStackTrace();
                 } catch (XMPPException e) {
                     e.printStackTrace();
                 } catch (SmackException e) {
@@ -242,7 +262,7 @@ public class XMPPClient {
         ProviderManager.addExtensionProvider(ReadReceipt.ELEMENT, ReadReceipt.NAMESPACE, new ReadReceipt.Provider());
     }
 
-    private void closeConnection() {
+    public void closeConnection() {
         connection.disconnect();
         connection = null;
     }

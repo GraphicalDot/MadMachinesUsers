@@ -3,6 +3,7 @@ package com.sports.unity.common.controller;
 import android.Manifest;
 import android.animation.LayoutTransition;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
@@ -16,6 +17,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
@@ -44,6 +46,7 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.ControlledSwipeViewPager;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.messages.controller.activity.GroupDetailActivity;
 import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
@@ -54,6 +57,8 @@ import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.network.LocManager;
 
+import org.jivesoftware.smack.ReconnectionManager;
+import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -94,6 +99,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
     private FloatingActionMenu fabMenu;
     private View backgroundDimmer;
+    private boolean isConnectionReplaced = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -188,12 +194,12 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             @Override
             public void onClick(View v) {
                 if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-                   // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
+                    // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
                     Intent intent = new Intent(MainActivity.this, PeopleAroundActivity.class);
                     startActivity(intent);
                 } else {
                     if (PermissionUtil.getInstance().requestPermission(MainActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)), getResources().getString(R.string.location_permission_message), Constants.REQUEST_CODE_LOCATION_PERMISSION)) {
-                       // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
+                        // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
                         Intent intent = new Intent(MainActivity.this, PeopleAroundActivity.class);
                         startActivity(intent);
                     }
@@ -582,5 +588,36 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
     public interface ContactSyncListener {
         public void onSyncComplete();
+    }
+
+    @Override
+    public void onConnectionReplaced(Exception e) {
+        super.onConnectionReplaced(e);
+        if (!isConnectionReplaced) {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    showConnectionReplacedDialog();
+                }
+            });
+        }
+    }
+
+    public void showConnectionReplacedDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setMessage(R.string.connection_replaced_msg);
+        builder.setPositiveButton(R.string.verify, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                UserUtil.setOtpSent(MainActivity.this, false);
+                UserUtil.setUserRegistered(MainActivity.this, false);
+                Intent intent = new Intent(MainActivity.this, EnterPhoneActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+        AlertDialog dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.show();
     }
 }

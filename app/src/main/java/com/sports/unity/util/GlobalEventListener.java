@@ -13,4 +13,6 @@ public interface GlobalEventListener {
     public void onXMPPServiceAuthenticated(boolean connected, XMPPConnection connection);
 
     public void onReconnecting(int seconds);
+
+    public void onConnectionReplaced(Exception e);
 }

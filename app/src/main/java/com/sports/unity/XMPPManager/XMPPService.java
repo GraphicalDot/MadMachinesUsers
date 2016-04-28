@@ -35,6 +35,7 @@ import com.sports.unity.util.NotificationHandler;
 
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
@@ -435,6 +436,8 @@ public class XMPPService extends Service {
 
                 PersonalMessaging.getInstance(XMPPService.this).updateBlockList(XMPPService.this);
                 GlobalEventHandler.getInstance().xmppServerConnected(true, connection);
+
+                ContactsHandler.getInstance().addCallToProcessPendingActions(XMPPService.this);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -450,7 +453,18 @@ public class XMPPService extends Service {
         @Override
         public void connectionClosedOnError(Exception e) {
             Log.i("connection", "closed on error");
-
+            Log.d("max", "Type connection closed on error> " + e.getMessage());
+            if (e.getMessage().contains("Replaced by new connection")) {
+                try {
+                    ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(XMPPClient.getConnection());
+                    reconnectionManager.disableAutomaticReconnection();
+                    XMPPClient.getInstance().closeConnection();
+                } catch (Exception conException) {
+                    conException.printStackTrace();
+                }
+                GlobalEventHandler.getInstance().onConnectionReplaced(e);
+            }
+            e.printStackTrace();
             GlobalEventHandler.getInstance().xmppServerConnected(false, null);
         }
 
@@ -468,6 +482,18 @@ public class XMPPService extends Service {
 
         @Override
         public void reconnectionFailed(Exception e) {
+
+            Log.d("max", "Type reconnection failed> " + e.getMessage());
+            if (e.getMessage().equals("SASLError using SCRAM-SHA-1: bad-auth")) {
+                try {
+                    ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(XMPPClient.getConnection());
+                    reconnectionManager.disableAutomaticReconnection();
+                    XMPPClient.getInstance().closeConnection();
+                } catch (Exception conException) {
+                    conException.printStackTrace();
+                }
+                GlobalEventHandler.getInstance().onConnectionReplaced(e);
+            }
             Log.i("reconnection", "failed");
 
         }

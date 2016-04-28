@@ -45,6 +45,7 @@ public class ContactsHandler {
     private static final int CONTACT_PENDING_ACTION_UPDATE_USER_FAVORITES = 11;
     private static final int CONTACT_PENDING_ACTION_UPDATE_VCARD = 17;
     private static final int CONTACT_PENDING_ACTION_GET_GROUPS_LIST = 19;
+    private static final int CONTACT_PENDING_ACTION_UPDATE_USER_INFO = 23;
 
     private static final int CONTACT_PENDING_ACTION_DEFAULT_VALUE = CONTACT_PENDING_ACTION_COPY_LOCALLY * CONTACT_PENDING_ACTION_FETCH_JID * CONTACT_PENDING_ACTION_GET_GROUPS_LIST;
 
@@ -97,6 +98,16 @@ public class ContactsHandler {
 
     synchronized public void addCallToUpdateUserFavorites(Context context) {
         addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_UPDATE_USER_FAVORITES);
+
+        if (!inProcess) {
+            process(context);
+        } else {
+            //nothing
+        }
+    }
+
+    synchronized public void addCallToUpdateCompleteUserProfile(Context context) {
+        addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_UPDATE_USER_INFO);
 
         if (!inProcess) {
             process(context);
@@ -555,7 +566,18 @@ public class ContactsHandler {
         private void processPendingActions(Context context) {
             {
                 int pendingActions = TinyDB.getInstance(context).getInt(TinyDB.KEY_ALL_CONTACTS_SYNC_STATUS, CONTACT_PENDING_ACTION_DEFAULT_VALUE);
-                if (isPendingAction(pendingActions, CONTACT_PENDING_ACTION_COPY_LOCALLY)) {
+                if (isPendingAction(pendingActions, CONTACT_PENDING_ACTION_UPDATE_USER_INFO)) {
+                    Log.d("ContactsHandler", "update login user info on server");
+
+                    boolean success = UserProfileHandler.getInstance().submitUserCompleteProfile(context);
+                    if (success) {
+                        //nothing
+                    } else {
+                        failedActions = addPendingAction(failedActions, CONTACT_PENDING_ACTION_UPDATE_USER_INFO);
+                    }
+
+                    onCompleteActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_UPDATE_USER_INFO);
+                } else if (isPendingAction(pendingActions, CONTACT_PENDING_ACTION_COPY_LOCALLY)) {
                     Log.d("ContactsHandler", "copy contacts");
 
                     if (isContactAccessGranted(context)) {

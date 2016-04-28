@@ -41,9 +41,9 @@ public class SplashScreenActivity extends AppCompatActivity {
         if (UserUtil.isUserRegistered()) {
             if (UserUtil.isProfileCreated()) {
                 if (UserUtil.isSportsSelected()) {
-                    if(UserUtil.isFilterCompleted()) {
+                    if (UserUtil.isFilterCompleted()) {
                         moveToNextActivity(MainActivity.class);
-                    }else{
+                    } else {
                         moveToNextActivity(SelectSportsActivity.class);
                     }
                 } else {
@@ -56,7 +56,11 @@ public class SplashScreenActivity extends AppCompatActivity {
             if (UserUtil.isOtpSent()) {
                 moveToNextActivity(EnterOtpActivity.class);
             } else {
-                show();
+                if (!UserUtil.isFilterCompleted()) {
+                    show();
+                } else {
+                    moveToNextActivity(EnterPhoneActivity.class);
+                }
             }
         }
 
@@ -75,12 +79,12 @@ public class SplashScreenActivity extends AppCompatActivity {
         ContactsHandler.getInstance().addCallToSyncContacts(context);
     }
 
-    private void showScreenSize(){
+    private void showScreenSize() {
         int screenSize = getResources().getConfiguration().screenLayout &
                 Configuration.SCREENLAYOUT_SIZE_MASK;
 
         String toastMsg;
-        switch(screenSize) {
+        switch (screenSize) {
             case Configuration.SCREENLAYOUT_SIZE_XLARGE:
                 toastMsg = "XLarge screen";
                 break;
