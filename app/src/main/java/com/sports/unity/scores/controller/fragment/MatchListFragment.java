@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.common.controller.FilterActivity;
@@ -28,6 +29,7 @@ import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.util.Constants;
@@ -39,7 +41,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -74,13 +75,13 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         bundle = getArguments();
         if (bundle != null) {
             scoreDetailsId = bundle.getString(Constants.INTENT_KEY_ID);
             isStaffPicked = bundle.getBoolean(Constants.SPORTS_TYPE_STAFF, false);
             favouriteItem = new FavouriteItem(scoreDetailsId);
             scoreDetailsId = favouriteItem.getId();
-
         }
     }
 
@@ -105,9 +106,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
-
         if (id == R.id.action_search) {
 //            Intent intent = new Intent(getActivity(), NewsSearchActivity.class);
 //            startActivity(intent);
@@ -128,6 +127,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
 
                     requestContent();
                     mSwipeRefreshLayout.setRefreshing(true);
+
                 }
 
             });
@@ -201,7 +201,6 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
         matchListWrapperAdapter = new MatchListWrapperAdapter(dataItem, getActivity(), this, shouldShowBanner);
         mWraperRecyclerView.setAdapter(matchListWrapperAdapter);
 
-        initErrorLayout(view);
         hideErrorLayout(view);
 
         initProgress(view);
@@ -478,19 +477,7 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
                 }
             }
 
-
             Collections.sort(dataItem);
-            /*for(int i = 0 ; i<matchList.size();i++)
-            { MatchListWrapperDTO tempDTO= matchList.get(i);
-                dayCount = DateUtil.getDayFromEpochTimeDayCount(tempDTO.getEpochTime() * 1000, getContext());
-                if(dayCount == 0){
-                    todayIndexPosition= i;
-                    break;
-                }
-            }*/
-            // mWraperRecyclerView.getLayoutManager().moveView(todayIndexPosition, 0);
-            // mWraperRecyclerView.getLayoutManager().scrollToPosition(todayIndexPosition);
-            //mWraperRecyclerView.getLayoutManager().moveView(0, todayIndexPosition);
         }
         return success;
     }
@@ -508,25 +495,18 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
 //
 //    }
 
-    private void initErrorLayout(View view) {
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-
-        TextView oops = (TextView) errorLayout.findViewById(R.id.oops);
-        oops.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
-
-        TextView something_wrong = (TextView) errorLayout.findViewById(R.id.something_wrong);
-        something_wrong.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
-    }
-
     private void showErrorLayout(View view) {
         if (matches.size() == 0) {
-            LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+            ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
             errorLayout.setVisibility(View.VISIBLE);
+            CustomComponentListener.renderAppropriateErrorLayout(errorLayout);
+        } else {
+            Toast.makeText(getActivity(), R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void hideErrorLayout(View view) {
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.GONE);
     }
 
@@ -569,15 +549,6 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
             parameters.put(Constants.SPORTS_TYPE_STAFF, String.valueOf(isStaffPicked));
             ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_MATCHES_LIST, parameters, LIST_LISTENER_KEY, LIST_OF_MATCHES_REQUEST_TAG);
         }
-//        ScoresContentHandler.getInstance().requestListOfMatches(LIST_LISTENER_KEY, LIST_OF_MATCHES_REQUEST_TAG);
-
-//        Calendar c = Calendar.getInstance();
-//        SimpleDateFormat df = new SimpleDateFormat("dd.MM.yyyy");
-//        String formattedDate = df.format(c.getTime());
-//
-//        String liveScore = "http://52.74.142.219:8080/get_league_fixtures?league_id=1204&date=" + formattedDate;
-//        String URL_UPCOMING_MATCHES = "http://52.74.142.219:8080/get_football_upcoming_fixtures";
-//
     }
 
 

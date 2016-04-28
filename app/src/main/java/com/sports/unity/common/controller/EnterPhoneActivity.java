@@ -20,14 +20,13 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
-import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class EnterPhoneActivity extends CustomVolleyCallerActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class EnterPhoneActivity extends CustomAppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private View.OnClickListener viewClickListener = new View.OnClickListener() {
 

@@ -19,13 +19,10 @@ import java.util.ArrayList;
  * Created by cfeindia on 3/2/16.
  */
 public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapter {
-
-
     private String titles[];
     private int numberOfTabs;
     private ArrayList<CommentriesModel> commentries;
     private String matchStatus;
-
 
     public ViewPagerCricketScoreDetailAdapter(FragmentManager fm, String[] titles, int numberOfTabs, ArrayList<CommentriesModel> commentries, String matchStatus) {
         super(fm);

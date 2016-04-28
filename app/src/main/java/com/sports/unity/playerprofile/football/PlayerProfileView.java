@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -16,6 +17,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
+import com.sports.unity.common.viewhelper.CustomComponentListener;
+import com.sports.unity.common.viewhelper.VolleyCallComponentHelper;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
 
@@ -34,6 +37,13 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 public class PlayerProfileView extends CustomVolleyCallerActivity {
 
+    private static final String REQUEST_LISTENER_KEY = "PLAYER_PROFILE_SCREEN_LISTENER";
+    private static final String PLAYER_PROFILE_REQUEST_TAG = "PLAYER_PROFILE_TAG";
+
+    private String playerNameKey;
+    private List<PlayerScoreCardDTO> playerScoreCardDTOs = new ArrayList<>();
+
+    private JSONObject playerJSONObject = null;
 
     private CircleImageView playerProfileImage;
     private ImageView playerTagImage;
@@ -55,68 +65,80 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
     private TextView tvNextGameVenue;
     private TextView tvNextGameDate;
     private ImageView notificationImage;
+
     private RecyclerView recyclerView;
-    private String playerNameKey;
     private PlayerScorecardAdapter mplayerScorecardAdapter;
-    private List<PlayerScoreCardDTO> playerScoreCardDTOs = new ArrayList<>();
-    private ProgressBar progressBar;
     private ImageView backImage;
     private View rootScrollBar;
+
+    private ProgressBar progressBar;
     private LinearLayout errorLayout;
 
-    private static final String REQUEST_LISTENER_KEY = "PLAYER_PROFILE_SCREEN_LISTENER";
+//    private ScoresContentHandler.ContentListener contentListener = new ScoresContentHandler.ContentListener() {
+//
+//        @Override
+//        public void handleContent(String tag, String content, int responseCode) {
+//            hideProgress();
+//            if (responseCode == 200) {
+//                try {
+//                    JSONObject response = new JSONObject(content);
+//                    if (response.getBoolean("success")) {
+//                        populateData(response);
+//                    } else {
+//                        showErrorLayout();
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                    showErrorLayout();
+//                }
+//            } else {
+//                showErrorLayout();
+//            }
+//        }
+//    };
 
-    private static final String PLAYER_PROFILE_REQUEST_TAG = "playerProfileTag";
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-    private ScoresContentHandler.ContentListener contentListener = new ScoresContentHandler.ContentListener() {
+        setContentView(R.layout.activity_player_profile_view);
+        getIntentExtras();
+        initView();
 
-        @Override
-        public void handleContent(String tag, String content, int responseCode) {
-            hideProgress();
-            if (responseCode == 200) {
-                try {
-                    JSONObject response = new JSONObject(content);
-                    if (response.getBoolean("success")) {
-                        populateData(response);
-                    } else {
-                        showErrorLayout();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    showErrorLayout();
-                }
-            } else {
-                showErrorLayout();
-            }
+        {
+            onComponentCreate();
+            requestPlayerProfile();
         }
-    };
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        ScoresContentHandler.getInstance().addResponseListener(contentListener, REQUEST_LISTENER_KEY);
+
+        onComponentResume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        ScoresContentHandler.getInstance().removeResponseListener(REQUEST_LISTENER_KEY);
+
+        onComponentPause();
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_player_profile_view);
-        getIntentExtras();
-        initView();
-        setInitData();
+    public VolleyCallComponentHelper getVolleyCallComponentHelper() {
+        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper( REQUEST_LISTENER_KEY, new PlayerProfileComponentListener(progressBar, errorLayout));
+        return volleyCallComponentHelper;
+    }
+
+    private void getIntentExtras() {
+        playerNameKey = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
     }
 
     private void initView() {
         try {
             backImage = (ImageView) findViewById(R.id.back_img);
             playerProfileImage = (CircleImageView) findViewById(R.id.player_profile_image);
-          /*  playerTagImage = (ImageView) findViewById(R.id.player_tag_image);*/
             playerName = (TextView) findViewById(R.id.player_name);
             teamName = (TextView) findViewById(R.id.team_name);
             playerAge = (TextView) findViewById(R.id.player_age_value);
@@ -135,9 +157,6 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             recyclerView.setNestedScrollingEnabled(false);
             mplayerScorecardAdapter = new PlayerScorecardAdapter(playerScoreCardDTOs);
             recyclerView.setAdapter(mplayerScorecardAdapter);
-            progressBar = (ProgressBar) findViewById(R.id.progress);
-            progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
-            progressBar.setIndeterminate(true);
             backImage.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -145,7 +164,12 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
 
                 }
             });
+
             errorLayout = (LinearLayout) findViewById(R.id.error);
+            progressBar = (ProgressBar) findViewById(R.id.progress);
+            progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+            progressBar.setIndeterminate(true);
+
             rootScrollBar = findViewById(R.id.root_scroll_bar);
         } catch (Exception e) {
             e.printStackTrace();
@@ -153,32 +177,29 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
         }
     }
 
-    private void setInitData() {
-        try {
-            HashMap<String, String> parameters = new HashMap<>();
-            parameters.put(Constants.PLAYER_NAME, playerNameKey);
-            parameters.put(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_FOOTBALL);
-            showProgress();
-            ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_PLAYER_PROFILE, parameters, REQUEST_LISTENER_KEY, PLAYER_PROFILE_REQUEST_TAG);
+    private void requestPlayerProfile() {
+        Log.i("News Detail", "Request news Details");
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put(Constants.PLAYER_NAME, playerNameKey);
+        parameters.put(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_FOOTBALL);
+        requestContent(ScoresContentHandler.CALL_NAME_PLAYER_PROFILE, parameters, PLAYER_PROFILE_REQUEST_TAG);
+    }
+
+    private boolean handleResponse(String response){
+        boolean success = false;
+        try{
+            playerJSONObject = new JSONObject(response);
+            success = true;
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
+        return success;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return true;
-    }
-
-    private void getIntentExtras() {
-        playerNameKey = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-    }
-
-    private void populateData(JSONObject jsonObject) {
+    private void renderContent() {
         try {
-
-            JSONArray datArray = (JSONArray) jsonObject.get("data");
+            JSONArray datArray = (JSONArray) playerJSONObject.get("data");
 
             JSONObject dataObject = datArray.getJSONObject(0);
             JSONArray otherComptetionArray = dataObject.getJSONArray("other_competitions");
@@ -214,21 +235,42 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
         }
     }
 
+//    public void showProgress() {
+//        progressBar.setVisibility(View.VISIBLE);
+//        rootScrollBar.setVisibility(View.GONE);
+//    }
+//
+//    public void hideProgress() {
+//        progressBar.setVisibility(View.GONE);
+//        rootScrollBar.setVisibility(View.VISIBLE);
+//    }
+//
+//
+//    private void showErrorLayout() {
+//        errorLayout.setVisibility(View.VISIBLE);
+//        rootScrollBar.setVisibility(View.GONE);
+//    }
 
-    public void showProgress() {
-        progressBar.setVisibility(View.VISIBLE);
-        rootScrollBar.setVisibility(View.GONE);
-    }
+    private class PlayerProfileComponentListener extends CustomComponentListener {
 
-    public void hideProgress() {
-        progressBar.setVisibility(View.GONE);
-        rootScrollBar.setVisibility(View.VISIBLE);
-    }
+        public PlayerProfileComponentListener(ProgressBar progressBar, ViewGroup errorLayout) {
+            super( PLAYER_PROFILE_REQUEST_TAG, progressBar, errorLayout);
+        }
 
+        @Override
+        public boolean handleContent(String tag, String content) {
+            return PlayerProfileView.this.handleResponse(content);
+        }
 
-    private void showErrorLayout() {
-        errorLayout.setVisibility(View.VISIBLE);
-        rootScrollBar.setVisibility(View.GONE);
+        @Override
+        public void handleErrorContent(String tag) {
+
+        }
+
+        @Override
+        public void changeUI(String tag) {
+            PlayerProfileView.this.renderContent();
+        }
 
     }
 

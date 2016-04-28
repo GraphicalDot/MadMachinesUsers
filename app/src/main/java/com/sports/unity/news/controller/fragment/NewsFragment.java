@@ -28,6 +28,7 @@ import com.sports.unity.common.controller.FilterActivity;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.news.controller.activity.NewsSearchActivity;
 import com.sports.unity.news.model.NewsContentHandler;
 import com.sports.unity.util.Constants;
@@ -166,7 +167,6 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         initProgress(v);
         hideProgress(v);
 
-        initErrorLayout(v);
         hideErrorLayout(v);
 
         if (searchOn == false) {
@@ -231,7 +231,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                             if (success == false) {
                                 mSwipeRefreshLayout.setRefreshing(false);
 
-                                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
                             } else {
                                 mSwipeRefreshLayout.setRefreshing(true);
 //                              showProgress(getView());
@@ -315,12 +315,11 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
             newsContentHandler.selectedSportsChanged();
             sportSelected = sports;
             sportsSelectedNum = sports.size();
+
             boolean success = newsContentHandler.refreshNews(true);
             if (success == false) {
                 showErrorLayout(getView());
                 hideProgress(getView());
-
-                Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
             } else {
                 hideErrorLayout(getView());
                 showProgress(getView());
@@ -328,25 +327,18 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
         }
     }
 
-    private void initErrorLayout(View view) {
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-
-        TextView oops = (TextView) errorLayout.findViewById(R.id.oops);
-        oops.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
-
-        TextView something_wrong = (TextView) errorLayout.findViewById(R.id.something_wrong);
-        something_wrong.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
-    }
-
     private void showErrorLayout(View view) {
         if (mAdapter.getNews().size() == 0) {
-            LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+            ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
             errorLayout.setVisibility(View.VISIBLE);
+            CustomComponentListener.renderAppropriateErrorLayout(errorLayout);
+        } else {
+            Toast.makeText(getActivity(), R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
         }
     }
 
     private void hideErrorLayout(View view) {
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
         errorLayout.setVisibility(View.GONE);
     }
 
@@ -384,9 +376,7 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                 if (list.size() == 0) {
                     if (!searchOn) {
                         showErrorLayout(getView());
-                        Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
                     } else {
-//                        something_wrong.setText("No search results found for this search");
                         Toast.makeText(getActivity(), "No search results found for this search", Toast.LENGTH_SHORT).show();
                     }
                 } else {
@@ -472,8 +462,6 @@ public class NewsFragment extends Fragment implements NewsContentHandler.Content
                 @Override
                 public void run() {
                     showErrorLayout(getView());
-
-                    Toast.makeText(getActivity(), "Check your internet connection", Toast.LENGTH_SHORT).show();
                 }
 
             });

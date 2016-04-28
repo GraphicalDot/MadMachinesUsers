@@ -16,6 +16,7 @@ import com.sports.unity.R;
 import com.sports.unity.common.view.CustomViewPager;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.view.SlidingTabLayout;
+import com.sports.unity.common.viewhelper.VolleyCallComponentHelper;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
 
@@ -65,6 +66,13 @@ public class PlayerCricketBioDataActivity extends CustomVolleyCallerActivity {
             }
         }
     };
+
+    @Override
+    public VolleyCallComponentHelper getVolleyCallComponentHelper() {
+        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper( REQUEST_LISTENER_KEY, null);
+//        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper( REQUEST_LISTENER_KEY, new NewsDetailComponentListener(progressBar, null));
+        return volleyCallComponentHelper;
+    }
 
     @Override
     protected void onResume() {

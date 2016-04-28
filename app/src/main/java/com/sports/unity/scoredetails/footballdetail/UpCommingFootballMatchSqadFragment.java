@@ -13,7 +13,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.sports.unity.R;
@@ -21,7 +20,6 @@ import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.view.CustomRobotoCondenseBoldTextView;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.UpCommingFootballMatchSquadAdapter;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.UpCommingFootballMatchSquadDTO;
-import com.sports.unity.scores.controller.fragment.MatchListFragment;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
 
