@@ -144,14 +144,13 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
         return success;
     }
 
-    private void renderContent() {
+    private boolean renderContent() {
+        boolean success = false;
         try {
             JSONArray datArray = (JSONArray) playerJSONObject.get("data");
 
             JSONObject dataObject = datArray.getJSONObject(0);
             JSONArray otherComptetionArray = dataObject.getJSONArray("other_competitions");
-
-            rootScrollBar.setVisibility(View.VISIBLE);
 
             playerName.setText(dataObject.getString("name"));
             nationality.setText(dataObject.getString("Nationality"));
@@ -178,10 +177,16 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             }
             mplayerScorecardAdapter.notifyDataSetChanged();
 
+            success = true;
         } catch (Exception ex) {
             ex.printStackTrace();
             Toast.makeText(getApplicationContext(), "player has missing data", Toast.LENGTH_SHORT).show();
         }
+
+        if( success ){
+            rootScrollBar.setVisibility(View.VISIBLE);
+        }
+        return success;
     }
 
     private class PlayerProfileComponentListener extends CustomComponentListener {
@@ -202,7 +207,12 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
 
         @Override
         public void changeUI(String tag) {
-            PlayerProfileView.this.renderContent();
+            boolean success = PlayerProfileView.this.renderContent();
+            if( ! success ){
+                showErrorLayout();
+            } else {
+                //nothing
+            }
         }
 
     }

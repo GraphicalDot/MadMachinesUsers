@@ -53,6 +53,7 @@ public class GenericVolleyRequestResponseFragment extends Fragment {
         if( volleyCallComponentHelper == null ) {
             volleyCallComponentHelper = basicVolleyRequestResponseViewHelper.getVolleyCallComponentHelper(view);
             volleyCallComponentHelper.onComponentCreate();
+            volleyCallComponentHelper.requestContent( basicVolleyRequestResponseViewHelper.getRequestCallName(), basicVolleyRequestResponseViewHelper.getRequestParameters(), basicVolleyRequestResponseViewHelper.getRequestTag());
         }
     }
 

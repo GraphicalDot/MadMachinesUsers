@@ -100,13 +100,14 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         setTitle();
 
         {
-            errorLayout = (LinearLayout) findViewById(R.id.error);
+            errorLayout = (ViewGroup) findViewById(R.id.error);
             errorLayout.setVisibility(View.GONE);
 
             mProgressBar = (ProgressBar) findViewById(R.id.progress);
             mProgressBar = (ProgressBar) findViewById(R.id.progressbar);
 
             onComponentCreate();
+            requestMatchScoreDetails();
         }
     }
 
@@ -130,12 +131,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
     @Override
     public void onResume() {
         super.onResume();
-
-        onComponentResume();
-//        {
-//            Log.i("Score Detail", "Through Resume");
-//            requestMatchScoreDetails();
-//        }
     }
 
     @Override
@@ -150,10 +145,18 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         try {
             int tab_index = getIntent().getIntExtra("tab_index", 1);
 
+            HashMap<String, String> parameters = new HashMap<>();
+            parameters.put( ScoresContentHandler.PARAM_SERIESID, seriesId);
+            parameters.put( ScoresContentHandler.PARAM_SPORTS_TYPE, sportsType);
+            parameters.put( ScoresContentHandler.PARAM_ID, matchId);
+
+            MatchCommentaryHelper matchCommentaryHelper = new MatchCommentaryHelper();
+            matchCommentaryHelper.setRequestParameters(parameters);
+
             ArrayList<BasicVolleyRequestResponseViewHelper> fragmentHelperList = new ArrayList<>();
-            fragmentHelperList.add( new MatchCommentaryHelper());
-            fragmentHelperList.add( new MatchCommentaryHelper());
-            fragmentHelperList.add( new MatchCommentaryHelper());
+            fragmentHelperList.add( matchCommentaryHelper);
+//            fragmentHelperList.add( new MatchCommentaryHelper());
+//            fragmentHelperList.add( new MatchCommentaryHelper());
 
             mViewPager = (ViewPager) findViewById(R.id.pager);
             mViewPager.setAdapter( new GenericFragmentViewPagerAdapter(getSupportFragmentManager(), fragmentHelperList));
@@ -247,7 +250,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         }
         mProgressBar.setProgress(currenttime);
     }
-
 
     private void setToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);

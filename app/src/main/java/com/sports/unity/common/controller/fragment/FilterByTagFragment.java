@@ -20,6 +20,7 @@ import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.UserUtil;
+import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
@@ -41,9 +42,10 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     private FilterRecycleAdapter itemAdapter;
     ArrayList<FavouriteItem> searchList;
     private boolean isSearchRequested;
-    private LinearLayout errorLayout;
+
+    private ViewGroup errorLayout;
     private ProgressBar progressBar;
-    private TextView messageView;
+
     private final String errorMessage = "Something went wrong";
     private final String noResultMessage = "No result found";
 
@@ -120,12 +122,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
             //nothing
         }
 
-        errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        TextView oops = (TextView) errorLayout.findViewById(R.id.oops);
-        oops.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
-
-        messageView = (TextView) errorLayout.findViewById(R.id.something_wrong);
-        messageView.setTypeface(FontTypeface.getInstance(getActivity()).getRobotoLight());
+        errorLayout = (ViewGroup) view.findViewById(R.id.error);
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
         progressBar.getIndeterminateDrawable().setColorFilter(getActivity().getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
     }
@@ -381,8 +378,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     private void showErrorLayout(String message) {
         filterRecyclerView.setVisibility(View.INVISIBLE);
         errorLayout.setVisibility(View.VISIBLE);
-        messageView.setText(message);
-        errorLayout.requestLayout();
+        CustomComponentListener.renderAppropriateErrorLayout(errorLayout);
     }
 
     /**
@@ -398,7 +394,6 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
      */
     private void showProgress() {
         progressBar.setVisibility(View.VISIBLE);
-
     }
 
     /**
