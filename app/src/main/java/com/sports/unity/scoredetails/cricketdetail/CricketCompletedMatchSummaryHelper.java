@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import java.util.HashMap;
 
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
+import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
 import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 
 public class CricketCompletedMatchSummaryHelper extends BasicVolleyRequestResponseViewHelper {
@@ -56,6 +57,8 @@ public class CricketCompletedMatchSummaryHelper extends BasicVolleyRequestRespon
 
         toss = intent.getStringExtra(INTENT_KEY_TOSS);
         date = intent.getStringExtra(INTENT_KEY_DATE);
+        matchName = intent.getStringExtra(INTENT_KEY_MATCH_NAME);
+
     }
 
     @Override
