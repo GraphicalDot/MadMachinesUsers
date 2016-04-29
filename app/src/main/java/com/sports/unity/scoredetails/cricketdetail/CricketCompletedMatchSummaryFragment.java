@@ -16,9 +16,13 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
+import com.sports.unity.common.viewhelper.BasicVolleyRequestResponseViewHelper;
+import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.playerprofile.cricket.PlayerCricketBioDataActivity;
 import com.sports.unity.scoredetails.cricketdetail.JsonParsers.CompletedCricketMatchSummaryParser;
 import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.scores.model.ScoresContentHandler;
+import com.sports.unity.scores.model.ScoresJsonParser;
 import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
@@ -27,13 +31,23 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_ID;
 import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
 import static com.sports.unity.util.Constants.INTENT_KEY_SERIES;
 import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 
-public class CricketCompletedMatchSummaryFragment extends Fragment implements CricketCompletedMatchSummaryHandler.CricketCompletedMatchSummaryContentListener {
+public class CricketCompletedMatchSummaryFragment extends BasicVolleyRequestResponseViewHelper {
+
+    private HashMap<String, String> parameters = null;
+
+    private String matchId;
+    private String seriesId;
+    private String toss = "";
+    private String matchName = "";
+    private String date = "";
 
     private ImageView ivPlayerProfileView;
     private ImageView ivCountryImage;
@@ -46,48 +60,83 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
     private TextView tvTossWinTeam;
     private TextView tvUmpiresName;
     private TextView tvMatchReferee;
-    private ProgressBar progressBar;
-    private String toss = "";
-    private String matchName = "";
-    private String date = "";
-    private CricketCompletedMatchSummaryHandler cricketCompletedMatchSummaryHandler;
-    private String matchId;
-    private LinearLayout errorLayout;
-    private String seriesId;
-    private CompletedCricketMatchSummaryParser cricketMatchSummaryParser;
     private TextView playedBallTag;
-    private  TextView playerStrikeRate;
-    //private CricketMatchJsonCaller cricketMatchJsonCaller;
+    private TextView playerStrikeRate;
 
-    public CricketCompletedMatchSummaryFragment() {
-        // Required empty public constructor
+    private JSONObject response = null;
+
+    private CompletedCricketMatchSummaryParser cricketMatchSummaryParser;
+
+    private String title = null;
+
+    public CricketCompletedMatchSummaryFragment(String title) {
+        this.title = title;
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        ScoreDetailActivity scoreDetail = (ScoreDetailActivity) getActivity();
-        Intent i = scoreDetail.getIntent();
-        matchId = i.getStringExtra(INTENT_KEY_ID);
-        matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
-        toss = i.getStringExtra(INTENT_KEY_TOSS);
-        date = i.getStringExtra(INTENT_KEY_DATE);
-        seriesId = i.getStringExtra(INTENT_KEY_SERIES);
-        cricketCompletedMatchSummaryHandler = CricketCompletedMatchSummaryHandler.getInstance(context);
-        cricketCompletedMatchSummaryHandler.addListener(this);
-        cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(seriesId, matchId);
-
+    public int getFragmentLayout() {
+        return R.layout.fragment_cricket_completed_match_summery;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public String getFragmentTitle() {
+        return title;
+    }
 
-        View view = inflater.inflate(R.layout.fragment_cricket_completed_match_summery, container, false);
+    @Override
+    public String getRequestListenerKey() {
+        return "CricketCompletedMatchSummary";
+    }
+
+    @Override
+    public CustomComponentListener getCustomComponentListener(View view) {
+        ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
+        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+
+        MatchSummaryComponentListener componentListener = new MatchSummaryComponentListener( getRequestTag(), progressBar, errorLayout);
+        return componentListener;
+    }
+
+    @Override
+    public String getRequestTag() {
+        return "CricketCompletedMatchRequestTag";
+    }
+
+    @Override
+    public String getRequestCallName() {
+        return ScoresContentHandler.CALL_NAME_CRICKET_MATCH_SUMMARY;
+    }
+
+    @Override
+    public HashMap<String, String> getRequestParameters() {
+        return parameters;
+    }
+
+    @Override
+    public void initialiseViews(View view) {
         initView(view);
-        initProgress(view);
-        return view;
     }
+
+    public void setParameters(HashMap<String, String> parameters) {
+        this.parameters = parameters;
+    }
+
+    //    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//        ScoreDetailActivity scoreDetail = (ScoreDetailActivity) getActivity();
+//        Intent i = scoreDetail.getIntent();
+//        matchId = i.getStringExtra(INTENT_KEY_ID);
+//        matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
+//        toss = i.getStringExtra(INTENT_KEY_TOSS);
+//        date = i.getStringExtra(INTENT_KEY_DATE);
+//        seriesId = i.getStringExtra(INTENT_KEY_SERIES);
+//
+////        cricketCompletedMatchSummaryHandler = CricketCompletedMatchSummaryHandler.getInstance(context);
+////        cricketCompletedMatchSummaryHandler.addListener(this);
+////        cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(seriesId, matchId);
+//
+//    }
 
     private void initView(View view) {
         ivPlayerProfileView = (ImageView) view.findViewById(R.id.iv_player_profile_image);
@@ -105,8 +154,6 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
         playerStrikeRate = (TextView) view.findViewById(R.id.tv_player_sr_t);
         tvSeriesName.setText(matchName);
         tvTossWinTeam.setText(toss);
-        initProgress(view);
-        initErrorLayout(view);
 
         ivPlayerProfileView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,10 +161,8 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
                 if (cricketMatchSummaryParser != null) {
                     try {
                         String playerId = cricketMatchSummaryParser.getPlayerId();
-                        Intent intent = PlayerCricketBioDataActivity.createIntent(getContext(), playerId, playerName.getText().toString());
-//                        Intent i = new Intent(getContext(), PlayerCricketBioDataActivity.class);
-//                        i.putExtra(Constants.INTENT_KEY_ID,playerId);
-                        startActivity(intent);
+                        Intent intent = PlayerCricketBioDataActivity.createIntent( v.getContext(), playerId, playerName.getText().toString());
+                        v.getContext().startActivity(intent);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -132,10 +177,8 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
                 if (cricketMatchSummaryParser != null) {
                     try {
                         String playerId = cricketMatchSummaryParser.getPlayerId();
-                        Intent intent = PlayerCricketBioDataActivity.createIntent(getContext(), playerId, playerName.getText().toString());
-//                        Intent i = new Intent(getContext(), PlayerCricketBioDataActivity.class);
-//                        i.putExtra(Constants.INTENT_KEY_ID,playerId);
-                        startActivity(intent);
+                        Intent intent = PlayerCricketBioDataActivity.createIntent( v.getContext(), playerId, playerName.getText().toString());
+                        v.getContext().startActivity(intent);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -144,179 +187,143 @@ public class CricketCompletedMatchSummaryFragment extends Fragment implements Cr
 
             }
         });
-
-
     }
 
-    @Override
-    public void handleContent(String content) {
-        {
-
-            try {
-                showProgress();
-                JSONObject jsonObject = new JSONObject(content);
-                boolean success = jsonObject.getBoolean("success");
-                if (success) {
-
-                    renderDisplay(jsonObject);
-
-                } else {
-                    showErrorLayout();
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                Toast.makeText(getActivity(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+    public boolean handleContent(String content) {
+        boolean success = false;
+        try {
+            JSONObject jsonObject = new JSONObject(content);
+            success = jsonObject.getBoolean("success");
+            if (success) {
+                response = jsonObject;
+            } else {
+                //nothing
             }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+        return success;
     }
 
-    private void initErrorLayout(View view) {
+    private boolean renderDisplay() {
+        boolean success = false;
 
-        errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.GONE);
-    }
+        try {
+            if (!response.isNull("data")) {
+                JSONArray dataArray = response.getJSONArray("data");
+                for (int i = 0; i < dataArray.length(); i++) {
+                    final JSONObject matchObject = dataArray.getJSONObject(i);
+                    cricketMatchSummaryParser = new CompletedCricketMatchSummaryParser();
+                    cricketMatchSummaryParser.setJsonObject(matchObject);
+                    JSONObject matchSummary = cricketMatchSummaryParser.getMatchSummary();
+                    cricketMatchSummaryParser.setCricketSummary(matchSummary);
+                    JSONObject manOftheMatch = cricketMatchSummaryParser.getManOfMatchDetails();
+                    cricketMatchSummaryParser.setManOfTheMatch(manOftheMatch);
+                    final JSONObject batting = cricketMatchSummaryParser.getBattingDetails();
+                    cricketMatchSummaryParser.setBatting(batting);
+                    final JSONObject umpire = cricketMatchSummaryParser.getUmpireDetails();
+                    cricketMatchSummaryParser.setUmpire(umpire);
+                    final JSONObject bowling = cricketMatchSummaryParser.getBowlingDetails();
+                    if (bowling != null) {
+                        cricketMatchSummaryParser.setBowling(bowling);
+                    }
 
-    private void showErrorLayout() {
-
-        errorLayout.setVisibility(View.VISIBLE);
-
-    }
-
-    private void initProgress(View view) {
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
-    }
-
-    private void showProgress() {
-        progressBar.setVisibility(View.VISIBLE);
-
-    }
-
-    private void hideProgress() {
-        progressBar.setVisibility(View.GONE);
-
-    }
-
-    private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-        final ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-        hideProgress();
-        if (!jsonObject.isNull("data")) {
-            JSONArray dataArray = jsonObject.getJSONArray("data");
-            for (int i = 0; i < dataArray.length(); i++) {
-                final JSONObject matchObject = dataArray.getJSONObject(i);
-                cricketMatchSummaryParser = new CompletedCricketMatchSummaryParser();
-                cricketMatchSummaryParser.setJsonObject(matchObject);
-                JSONObject matchSummary = cricketMatchSummaryParser.getMatchSummary();
-                cricketMatchSummaryParser.setCricketSummary(matchSummary);
-                JSONObject manOftheMatch = cricketMatchSummaryParser.getManOfMatchDetails();
-                cricketMatchSummaryParser.setManOfTheMatch(manOftheMatch);
-                final JSONObject batting = cricketMatchSummaryParser.getBattingDetails();
-                cricketMatchSummaryParser.setBatting(batting);
-                final JSONObject umpire = cricketMatchSummaryParser.getUmpireDetails();
-                cricketMatchSummaryParser.setUmpire(umpire);
-                final JSONObject bowling = cricketMatchSummaryParser.getBowlingDetails();
-                if(bowling != null){
-                    cricketMatchSummaryParser.setBowling(bowling);
-                }
-                if (activity != null) {
-
-                    activity.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Log.i("run: ", jsonObject.toString());
-                                Glide.with(getContext()).load(cricketMatchSummaryParser.getPlayerImage()).placeholder(R.drawable.ic_user).into(ivPlayerProfileView);
-                                playerName.setText(cricketMatchSummaryParser.getPlayerName());
-                                tvPlayerRun.setText(cricketMatchSummaryParser.getruns());
-                                if(cricketMatchSummaryParser.getBalls().trim().equalsIgnoreCase("0".trim())){
-                                    playedBallTag.setText("WICKET");
-                                    playerStrikeRate.setText("ECO");
-                                    tvPlayerPlayedBall.setText(cricketMatchSummaryParser.getBowling().getString("wickets"));
-                                    tvPlayerStrike_Rate.setText(cricketMatchSummaryParser.getBowling().getString("economy"));
-                                }else
-                                {
-                                    playedBallTag.setText("BALL");
-                                    playerStrikeRate.setText("SR");
-                                    tvPlayerPlayedBall.setText(cricketMatchSummaryParser.getBalls());
-                                    tvPlayerStrike_Rate.setText(cricketMatchSummaryParser.getstrikerate());
-                                }
-
-                                tvMatchDate.setText(DateUtil.getFormattedDate(date));
-                                tvTossWinTeam.setText(toss);
-                                tvSeriesName.setText(matchName);
-                                tvUmpiresName.setText(cricketMatchSummaryParser.getFirstUmpire()+", "+cricketMatchSummaryParser.secondFirstUmpire());
-                                tvMatchReferee.setText(cricketMatchSummaryParser.getRefree());
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                                showErrorLayout();
-                            }
+                    {
+                        Glide.with( ivPlayerProfileView.getContext()).load(cricketMatchSummaryParser.getPlayerImage()).placeholder(R.drawable.ic_user).into(ivPlayerProfileView);
+                        playerName.setText(cricketMatchSummaryParser.getPlayerName());
+                        tvPlayerRun.setText(cricketMatchSummaryParser.getruns());
+                        if (cricketMatchSummaryParser.getBalls().trim().equalsIgnoreCase("0".trim())) {
+                            playedBallTag.setText("WICKET");
+                            playerStrikeRate.setText("ECO");
+                            tvPlayerPlayedBall.setText(cricketMatchSummaryParser.getBowling().getString("wickets"));
+                            tvPlayerStrike_Rate.setText(cricketMatchSummaryParser.getBowling().getString("economy"));
+                        } else {
+                            playedBallTag.setText("BALL");
+                            playerStrikeRate.setText("SR");
+                            tvPlayerPlayedBall.setText(cricketMatchSummaryParser.getBalls());
+                            tvPlayerStrike_Rate.setText(cricketMatchSummaryParser.getstrikerate());
                         }
-                    });
+
+                        tvMatchDate.setText(DateUtil.getFormattedDate(date));
+                        tvTossWinTeam.setText(toss);
+                        tvSeriesName.setText(matchName);
+                        tvUmpiresName.setText(cricketMatchSummaryParser.getFirstUmpire() + ", " + cricketMatchSummaryParser.secondFirstUmpire());
+                        tvMatchReferee.setText(cricketMatchSummaryParser.getRefree());
+                    }
                 }
+            } else {
+                //nothing
             }
-        } else {
-            showErrorLayout();
+
+            success = true;
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
+
+        return success;
     }
 
 
-    private void setComplatedCricketSummary(JSONObject jsonObject, JSONObject manOftheMatch, JSONObject statObject) throws JSONException {
-        Log.i("run: ", jsonObject.toString());
-        if (manOftheMatch != null && !manOftheMatch.isNull("image")) {
-            Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_user).into(ivPlayerProfileView);
-            Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_user).into(ivCountryImage);
-        }
-        if (manOftheMatch != null && !manOftheMatch.isNull("name")) {
-            playerName.setText(manOftheMatch.getString("name"));
-        }
-        if (!statObject.isNull("runs")) {
-            tvPlayerRun.setText(statObject.getString("runs"));
-        } else {
-            tvPlayerRun.setText("N/A");
+//    private void setComplatedCricketSummary(JSONObject jsonObject, JSONObject manOftheMatch, JSONObject statObject) throws JSONException {
+//        Log.i("run: ", jsonObject.toString());
+//        if (manOftheMatch != null && !manOftheMatch.isNull("image")) {
+//            Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_user).into(ivPlayerProfileView);
+//            Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_user).into(ivCountryImage);
+//        }
+//        if (manOftheMatch != null && !manOftheMatch.isNull("name")) {
+//            playerName.setText(manOftheMatch.getString("name"));
+//        }
+//        if (!statObject.isNull("runs")) {
+//            tvPlayerRun.setText(statObject.getString("runs"));
+//        } else {
+//            tvPlayerRun.setText("N/A");
+//        }
+//
+//        if (!statObject.isNull("balls")) {
+//            tvPlayerPlayedBall.setText(statObject.getString("balls"));
+//        } else {
+//            tvPlayerPlayedBall.setText("N/A");
+//        }
+//
+//        if (!statObject.isNull("strike_rate")) {
+//            tvPlayerStrike_Rate.setText(statObject.getString("strike_rate"));
+//        } else {
+//            tvPlayerStrike_Rate.setText("N/A");
+//        }
+//        tvMatchDate.setText(DateUtil.getFormattedDate(date));
+//        tvTossWinTeam.setText(toss);
+//        tvSeriesName.setText(matchName);
+//        tvUmpiresName.setText("N/A");
+//        tvMatchReferee.setText("N/A");
+//    }
+
+    public class MatchSummaryComponentListener extends CustomComponentListener {
+
+        public MatchSummaryComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
+            super(requestTag, progressBar, errorLayout);
         }
 
-        if (!statObject.isNull("balls")) {
-            tvPlayerPlayedBall.setText(statObject.getString("balls"));
-        } else {
-            tvPlayerPlayedBall.setText("N/A");
+        @Override
+        public boolean handleContent(String tag, String content) {
+            boolean success = CricketCompletedMatchSummaryFragment.this.handleContent(content);
+            return success;
         }
 
-        if (!statObject.isNull("strike_rate")) {
-            tvPlayerStrike_Rate.setText(statObject.getString("strike_rate"));
-        } else {
-            tvPlayerStrike_Rate.setText("N/A");
-        }
-        tvMatchDate.setText(DateUtil.getFormattedDate(date));
-        tvTossWinTeam.setText(toss);
-        tvSeriesName.setText(matchName);
-        tvUmpiresName.setText("N/A");
-        tvMatchReferee.setText("N/A");
-    }
+        @Override
+        public void handleErrorContent(String tag) {
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (cricketCompletedMatchSummaryHandler != null) {
-            cricketCompletedMatchSummaryHandler.addListener(null);
         }
 
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        showProgress();
-        if (cricketCompletedMatchSummaryHandler != null) {
-            cricketCompletedMatchSummaryHandler.addListener(this);
-
-        } else {
-            cricketCompletedMatchSummaryHandler = CricketCompletedMatchSummaryHandler.getInstance(getContext());
+        @Override
+        public void changeUI(String tag) {
+            boolean success = renderDisplay();
+            if( success ){
+                //nothing
+            } else {
+                showErrorLayout();
+            }
         }
-        cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(seriesId, matchId);
-    }
 
-    public void handleError() {
-        showErrorLayout();
     }
 
 }
