@@ -7,7 +7,6 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scoredetails.commentary.MatchCommentaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CompletedMatchScoreCardFragment;
-import com.sports.unity.scoredetails.cricketdetail.CricketCompletedMatchSummaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketLiveMatchSummaryFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketUpcomingMatchScoreCardFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketUpcomingMatchSummaryFragment;
@@ -42,7 +41,7 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
             }else if(matchStatus.equalsIgnoreCase("L")){
                 fragment = new CricketLiveMatchSummaryFragment();
             } else  {
-                fragment = new CricketCompletedMatchSummaryFragment();
+//                fragment = new CricketCompletedMatchSummaryFragment("");
             }
            // fragment = new CricketLiveMatchSummaryFragment();
         } else if (position == 1) {

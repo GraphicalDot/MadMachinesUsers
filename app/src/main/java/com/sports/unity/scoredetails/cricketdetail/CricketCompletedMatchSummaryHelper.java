@@ -1,18 +1,11 @@
 package com.sports.unity.scoredetails.cricketdetail;
 
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
@@ -20,37 +13,26 @@ import com.sports.unity.common.viewhelper.BasicVolleyRequestResponseViewHelper;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.playerprofile.cricket.PlayerCricketBioDataActivity;
 import com.sports.unity.scoredetails.cricketdetail.JsonParsers.CompletedCricketMatchSummaryParser;
-import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.scores.model.ScoresContentHandler;
-import com.sports.unity.scores.model.ScoresJsonParser;
-import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
-import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
 
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
-import static com.sports.unity.util.Constants.INTENT_KEY_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
-import static com.sports.unity.util.Constants.INTENT_KEY_SERIES;
 import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 
-public class CricketCompletedMatchSummaryFragment extends BasicVolleyRequestResponseViewHelper {
+public class CricketCompletedMatchSummaryHelper extends BasicVolleyRequestResponseViewHelper {
 
     private HashMap<String, String> parameters = null;
 
-    private String matchId;
-    private String seriesId;
     private String toss = "";
     private String matchName = "";
     private String date = "";
 
     private ImageView ivPlayerProfileView;
-    private ImageView ivCountryImage;
     private TextView playerName;
     private TextView tvPlayerRun;
     private TextView tvPlayerPlayedBall;
@@ -69,8 +51,11 @@ public class CricketCompletedMatchSummaryFragment extends BasicVolleyRequestResp
 
     private String title = null;
 
-    public CricketCompletedMatchSummaryFragment(String title) {
+    public CricketCompletedMatchSummaryHelper(String title, Intent intent) {
         this.title = title;
+
+        toss = intent.getStringExtra(INTENT_KEY_TOSS);
+        date = intent.getStringExtra(INTENT_KEY_DATE);
     }
 
     @Override
@@ -121,26 +106,8 @@ public class CricketCompletedMatchSummaryFragment extends BasicVolleyRequestResp
         this.parameters = parameters;
     }
 
-    //    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        ScoreDetailActivity scoreDetail = (ScoreDetailActivity) getActivity();
-//        Intent i = scoreDetail.getIntent();
-//        matchId = i.getStringExtra(INTENT_KEY_ID);
-//        matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
-//        toss = i.getStringExtra(INTENT_KEY_TOSS);
-//        date = i.getStringExtra(INTENT_KEY_DATE);
-//        seriesId = i.getStringExtra(INTENT_KEY_SERIES);
-//
-////        cricketCompletedMatchSummaryHandler = CricketCompletedMatchSummaryHandler.getInstance(context);
-////        cricketCompletedMatchSummaryHandler.addListener(this);
-////        cricketCompletedMatchSummaryHandler.requestCompletedMatchSummary(seriesId, matchId);
-//
-//    }
-
     private void initView(View view) {
         ivPlayerProfileView = (ImageView) view.findViewById(R.id.iv_player_profile_image);
-        ivCountryImage = (ImageView) view.findViewById(R.id.iv_country_image);
         playerName = (TextView) view.findViewById(R.id.tv_player_name);
         tvPlayerRun = (TextView) view.findViewById(R.id.tv_player_run);
         tvPlayerPlayedBall = (TextView) view.findViewById(R.id.tv_player_played_ball);
@@ -263,40 +230,6 @@ public class CricketCompletedMatchSummaryFragment extends BasicVolleyRequestResp
         return success;
     }
 
-
-//    private void setComplatedCricketSummary(JSONObject jsonObject, JSONObject manOftheMatch, JSONObject statObject) throws JSONException {
-//        Log.i("run: ", jsonObject.toString());
-//        if (manOftheMatch != null && !manOftheMatch.isNull("image")) {
-//            Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_user).into(ivPlayerProfileView);
-//            Glide.with(getContext()).load(manOftheMatch.getString("image")).placeholder(R.drawable.ic_user).into(ivCountryImage);
-//        }
-//        if (manOftheMatch != null && !manOftheMatch.isNull("name")) {
-//            playerName.setText(manOftheMatch.getString("name"));
-//        }
-//        if (!statObject.isNull("runs")) {
-//            tvPlayerRun.setText(statObject.getString("runs"));
-//        } else {
-//            tvPlayerRun.setText("N/A");
-//        }
-//
-//        if (!statObject.isNull("balls")) {
-//            tvPlayerPlayedBall.setText(statObject.getString("balls"));
-//        } else {
-//            tvPlayerPlayedBall.setText("N/A");
-//        }
-//
-//        if (!statObject.isNull("strike_rate")) {
-//            tvPlayerStrike_Rate.setText(statObject.getString("strike_rate"));
-//        } else {
-//            tvPlayerStrike_Rate.setText("N/A");
-//        }
-//        tvMatchDate.setText(DateUtil.getFormattedDate(date));
-//        tvTossWinTeam.setText(toss);
-//        tvSeriesName.setText(matchName);
-//        tvUmpiresName.setText("N/A");
-//        tvMatchReferee.setText("N/A");
-//    }
-
     public class MatchSummaryComponentListener extends CustomComponentListener {
 
         public MatchSummaryComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
@@ -305,7 +238,7 @@ public class CricketCompletedMatchSummaryFragment extends BasicVolleyRequestResp
 
         @Override
         public boolean handleContent(String tag, String content) {
-            boolean success = CricketCompletedMatchSummaryFragment.this.handleContent(content);
+            boolean success = CricketCompletedMatchSummaryHelper.this.handleContent(content);
             return success;
         }
 

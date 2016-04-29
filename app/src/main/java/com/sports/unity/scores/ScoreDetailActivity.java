@@ -1,9 +1,6 @@
 package com.sports.unity.scores;
 
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Typeface;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
@@ -20,8 +17,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.sports.unity.R;
-import com.sports.unity.common.controller.ViewPagerCricketScoreDetailAdapter;
-import com.sports.unity.common.controller.ViewPagerFootballScoreDetailAdapter;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.view.SlidingTabLayout;
@@ -29,7 +24,7 @@ import com.sports.unity.common.viewhelper.BasicVolleyRequestResponseViewHelper;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.common.viewhelper.GenericFragmentViewPagerAdapter;
 import com.sports.unity.common.viewhelper.VolleyCallComponentHelper;
-import com.sports.unity.scoredetails.CommentriesModel;
+import com.sports.unity.scoredetails.cricketdetail.CricketCompletedMatchSummaryHelper;
 import com.sports.unity.scores.controller.fragment.MatchListWrapperAdapter;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
@@ -49,7 +44,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
-import java.util.TimerTask;
 
 import static com.sports.unity.util.Constants.INTENT_KEY_TYPE;
 
@@ -143,19 +137,21 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
     private void initView() {
         try {
-            int tab_index = 0;
-//            int tab_index = getIntent().getIntExtra("tab_index", 1);
+            int tab_index = getIntent().getIntExtra("tab_index", 1);
 
             HashMap<String, String> parameters = new HashMap<>();
-            parameters.put( ScoresContentHandler.PARAM_SERIESID, seriesId);
-            parameters.put( ScoresContentHandler.PARAM_SPORTS_TYPE, sportsType);
+            parameters.put(ScoresContentHandler.PARAM_SERIESID, seriesId);
+            parameters.put(ScoresContentHandler.PARAM_SPORTS_TYPE, sportsType);
             parameters.put(ScoresContentHandler.PARAM_ID, matchId);
 
-            MatchCommentaryHelper matchCommentaryHelper = new MatchCommentaryHelper();
+            MatchCommentaryHelper matchCommentaryHelper = new MatchCommentaryHelper(getString(R.string.commentary));
             matchCommentaryHelper.setRequestParameters(parameters);
 
+            CricketCompletedMatchSummaryHelper cricketCompletedMatchSummaryHelper = new CricketCompletedMatchSummaryHelper(getString(R.string.summary), getIntent());
+            cricketCompletedMatchSummaryHelper.setParameters(parameters);
+
             ArrayList<BasicVolleyRequestResponseViewHelper> fragmentHelperList = new ArrayList<>();
-//            fragmentHelperList.add( new MatchCommentaryHelper());
+            fragmentHelperList.add(cricketCompletedMatchSummaryHelper);
             fragmentHelperList.add( matchCommentaryHelper);
 //            fragmentHelperList.add( new MatchCommentaryHelper());
 
@@ -170,22 +166,22 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 //
 //
 //            int tab_index = 0;
-//            if (sportsType.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
+            if (sportsType.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
 //                cricketScoreDetailAdapter = new ViewPagerCricketScoreDetailAdapter(getSupportFragmentManager(), cricketMatchtitles, numberOfCricketTabs, commentaries, matchStatus);
 //                mViewPager.setAdapter(cricketScoreDetailAdapter);
 //                tab_index = getIntent().getIntExtra("tab_index", 1);
-//            } else {
-//                if (matchStatus.equals(matchTime) || "Postp.".equalsIgnoreCase(matchStatus) && !isLive) {
+            } else {
+                if (matchStatus.equals(matchTime) || "Postp.".equalsIgnoreCase(matchStatus) && !isLive) {
 //                    footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitlesupcommingTitles, footballMatchtitlesupcommingTitles.length, commentaries, matchStatus, matchTime, isLive);
 //                    mViewPager.setAdapter(footballScoreDetailAdapter);
 //                    tab_index = getIntent().getIntExtra("tab_index", 0);
-//                } else {
+                } else {
 //                    footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitles, numberOfFootballTabs, commentaries, matchStatus, matchTime, isLive);
 //                    mViewPager.setAdapter(footballScoreDetailAdapter);
 //                    tab_index = getIntent().getIntExtra("tab_index", 1);
 //
-//                }
-//            }
+                }
+            }
 
             SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
             tabs.setDistributeEvenly(false);

@@ -30,6 +30,7 @@ public class ScoresContentHandler {
     public static final String CALL_NAME_PLAYER_PROFILE = "PLAYER_PROFILE";
     public static final String CALL_NAME_LEAGUE_TABLE = "LEAGUE_TABLE";
     public static final String CALL_NAME_CRICKET_MATCH_SUMMARY = "CRICKET_MATCH_SUMMARY";
+    public static final String CALL_NAME_CRICKET_MATCH_SCORECARD = "CRICKET_MATCH_SCORECARD";
 
     public static final String PARAM_SPORTS_TYPE = "SPORTS_TYPE";
     public static final String PARAM_ID = "ID";
@@ -63,7 +64,9 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_CRICKET_LEAGUE_FIXTURES = "/v2/get_series_fixtures?season_key=";
     private static final String URL_PARAMS_FOR_STAFF_LEAGUE = "/v1/get_major_tournament";
     private static final String URL_PARAMS_FOR_LEAGUE_TABLE = Constants.SCORE_BASE_URL + "/get_league_standings?league_id=";
+
     private static final String URL_PARAMS_FOR_CRICKET_MATCH_SUMMARY = Constants.SCORE_BASE_URL+"/v1/get_cricket_match_summary?season_key=%s&match_id=%s";
+    private static final String URL_PARAMS_FOR_CRICKET_MATCH_SCORECARD = Constants.SCORE_BASE_URL+"/v1/get_match_scorecard?season_key=%s&match_id=%s";
 
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
 
@@ -180,6 +183,10 @@ public class ScoresContentHandler {
             String leagueId = parameters.get(PARAM_SERIESID); // league name returns leagueId here
             String matchId = parameters.get(PARAM_ID);
             requestMatchSummary( leagueId, matchId, requestListenerKey, requestTag);
+        } else if (callName.equals(CALL_NAME_CRICKET_MATCH_SCORECARD)) {
+            String leagueId = parameters.get(PARAM_SERIESID); // league name returns leagueId here
+            String matchId = parameters.get(PARAM_ID);
+            requestMatchScorecard( leagueId, matchId, requestListenerKey, requestTag);
         }
 
     }
@@ -367,6 +374,14 @@ public class ScoresContentHandler {
     private void requestMatchSummary(String seriesId, String matchId, String listenerKey, String requestTag){
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             String url = String.format(URL_PARAMS_FOR_CRICKET_MATCH_SUMMARY, seriesId,matchId);
+
+            requestContent(requestTag, listenerKey, url);
+        }
+    }
+
+    private void requestMatchScorecard(String seriesId, String matchId, String listenerKey, String requestTag){
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
+            String url = String.format(URL_PARAMS_FOR_CRICKET_MATCH_SCORECARD, seriesId,matchId);
 
             requestContent(requestTag, listenerKey, url);
         }

@@ -31,6 +31,7 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
  */
 public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper {
 
+    private String title = null;
     private HashMap<String, String> requestParameters = null;
 
     private ArrayList<CommentriesModel> response = null;
@@ -42,8 +43,8 @@ public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper 
 
     private View tvEmptyView;
 
-    public MatchCommentaryHelper(){
-
+    public MatchCommentaryHelper(String title){
+        this.title = title;
     }
 
     @Override
@@ -53,7 +54,7 @@ public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper 
 
     @Override
     public String getFragmentTitle() {
-        return "Commentary";
+        return title;
     }
 
     @Override
