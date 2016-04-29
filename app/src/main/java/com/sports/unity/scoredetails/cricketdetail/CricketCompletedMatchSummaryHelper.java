@@ -14,6 +14,8 @@ import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.playerprofile.cricket.PlayerCricketBioDataActivity;
 import com.sports.unity.scoredetails.cricketdetail.JsonParsers.CompletedCricketMatchSummaryParser;
 import com.sports.unity.scores.model.ScoresContentHandler;
+import com.sports.unity.scores.model.ScoresUtil;
+import com.sports.unity.util.Constants;
 import com.sports.unity.util.commons.DateUtil;
 
 import org.json.JSONArray;
@@ -27,30 +29,28 @@ import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 
 public class CricketCompletedMatchSummaryHelper extends BasicVolleyRequestResponseViewHelper {
 
+    private String title = null;
     private HashMap<String, String> parameters = null;
+    private JSONObject response = null;
 
     private String toss = "";
     private String matchName = "";
     private String date = "";
+    private String matchStatus = "";
+
+    private TextView tvUmpiresName;
+    private TextView tvMatchReferee;
 
     private ImageView ivPlayerProfileView;
     private TextView playerName;
     private TextView tvPlayerRun;
     private TextView tvPlayerPlayedBall;
     private TextView tvPlayerStrike_Rate;
-    private TextView tvSeriesName;
-    private TextView tvMatchDate;
-    private TextView tvTossWinTeam;
-    private TextView tvUmpiresName;
-    private TextView tvMatchReferee;
+
     private TextView playedBallTag;
     private TextView playerStrikeRate;
 
-    private JSONObject response = null;
-
     private CompletedCricketMatchSummaryParser cricketMatchSummaryParser;
-
-    private String title = null;
 
     public CricketCompletedMatchSummaryHelper(String title, Intent intent) {
         this.title = title;
@@ -58,6 +58,7 @@ public class CricketCompletedMatchSummaryHelper extends BasicVolleyRequestRespon
         toss = intent.getStringExtra(INTENT_KEY_TOSS);
         date = intent.getStringExtra(INTENT_KEY_DATE);
         matchName = intent.getStringExtra(INTENT_KEY_MATCH_NAME);
+        matchStatus = intent.getStringExtra(Constants.INTENT_KEY_MATCH_STATUS);
 
     }
 
@@ -92,7 +93,14 @@ public class CricketCompletedMatchSummaryHelper extends BasicVolleyRequestRespon
 
     @Override
     public String getRequestCallName() {
-        return ScoresContentHandler.CALL_NAME_CRICKET_MATCH_SUMMARY;
+        boolean completed = ScoresUtil.isCricketMatchCompleted(matchStatus);
+        String callName = null;
+        if( completed ) {
+            callName = ScoresContentHandler.CALL_NAME_CRICKET_MATCH_SUMMARY;
+        } else {
+            //nothing
+        }
+        return callName;
     }
 
     @Override
@@ -105,25 +113,52 @@ public class CricketCompletedMatchSummaryHelper extends BasicVolleyRequestRespon
         initView(view);
     }
 
+    @Override
+    public void requestContent() {
+        boolean completed = ScoresUtil.isCricketMatchCompleted(matchStatus);
+        if( completed ) {
+            super.requestContent();
+        } else {
+            //nothing
+        }
+    }
+
     public void setParameters(HashMap<String, String> parameters) {
         this.parameters = parameters;
     }
 
     private void initView(View view) {
+        boolean isUpcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
+        if( isUpcoming ){
+            View playerOfTheMatchLayout = view.findViewById(R.id.player_of_the_match_layout);
+            playerOfTheMatchLayout.setVisibility(View.GONE);
+        }
+
         ivPlayerProfileView = (ImageView) view.findViewById(R.id.iv_player_profile_image);
         playerName = (TextView) view.findViewById(R.id.tv_player_name);
         tvPlayerRun = (TextView) view.findViewById(R.id.tv_player_run);
         tvPlayerPlayedBall = (TextView) view.findViewById(R.id.tv_player_played_ball);
         tvPlayerStrike_Rate = (TextView) view.findViewById(R.id.tv_player_strike_rate);
-        tvSeriesName = (TextView) view.findViewById(R.id.tv_series_name);
-        tvMatchDate = (TextView) view.findViewById(R.id.tv_match_date);
-        tvTossWinTeam = (TextView) view.findViewById(R.id.tv_toss_win_team);
-        tvUmpiresName = (TextView) view.findViewById(R.id.tv_umpires_name);
-        tvMatchReferee = (TextView) view.findViewById(R.id.tv_match_referee);
         playedBallTag = (TextView) view.findViewById(R.id.tv_player_ball_tag);
         playerStrikeRate = (TextView) view.findViewById(R.id.tv_player_sr_t);
-        tvSeriesName.setText(matchName);
-        tvTossWinTeam.setText(toss);
+
+        tvUmpiresName = (TextView) view.findViewById(R.id.tv_umpires_name);
+        tvMatchReferee = (TextView) view.findViewById(R.id.tv_match_referee);
+
+        {
+            TextView tvSeriesName = (TextView) view.findViewById(R.id.tv_series_name);
+            TextView tvMatchDate = (TextView) view.findViewById(R.id.tv_match_date);
+            TextView tvTossWinTeam = (TextView) view.findViewById(R.id.tv_toss_win_team);
+
+            tvMatchDate.setText(DateUtil.getFormattedDate(date));
+            tvTossWinTeam.setText(toss);
+            tvSeriesName.setText(matchName);
+
+            if (isUpcoming) {
+                view.findViewById(R.id.umpires_layout).setVisibility(View.GONE);
+                view.findViewById(R.id.refree_layout).setVisibility(View.GONE);
+            }
+        }
 
         ivPlayerProfileView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,13 +248,13 @@ public class CricketCompletedMatchSummaryHelper extends BasicVolleyRequestRespon
                             tvPlayerPlayedBall.setText(cricketMatchSummaryParser.getBalls());
                             tvPlayerStrike_Rate.setText(cricketMatchSummaryParser.getstrikerate());
                         }
+                    }
 
-                        tvMatchDate.setText(DateUtil.getFormattedDate(date));
-                        tvTossWinTeam.setText(toss);
-                        tvSeriesName.setText(matchName);
+                    {
                         tvUmpiresName.setText(cricketMatchSummaryParser.getFirstUmpire() + ", " + cricketMatchSummaryParser.secondFirstUmpire());
                         tvMatchReferee.setText(cricketMatchSummaryParser.getRefree());
                     }
+
                 }
             } else {
                 //nothing

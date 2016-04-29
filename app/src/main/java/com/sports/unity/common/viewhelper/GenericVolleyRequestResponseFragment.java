@@ -56,7 +56,11 @@ public class GenericVolleyRequestResponseFragment extends Fragment {
             basicVolleyRequestResponseViewHelper.initialiseViews(view);
             volleyCallComponentHelper = basicVolleyRequestResponseViewHelper.getVolleyCallComponentHelper(view);
             volleyCallComponentHelper.onComponentCreate();
-            volleyCallComponentHelper.requestContent( basicVolleyRequestResponseViewHelper.getRequestCallName(), basicVolleyRequestResponseViewHelper.getRequestParameters(), basicVolleyRequestResponseViewHelper.getRequestTag());
+
+            String callname = basicVolleyRequestResponseViewHelper.getRequestCallName();
+            if( callname != null ) {
+                volleyCallComponentHelper.requestContent( callname, basicVolleyRequestResponseViewHelper.getRequestParameters(), basicVolleyRequestResponseViewHelper.getRequestTag());
+            }
         }
     }
 
@@ -72,10 +76,10 @@ public class GenericVolleyRequestResponseFragment extends Fragment {
         }
     }
 
-    public void requestContent(String callName, HashMap<String,String> parameters, String requestTag) {
-        if( volleyCallComponentHelper != null ) {
-            volleyCallComponentHelper.requestContent(callName, parameters, requestTag);
-        }
-    }
+//    public void requestContent(String callName, HashMap<String,String> parameters, String requestTag) {
+//        if( volleyCallComponentHelper != null ) {
+//            volleyCallComponentHelper.requestContent(callName, parameters, requestTag);
+//        }
+//    }
 
 }

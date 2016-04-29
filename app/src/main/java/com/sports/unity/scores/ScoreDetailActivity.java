@@ -29,6 +29,7 @@ import com.sports.unity.scoredetails.cricketdetail.CricketCompletedMatchSummaryH
 import com.sports.unity.scores.controller.fragment.MatchListWrapperAdapter;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
+import com.sports.unity.scores.model.ScoresUtil;
 import com.sports.unity.scores.model.football.CricketMatchJsonCaller;
 import com.sports.unity.scores.model.football.FootballMatchJsonCaller;
 import com.sports.unity.scores.viewhelper.MatchCommentaryHelper;
@@ -138,26 +139,14 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
     private void initView() {
         try {
-            int tab_index = 0;//getIntent().getIntExtra("tab_index", 1);
+            int tab_index = getIntent().getIntExtra("tab_index", 1);
 
-            HashMap<String, String> parameters = new HashMap<>();
-            parameters.put(ScoresContentHandler.PARAM_SERIESID, seriesId);
-            parameters.put(ScoresContentHandler.PARAM_SPORTS_TYPE, sportsType);
-            parameters.put(ScoresContentHandler.PARAM_ID, matchId);
-
-            MatchCommentaryHelper matchCommentaryHelper = new MatchCommentaryHelper(getString(R.string.commentary));
-            matchCommentaryHelper.setRequestParameters(parameters);
-
-            CricketCompletedMatchSummaryHelper cricketCompletedMatchSummaryHelper = new CricketCompletedMatchSummaryHelper(getString(R.string.summary), getIntent());
-            cricketCompletedMatchSummaryHelper.setParameters(parameters);
-
-            CompletedMatchScoreCardFragment completedMatchScoreCardFragment = new CompletedMatchScoreCardFragment(getString(R.string.scorecard));
-            completedMatchScoreCardFragment.setParameters(parameters);
-
-            ArrayList<BasicVolleyRequestResponseViewHelper> fragmentHelperList = new ArrayList<>();
-//            fragmentHelperList.add(cricketCompletedMatchSummaryHelper);
-//            fragmentHelperList.add(matchCommentaryHelper);
-            fragmentHelperList.add(completedMatchScoreCardFragment);
+            ArrayList<BasicVolleyRequestResponseViewHelper> fragmentHelperList = null;
+            if ( sportsType.equalsIgnoreCase(ScoresJsonParser.CRICKET) ) {
+                fragmentHelperList = getListOfViewHelpersForCricket(sportsType, matchStatus);
+            } else {
+                fragmentHelperList = getListOfViewHelpersForFootball(sportsType, matchStatus);
+            }
 
             mViewPager = (ViewPager) findViewById(R.id.pager);
             mViewPager.setAdapter( new GenericFragmentViewPagerAdapter(getSupportFragmentManager(), fragmentHelperList));
@@ -236,6 +225,83 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             Toast.makeText(this, "Error Occured", Toast.LENGTH_LONG);
             e.printStackTrace();
         }
+    }
+
+    private ArrayList<BasicVolleyRequestResponseViewHelper> getListOfViewHelpersForCricket(String sportsType, String matchStatus){
+        ArrayList<BasicVolleyRequestResponseViewHelper> fragmentHelperList = new ArrayList<>();
+
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put(ScoresContentHandler.PARAM_SERIESID, seriesId);
+        parameters.put(ScoresContentHandler.PARAM_SPORTS_TYPE, sportsType);
+        parameters.put(ScoresContentHandler.PARAM_ID, matchId);
+
+        if( ScoresUtil.isCricketMatchCompleted(matchStatus) ){
+            CricketCompletedMatchSummaryHelper helper = new CricketCompletedMatchSummaryHelper(getString(R.string.summary), getIntent());
+            helper.setParameters(parameters);
+            fragmentHelperList.add(helper);
+        } else if( ScoresUtil.isCricketMatchLive(matchStatus) ){
+//            fragment = new CricketLiveMatchSummaryFragment();
+        } else  {
+            CricketCompletedMatchSummaryHelper helper = new CricketCompletedMatchSummaryHelper(getString(R.string.summary), getIntent());
+            helper.setParameters(parameters);
+            fragmentHelperList.add(helper);
+        }
+
+        {
+            MatchCommentaryHelper helper = new MatchCommentaryHelper(getString(R.string.commentary), matchStatus);
+            helper.setRequestParameters(parameters);
+            fragmentHelperList.add(helper);
+        }
+
+        if( ScoresUtil.isCricketMatchCompleted(matchStatus) ){
+            CompletedMatchScoreCardFragment helper = new CompletedMatchScoreCardFragment(getString(R.string.scorecard), matchStatus);
+            helper.setParameters(parameters);
+            fragmentHelperList.add(helper);
+        }else if( ScoresUtil.isCricketMatchLive(matchStatus) ){
+//            fragment = new LiveCricketMatchScoreCardFragment();}
+        } else {
+            CompletedMatchScoreCardFragment helper = new CompletedMatchScoreCardFragment(getString(R.string.scorecard), matchStatus);
+            helper.setParameters(parameters);
+            fragmentHelperList.add(helper);
+        }
+
+        return fragmentHelperList;
+    }
+
+    private ArrayList<BasicVolleyRequestResponseViewHelper> getListOfViewHelpersForFootball(String sportsType, String matchStatus){
+        ArrayList<BasicVolleyRequestResponseViewHelper> fragmentHelperList = new ArrayList<>();
+
+        HashMap<String, String> parameters = new HashMap<>();
+        parameters.put(ScoresContentHandler.PARAM_SERIESID, seriesId);
+        parameters.put(ScoresContentHandler.PARAM_SPORTS_TYPE, sportsType);
+        parameters.put(ScoresContentHandler.PARAM_ID, matchId);
+
+        if( ScoresUtil.isCricketMatchCompleted(matchStatus) ){
+            CricketCompletedMatchSummaryHelper cricketCompletedMatchSummaryHelper = new CricketCompletedMatchSummaryHelper(getString(R.string.summary), getIntent());
+            cricketCompletedMatchSummaryHelper.setParameters(parameters);
+        }else if( ScoresUtil.isCricketMatchLive(matchStatus) ){
+//            fragment = new CricketLiveMatchSummaryFragment();
+        } else  {
+            CricketCompletedMatchSummaryHelper cricketCompletedMatchSummaryHelper = new CricketCompletedMatchSummaryHelper(getString(R.string.summary), getIntent());
+            cricketCompletedMatchSummaryHelper.setParameters(parameters);
+        }
+
+        MatchCommentaryHelper matchCommentaryHelper = new MatchCommentaryHelper(getString(R.string.commentary), matchStatus);
+        matchCommentaryHelper.setRequestParameters(parameters);
+        fragmentHelperList.add( matchCommentaryHelper);
+
+        if( ScoresUtil.isCricketMatchCompleted(matchStatus) ){
+            CompletedMatchScoreCardFragment completedMatchScoreCardFragment = new CompletedMatchScoreCardFragment(getString(R.string.scorecard), matchStatus);
+            completedMatchScoreCardFragment.setParameters(parameters);
+//            fragment = new CricketUpcomingMatchScoreCardFragment();
+        }else if( ScoresUtil.isCricketMatchLive(matchStatus) ){
+//            fragment = new LiveCricketMatchScoreCardFragment();}
+        } else {
+            CompletedMatchScoreCardFragment completedMatchScoreCardFragment = new CompletedMatchScoreCardFragment(getString(R.string.scorecard), matchStatus);
+            completedMatchScoreCardFragment.setParameters(parameters);
+        }
+
+        return fragmentHelperList;
     }
 
     private void displayMatchTimer(Integer currenttime) {

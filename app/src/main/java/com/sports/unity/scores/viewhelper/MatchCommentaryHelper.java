@@ -16,6 +16,7 @@ import com.sports.unity.scoredetails.CommentriesModel;
 import com.sports.unity.scores.controller.fragment.BroadcastListAdapter;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.scores.model.ScoresJsonParser;
+import com.sports.unity.scores.model.ScoresUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -32,6 +33,7 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper {
 
     private String title = null;
+    private String matchStatus = "";
     private HashMap<String, String> requestParameters = null;
 
     private ArrayList<CommentriesModel> response = null;
@@ -43,8 +45,9 @@ public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper 
 
     private View tvEmptyView;
 
-    public MatchCommentaryHelper(String title){
+    public MatchCommentaryHelper(String title, String matchStatus){
         this.title = title;
+        this.matchStatus = matchStatus;
     }
 
     @Override
@@ -69,12 +72,29 @@ public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper 
 
     @Override
     public String getRequestCallName() {
-        return ScoresContentHandler.CALL_NAME_MATCH_COMMENTARIES;
+        boolean upcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
+        String callName = null;
+        if( upcoming ) {
+            callName = null;
+        } else {
+            callName = ScoresContentHandler.CALL_NAME_MATCH_COMMENTARIES;
+        }
+        return callName;
     }
 
     @Override
     public HashMap<String, String> getRequestParameters() {
         return requestParameters;
+    }
+
+    @Override
+    public void requestContent() {
+        boolean upcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
+        if( upcoming ) {
+            //nothing
+        } else {
+            super.requestContent();
+        }
     }
 
     @Override
@@ -96,28 +116,35 @@ public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper 
     }
 
     private void initViews(View view){
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
-        mRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(view.getContext(), VERTICAL, false));
-        mRecyclerView.setNestedScrollingEnabled(false);
-
-        String sportsType = getRequestParameters().get(ScoresContentHandler.PARAM_SPORTS_TYPE);
-        mAdapter = new BroadcastListAdapter(sportsType, commentaries, view.getContext());
-        mRecyclerView.setAdapter(mAdapter);
-        mAdapter.notifyDataSetChanged();
+        boolean upcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
 
         tvEmptyView = view.findViewById(R.id.tv_empty_view);
-
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.commentary_refresh);
+
+        if( upcoming ){
+            tvEmptyView.setVisibility(View.VISIBLE);
+            swipeRefreshLayout.setVisibility(View.GONE);
+        } else {
+            mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
+            mRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(view.getContext(), VERTICAL, false));
+            mRecyclerView.setNestedScrollingEnabled(false);
+
+            String sportsType = getRequestParameters().get(ScoresContentHandler.PARAM_SPORTS_TYPE);
+            mAdapter = new BroadcastListAdapter(sportsType, commentaries, view.getContext());
+            mRecyclerView.setAdapter(mAdapter);
+            mAdapter.notifyDataSetChanged();
+
 //        swipeRefreshLayout.setRefreshing(true);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
-            @Override
-            public void onRefresh() {
+                @Override
+                public void onRefresh() {
 //                swipeRefreshLayout.setRefreshing(true);
-                requestContent();
-            }
+                    requestContent();
+                }
 
-        });
+            });
+        }
     }
 
     private void renderDisplay() {
@@ -180,7 +207,7 @@ public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper 
             if( commentaries.size() == 0 ){
                 super.showErrorLayout();
             } else {
-                Toast.makeText( mRecyclerView.getContext(), R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
+                Toast.makeText( tvEmptyView.getContext(), R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
             }
         }
 
