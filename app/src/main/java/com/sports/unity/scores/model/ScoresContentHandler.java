@@ -29,6 +29,8 @@ public class ScoresContentHandler {
     public static final String CALL_NAME_NEAR_BY_USERS = "NEAR_BY_USERS";
     public static final String CALL_NAME_PLAYER_PROFILE = "PLAYER_PROFILE";
     public static final String CALL_NAME_LEAGUE_TABLE = "LEAGUE_TABLE";
+    public static final String CALL_NAME_CRICKET_MATCH_SUMMARY = "CRICKET_MATCH_SUMMARY";
+
     public static final String PARAM_SPORTS_TYPE = "SPORTS_TYPE";
     public static final String PARAM_ID = "ID";
     public static final String PARAM_SERIESID = "series_id";
@@ -37,15 +39,17 @@ public class ScoresContentHandler {
     public static final String PARAM_LATITUDE = "LATITUDE";
     public static final String PARAM_LONGITUDE = "LONGITUDE";
     public static final String PARAM_RADIUS = "RADIUS";
-
     public static final String PARAM_NEWS_IMAGE_DPI = "IMAGE_DPI";
     public static final String PARAM_NEWS_ID = "NEWS_ID";
-    public static final String URL_REGISTER = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/register?";
+
+    private static final String URL_REGISTER = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/register?";
     private static final String URL_CREATE = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/create?";
     private static final String URL_REQUEST_OTP = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/create?";
     private static final String URL_NEAR_BY = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/get_nearby_users?";
+
     private static final String URL_PARAMS_NEWS_IMAGE_DPI = "image_size";
     private static final String URL_PARAMS_NEWS_ID = "news_id";
+
     private static final String URL_PARAMS_FOR_LIST_OF_MATCHES = "v1/get_all_matches_list";
     private static final String URL_PARAMS_FOR_FOOTBALL_MATCH_DETAIL = "get_football_match_scores?match_id=";
     private static final String URL_PARAMS_FOR_CRICKET_MATCH_DETAIL = "v1/get_match_widget?season_key=%s&match_id=";
@@ -59,39 +63,9 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_CRICKET_LEAGUE_FIXTURES = "/v2/get_series_fixtures?season_key=";
     private static final String URL_PARAMS_FOR_STAFF_LEAGUE = "/v1/get_major_tournament";
     private static final String URL_PARAMS_FOR_LEAGUE_TABLE = Constants.SCORE_BASE_URL + "/get_league_standings?league_id=";
+    private static final String URL_PARAMS_FOR_CRICKET_MATCH_SUMMARY = Constants.SCORE_BASE_URL+"/v1/get_cricket_match_summary?season_key=%s&match_id=%s";
+
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
-    private HashMap<String, ContentListener> mapOfResponseListeners = new HashMap<>();
-    private HashMap<String, String> requestInProcess_RequestTagAndListenerKey = new HashMap<>();
-    private VolleyResponseListener responseListener = new VolleyResponseListener() {
-
-        @Override
-        public void handleResponse(String tag, String response, int responseCode) {
-            if (requestInProcess_RequestTagAndListenerKey.containsKey(tag)) {
-                String listenerKey = requestInProcess_RequestTagAndListenerKey.get(tag);
-                ContentListener contentListener = mapOfResponseListeners.get(listenerKey);
-                if (contentListener != null) {
-                    contentListener.handleContent(tag, response, responseCode);
-                } else {
-                    //nothing
-//=======
-//            if( requestInProcess_RequestTagAndListenerKey.containsKey(tag) ) {
-//                String listenerKey = requestInProcess_RequestTagAndListenerKey.get(tag);
-//                ContentListener contentListener = mapOfResponseListeners.get(listenerKey);
-//                if( contentListener != null ) {
-//                    contentListener.handleContent(tag, response, responseCode);
-//>>>>>>> team2_dev_branch
-                }
-
-                requestInProcess_RequestTagAndListenerKey.remove(tag);
-            }
-        }
-
-    };
-
-
-    private ScoresContentHandler() {
-
-    }
 
     public static ScoresContentHandler getInstance() {
         if (SCORES_CONTENT_HANDLER == null) {
@@ -105,6 +79,33 @@ public class ScoresContentHandler {
             SCORES_CONTENT_HANDLER.cleanUp();
             SCORES_CONTENT_HANDLER = null;
         }
+    }
+
+    private HashMap<String, ContentListener> mapOfResponseListeners = new HashMap<>();
+    private HashMap<String, String> requestInProcess_RequestTagAndListenerKey = new HashMap<>();
+
+    private VolleyResponseListener responseListener = new VolleyResponseListener() {
+
+        @Override
+        public void handleResponse(String tag, String response, int responseCode) {
+            if (requestInProcess_RequestTagAndListenerKey.containsKey(tag)) {
+                String listenerKey = requestInProcess_RequestTagAndListenerKey.get(tag);
+                ContentListener contentListener = mapOfResponseListeners.get(listenerKey);
+                if (contentListener != null) {
+                    contentListener.handleContent(tag, response, responseCode);
+                } else {
+                    //nothing
+                }
+
+                requestInProcess_RequestTagAndListenerKey.remove(tag);
+            }
+        }
+
+    };
+
+
+    private ScoresContentHandler() {
+
     }
 
     public void addResponseListener(ContentListener responseListener, String listenerKey) {
@@ -175,19 +176,11 @@ public class ScoresContentHandler {
             String leagueId = parameters.get(Constants.LEAGUE_NAME); // league name returns leagueId here
             String sportsType = parameters.get(Constants.SPORTS_TYPE);
             requestLeagueTable(sportsType, leagueId, requestListenerKey, requestTag);
+        } else if (callName.equals(CALL_NAME_CRICKET_MATCH_SUMMARY)) {
+            String leagueId = parameters.get(PARAM_SERIESID); // league name returns leagueId here
+            String matchId = parameters.get(PARAM_ID);
+            requestMatchSummary( leagueId, matchId, requestListenerKey, requestTag);
         }
-
-    }
-
-    private void requestLeagueTable(String sportsType, String leagueId, String requestListenerKey, String requestTag) {
-        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
-            StringBuilder stringBuilder = new StringBuilder(URL_PARAMS_FOR_LEAGUE_TABLE);
-            stringBuilder.append(leagueId);
-            requestContent(requestTag, requestListenerKey, stringBuilder.toString());
-        }
-    }
-
-    public void requestCall(String callName, Object requestContent, String requestListenerKey, String requestTag, Context context) {
 
     }
 
@@ -318,7 +311,6 @@ public class ScoresContentHandler {
         }
     }
 
-
     public void requestStaffContent(String listenerKey, String requestTag) {
         if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
             String url = generateURL(URL_PARAMS_FOR_STAFF_LEAGUE);
@@ -360,6 +352,22 @@ public class ScoresContentHandler {
             }
 
             Log.i("CRICKET", "requestCommentaryOnMatch: " + url);
+            requestContent(requestTag, listenerKey, url);
+        }
+    }
+
+    private void requestLeagueTable(String sportsType, String leagueId, String requestListenerKey, String requestTag) {
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
+            StringBuilder stringBuilder = new StringBuilder(URL_PARAMS_FOR_LEAGUE_TABLE);
+            stringBuilder.append(leagueId);
+            requestContent(requestTag, requestListenerKey, stringBuilder.toString());
+        }
+    }
+
+    private void requestMatchSummary(String seriesId, String matchId, String listenerKey, String requestTag){
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(requestTag)) {
+            String url = String.format(URL_PARAMS_FOR_CRICKET_MATCH_SUMMARY, seriesId,matchId);
+
             requestContent(requestTag, listenerKey, url);
         }
     }
