@@ -94,7 +94,8 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     private static final String SPORT_SELECTION_CRICKET = "cricket";
 
 
-    private ProgressDialog aDialog = null;
+    private ProgressDialog progressDialog = null;
+    private Dialog aDialog = null;
 
     private NearByUserJsonCaller nearByUserJsonCaller = new NearByUserJsonCaller();
 
@@ -138,19 +139,21 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_people_around);
+        aDialog = new Dialog(PeopleAroundActivity.this);
+        aDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.customLocation = false;
         progress = (ProgressBar) findViewById(R.id.progress);
         tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         locManager = LocManager.getInstance(getApplicationContext());
         locManager.buildApiClient();
-       // setCustomButtonsForNavigationAndUsers();
+        // setCustomButtonsForNavigationAndUsers();
         hideSoftKeyboard();
         initToolbar();
         InitSeekbar();
         //bindAutoComplete();
         userPrivacyUpdate();
         getLocation();
-       // getPeopleAroundMe(latLong.latitude, latLong.longitude);
+        // getPeopleAroundMe(latLong.latitude, latLong.longitude);
 
         int tab_index = 0;
         mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -196,15 +199,15 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                     peopleNeedHeading.clear();
                     Collections.sort(people);
                     for(Person person : people){
-                     if(person.isFriend()){
-                         peopleFriends.add(person);
-                     }else if(person.isCommonInterest()){
-                         peopleNeedHeading.add(person);
-                     }else{
-                         peopleSU.add(person);
-                     }
+                        if(person.isFriend()){
+                            peopleFriends.add(person);
+                        }else if(person.isCommonInterest()){
+                            peopleNeedHeading.add(person);
+                        }else{
+                            peopleSU.add(person);
+                        }
                     }
-                     for(Fragment fragment: getSupportFragmentManager().getFragments()){
+                    for(Fragment fragment: getSupportFragmentManager().getFragments()){
                         if(fragment instanceof DataNotifier) {
                             DataNotifier listner = (DataNotifier)fragment;
                             listner.notifyPeoples();
@@ -329,8 +332,8 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             @Override
             public void onClick(View v) {
 
-                    getuserFromNearBy();
-                }
+                getuserFromNearBy();
+            }
         });
     }
 
@@ -392,9 +395,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
     private void getPeopleAroundMe(double latitude, double longitude) {
         progress.setVisibility(View.VISIBLE);
-        tabs.setVisibility(View.GONE);
         ScoresContentHandler.getInstance().addResponseListener(contentListener, REQUEST_LISTENER_KEY);
-
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(PARAM_USERNAME, getInstance(getApplicationContext()).getString(KEY_USER_JID));
         parameters.put(PARAM_PASSWORD, getInstance(getApplicationContext()).getString(KEY_PASSWORD));
@@ -419,7 +420,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
 //        AlertDialog.Builder otherProfileBuilder = new AlertDialog.Builder(PeopleAroundMeMap.this);
 //        otherProfileBuilder.setView(popupProfile);
-        aDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
 
             @Override
             public void onCancel(DialogInterface dialog) {
@@ -436,11 +437,11 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 //
 //        });
 
-        aDialog.setContentView(R.layout.chat_other_profile_layout);
-        aDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        aDialog.show();
+        progressDialog.setContentView(R.layout.chat_other_profile_layout);
+        progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        progressDialog.show();
 
-        aDialog.findViewById(R.id.progressBarProfile).setVisibility(VISIBLE);
+        progressDialog.findViewById(R.id.progressBarProfile).setVisibility(VISIBLE);
 
 //        int distance = (int) Math.round(Double.parseDouble(marker.getSnippet().substring(marker.getSnippet().indexOf(",") + 1, marker.getSnippet().length())));
         int distance = person.getDistance();
@@ -467,33 +468,33 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
     private void populateProfilePopup(final VCard vCard, View popupProfile, final String jid, int distance, String info, Person person) {
 
-        CircleImageView imageview = (CircleImageView) aDialog.findViewById(R.id.user_pic);
+        CircleImageView imageview = (CircleImageView) progressDialog.findViewById(R.id.user_pic);
 
-        TextView distancefromUser = (TextView) aDialog.findViewById(R.id.distanceFromMe);
+        TextView distancefromUser = (TextView) progressDialog.findViewById(R.id.distanceFromMe);
         distancefromUser.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoMedium());
 
-        TextView sport = (TextView) aDialog.findViewById(R.id.sport);
+        TextView sport = (TextView) progressDialog.findViewById(R.id.sport);
         sport.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
-        TextView name = (TextView) aDialog.findViewById(R.id.username);
+        TextView name = (TextView) progressDialog.findViewById(R.id.username);
         name.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedBold());
 
-        Button sayHello = (Button) aDialog.findViewById(R.id.start_chat);
+        Button sayHello = (Button) progressDialog.findViewById(R.id.start_chat);
         sayHello.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
 
-        ImageView dismissDialog = (ImageView) aDialog.findViewById(R.id.close_icon);
+        ImageView dismissDialog = (ImageView) progressDialog.findViewById(R.id.close_icon);
         dismissDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                aDialog.cancel();
+                progressDialog.cancel();
             }
         });
-        aDialog.findViewById(R.id.progressBarProfile).setVisibility(GONE);
+        progressDialog.findViewById(R.id.progressBarProfile).setVisibility(GONE);
 
         if (vCard == null) {
             if (info == null) {
                 sayHello.setVisibility(GONE);
-                aDialog.findViewById(R.id.dot).setVisibility(GONE);
+                progressDialog.findViewById(R.id.dot).setVisibility(GONE);
                 sport.setVisibility(GONE);
 
                 name.setText(R.string.no_users_nearby);
@@ -501,7 +502,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                 imageview.setImageResource(R.drawable.img_no_frnd_found);
             } else {
                 sayHello.setVisibility(GONE);
-                aDialog.findViewById(R.id.dot).setVisibility(GONE);
+                progressDialog.findViewById(R.id.dot).setVisibility(GONE);
                 sport.setVisibility(GONE);
 
                 name.setText("Whoops!!");
@@ -581,16 +582,15 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         LayoutInflater inflater = PeopleAroundActivity.this.getLayoutInflater();
         View enableGps = inflater.inflate(R.layout.dialog_enable_gps, null);
         setCustomFont(enableGps);
-
         aDialog.setContentView(R.layout.dialog_enable_gps);
-//        aDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+//        progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         aDialog.show();
 
 //        AlertDialog.Builder builder = new AlertDialog.Builder(PeopleAroundMeMap.this);
 //        builder.setView(enableGps);
 //
-//        aDialog = builder.create();
-//        aDialog.show();
+//        progressDialog = builder.create();
+//        progressDialog.show();
 
         aDialog.findViewById(R.id.enable_gps).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -662,8 +662,8 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     }
 
     private void dismissDialog() {
-        if (aDialog != null && aDialog.isShowing()) {
-            aDialog.cancel();
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.cancel();
         }
     }
     @Override
@@ -717,7 +717,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         if(contentListener!=null){
             contentListener = null;
         }
-         }
+    }
     class FetchAndDisplayCurrentAddress extends AsyncTask<Void, Void, Void> {
 
         Location location = null;
