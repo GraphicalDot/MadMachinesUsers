@@ -36,8 +36,11 @@ import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 
 public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponseViewHelper {
+
     private String title;
-    private Context mContext;
+    private JSONObject response;
+    private HashMap<String, String> parameters;
+
     private TextView tvFirstTeamInning;
     private TextView tvSecondTeamInning;
     private ImageView ivDwn;
@@ -77,14 +80,9 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
     private LinearLayout secondBattingLinearLayout;
     private LinearLayout secondBowlingLinearLayout;
     private LinearLayout secondFallofWicketsLinearLayout;
-    private ProgressBar progressBar;
-    private  CompletedMatchScoreCardHandler completedMatchScoreCardHandler;
-    private String matchId;
-    private String seriesId;
+
     private RelativeLayout team1ScoreDetails;
     private RelativeLayout team2ScoreDetails;
-    private JSONObject response;
-    private HashMap<String, String> parameters;
 
     public CompletedMatchScoreCardFragment(String title) {
         this.title  = title;
@@ -102,7 +100,7 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
 
     @Override
     public String getRequestListenerKey() {
-        return null;
+        return "CompletedMatchScorecardListenerKey";
     }
 
     @Override
@@ -138,27 +136,9 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
         this.parameters = parameters;
     }
 
-    /*@Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        matchId =  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-        seriesId=  getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_SERIES);
-        mContext = context;
-        completedMatchScoreCardHandler = CompletedMatchScoreCardHandler.getInstance(context);
-        completedMatchScoreCardHandler.addListener(this);
-        completedMatchScoreCardHandler.requestCompletdMatchScoreCard(seriesId, matchId);
-    }
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_completed_match_score_card, container, false);
-        initView(view);
-        initProgress(view);
-        return view;
-    }*/
-
     private void initView(View view) {
+        Context context = view.getContext();
+
         firstBattingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_first_view_visibility);
         firstBowlingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_first_bowling_visibility);
         firstFallofWicketsLinearLayout = (LinearLayout) view.findViewById(R.id.first_layout_fall_wicket);
@@ -194,37 +174,36 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
         teamBBowlingRecycler.setLayoutManager(new LinearLayoutManager(teamBBowlingRecycler.getContext(), VERTICAL, false));
         teamBFallOfWicketRecycler = (RecyclerView) view.findViewById(R.id.rv_second_team_fall_wicket);
         teamBFallOfWicketRecycler.setLayoutManager(new LinearLayoutManager(teamBFallOfWicketRecycler.getContext(), VERTICAL, false));
-        teamABattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamABattingCardList,mContext);
+        teamABattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamABattingCardList, context);
         teamABattingRecycler.setAdapter(teamABattingAdapter);
         teamABattingRecycler.setNestedScrollingEnabled(false);
-        teamBBattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamBBattingCardList,mContext);
+        teamBBattingAdapter = new LiveAndCompletedCricketBattingCardAdapter(teamBBattingCardList, context);
         teamBBattingRecycler.setAdapter(teamBBattingAdapter);
         teamBBattingRecycler.setNestedScrollingEnabled(false);
-        teamABowlingAdapter = new LiveAndCompletedCricketBowlingCardAdapter(teamABowlingCardList,mContext);
+        teamABowlingAdapter = new LiveAndCompletedCricketBowlingCardAdapter(teamABowlingCardList, context);
         teamABowlingRecycler.setAdapter(teamABowlingAdapter);
         teamABowlingRecycler.setNestedScrollingEnabled(false);
-        teamBBowlingAdapter = new LiveAndCompletedCricketBowlingCardAdapter(teamBBowlingCardList,mContext);
+        teamBBowlingAdapter = new LiveAndCompletedCricketBowlingCardAdapter(teamBBowlingCardList, context);
         teamBBowlingRecycler.setAdapter(teamBBowlingAdapter);
-        teamAFallOfWicketAdapter = new LiveAndCompletedCricketFallOfWicketAdapter(teamAFallOfWicketCardList,mContext);
+        teamAFallOfWicketAdapter = new LiveAndCompletedCricketFallOfWicketAdapter(teamAFallOfWicketCardList, context);
         teamAFallOfWicketRecycler.setAdapter(teamAFallOfWicketAdapter);
         teamAFallOfWicketRecycler.setNestedScrollingEnabled(false);
-        teamBFallOfWicketAdapter = new LiveAndCompletedCricketFallOfWicketAdapter(teamBFallOfWicketCardList,mContext);
+        teamBFallOfWicketAdapter = new LiveAndCompletedCricketFallOfWicketAdapter(teamBFallOfWicketCardList, context);
         teamBFallOfWicketRecycler.setAdapter(teamBFallOfWicketAdapter);
         teamBFallOfWicketRecycler.setNestedScrollingEnabled(false);
-        //initErrorLayout(view);
 
         team1ScoreDetails = (RelativeLayout) view.findViewById(R.id.team1_scroll_details);
         team2ScoreDetails = (RelativeLayout) view.findViewById(R.id.team2_scroll_details);
         ivDwn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ShowHideTeamFirstScoreCard();
+                showHideTeamFirstScoreCard();
             }
         });
         ivDwnSecond.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showhideTeamSecondScoreCard();
+                showHideTeamSecondScoreCard();
             }
         });
 
@@ -232,7 +211,7 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
             @Override
             public void onClick(View v) {
                 {
-                    ShowHideTeamFirstScoreCard();
+                    showHideTeamFirstScoreCard();
                 }
             }
         });
@@ -240,15 +219,12 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
         team2ScoreDetails.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showhideTeamSecondScoreCard();
+                showHideTeamSecondScoreCard();
             }
         });
-
-
-
     }
 
-    private void showhideTeamSecondScoreCard() {
+    private void showHideTeamSecondScoreCard() {
         if (secondBattingLinearLayout.getVisibility() == View.GONE) {
             secondBattingLinearLayout.setVisibility(View.VISIBLE);
             secondBowlingLinearLayout.setVisibility(View.VISIBLE);
@@ -262,7 +238,7 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
         }
     }
 
-    private void ShowHideTeamFirstScoreCard() {
+    private void showHideTeamFirstScoreCard() {
         if (firstBattingLinearLayout.getVisibility() == View.GONE) {
             firstBattingLinearLayout.setVisibility(View.VISIBLE);
             firstBowlingLinearLayout.setVisibility(View.VISIBLE);
@@ -276,20 +252,7 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
         }
     }
 
-    private void initProgress(View view) {
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        progressBar.getIndeterminateDrawable().setColorFilter(progressBar.getContext().getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
-
-    }
-    public void showProgress() {
-        progressBar.setVisibility(View.VISIBLE);
-
-    }
-    public void hideProgress() {
-        progressBar.setVisibility(View.GONE);
-
-    }
-    public boolean handleContent(String content) {
+    private boolean handleContent(String content) {
         boolean success = false;
         try {
             JSONObject jsonObject = new JSONObject(content);
@@ -299,25 +262,14 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
             } else {
                 //nothing
             }
+
+            success = true;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return success;
 
     }
-
-    /*private void initErrorLayout(View view) {
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.GONE);
-
-    }
-
-    private void showErrorLayout(View view) {
-
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.VISIBLE);
-
-    }*/
 
     private boolean renderDisplay() {
         boolean success = false;
@@ -339,16 +291,13 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
             }else {
                 success = false;
             }
-        }catch (Exception e){e.printStackTrace();}
-        return  success;
-
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return success;
     }
 
-
-
     private void setScoreCard(CricketMatchScoreJsonParser cricketMatchScoreJsonParser) throws JSONException {
-
-
         String teamNameFirst = null;
         String teamNameSecond = null;
         JSONObject scoreCard = cricketMatchScoreJsonParser.getScoreCrad();
@@ -474,37 +423,6 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
         teamBFallOfWicketAdapter.notifyDataSetChanged();
     }
 
-
-
-
-
-    /*@Override
-    public void onPause() {
-        super.onPause();
-        if(completedMatchScoreCardHandler != null){
-            completedMatchScoreCardHandler.addListener(null);
-        }
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        showProgress();
-        if(completedMatchScoreCardHandler != null){
-            completedMatchScoreCardHandler.addListener(this);
-
-        }else {
-            completedMatchScoreCardHandler= CompletedMatchScoreCardHandler.getInstance(getContext());
-        }
-        completedMatchScoreCardHandler.requestCompletdMatchScoreCard(seriesId, matchId);
-    }*/
-    /*public void handleError(){
-        showErrorLayout(getView());
-    }
-*/
-
-
     public class MatchScoreCardComponentListener extends CustomComponentListener {
 
         public MatchScoreCardComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
@@ -533,7 +451,5 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
         }
 
     }
-
-
 
 }

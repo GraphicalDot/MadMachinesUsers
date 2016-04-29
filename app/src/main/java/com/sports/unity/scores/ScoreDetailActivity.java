@@ -138,7 +138,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
     private void initView() {
         try {
-            int tab_index = getIntent().getIntExtra("tab_index", 1);
+            int tab_index = 0;//getIntent().getIntExtra("tab_index", 1);
 
             HashMap<String, String> parameters = new HashMap<>();
             parameters.put(ScoresContentHandler.PARAM_SERIESID, seriesId);
@@ -150,14 +150,14 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
             CricketCompletedMatchSummaryHelper cricketCompletedMatchSummaryHelper = new CricketCompletedMatchSummaryHelper(getString(R.string.summary), getIntent());
             cricketCompletedMatchSummaryHelper.setParameters(parameters);
+
             CompletedMatchScoreCardFragment completedMatchScoreCardFragment = new CompletedMatchScoreCardFragment(getString(R.string.scorecard));
             completedMatchScoreCardFragment.setParameters(parameters);
 
             ArrayList<BasicVolleyRequestResponseViewHelper> fragmentHelperList = new ArrayList<>();
-            fragmentHelperList.add(cricketCompletedMatchSummaryHelper);
-            fragmentHelperList.add(matchCommentaryHelper);
+//            fragmentHelperList.add(cricketCompletedMatchSummaryHelper);
+//            fragmentHelperList.add(matchCommentaryHelper);
             fragmentHelperList.add(completedMatchScoreCardFragment);
-//            fragmentHelperList.add( new MatchCommentaryHelper());
 
             mViewPager = (ViewPager) findViewById(R.id.pager);
             mViewPager.setAdapter( new GenericFragmentViewPagerAdapter(getSupportFragmentManager(), fragmentHelperList));
