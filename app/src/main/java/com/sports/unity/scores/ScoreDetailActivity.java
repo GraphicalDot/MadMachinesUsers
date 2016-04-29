@@ -143,19 +143,20 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
     private void initView() {
         try {
-            int tab_index = getIntent().getIntExtra("tab_index", 1);
+            int tab_index = 0;
+//            int tab_index = getIntent().getIntExtra("tab_index", 1);
 
             HashMap<String, String> parameters = new HashMap<>();
             parameters.put( ScoresContentHandler.PARAM_SERIESID, seriesId);
             parameters.put( ScoresContentHandler.PARAM_SPORTS_TYPE, sportsType);
-            parameters.put( ScoresContentHandler.PARAM_ID, matchId);
+            parameters.put(ScoresContentHandler.PARAM_ID, matchId);
 
             MatchCommentaryHelper matchCommentaryHelper = new MatchCommentaryHelper();
             matchCommentaryHelper.setRequestParameters(parameters);
 
             ArrayList<BasicVolleyRequestResponseViewHelper> fragmentHelperList = new ArrayList<>();
-            fragmentHelperList.add( matchCommentaryHelper);
 //            fragmentHelperList.add( new MatchCommentaryHelper());
+            fragmentHelperList.add( matchCommentaryHelper);
 //            fragmentHelperList.add( new MatchCommentaryHelper());
 
             mViewPager = (ViewPager) findViewById(R.id.pager);

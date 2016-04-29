@@ -27,9 +27,10 @@ import java.util.ArrayList;
 public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdapter.ViewHolder> {
 
     private Context context;
-    private ArrayList<CommentriesModel> list;
 
     private String sportsType;
+    private ArrayList<CommentriesModel> list;
+
     public BroadcastListAdapter(String sportsType, ArrayList<CommentriesModel> list, Context activity) {
         this.sportsType = sportsType;
         this.list = list;
@@ -42,20 +43,16 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
         private TextView commentTime;
         private ImageView commentImage;
         private View lvDivider;
-        private LinearLayout backGroundColor;
-
-        private View view;
 
         public ViewHolder(View v) {
             super(v);
 
-            view = v;
             broadcast = (TextView) v.findViewById(R.id.broadcast);
             commentTime = (TextView) v.findViewById(R.id.comment_time);
             commentImage  = (ImageView) v.findViewById(R.id.comment_image);
             lvDivider = v.findViewById(R.id.lv_divider);
-            backGroundColor = (LinearLayout) v.findViewById(R.id.back_ground_color);
         }
+
     }
 
     @Override
@@ -68,10 +65,8 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
     public void onBindViewHolder(BroadcastListAdapter.ViewHolder holder, int position) {
         try {
             if(list != null ) {
-
                 CommentriesModel nextObject = null;
                 CommentriesModel jsonObject = list.get(position);
-
                 if (sportsType.equals(ScoresJsonParser.CRICKET)) {
                     if(position+1<getItemCount()){
                         nextObject = list.get(position+1) ;
@@ -100,20 +95,16 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
                             holder.broadcast.setTextColor(context.getResources().getColor(R.color.news_headline_mini));
                             holder.commentTime.setTextColor(context.getResources().getColor(R.color.news_headline_mini));
                         }
-
                     }
 
-                if("-1.0".equalsIgnoreCase(jsonObject.getOver())){
+                    if("-1.0".equalsIgnoreCase(jsonObject.getOver())) {
                         holder.commentImage.setImageResource(R.drawable.commentary_icon);
                         holder.commentTime.setVisibility(View.GONE);
-                    }else{
+                    } else {
                         holder.commentImage.setImageResource(R.drawable.grey_ring);
                         holder.commentTime.setVisibility(View.VISIBLE);
                         holder.commentTime.setText(jsonObject.getOver());
-
                     }
-
-
                 } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
                     holder.broadcast.setText(jsonObject.getComment());
                     holder.commentTime.setText(jsonObject.getMinute());
@@ -123,6 +114,7 @@ public class BroadcastListAdapter extends RecyclerView.Adapter<BroadcastListAdap
             ex.printStackTrace();
         }
     }
+
    @Override
     public int getItemCount() {
         return list.size();

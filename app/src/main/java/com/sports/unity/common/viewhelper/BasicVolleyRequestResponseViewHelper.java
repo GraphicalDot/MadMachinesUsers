@@ -33,6 +33,8 @@ public abstract class BasicVolleyRequestResponseViewHelper {
         }
     }
 
+    abstract public int getFragmentLayout();
+
     abstract public String getFragmentTitle();
 
     abstract public String getRequestListenerKey();
@@ -44,5 +46,7 @@ public abstract class BasicVolleyRequestResponseViewHelper {
     abstract public String getRequestCallName();
 
     abstract public HashMap<String,String> getRequestParameters();
+
+    abstract public void initialiseViews(View view);
 
 }

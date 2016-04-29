@@ -3,16 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.sports.unity.scoredetails.CommentaryFragment">
-<android.support.v4.widget.SwipeRefreshLayout
-    android:id="@+id/commentary_refresh"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-      <android.support.v7.widget.RecyclerView
-            android:id="@+id/my_recycler_view"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-          tools:listitem="@layout/score_broadcast_item"
-            />
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/commentary_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+          <android.support.v7.widget.RecyclerView
+                android:id="@+id/my_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+              tools:listitem="@layout/score_broadcast_item"
+                />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
     <include layout="@layout/error_layout"
         android:id="@+id/error"
         android:layout_width="match_parent"
@@ -30,8 +34,13 @@
         android:visibility="gone"
         />
 
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
-</android.support.v4.widget.SwipeRefreshLayout>
     <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
         android:id="@+id/tv_empty_view"
         android:layout_width="match_parent"

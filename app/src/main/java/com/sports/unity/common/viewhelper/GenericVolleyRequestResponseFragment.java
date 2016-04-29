@@ -7,6 +7,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.sports.unity.R;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -29,7 +31,7 @@ public class GenericVolleyRequestResponseFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = super.onCreateView(inflater, container, savedInstanceState);
+        View view = inflater.inflate( basicVolleyRequestResponseViewHelper.getFragmentLayout(), container, false);
         onComponentCreate(view);
         return view;
     }
@@ -51,6 +53,7 @@ public class GenericVolleyRequestResponseFragment extends Fragment {
 
     public void onComponentCreate(View view) {
         if( volleyCallComponentHelper == null ) {
+            basicVolleyRequestResponseViewHelper.initialiseViews(view);
             volleyCallComponentHelper = basicVolleyRequestResponseViewHelper.getVolleyCallComponentHelper(view);
             volleyCallComponentHelper.onComponentCreate();
             volleyCallComponentHelper.requestContent( basicVolleyRequestResponseViewHelper.getRequestCallName(), basicVolleyRequestResponseViewHelper.getRequestParameters(), basicVolleyRequestResponseViewHelper.getRequestTag());
