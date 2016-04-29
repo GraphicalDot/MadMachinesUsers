@@ -24,6 +24,7 @@ import com.sports.unity.common.viewhelper.BasicVolleyRequestResponseViewHelper;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.common.viewhelper.GenericFragmentViewPagerAdapter;
 import com.sports.unity.common.viewhelper.VolleyCallComponentHelper;
+import com.sports.unity.scoredetails.cricketdetail.CompletedMatchScoreCardFragment;
 import com.sports.unity.scoredetails.cricketdetail.CricketCompletedMatchSummaryHelper;
 import com.sports.unity.scores.controller.fragment.MatchListWrapperAdapter;
 import com.sports.unity.scores.model.ScoresContentHandler;
@@ -149,10 +150,13 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
             CricketCompletedMatchSummaryHelper cricketCompletedMatchSummaryHelper = new CricketCompletedMatchSummaryHelper(getString(R.string.summary), getIntent());
             cricketCompletedMatchSummaryHelper.setParameters(parameters);
+            CompletedMatchScoreCardFragment completedMatchScoreCardFragment = new CompletedMatchScoreCardFragment(getString(R.string.scorecard));
+            completedMatchScoreCardFragment.setParameters(parameters);
 
             ArrayList<BasicVolleyRequestResponseViewHelper> fragmentHelperList = new ArrayList<>();
             fragmentHelperList.add(cricketCompletedMatchSummaryHelper);
-            fragmentHelperList.add( matchCommentaryHelper);
+            fragmentHelperList.add(matchCommentaryHelper);
+            fragmentHelperList.add(completedMatchScoreCardFragment);
 //            fragmentHelperList.add( new MatchCommentaryHelper());
 
             mViewPager = (ViewPager) findViewById(R.id.pager);
