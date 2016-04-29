@@ -54,7 +54,7 @@ public class ViewPagerCricketScoreDetailAdapter extends FragmentStatePagerAdapte
             }else if(matchStatus.equalsIgnoreCase("L")){
                 fragment = new LiveCricketMatchScoreCardFragment();}
             else {
-                fragment = new CompletedMatchScoreCardFragment();
+               // fragment = new CompletedMatchScoreCardFragment();
             }
         }
         return fragment;
