@@ -18,6 +18,8 @@ import android.widget.TextView;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.view.CustomRobotoCondenseBoldTextView;
+import com.sports.unity.common.viewhelper.BasicVolleyRequestResponseViewHelper;
+import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.UpCommingFootballMatchSquadAdapter;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.UpCommingFootballMatchSquadDTO;
 import com.sports.unity.scores.model.ScoresContentHandler;
@@ -29,7 +31,9 @@ import org.json.JSONObject;
 import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
@@ -44,23 +48,30 @@ import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 /**
  * Created by madmachines on 23/2/16.
  */
-public class UpCommingFootballMatchSqadFragment extends Fragment {
+public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestResponseViewHelper {
 
-    String toss = "";
-    String matchName = "";
-    String date = "";
+    private static final String REQUEST_TAG = "UPCOMMING_FOOTBALL_SQUAD_TAG";
+    private String toss = "";
+    private String matchName = "";
+    private String date = "";
     private String matchId;
-    private ProgressBar progressBar;
+    private final String title;
     private String teamFirstName;
     private String teamSecondName;
     private String teamFirstId = "";
     private String teamSecondId;
-    private RecyclerView rcRecyclerViewTeamFirst;
-    private RecyclerView rcRecyclerViewTeamSecond;
+    private HashMap<String,String> params;
+
+
     private UpCommingFootballMatchSquadAdapter upCommingFootballMatchSquadAdapterFirst;
     private List<UpCommingFootballMatchSquadDTO> listTeamFirst = new ArrayList<UpCommingFootballMatchSquadDTO>();
     private UpCommingFootballMatchSquadAdapter upCommingFootballMatchSquadAdapterSecond;
     private List<UpCommingFootballMatchSquadDTO> listTeamSecond = new ArrayList<UpCommingFootballMatchSquadDTO>();
+
+
+    private RecyclerView rcRecyclerViewTeamFirst;
+    private RecyclerView rcRecyclerViewTeamSecond;
+    private ProgressBar progressBar;
     private TextView tvTeamFirst;
     private TextView tvTeamSecond;
     private LinearLayout squadParnetLinearLayout;
@@ -71,19 +82,23 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
     private JSONArray teamSecondSquadArray;
     private FavouriteItem favouriteItem;
 
-    private SquadContentListener squadContentListener;
+    private View layoutView;
+
+    //private SquadContentListener squadContentListener;
 
     public static final String SQUAD_BASE_URL = Constants.SCORE_BASE_URL+"get_football_squads?team_1=";
     public static final String SQUAD_LISTENER_KEY = "squad_listener_key";
     public static final String SQUAD_REQUEST_TAG = "squad_request_tag";
     public static final String SQUAD_FOOTBALL_URL = Constants.SCORE_BASE_URL+"/get_team_players?team_id=";
     public static final String SQUAD_CRICKET_URL = Constants.SCORE_BASE_URL+"/v1/get_team_squad?team_id=";
+    private JSONObject response;
 
-    public UpCommingFootballMatchSqadFragment() {
+    public UpCommingFootballMatchSqadFragment(String title) {
+        this.title = title;
 
     }
 
-    @Override
+    /*@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         squadContentListener = new SquadContentListener();
@@ -124,22 +139,24 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_upcoming_football_match_squard_wrapper, container, false);
         initView(view);
         return view;
-    }
+    }*/
 
     private void initView(View view) {
+        context = view.getContext();
+        layoutView = view;
         tvTeamFirst = (TextView) view.findViewById(R.id.tv_team_first_name);
         tvTeamSecond = (TextView) view.findViewById(R.id.tv_team_second_name);
         progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+        progressBar.getIndeterminateDrawable().setColorFilter(context.getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
         rcRecyclerViewTeamFirst = (RecyclerView) view.findViewById(R.id.rc_child1_rv);
-        rcRecyclerViewTeamFirst.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        rcRecyclerViewTeamFirst.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
         rcRecyclerViewTeamFirst.setNestedScrollingEnabled(false);
         rcRecyclerViewTeamSecond = (RecyclerView) view.findViewById(R.id.rc_child2_rv);
-        rcRecyclerViewTeamSecond.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        rcRecyclerViewTeamSecond.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
         rcRecyclerViewTeamSecond.setNestedScrollingEnabled(false);
-        upCommingFootballMatchSquadAdapterFirst = new UpCommingFootballMatchSquadAdapter(listTeamFirst, getContext());
+        upCommingFootballMatchSquadAdapterFirst = new UpCommingFootballMatchSquadAdapter(listTeamFirst, context);
         rcRecyclerViewTeamFirst.setAdapter(upCommingFootballMatchSquadAdapterFirst);
-        upCommingFootballMatchSquadAdapterSecond = new UpCommingFootballMatchSquadAdapter(listTeamSecond, getContext());
+        upCommingFootballMatchSquadAdapterSecond = new UpCommingFootballMatchSquadAdapter(listTeamSecond, context);
         rcRecyclerViewTeamSecond.setAdapter(upCommingFootballMatchSquadAdapterSecond);
         squadParnetLinearLayout = (LinearLayout) view.findViewById(R.id.squad_parent_linearlayout);
         squadParnetLinearLayout.setVisibility(View.GONE);
@@ -156,7 +173,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
         }
     }
 
-    private void showProgressBar() {
+    /*private void showProgressBar() {
         progressBar.setVisibility(View.VISIBLE);
 
     }
@@ -175,81 +192,84 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
     private void hideErrorLayout() {
         errorLayout.setVisibility(View.GONE);
         squadParnetLinearLayout.setVisibility(View.VISIBLE);
-    }
+    }*/
 
-    private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-        listTeamFirst.clear();
-        listTeamSecond.clear();
-        Activity activity = getActivity();
-        hideProgressBar();
-        if (!jsonObject.isNull("data")) {
-            JSONObject dataObject;
-            if (bundle == null) {
-                dataObject = jsonObject.getJSONObject("data");
-                teamFirstSquadArray = dataObject.getJSONArray("team_1_squad");
-                teamSecondSquadArray = dataObject.getJSONArray("team_2_squad");
-            } else {
-                teamFirstSquadArray = jsonObject.getJSONArray("data");
-                tvTeamFirst.setText(favouriteItem.getName());
-                if (favouriteItem.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
-                    getView().findViewById(R.id.team2_layout).setVisibility(View.GONE);
+    private boolean renderDisplay()  {
+        boolean success = false;
+        try{
+            listTeamFirst.clear();
+            listTeamSecond.clear();
+
+            if (!response.isNull("data")) {
+                JSONObject dataObject;
+                if (bundle == null) {
+                    dataObject = response.getJSONObject("data");
+                    teamFirstSquadArray = dataObject.getJSONArray("team_1_squad");
+                    teamSecondSquadArray = dataObject.getJSONArray("team_2_squad");
                 } else {
-                    getView().findViewById(R.id.team1_layout).setVisibility(View.GONE);
-                    getView().findViewById(R.id.team2_layout).setVisibility(View.GONE);
-                    CustomRobotoCondenseBoldTextView cricketTeamName = (CustomRobotoCondenseBoldTextView) getView().findViewById(R.id.cricket_team_name);
-                    cricketTeamName.setVisibility(View.VISIBLE);
-                    cricketTeamName.setText("NAME");
+                    teamFirstSquadArray = response.getJSONArray("data");
+                    tvTeamFirst.setText(favouriteItem.getName());
+                    if (favouriteItem.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                        layoutView.findViewById(R.id.team2_layout).setVisibility(View.GONE);
+                    } else {
+                        layoutView.findViewById(R.id.team1_layout).setVisibility(View.GONE);
+                        layoutView.findViewById(R.id.team2_layout).setVisibility(View.GONE);
+                        CustomRobotoCondenseBoldTextView cricketTeamName = (CustomRobotoCondenseBoldTextView) layoutView.findViewById(R.id.cricket_team_name);
+                        cricketTeamName.setVisibility(View.VISIBLE);
+                        cricketTeamName.setText("NAME");
+                    }
                 }
-            }
-            squadParnetLinearLayout.setVisibility(View.VISIBLE);
-            if (activity != null) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            tvTeamFirst.setText(teamFirstName);
-                            tvTeamSecond.setText(teamSecondName);
-                            UpCommingFootballMatchSquadDTO dto;
-                            if (teamFirstSquadArray.length() > 0) {
-                                for (int i = 0; i < teamFirstSquadArray.length(); i++) {
-                                    JSONObject playerObject = teamFirstSquadArray.getJSONObject(i);
-                                    dto = new UpCommingFootballMatchSquadDTO();
+                squadParnetLinearLayout.setVisibility(View.VISIBLE);
+                {
+                    tvTeamFirst.setText(teamFirstName);
+                    tvTeamSecond.setText(teamSecondName);
+                    UpCommingFootballMatchSquadDTO dto;
+                    if (teamFirstSquadArray.length() > 0) {
+                        for (int i = 0; i < teamFirstSquadArray.length(); i++) {
+                            JSONObject playerObject = teamFirstSquadArray.getJSONObject(i);
+                            dto = new UpCommingFootballMatchSquadDTO();
 
-                                    if (bundle == null || favouriteItem.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
-                                        getSquadDetails(dto, playerObject);
-                                    } else {
-                                        getCricketSquadDetails(dto, playerObject);
-                                        upCommingFootballMatchSquadAdapterFirst.setCricketSquad(true);
-                                    }
-                                    listTeamFirst.add(dto);
-                                }
-                            }
-                            if (teamSecondSquadArray.length() > 0) {
-                                for (int i = 0; i < teamSecondSquadArray.length(); i++) {
-                                    JSONObject playerObject = teamSecondSquadArray.getJSONObject(i);
-                                    dto = new UpCommingFootballMatchSquadDTO();
-                                    getSquadDetails(dto, playerObject);
-                                    listTeamSecond.add(dto);
-                                }
-                            }
-                            if (bundle == null) {
-                                upCommingFootballMatchSquadAdapterFirst.notifyDataSetChanged();
-                                upCommingFootballMatchSquadAdapterSecond.notifyDataSetChanged();
+                            if (bundle == null || favouriteItem.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                                getSquadDetails(dto, playerObject);
                             } else {
-                                upCommingFootballMatchSquadAdapterFirst.notifyDataSetChanged();
-                                rcRecyclerViewTeamFirst.setFocusable(false);
+                                getCricketSquadDetails(dto, playerObject);
+                                upCommingFootballMatchSquadAdapterFirst.setCricketSquad(true);
                             }
-
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                            showErrorLayout();
+                            listTeamFirst.add(dto);
                         }
                     }
-                });
+                    if (teamSecondSquadArray.length() > 0) {
+                        for (int i = 0; i < teamSecondSquadArray.length(); i++) {
+                            JSONObject playerObject = teamSecondSquadArray.getJSONObject(i);
+                            dto = new UpCommingFootballMatchSquadDTO();
+                            getSquadDetails(dto, playerObject);
+                            listTeamSecond.add(dto);
+                        }
+                    }
+                    if (bundle == null) {
+                        upCommingFootballMatchSquadAdapterFirst.notifyDataSetChanged();
+                        upCommingFootballMatchSquadAdapterSecond.notifyDataSetChanged();
+                    } else {
+                        upCommingFootballMatchSquadAdapterFirst.notifyDataSetChanged();
+                        rcRecyclerViewTeamFirst.setFocusable(false);
+                    }
+
+                }
+            } else {
+               success = false;
             }
-        } else {
-            showErrorLayout();
+
+        }catch (Exception e){
+            success = false;
         }
+
+
+return  success;
+
+
+
+
+
     }
 
     private void getSquadDetails(UpCommingFootballMatchSquadDTO dto, JSONObject playerObject) throws JSONException {
@@ -291,7 +311,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
         }
     }
 
-    @Override
+    /*@Override
     public void onPause() {
         super.onPause();
         ScoresContentHandler.getInstance().removeResponseListener(SQUAD_LISTENER_KEY);
@@ -305,7 +325,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
             showProgressBar();
             requestContent();
         }
-    }
+    }*/
 
     public void requestContent() {
         if (bundle != null) {
@@ -323,8 +343,56 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
         }
     }
 
+    @Override
+    public int getFragmentLayout() {
+        return R.layout.fragment_upcoming_football_match_squard_wrapper;
+    }
 
-    public class SquadContentListener implements ScoresContentHandler.ContentListener {
+    @Override
+    public String getFragmentTitle() {
+        return title;
+    }
+
+    @Override
+    public String getRequestListenerKey() {
+        return null;
+    }
+
+    @Override
+    public CustomComponentListener getCustomComponentListener(View view) {
+        ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
+        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+
+        UpcomingFootballMatchSquadComponentListener  upcomingFootballMatchSquadComponentListener = new UpcomingFootballMatchSquadComponentListener( getRequestTag(), progressBar, errorLayout);
+        return upcomingFootballMatchSquadComponentListener;
+
+    }
+
+    @Override
+    public String getRequestTag() {
+        return REQUEST_TAG;
+    }
+
+    @Override
+    public String getRequestCallName() {
+        return null;
+    }
+
+    @Override
+    public HashMap<String, String> getRequestParameters() {
+        return params;
+    }
+
+    @Override
+    public void initialiseViews(View view) {
+        initView(view);
+    }
+
+    public void setRequestParameters(HashMap<String,String> params ) {
+        this.params = params;
+    }
+
+    /*public class SquadContentListener implements ScoresContentHandler.ContentListener {
 
         @Override
         public void handleContent(String tag, String content, int responseCode) {
@@ -342,7 +410,7 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
                     if (success) {
                         hideErrorLayout();
                         try {
-                            renderDisplay(jsonObject);
+                            renderDisplay();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -358,6 +426,58 @@ public class UpCommingFootballMatchSqadFragment extends Fragment {
                 hideProgressBar();
             }
         }
+
+
+
     }
+*/
+
+    private  boolean handleContent(String content){
+        boolean success = false;
+        try {
+            JSONObject jsonObject = new JSONObject(content);
+            success = jsonObject.getBoolean("success");
+            if (success) {
+                response = jsonObject;
+            } else {
+                //nothing
+            }
+
+            success = true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return success;
+    }
+
+    public class UpcomingFootballMatchSquadComponentListener extends CustomComponentListener {
+
+        public UpcomingFootballMatchSquadComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
+            super(requestTag, progressBar, errorLayout);
+        }
+
+        @Override
+        public boolean handleContent(String tag, String content) {
+            boolean success = UpCommingFootballMatchSqadFragment.this.handleContent(content);
+            return success;
+        }
+
+        @Override
+        public void handleErrorContent(String tag) {
+
+        }
+
+        @Override
+        public void changeUI(String tag) {
+            boolean success = renderDisplay();
+            if( success ){
+                //nothing
+            } else {
+                showErrorLayout();
+            }
+        }
+
+    }
+
 
 }
