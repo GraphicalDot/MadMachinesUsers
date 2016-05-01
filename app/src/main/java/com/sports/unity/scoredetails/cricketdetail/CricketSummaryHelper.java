@@ -27,7 +27,7 @@ import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
 import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
 import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 
-public class CricketCompletedMatchSummaryHelper extends BasicVolleyRequestResponseViewHelper {
+public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
 
     private String title = null;
     private HashMap<String, String> parameters = null;
@@ -52,7 +52,7 @@ public class CricketCompletedMatchSummaryHelper extends BasicVolleyRequestRespon
 
     private CompletedCricketMatchSummaryParser cricketMatchSummaryParser;
 
-    public CricketCompletedMatchSummaryHelper(String title, Intent intent) {
+    public CricketSummaryHelper(String title, Intent intent) {
         this.title = title;
 
         toss = intent.getStringExtra(INTENT_KEY_TOSS);
@@ -276,7 +276,7 @@ public class CricketCompletedMatchSummaryHelper extends BasicVolleyRequestRespon
 
         @Override
         public boolean handleContent(String tag, String content) {
-            boolean success = CricketCompletedMatchSummaryHelper.this.handleContent(content);
+            boolean success = CricketSummaryHelper.this.handleContent(content);
             return success;
         }
 

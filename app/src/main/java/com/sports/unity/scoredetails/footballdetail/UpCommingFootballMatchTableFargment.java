@@ -53,107 +53,81 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
     private static final String REQUEST_LISTENER_KEY = "LEAGUE_TABLE";
     private static final String LEAGUE_TABLE_REQUEST_TAG = "leagueTableTag";
 
-    private HashMap<String,String> params;
-    private String date = "";
-    private String matchId = "";
-    private String leagueId = "";
+    private Context context;
+
+    private String title;
+    private HashMap<String,String> requestParameters;
+    private JSONObject response;
+
     private String team1 = "abc";
     private String team2 = "xyz";
-    private String key = "table";
+
+    private ViewGroup contentLayout = null;
 
     private UpCommingFootballMatchTableAdapter adapter;
     private RecyclerView recyclerView;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private ProgressBar progressBar;
-
-    private JSONObject response;
-    private Context context;
-
 
     private HashMap<String, ArrayList<UpCommngFootbalMatchTableDTO>> groupStandingsMap = new HashMap<>();
     private ArrayList<String> groupsListInOrder = new ArrayList<>();
-    private String title;
-     public  UpCommingFootballMatchTableFargment(String title){
-         this.title = title;
-     }
 
-
-
-
-
-    /*ScoresContentHandler.ContentListener contentListener = new ScoresContentHandler.ContentListener() {
-        @Override
-        public void handleContent(String tag, String content, int responseCode) {
-            if (responseCode == 200) {
-                try {
-                    JSONObject jsonObject = new JSONObject(content);
-                    renderDisplay(jsonObject);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                Toast.makeText(getActivity().getApplicationContext(), "no data", Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
-*/
-
-    /*@Override
-    public void onResume() {
-        super.onResume();
-        ScoresContentHandler.getInstance().addResponseListener(contentListener, REQUEST_LISTENER_KEY);
+    public  UpCommingFootballMatchTableFargment(String title){
+        this.title = title;
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        ScoresContentHandler.getInstance().removeResponseListener(REQUEST_LISTENER_KEY);
-    }*/
-
-    /*@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        getIntentAndBundleExtras();
-        requestData();
+    public int getFragmentLayout() {
+        return R.layout.fragment_upcoming_football_match_table;
     }
-*/
-    /*private void getIntentAndBundleExtras() {
 
-        if (getArguments() != null) {
-            leagueId = getArguments().getString(Constants.INTENT_KEY_LEAGUE_ID);
-        } else {
-            Intent intent = getActivity().getIntent();
-            leagueId = intent.getStringExtra(Constants.INTENT_KEY_LEAGUE_ID);
-            matchId = intent.getStringExtra(INTENT_KEY_ID);
-            date = intent.getStringExtra(INTENT_KEY_DATE);
-            team1 = intent.getStringExtra(INTENT_KEY_TEAM1_NAME);
-            Log.i("team1", team1);
-            team2 = intent.getStringExtra(INTENT_KEY_TEAM2_NAME);
-            Log.i("team2", team2);
-        }
-    }*/
+    @Override
+    public String getFragmentTitle() {
+        return title;
+    }
 
-    /*private void requestData() {
-        HashMap<String, String> parameters = new HashMap<>();
-        parameters.put(Constants.LEAGUE_NAME, leagueId);
-        parameters.put(Constants.SPORTS_TYPE, Constants.SPORTS_TYPE_FOOTBALL);
-        ScoresContentHandler.getInstance().requestCall(ScoresContentHandler.CALL_NAME_LEAGUE_TABLE, parameters, REQUEST_LISTENER_KEY, LEAGUE_TABLE_REQUEST_TAG);
-    }*/
+    @Override
+    public String getRequestListenerKey() {
+        return REQUEST_LISTENER_KEY;
+    }
 
+    @Override
+    public CustomComponentListener getCustomComponentListener(View view) {
+        ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
+        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
 
-    /*@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_upcoming_football_match_table, container, false);
+        UpcomingFootballMatchTableComponentListener upcomingFootballMatchTableComponentListener = new UpcomingFootballMatchTableComponentListener( getRequestTag(), progressBar, errorLayout);
+        return upcomingFootballMatchTableComponentListener;
+    }
+
+    @Override
+    public String getRequestTag() {
+        return LEAGUE_TABLE_REQUEST_TAG;
+    }
+
+    @Override
+    public String getRequestCallName() {
+        return ScoresContentHandler.CALL_NAME_LEAGUE_TABLE;
+    }
+
+    @Override
+    public HashMap<String, String> getRequestParameters() {
+        return requestParameters;
+    }
+
+    @Override
+    public void initialiseViews(View view) {
         initView(view);
+    }
 
-        return view;
-    }*/
+    public void setRequestParameters(HashMap<String,String> requestParameters ) {
+        this.requestParameters = requestParameters;
+    }
 
     private void initView(View view) {
         context = view.getContext();
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        progressBar.getIndeterminateDrawable().setColorFilter(context.getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+
+        contentLayout = (ViewGroup)view.findViewById(R.id.content_layout);
+        contentLayout.setVisibility(View.GONE);
 
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_table);
 
@@ -162,8 +136,6 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
 
         adapter = new UpCommingFootballMatchTableAdapter(context, team1, team2, groupsListInOrder, groupStandingsMap);
         recyclerView.setAdapter(adapter);
-
-        //initErrorLayout(view);
 
         {
             ViewGroup viewGroup = (ViewGroup)view.findViewById(R.id.header_row);
@@ -175,54 +147,25 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
 
             @Override
             public void onRefresh() {
-              /*  requestData();*/
-                swipeRefreshLayout.setRefreshing(true);
+                requestContent();
             }
 
         });
     }
 
-    /*private void initErrorLayout(View view) {
-        try {
-            LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-            errorLayout.setVisibility(View.GONE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
-//
-//    private void showErrorLayout(View view) {
-//        PercentRelativeLayout percentRelativeLayout = (PercentRelativeLayout) view.findViewById(R.id.pl_team_table);
-//        percentRelativeLayout.setVisibility(View.INVISIBLE);
-//        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-//        errorLayout.setVisibility(View.VISIBLE);
-//    }
-//
-//    private void showProgressBar() {
-//        progressBar.setVisibility(View.VISIBLE);
-//    }
-//
-//    private void hideProgressBar() {
-//        progressBar.setVisibility(View.GONE);
-//    }
-
     private boolean renderDisplay()  {
         boolean success = false;
         try{
-            if (swipeRefreshLayout.isRefreshing()) {
-                swipeRefreshLayout.setRefreshing(false);
-            }
             success = getData(response);
-
-        }catch (Exception e){e.printStackTrace();}
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         return  success;
     }
 
     private boolean getData(JSONObject jsonObject) {
         boolean success = false;
         try {
-
             groupStandingsMap.clear();
             groupsListInOrder.clear();
 
@@ -302,20 +245,6 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
         return upCommngFootbalMatchTableDTO;
     }
 
-//    private UpCommngFootbalMatchTableDTO getHeaderRowObject() {
-//        UpCommngFootbalMatchTableDTO upCommngFootbalMatchTableDTO = new UpCommngFootbalMatchTableDTO();
-//        upCommngFootbalMatchTableDTO.setViewType(1);
-//        upCommngFootbalMatchTableDTO.setTvTeamName("");
-//        upCommngFootbalMatchTableDTO.setIvTeamProfileImage("");
-//        upCommngFootbalMatchTableDTO.setTeamId("");
-//        upCommngFootbalMatchTableDTO.setTvP("P");
-//        upCommngFootbalMatchTableDTO.setTvW("W");
-//        upCommngFootbalMatchTableDTO.setTvD("D");
-//        upCommngFootbalMatchTableDTO.setTvL("L");
-//        upCommngFootbalMatchTableDTO.setTvPts("Pts");
-//        return upCommngFootbalMatchTableDTO;
-//    }
-
     private UpCommngFootbalMatchTableDTO getHeaderRowObject(String groupName) {
         UpCommngFootbalMatchTableDTO upCommngFootbalMatchTableDTO = new UpCommngFootbalMatchTableDTO();
         upCommngFootbalMatchTableDTO.setViewType(1);
@@ -328,53 +257,6 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
         upCommngFootbalMatchTableDTO.setTvL("");
         upCommngFootbalMatchTableDTO.setTvPts("");
         return upCommngFootbalMatchTableDTO;
-    }
-
-    @Override
-    public int getFragmentLayout() {
-        return R.layout.fragment_upcoming_football_match_table;
-    }
-
-    @Override
-    public String getFragmentTitle() {
-        return title;
-    }
-
-    @Override
-    public String getRequestListenerKey() {
-        return REQUEST_LISTENER_KEY;
-    }
-
-    @Override
-    public CustomComponentListener getCustomComponentListener(View view) {
-        ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
-        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
-
-        UpcomingFootballMatchTableComponentListener upcomingFootballMatchTableComponentListener = new UpcomingFootballMatchTableComponentListener( getRequestTag(), progressBar, errorLayout);
-        return upcomingFootballMatchTableComponentListener;
-    }
-    @Override
-    public String getRequestTag() {
-        return LEAGUE_TABLE_REQUEST_TAG;
-    }
-
-    @Override
-    public String getRequestCallName() {
-        return null;
-    }
-
-    @Override
-    public HashMap<String, String> getRequestParameters() {
-        return params;
-    }
-
-    @Override
-    public void initialiseViews(View view) {
-        initView(view);
-    }
-
-    public void setRequestParameters(HashMap<String,String> params ) {
-        this.params = params;
     }
 
     private  boolean handleContent(String content){
@@ -413,16 +295,42 @@ public class UpCommingFootballMatchTableFargment extends BasicVolleyRequestRespo
         }
 
         @Override
+        protected void showErrorLayout() {
+            if( contentLayout == null || contentLayout.getVisibility() == View.GONE ) {
+                super.showErrorLayout();
+            } else {
+                //nothing
+            }
+        }
+
+        @Override
+        protected void showProgress() {
+            if( contentLayout == null || contentLayout.getVisibility() == View.GONE ) {
+                super.showProgress();
+            } else {
+                //nothing
+            }
+        }
+
+        @Override
+        protected void hideProgress() {
+            super.hideProgress();
+
+            if( swipeRefreshLayout != null ){
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }
+
+        @Override
         public void changeUI(String tag) {
             boolean success = renderDisplay();
             if( success ){
-                //nothing
+                contentLayout.setVisibility(View.VISIBLE);
             } else {
                 showErrorLayout();
             }
         }
 
     }
-
 
 }

@@ -29,4 +29,32 @@ public class ScoresUtil {
         return completed;
     }
 
+    public static boolean isFootballMatchUpcoming(String matchStatus, String matchTime, boolean live){
+        boolean upcoming= false;
+        if( ! live ){
+            if( matchStatus.equals(matchTime) || "Postp.".equalsIgnoreCase(matchStatus) ){
+                upcoming = true;
+            } else {
+                //nothing
+            }
+        } else {
+            //nothing
+        }
+        return upcoming;
+    }
+
+    public static boolean isFootballMatchCompleted(String matchStatus, String matchTime, boolean live){
+        boolean completed = false;
+        if( ! live ){
+            if( matchStatus.equals(matchTime) || "Postp.".equalsIgnoreCase(matchStatus) ){
+                //nothing
+            } else {
+                completed = true;
+            }
+        } else {
+            //nothing
+        }
+        return completed;
+    }
+
 }

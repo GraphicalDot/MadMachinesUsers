@@ -72,29 +72,19 @@ public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper 
 
     @Override
     public String getRequestCallName() {
-        boolean upcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
-        String callName = null;
-        if( upcoming ) {
-            callName = null;
-        } else {
-            callName = ScoresContentHandler.CALL_NAME_MATCH_COMMENTARIES;
-        }
-        return callName;
+//        boolean upcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
+//        String callName = null;
+//        if( upcoming ) {
+//            callName = null;
+//        } else {
+//            callName = ScoresContentHandler.CALL_NAME_MATCH_COMMENTARIES;
+//        }
+        return ScoresContentHandler.CALL_NAME_MATCH_COMMENTARIES;
     }
 
     @Override
     public HashMap<String, String> getRequestParameters() {
         return requestParameters;
-    }
-
-    @Override
-    public void requestContent() {
-        boolean upcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
-        if( upcoming ) {
-            //nothing
-        } else {
-            super.requestContent();
-        }
     }
 
     @Override
@@ -116,15 +106,15 @@ public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper 
     }
 
     private void initViews(View view){
-        boolean upcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
+//        boolean upcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
 
         tvEmptyView = view.findViewById(R.id.tv_empty_view);
         swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.commentary_refresh);
 
-        if( upcoming ){
-            tvEmptyView.setVisibility(View.VISIBLE);
-            swipeRefreshLayout.setVisibility(View.GONE);
-        } else {
+//        if( upcoming ){
+//            tvEmptyView.setVisibility(View.VISIBLE);
+//            swipeRefreshLayout.setVisibility(View.GONE);
+//        } else {
             mRecyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
             mRecyclerView.setLayoutManager(new org.solovyev.android.views.llm.LinearLayoutManager(view.getContext(), VERTICAL, false));
             mRecyclerView.setNestedScrollingEnabled(false);
@@ -144,7 +134,7 @@ public class MatchCommentaryHelper extends BasicVolleyRequestResponseViewHelper 
                 }
 
             });
-        }
+//        }
     }
 
     private void renderDisplay() {

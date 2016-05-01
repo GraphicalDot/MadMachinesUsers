@@ -4,60 +4,48 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.sports.unity.R;
 import com.sports.unity.common.viewhelper.BasicVolleyRequestResponseViewHelper;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
-import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.scores.model.ScoresContentHandler;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
-
-import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
-import static com.sports.unity.util.Constants.INTENT_KEY_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_LEAGUE_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_NAME;
-import static com.sports.unity.util.Constants.INTENT_KEY_TEAM2_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_TEAM2_NAME;
 
 /**
  * Created by madmachines on 23/2/16.
  */
 public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestResponseViewHelper {
+
     private static final String REQUEST_TAG = "UPCOMING_FOOTBALL_MATCH_FORM";
-    private String date = "";
-    private String matchId ="";
-    private String leagueId = "";
+
+    private String title;
+    private HashMap<String,String> requestParameters;
+    private JSONObject response;
+
+    private Context context;
+
     private String team1;
     private String team2;
-    private String teamId1;
-    private String teamId2;
-    private String title;
-    private HashMap<String,String> params;
 
+    private View parentView;
+    private View emptyView;
 
-    private ProgressBar progressBar;
-    private SwipeRefreshLayout commentaryrefresh;
     private TextView tvnamefirstteam;
     private TextView tvlastfivematchteamfirst;
-    private ImageView[] ivfirstmatchteamfirst  = new ImageView[5];;
+    private ImageView[] ivfirstmatchteamfirst  = new ImageView[5];
     private View firstview;
     private TextView tvfirstpremieradivision;
     private TextView tvfirstpoint;
@@ -77,18 +65,12 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
     private TextView tvwinmatchofsecondteam;
     private TextView tvdrawmatchofsecondteam;
     private TextView tvlossmatchofsecondteam;
-    private View secondview;
-    private TextView tvsecondpremieradivision;
-    private View parentView;
-    private LinearLayout errorLayout;
-    private UpCommingFootballMatchFromHandler upCommingFootballMatchFromHandler;
-    private Context context;
-    private View emptyView;
-    private JSONObject response;
 
-
-    public UpCommingFootballMatchFromFragment(final String title) {
+    public UpCommingFootballMatchFromFragment(String title, Intent intent) {
         this.title = title;
+
+        team1 = intent.getStringExtra(Constants.INTENT_KEY_TEAM1_NAME);
+        team2 = intent.getStringExtra(Constants.INTENT_KEY_TEAM2_NAME);
     }
 
     @Override
@@ -103,7 +85,7 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
 
     @Override
     public String getRequestListenerKey() {
-        return null;
+        return "FootballFormRequestListener";
     }
 
     @Override
@@ -111,9 +93,8 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
         ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
 
-        UpcomingFootballMatchFormComponentListener  upcomingFootballMatchFormComponentListener = new UpcomingFootballMatchFormComponentListener( getRequestTag(), progressBar, errorLayout);
-        return upcomingFootballMatchFormComponentListener;
-
+        UpcomingFootballMatchFormComponentListener  componentListener = new UpcomingFootballMatchFormComponentListener( getRequestTag(), progressBar, errorLayout);
+        return componentListener;
     }
 
     @Override
@@ -123,12 +104,12 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
 
     @Override
     public String getRequestCallName() {
-        return null;
+        return ScoresContentHandler.CALL_NAME_FOOTBALL_FORM;
     }
 
     @Override
     public HashMap<String, String> getRequestParameters() {
-        return params;
+        return requestParameters;
     }
 
     @Override
@@ -138,38 +119,16 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
 
 
     public void setRequestParameters(HashMap<String,String> params ) {
-        this.params = params;
+        this.requestParameters = params;
     }
 
-
-    /*@Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        this.context = context;
-        Intent i = getActivity().getIntent();
-        matchId = i.getStringExtra(INTENT_KEY_ID);
-        leagueId = i.getStringExtra(INTENT_KEY_LEAGUE_ID);
-        date = i.getStringExtra(INTENT_KEY_DATE);
-        team1 = i.getStringExtra(INTENT_KEY_TEAM1_NAME);
-        team2 = i.getStringExtra(INTENT_KEY_TEAM2_NAME);
-        teamId1 = i.getStringExtra(INTENT_KEY_TEAM1_ID);
-        teamId2 = i.getStringExtra(INTENT_KEY_TEAM2_ID);
-        upCommingFootballMatchFromHandler = UpCommingFootballMatchFromHandler.getInstance(context);
-        upCommingFootballMatchFromHandler.addListener(this);
-        upCommingFootballMatchFromHandler.requestUpcommingMatchFrom(teamId1, teamId2, leagueId);
-
-    }*/
-    /*@Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_football_upcoming_match_form_v2, container, false);
-        initView(view);
-        return view;
-    }*/
     private void initView(View view) {
         context = view.getContext();
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        progressBar.getIndeterminateDrawable().setColorFilter(context.getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+
+        parentView = view.findViewById(R.id.root_layout);
+        parentView.setVisibility(View.GONE);
+        emptyView = view.findViewById(R.id.tv_empty_view);
+
         tvnamefirstteam = (TextView)view.findViewById(R.id.tv_name_first_team);
         tvlastfivematchteamfirst=(TextView)view.findViewById(R.id.tv_last_five_match_team_first);
         ivfirstmatchteamfirst[0]=(ImageView)view.findViewById(R.id.iv_first_match_team_first);
@@ -198,70 +157,18 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
         tvwinmatchofsecondteam=(TextView)view.findViewById(R.id.tv_win_match_of_second_team);
         tvdrawmatchofsecondteam=(TextView)view.findViewById(R.id.tv_draw_match_of_second_team);
         tvlossmatchofsecondteam=(TextView)view.findViewById(R.id.tv_loss_match_of_second_team);
-        parentView = view.findViewById(R.id.root_layout);
-        commentaryrefresh=(SwipeRefreshLayout)view.findViewById(R.id.commentary_refresh);
-        emptyView = view.findViewById(R.id.tv_empty_view);
-
-    }
-    /*private void  showProgressBar(){
-        progressBar.setVisibility(View.VISIBLE);
-    }
-    private void  hideProgressBar(){
-        progressBar.setVisibility(View.GONE);
-    }*/
-
-    /*public void handleContent(String object) {
-        {
-            showProgressBar();
-
-            try {
-                JSONObject jsonObject = new JSONObject(object);
-
-                boolean success = jsonObject.getBoolean("success");
-
-                if( success ) {
-
-                    renderDisplay(jsonObject);
-
-                } else {
-                    showErrorLayout();
-                }
-            }catch (Exception ex){
-                ex.printStackTrace();
-                showErrorLayout();
-            }
-        }
-    }*/
-    /*private void initErrorLayout(View view) {
-        try {
-            errorLayout = (LinearLayout) view.findViewById(R.id.error);
-            errorLayout.setVisibility(View.GONE);
-        }catch (Exception e){e.printStackTrace();}
-    }
-*/
-    private void showErrorLayout() {
-
-        parentView.setVisibility(View.GONE);
-        errorLayout.setVisibility(View.VISIBLE);
-
-
     }
 
     private void showDataNotExists() {
-
         parentView.setVisibility(View.GONE);
         emptyView.setVisibility(View.VISIBLE);
-
-
     }
-
 
     private boolean renderDisplay()  {
         boolean success = false;
+        boolean noData = false;
         try{
-            parentView.setVisibility(View.VISIBLE);
-            emptyView.setVisibility(View.GONE);
-            final JSONArray dataArray = response.getJSONArray("data");
+            JSONArray dataArray = response.getJSONArray("data");
             {
                 for(int i = 0; i< dataArray.length();i++){
                     JSONObject teamFromObject = dataArray.getJSONObject(i);
@@ -273,7 +180,7 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
                                 if(recentForm !=null && recentForm.length()>0){
                                     initializeTeamForms(recentForm);
                                 }else{
-                                    showDataNotExists();
+                                    noData = true;
                                 }
                             }
                             if(!teamFromObject.isNull("team_points")){
@@ -292,7 +199,7 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
                                 if(recentForm !=null && recentForm.length()>0){
                                     initFromDataTeamSecond(recentForm);
                                 }else{
-                                    showDataNotExists();
+                                    noData = true;
                                 }
                             } if(!teamFromObject.isNull("team_points")){
                                 tvpointofsecondteam.setText(teamFromObject.getString("team_points"));}
@@ -304,26 +211,32 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
                             if(!teamFromObject.isNull("games_lost")){
                                 tvlossmatchofsecondteam.setText(teamFromObject.getString("games_lost"));}
 
-                        }else{
-                            showDataNotExists();
+                        } else {
+                            noData = true;
                         }
-
                     }
                 }
-
             }
+
             success = true;
-
-
-        }catch ( Exception e){
-            success = false;e.printStackTrace();}
-
+            if( success ) {
+                if (noData) {
+                    parentView.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
+                } else {
+                    parentView.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.GONE);
+                }
+            } else {
+                //nothing
+            }
+        } catch ( Exception e) {
+            e.printStackTrace();
+        }
         return  success;
-
     }
 
     private void initFromDataTeamSecond(String recentForm) {
-
         for(int i = 0; i<recentForm.length();i++){
             tvfirstmatchteamsecond[i].setImageDrawable(getBallColor("" + recentForm.charAt(i), getBallColor(recentForm.charAt(i))));
         }
@@ -334,7 +247,6 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
             ivfirstmatchteamfirst[i].setImageDrawable(getBallColor("" + recentForm.charAt(i), getBallColor(recentForm.charAt(i))));
         }
     }
-
 
     private int getBallColor(char c){
         Log.i("getBallColor: ", " " + c);
@@ -358,7 +270,6 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
         return color ;
     }
 
-
     private Drawable getBallColor(String text,int color){
         int radius = context.getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
         int border = context.getResources().getDimensionPixelSize(R.dimen.user_image_border);
@@ -373,29 +284,6 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
         return  drawable;
     }
 
-    /*@Override
-    public void onPause() {
-        super.onPause();
-        if(upCommingFootballMatchFromHandler != null){
-            upCommingFootballMatchFromHandler.addListener(null);
-        }
-
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        showProgressBar();
-        if(upCommingFootballMatchFromHandler != null){
-            upCommingFootballMatchFromHandler.addListener(this);
-
-        }else {
-            upCommingFootballMatchFromHandler = UpCommingFootballMatchFromHandler.getInstance(context);
-
-        }
-        upCommingFootballMatchFromHandler.requestUpcommingMatchFrom(teamId1,teamId2,leagueId);
-    }*/
-
     public boolean handleContent(String content) {
         boolean success = false;
         try {
@@ -406,15 +294,11 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
             } else {
                 //nothing
             }
-
-            success = true;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
         return success;
     }
-
-
 
     public class UpcomingFootballMatchFormComponentListener extends CustomComponentListener {
 

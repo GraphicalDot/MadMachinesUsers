@@ -4,21 +4,6 @@
     android:layout_height="match_parent"
     >
 
-    <include
-        android:id="@+id/error"
-        layout="@layout/error_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
-
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"
-        />
-
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -350,4 +335,13 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        />
+
 </FrameLayout>

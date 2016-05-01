@@ -1,14 +1,10 @@
 package com.sports.unity.scoredetails.footballdetail;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -33,121 +29,151 @@ import org.solovyev.android.views.llm.LinearLayoutManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
-import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
-import static com.sports.unity.util.Constants.INTENT_KEY_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
-import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_NAME;
-import static com.sports.unity.util.Constants.INTENT_KEY_TEAM2_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_TEAM2_NAME;
-import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 
 /**
  * Created by madmachines on 23/2/16.
  */
 public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestResponseViewHelper {
 
-    private static final String REQUEST_TAG = "UPCOMMING_FOOTBALL_SQUAD_TAG";
-    private String toss = "";
-    private String matchName = "";
-    private String date = "";
-    private String matchId;
-    private final String title;
+    private static final String SQUAD_LISTENER_KEY = "squad_listener_key";
+    private static final String SQUAD_REQUEST_TAG = "squad_request_tag";
+
+//    private static final String SQUAD_BASE_URL = Constants.SCORE_BASE_URL+"get_football_squads?team_1=";
+//    private static final String SQUAD_FOOTBALL_URL = Constants.SCORE_BASE_URL+"/get_team_players?team_id=";
+//    private static final String SQUAD_CRICKET_URL = Constants.SCORE_BASE_URL+"/v1/get_team_squad?team_id=";
+
+    private Context context;
+
+    private String title;
+    private HashMap<String,String> requestParameters;
+    private JSONObject response;
+
+    private Bundle bundle = null;
+    private FavouriteItem favouriteItem = null;
+
     private String teamFirstName;
     private String teamSecondName;
-    private String teamFirstId = "";
-    private String teamSecondId;
-    private HashMap<String,String> params;
-
 
     private UpCommingFootballMatchSquadAdapter upCommingFootballMatchSquadAdapterFirst;
     private List<UpCommingFootballMatchSquadDTO> listTeamFirst = new ArrayList<UpCommingFootballMatchSquadDTO>();
     private UpCommingFootballMatchSquadAdapter upCommingFootballMatchSquadAdapterSecond;
     private List<UpCommingFootballMatchSquadDTO> listTeamSecond = new ArrayList<UpCommingFootballMatchSquadDTO>();
 
-
     private RecyclerView rcRecyclerViewTeamFirst;
     private RecyclerView rcRecyclerViewTeamSecond;
-    private ProgressBar progressBar;
     private TextView tvTeamFirst;
     private TextView tvTeamSecond;
     private LinearLayout squadParnetLinearLayout;
-    private LinearLayout errorLayout;
-    private Context context;
-    private Bundle bundle;
     private JSONArray teamFirstSquadArray;
     private JSONArray teamSecondSquadArray;
-    private FavouriteItem favouriteItem;
-
     private View layoutView;
 
-    //private SquadContentListener squadContentListener;
-
-    public static final String SQUAD_BASE_URL = Constants.SCORE_BASE_URL+"get_football_squads?team_1=";
-    public static final String SQUAD_LISTENER_KEY = "squad_listener_key";
-    public static final String SQUAD_REQUEST_TAG = "squad_request_tag";
-    public static final String SQUAD_FOOTBALL_URL = Constants.SCORE_BASE_URL+"/get_team_players?team_id=";
-    public static final String SQUAD_CRICKET_URL = Constants.SCORE_BASE_URL+"/v1/get_team_squad?team_id=";
-    private JSONObject response;
-
-    public UpCommingFootballMatchSqadFragment(String title) {
+    public UpCommingFootballMatchSqadFragment(String title, Intent intent, Bundle bundle) {
         this.title = title;
 
+        this.bundle = bundle;
+        {
+            String teamFirstId = null;
+            if (bundle != null) {
+                teamFirstId = bundle.getString(Constants.INTENT_KEY_TEAM1_ID);
+                favouriteItem = new FavouriteItem(teamFirstId);
+                teamFirstId = favouriteItem.getId();
+            }
+
+            teamFirstSquadArray = new JSONArray();
+            teamSecondSquadArray = new JSONArray();
+
+            if (TextUtils.isEmpty(teamFirstId)) {
+                teamFirstName = intent.getStringExtra(Constants.INTENT_KEY_TEAM1_NAME);
+                teamSecondName = intent.getStringExtra(Constants.INTENT_KEY_TEAM2_NAME);
+            } else {
+                teamFirstName = favouriteItem.getName();
+            }
+        }
     }
 
-    /*@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        squadContentListener = new SquadContentListener();
-        bundle = getArguments();
-        if (bundle != null) {
-            teamFirstId = bundle.getString(Constants.INTENT_KEY_TEAM1_ID);
-            favouriteItem = new FavouriteItem(teamFirstId);
-            teamFirstId = favouriteItem.getId();
-        }
-        teamFirstSquadArray = new JSONArray();
-        teamSecondSquadArray = new JSONArray();
-        this.context = getActivity();
-        Intent i = getActivity().getIntent();
-        if (TextUtils.isEmpty(teamFirstId)) {
-            matchId = i.getStringExtra(INTENT_KEY_ID);
-            matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
-            toss = i.getStringExtra(INTENT_KEY_TOSS);
-            date = i.getStringExtra(INTENT_KEY_DATE);
-            teamFirstId = i.getStringExtra(INTENT_KEY_TEAM1_ID);
-            teamSecondId = i.getStringExtra(INTENT_KEY_TEAM2_ID);
-            teamFirstName = i.getStringExtra(INTENT_KEY_TEAM1_NAME);
-            teamSecondName = i.getStringExtra(INTENT_KEY_TEAM2_NAME);
+    @Override
+    public int getFragmentLayout() {
+        return R.layout.fragment_upcoming_football_match_squard_wrapper;
+    }
+
+    @Override
+    public String getFragmentTitle() {
+        return title;
+    }
+
+    @Override
+    public String getRequestListenerKey() {
+        return SQUAD_LISTENER_KEY;
+    }
+
+    @Override
+    public CustomComponentListener getCustomComponentListener(View view) {
+        ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
+        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+
+        UpcomingFootballMatchSquadComponentListener  componentListener = new UpcomingFootballMatchSquadComponentListener( getRequestTag(), progressBar, errorLayout);
+        return componentListener;
+    }
+
+    @Override
+    public String getRequestTag() {
+        return SQUAD_REQUEST_TAG;
+    }
+
+    @Override
+    public String getRequestCallName() {
+        String callName = null;
+        if( favouriteItem != null ){
+            if( Constants.SPORTS_TYPE_FOOTBALL.equals(favouriteItem.getSportsType()) ) {
+                callName = ScoresContentHandler.CALL_NAME_FOOTBALL_PLAYERS;
+            } else {
+                callName = ScoresContentHandler.CALL_NAME_CRICKET_PLAYER;
+            }
         } else {
-            //nothing
-            teamFirstName = favouriteItem.getName();
+            callName = ScoresContentHandler.CALL_NAME_FOOTBALL_SQUAD;
         }
+        return callName;
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-
+    public HashMap<String, String> getRequestParameters() {
+        return requestParameters;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_upcoming_football_match_squard_wrapper, container, false);
+    public void initialiseViews(View view) {
         initView(view);
-        return view;
-    }*/
+    }
+
+    public void setRequestParameters(HashMap<String,String> params ) {
+        this.requestParameters = params;
+    }
+
+//    public void requestContent() {
+//        if (bundle != null) {
+//            if (favouriteItem.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+//                ScoresContentHandler.getInstance().requestSquadContent(SQUAD_FOOTBALL_URL + favouriteItem.getId(), SQUAD_LISTENER_KEY, SQUAD_REQUEST_TAG);
+//            } else {
+//                //TODO request for cricket squad; dependency API
+//                ScoresContentHandler.getInstance().requestSquadContent(SQUAD_CRICKET_URL + favouriteItem.getId(), SQUAD_LISTENER_KEY, SQUAD_REQUEST_TAG);
+//                //ScoresContentHandler.getInstance().requestSquadContent(SQUAD_CRICKET_URL + 3, SQUAD_LISTENER_KEY, SQUAD_REQUEST_TAG);
+//            }
+//        } else {
+//
+//            ScoresContentHandler.getInstance().requestSquadContent(SQUAD_BASE_URL + teamFirstId + "&team_2=" + teamSecondId, SQUAD_LISTENER_KEY, SQUAD_REQUEST_TAG);
+//        }
+//    }
 
     private void initView(View view) {
         context = view.getContext();
         layoutView = view;
+
         tvTeamFirst = (TextView) view.findViewById(R.id.tv_team_first_name);
         tvTeamSecond = (TextView) view.findViewById(R.id.tv_team_second_name);
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        progressBar.getIndeterminateDrawable().setColorFilter(context.getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
+
         rcRecyclerViewTeamFirst = (RecyclerView) view.findViewById(R.id.rc_child1_rv);
         rcRecyclerViewTeamFirst.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
         rcRecyclerViewTeamFirst.setNestedScrollingEnabled(false);
@@ -160,39 +186,8 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
         rcRecyclerViewTeamSecond.setAdapter(upCommingFootballMatchSquadAdapterSecond);
         squadParnetLinearLayout = (LinearLayout) view.findViewById(R.id.squad_parent_linearlayout);
         squadParnetLinearLayout.setVisibility(View.GONE);
-        initErrorLayout(view);
 
     }
-
-    private void initErrorLayout(View view) {
-        try {
-            errorLayout = (LinearLayout) view.findViewById(R.id.error);
-            errorLayout.setVisibility(View.GONE);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /*private void showProgressBar() {
-        progressBar.setVisibility(View.VISIBLE);
-
-    }
-
-    private void hideProgressBar() {
-        progressBar.setVisibility(View.GONE);
-
-    }
-
-    private void showErrorLayout() {
-        squadParnetLinearLayout.setVisibility(View.GONE);
-        errorLayout.setVisibility(View.VISIBLE);
-
-    }
-
-    private void hideErrorLayout() {
-        errorLayout.setVisibility(View.GONE);
-        squadParnetLinearLayout.setVisibility(View.VISIBLE);
-    }*/
 
     private boolean renderDisplay()  {
         boolean success = false;
@@ -255,21 +250,15 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
                     }
 
                 }
+
+                success = true;
             } else {
-               success = false;
+                //nothing
             }
-
-        }catch (Exception e){
-            success = false;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-
-return  success;
-
-
-
-
-
+        return  success;
     }
 
     private void getSquadDetails(UpCommingFootballMatchSquadDTO dto, JSONObject playerObject) throws JSONException {
@@ -311,127 +300,6 @@ return  success;
         }
     }
 
-    /*@Override
-    public void onPause() {
-        super.onPause();
-        ScoresContentHandler.getInstance().removeResponseListener(SQUAD_LISTENER_KEY);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        ScoresContentHandler.getInstance().addResponseListener(squadContentListener, SQUAD_LISTENER_KEY);
-        if (teamFirstSquadArray.length() == 0) {
-            showProgressBar();
-            requestContent();
-        }
-    }*/
-
-    public void requestContent() {
-        if (bundle != null) {
-            if (favouriteItem.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
-                ScoresContentHandler.getInstance().requestSquadContent(SQUAD_FOOTBALL_URL + favouriteItem.getId(), SQUAD_LISTENER_KEY, SQUAD_REQUEST_TAG);
-            } else {
-                //TODO request for cricket squad; dependency API
-
-                ScoresContentHandler.getInstance().requestSquadContent(SQUAD_CRICKET_URL + favouriteItem.getId(), SQUAD_LISTENER_KEY, SQUAD_REQUEST_TAG);
-                //ScoresContentHandler.getInstance().requestSquadContent(SQUAD_CRICKET_URL + 3, SQUAD_LISTENER_KEY, SQUAD_REQUEST_TAG);
-            }
-        } else {
-
-            ScoresContentHandler.getInstance().requestSquadContent(SQUAD_BASE_URL + teamFirstId + "&team_2=" + teamSecondId, SQUAD_LISTENER_KEY, SQUAD_REQUEST_TAG);
-        }
-    }
-
-    @Override
-    public int getFragmentLayout() {
-        return R.layout.fragment_upcoming_football_match_squard_wrapper;
-    }
-
-    @Override
-    public String getFragmentTitle() {
-        return title;
-    }
-
-    @Override
-    public String getRequestListenerKey() {
-        return null;
-    }
-
-    @Override
-    public CustomComponentListener getCustomComponentListener(View view) {
-        ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
-        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
-
-        UpcomingFootballMatchSquadComponentListener  upcomingFootballMatchSquadComponentListener = new UpcomingFootballMatchSquadComponentListener( getRequestTag(), progressBar, errorLayout);
-        return upcomingFootballMatchSquadComponentListener;
-
-    }
-
-    @Override
-    public String getRequestTag() {
-        return REQUEST_TAG;
-    }
-
-    @Override
-    public String getRequestCallName() {
-        return null;
-    }
-
-    @Override
-    public HashMap<String, String> getRequestParameters() {
-        return params;
-    }
-
-    @Override
-    public void initialiseViews(View view) {
-        initView(view);
-    }
-
-    public void setRequestParameters(HashMap<String,String> params ) {
-        this.params = params;
-    }
-
-    /*public class SquadContentListener implements ScoresContentHandler.ContentListener {
-
-        @Override
-        public void handleContent(String tag, String content, int responseCode) {
-            if (tag.equals(SQUAD_REQUEST_TAG)) {
-                boolean success = false;
-                if (responseCode == 200) {
-
-                    JSONObject jsonObject = null;
-                    try {
-                        jsonObject = new JSONObject(content);
-                        success = jsonObject.getBoolean("success");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    if (success) {
-                        hideErrorLayout();
-                        try {
-                            renderDisplay();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Log.i("List of Matches", "Error In Handling Content");
-                        showErrorLayout();
-                    }
-                } else {
-                    Log.i("List of Matches", "Error In Response");
-                    showErrorLayout();
-                }
-
-                hideProgressBar();
-            }
-        }
-
-
-
-    }
-*/
-
     private  boolean handleContent(String content){
         boolean success = false;
         try {
@@ -442,8 +310,6 @@ return  success;
             } else {
                 //nothing
             }
-
-            success = true;
         } catch (Exception ex) {
             ex.printStackTrace();
         }

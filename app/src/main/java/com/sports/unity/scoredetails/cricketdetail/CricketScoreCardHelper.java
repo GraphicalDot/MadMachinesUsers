@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.sports.unity.R;
@@ -36,7 +37,7 @@ import java.util.List;
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
 
 
-public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponseViewHelper {
+public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper {
 
     private String title;
     private String matchStatus = "";
@@ -87,8 +88,11 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
     private RelativeLayout team1ScoreDetails;
     private RelativeLayout team2ScoreDetails;
 
-    public CompletedMatchScoreCardFragment(String title, String matchStatus) {
+    private ScrollView scrollview = null;
+
+    public CricketScoreCardHelper(String title, String matchStatus) {
         this.title  = title;
+        this.matchStatus = matchStatus;
     }
 
     @Override
@@ -152,17 +156,20 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
         initView(view);
 
     }
-    public void setParameters(HashMap<String, String> parameters) {
+
+    public void setRequestParameters(HashMap<String, String> parameters) {
         this.parameters = parameters;
     }
 
     private void initView(View view) {
         Context context = view.getContext();
 
+        scrollview = (ScrollView)view.findViewById(R.id.scorecard_scrollview);
+        scrollview.setVisibility(View.GONE);
+
         boolean upcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
         if( upcoming ){
             view.findViewById(R.id.tv_empty_view).setVisibility(View.VISIBLE);
-            view.findViewById(R.id.scorecard_scrollview).setVisibility(View.GONE);
         } else {
             firstBattingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_first_view_visibility);
             firstBowlingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_first_bowling_visibility);
@@ -306,13 +313,16 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
             teamBBattingCardList.clear();
             teamBBowlingCardList.clear();
             teamBFallOfWicketCardList.clear();
+
             linearLayout.setVisibility(View.VISIBLE);
-            if(!response.isNull("data")) {
+            if( ! response.isNull("data") ) {
                 JSONArray jsonArray = response.getJSONArray("data");
                 final JSONObject dataObject = jsonArray.getJSONObject(0);
                 final CricketMatchScoreJsonParser cricketMatchScoreJsonParser = new CricketMatchScoreJsonParser();
                 cricketMatchScoreJsonParser.setJsonObject(dataObject);
                 setScoreCard(cricketMatchScoreJsonParser);
+
+                scrollview.setVisibility(View.VISIBLE);
                 success = true;
             }else {
                 success = false;
@@ -457,13 +467,22 @@ public class CompletedMatchScoreCardFragment  extends BasicVolleyRequestResponse
 
         @Override
         public boolean handleContent(String tag, String content) {
-            boolean success = CompletedMatchScoreCardFragment.this.handleContent(content);
+            boolean success = CricketScoreCardHelper.this.handleContent(content);
             return success;
         }
 
         @Override
         public void handleErrorContent(String tag) {
 
+        }
+
+        @Override
+        protected void showErrorLayout() {
+            if( scrollview.getVisibility() == View.VISIBLE ) {
+                //nothing
+            } else {
+                super.showErrorLayout();
+            }
         }
 
         @Override

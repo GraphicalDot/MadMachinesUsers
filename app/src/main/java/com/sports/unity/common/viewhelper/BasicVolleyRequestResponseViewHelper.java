@@ -16,9 +16,7 @@ public abstract class BasicVolleyRequestResponseViewHelper {
     }
 
     public VolleyCallComponentHelper getVolleyCallComponentHelper(View view) {
-        if( volleyCallComponentHelper == null ) {
-            volleyCallComponentHelper = new VolleyCallComponentHelper(getRequestListenerKey(), getCustomComponentListener(view));
-        }
+        volleyCallComponentHelper = new VolleyCallComponentHelper(getRequestListenerKey(), getCustomComponentListener(view));
         return volleyCallComponentHelper;
     }
 

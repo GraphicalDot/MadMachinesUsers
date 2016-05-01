@@ -49,11 +49,11 @@ public class ViewPagerFootballScoreDetailAdapter extends FragmentStatePagerAdapt
         Fragment fragment = null;
         if(matchStatus.equals(matchTime) || "Postp.".equalsIgnoreCase(matchStatus) && !isLive){
             if (position == 0) {
-                fragment = new UpCommingFootballMatchTableFargment();
+//                fragment = new UpCommingFootballMatchTableFargment();
             } else if (position == 1) {
-                fragment = new UpCommingFootballMatchFromFragment();
+//                fragment = new UpCommingFootballMatchFromFragment();
             } else if(position == 2) {
-                fragment = new UpCommingFootballMatchSqadFragment();
+//                fragment = new UpCommingFootballMatchSqadFragment();
             }
         }else {
             if (position == 0) {
@@ -63,20 +63,20 @@ public class ViewPagerFootballScoreDetailAdapter extends FragmentStatePagerAdapt
                 if(isLive){
                     fragment = new LiveFootballMatchStatFragment();
                 }else {
-                    fragment = new CompletedFootballMatchStatFragment();
+//                    fragment = new CompletedFootballMatchStatFragment();
                 }
 
             } else if(position == 2){
                 if(isLive){
                     fragment = new LiveFootballMatchTimeLineFragment();
                 }else {
-                    fragment = new CompletedFootballMatchTimeLineFragment();
+//                    fragment = new CompletedFootballMatchTimeLineFragment();
                 }
             } else {
                 if(isLive){
                     fragment = new LiveFootballMatchLineUpFargment();
                 }else {
-                    fragment = new CompletedFootballMatchLineUpFragment();
+//                    fragment = new CompletedFootballMatchLineUpFragment();
                 }
             }
         }
