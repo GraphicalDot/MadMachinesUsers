@@ -20,7 +20,6 @@ import com.sports.unity.R;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.viewhelper.BasicVolleyRequestResponseViewHelper;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
-import com.sports.unity.scoredetails.footballdetail.UpCommingFootballMatchTableHandler;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
 

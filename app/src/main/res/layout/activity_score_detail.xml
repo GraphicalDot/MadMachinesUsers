@@ -209,7 +209,7 @@
                 android:layout_gravity="center_vertical"
                 android:progressDrawable="@drawable/progress_drawable"
                 android:max="90"
-                android:visibility="gone"></ProgressBar>
+                android:visibility="visible"></ProgressBar>
 
         </LinearLayout>
 
@@ -322,12 +322,5 @@
 
         </android.support.v4.view.ViewPager>
     </LinearLayout>
-
-    <include
-        android:id="@+id/error"
-        layout="@layout/error_layout"
-        android:background="@color/app_theme_blue"
-        android:elevation="@dimen/toolbar_elevation" />
-
 
 </LinearLayout>

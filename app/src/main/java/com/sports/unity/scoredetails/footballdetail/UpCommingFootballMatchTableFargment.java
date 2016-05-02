@@ -21,7 +21,6 @@ import android.widget.Toast;
 import com.sports.unity.R;
 import com.sports.unity.common.viewhelper.BasicVolleyRequestResponseViewHelper;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
-import com.sports.unity.scoredetails.cricketdetail.CricketLiveMatchSummaryHandler;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.UpCommingFootballMatchTableAdapter;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.UpCommngFootbalMatchTableDTO;
 import com.sports.unity.scores.ScoreDetailActivity;

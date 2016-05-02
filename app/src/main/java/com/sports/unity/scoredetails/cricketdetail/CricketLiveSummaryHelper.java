@@ -462,6 +462,18 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
         }
 
         @Override
+        protected void hideProgress() {
+            super.hideProgress();
+
+            swLivSummary.setRefreshing(false);
+        }
+
+        @Override
+        protected void showErrorLayout() {
+//            super.showErrorLayout();
+        }
+
+        @Override
         public void handleErrorContent(String tag) {
 
         }

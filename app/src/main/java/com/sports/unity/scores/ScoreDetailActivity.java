@@ -54,6 +54,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.sports.unity.util.Constants.INTENT_KEY_TYPE;
 
@@ -62,11 +63,11 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
     private static final String REQUEST_LISTENER_KEY = "score_detail_listener";
     private static final String SCORE_DETAIL_REQUEST_TAG = "score_detail_request_tag";
 
-    private CricketMatchJsonCaller cricketMatchJsonCaller = new CricketMatchJsonCaller();
-    private FootballMatchJsonCaller footballMatchJsonCaller = new FootballMatchJsonCaller();
+    private ArrayList<BasicVolleyRequestResponseViewHelper> fragmentVolleyHelperList = new ArrayList<>();
 
     private JSONObject matchScoreDetails = null;
-//    private ArrayList<CommentriesModel> commentaries = new ArrayList<>();
+    private CricketMatchJsonCaller cricketMatchJsonCaller = new CricketMatchJsonCaller();
+    private FootballMatchJsonCaller footballMatchJsonCaller = new FootballMatchJsonCaller();
 
     private String sportsType = null;
     private String seriesId;
@@ -78,19 +79,15 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
     private Timer timerToRefreshContent = null;
 
-    private ProgressBar mProgressBar = null;
-    private ViewGroup errorLayout = null;
-
     private ViewPager mViewPager;
-//    private ViewPagerCricketScoreDetailAdapter cricketScoreDetailAdapter;
-//    private ViewPagerFootballScoreDetailAdapter footballScoreDetailAdapter;
+    private ImageView refreshImage;
+    private ProgressBar mProgressBar = null;
 
     private View llMatchDetailLinear;
     private TextView teamFirstOvers;
     private TextView teamSecondOvers;
     private TextView tvMatchTime;
     private TextView getTvMatchDay;
-    private ImageView refreshImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,10 +101,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         setTitle();
 
         {
-            errorLayout = (ViewGroup) findViewById(R.id.error);
-            errorLayout.setVisibility(View.GONE);
-
-            mProgressBar = (ProgressBar) findViewById(R.id.progress);
             mProgressBar = (ProgressBar) findViewById(R.id.progressbar);
 
             onComponentCreate();
@@ -116,8 +109,26 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        if( isMatchLive() ){
+            enableAutoRefreshContent();
+        } else {
+            //nothing
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        disableAutoRefreshContent();
+    }
+
+    @Override
     public VolleyCallComponentHelper getVolleyCallComponentHelper() {
-        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper( REQUEST_LISTENER_KEY, new ScoreDetailComponentListener(mProgressBar, errorLayout));
+        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper( REQUEST_LISTENER_KEY, new ScoreDetailComponentListener( null, null));
         return volleyCallComponentHelper;
     }
 
@@ -136,57 +147,66 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
+    private boolean isMatchLive(){
+        boolean success = false;
+        if ( sportsType.equalsIgnoreCase(ScoresJsonParser.CRICKET) ) {
+            if( ScoresUtil.isCricketMatchLive(matchStatus) ){
+                success = true;
+            } else {
+
+            }
+        } else {
+            if( isLive ){
+                success = true;
+            } else {
+
+            }
+        }
+        return success;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
+    private void disableAutoRefreshContent() {
+        if (timerToRefreshContent != null) {
+            timerToRefreshContent.cancel();
+            timerToRefreshContent = null;
+        }
+    }
 
-//        disableAutoRefreshContent();
-        onComponentPause();
+    private void enableAutoRefreshContent() {
+        disableAutoRefreshContent();
+
+        timerToRefreshContent = new Timer();
+        timerToRefreshContent.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                autoRefreshCall();
+            }
+
+        }, Constants.SCORE_REFRESH_TIME_DURATION, Constants.SCORE_REFRESH_TIME_DURATION);
+    }
+
+    private void autoRefreshCall() {
+        requestMatchScoreDetails();
+
+        for(int index = 0 ; fragmentVolleyHelperList.size() > 0 ; index++ ){
+            BasicVolleyRequestResponseViewHelper helper = fragmentVolleyHelperList.get(index);
+            helper.requestContent();
+        }
     }
 
     private void initView() {
         try {
-            int tab_index = 2;//getIntent().getIntExtra("tab_index", 1);
+            int tab_index = getIntent().getIntExtra("tab_index", 1);
 
-            ArrayList<BasicVolleyRequestResponseViewHelper> fragmentHelperList = null;
             if ( sportsType.equalsIgnoreCase(ScoresJsonParser.CRICKET) ) {
-                fragmentHelperList = getListOfViewHelpersForCricket(sportsType, matchStatus);
+                fragmentVolleyHelperList = getListOfViewHelpersForCricket(sportsType, matchStatus);
             } else {
-                fragmentHelperList = getListOfViewHelpersForFootball(sportsType, matchStatus, matchTime, isLive);
+                fragmentVolleyHelperList = getListOfViewHelpersForFootball(sportsType, matchStatus, matchTime, isLive);
             }
 
             mViewPager = (ViewPager) findViewById(R.id.pager);
-            mViewPager.setAdapter( new GenericFragmentViewPagerAdapter(getSupportFragmentManager(), fragmentHelperList));
-
-//            String cricketMatchtitles[] = {getString(R.string.summary), getString(R.string.commentary), getString(R.string.scorecard)};
-//            int numberOfCricketTabs = cricketMatchtitles.length;
-//            String footballMatchtitles[] = {getString(R.string.commentary), getString(R.string.matchstats), getString(R.string.timeline), getString(R.string.lineup)};
-//            int numberOfFootballTabs = footballMatchtitles.length;
-//            String footballMatchtitlesupcommingTitles[] = {getString(R.string.table), getString(R.string.form), getString(R.string.squad)};
-//
-//
-//            int tab_index = 0;
-            if (sportsType.equalsIgnoreCase(ScoresJsonParser.CRICKET)) {
-//                cricketScoreDetailAdapter = new ViewPagerCricketScoreDetailAdapter(getSupportFragmentManager(), cricketMatchtitles, numberOfCricketTabs, commentaries, matchStatus);
-//                mViewPager.setAdapter(cricketScoreDetailAdapter);
-//                tab_index = getIntent().getIntExtra("tab_index", 1);
-            } else {
-                if (matchStatus.equals(matchTime) || "Postp.".equalsIgnoreCase(matchStatus) && !isLive) {
-//                    footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitlesupcommingTitles, footballMatchtitlesupcommingTitles.length, commentaries, matchStatus, matchTime, isLive);
-//                    mViewPager.setAdapter(footballScoreDetailAdapter);
-//                    tab_index = getIntent().getIntExtra("tab_index", 0);
-                } else {
-//                    footballScoreDetailAdapter = new ViewPagerFootballScoreDetailAdapter(getSupportFragmentManager(), footballMatchtitles, numberOfFootballTabs, commentaries, matchStatus, matchTime, isLive);
-//                    mViewPager.setAdapter(footballScoreDetailAdapter);
-//                    tab_index = getIntent().getIntExtra("tab_index", 1);
-//
-                }
-            }
+            mViewPager.setAdapter( new GenericFragmentViewPagerAdapter(getSupportFragmentManager(), fragmentVolleyHelperList));
 
             SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
             tabs.setDistributeEvenly(false);
@@ -202,15 +222,16 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
             mViewPager.setCurrentItem(tab_index);
             teamFirstOvers = (TextView) findViewById(R.id.team1_over);
             teamSecondOvers = (TextView) findViewById(R.id.team2_over);
+
             ImageView img = (ImageView) findViewById(R.id.back_img);
             img.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     finish();
                 }
             });
+
             refreshImage = (ImageView) findViewById(R.id.refresh);
             refreshImage.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
-
             refreshImage.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -226,16 +247,55 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
                             .commit();
                 }
             });
+            if( isMatchLive() ){
+                refreshImage.setVisibility(View.VISIBLE);
+            }
+
 
             llMatchDetailLinear = findViewById(R.id.ll_match_detail_linear);
             tvMatchTime = (TextView) findViewById(R.id.tv_match_time);
+
             getTvMatchDay = (TextView) findViewById(R.id.tv_game_day);
             getTvMatchDay.setTextColor(getResources().getColor(R.color.score_light_grey));
             getTvMatchDay.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
         } catch (Exception e) {
-            Log.i("Exception Occured", "initView: ");
             Toast.makeText(this, "Error Occured", Toast.LENGTH_LONG);
             e.printStackTrace();
+        }
+    }
+
+    private void setToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        ImageView backArrow = (ImageView) toolbar.findViewById(R.id.back_img);
+        backArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ScoreDetailActivity.this.finish();
+            }
+        });
+    }
+
+    private void setTitle() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        TextView title_text = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        try {
+            if (sportsType.equals(ScoresJsonParser.CRICKET)) {
+                cricketMatchJsonCaller.setJsonObject(matchScoreDetails);
+                if (LeagueName != null) {
+                    title_text.setText(LeagueName);
+                } else {
+                    title_text.setText(cricketMatchJsonCaller.getSeriesName());
+                }
+            } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
+                footballMatchJsonCaller.setJsonObject(matchScoreDetails);
+                if (LeagueName != null) {
+                    title_text.setText(LeagueName);
+                } else {
+                    title_text.setText(cricketMatchJsonCaller.getSeriesName());
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
     }
 
@@ -370,41 +430,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         mProgressBar.setProgress(currenttime);
     }
 
-    private void setToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        ImageView backArrow = (ImageView) toolbar.findViewById(R.id.back_img);
-        backArrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ScoreDetailActivity.this.finish();
-            }
-        });
-    }
-
-    private void setTitle() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        TextView title_text = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        try {
-            if (sportsType.equals(ScoresJsonParser.CRICKET)) {
-                cricketMatchJsonCaller.setJsonObject(matchScoreDetails);
-                if (LeagueName != null) {
-                    title_text.setText(LeagueName);
-                } else {
-                    title_text.setText(cricketMatchJsonCaller.getSeriesName());
-                }
-            } else if (sportsType.equals(ScoresJsonParser.FOOTBALL)) {
-                footballMatchJsonCaller.setJsonObject(matchScoreDetails);
-                if (LeagueName != null) {
-                    title_text.setText(LeagueName);
-                } else {
-                    title_text.setText(cricketMatchJsonCaller.getSeriesName());
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
     private boolean renderScores() {
         Log.i("Score Detail", "Render Scores");
         boolean requestCommentaries = false;
@@ -500,7 +525,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
                     TextView team2Score = (TextView) findViewById(R.id.team2_score);
                     text1Score.setText(cricketMatchJsonCaller.getTeam1());
                     team2Score.setText(cricketMatchJsonCaller.getTeam2());
-                    refreshImage.setVisibility(View.GONE);
                 } else {
 
                     TextView textView = (TextView) findViewById(R.id.team1_name);
@@ -509,15 +533,11 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
                     textView = (TextView) findViewById(R.id.team2_name);
                     textView.setText(cricketMatchJsonCaller.getTeam2());
                     if (cricketMatchJsonCaller.getStatus().equalsIgnoreCase("L")) {
-
                         tvCurrentScore.setVisibility(View.GONE);
-                        refreshImage.setVisibility(View.VISIBLE);
                     } else {
                         tvCurrentScore.setText(cricketMatchJsonCaller.getMatchResult());
                         tvCurrentScore.setVisibility(View.VISIBLE);
-                        refreshImage.setVisibility(View.GONE);
                     }
-
 
                     if (cricketMatchJsonCaller.getStatus().equalsIgnoreCase("F") || cricketMatchJsonCaller.getStatus().equalsIgnoreCase("L")) {
 
@@ -594,12 +614,10 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
                     llMatchDetailLinear.setVisibility(View.GONE);
                 }
                 if (!footballMatchJsonCaller.isLive() && footballMatchJsonCaller.getMatchStatus().equalsIgnoreCase("FT")) {
-                    refreshImage.setVisibility(View.GONE);
                     getTvMatchDay.setText(R.string.full_time);
 
 
                 } else if (!footballMatchJsonCaller.isLive() && "Postp.".equalsIgnoreCase(footballMatchJsonCaller.getMatchStatus())) {
-                    refreshImage.setVisibility(View.GONE);
                     getTvMatchDay.setText(R.string.post_pond);
 
                 }
@@ -696,31 +714,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         return requestCommentaries;
     }
 
-//    private void disableAutoRefreshContent() {
-//        if (timerToRefreshContent != null) {
-//            timerToRefreshContent.cancel();
-//            timerToRefreshContent = null;
-//        }
-//    }
-//
-//    private void enableAutoRefreshContent() {
-//        disableAutoRefreshContent();
-//
-//        timerToRefreshContent = new Timer();
-//        timerToRefreshContent.schedule(new TimerTask() {
-//
-//            @Override
-//            public void run() {
-//                autoRefreshCall();
-//            }
-//
-//        }, Constants.TIMEINMILISECOND, Constants.TIMEINMILISECOND);
-//    }
-//
-//    private void autoRefreshCall() {
-//        requestMatchScoreDetails();
-//    }
-
     private boolean handleScoreDetails(String content) {
         Log.i("Score Detail", "Handle Content");
         boolean success = false;
@@ -741,15 +734,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         parameters.put(ScoresContentHandler.PARAM_ID, matchId);
         parameters.put(ScoresContentHandler.PARAM_SERIESID, seriesId);
         requestContent(ScoresContentHandler.CALL_NAME_MATCH_DETAIL, parameters, SCORE_DETAIL_REQUEST_TAG);
-    }
-
-    private boolean handleScoreCard(String content) {
-        Log.i("Score Detail", "Handle Content");
-        boolean success = false;
-        if (content != null) {
-            success = true;
-        }
-        return success;
     }
 
     private class ScoreDetailComponentListener extends CustomComponentListener {

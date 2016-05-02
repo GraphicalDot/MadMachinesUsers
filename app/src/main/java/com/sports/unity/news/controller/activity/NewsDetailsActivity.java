@@ -51,6 +51,9 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
 
     private JSONObject newsJsonObject = null;
 
+    private ImageView refresh = null;
+    private ImageView share = null;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -97,8 +100,17 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
 
         });
 
-        ImageView share = (ImageView) toolbar.findViewById(R.id.share);
-        share.setVisibility(View.GONE);
+        refresh = (ImageView) toolbar.findViewById(R.id.refresh);
+        refresh.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
+        refresh.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                requestNewsDetail();
+            }
+
+        });
+
+        share = (ImageView) toolbar.findViewById(R.id.share);
         share.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         share.setOnClickListener(new View.OnClickListener() {
 
@@ -201,13 +213,6 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
             //nothing
         }
 
-        if ( success ) {
-            Toolbar toolbar = (Toolbar) findViewById(com.sports.unity.R.id.tool_bar);
-            ImageView share = (ImageView) toolbar.findViewById(R.id.share);
-            share.setVisibility(View.VISIBLE);
-           // menu.findItem(R.id.action_share).setVisible(true);
-
-        }
         return success;
     }
 
@@ -232,6 +237,14 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
         }
 
         @Override
+        protected void showErrorLayout() {
+            super.showErrorLayout();
+
+            refresh.setVisibility(View.VISIBLE);
+            share.setVisibility(View.GONE);
+        }
+
+        @Override
         public boolean handleContent(String tag, String content) {
             return NewsDetailsActivity.this.handleNewsDetailResponse(content);
         }
@@ -242,7 +255,8 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
             if( ! success ){
                 showErrorLayout();
             } else {
-                //nothing
+                share.setVisibility(View.VISIBLE);
+                refresh.setVisibility(View.GONE);
             }
         }
 

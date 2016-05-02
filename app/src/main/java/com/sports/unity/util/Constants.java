@@ -63,6 +63,7 @@ public class Constants {
 
     public static final int CONNECTION_TIME_OUT = 10 * 1000;
     public static final int CONNECTION_READ_TIME_OUT = 20 * 1000;
+    public static final long SCORE_REFRESH_TIME_DURATION = 20000;
 
     // SD card image directory
     public static final String PHOTO_ALBUM = "image";
@@ -114,7 +115,7 @@ public class Constants {
     public static final String INTENT_KEY_LEAGUE_ID = "league_id";
     public static final String INTENT_KEY_TEAM1_NAME = "team1";
     public static final String INTENT_KEY_TEAM2_NAME = "team2";
-    public static final long TIMEINMILISECOND = 20000;
+
     public static final String ERRORRESPONSE = "{\"success\":false,\"error\":true}";
     public static final String TOKEN_PARAM = "token";
     public static final String INTENT_KEY_SERIES = "series_id";
