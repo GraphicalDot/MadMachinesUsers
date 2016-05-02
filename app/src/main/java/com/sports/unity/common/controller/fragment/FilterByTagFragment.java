@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.common.controller.AdvancedFilterActivity;
-import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.FavouriteContentHandler;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
@@ -77,7 +76,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     @Override
     public void onPause() {
         super.onPause();
-        ((AdvancedFilterActivity) getActivity()).removeEditClickListener(this);
+        ((AdvancedFilterActivity) getActivity()).removeSearchListener(this);
         favouriteContentHandler.searchNum = 0;
         favouriteContentHandler.onPause();
         favouriteContentHandler.removePreparedListener(this);
@@ -89,7 +88,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     public void onResume() {
         super.onResume();
         favouriteContentHandler.onResume();
-        ((AdvancedFilterActivity) getActivity()).addEditClickListener(this);
+        ((AdvancedFilterActivity) getActivity()).addSearchListener(this);
         favouriteContentHandler.addPreparedListener(this);
         if (!favouriteContentHandler.isDisplay) {
             showProgress();
@@ -409,7 +408,7 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     }
 
     /**
-     * callback for search fired from MainActivity.
+     * callback implementation for search fired from MainActivity.
      *
      * @param isSearchInitiated True if user searches for a favourite. False when user closes the search.
      */
@@ -417,6 +416,20 @@ public class FilterByTagFragment extends Fragment implements AdvancedFilterActiv
     public void onSearch(boolean isSearchInitiated, String searchString) {
         requestSearch(isSearchInitiated, searchString);
 
+    }
+
+    /**
+     * callback implementation for refresh fired from MainActivity.
+     *
+     */
+    @Override
+    public void onRefresh() {
+        if (!favouriteContentHandler.isDisplay) {
+            filterRecyclerView.setVisibility(View.INVISIBLE);
+            errorLayout.setVisibility(View.GONE);
+            showProgress();
+            favouriteContentHandler.makeRequest();
+        }
     }
 
     /**
