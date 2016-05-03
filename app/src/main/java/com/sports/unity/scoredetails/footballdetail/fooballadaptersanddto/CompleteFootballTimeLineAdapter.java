@@ -83,9 +83,9 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
     }
 
     private void setVisitorTeamTimeLine(ViewHolder holder) {
-        int padding = context.getResources().getDimensionPixelOffset(R.dimen.horizontal_padding_very_very_small);
-        float density = context.getResources().getDisplayMetrics().density;
-        int paddingDp = (int)(padding * density);
+//        int padding = context.getResources().getDimensionPixelOffset(R.dimen.horizontal_padding_very_very_small);
+//        float density = context.getResources().getDisplayMetrics().density;
+//        int paddingDp = (int)(padding * density);
         holder.tvTeamSecondTime.setText(holder.dto.getTvTeamSecondTime());
         holder.tvTeamSecondOnPlayer.setText(holder.dto.getTvTeamSecondOnPlayer());
         if(holder.dto.getTvTeamSecondOffPlayer()!=null){
@@ -93,8 +93,8 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
             holder.tvTeamSecondOffPlayer.setVisibility(View.VISIBLE);
         }else{
             holder.tvTeamSecondOffPlayer.setVisibility(View.GONE);
-            holder.tvTeamSecondOnPlayer.setGravity(Gravity.CENTER);
-            holder.tvTeamSecondOnPlayer.setPadding(0,paddingDp,0,0);
+//            holder.tvTeamSecondOnPlayer.setGravity(Gravity.CENTER);
+//            holder.tvTeamSecondOnPlayer.setPadding(0,paddingDp,0,0);
        }
 
         holder.tvTeamSecondTime.setVisibility(View.VISIBLE);
@@ -105,9 +105,9 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
     }
 
     private void setLocalTeamTimeLine(ViewHolder holder) {
-        int padding = context.getResources().getDimensionPixelOffset(R.dimen.horizontal_padding_very_very_small);
-        float density = context.getResources().getDisplayMetrics().density;
-        int paddingDp = (int)(padding * density);
+//        int padding = context.getResources().getDimensionPixelOffset(R.dimen.horizontal_padding_very_very_small);
+//        float density = context.getResources().getDisplayMetrics().density;
+//        int paddingDp = (int)(padding * density);
         holder.tvTeamFirstTime.setText(holder.dto.getTvTeamFirstTime());
         holder.tvTeamFirstOnPlayer.setText(holder.dto.getTvTeamFirstOnPlayer());
         if(holder.dto.getTvTeamFirstOffPlayer()!=null){
@@ -115,9 +115,9 @@ public class CompleteFootballTimeLineAdapter extends RecyclerView.Adapter<Comple
             holder.tvTeamFirstOffPlayer.setVisibility(View.VISIBLE);
         }else {
             holder.tvTeamFirstOffPlayer.setVisibility(View.GONE);
-            holder.tvTeamFirstOnPlayer.setGravity(Gravity.CENTER);
-            holder.tvTeamFirstOnPlayer.setGravity(Gravity.CENTER);
-            holder.tvTeamFirstOnPlayer.setPadding(0, paddingDp, 0, 0);
+//            holder.tvTeamFirstOnPlayer.setGravity(Gravity.CENTER);
+//            holder.tvTeamFirstOnPlayer.setGravity(Gravity.CENTER);
+//            holder.tvTeamFirstOnPlayer.setPadding(0, paddingDp, 0, 0);
 
         }
         holder.tvTeamFirstTime.setVisibility(View.VISIBLE);

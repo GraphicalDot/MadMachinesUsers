@@ -209,7 +209,7 @@
                 android:layout_gravity="center_vertical"
                 android:progressDrawable="@drawable/progress_drawable"
                 android:max="90"
-                android:visibility="visible"></ProgressBar>
+                android:visibility="gone"></ProgressBar>
 
         </LinearLayout>
 

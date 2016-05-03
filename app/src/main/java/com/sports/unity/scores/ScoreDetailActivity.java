@@ -145,6 +145,9 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         } else {
             seriesId = i.getStringExtra(Constants.INTENT_KEY_SERIES);
         }
+
+        matchStatus = "L";
+        isLive = true;
     }
 
     private boolean isMatchLive(){
@@ -189,10 +192,17 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
     private void autoRefreshCall() {
         requestMatchScoreDetails();
 
-        for(int index = 0 ; fragmentVolleyHelperList.size() > 0 ; index++ ){
-            BasicVolleyRequestResponseViewHelper helper = fragmentVolleyHelperList.get(index);
-            helper.requestContent();
-        }
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                for(int index = 0 ; index < fragmentVolleyHelperList.size() ; index++ ){
+                    BasicVolleyRequestResponseViewHelper helper = fragmentVolleyHelperList.get(index);
+                    helper.requestContent();
+                }
+            }
+
+        });
     }
 
     private void initView() {
@@ -236,15 +246,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
                 @Override
                 public void onClick(View v) {
-
-                    int index = mViewPager.getCurrentItem();
-                    List<Fragment> fargmentList = getSupportFragmentManager().getFragments();
-                    Fragment fragment = fargmentList.get(index);
-                    getSupportFragmentManager()
-                            .beginTransaction()
-                            .detach(fragment)
-                            .attach(fragment)
-                            .commit();
+                    autoRefreshCall();
                 }
             });
             if( isMatchLive() ){

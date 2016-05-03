@@ -172,6 +172,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:gravity="center"
+                                android:maxLength="10"
                                 android:text=""
                                 android:textColor="@color/Very_dark_gray"
                                 android:textSize="@dimen/font_size_small_large" />
