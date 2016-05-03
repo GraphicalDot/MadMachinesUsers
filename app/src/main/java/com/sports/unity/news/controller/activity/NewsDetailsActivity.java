@@ -21,6 +21,8 @@ import com.bumptech.glide.Glide;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
+import com.sports.unity.common.viewhelper.CustomComponentListener;
+import com.sports.unity.common.viewhelper.VolleyCallComponentHelper;
 import com.sports.unity.news.model.NewsJsonCaller;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.CommonUtil;
@@ -43,13 +45,14 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
     private static final String REQUEST_LISTENER_KEY = "news_detail_listener";
     private static final String NEWS_DETAIL_REQUEST_TAG = "news_detail_request_tag";
 
-    private Menu menu = null;
-
     private String id = null;
     private String title = null;
     private String shareContent = null;
 
     private JSONObject newsJsonObject = null;
+
+    private ImageView refresh = null;
+    private ImageView share = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,43 +62,23 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
         setContentView(R.layout.activity_news_details);
         initView();
 
-        {
-            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
-            LinearLayout errorLayout = (LinearLayout) findViewById(R.id.error);
-            initErrorLayout(errorLayout);
-
-            NewsDetailComponentListener createUserComponentListener = new NewsDetailComponentListener(progressBar, errorLayout);
-
-            ArrayList<CustomComponentListener> listeners = new ArrayList<>();
-            listeners.add(createUserComponentListener);
-
-            onComponentCreate(listeners, REQUEST_LISTENER_KEY);
-        }
-
+        onComponentCreate();
         requestNewsDetail();
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        onComponentResume();
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-
-        onComponentPause();
+    public VolleyCallComponentHelper getVolleyCallComponentHelper() {
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progress);
+        ViewGroup errorLayout = (ViewGroup)findViewById(R.id.error);
+        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper( REQUEST_LISTENER_KEY, new NewsDetailComponentListener(progressBar, errorLayout));
+        return volleyCallComponentHelper;
     }
 
     private void initView(){
         id = getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-
         String title = getIntent().getStringExtra(Constants.INTENT_KEY_TITLE);
-        setToolBar(title);
 
-        initViews();
+        setToolBar(title);
     }
 
     private void setToolBar(final String title) {
@@ -117,8 +100,17 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
 
         });
 
-        ImageView share = (ImageView) toolbar.findViewById(R.id.share);
-        share.setVisibility(View.GONE);
+        refresh = (ImageView) toolbar.findViewById(R.id.refresh);
+        refresh.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
+        refresh.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                requestNewsDetail();
+            }
+
+        });
+
+        share = (ImageView) toolbar.findViewById(R.id.share);
         share.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         share.setOnClickListener(new View.OnClickListener() {
 
@@ -128,25 +120,6 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
                 sharingIntent.putExtra(Intent.EXTRA_SUBJECT, title);
                 sharingIntent.putExtra(Intent.EXTRA_TEXT, shareContent);
                 startActivity(Intent.createChooser(sharingIntent, "Share via"));
-            }
-
-        });
-    }
-
-    private void initViews() {
-
-    }
-
-    private void initErrorLayout(LinearLayout errorLayout){
-        errorLayout.setVisibility(View.GONE);
-        TextView message = (TextView)errorLayout.findViewById(R.id.something_wrong);
-        message.setText("Tap here, to reload news article.");
-        errorLayout.setClickable(true);
-        errorLayout.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                requestNewsDetail();
             }
 
         });
@@ -240,13 +213,6 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
             //nothing
         }
 
-        if ( success ) {
-            Toolbar toolbar = (Toolbar) findViewById(com.sports.unity.R.id.tool_bar);
-            ImageView share = (ImageView) toolbar.findViewById(R.id.share);
-            share.setVisibility(View.VISIBLE);
-           // menu.findItem(R.id.action_share).setVisible(true);
-
-        }
         return success;
     }
 
@@ -259,10 +225,23 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
         requestContent(ScoresContentHandler.CALL_NAME_NEWS_DETAIL, parameters, NEWS_DETAIL_REQUEST_TAG);
     }
 
-    private class NewsDetailComponentListener extends CustomVolleyCallerActivity.CustomComponentListener {
+    private class NewsDetailComponentListener extends CustomComponentListener {
 
         public NewsDetailComponentListener(ProgressBar progressBar, ViewGroup errorLayout){
             super( NEWS_DETAIL_REQUEST_TAG, progressBar, errorLayout);
+        }
+
+        @Override
+        public void handleErrorContent(String tag) {
+            //nothing
+        }
+
+        @Override
+        protected void showErrorLayout() {
+            super.showErrorLayout();
+
+            refresh.setVisibility(View.VISIBLE);
+            share.setVisibility(View.GONE);
         }
 
         @Override
@@ -271,26 +250,13 @@ public class NewsDetailsActivity extends CustomVolleyCallerActivity {
         }
 
         @Override
-        public void handleErrorContent(String tag) {
-
-        }
-
-        @Override
-        protected void showErrorLayout() {
-            super.showErrorLayout();
-
-            if( CommonUtil.isInternetConnectionAvailable(NewsDetailsActivity.this) ){
-                Toast.makeText(NewsDetailsActivity.this, R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        @Override
-        public void changeUI() {
+        public void changeUI(String tag) {
             boolean success = renderResponse();
             if( ! success ){
                 showErrorLayout();
             } else {
-                //nothing
+                share.setVisibility(View.VISIBLE);
+                refresh.setVisibility(View.GONE);
             }
         }
 

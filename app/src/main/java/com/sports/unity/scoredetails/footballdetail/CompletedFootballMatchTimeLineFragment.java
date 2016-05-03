@@ -18,9 +18,12 @@ import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.common.view.CustomLinearLayoutManager;
+import com.sports.unity.common.viewhelper.BasicVolleyRequestResponseViewHelper;
+import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballTimeLineAdapter;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballTimeLineDTO;
 import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.scores.model.ScoresContentHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -29,6 +32,7 @@ import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
@@ -40,161 +44,152 @@ import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 /**
  * Created by madmachines on 23/2/16.
  */
-public class CompletedFootballMatchTimeLineFragment extends Fragment implements CompletedFootballMatchTimeLineHandler.CompletedMatchContentListener{
+public class CompletedFootballMatchTimeLineFragment extends BasicVolleyRequestResponseViewHelper {
 
+    private String title;
+    private HashMap<String,String> requestParameters;
+    private JSONObject response;
 
-    private RecyclerView recyclerView;
-    private String toss = "";
-    private String matchName="";
-    private String date = "";
-    private String matchId;
     private SwipeRefreshLayout swTimeLineRefresh;
-    private TextView nocomments;
-    private ProgressBar progressBar;
+    private RecyclerView recyclerView;
     private CompleteFootballTimeLineAdapter completeFootballTimeLineAdapter;
+
     private List<CompleteFootballTimeLineDTO> list = new ArrayList<>();
-    private CompletedFootballMatchTimeLineHandler completedFootballMatchTimeLineHandler;
-    private Context context;
 
-    public CompletedFootballMatchTimeLineFragment() {
-        // Required empty public constructor
+    public CompletedFootballMatchTimeLineFragment(String title) {
+        this.title = title;
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        this.context = context;
-        Intent i = getActivity().getIntent();
-        matchId =  i.getStringExtra(INTENT_KEY_ID);
-        matchName = i.getStringExtra(INTENT_KEY_MATCH_NAME);
-        toss = i.getStringExtra(INTENT_KEY_TOSS);
-        date = i.getStringExtra(INTENT_KEY_DATE);
-        completedFootballMatchTimeLineHandler = CompletedFootballMatchTimeLineHandler.getInstance(context);
-        completedFootballMatchTimeLineHandler.addListener(this);
-        completedFootballMatchTimeLineHandler.requestCompletedMatchTimeLine(matchId);
-
+    public int getFragmentLayout() {
+        return R.layout.fragment_football_match_timeline;
     }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_football_match_timeline, container, false);
+    public String getFragmentTitle() {
+        return title;
+    }
+
+    @Override
+    public String getRequestListenerKey() {
+        return "FootballTimelineRequestListener";
+    }
+
+    @Override
+    public CustomComponentListener getCustomComponentListener(View view) {
+        ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
+        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+
+        MatchTimelineComponentListener  componentListener = new MatchTimelineComponentListener( getRequestTag(), progressBar, errorLayout);
+        return componentListener;
+    }
+
+    @Override
+    public String getRequestTag() {
+        return "MatchTimelineRequestTag";
+    }
+
+    @Override
+    public String getRequestCallName() {
+        return ScoresContentHandler.CALL_NAME_FOOTBALL_TIMELINE;
+    }
+
+    @Override
+    public HashMap<String, String> getRequestParameters() {
+        return requestParameters;
+    }
+
+    @Override
+    public void initialiseViews(View view) {
         initView(view);
-
-        return view;
     }
+
+
+    public void setRequestParameters(HashMap<String,String> params ) {
+        this.requestParameters = params;
+    }
+
     private void initView(View view) {
+        Context context = view.getContext();
+
         recyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
         recyclerView.setNestedScrollingEnabled(false);
-        completeFootballTimeLineAdapter = new CompleteFootballTimeLineAdapter(list,getContext());
+        completeFootballTimeLineAdapter = new CompleteFootballTimeLineAdapter(list, context);
         recyclerView.setAdapter(completeFootballTimeLineAdapter);
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
+
         swTimeLineRefresh = (SwipeRefreshLayout) view.findViewById(R.id.sw_timeline_refresh);
-        initErrorLayout(view);
-        nocomments=(TextView)view.findViewById(R.id.no_comments);
+        swTimeLineRefresh.setVisibility(View.GONE);
         swTimeLineRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if (completedFootballMatchTimeLineHandler != null) {
-                    completedFootballMatchTimeLineHandler.requestCompletedMatchTimeLine(matchId);
-                    swTimeLineRefresh.setRefreshing(true);
-                }
+                requestContent();
             }
         });
 
     }
 
-    @Override
-    public void handleContent(String object) {
-        {
-
-            try {
-                showProgressBar();
-                JSONObject jsonObject = new JSONObject(object);
-                boolean success = jsonObject.getBoolean("success");
-                if( success ) {
-
-                    renderDisplay(jsonObject);
-
-                } else {
-                    showErrorLayout(getView());
-                }
-            }catch (Exception ex){
-                ex.printStackTrace();
-                showErrorLayout(getView());
-            }
-        }
-    }
-    private void initErrorLayout(View view) {
+    private boolean handleContent(String object) {
+        boolean success = false;
         try {
-            LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-            errorLayout.setVisibility(View.GONE);
-        }catch (Exception e){e.printStackTrace();}
+            JSONObject jsonObject = new JSONObject(object);
+            success = jsonObject.getBoolean("success");
+            if( success ) {
+                response = jsonObject;
+            } else {
+
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return success;
     }
 
-    private void showErrorLayout(View view) {
+    private boolean renderDisplay() {
+        boolean success = false;
+        if(!response.isNull("data")){
+            try {
+                JSONArray dataArray = response.getJSONArray("data");
+                list.clear();
 
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
-        errorLayout.setVisibility(View.VISIBLE);
-        progressBar.setVisibility(View.GONE);
-    }
-    private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-        list.clear();
-        ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-        hideProgressBar();
-        swTimeLineRefresh.setRefreshing(false);
-        if(!jsonObject.isNull("data")){
-            final JSONArray dataArray = jsonObject.getJSONArray("data");
-            list.clear();
-            if (activity != null) {
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            CompleteFootballTimeLineDTO completeFootballTimeLineDTO = null;
-
-                            for (int i = 0; i < dataArray.length(); i++) {
-                                completeFootballTimeLineDTO = new CompleteFootballTimeLineDTO();
-                                JSONObject dataObject = dataArray.getJSONObject(i);
-                                if (!dataObject.isNull("team")) {
-                                    completeFootballTimeLineDTO.setTeamName(dataObject.getString("team"));
-                                    if (dataObject.getString("team").equalsIgnoreCase(getContext().getString(R.string.home_team_name))) {
-
-                                        setTeamFirstTimeDTO(completeFootballTimeLineDTO, dataObject);
-
-                                    } else {
-
-                                        setTeamSecondTimeDTO(completeFootballTimeLineDTO, dataObject);
-                                    }
-                                }
-                                list.add(completeFootballTimeLineDTO);
-                            }
-                            Collections.sort(list);
-                            completeFootballTimeLineAdapter.notifyDataSetChanged();
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                            showErrorLayout(getView());
+                CompleteFootballTimeLineDTO completeFootballTimeLineDTO = null;
+                for (int i = 0; i < dataArray.length(); i++) {
+                    completeFootballTimeLineDTO = new CompleteFootballTimeLineDTO();
+                    JSONObject dataObject = dataArray.getJSONObject(i);
+                    if (!dataObject.isNull("team")) {
+                        completeFootballTimeLineDTO.setTeamName(dataObject.getString("team"));
+                        if (dataObject.getString("team").equalsIgnoreCase(swTimeLineRefresh.getContext().getString(R.string.home_team_name))) {
+                            setTeamFirstTimeDTO(completeFootballTimeLineDTO, dataObject);
+                        } else {
+                            setTeamSecondTimeDTO(completeFootballTimeLineDTO, dataObject);
                         }
                     }
-                });
-            }
-        }else{
-            showErrorLayout(getView());
-        }
+                    list.add(completeFootballTimeLineDTO);
+                }
+                Collections.sort(list);
+                completeFootballTimeLineAdapter.notifyDataSetChanged();
 
+                success = true;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        } else {
+            //nothing
+        }
+        return success;
     }
 
     private void setTeamFirstTimeDTO(CompleteFootballTimeLineDTO completeFootballTimeLineDTO, JSONObject dataObject) throws JSONException {
-
         if(!dataObject.isNull("event_time")){
-            completeFootballTimeLineDTO.setTvTeamFirstTime(dataObject.getString("event_time")+"'");
+            completeFootballTimeLineDTO.setTvTeamFirstTime(dataObject.getString("event_time") + "'");
         }else if(!dataObject.isNull("minute")){
-            completeFootballTimeLineDTO.setTvTeamFirstTime(dataObject.getString("minute")+"'");
+            completeFootballTimeLineDTO.setTvTeamFirstTime(dataObject.getString("minute") + "'");
         }
 
         if(!dataObject.isNull("player_on")){
             completeFootballTimeLineDTO.setTvTeamFirstOnPlayer("ON:" + dataObject.getString("player_on"));
         }
+
         if(!dataObject.isNull("player_off")){
             completeFootballTimeLineDTO.setTvTeamFirstOffPlayer("OFF:" + dataObject.getString("player_off"));
         }
@@ -205,20 +200,19 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
         }else {
             completeFootballTimeLineDTO.setDrwDrawable(getDrwableResource(""));
         }
-
-
     }
-    private void setTeamSecondTimeDTO(CompleteFootballTimeLineDTO completeFootballTimeLineDTO, JSONObject dataObject) throws JSONException {
 
+    private void setTeamSecondTimeDTO(CompleteFootballTimeLineDTO completeFootballTimeLineDTO, JSONObject dataObject) throws JSONException {
         if(!dataObject.isNull("event_time")){
             completeFootballTimeLineDTO.setTvTeamSecondTime(dataObject.getString("event_time")+"'");
-        }else if(!dataObject.isNull("minute")){
+        } else if(!dataObject.isNull("minute")){
             completeFootballTimeLineDTO.setTvTeamSecondTime(dataObject.getString("minute")+"'");
         }
 
         if(!dataObject.isNull("player_on")){
             completeFootballTimeLineDTO.setTvTeamSecondOnPlayer("ON:" + dataObject.getString("player_on"));
         }
+
         if(!dataObject.isNull("player_off")){
             completeFootballTimeLineDTO.setTvTeamSecondOffPlayer("OFF:" + dataObject.getString("player_off"));
         }
@@ -229,12 +223,10 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
         }else {
             completeFootballTimeLineDTO.setDrwDrawable(getDrwableResource(""));
         }
-
-
     }
 
     private Drawable getDrwableResource(String event) {
-        Resources.Theme theme = getActivity().getTheme();
+        Resources.Theme theme = swTimeLineRefresh.getContext().getTheme();
         int drwableId = R.drawable.ic_subsitute_circle;
         if("yellowcards".equalsIgnoreCase(event)){
             drwableId = R.drawable.ic_yellow_card_circle;
@@ -246,38 +238,67 @@ public class CompletedFootballMatchTimeLineFragment extends Fragment implements 
         }
         Drawable drawable = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            drawable = getResources().getDrawable(drwableId,theme);
+            drawable = swTimeLineRefresh.getResources().getDrawable(drwableId,theme);
         } else {
-            drawable = getResources().getDrawable(drwableId);
+            drawable = swTimeLineRefresh.getResources().getDrawable(drwableId);
         }
         return drawable;
     }
 
-    private void  showProgressBar(){
-        progressBar.setVisibility(View.VISIBLE);
-    }
-    private void  hideProgressBar(){
-        progressBar.setVisibility(View.GONE);
-    }
+    public class MatchTimelineComponentListener extends CustomComponentListener {
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (completedFootballMatchTimeLineHandler != null) {
-            completedFootballMatchTimeLineHandler.addListener(this);
-        } else {
-            completedFootballMatchTimeLineHandler =CompletedFootballMatchTimeLineHandler.getInstance(context);
-            completedFootballMatchTimeLineHandler.addListener(this);
+        public MatchTimelineComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
+            super(requestTag, progressBar, errorLayout);
         }
-        completedFootballMatchTimeLineHandler.requestCompletedMatchTimeLine(matchId);
-    }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (completedFootballMatchTimeLineHandler != null)
-            completedFootballMatchTimeLineHandler = null;
+        @Override
+        public void handleErrorContent(String tag) {
+
+        }
+
+        @Override
+        protected void showErrorLayout() {
+            if( swTimeLineRefresh.getVisibility() == View.VISIBLE ) {
+                //nothing
+            } else {
+                super.showErrorLayout();
+            }
+        }
+
+        @Override
+        protected void showProgress() {
+            if( swTimeLineRefresh.getVisibility() == View.VISIBLE ) {
+                //nothing
+            } else {
+                super.showProgress();
+            }
+        }
+
+        @Override
+        protected void hideProgress() {
+            super.hideProgress();
+
+            if( swTimeLineRefresh != null ){
+                swTimeLineRefresh.setRefreshing(false);
+            }
+        }
+
+        @Override
+        public boolean handleContent(String tag, String content) {
+            boolean success = CompletedFootballMatchTimeLineFragment.this.handleContent(content);
+            return success;
+        }
+
+
+        @Override
+        public void changeUI(String tag) {
+            boolean success = renderDisplay();
+            if( success ){
+                swTimeLineRefresh.setVisibility(View.VISIBLE);
+            } else {
+                showErrorLayout();
+            }
+        }
 
     }
 

@@ -1,15 +1,17 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/ColorPrimary">
+
     <include
         android:id="@+id/error"
         layout="@layout/error_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"/>
+        />
+
     <ProgressBar
         android:id="@+id/progress"
         android:layout_width="wrap_content"
@@ -17,6 +19,7 @@
         android:layout_gravity="center"
         android:visibility="gone"
         />
+
     <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
         android:id="@+id/tv_empty_view"
         android:layout_width="match_parent"
@@ -31,8 +34,8 @@
         android:textColor="@color/gray1"
         android:textSize="@dimen/font_size_large"
         android:visibility="gone"/>
+
     <ScrollView
-        android:layout_below="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -41,7 +44,7 @@
             android:orientation="vertical"
             android:layout_height="wrap_content"
             android:id="@+id/root_layout"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <RelativeLayout
 
@@ -538,4 +541,4 @@
     </ScrollView>
 
 
-</LinearLayout>
+</FrameLayout>

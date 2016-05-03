@@ -4,52 +4,48 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toolbar;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.sports.unity.R;
-import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.common.viewhelper.BasicVolleyRequestResponseViewHelper;
+import com.sports.unity.common.viewhelper.CustomComponentListener;
+import com.sports.unity.scores.model.ScoresContentHandler;
+import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
-import static com.sports.unity.util.Constants.INTENT_KEY_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_LEAGUE_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_TEAM1_NAME;
-import static com.sports.unity.util.Constants.INTENT_KEY_TEAM2_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_TEAM2_NAME;
+import java.util.HashMap;
 
 /**
  * Created by madmachines on 23/2/16.
  */
-public class UpCommingFootballMatchFromFragment extends Fragment implements UpCommingFootballMatchFromHandler.UpCommingMatchFromContentListener{
+public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestResponseViewHelper {
 
-    private ProgressBar progressBar;
-    private String date = "";
-    private String matchId ="";
-    private String leagueId = "";
+    private static final String REQUEST_TAG = "UPCOMING_FOOTBALL_MATCH_FORM";
+
+    private String title;
+    private HashMap<String,String> requestParameters;
+    private JSONObject response;
+
+    private Context context;
+
     private String team1;
     private String team2;
-    private String teamId1;
-    private String teamId2;
-    private SwipeRefreshLayout commentaryrefresh;
+
+    private View parentView;
+    private View emptyView;
+
     private TextView tvnamefirstteam;
     private TextView tvlastfivematchteamfirst;
-    private ImageView[] ivfirstmatchteamfirst  = new ImageView[5];;
+    private ImageView[] ivfirstmatchteamfirst  = new ImageView[5];
     private View firstview;
     private TextView tvfirstpremieradivision;
     private TextView tvfirstpoint;
@@ -69,47 +65,71 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
     private TextView tvwinmatchofsecondteam;
     private TextView tvdrawmatchofsecondteam;
     private TextView tvlossmatchofsecondteam;
-    private View secondview;
-    private TextView tvsecondpremieradivision;
-    private View parentView;
-    private LinearLayout errorLayout;
-    private UpCommingFootballMatchFromHandler upCommingFootballMatchFromHandler;
-    private Context context;
-    private View emptyView;
 
-    public UpCommingFootballMatchFromFragment() {
-        // Required empty public constructor
+    public UpCommingFootballMatchFromFragment(String title, Intent intent) {
+        this.title = title;
+
+        team1 = intent.getStringExtra(Constants.INTENT_KEY_TEAM1_NAME);
+        team2 = intent.getStringExtra(Constants.INTENT_KEY_TEAM2_NAME);
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        this.context = context;
-        Intent i = getActivity().getIntent();
-        matchId = i.getStringExtra(INTENT_KEY_ID);
-        leagueId = i.getStringExtra(INTENT_KEY_LEAGUE_ID);
-        date = i.getStringExtra(INTENT_KEY_DATE);
-        team1 = i.getStringExtra(INTENT_KEY_TEAM1_NAME);
-        team2 = i.getStringExtra(INTENT_KEY_TEAM2_NAME);
-        teamId1 = i.getStringExtra(INTENT_KEY_TEAM1_ID);
-        teamId2 = i.getStringExtra(INTENT_KEY_TEAM2_ID);
-        upCommingFootballMatchFromHandler = UpCommingFootballMatchFromHandler.getInstance(context);
-        upCommingFootballMatchFromHandler.addListener(this);
-        upCommingFootballMatchFromHandler.requestUpcommingMatchFrom(teamId1, teamId2, leagueId);
-
+    public int getFragmentLayout() {
+        return R.layout.fragment_football_upcoming_match_form_v2;
     }
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_football_upcoming_match_form_v2, container, false);
+    public String getFragmentTitle() {
+        return title;
+    }
+
+    @Override
+    public String getRequestListenerKey() {
+        return "FootballFormRequestListener";
+    }
+
+    @Override
+    public CustomComponentListener getCustomComponentListener(View view) {
+        ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
+        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+
+        UpcomingFootballMatchFormComponentListener  componentListener = new UpcomingFootballMatchFormComponentListener( getRequestTag(), progressBar, errorLayout);
+        return componentListener;
+    }
+
+    @Override
+    public String getRequestTag() {
+        return REQUEST_TAG;
+    }
+
+    @Override
+    public String getRequestCallName() {
+        return ScoresContentHandler.CALL_NAME_FOOTBALL_FORM;
+    }
+
+    @Override
+    public HashMap<String, String> getRequestParameters() {
+        return requestParameters;
+    }
+
+    @Override
+    public void initialiseViews(View view) {
         initView(view);
-        return view;
     }
+
+
+    public void setRequestParameters(HashMap<String,String> params ) {
+        this.requestParameters = params;
+    }
+
     private void initView(View view) {
-        progressBar = (ProgressBar) view.findViewById(R.id.progress);
-        progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.app_theme_blue), android.graphics.PorterDuff.Mode.MULTIPLY);
-        initErrorLayout(view);
-        tvnamefirstteam=(TextView)view.findViewById(R.id.tv_name_first_team);
+        context = view.getContext();
+
+        parentView = view.findViewById(R.id.root_layout);
+        parentView.setVisibility(View.GONE);
+        emptyView = view.findViewById(R.id.tv_empty_view);
+
+        tvnamefirstteam = (TextView)view.findViewById(R.id.tv_name_first_team);
         tvlastfivematchteamfirst=(TextView)view.findViewById(R.id.tv_last_five_match_team_first);
         ivfirstmatchteamfirst[0]=(ImageView)view.findViewById(R.id.iv_first_match_team_first);
         ivfirstmatchteamfirst[1]=(ImageView)view.findViewById(R.id.iv_second_match_team_first);
@@ -137,140 +157,90 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         tvwinmatchofsecondteam=(TextView)view.findViewById(R.id.tv_win_match_of_second_team);
         tvdrawmatchofsecondteam=(TextView)view.findViewById(R.id.tv_draw_match_of_second_team);
         tvlossmatchofsecondteam=(TextView)view.findViewById(R.id.tv_loss_match_of_second_team);
-        parentView = view.findViewById(R.id.root_layout);
-        commentaryrefresh=(SwipeRefreshLayout)view.findViewById(R.id.commentary_refresh);
-        emptyView = view.findViewById(R.id.tv_empty_view);
-
-    }
-    private void  showProgressBar(){
-        progressBar.setVisibility(View.VISIBLE);
-    }
-    private void  hideProgressBar(){
-        progressBar.setVisibility(View.GONE);
-    }
-    @Override
-    public void handleContent(String object) {
-        {
-            showProgressBar();
-
-            try {
-                JSONObject jsonObject = new JSONObject(object);
-
-                boolean success = jsonObject.getBoolean("success");
-
-                if( success ) {
-
-                    renderDisplay(jsonObject);
-
-                } else {
-                    showErrorLayout();
-                }
-            }catch (Exception ex){
-                ex.printStackTrace();
-                showErrorLayout();
-            }
-        }
-    }
-    private void initErrorLayout(View view) {
-        try {
-            errorLayout = (LinearLayout) view.findViewById(R.id.error);
-            errorLayout.setVisibility(View.GONE);
-        }catch (Exception e){e.printStackTrace();}
-    }
-
-    private void showErrorLayout() {
-
-        parentView.setVisibility(View.GONE);
-        errorLayout.setVisibility(View.VISIBLE);
-
-
     }
 
     private void showDataNotExists() {
-
         parentView.setVisibility(View.GONE);
         emptyView.setVisibility(View.VISIBLE);
-
-
     }
 
-
-    private void renderDisplay(final JSONObject jsonObject) throws JSONException {
-
-        parentView.setVisibility(View.VISIBLE);
-        emptyView.setVisibility(View.GONE);
-        ScoreDetailActivity activity = (ScoreDetailActivity) getActivity();
-        final JSONArray dataArray = jsonObject.getJSONArray("data");
-        hideProgressBar();
-        if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        for(int i = 0; i< dataArray.length();i++){
-                            JSONObject teamFromObject = dataArray.getJSONObject(i);
-                            if(!teamFromObject.isNull("team_name")){
-                                if(team1.equals(teamFromObject.getString("team_name"))){
-                                    tvnamefirstteam.setText(teamFromObject.getString("team_name"));
-                                    if(!teamFromObject.isNull("recent_form")){
-                                        String recentForm = teamFromObject.getString("recent_form");
-                                        if(recentForm !=null && recentForm.length()>0){
-                                            initializeTeamForms(recentForm);
-                                        }else{
-                                            showDataNotExists();
-                                        }
-                                       }
-                                    if(!teamFromObject.isNull("team_points")){
-                                        tvpointoffirstteam.setText(teamFromObject.getString("team_points"));}
-                                    if(!teamFromObject.isNull("games_won")) {
-                                        tvwinmatchoffirstteam.setText(teamFromObject.getString("games_won"));
-                                    }if(!teamFromObject.isNull("games_drawn")){
-                                        tvdrawmatchoffirstteam.setText(teamFromObject.getString("games_drawn"));}
-                                    if(!teamFromObject.isNull("games_lost")){
-                                        tvlossmatchoffirstteam.setText(teamFromObject.getString("games_lost"));}
-
-                                }else if(team2.equals(teamFromObject.getString("team_name"))){
-                                    tvnamesecondteam.setText(teamFromObject.getString("team_name"));
-                                    if(!teamFromObject.isNull("recent_form")) {
-                                        String recentForm = teamFromObject.getString("recent_form");
-                                        if(recentForm !=null && recentForm.length()>0){
-                                            initFromDataTeamSecond(recentForm);
-                                        }else{
-                                            showDataNotExists();
-                                        }
-                                    } if(!teamFromObject.isNull("team_points")){
-                                        tvpointofsecondteam.setText(teamFromObject.getString("team_points"));}
-                                    if(!teamFromObject.isNull("games_won")){
-                                        tvwinmatchofsecondteam.setText(teamFromObject.getString("games_won"));}
-                                    if(!teamFromObject.isNull("games_drawn")) {
-                                        tvdrawmatchofsecondteam.setText(teamFromObject.getString("games_drawn"));
-                                    }
-                                    if(!teamFromObject.isNull("games_lost")){
-                                        tvlossmatchofsecondteam.setText(teamFromObject.getString("games_lost"));}
-
+    private boolean renderDisplay()  {
+        boolean success = false;
+        boolean noData = false;
+        try{
+            JSONArray dataArray = response.getJSONArray("data");
+            {
+                for(int i = 0; i< dataArray.length();i++){
+                    JSONObject teamFromObject = dataArray.getJSONObject(i);
+                    if(!teamFromObject.isNull("team_name")){
+                        if(team1.equals(teamFromObject.getString("team_name"))){
+                            tvnamefirstteam.setText(teamFromObject.getString("team_name"));
+                            if(!teamFromObject.isNull("recent_form")){
+                                String recentForm = teamFromObject.getString("recent_form");
+                                if(recentForm !=null && recentForm.length()>0){
+                                    initializeTeamForms(recentForm);
                                 }else{
-                                    showDataNotExists();
+                                    noData = true;
                                 }
-
                             }
-                      }
+                            if(!teamFromObject.isNull("team_points")){
+                                tvpointoffirstteam.setText(teamFromObject.getString("team_points"));}
+                            if(!teamFromObject.isNull("games_won")) {
+                                tvwinmatchoffirstteam.setText(teamFromObject.getString("games_won"));
+                            }if(!teamFromObject.isNull("games_drawn")){
+                                tvdrawmatchoffirstteam.setText(teamFromObject.getString("games_drawn"));}
+                            if(!teamFromObject.isNull("games_lost")){
+                                tvlossmatchoffirstteam.setText(teamFromObject.getString("games_lost"));}
 
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                        showErrorLayout();
+                        }else if(team2.equals(teamFromObject.getString("team_name"))){
+                            tvnamesecondteam.setText(teamFromObject.getString("team_name"));
+                            if(!teamFromObject.isNull("recent_form")) {
+                                String recentForm = teamFromObject.getString("recent_form");
+                                if(recentForm !=null && recentForm.length()>0){
+                                    initFromDataTeamSecond(recentForm);
+                                }else{
+                                    noData = true;
+                                }
+                            } if(!teamFromObject.isNull("team_points")){
+                                tvpointofsecondteam.setText(teamFromObject.getString("team_points"));}
+                            if(!teamFromObject.isNull("games_won")){
+                                tvwinmatchofsecondteam.setText(teamFromObject.getString("games_won"));}
+                            if(!teamFromObject.isNull("games_drawn")) {
+                                tvdrawmatchofsecondteam.setText(teamFromObject.getString("games_drawn"));
+                            }
+                            if(!teamFromObject.isNull("games_lost")){
+                                tvlossmatchofsecondteam.setText(teamFromObject.getString("games_lost"));}
+
+                        } else {
+                            noData = true;
+                        }
                     }
                 }
-            });
-        }
+            }
 
+            success = true;
+            if( success ) {
+                if (noData) {
+                    parentView.setVisibility(View.GONE);
+                    emptyView.setVisibility(View.VISIBLE);
+                } else {
+                    parentView.setVisibility(View.VISIBLE);
+                    emptyView.setVisibility(View.GONE);
+                }
+            } else {
+                //nothing
+            }
+        } catch ( Exception e) {
+            e.printStackTrace();
+        }
+        return  success;
     }
 
     private void initFromDataTeamSecond(String recentForm) {
-
         for(int i = 0; i<recentForm.length();i++){
             tvfirstmatchteamsecond[i].setImageDrawable(getBallColor("" + recentForm.charAt(i), getBallColor(recentForm.charAt(i))));
         }
-  }
+    }
 
     private void initializeTeamForms(String recentForm) {
         for(int i = 0; i<recentForm.length();i++){
@@ -278,22 +248,21 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         }
     }
 
-
     private int getBallColor(char c){
         Log.i("getBallColor: ", " " + c);
         int color= 0;
         switch (c){
             case 'W':
             case 'w':
-                color=   getResources().getColor(R.color.green);
+                color=   context.getResources().getColor(R.color.green);
                 break;
             case 'L':
             case 'l':
-                color=getResources().getColor(R.color.loose);
+                color= context.getResources().getColor(R.color.loose);
                 break;
             case 'D':
             case 'd':
-                color= getResources().getColor(R.color.draw);
+                color= context.getResources().getColor(R.color.draw);
                 break;
             default:color = Color.WHITE;
         }
@@ -301,11 +270,10 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         return color ;
     }
 
-
     private Drawable getBallColor(String text,int color){
-        int radius = getContext().getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
-        int border = getContext().getResources().getDimensionPixelSize(R.dimen.user_image_border);
-       TextDrawable drawable = TextDrawable.builder()
+        int radius = context.getResources().getDimensionPixelSize(R.dimen.recent_ball_radius);
+        int border = context.getResources().getDimensionPixelSize(R.dimen.user_image_border);
+        TextDrawable drawable = TextDrawable.builder()
                 .beginConfig().textColor(Color.WHITE)
                 .withBorder(border)
                 .width(radius)
@@ -316,28 +284,49 @@ public class UpCommingFootballMatchFromFragment extends Fragment implements UpCo
         return  drawable;
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        if(upCommingFootballMatchFromHandler != null){
-            upCommingFootballMatchFromHandler.addListener(null);
+    public boolean handleContent(String content) {
+        boolean success = false;
+        try {
+            JSONObject jsonObject = new JSONObject(content);
+            success = jsonObject.getBoolean("success");
+            if (success) {
+                response = jsonObject;
+            } else {
+                //nothing
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return success;
+    }
+
+    public class UpcomingFootballMatchFormComponentListener extends CustomComponentListener {
+
+        public UpcomingFootballMatchFormComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
+            super(requestTag, progressBar, errorLayout);
+        }
+
+        @Override
+        public boolean handleContent(String tag, String content) {
+            boolean success = UpCommingFootballMatchFromFragment.this.handleContent(content);
+            return success;
+        }
+
+        @Override
+        public void handleErrorContent(String tag) {
+
+        }
+
+        @Override
+        public void changeUI(String tag) {
+            boolean success = renderDisplay();
+            if( success ){
+                //nothing
+            } else {
+                showErrorLayout();
+            }
         }
 
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        showProgressBar();
-        if(upCommingFootballMatchFromHandler != null){
-            upCommingFootballMatchFromHandler.addListener(this);
-
-        }else {
-            upCommingFootballMatchFromHandler = UpCommingFootballMatchFromHandler.getInstance(context);
-
-        }
-        upCommingFootballMatchFromHandler.requestUpcommingMatchFrom(teamId1,teamId2,leagueId);
-    }
-
 
 }

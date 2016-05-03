@@ -47,13 +47,21 @@
         android:layout_below="@id/tabs"
         android:background="@color/ColorPrimary" />
 
-
     <com.sports.unity.common.model.ControlledSwipeViewPager
         android:id="@+id/pager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1">
     </com.sports.unity.common.model.ControlledSwipeViewPager>
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
+
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -99,10 +107,5 @@
         android:layout_height="match_parent"
         android:visibility="gone"/>
 
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone"/>
+
 </LinearLayout>

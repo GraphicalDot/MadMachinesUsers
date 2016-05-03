@@ -1,13 +1,14 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/ColorPrimary"
     android:focusableInTouchMode="true"
-    android:orientation="vertical">
+    >
 
     <ScrollView
+        android:id="@+id/scorecard_scrollview"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -747,4 +748,19 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:visibility="gone"/>
-</LinearLayout>
+
+    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+        android:id="@+id/tv_empty_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/vertical_padding_large"
+        android:paddingLeft="@dimen/horizontal_padding_large"
+        android:paddingRight="@dimen/horizontal_padding_large"
+        android:paddingTop="@dimen/vertical_padding_large"
+        android:text="@string/scorecard_not_exist"
+        android:textColor="@color/gray1"
+        android:textSize="@dimen/font_size_large"
+        android:visibility="gone"
+        />
+
+</FrameLayout>

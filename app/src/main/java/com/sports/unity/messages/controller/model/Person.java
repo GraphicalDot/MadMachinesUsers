@@ -118,4 +118,17 @@ public class Person implements  Parcelable, ClusterItem ,Comparable<Person>{
     public int compareTo(Person another) {
         return another.getDistance().compareTo(this.getDistance());
     }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "username='" + username + '\'' +
+                ", distance=" + distance +
+                ", position=" + position +
+                ", friend=" + friend +
+                ", commonInterest=" + commonInterest +
+                ", name='" + name + '\'' +
+                ", interests=" + interests +
+                '}';
+    }
 }

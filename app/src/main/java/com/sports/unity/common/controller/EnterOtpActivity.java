@@ -1,18 +1,12 @@
 package com.sports.unity.common.controller;
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.telephony.gsm.SmsMessage;
 import android.text.Editable;
@@ -26,18 +20,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
-import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
+import com.sports.unity.common.viewhelper.CustomComponentListener;
+import com.sports.unity.common.viewhelper.VolleyCallComponentHelper;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -62,19 +56,24 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
     private EditText otpEditText;
 
     private SMSReceiverBroadcast smsReceiverBroadcast = null;
+    private EnterOtpCustomComponentListener enterOtpCustomComponentListener = null;
 
     private View.OnClickListener sendButtonClickListener = new View.OnClickListener() {
+
         @Override
         public void onClick(View v) {
             createUser();
         }
+
     };
 
     private View.OnClickListener resendOtpButtonClickListener = new View.OnClickListener() {
+
         @Override
         public void onClick(View v) {
             resendOtp();
         }
+
     };
 
     @Override
@@ -82,30 +81,27 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(com.sports.unity.R.layout.activity_enter_otp);
-
         initViews();
 
         {
-            ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
-            CreateUserComponentListener createUserComponentListener = new CreateUserComponentListener(progressBar);
-            ResendOtpComponentListener resendOtpComponentListener = new ResendOtpComponentListener(progressBar);
+            onComponentCreate();
 
-            ArrayList<CustomComponentListener> listeners = new ArrayList<>();
-            listeners.add(createUserComponentListener);
-            listeners.add(resendOtpComponentListener);
-
-            onComponentCreate(listeners, REQUEST_LISTENER);
-        }
-
-        {
-            if (!UserUtil.isOtpSent()) {
+            if ( ! UserUtil.isOtpSent() ) {
                 UserUtil.setOtpSent(EnterOtpActivity.this, true);
                 resendOtp();
             } else {
                 //nothing
             }
         }
+    }
 
+    @Override
+    public VolleyCallComponentHelper getVolleyCallComponentHelper() {
+        ProgressBar progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        enterOtpCustomComponentListener = new EnterOtpCustomComponentListener( progressBar);
+
+        VolleyCallComponentHelper volleyCallComponentHelper = new VolleyCallComponentHelper( REQUEST_LISTENER, enterOtpCustomComponentListener);
+        return volleyCallComponentHelper;
     }
 
     @Override
@@ -115,16 +111,9 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         if (UserUtil.isUserRegistered()) {
             moveToNextActivity();
         } else {
-            onComponentResume();
+
         }
 
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        onComponentPause();
     }
 
     @Override
@@ -132,42 +121,6 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         moveBack();
 
         super.onBackPressed();
-    }
-
-    private class SMSReceiverBroadcast extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Bundle bundle = intent.getExtras();
-            try {
-                if (bundle != null) {
-
-                    final Object[] pdusObj = (Object[]) bundle.get("pdus");
-                    for (int i = 0; i < pdusObj.length; i++) {
-                        SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
-                        String phoneNumber = currentMessage.getDisplayOriginatingAddress();
-                        String senderNum = phoneNumber;
-                        String message = currentMessage.getDisplayMessageBody();
-
-                        try {
-                            if (senderNum.contains("SPORTU") || message.toLowerCase().contains("Sports Unity".toLowerCase())) {
-                                otpWaitingDialog.cancel();
-                                String str = message.replaceAll("\\D+", "");
-                                otpEditText.setText(str);
-                                createUser();
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
     }
 
     private void initViews() {
@@ -245,6 +198,8 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
     private void createUser() {
         unRegisterSmsBroadcastReceiver();
 
+        enterOtpCustomComponentListener.setCurrentTag(CREATE_USER_REQUEST_TAG);
+
         EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         String otp = otpEditText.getText().toString();
         ArrayList<String> countryDetails = CommonUtil.getCountryDetailsByCountryCode(EnterOtpActivity.this, UserUtil.getCountryCode());
@@ -261,6 +216,8 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
     private void resendOtp() {
         Toast.makeText(EnterOtpActivity.this, R.string.otp_message_sending, Toast.LENGTH_SHORT).show();
+
+        enterOtpCustomComponentListener.setCurrentTag(RESEND_OTP_REQUEST_TAG);
 
         ArrayList<String> countryDetails = CommonUtil.getCountryDetailsByCountryCode(EnterOtpActivity.this, UserUtil.getCountryCode());
         String countryCode = countryDetails.get(0);
@@ -289,129 +246,6 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         Intent intent = new Intent(this, EnterPhoneActivity.class);
         intent.putExtra(Constants.INTENT_KEY_PHONE_NUMBER, phoneNumber);
         startActivity(intent);
-    }
-
-    private class CreateUserComponentListener extends CustomComponentListener {
-
-        private boolean success;
-
-        public CreateUserComponentListener(ProgressBar progressBar) {
-            super(CREATE_USER_REQUEST_TAG, progressBar, null);
-        }
-
-        @Override
-        protected void showErrorLayout() {
-            super.showErrorLayout();
-            Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public boolean handleContent(String tag, String content) {
-            boolean success = false;
-            try {
-                JSONObject response = new JSONObject(content);
-                if (response.getString("status").equals("200")) {
-                    String password = response.getString(Constants.REQUEST_PARAMETER_KEY_PASSWORD);
-                    String userJid = response.getString(Constants.REQUEST_PARAMETER_KEY_USER_NAME);
-                    TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_USER_JID, userJid);
-
-                    TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
-                    UserUtil.setOtpSent(EnterOtpActivity.this, false);
-                    UserUtil.setUserRegistered(EnterOtpActivity.this, true);
-
-                    this.success = true;
-                } else {
-                    this.success = false;
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            success = true;
-            return success;
-        }
-
-        @Override
-        public void handleErrorContent(String tag) {
-            //nothing
-        }
-
-        @Override
-        public void changeUI() {
-            if (success) {
-                moveToNextActivity();
-            } else {
-                Toast.makeText(getApplicationContext(), R.string.otp_message_wrong_expired_token, Toast.LENGTH_SHORT).show();
-            }
-        }
-
-    }
-
-    private class ResendOtpComponentListener extends CustomComponentListener {
-
-        private boolean resendSuccessful;
-        private String toastMessage = "";
-
-        public ResendOtpComponentListener(ProgressBar progressBar) {
-            super(RESEND_OTP_REQUEST_TAG, progressBar, null);
-        }
-
-        @Override
-        protected void showErrorLayout() {
-            super.showErrorLayout();
-            Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
-        }
-
-        @Override
-        public void handleErrorContent(String tag) {
-            UserUtil.setOtpSent(EnterOtpActivity.this, false);
-        }
-
-        @Override
-        public boolean handleContent(String tag, String content) {
-            boolean success = false;
-            try {
-                JSONObject response = new JSONObject(content);
-                int responseCode = response.getInt("status");
-                String info = response.getString("info");
-
-                if (responseCode == 200) {
-                    UserUtil.setOtpSent(EnterOtpActivity.this, true);
-                    this.resendSuccessful = true;
-                    this.toastMessage = getResources().getString(R.string.otp_message_otp_sent);
-                } else if (responseCode == 500) {
-                    UserUtil.setOtpSent(EnterOtpActivity.this, false);
-                    this.resendSuccessful = false;
-                    this.toastMessage = getResources().getString(R.string.otp_message_invalid_number);
-                } else {
-                    UserUtil.setOtpSent(EnterOtpActivity.this, false);
-                    this.resendSuccessful = false;
-                    this.toastMessage = getResources().getString(R.string.otp_message_resending_failed);
-                }
-                Log.i("Enter Otp", "resend response info : " + info);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-            success = true;
-            return success;
-        }
-
-        @Override
-        public void changeUI() {
-            Toast.makeText(EnterOtpActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
-            if (resendSuccessful) {
-                if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-                    displayOtpWaitingDialog();
-                    registerSmsBroadcastReceiver();
-                } else if (PermissionUtil.getInstance().requestPermission(EnterOtpActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.RECEIVE_SMS)))) {
-                    displayOtpWaitingDialog();
-                    registerSmsBroadcastReceiver();
-                }
-            } else {
-                //nothing
-            }
-        }
-
     }
 
     private void registerSmsBroadcastReceiver() {
@@ -468,4 +302,168 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
             }
         }.start();
     }
+
+    private class SMSReceiverBroadcast extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Bundle bundle = intent.getExtras();
+            try {
+                if (bundle != null) {
+
+                    final Object[] pdusObj = (Object[]) bundle.get("pdus");
+                    for (int i = 0; i < pdusObj.length; i++) {
+                        SmsMessage currentMessage = SmsMessage.createFromPdu((byte[]) pdusObj[i]);
+                        String phoneNumber = currentMessage.getDisplayOriginatingAddress();
+                        String senderNum = phoneNumber;
+                        String message = currentMessage.getDisplayMessageBody();
+
+                        try {
+                            if (senderNum.contains("SPORTU") || message.toLowerCase().contains("Sports Unity".toLowerCase())) {
+                                otpWaitingDialog.cancel();
+                                String str = message.replaceAll("\\D+", "");
+                                otpEditText.setText(str);
+                                createUser();
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private class EnterOtpCustomComponentListener extends CustomComponentListener {
+
+        private boolean success;
+        private String currentTag = RESEND_OTP_REQUEST_TAG;
+
+        private String toastMessage = "";
+
+        public EnterOtpCustomComponentListener(ProgressBar progressBar) {
+            super(CREATE_USER_REQUEST_TAG, progressBar, null);
+        }
+
+        @Override
+        protected void showErrorLayout() {
+            super.showErrorLayout();
+
+            if( CommonUtil.isInternetConnectionAvailable(EnterOtpActivity.this) ) {
+                Toast.makeText(getApplicationContext(), R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        @Override
+        public void handleErrorContent(String tag) {
+            if( tag.equals(RESEND_OTP_REQUEST_TAG) ) {
+                UserUtil.setOtpSent(EnterOtpActivity.this, false);
+            } else if( tag.equals(CREATE_USER_REQUEST_TAG) ){
+                //nothing
+            }
+        }
+
+        @Override
+        public boolean handleContent(String tag, String content) {
+            boolean success = false;
+            if( tag.equals(RESEND_OTP_REQUEST_TAG) ) {
+                success = handleContentForOtpRequest(content);
+            } else if( tag.equals(CREATE_USER_REQUEST_TAG) ){
+                success = handleContentForCreateUserRequest(content);
+            }
+            return success;
+        }
+
+        @Override
+        public void changeUI(String tag) {
+            if( tag.equals(RESEND_OTP_REQUEST_TAG) ) {
+                Toast.makeText(EnterOtpActivity.this, toastMessage, Toast.LENGTH_SHORT).show();
+                if (success) {
+                    if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+                        displayOtpWaitingDialog();
+                        registerSmsBroadcastReceiver();
+                    } else if (PermissionUtil.getInstance().requestPermission(EnterOtpActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.RECEIVE_SMS)))) {
+                        displayOtpWaitingDialog();
+                        registerSmsBroadcastReceiver();
+                    }
+                } else {
+                    //nothing
+                }
+            } else if( tag.equals(CREATE_USER_REQUEST_TAG) ){
+                if (success) {
+                    moveToNextActivity();
+                } else {
+                    Toast.makeText(getApplicationContext(), R.string.otp_message_wrong_expired_token, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+        private void setCurrentTag(String currentTag) {
+            this.currentTag = currentTag;
+            this.success = false;
+            this.toastMessage = "";
+        }
+
+        private boolean handleContentForOtpRequest(String content){
+            boolean success = false;
+            try {
+                JSONObject response = new JSONObject(content);
+                int responseCode = response.getInt("status");
+                String info = response.getString("info");
+
+                if (responseCode == 200) {
+                    UserUtil.setOtpSent(EnterOtpActivity.this, true);
+                    this.success = true;
+                    this.toastMessage = getResources().getString(R.string.otp_message_otp_sent);
+                } else if (responseCode == 500) {
+                    UserUtil.setOtpSent(EnterOtpActivity.this, false);
+                    this.success = false;
+                    this.toastMessage = getResources().getString(R.string.otp_message_invalid_number);
+                } else {
+                    UserUtil.setOtpSent(EnterOtpActivity.this, false);
+                    this.success = false;
+                    this.toastMessage = getResources().getString(R.string.otp_message_resending_failed);
+                }
+                Log.i("Enter Otp", "resend response info : " + info);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            success = true;
+            return success;
+        }
+
+        private boolean handleContentForCreateUserRequest(String content){
+            boolean success = false;
+            try {
+                JSONObject response = new JSONObject(content);
+                if (response.getString("status").equals("200")) {
+                    String password = response.getString(Constants.REQUEST_PARAMETER_KEY_PASSWORD);
+                    String userJid = response.getString(Constants.REQUEST_PARAMETER_KEY_USER_NAME);
+                    TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_USER_JID, userJid);
+
+                    TinyDB.getInstance(getApplicationContext()).putString(TinyDB.KEY_PASSWORD, password);
+                    UserUtil.setOtpSent(EnterOtpActivity.this, false);
+                    UserUtil.setUserRegistered(EnterOtpActivity.this, true);
+
+                    this.success = true;
+                } else {
+                    this.success = false;
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            success = true;
+            return success;
+        }
+
+    }
+
 }

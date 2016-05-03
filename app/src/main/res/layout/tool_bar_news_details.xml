@@ -40,7 +40,20 @@
         android:paddingLeft="@dimen/horizontal_padding_small"
         android:paddingRight="@dimen/horizontal_padding_small"
         android:scaleType="center"
-        android:src="@drawable/ic_share_white" />
+        android:src="@drawable/ic_share_white"
+        android:visibility="gone"
+        />
+    <ImageView
+        android:id="@+id/refresh"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:paddingLeft="@dimen/horizontal_padding_small"
+        android:paddingRight="@dimen/horizontal_padding_small"
+        android:scaleType="center"
+        android:src="@drawable/ic_refresh_white"
+        android:visibility="gone"
+        />
+
     </LinearLayout>
 
 </android.support.v7.widget.Toolbar>

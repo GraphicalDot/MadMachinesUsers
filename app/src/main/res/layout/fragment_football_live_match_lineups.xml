@@ -1,148 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/parent_layout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
+        android:layout_height="match_parent">
         <LinearLayout
-            android:id="@+id/manager_root"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="@drawable/round_edge_black_box"
-            android:orientation="vertical"
-            android:visibility="gone">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/horizontal_padding_very_very_small"
-                android:orientation="horizontal">
-                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                    android:id="@+id/tv_caption"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/manager"
-                    android:textColor="@color/dark_blue"
-                    android:textSize="@dimen/font_size_small_large"/>
-            </LinearLayout>
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/gray3" />
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="@dimen/horizontal_padding_very_very_small"
-                android:weightSum="2">
-                <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
-                    android:id="@+id/tv_team_first_captain"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Iker Casillan"
-                    android:textSize="@dimen/font_size_small_large"/>
-                <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
-                    android:id="@+id/tv_team_second_captain"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:text="Carles Payol"
-                    android:textSize="@dimen/font_size_small_large"/>
-            </LinearLayout>
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/layout_line_up"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="@drawable/round_edge_black_box"
-            android:orientation="vertical">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/horizontal_padding_very_very_small"
-                android:orientation="horizontal">
-                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                    android:id="@+id/tv_line_up"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/line_up"
-                    android:textColor="@color/dark_blue"
-                    android:textSize="@dimen/font_size_small_large"/>
-            </LinearLayout>
-                <View
-                    android:layout_width="wrap_content"
-                    android:layout_height="1dp"
-                    android:background="@color/gray3" />
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_lineup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
-            </android.support.v7.widget.RecyclerView>
-
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/layout_substitutes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp"
-            android:background="@drawable/round_edge_black_box"
-            android:orientation="vertical">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="@dimen/horizontal_padding_very_very_small"
-                android:orientation="horizontal">
-                <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
-                    android:id="@+id/tv_substitutes"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="@string/substitutes"
-                    android:textColor="@color/dark_blue"
-                    android:textSize="@dimen/font_size_small_large"/>
-            </LinearLayout>
-                <View
-                    android:layout_width="wrap_content"
-                    android:layout_height="1dp"
-                    android:background="@color/gray3" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_substitutes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                >
-            </android.support.v7.widget.RecyclerView>
-
-        </LinearLayout>
-        <include
-            android:id="@+id/error"
-            layout="@layout/error_layout"
+            android:id="@+id/parent_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="gone" />
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone" />
+            android:orientation="vertical"
+            >
+            <LinearLayout
+                android:id="@+id/manager_root"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@drawable/round_edge_black_box"
+                android:orientation="vertical"
+                android:visibility="gone">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/horizontal_padding_very_very_small"
+                    android:orientation="horizontal">
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                        android:id="@+id/tv_caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/manager"
+                        android:textColor="@color/dark_blue"
+                        android:textSize="@dimen/font_size_small_large"/>
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray3" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="@dimen/horizontal_padding_very_very_small"
+                    android:weightSum="2">
+                    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                        android:id="@+id/tv_team_first_captain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Iker Casillan"
+                        android:textSize="@dimen/font_size_small_large"/>
+                    <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+                        android:id="@+id/tv_team_second_captain"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="Carles Payol"
+                        android:textSize="@dimen/font_size_small_large"/>
+                </LinearLayout>
+            </LinearLayout>
 
-    </LinearLayout>
 
-</ScrollView>
+            <LinearLayout
+                android:id="@+id/layout_line_up"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@drawable/round_edge_black_box"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/horizontal_padding_very_very_small"
+                    android:orientation="horizontal">
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                        android:id="@+id/tv_line_up"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/line_up"
+                        android:textColor="@color/dark_blue"
+                        android:textSize="@dimen/font_size_small_large"/>
+                </LinearLayout>
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="1dp"
+                        android:background="@color/gray3" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_lineup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                </android.support.v7.widget.RecyclerView>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_substitutes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:background="@drawable/round_edge_black_box"
+                android:orientation="vertical">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/horizontal_padding_very_very_small"
+                    android:orientation="horizontal">
+                    <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+                        android:id="@+id/tv_substitutes"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/substitutes"
+                        android:textColor="@color/dark_blue"
+                        android:textSize="@dimen/font_size_small_large"/>
+                </LinearLayout>
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="1dp"
+                        android:background="@color/gray3" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_substitutes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    >
+                </android.support.v7.widget.RecyclerView>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+    <include
+        android:id="@+id/error"
+        layout="@layout/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        />
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
+
+</FrameLayout>

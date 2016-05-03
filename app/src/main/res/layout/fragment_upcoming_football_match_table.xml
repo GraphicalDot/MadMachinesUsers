@@ -1,48 +1,45 @@
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/sv_football_match_table"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    >
 
-    <include layout="@layout/football_league_table_item"
-        android:id="@+id/header_row"
-        />
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/sv_swipe_football_match_table"
+    <LinearLayout
+        android:id="@+id/content_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_football_match_table"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+        <include layout="@layout/football_league_table_item"
+            android:id="@+id/header_row"
+        />
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/sv_swipe_football_match_table"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/gray3"
-            android:scrollbars="vertical" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:layout_height="match_parent">
 
-        <ProgressBar
-            android:id="@+id/progress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone" />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_football_match_table"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/gray3"
+                android:scrollbars="vertical" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+    </LinearLayout>
 
-        <include
-            android:id="@+id/error"
-            layout="@layout/error_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="gone" />
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="gone" />
 
-        <TextView
-            android:id="@+id/no_comments"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="No Comments"
-            android:textSize="@dimen/font_size_large"
-            android:visibility="gone" />
+    <include
+        android:id="@+id/error"
+        layout="@layout/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
-</LinearLayout>
+</FrameLayout>

@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
@@ -36,15 +37,17 @@ import static android.view.View.VISIBLE;
 /**
  * Created by madmachines on 15/2/16.
  */
-public class CricketPlayerMachStatFragment extends Fragment {
-    Map<String, String> battingTestsmatchMap = new HashMap<String, String>();
-    Map<String, String> battingOdisMap = new HashMap<String, String>();
-    Map<String, String> battingT20sMap = new HashMap<String, String>();
-    Map<String, String> battingIPLMap = new HashMap<String, String>();
-    Map<String, String> bowlingTestsmatchMap = new HashMap<String, String>();
-    Map<String, String> bowlingOdisMap = new HashMap<String, String>();
-    Map<String, String> bowlingT20sMap = new HashMap<String, String>();
-    Map<String, String> bowlingIPLMap = new HashMap<String, String>();
+public class CricketPlayerMatchStat {
+
+    private Map<String, String> battingTestsmatchMap = new HashMap<String, String>();
+    private Map<String, String> battingOdisMap = new HashMap<String, String>();
+    private Map<String, String> battingT20sMap = new HashMap<String, String>();
+    private Map<String, String> battingIPLMap = new HashMap<String, String>();
+    private Map<String, String> bowlingTestsmatchMap = new HashMap<String, String>();
+    private Map<String, String> bowlingOdisMap = new HashMap<String, String>();
+    private Map<String, String> bowlingT20sMap = new HashMap<String, String>();
+    private Map<String, String> bowlingIPLMap = new HashMap<String, String>();
+
     private RecyclerView rcBattingPerformanceSummery;
     private RecyclerView rcBowlingPerformanceSummary;
     private ImageView battingImageView;
@@ -57,40 +60,22 @@ public class CricketPlayerMachStatFragment extends Fragment {
     private RelativeLayout relativeLayoutBolling;
     private LinearLayout linearLayoutBatting;
     private LinearLayout linearLayoutBolling;
-    private String playerId;
-    private Context context;
 
-    public CricketPlayerMachStatFragment() {
-        super();
-    }
+    void populateData(View view, JSONObject jsonObject) {
+        boolean success = false;
+        try {
+            initErrorLayout(view);
+            initView(view);
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        playerId = getActivity().getIntent().getStringExtra(Constants.INTENT_KEY_ID);
-        this.context = context;
+            renderDisplay(jsonObject);
 
-    }
+            success = true;
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        View view = inflater.inflate(R.layout.fragment_players_cricket_stat_batting, container, false);
-        initView(view);
-        populateData(view);
-        return view;
-    }
-
-    private void populateData(View view) {
-        if (getArguments().getString("content") != null) {
-            try {
-                JSONObject jsonObject = new JSONObject(getArguments().getString("content"));
-                renderDisplay(jsonObject);
-            } catch (JSONException e) {
-                e.printStackTrace();
-                showErrorLayout(view);
-            }
+        if( success ){
+            //nothing
         } else {
             showErrorLayout(view);
         }
@@ -98,11 +83,11 @@ public class CricketPlayerMachStatFragment extends Fragment {
 
     private void initView(View view) {
         rcBattingPerformanceSummery = (RecyclerView) view.findViewById(R.id.rc_batting_performance_summary);
-        rcBattingPerformanceSummery.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
+        rcBattingPerformanceSummery.setLayoutManager(new LinearLayoutManager(view.getContext(), VERTICAL, true));
         rcBattingPerformanceSummery.setNestedScrollingEnabled(false);
         rcBattingPerformanceSummery.setHasFixedSize(false);
         rcBowlingPerformanceSummary = (RecyclerView) view.findViewById(R.id.rc_bowling_performance_summary);
-        rcBowlingPerformanceSummary.setLayoutManager(new LinearLayoutManager(getContext(), VERTICAL, true));
+        rcBowlingPerformanceSummary.setLayoutManager(new LinearLayoutManager(view.getContext(), VERTICAL, true));
         rcBowlingPerformanceSummary.setNestedScrollingEnabled(false);
         rcBowlingPerformanceSummary.setHasFixedSize(false);
         battingImageView = (ImageView) view.findViewById(R.id.iv_down);
@@ -145,26 +130,28 @@ public class CricketPlayerMachStatFragment extends Fragment {
         rcBattingPerformanceSummery.setAdapter(cricketPlayerMatchBattingStatAdapter);
         cricketPlayerMatchBowlingStatAdapter = new CricketPlayerMatchBowlingStatAdapter(playerMatchBowlingStatDTOList);
         rcBowlingPerformanceSummary.setAdapter(cricketPlayerMatchBowlingStatAdapter);
-        initErrorLayout(view);
-
     }
 
     private void initErrorLayout(View view) {
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
         errorLayout.setVisibility(GONE);
-
     }
 
     private void showErrorLayout(View view) {
-
-        LinearLayout errorLayout = (LinearLayout) view.findViewById(R.id.error);
+        ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
         errorLayout.setVisibility(VISIBLE);
-        linearLayoutBatting.setVisibility(GONE);
-        linearLayoutBolling.setVisibility(GONE);
+        CustomComponentListener.renderAppropriateErrorLayout(errorLayout);
 
+        if( linearLayoutBatting != null ) {
+            linearLayoutBatting.setVisibility(GONE);
+        }
+
+        if( linearLayoutBolling != null ) {
+            linearLayoutBolling.setVisibility(GONE);
+        }
     }
 
-    public void renderDisplay(JSONObject jsonObject) throws JSONException {
+    private void renderDisplay(JSONObject jsonObject) throws JSONException {
         playerMatchBattingStatDTOList.clear();
         playerMatchBowlingStatDTOList.clear();
         battingTestsmatchMap.clear();
@@ -250,7 +237,6 @@ public class CricketPlayerMachStatFragment extends Fragment {
 //            });
     }
 
-
     private void battingStatProcess(String key, JSONObject batting) throws JSONException {
 
         if (batting != null) {
@@ -298,10 +284,7 @@ public class CricketPlayerMachStatFragment extends Fragment {
                 battingIPLMap.put("50s", batting.getString("50s"));
                 //battingIPLMap.put("not_out", batting.getString("not_out"));
             }
-
-
         }
-
     }
 
     private void bowlingStatProcess(String key, JSONObject bowling) throws JSONException {

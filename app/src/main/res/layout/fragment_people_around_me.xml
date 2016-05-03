@@ -39,7 +39,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:id="@+id/data_exist"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/tv_empty_view"
