@@ -37,7 +37,6 @@ import com.github.clans.fab.FloatingActionMenu;
 import com.mixpanel.android.mpmetrics.MixpanelAPI;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
-import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.fragment.NavigationFragment;
 import com.sports.unity.common.model.ContactsHandler;
@@ -49,7 +48,6 @@ import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.messages.controller.activity.GroupDetailActivity;
-import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.gcm.RegistrationIntentService;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.peoplearound.PeopleAroundActivity;
@@ -194,12 +192,12 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             @Override
             public void onClick(View v) {
                 if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-                    // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
+                   // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
                     Intent intent = new Intent(MainActivity.this, PeopleAroundActivity.class);
                     startActivity(intent);
                 } else {
                     if (PermissionUtil.getInstance().requestPermission(MainActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)), getResources().getString(R.string.location_permission_message), Constants.REQUEST_CODE_LOCATION_PERMISSION)) {
-                        // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
+                       // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
                         Intent intent = new Intent(MainActivity.this, PeopleAroundActivity.class);
                         startActivity(intent);
                     }
@@ -330,6 +328,8 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 invalidateOptionsMenu();
+                navigationFragment.updatePendingFriendRequestCount();
+
             }
 
             @Override

@@ -1,16 +1,26 @@
 package com.sports.unity.messages.controller.model;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.ThumbnailUtils;
 import android.provider.MediaStore;
+import android.support.v4.app.NotificationCompat;
 import android.util.Base64;
 import android.util.Log;
 
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
+import com.sports.unity.common.controller.FriendRequestsActivity;
+import com.sports.unity.common.model.ContactsHandler;
+import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
@@ -47,6 +57,8 @@ public class PersonalMessaging {
 
     private static PersonalMessaging PERSONAL_MESSAGING = null;
 
+    private Context context;
+
     synchronized public static PersonalMessaging getInstance(Context context) {
         if (PERSONAL_MESSAGING == null) {
             PERSONAL_MESSAGING = new PersonalMessaging(context);
@@ -60,6 +72,7 @@ public class PersonalMessaging {
 
     private PersonalMessaging(Context context) {
         sportsUnityDBHelper = SportsUnityDBHelper.getInstance(context);
+        this.context = context;
     }
 
     public void sendTextMessage(String msg, Chat chat, String fromJID, int chatId, boolean otherChat) {
@@ -335,13 +348,26 @@ public class PersonalMessaging {
          */
 
         if (fromJid.substring(0, fromJid.indexOf("@")).equals("dev")) {
-            sportsUnityDBHelper.updateServerReceived(receiptId);
-            updateReceipts(RECEIPT_KIND_SERVER);
+            if (receiptId.contains("REQUEST") || receiptId.contains("ACCEPT")) {
+                sportsUnityDBHelper.updateFriendRequestStatus(receiptId);
+                int contactId = sportsUnityDBHelper.getContactIdByReceipt(receiptId);
+                String jid = sportsUnityDBHelper.getContact(contactId).jid;
+                if (receiptId.contains("REQUEST")) {
+                    sportsUnityDBHelper.updateContactFriendRequestStatus(jid, Contacts.WAITING_FOR_REQUEST_ACCEPTANCE);
+                    ActivityActionHandler.getInstance().dispatchRequestStatusEvent(ActivityActionHandler.CHAT_SCREEN_KEY, jid, "Request Sent succesfully");
+                } else if (receiptId.contains("ACCEPT")) {
+                    sportsUnityDBHelper.updateContactFriendRequestStatus(jid, Contacts.REQUEST_ACCEPTED);
+                    sportsUnityDBHelper.updateContactAvailability(jid);
+                    ActivityActionHandler.getInstance().acceptRequestStatusEvent(ActivityActionHandler.REQEUSTS_SCREEN_KEY, FriendRequestsActivity.DUMMY_JABBER_ID, jid);
+                }
+            } else {
+                sportsUnityDBHelper.updateServerReceived(receiptId);
+                updateReceipts(RECEIPT_KIND_SERVER);
+            }
         } else {
             sportsUnityDBHelper.updateClientReceived(receiptId);
             updateReceipts(RECEIPT_KIND_CLIENT);
         }
-
     }
 
     public void readReceiptReceived(String fromJid, String toJid, String packetId) {
@@ -524,4 +550,128 @@ public class PersonalMessaging {
         }
     }
 
+    public boolean acceptFriendRequest(Contacts contact) {
+        boolean success = false;
+        Message message = new Message();
+        message.setStanzaId(message.getStanzaId().concat("ACCEPT"));
+        message.setTo(contact.jid.concat("@mm.io"));
+        message.setBody("acceptance message");
+        try {
+            XMPPClient.getConnection().sendStanza(message);
+            sportsUnityDBHelper.createRequestStatusEntry(sportsUnityDBHelper.getContactIdFromJID(contact.jid), message.getStanzaId());
+            success = true;
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        }
+        return success;
+    }
+
+    public boolean sendFriendRequest(String jid) {
+        boolean success = false;
+        Message message = new Message();
+        message.setStanzaId(message.getStanzaId().concat("REQUEST"));
+        message.setTo(jid.concat("@mm.io"));
+        message.setBody("friend request");
+        try {
+            XMPPClient.getConnection().sendStanza(message);
+            sportsUnityDBHelper.createRequestStatusEntry(sportsUnityDBHelper.getContactIdFromJID(jid), message.getStanzaId());
+            success = true;
+            Log.d("maxchat", "adding and waiting");
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        }
+        return success;
+    }
+
+    public void handleFriendRequest(Message message) {
+        String jid = filterJidFromMessage(message);
+        if (message.getStanzaId().contains("REQUEST")) {
+            Contacts contact = sportsUnityDBHelper.getContactByJid(jid);
+            if (contact == null) {
+                sportsUnityDBHelper.addToContacts("", null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
+                sportsUnityDBHelper.updateContactFriendRequestStatus(jid, Contacts.PENDING_REQUESTS_TO_PROCESS);
+                contact = sportsUnityDBHelper.getContactByJid(jid);
+                displayNotificationForFriendRequest(contact);
+
+            } else {
+                if (contact.availableStatus != Contacts.AVAILABLE_NOT) {
+                    if (contact.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS) {
+                        acceptFriendRequest(contact);
+                    } else {
+                        sportsUnityDBHelper.updateContactFriendRequestStatus(jid, Contacts.PENDING_REQUESTS_TO_PROCESS);
+                        displayNotificationForFriendRequest(contact);
+                    }
+                }
+            }
+        } else if (message.getStanzaId().contains("ACCEPT")) {
+            if (sportsUnityDBHelper.getContactByJid(jid) == null) {
+                // TODO
+            } else {
+                sportsUnityDBHelper.updateContactFriendRequestStatus(jid, Contacts.REQUEST_ACCEPTED);
+                sportsUnityDBHelper.updateContactAvailability(jid);
+                Contacts contact = sportsUnityDBHelper.getContactByJid(jid);
+                displayNotificationForFriendRequestAccepted(contact);
+            }
+        }
+    }
+
+    private String filterJidFromMessage(Message message) {
+        String jid = message.getFrom().replace("@mm.io", "");
+        if (jid.contains("/Smack")) {
+            jid = jid.replace("/Smack", "");
+        }
+        return jid;
+    }
+
+
+    private void displayNotificationForFriendRequest(Contacts contact) {
+        int mNotificationId = 001;
+
+        Intent friendRequestsActivityIntent = new Intent(context, FriendRequestsActivity.class);
+        PendingIntent pendingIntent = XMPPService.getPendingIntentForFriendRequestActivity(context, friendRequestsActivityIntent);
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(context)
+//                        .setLargeIcon(BitmapFactory.decodeByteArray(contact.image, 0, contact.image.length))
+                        .setColor(context.getResources().getColor(R.color.app_theme_blue))
+                        .setSmallIcon(R.drawable.ic_stat_notification)
+                        .setContentTitle("Friend Request")
+                        .setContentText("You have a friend request from " + contact.getName())
+                        .setContentIntent(pendingIntent)
+                        .setPriority(Notification.PRIORITY_HIGH)
+                        .setAutoCancel(true);
+
+        NotificationManager mNotifyMgr =
+                (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+    }
+
+    private void displayNotificationForFriendRequestAccepted(Contacts contact) {
+        int mNotificationId = 001;
+
+        PendingIntent pendingIntent = XMPPService.getPendingIntentForChatActivity(context,
+                false,
+                contact.getName(),
+                contact.jid,
+                sportsUnityDBHelper.getChatEntryID(contact.jid),
+                contact.image,
+                contact.isOthers(),
+                contact.availableStatus,
+                contact.status);
+
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(context)
+//                        .setLargeIcon(BitmapFactory.decodeByteArray(contact.image, 0, contact.image.length))
+                        .setColor(context.getResources().getColor(R.color.app_theme_blue))
+                        .setSmallIcon(R.drawable.ic_stat_notification)
+                        .setContentTitle("Friend Request Accepted. Tap to chat now")
+                        .setContentText(contact.getName() + " has accepted your friend request")
+                        .setContentIntent(pendingIntent);
+
+        NotificationManager mNotifyMgr =
+                (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
+
+        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+    }
 }

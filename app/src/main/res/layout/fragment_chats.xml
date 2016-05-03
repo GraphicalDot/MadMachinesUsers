@@ -8,10 +8,10 @@
         android:id="@+id/chats"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@android:color/white"
         android:layout_gravity="center_horizontal"
+        android:background="@android:color/white"
         android:divider="@drawable/list_divider"
-        android:dividerHeight="1dp"/>
+        android:dividerHeight="1dp" />
 
     <TextView
         android:id="@+id/empty"
@@ -19,13 +19,13 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:background="@android:color/white"
-        android:textColor="@color/text_color"
         android:gravity="center"
+        android:paddingBottom="@dimen/vertical_padding_small"
         android:paddingLeft="@dimen/horizontal_padding_small"
         android:paddingRight="@dimen/horizontal_padding_small"
         android:paddingTop="@dimen/vertical_padding_small"
-        android:paddingBottom="@dimen/vertical_padding_small"
         android:text="@string/start_messaging"
+        android:textColor="@color/text_color"
         android:textSize="@dimen/font_size_small_large" />
 
 </FrameLayout>

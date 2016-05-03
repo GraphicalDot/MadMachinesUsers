@@ -38,7 +38,8 @@
             android:ellipsize="end"
             android:text="@string/activeStatus"
             android:textColor="@color/last_msg"
-            android:textSize="@dimen/font_size_very_small" />
+            android:textSize="@dimen/font_size_very_small"
+            android:visibility="visible" />
 
     </LinearLayout>
 

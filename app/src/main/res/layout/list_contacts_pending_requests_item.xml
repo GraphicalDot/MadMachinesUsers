@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/parent_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="horizontal"
+    android:paddingBottom="@dimen/horizontal_padding_very_small"
+    android:paddingTop="@dimen/horizontal_padding_very_small">
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/user_icon"
+        android:layout_width="@dimen/profile_thumb_image_small"
+        android:layout_height="@dimen/profile_thumb_image_small"
+        android:layout_gravity="center"
+        android:layout_marginLeft="@dimen/horizontal_padding_small"
+        android:layout_marginRight="@dimen/horizontal_padding_very_very_small"
+        android:src="@drawable/ic_user" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center|left"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/contact_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:text="@string/username"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/font_size_small_large" />
+
+        <LinearLayout
+            android:id="@+id/action_friend_request"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/vertical_padding_very_very_small"
+            android:visibility="visible">
+
+            <Button
+                android:id="@+id/confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="@dimen/horizontal_padding_very_small"
+                android:background="@drawable/round_edge_box_blue"
+                android:minHeight="@dimen/invite_button_height"
+                android:paddingLeft="@dimen/horizontal_padding_medium"
+                android:paddingRight="@dimen/horizontal_padding_medium"
+                android:text="Accept"
+                android:textColor="@android:color/white" />
+
+            <Button
+                android:id="@+id/block"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/round_edge_gray_box"
+                android:minHeight="@dimen/invite_button_height"
+                android:paddingLeft="@dimen/horizontal_padding_medium"
+                android:paddingRight="@dimen/horizontal_padding_medium"
+                android:text="block"
+                android:textColor="@color/gray1" />
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:text="@string/activeStatus"
+            android:textColor="@color/last_msg"
+            android:textSize="@dimen/font_size_very_small"
+            android:visibility="visible" />
+
+    </LinearLayout>
+</LinearLayout>
+
+
+

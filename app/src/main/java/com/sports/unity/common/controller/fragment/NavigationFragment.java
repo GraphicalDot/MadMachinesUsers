@@ -19,8 +19,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.About;
+import com.sports.unity.common.controller.FriendRequestsActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.NavListAdapter;
 import com.sports.unity.common.controller.SelectSportsActivity;
@@ -29,6 +31,7 @@ import com.sports.unity.common.controller.TeamLeagueDetails;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.CommonUtil;
@@ -58,7 +61,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     private NavListAdapter teamAdapter, compAdapter, sportsAdapter;
     private final String STAFF_LISTENER_KEY = "staff_pick_key";
     private final String STAFF_REQUEST_TAG = "staff_request_tag";
-    TextView editTeam, editComp, editSports;
+    TextView editTeam, editComp, editSports, friendRequestCount;
 
     ImageView teamIndi, compIndi, sportsIndi;
     boolean isTeam, isComp;
@@ -68,6 +71,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
     private LayoutInflater inflater;
     private LinearLayout staffView;
     private LinearLayout staffParent;
+    private LinearLayout actionForFriendRequests;
     private boolean isStaffInitialized;
 
     private StaffContentListener listener = new StaffContentListener();
@@ -116,7 +120,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
         initTextViews(view);
     }
 
-    TextView.OnClickListener textViewClickListener = new View.OnClickListener() {
+    View.OnClickListener viewClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (v.getId() == R.id.settings) {
@@ -132,6 +136,9 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
             } else if (v.getId() == R.id.about) {
                 ((MainActivity) getActivity()).closeDrawer();
                 openAboutPage();
+            } else if (v.getId() == R.id.friend_requests) {
+                Intent intent = new Intent(getActivity(), FriendRequestsActivity.class);
+                startActivity(intent);
             }
         }
     };
@@ -183,12 +190,18 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
         rateUs.setTypeface(FontTypeface.getInstance(getActivity().getApplicationContext()).getRobotoRegular());
         about.setTypeface(FontTypeface.getInstance(getActivity().getApplicationContext()).getRobotoRegular());
 
-        settings.setOnClickListener(textViewClickListener);
-        shareFeedback.setOnClickListener(textViewClickListener);
-        rateUs.setOnClickListener(textViewClickListener);
-        about.setOnClickListener(textViewClickListener);
+        settings.setOnClickListener(viewClickListener);
+        shareFeedback.setOnClickListener(viewClickListener);
+        rateUs.setOnClickListener(viewClickListener);
+        about.setOnClickListener(viewClickListener);
         staffView = (LinearLayout) view.findViewById(R.id.staff_layout);
         staffParent = (LinearLayout) view.findViewById(R.id.staff_parent);
+
+        friendRequestCount = (TextView) view.findViewById(R.id.request_count);
+
+        actionForFriendRequests = (LinearLayout) view.findViewById(R.id.friend_requests);
+        actionForFriendRequests.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+        actionForFriendRequests.setOnClickListener(viewClickListener);
     }
 
     private void initStaffView(final FavouriteItem staffFavouriteItem) {
@@ -520,6 +533,17 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
             }
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void updatePendingFriendRequestCount() {
+        int count = SportsUnityDBHelper.getInstance(getContext()).getPendingFriendRequestCount();
+        Log.d("max", "Count is>>" + count);
+        if (count == 0) {
+            friendRequestCount.setVisibility(View.GONE);
+        } else {
+            friendRequestCount.setVisibility(View.VISIBLE);
+            friendRequestCount.setText(String.valueOf(count));
         }
     }
 

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar_forward_contact"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:minHeight="?android:attr/actionBarSize" />
+
+    <ListView
+        android:id="@+id/pending_requests_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:divider="@drawable/list_divider"
+        android:dividerHeight="1dp"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:id="@+id/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.sports.unity.common.view.CustomRobotoLightTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="@dimen/vertical_padding_very_small"
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
+            android:paddingRight="@dimen/horizontal_padding_very_small"
+            android:paddingTop="@dimen/vertical_padding_very_small"
+            android:text="Meet friends who share the same interest"
+            android:textSize="@dimen/font_size_xlarge" />
+
+        <com.sports.unity.common.view.CustomRobotoLightTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="@dimen/vertical_padding_very_small"
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
+            android:paddingRight="@dimen/horizontal_padding_very_small"
+            android:paddingTop="@dimen/vertical_padding_very_small"
+            android:text="Make new friends with the same interest as you"
+            android:textSize="@dimen/font_size_small_large" />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="@dimen/vertical_padding_small"
+            android:paddingTop="@dimen/vertical_padding_small"
+            android:src="@drawable/img_meet_friends" />
+
+        <Button
+            android:id="@+id/find_friends"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/round_edge_box_blue"
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
+            android:paddingRight="@dimen/horizontal_padding_very_small"
+            android:text="FIND FRIENDS"
+            android:textColor="@android:color/white" />
+
+    </LinearLayout>
+
+</LinearLayout>
