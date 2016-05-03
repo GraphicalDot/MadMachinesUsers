@@ -18,8 +18,6 @@ import android.widget.Toast;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.FontTypeface;
-import com.sports.unity.messages.controller.BlockUnblockUserHelper;
-import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.util.Constants;
@@ -78,7 +76,7 @@ public class FriendRequestsActivityAdapter extends ArrayAdapter<Contacts> {
             status.setVisibility(View.VISIBLE);
             actionOnPendingRequest.setVisibility(View.GONE);
 
-            status.setText("You are now friends");
+            status.setText(R.string.you_are_friends);
 
             name.setTextColor(resources.getColor(R.color.app_theme_blue));
             status.setTextColor(resources.getColor(android.R.color.black));
@@ -87,7 +85,7 @@ public class FriendRequestsActivityAdapter extends ArrayAdapter<Contacts> {
 
             status.setVisibility(View.GONE);
             actionOnPendingRequest.setVisibility(View.VISIBLE);
-            parentLayout.setBackground(new ColorDrawable(getContext().getResources().getColor(android.R.color.white)));
+            parentLayout.setBackground(new ColorDrawable(resources.getColor(android.R.color.white)));
         }
 
 
@@ -124,11 +122,11 @@ public class FriendRequestsActivityAdapter extends ArrayAdapter<Contacts> {
             Contacts contact = contacts.get((Integer) v.getTag());
             boolean success = PersonalMessaging.getInstance(context).acceptFriendRequest(contact);
             if (success) {
-                ((Button) v).setText("ACCEPTING...");
+                ((Button) v).setText(R.string.accepting_friend);
                 v.setEnabled(false);
             }
         } else {
-            Toast.makeText(context, "Connection not authenticated ", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.conn_not_authenticated, Toast.LENGTH_SHORT).show();
         }
     }
 

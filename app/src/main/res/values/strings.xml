@@ -440,4 +440,14 @@ message to verify your mobile number.</string>
     <string name="title_activity_friend_requests">FriendRequestsActivity</string>
     <string name="connection_replaced_msg">Couldn\'t verify this phone. This is likely because you registered your phone number with SportsUnity on a different phone.</string>
     <string name="verify">VERIFY</string>
+    <string name="find_friends">FIND FRIENDS</string>
+    <string name="make_friends_text">Make new friends with the same interest as you</string>
+    <string name="meet_friends_text">Meet friends who share the same interest</string>
+    <string name="accept_friend">Accept</string>
+    <string name="block_friend">block</string>
+    <string name="accepting_friend">ACCEPTING...</string>
+    <string name="you_are_friends">You are now friends</string>
+    <string name="conn_not_authenticated">"Connection not authenticated "</string>
+    <string name="request_pending">Request pending for acceptance</string>
+    <string name="request_sent">Request sent for acceptance</string>
 </resources>    
