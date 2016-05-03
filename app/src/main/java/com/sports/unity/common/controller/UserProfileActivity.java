@@ -514,7 +514,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 //nothing
             }
 
-            if( contactAvailableStatus <= Contacts.AVAILABLE_BY_OTHER_CONTACTS ) {
+            if (contactAvailableStatus <= Contacts.AVAILABLE_BY_OTHER_CONTACTS) {
                 name.setText(nickname);
             } else {
                 //nothing
@@ -679,7 +679,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 linearLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        teamAndLeagueDetails(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA,favouriteItem.getJsonObject().toString());
+                        teamAndLeagueDetails(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, favouriteItem.getJsonObject().toString());
                     }
                 });
 
@@ -722,7 +722,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                 linearLayout.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        teamAndLeagueDetails(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA,favouriteItem.getJsonObject().toString());
+                        teamAndLeagueDetails(Constants.INTENT_TEAM_LEAGUE_DETAIL_EXTRA, favouriteItem.getJsonObject().toString());
                     }
                 });
 
@@ -759,7 +759,11 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
                     Glide.with(this).load(Uri.parse(uri)).placeholder(R.drawable.ic_no_img).into(iv);
                 } else {
                     iv.setVisibility(View.VISIBLE);
-                    iv.setImageResource(R.drawable.ic_no_img);
+                    if (favouriteItem.getSportsType().equals(Constants.SPORTS_TYPE_CRICKET)) {
+                        iv.setImageResource(R.drawable.ic_cricket_group);
+                    } else if (favouriteItem.getSportsType().equals(Constants.SPORTS_TYPE_FOOTBALL)) {
+                        iv.setImageResource(R.drawable.ic_football_group);
+                    }
                 }
                 linearLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
                 playerList.addView(linearLayout);
@@ -856,7 +860,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         if (Constants.SPORTS_TYPE_FOOTBALL.equals(sportsType)) {
             Intent intent = new Intent(UserProfileActivity.this, PlayerProfileView.class);
             intent.putExtra(Constants.INTENT_KEY_ID, playerId);
-            intent.putExtra(Constants.INTENT_KEY_PLAYER_NAME,playerName);
+            intent.putExtra(Constants.INTENT_KEY_PLAYER_NAME, playerName);
             startActivity(intent);
         } else {
             Intent intent = PlayerCricketBioDataActivity.createIntent(getApplicationContext(), playerId, playerName);
