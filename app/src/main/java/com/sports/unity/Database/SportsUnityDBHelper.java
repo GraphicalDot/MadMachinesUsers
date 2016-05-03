@@ -196,8 +196,10 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         int rowId = -1;
 
         // temporary fix to remove /Smack from jid if it exists
-        if (jid.contains("/Smack")) {
-            jid = jid.replace("/Smack", "");
+        if (jid != null) {
+            if (jid.contains("/Smack")) {
+                jid = jid.replace("/Smack", "");
+            }
         }
         try {
             SQLiteDatabase db = this.getWritableDatabase();
