@@ -13,6 +13,7 @@ import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,7 +28,7 @@ import static com.sports.unity.Database.SportsUnityContract.FriendRequestEntry;
  */
 public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "spu.db";
 
     public static final int DEFAULT_ENTRY_ID = -1;
@@ -69,7 +70,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             ContactChatEntry.COLUMN_LAST_USED + " DATETIME DEFAULT CURRENT_TIMESTAMP " + COMMA_SEP +
             ContactChatEntry.COLUMN_GROUP_CHAT + " boolean DEFAULT 0 " + COMMA_SEP +
             ContactChatEntry.COLUMN_ROSTER_ENTRY + " boolean DEFAULT 0 " + COMMA_SEP +
-            ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST + " INTEGER DEFAULT 0" +
+            ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST + " INTEGER DEFAULT " + Contacts.DEFAULT_PENDNG_REQUEST_ID +
             ");";
 
     private static final String CREATE_MESSAGES_TABLE = "CREATE TABLE IF NOT EXISTS " +
@@ -160,7 +161,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE " + ContactChatEntry.TABLE_NAME + " ADD COLUMN " + ContactChatEntry.COLUMN_ROSTER_ENTRY + " BOOLEAN DEFAULT 0");
             }
             case 2: {
-                db.execSQL("ALTER TABLE " + ContactChatEntry.TABLE_NAME + " ADD COLUMN " + ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST + " INTEGER DEFAULT 0");
+                db.execSQL("ALTER TABLE " + ContactChatEntry.TABLE_NAME + " ADD COLUMN " + ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST + " INTEGER DEFAULT " + Contacts.DEFAULT_PENDNG_REQUEST_ID);
+                db.execSQL(CREATE_FRIEND_REQUESTS_TABLE);
             }
             case 3: {
 
@@ -201,6 +203,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 jid = jid.replace("/Smack", "");
             }
         }
+
         try {
             SQLiteDatabase db = this.getWritableDatabase();
 
@@ -212,7 +215,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             contentValues.put(ContactChatEntry.COLUMN_IMAGE, image);
             contentValues.put(ContactChatEntry.COLUMN_AVAILABLE_STATUS, availableStatus);
             contentValues.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, infoUpdateRequired);
-            contentValues.put(ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST, Contacts.DEFAULT_PENDNG_REQUEST_ID);
 
             rowId = (int) db.insert(ContactChatEntry.TABLE_NAME, null, contentValues);
         } catch (Exception e) {
@@ -629,6 +631,13 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     public int updateContacts(String number, String jid, String status) {
         SQLiteDatabase db = this.getWritableDatabase();
+
+        // temporary fix to remove /Smack from jid if it exists
+        if (jid != null) {
+            if (jid.contains("/Smack")) {
+                jid = jid.replace("/Smack", "");
+            }
+        }
 
         ContentValues values = new ContentValues();
         values.put(ContactChatEntry.COLUMN_JID, jid);
