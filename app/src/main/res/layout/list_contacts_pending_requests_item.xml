@@ -50,7 +50,7 @@
                 android:minHeight="@dimen/invite_button_height"
                 android:paddingLeft="@dimen/horizontal_padding_medium"
                 android:paddingRight="@dimen/horizontal_padding_medium"
-                android:text="Accept"
+                android:text="@string/accept_friend"
                 android:textColor="@android:color/white" />
 
             <Button
@@ -61,7 +61,7 @@
                 android:minHeight="@dimen/invite_button_height"
                 android:paddingLeft="@dimen/horizontal_padding_medium"
                 android:paddingRight="@dimen/horizontal_padding_medium"
-                android:text="block"
+                android:text="@string/block_friend"
                 android:textColor="@color/gray1" />
 
         </LinearLayout>

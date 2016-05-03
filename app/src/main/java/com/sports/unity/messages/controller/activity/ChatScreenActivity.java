@@ -460,11 +460,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             if (requestId == Contacts.WAITING_FOR_REQUEST_ACCEPTANCE) {
                 addBlockLayout.setVisibility(View.GONE);
                 requestStatus.setVisibility(View.VISIBLE);
-                requestStatus.setText("Request sent for acceptance");
+                requestStatus.setText(R.string.request_sent);
             } else if (requestId == Contacts.PENDING_REQUESTS_TO_PROCESS) {
                 addBlockLayout.setVisibility(View.GONE);
                 requestStatus.setVisibility(View.VISIBLE);
-                requestStatus.setText("Request pending for acceptance");
+                requestStatus.setText(R.string.request_pending);
             } else {
                 addBlockLayout.setVisibility(View.VISIBLE);
                 TextView addFriend = (TextView) findViewById(R.id.add_friend);
@@ -481,7 +481,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                                 Toast.makeText(getApplicationContext(), "something went wrong ", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            Toast.makeText(getApplicationContext(), "Connection is not authenticated ", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getApplicationContext(), R.string.conn_not_authenticated, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

@@ -18,7 +18,7 @@
         android:background="@android:color/white"
         android:divider="@drawable/list_divider"
         android:dividerHeight="1dp"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <LinearLayout
         android:id="@+id/error_layout"
@@ -35,7 +35,7 @@
             android:paddingLeft="@dimen/horizontal_padding_very_small"
             android:paddingRight="@dimen/horizontal_padding_very_small"
             android:paddingTop="@dimen/vertical_padding_very_small"
-            android:text="Meet friends who share the same interest"
+            android:text="@string/meet_friends_text"
             android:textSize="@dimen/font_size_xlarge" />
 
         <com.sports.unity.common.view.CustomRobotoLightTextView
@@ -46,7 +46,7 @@
             android:paddingLeft="@dimen/horizontal_padding_very_small"
             android:paddingRight="@dimen/horizontal_padding_very_small"
             android:paddingTop="@dimen/vertical_padding_very_small"
-            android:text="Make new friends with the same interest as you"
+            android:text="@string/make_friends_text"
             android:textSize="@dimen/font_size_small_large" />
 
         <ImageView
@@ -64,7 +64,7 @@
             android:background="@drawable/round_edge_box_blue"
             android:paddingLeft="@dimen/horizontal_padding_very_small"
             android:paddingRight="@dimen/horizontal_padding_very_small"
-            android:text="FIND FRIENDS"
+            android:text="@string/find_friends"
             android:textColor="@android:color/white" />
 
     </LinearLayout>
