@@ -100,4 +100,9 @@ public class CustomAppCompatActivity extends AppCompatActivity implements Global
 
     }
 
+    @Override
+    public void onConnectionReplaced(Exception e) {
+
+    }
+
 }

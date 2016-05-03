@@ -55,8 +55,9 @@ android {
             minSdkVersion 19
             applicationId 'co.sports.unity'
             targetSdkVersion 23
-            versionCode 8
+            versionCode 6
             versionName '1.0'
+            signingConfig signingConfigs.config
         }
     }
     packagingOptions {

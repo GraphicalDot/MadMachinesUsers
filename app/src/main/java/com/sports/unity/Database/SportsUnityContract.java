@@ -32,6 +32,7 @@ public final class SportsUnityContract {
         public static final String COLUMN_MUTE_CONVERSATION = "mute_conversation";
         public static final String COLUMN_GROUP_CHAT = "group_chat";
         public static final String COLUMN_ROSTER_ENTRY = "roster_entry";
+        public static final String COLUMN_PENDING_FRIEND_REQUEST = "pending_friend_request";
 
 //        public static final String COLUMN_CHAT_ID = "chat_id";
 //        public static final String COLUMN_GROUP_SERVER_ID = "group_server_id";
@@ -80,6 +81,15 @@ public final class SportsUnityContract {
         public static final String COLUMN_CHAT_ID = "chat_id";
         public static final String COLUMN_CONTACT_ID = "contact_id";
         public static final String COLUMN_ADMIN = "group_admin";
+
+    }
+
+    public static abstract class FriendRequestEntry implements BaseColumns {
+        public static final String TABLE_NAME = "friendRequeststable";
+
+        public static final String COLUMN_CONTACT_ID = "contact_id";
+        public static final String COLUMN_REQUEST_STANZA_ID = "request_stanza_id";
+        public static final String COLUMN_SERVER_RECEIPT_FOR_REQUEST_STANZA = "server_receipt";
 
     }
 

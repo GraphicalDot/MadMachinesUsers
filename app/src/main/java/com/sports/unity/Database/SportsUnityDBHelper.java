@@ -3,6 +3,7 @@ package com.sports.unity.Database;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -19,13 +20,14 @@ import java.util.HashMap;
 import static com.sports.unity.Database.SportsUnityContract.ContactChatEntry;
 import static com.sports.unity.Database.SportsUnityContract.MessagesEntry;
 import static com.sports.unity.Database.SportsUnityContract.GroupUserEntry;
+import static com.sports.unity.Database.SportsUnityContract.FriendRequestEntry;
 
 /**
  * Created by madmachines on 1/9/15.
  */
 public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME = "spu.db";
 
     public static final int DEFAULT_ENTRY_ID = -1;
@@ -66,7 +68,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             ContactChatEntry.COLUMN_UNREAD_COUNT + " INTEGER " + COMMA_SEP +
             ContactChatEntry.COLUMN_LAST_USED + " DATETIME DEFAULT CURRENT_TIMESTAMP " + COMMA_SEP +
             ContactChatEntry.COLUMN_GROUP_CHAT + " boolean DEFAULT 0 " + COMMA_SEP +
-            ContactChatEntry.COLUMN_ROSTER_ENTRY + " boolean DEFAULT 0 " +
+            ContactChatEntry.COLUMN_ROSTER_ENTRY + " boolean DEFAULT 0 " + COMMA_SEP +
+            ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST + " INTEGER DEFAULT 0" +
             ");";
 
     private static final String CREATE_MESSAGES_TABLE = "CREATE TABLE IF NOT EXISTS " +
@@ -86,6 +89,14 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             MessagesEntry.COLUMN_READ_STATUS + " boolean" + COMMA_SEP +
             MessagesEntry.COLUMN_MEDIA_FILE_NAME + " VARCHAR default NULL " +
             ");";
+
+    private static final String CREATE_FRIEND_REQUESTS_TABLE = " CREATE TABLE IF NOT EXISTS " +
+            FriendRequestEntry.TABLE_NAME + "( " +
+            FriendRequestEntry.COLUMN_CONTACT_ID + " INTEGER PRIMARY KEY " + COMMA_SEP +
+            FriendRequestEntry.COLUMN_REQUEST_STANZA_ID + " VARCHAR " + COMMA_SEP +
+            FriendRequestEntry.COLUMN_SERVER_RECEIPT_FOR_REQUEST_STANZA + " VARCHAR default NULL " +
+            ");";
+
 
 //    private static final String CREATE_CHAT_TABLE = "CREATE TABLE IF NOT EXISTS " +
 //            ChatEntry.TABLE_NAME + "( " +
@@ -139,6 +150,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         db.execSQL(CREATE_CONTACT_CHAT_TABLE);
         db.execSQL(CREATE_MESSAGES_TABLE);
         db.execSQL(CREATE_GROUP_USER_TABLE);
+        db.execSQL(CREATE_FRIEND_REQUESTS_TABLE);
     }
 
     @Override
@@ -148,6 +160,9 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 db.execSQL("ALTER TABLE " + ContactChatEntry.TABLE_NAME + " ADD COLUMN " + ContactChatEntry.COLUMN_ROSTER_ENTRY + " BOOLEAN DEFAULT 0");
             }
             case 2: {
+                db.execSQL("ALTER TABLE " + ContactChatEntry.TABLE_NAME + " ADD COLUMN " + ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST + " INTEGER DEFAULT 0");
+            }
+            case 3: {
 
             }
         }
@@ -179,6 +194,11 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
     public int addToContacts(String name, String number, String jid, String defaultStatus, byte[] image, int availableStatus, boolean infoUpdateRequired) {
         int rowId = -1;
+
+        // temporary fix to remove /Smack from jid if it exists
+        if (jid.contains("/Smack")) {
+            jid = jid.replace("/Smack", "");
+        }
         try {
             SQLiteDatabase db = this.getWritableDatabase();
 
@@ -190,6 +210,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             contentValues.put(ContactChatEntry.COLUMN_IMAGE, image);
             contentValues.put(ContactChatEntry.COLUMN_AVAILABLE_STATUS, availableStatus);
             contentValues.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, infoUpdateRequired);
+            contentValues.put(ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST, Contacts.DEFAULT_PENDNG_REQUEST_ID);
 
             rowId = (int) db.insert(ContactChatEntry.TABLE_NAME, null, contentValues);
         } catch (Exception e) {
@@ -222,8 +243,8 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         String selection = ContactChatEntry.COLUMN_ROSTER_ENTRY + " LIKE ? " +
                 "AND " + ContactChatEntry.COLUMN_JID + " IS NOT NULL " +
                 "AND " + ContactChatEntry.COLUMN_AVAILABLE_STATUS + " = ? " +
-               "AND " + ContactChatEntry.COLUMN_GROUP_CHAT + " = ? " ;
-        String[] selectionArgs = { String.valueOf("0"), String.valueOf(Contacts.AVAILABLE_BY_MY_CONTACTS), String.valueOf("0") };
+                "AND " + ContactChatEntry.COLUMN_GROUP_CHAT + " = ? ";
+        String[] selectionArgs = {String.valueOf("0"), String.valueOf(Contacts.AVAILABLE_BY_MY_CONTACTS), String.valueOf("0")};
 
         Cursor c = db.query(ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
         ArrayList<String> jids = new ArrayList<>();
@@ -410,6 +431,63 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         c.close();
 
         return image;
+    }
+
+    public ArrayList<Contacts> getPendingContacts() {
+        ArrayList<Contacts> list = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                ContactChatEntry.COLUMN_NAME,
+                ContactChatEntry.COLUMN_JID,
+                ContactChatEntry.COLUMN_PHONE_NUMBER,
+                ContactChatEntry.COLUMN_IMAGE,
+                ContactChatEntry.COLUMN_ID,
+                ContactChatEntry.COLUMN_STATUS,
+                ContactChatEntry.COLUMN_AVAILABLE_STATUS,
+                ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST
+        };
+
+        String selection = ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST + " = " + Contacts.PENDING_REQUESTS_TO_PROCESS + " AND " + ContactChatEntry.COLUMN_GROUP_CHAT + " = ? ";
+        String[] selectionArgs = new String[]{"0"};
+        String sortOrder = ContactChatEntry.COLUMN_NAME + " COLLATE NOCASE ASC ";
+
+        Cursor c = db.query(ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
+        if (c.moveToFirst()) {
+            do {
+                list.add(new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5), c.getInt(6), c.getInt(7)));
+            } while (c.moveToNext());
+        }
+        c.close();
+
+        return list;
+    }
+
+    public boolean isRequestPending(String jid) {
+
+        boolean isRequestPending = false;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] projection = {
+                ContactChatEntry.COLUMN_NAME,
+                ContactChatEntry.COLUMN_JID,
+                ContactChatEntry.COLUMN_PHONE_NUMBER,
+                ContactChatEntry.COLUMN_IMAGE,
+                ContactChatEntry.COLUMN_ID,
+                ContactChatEntry.COLUMN_STATUS,
+                ContactChatEntry.COLUMN_AVAILABLE_STATUS
+        };
+
+        String selection = ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST + " = " + Contacts.WAITING_FOR_REQUEST_ACCEPTANCE + " AND " + ContactChatEntry.COLUMN_GROUP_CHAT + " = 0 " + " AND " + ContactChatEntry.COLUMN_JID + " LIKE ?";
+        String[] selectionArgs = new String[]{jid};
+
+        Cursor c = db.query(ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+        if (c.moveToFirst()) {
+            isRequestPending = true;
+        }
+        c.close();
+
+        return isRequestPending;
     }
 
     public ArrayList<Contacts> getContactList_AvailableOnly(boolean forceLoad) {
@@ -1586,6 +1664,81 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return db.update(ContactChatEntry.TABLE_NAME, values, selection, selectionArgs);
     }
 
+    public int updateFriendRequestStatus(String stanzaId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(FriendRequestEntry.COLUMN_SERVER_RECEIPT_FOR_REQUEST_STANZA, stanzaId);
+
+        String selection = FriendRequestEntry.COLUMN_REQUEST_STANZA_ID + " LIKE ? ";
+        String[] selectionArgs = {stanzaId};
+
+        return db.update(FriendRequestEntry.TABLE_NAME, values, selection, selectionArgs);
+    }
+
+    public int updateContactFriendRequestStatus(String jid, int requestStatus) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST, requestStatus);
+
+        String selection = ContactChatEntry.COLUMN_JID + " LIKE ? ";
+        String[] selectionArgs = {jid};
+
+        return db.update(ContactChatEntry.TABLE_NAME, values, selection, selectionArgs);
+    }
+
+    public int createRequestStatusEntry(int contactId, String stanzaId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+
+        values.put(FriendRequestEntry.COLUMN_CONTACT_ID, contactId);
+        values.put(FriendRequestEntry.COLUMN_REQUEST_STANZA_ID, stanzaId);
+
+        return (int) db.insert(FriendRequestEntry.TABLE_NAME, null, values);
+    }
+
+    public int getContactIdByReceipt(String receiptId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String[] projection = {FriendRequestEntry.COLUMN_CONTACT_ID};
+        String selection = FriendRequestEntry.COLUMN_SERVER_RECEIPT_FOR_REQUEST_STANZA + " = ? ";
+        String[] selectionArgs = {receiptId};
+
+        Cursor c = db.query(FriendRequestEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+        if (c.moveToFirst()) {
+            return c.getInt(0);
+        }
+        c.close();
+        return -1;
+    }
+
+    public int getPendingFriendRequestCount() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectionArgs[] = new String[]{String.valueOf(Contacts.PENDING_REQUESTS_TO_PROCESS)};
+
+        int numRows = (int) DatabaseUtils.longForQuery(db, "SELECT COUNT(*) FROM " +
+                ContactChatEntry.TABLE_NAME + " WHERE " + ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST + " = ? ", selectionArgs);
+
+        return numRows;
+    }
+
+    public int checkJidForPendingRequest(String jabberId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        String[] projection = {ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST};
+        String selection = ContactChatEntry.COLUMN_JID + " = ? ";
+        String[] selectionArgs = {jabberId};
+
+        Cursor c = db.query(ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+        if (c.moveToFirst()) {
+            return c.getInt(0);
+        }
+        c.close();
+        return -1;
+    }
+
     public static class GroupParticipants {
 
         public int chatId;
@@ -1597,7 +1750,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
             this.usersInGroup = usersInGroup;
             this.adminJids = adminJids;
         }
-
     }
 
     public void addDummyMessageIfNotExist() {

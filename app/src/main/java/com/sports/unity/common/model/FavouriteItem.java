@@ -190,13 +190,13 @@ public class FavouriteItem implements Comparable<FavouriteItem> {
 
     @Override
     public int compareTo(FavouriteItem another) {
-        return this.getId().compareTo(another.getId());
+        return this.getName().compareTo(another.getName());
     }
 
     @Override
     public boolean equals(Object o) {
         if (o instanceof FavouriteItem) {
-            return this.getId().equals(((FavouriteItem) o).getId());
+            return this.getId().equalsIgnoreCase(((FavouriteItem) o).getId());
         }
         return false;
     }

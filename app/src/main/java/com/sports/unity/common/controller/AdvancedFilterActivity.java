@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -25,12 +24,9 @@ import com.sports.unity.common.model.FavouriteContentHandler;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
-import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -45,8 +41,9 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     private ArrayList<String> sportsSelected;
     private TextView titleText;
     private ImageView back;
-    private ArrayList<onSearchListener> editFilterListener;
+    private ArrayList<onSearchListener> searchRefreshListener;
     public ImageView search, searchClose;
+    private ImageView refresh;
     private LinearLayout titleLayout, searchLayout;
     private EditText searchText;
     public boolean isSearchEdit;
@@ -61,7 +58,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.advanced_filter_activity);
-        editFilterListener = new ArrayList<onSearchListener>();
+        searchRefreshListener = new ArrayList<onSearchListener>();
         favList = FavouriteItemWrapper.getInstance(this).getFavList();
         sportsSelected = UserUtil.getSportsSelected();
         bundle = getIntent().getExtras();
@@ -161,7 +158,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
         closeSearch();
     }
 
-    private void beforeExitingActivity(){
+    private void beforeExitingActivity() {
         UserUtil.setFilterCompleted(AdvancedFilterActivity.this, true);
         ContactsHandler.getInstance().addCallToUpdateUserFavorites(getApplicationContext());
     }
@@ -288,17 +285,25 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
                 return false;
             }
         });
+        refresh = (ImageView) toolbar.findViewById(R.id.action_refresh);
+        refresh.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
+        refresh.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                performRefresh();
+            }
+        });
     }
 
-    public void addEditClickListener(onSearchListener listener) {
-        if (editFilterListener == null) {
-            editFilterListener = new ArrayList<>();
+    public void addSearchListener(onSearchListener listener) {
+        if (searchRefreshListener == null) {
+            searchRefreshListener = new ArrayList<>();
         }
-        editFilterListener.add(listener);
+        searchRefreshListener.add(listener);
     }
 
-    public void removeEditClickListener(onSearchListener listener) {
-        editFilterListener.remove(listener);
+    public void removeSearchListener(onSearchListener listener) {
+        searchRefreshListener.remove(listener);
     }
 
     private void moveToNextActivity(Class nextActivityClass) {
@@ -327,7 +332,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
     private void addFragment() {
         fragmentNum = 1;
-        editFilterListener = new ArrayList<>();
+        searchRefreshListener = new ArrayList<>();
         FavouriteContentHandler.getInstance(this).resetListener();
         advancedFilterFragment = new AdvancedFilterFragment();
         advancedFilterFragment.setArguments(bundle);
@@ -341,7 +346,7 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
     }
 
     private void replaceFragment(Bundle bundle) {
-        editFilterListener = new ArrayList<>();
+        searchRefreshListener = new ArrayList<>();
         FavouriteContentHandler.getInstance(this).resetListener();
         advancedFilterFragment = new AdvancedFilterFragment();
         advancedFilterFragment.setArguments(bundle);
@@ -350,12 +355,24 @@ public class AdvancedFilterActivity extends CustomAppCompatActivity {
 
     public interface onSearchListener {
         public void onSearch(boolean isSearchInitiated, String searchString);
+
+        public void onRefresh();
     }
 
     private void performEdit() {
-        if (editFilterListener.size() > 0) {
-            for (onSearchListener e : editFilterListener) {
+        if (searchRefreshListener.size() > 0) {
+            for (onSearchListener e : searchRefreshListener) {
                 e.onSearch(isSearchEdit, searchString);
+            }
+        } else {
+            //nothing
+        }
+    }
+
+    private void performRefresh() {
+        if (searchRefreshListener.size() > 0) {
+            for (onSearchListener e : searchRefreshListener) {
+                e.onRefresh();
             }
         } else {
             //nothing

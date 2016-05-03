@@ -6,7 +6,6 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -30,7 +29,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +38,7 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPConnectionUtil;
+import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.UserProfileActivity;
 import com.sports.unity.common.model.FontTypeface;
@@ -73,8 +72,6 @@ import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.roster.Roster;
 import org.jivesoftware.smackx.chatstates.ChatState;
 
-import java.io.File;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -213,6 +210,18 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     }
 
                 });
+            } else if (id == ActivityActionHandler.EVENT_FRIEND_REQUEST_SENT) {
+                ChatScreenActivity.this.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        TextView friendRequestStatus = (TextView) findViewById(R.id.request_status);
+                        if (friendRequestStatus.getVisibility() == View.VISIBLE) {
+                            friendRequestStatus.setText((CharSequence) object);
+                        }
+                        long milliseconds = 5000;
+                        removeRequestStatusFromWindow(milliseconds, friendRequestStatus);
+                    }
+                });
             }
         }
 
@@ -277,6 +286,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         }
 
     };
+
+    private void removeRequestStatusFromWindow(long milliseconds, final TextView friendRequestStatus) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                friendRequestStatus.setVisibility(View.GONE);
+            }
+        }, milliseconds);
+    }
 
     @Override
     protected void onDestroy() {
@@ -410,6 +428,9 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         mSend.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
 
         getIntentExtras();
+
+        boolean isPending = SportsUnityDBHelper.getInstance(this).isRequestPending(jabberId);
+        Log.d("max", "is Pending>> " + isPending);
         clearUnreadCount();
         initToolbar();
         hideStatusIfUserBlocked();
@@ -433,25 +454,47 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     private void initAddBlockView() {
         final LinearLayout addBlockLayout = (LinearLayout) findViewById(R.id.add_block_layout);
+        final TextView requestStatus = (TextView) findViewById(R.id.request_status);
         if ((availableStatus == Contacts.AVAILABLE_BY_OTHER_CONTACTS || availableStatus == Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME) && !blockUnblockUserHelper.isBlockStatus()) {
-            addBlockLayout.setVisibility(View.VISIBLE);
-            TextView addFriend = (TextView) findViewById(R.id.add_friend);
-            addFriend.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
-            addFriend.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    sportsUnityDBHelper.updateContactAvailability(jabberId);
-                    addBlockLayout.setVisibility(View.GONE);
-                }
-            });
-            final TextView blockUser = (TextView) findViewById(R.id.block_user);
-            blockUser.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
-            blockUser.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    blockUnblockUserHelper.onMenuItemSelected(ChatScreenActivity.this, chatID, jabberId, menu);
-                }
-            });
+            int requestId = sportsUnityDBHelper.checkJidForPendingRequest(jabberId);
+            if (requestId == Contacts.WAITING_FOR_REQUEST_ACCEPTANCE) {
+                addBlockLayout.setVisibility(View.GONE);
+                requestStatus.setVisibility(View.VISIBLE);
+                requestStatus.setText("Request sent for acceptance");
+            } else if (requestId == Contacts.PENDING_REQUESTS_TO_PROCESS) {
+                addBlockLayout.setVisibility(View.GONE);
+                requestStatus.setVisibility(View.VISIBLE);
+                requestStatus.setText("Request pending for acceptance");
+            } else {
+                addBlockLayout.setVisibility(View.VISIBLE);
+                TextView addFriend = (TextView) findViewById(R.id.add_friend);
+                addFriend.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+                addFriend.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+                            boolean success = personalMessaging.sendFriendRequest(jabberId);
+                            if (success) {
+                                addBlockLayout.setVisibility(View.GONE);
+                                requestStatus.setVisibility(View.VISIBLE);
+                            } else {
+                                Toast.makeText(getApplicationContext(), "something went wrong ", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Connection is not authenticated ", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+                final TextView blockUser = (TextView) findViewById(R.id.block_user);
+                blockUser.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+                blockUser.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        blockUnblockUserHelper.onMenuItemSelected(ChatScreenActivity.this, chatID, jabberId, menu);
+                    }
+                });
+            }
+
         } else {
             addBlockLayout.setVisibility(View.GONE);
         }
@@ -757,8 +800,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                 userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
             }
 
-        } else if (userImageBytes!=null) {
+        } else if (userImageBytes != null) {
             userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
+        } else {
+            userPic.setImageResource(R.drawable.ic_user);
         }
 
         if (isGroupChat) {

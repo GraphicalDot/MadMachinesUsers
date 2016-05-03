@@ -25,9 +25,12 @@ import android.widget.Toast;
 
 import com.sports.unity.ProfileCreationActivity;
 import com.sports.unity.R;
+import com.sports.unity.XMPPManager.XMPPService;
+import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserProfileHandler;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.CustomVolleyCallerActivity;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
@@ -109,7 +112,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         super.onResume();
 
         if (UserUtil.isUserRegistered()) {
-            moveToNextActivity();
+            moveToNextActivity(ProfileCreationActivity.class);
         } else {
 
         }
@@ -229,11 +232,11 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         requestContent(ScoresContentHandler.CALL_NAME_ASK_OTP, parameters, RESEND_OTP_REQUEST_TAG);
     }
 
-    private void moveToNextActivity() {
+    private void moveToNextActivity(Class activityClass) {
         if (!moved) {
             moved = true;
 
-            Intent intent = new Intent(this, ProfileCreationActivity.class);
+            Intent intent = new Intent(this, activityClass);
             startActivity(intent);
 
             finish();
@@ -398,7 +401,13 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
                 }
             } else if( tag.equals(CREATE_USER_REQUEST_TAG) ){
                 if (success) {
-                    moveToNextActivity();
+                    if (!UserUtil.isFilterCompleted()) {
+                        moveToNextActivity(ProfileCreationActivity.class);
+                    } else {
+                        ContactsHandler.getInstance().addCallToUpdateCompleteUserProfile(getApplicationContext());
+                        ContactsHandler.getInstance().addCallToUpdateUserFavorites(getApplicationContext());
+                        moveToNextActivity(MainActivity.class);
+                    }
                 } else {
                     Toast.makeText(getApplicationContext(), R.string.otp_message_wrong_expired_token, Toast.LENGTH_SHORT).show();
                 }

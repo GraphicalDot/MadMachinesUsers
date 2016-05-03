@@ -11,16 +11,13 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
 import android.provider.ContactsContract;
-import android.util.Base64;
 import android.util.Log;
 
-import com.sports.unity.ChatScreenApplication;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.ContactsObserver;
-import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Contacts;
@@ -28,56 +25,26 @@ import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.CommonUtil;
-import com.sports.unity.util.Constants;
 import com.sports.unity.util.GlobalEventHandler;
-import com.sports.unity.util.GlobalEventListener;
 import com.sports.unity.util.NotificationHandler;
 
 import org.jivesoftware.smack.ConnectionListener;
 import org.jivesoftware.smack.PacketListener;
+import org.jivesoftware.smack.ReconnectionManager;
 import org.jivesoftware.smack.SmackException;
 import org.jivesoftware.smack.StanzaListener;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smack.filter.PacketFilter;
-import org.jivesoftware.smack.chat.ChatMessageListener;
-import org.jivesoftware.smack.filter.IQResultReplyFilter;
 import org.jivesoftware.smack.filter.IQTypeFilter;
 import org.jivesoftware.smack.filter.StanzaFilter;
 import org.jivesoftware.smack.filter.StanzaTypeFilter;
-import org.jivesoftware.smack.packet.IQ;
 import org.jivesoftware.smack.packet.Message;
-import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smack.packet.Stanza;
-import org.jivesoftware.smack.roster.Roster;
-import org.jivesoftware.smack.roster.RosterListener;
 import org.jivesoftware.smack.tcp.XMPPTCPConnection;
-import org.jivesoftware.smackx.chatstates.ChatState;
-import org.jivesoftware.smackx.chatstates.packet.ChatStateExtension;
-import org.jivesoftware.smackx.jiveproperties.JivePropertiesManager;
-import org.jivesoftware.smackx.muc.InvitationListener;
-import org.jivesoftware.smackx.muc.MultiUserChat;
-import org.jivesoftware.smackx.muc.MultiUserChatManager;
-import org.jivesoftware.smackx.ping.PingManager;
-import org.jivesoftware.smackx.ping.packet.Ping;
-import org.jivesoftware.smackx.pubsub.EventElementType;
-import org.jivesoftware.smackx.pubsub.Item;
-import org.jivesoftware.smackx.pubsub.ItemPublishEvent;
-import org.jivesoftware.smackx.pubsub.LeafNode;
-import org.jivesoftware.smackx.pubsub.PubSubManager;
-import org.jivesoftware.smackx.pubsub.listener.ItemEventListener;
-import org.jivesoftware.smackx.pubsub.listener.NodeConfigListener;
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager;
 import org.jivesoftware.smackx.receipts.ReceiptReceivedListener;
 import org.jivesoftware.smackx.vcardtemp.packet.VCard;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.Collection;
-import java.util.List;
 
 public class XMPPService extends Service {
 
@@ -209,7 +176,7 @@ public class XMPPService extends Service {
         return pendingIntent;
     }
 
-    private static PendingIntent getPendingIntentForChatActivity(Context context, boolean isGroupChat, String name, String from, int chatId, byte[] contactImage, boolean isOtherChat, int availabilityStatus, String userStatus) {
+    public static PendingIntent getPendingIntentForChatActivity(Context context, boolean isGroupChat, String name, String from, int chatId, byte[] contactImage, boolean isOtherChat, int availabilityStatus, String userStatus) {
         Intent notificationIntent = ChatScreenActivity.createChatScreenIntent(context, isGroupChat, from, name, chatId, contactImage, false, isOtherChat, availabilityStatus, userStatus);
 
         Intent backIntent = new Intent(context, MainActivity.class);
@@ -217,6 +184,15 @@ public class XMPPService extends Service {
         backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent pendingIntent = PendingIntent.getActivities(context, NotificationHandler.NOTIFICATION_ID, new Intent[]{backIntent, notificationIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
+        return pendingIntent;
+    }
+
+    public static PendingIntent getPendingIntentForFriendRequestActivity(Context context, Intent friendRequestIntent) {
+        Intent backIntent = new Intent(context, MainActivity.class);
+        backIntent.putExtra("tab_index", 2);
+        backIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+        PendingIntent pendingIntent = PendingIntent.getActivities(context, NotificationHandler.NOTIFICATION_ID, new Intent[]{backIntent, friendRequestIntent}, PendingIntent.FLAG_UPDATE_CURRENT);
         return pendingIntent;
     }
 
@@ -317,7 +293,7 @@ public class XMPPService extends Service {
                 @Override
                 public void onReceiptReceived(String fromJid, String toJid, String receiptId, Stanza receipt) {
                     /**
-                     * fromJid : the person who received our message
+                     * fromJid : jid of the server
                      * toJid : our phone number(our id)
                      * receiptId : id of the message that has reached the other person
                      */
@@ -435,6 +411,8 @@ public class XMPPService extends Service {
 
                 PersonalMessaging.getInstance(XMPPService.this).updateBlockList(XMPPService.this);
                 GlobalEventHandler.getInstance().xmppServerConnected(true, connection);
+
+                ContactsHandler.getInstance().addCallToProcessPendingActions(XMPPService.this);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -450,7 +428,18 @@ public class XMPPService extends Service {
         @Override
         public void connectionClosedOnError(Exception e) {
             Log.i("connection", "closed on error");
-
+            Log.d("max", "Type connection closed on error> " + e.getMessage());
+            if (e.getMessage().contains("Replaced by new connection")) {
+                try {
+                    ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(XMPPClient.getConnection());
+                    reconnectionManager.disableAutomaticReconnection();
+                    XMPPClient.getInstance().closeConnection();
+                } catch (Exception conException) {
+                    conException.printStackTrace();
+                }
+                GlobalEventHandler.getInstance().onConnectionReplaced(e);
+            }
+            e.printStackTrace();
             GlobalEventHandler.getInstance().xmppServerConnected(false, null);
         }
 
@@ -468,6 +457,18 @@ public class XMPPService extends Service {
 
         @Override
         public void reconnectionFailed(Exception e) {
+
+            Log.d("max", "Type reconnection failed> " + e.getMessage());
+            if (e.getMessage().equals("SASLError using SCRAM-SHA-1: bad-auth")) {
+                try {
+                    ReconnectionManager reconnectionManager = ReconnectionManager.getInstanceFor(XMPPClient.getConnection());
+                    reconnectionManager.disableAutomaticReconnection();
+                    XMPPClient.getInstance().closeConnection();
+                } catch (Exception conException) {
+                    conException.printStackTrace();
+                }
+                GlobalEventHandler.getInstance().onConnectionReplaced(e);
+            }
             Log.i("reconnection", "failed");
 
         }
@@ -523,6 +524,10 @@ public class XMPPService extends Service {
                 }
             } else if (((Message) packet).getType().equals(Presence.Type.subscribe)) {
                 //nothing
+            } else if (!message.getFrom().substring(0, message.getFrom().indexOf("@")).equals("dev")) {
+                if (message.getStanzaId().contains("ACCEPT") || message.getStanzaId().contains("REQUEST")) {
+                    PersonalMessaging.getInstance(getApplicationContext()).handleFriendRequest(message);
+                }
             }
         }
 

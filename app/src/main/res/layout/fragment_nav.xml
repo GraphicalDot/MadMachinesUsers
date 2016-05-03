@@ -41,6 +41,41 @@
         android:layout_marginTop="@dimen/vertical_padding_very_small"
         android:background="@color/gray3" />
 
+    <LinearLayout
+        android:id="@+id/friend_requests"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/drawer_header_height"
+        android:clickable="true"
+        android:orientation="horizontal">
+
+        <com.sports.unity.common.view.CustomRobotoMediumTextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:text="Friend Requests"
+            android:textColor="@color/gray1"
+            android:textSize="@dimen/font_size_small_large" />
+
+        <com.sports.unity.common.view.CustomRobotoCondenseRegularTextView
+            android:id="@+id/request_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/horizontal_padding_small"
+            android:background="@drawable/ic_msg_notification"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/font_size_very_small" />
+
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/gray3" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

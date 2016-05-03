@@ -10,6 +10,7 @@ import java.util.logging.Filter;
 public class ActivityActionHandler {
 
     public static final String CHAT_SCREEN_KEY = "chat_screen_key";
+    public static final String REQEUSTS_SCREEN_KEY = "chat_screen_key";
     public static final String CHAT_LIST_KEY = "chat_list_key";
     public static final String CHAT_OTHERS_LIST_KEY = "chat_list_others_key";
     public static final String UNREAD_COUNT_KEY = "unread_count";
@@ -20,6 +21,8 @@ public class ActivityActionHandler {
     public static final int EVENT_ID_INCOMING_MEDIA = 3;
     public static final int EVENT_ID_CHAT_STATUS = 4;
     public static final int EVENT_ID_RECEIPT = 5;
+    public static final int EVENT_FRIEND_REQUEST_SENT = 6;
+    public static final int EVENT_FRIEND_REQUEST_ACCEPTED = 7;
 
     private static ActivityActionHandler activityActionHandler = null;
 
@@ -52,11 +55,11 @@ public class ActivityActionHandler {
         activityListenerMap.put(key, listener);
 
         boolean filterMatched = false;
-        if( filterMap.containsKey(key) && filterMap.get(key).equals(filter) ) {
+        if (filterMap.containsKey(key) && filterMap.get(key).equals(filter)) {
             filterMatched = true;
         }
 
-        if ( filterMatched && actionItemOnHoldMap.containsKey(key)) {
+        if (filterMatched && actionItemOnHoldMap.containsKey(key)) {
             ActionItem actionItem = actionItemOnHoldMap.get(key);
             listener.handleMediaContent(actionItem.id, actionItem.getMimeType(), actionItem.getMessageContent(), actionItem.getThumbnailImage(), actionItem.getMediaContent());
             actionItemOnHoldMap.remove(key);
@@ -66,13 +69,13 @@ public class ActivityActionHandler {
     }
 
     public void removeActionListener(String key) {
-        if( ! filterMap.containsKey(key) ) {
+        if (!filterMap.containsKey(key)) {
             activityListenerMap.remove(key);
         }
     }
 
     public void removeActionListener(String key, String filter) {
-        if( filterMap.containsKey(key) && filterMap.get(key).equals(filter) ) {
+        if (filterMap.containsKey(key) && filterMap.get(key).equals(filter)) {
             activityListenerMap.remove(key);
         }
     }
@@ -83,12 +86,12 @@ public class ActivityActionHandler {
 
     public ActivityActionListener getActionListener(String key, String filter) {
         boolean filterMatched = false;
-        if( filterMap.containsKey(key) && filterMap.get(key).equals(filter) ) {
+        if (filterMap.containsKey(key) && filterMap.get(key).equals(filter)) {
             filterMatched = true;
         }
 
         ActivityActionListener activityActionListener = null;
-        if( filterMatched ){
+        if (filterMatched) {
             activityActionListener = activityListenerMap.get(key);
         } else {
             //nothing
@@ -196,6 +199,20 @@ public class ActivityActionHandler {
         return success;
     }
 
+    public boolean dispatchRequestStatusEvent(String key, String filter, Object data) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key, filter);
+
+        if (actionListener != null) {
+            actionListener.handleAction(EVENT_FRIEND_REQUEST_SENT, data);
+            success = true;
+        }
+
+        return success;
+    }
+
     public boolean dispatchSendStickerEvent(String key, String mimeType, String stickerPath) {
         boolean success = false;
 
@@ -240,6 +257,20 @@ public class ActivityActionHandler {
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
         activityActionHandler.addActionOnHold(key, new ActivityActionHandler.ActionItem(EVENT_ID_SEND_MEDIA, mimeType, fileName, thumbnailImageAsBase64, bytes));
+        return success;
+    }
+
+    public boolean acceptRequestStatusEvent(String key, String filter, String data) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key, filter);
+
+        if (actionListener != null) {
+            actionListener.handleAction(EVENT_FRIEND_REQUEST_ACCEPTED, data);
+            success = true;
+        }
+
         return success;
     }
 

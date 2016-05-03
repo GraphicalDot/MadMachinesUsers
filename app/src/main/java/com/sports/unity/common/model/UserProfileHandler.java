@@ -190,43 +190,11 @@ public class UserProfileHandler {
 
                     @Override
                     public Object process() {
-                        Boolean success = false;
-                        try {
-                            Contacts userContact = (Contacts) object;
-                            try {
-                                String password = TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD);
-                                JSONObject jsonObject = new JSONObject();
-                                jsonObject.put("username", userContact.jid);
-                                jsonObject.put("password", password);
-                                jsonObject.put("name", userContact.getName());
-                                jsonObject.put("apk_version", CommonUtil.getBuildConfig());
-                                jsonObject.put("udid", CommonUtil.getDeviceId(context));
+                        Contacts userContact = (Contacts) object;
 
-                                success = submitUserInfo(jsonObject.toString());
-                            }catch (Exception ex){
-                                ex.printStackTrace();
-                            }
-
-                            if( success ) {
-                                success = false;
-
-                                VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
-                                VCard vCard = new VCard();
-                                vCard.setNickName(userContact.getName());
-                                vCard.setAvatar(userContact.image);
-                                vCard.setMiddleName(userContact.status);
-                                vCard.setJabberId(XMPPClient.getConnection().getUser());
-                                manager.saveVCard(vCard);
-
-                                success = true;
-                                saveLoginUserDetail(this.context, userContact);
-                            }
-                        } catch (SmackException.NoResponseException e) {
-                            e.printStackTrace();
-                        } catch (XMPPException.XMPPErrorException e) {
-                            e.printStackTrace();
-                        } catch (SmackException.NotConnectedException e) {
-                            e.printStackTrace();
+                        Boolean success = submitUserInfo(context, userContact);
+                        if( success ) {
+                            success = submitUserVCard(context, userContact);
                         }
                         return success;
                     }
@@ -238,43 +206,6 @@ public class UserProfileHandler {
             requestStatus = REQUEST_STATUS_ALREADY_EXIST;
         }
         return requestStatus;
-    }
-
-    public boolean submitUserInfo(String jsonString){
-        boolean success = false;
-        HttpURLConnection httpURLConnection = null;
-        ByteArrayInputStream byteArrayInputStream = null;
-        try {
-            URL sendInterests = new URL(SET_USER_INFO_URL);
-            httpURLConnection = (HttpURLConnection) sendInterests.openConnection();
-            httpURLConnection.setConnectTimeout(Constants.CONNECTION_TIME_OUT);
-            httpURLConnection.setDoInput(false);
-            httpURLConnection.setDoOutput(true);
-            httpURLConnection.setRequestMethod("POST");
-
-            byteArrayInputStream = new ByteArrayInputStream(jsonString.getBytes());
-            OutputStream outputStream = httpURLConnection.getOutputStream();
-
-            byte chunk[] = new byte[4096];
-            int read = 0;
-            while ((read = byteArrayInputStream.read(chunk) ) != -1) {
-                outputStream.write(chunk, 0, read);
-            }
-
-            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                success = true;
-            } else {
-
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                httpURLConnection.disconnect();
-            } catch (Exception ex) {
-            }
-        }
-        return success;
     }
 
     public boolean submitUserFavorites(Context context){
@@ -312,9 +243,101 @@ public class UserProfileHandler {
         return success;
     }
 
+    public boolean submitUserCompleteProfile(Context context){
+        String jid = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
+        Contacts userContact = SportsUnityDBHelper.getInstance(context).getContactByJid(jid);
+
+        boolean success = submitUserInfo(context, userContact);
+        if( success ) {
+            success = submitUserVCard(context, userContact);
+        }
+        return success;
+    }
+
     public Contacts getLoginUserDetail(Context context){
         String jid = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
         return SportsUnityDBHelper.getInstance(context).getContactByJid(jid);
+    }
+
+    private boolean submitUserInfo(Context context, Contacts userContact){
+        String jsonString = getUserInfoAsJSON(context, userContact);
+        boolean success = false;
+        HttpURLConnection httpURLConnection = null;
+        ByteArrayInputStream byteArrayInputStream = null;
+        try {
+            URL sendInterests = new URL(SET_USER_INFO_URL);
+            httpURLConnection = (HttpURLConnection) sendInterests.openConnection();
+            httpURLConnection.setConnectTimeout(Constants.CONNECTION_TIME_OUT);
+            httpURLConnection.setDoInput(false);
+            httpURLConnection.setDoOutput(true);
+            httpURLConnection.setRequestMethod("POST");
+
+            byteArrayInputStream = new ByteArrayInputStream(jsonString.getBytes());
+            OutputStream outputStream = httpURLConnection.getOutputStream();
+
+            byte chunk[] = new byte[4096];
+            int read = 0;
+            while ((read = byteArrayInputStream.read(chunk) ) != -1) {
+                outputStream.write(chunk, 0, read);
+            }
+
+            if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                success = true;
+            } else {
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                httpURLConnection.disconnect();
+            } catch (Exception ex) {
+            }
+        }
+        return success;
+    }
+
+    private boolean submitUserVCard(Context context, Contacts userContact){
+        boolean success = false;
+        try {
+            VCardManager manager = VCardManager.getInstanceFor(XMPPClient.getConnection());
+            VCard vCard = new VCard();
+            vCard.setNickName(userContact.getName());
+            vCard.setAvatar(userContact.image);
+            vCard.setMiddleName(userContact.status);
+            vCard.setJabberId(XMPPClient.getConnection().getUser());
+            manager.saveVCard(vCard);
+
+            success = true;
+            saveLoginUserDetail(context, userContact);
+        } catch (SmackException.NoResponseException e) {
+            e.printStackTrace();
+        } catch (XMPPException.XMPPErrorException e) {
+            e.printStackTrace();
+        } catch (SmackException.NotConnectedException e) {
+            e.printStackTrace();
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return success;
+    }
+
+    private String getUserInfoAsJSON(Context context, Contacts userContact){
+        String jsonString = null;
+        try {
+            String password = TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD);
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("username", userContact.jid);
+            jsonObject.put("password", password);
+            jsonObject.put("name", userContact.getName());
+            jsonObject.put("apk_version", CommonUtil.getBuildConfig());
+            jsonObject.put("udid", CommonUtil.getDeviceId(context));
+
+            jsonString = jsonObject.toString();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return jsonString;
     }
 
     private void saveLoginUserDetail(Context context, Contacts loginUserDetail){

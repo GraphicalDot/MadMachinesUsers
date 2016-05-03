@@ -22,6 +22,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
         android:orientation="vertical">
 
         <include
@@ -31,6 +32,19 @@
             android:layout_height="wrap_content"
             android:minHeight="?android:attr/actionBarSize" />
 
+        <TextView
+            android:id="@+id/request_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:ellipsize="end"
+            android:paddingBottom="@dimen/vertical_padding_very_very_small"
+            android:paddingLeft="@dimen/horizontal_padding_very_very_small"
+            android:paddingRight="@dimen/horizontal_padding_very_very_small"
+            android:paddingTop="@dimen/vertical_padding_very_very_small"
+            android:text="Sending Request..."
+            android:visibility="gone" />
+
         <LinearLayout
             android:id="@+id/add_block_layout"
             android:layout_width="match_parent"
@@ -38,7 +52,7 @@
             android:layout_gravity="center_vertical"
             android:background="@color/textColorPrimary"
             android:orientation="horizontal"
-            android:visibility="gone"
+            android:visibility="visible"
             android:weightSum="2">
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
@@ -46,7 +60,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="center_horizontal"
                 android:paddingBottom="@dimen/vertical_padding_small"
                 android:paddingLeft="@dimen/horizontal_padding_small"
                 android:paddingRight="@dimen/horizontal_padding_small"
@@ -133,7 +147,7 @@
                     android:background="@android:color/transparent"
                     android:focusable="true"
                     android:hint="Write a message"
-                    android:inputType="textMultiLine|textCapSentences"
+                    android:inputType="textMultiLine|textCapSentences|textShortMessage"
                     android:maxLength="2000"
                     android:maxLines="5"
                     android:paddingLeft="@dimen/horizontal_padding_small"
