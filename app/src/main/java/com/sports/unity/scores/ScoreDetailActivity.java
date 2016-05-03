@@ -145,9 +145,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         } else {
             seriesId = i.getStringExtra(Constants.INTENT_KEY_SERIES);
         }
-
-        matchStatus = "L";
-        isLive = true;
     }
 
     private boolean isMatchLive(){
