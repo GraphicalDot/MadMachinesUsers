@@ -107,7 +107,7 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
 
                 long filesize = ImageUtil.getFileSize(getApplicationContext(), URI, URI.getScheme());
 
-                if (filesize > 51200 && filesize <= 10485760) {
+                if (filesize > 5120 && filesize <= 10485760) {
 
                     handleMediaContent(dataList, URI);
 
@@ -202,7 +202,7 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
 
                 long filesize = ImageUtil.getFileSize(getApplicationContext(), URI, URI.getScheme());
 
-                if (filesize > 51200 && filesize <= 10485760) {
+                if (filesize > 5120 && filesize <= 10485760) {
 
                     handleMediaContent(dataList, URI);
 
