@@ -10,7 +10,7 @@ import java.util.logging.Filter;
 public class ActivityActionHandler {
 
     public static final String CHAT_SCREEN_KEY = "chat_screen_key";
-    public static final String REQEUSTS_SCREEN_KEY = "chat_screen_key";
+    public static final String REQEUSTS_SCREEN_KEY = "requests_screen_key";
     public static final String CHAT_LIST_KEY = "chat_list_key";
     public static final String CHAT_OTHERS_LIST_KEY = "chat_list_others_key";
     public static final String UNREAD_COUNT_KEY = "unread_count";
@@ -22,7 +22,8 @@ public class ActivityActionHandler {
     public static final int EVENT_ID_CHAT_STATUS = 4;
     public static final int EVENT_ID_RECEIPT = 5;
     public static final int EVENT_FRIEND_REQUEST_SENT = 6;
-    public static final int EVENT_FRIEND_REQUEST_ACCEPTED = 7;
+    public static final int EVENT_FRIEND_REQUEST_RECEIVED = 7;
+    public static final int EVENT_FRIEND_REQUEST_ACCEPTED = 8;
 
     private static ActivityActionHandler activityActionHandler = null;
 
@@ -200,6 +201,20 @@ public class ActivityActionHandler {
     }
 
     public boolean dispatchRequestStatusEvent(String key, String filter, Object data) {
+        boolean success = false;
+
+        ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
+        ActivityActionListener actionListener = activityActionHandler.getActionListener(key, filter);
+
+        if (actionListener != null) {
+            actionListener.handleAction(EVENT_FRIEND_REQUEST_SENT, data);
+            success = true;
+        }
+
+        return success;
+    }
+
+    public boolean receivedRequestStatusEvent(String key, String filter, Object data) {
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();

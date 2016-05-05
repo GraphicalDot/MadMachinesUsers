@@ -592,14 +592,18 @@ public class PersonalMessaging {
                 sportsUnityDBHelper.updateContactFriendRequestStatus(jid, Contacts.PENDING_REQUESTS_TO_PROCESS);
                 contact = sportsUnityDBHelper.getContactByJid(jid);
                 displayNotificationForFriendRequest(contact);
-
             } else {
                 if (contact.availableStatus != Contacts.AVAILABLE_NOT) {
                     if (contact.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS) {
                         acceptFriendRequest(contact);
                     } else {
                         sportsUnityDBHelper.updateContactFriendRequestStatus(jid, Contacts.PENDING_REQUESTS_TO_PROCESS);
-                        displayNotificationForFriendRequest(contact);
+                        boolean success = ActivityActionHandler.getInstance().receivedRequestStatusEvent(ActivityActionHandler.CHAT_SCREEN_KEY, jid, " friend Request received from " + contact.getName());
+                        if (success) {
+                            //do nothing
+                        } else {
+                            displayNotificationForFriendRequest(contact);
+                        }
                     }
                 }
             }
@@ -610,7 +614,12 @@ public class PersonalMessaging {
                 sportsUnityDBHelper.updateContactFriendRequestStatus(jid, Contacts.REQUEST_ACCEPTED);
                 sportsUnityDBHelper.updateContactAvailability(jid);
                 Contacts contact = sportsUnityDBHelper.getContactByJid(jid);
-                displayNotificationForFriendRequestAccepted(contact);
+                boolean success = ActivityActionHandler.getInstance().receivedRequestStatusEvent(ActivityActionHandler.CHAT_SCREEN_KEY, jid, contact.getName() + " has accepted your friend request ");
+                if (success) {
+                    //do nothing
+                } else {
+                    displayNotificationForFriendRequestAccepted(contact);
+                }
             }
         }
     }

@@ -90,6 +90,11 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     private boolean shouldCloseDrawer = false;
     private MenuItem menuItem;
 
+    private FrameLayout hamburgerMenu;
+    private ImageView hamburgerIcon;
+    private TextView pendingRequestsCount;
+    private int requestsCount = 0;
+
     private ContactSyncListener contactSyncListener;
     private TextView unreadCount;
     private boolean messagesFragmentInFront = false;
@@ -192,12 +197,12 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             @Override
             public void onClick(View v) {
                 if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
-                   // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
+                    // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
                     Intent intent = new Intent(MainActivity.this, PeopleAroundActivity.class);
                     startActivity(intent);
                 } else {
                     if (PermissionUtil.getInstance().requestPermission(MainActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)), getResources().getString(R.string.location_permission_message), Constants.REQUEST_CODE_LOCATION_PERMISSION)) {
-                       // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
+                        // Intent intent = new Intent(MainActivity.this, PeopleAroundMeMap.class);
                         Intent intent = new Intent(MainActivity.this, PeopleAroundActivity.class);
                         startActivity(intent);
                     }
@@ -328,8 +333,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 invalidateOptionsMenu();
-                navigationFragment.updatePendingFriendRequestCount();
-
             }
 
             @Override
@@ -337,16 +340,31 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                 super.onDrawerClosed(drawerView);
                 invalidateOptionsMenu();
             }
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                super.onDrawerSlide(drawerView, slideOffset);
+                navigationFragment.updatePendingFriendRequestCount(requestsCount);
+            }
         };
 
         mDrawerToggle.setDrawerIndicatorEnabled(false);
-        mDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
 
+//        mDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+//
+//            @Override
+//            public void onClick(View v) {
+//                drawer.openDrawer(Gravity.LEFT);
+//            }
+//
+//        });
+
+        hamburgerIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 drawer.openDrawer(Gravity.LEFT);
+                pendingRequestsCount.setVisibility(View.GONE);
             }
-
         });
 
         drawer.setDrawerListener(mDrawerToggle);
@@ -390,7 +408,11 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
     private Toolbar initToolBar() {
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
-        toolbar.setNavigationIcon(R.drawable.ic_menu);
+        hamburgerMenu = (FrameLayout) toolbar.findViewById(R.id.hamburger_menu);
+        hamburgerMenu.setVisibility(View.VISIBLE);
+        hamburgerIcon = (ImageView) toolbar.findViewById(R.id.hamburger_icon);
+        pendingRequestsCount = (TextView) toolbar.findViewById(R.id.hamburger_unread);
+//        toolbar.setNavigationIcon(R.drawable.ic_menu);
         setSupportActionBar(toolbar);
         title = (TextView) toolbar.findViewById(R.id.toolbar_title);
         title.setText(R.string.app_name);
@@ -408,6 +430,8 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             }
         });
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
         return toolbar;
     }
 
@@ -431,6 +455,16 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         }
     }
 
+    private void setPendingRequestCount() {
+        requestsCount = SportsUnityDBHelper.getInstance(getApplicationContext()).getPendingFriendRequestCount();
+        if (requestsCount == 0) {
+            pendingRequestsCount.setVisibility(View.GONE);
+        } else {
+            pendingRequestsCount.setVisibility(View.VISIBLE);
+            pendingRequestsCount.setText(String.valueOf(requestsCount));
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -440,6 +474,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         if (messagesFragmentInFront) {
             fabMenu.showMenuButton(true);
         }
+        setPendingRequestCount();
     }
 
     private void updateLocation() {
@@ -530,37 +565,35 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
         InputMethodManager mgr = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         mgr.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(), 0);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        hamburgerMenu.setVisibility(View.VISIBLE);
         fabMenu.showMenuButton(true);
         tabs.setVisibility(View.VISIBLE);
         title.setVisibility(View.VISIBLE);
-        back.setVisibility(View.GONE);
         findViewById(R.id.seperator).setVisibility(View.VISIBLE);
         toolbar.setBackgroundColor(getResources().getColor(R.color.app_theme_blue));
-        toolbar.setNavigationIcon(R.drawable.ic_menu);
         initiateDrawer();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             toolbar.setElevation(0);
         }
         pager.setPagingEnabled(true);
+        back.setVisibility(View.GONE);
     }
 
 
     public void enableSearch() {
         fabMenu.hideMenuButton(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        hamburgerMenu.setVisibility(View.GONE);
         drawer.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
-        toolbar.setNavigationIcon(R.drawable.ic_menu_back_blk);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        tabs.setVisibility(View.GONE);
+        title.setVisibility(View.GONE);
+        findViewById(R.id.seperator).setVisibility(View.GONE);
+        back.setVisibility(View.VISIBLE);
+        back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onBackPressed();
             }
         });
-        tabs.setVisibility(View.GONE);
-        title.setVisibility(View.GONE);
-        findViewById(R.id.seperator).setVisibility(View.GONE);
-        back.setVisibility(View.GONE);
         toolbar.setBackgroundColor(getResources().getColor(R.color.textColorPrimary));
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             toolbar.setElevation(TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2, getResources().getDisplayMetrics()));

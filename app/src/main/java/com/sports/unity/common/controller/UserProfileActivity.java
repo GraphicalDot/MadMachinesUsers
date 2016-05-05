@@ -39,6 +39,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.login.widget.LoginButton;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
@@ -48,6 +49,8 @@ import com.sports.unity.common.model.UserProfileHandler;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.messages.controller.model.Person;
+import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.playerprofile.cricket.PlayerCricketBioDataActivity;
 import com.sports.unity.playerprofile.football.PlayerProfileView;
 import com.sports.unity.util.CommonUtil;
@@ -70,6 +73,8 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private static final String INFO_EDIT = "EDIT PROFILE";
     private static final String INFO_SAVE = "SAVE PROFILE";
     private static final String ADD_FRIEND = "ADD FRIEND";
+    private static final String ACCEPT_REQUEST = "ACCEPT FRIEND REQUEST";
+    private static final String REQUEST_SENT = "REQUEST SENT";
 
     private static final String LISTENER_KEY = "profile_listener_key";
 
@@ -99,6 +104,8 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
     private ProgressBar progessBar;
     private ProgressDialog dialog;
+
+    private int requestId = Contacts.DEFAULT_PENDNG_REQUEST_ID;
 
     private int statusValue[] = {R.string.available, R.string.busy, R.string.movie, R.string.work};
 
@@ -183,12 +190,42 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             toolbarActionButton.setText(INFO_EDIT);
         } else {
             if (getIntent().getBooleanExtra("otherChat", false)) {
-                toolbarActionButton.setText(ADD_FRIEND);
+                requestId = SportsUnityDBHelper.getInstance(getApplicationContext()).checkJidForPendingRequest(getIntent().getStringExtra("jid"));
+                if (requestId == Contacts.PENDING_REQUESTS_TO_PROCESS) {
+                    toolbarActionButton.setText(ACCEPT_REQUEST);
+                } else if (requestId == Contacts.DEFAULT_PENDNG_REQUEST_ID) {
+                    toolbarActionButton.setText(ADD_FRIEND);
+                } else if (requestId == Contacts.WAITING_FOR_REQUEST_ACCEPTANCE) {
+                    toolbarActionButton.setText(REQUEST_SENT);
+                }
                 toolbarActionButton.setBackground(getResources().getDrawable(R.drawable.round_edge_blue_box));
             } else {
                 toolbarActionButton.setVisibility(View.GONE);
             }
         }
+
+        toolbarActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (requestId == Contacts.PENDING_REQUESTS_TO_PROCESS) {
+                    Toast.makeText(getApplicationContext(), "not implemented yet", Toast.LENGTH_SHORT).show();
+                } else if (requestId == Contacts.DEFAULT_PENDNG_REQUEST_ID) {
+//                    if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+//                        boolean success = PersonalMessaging.getInstance(getApplicationContext()).sendFriendRequest(getIntent().getStringExtra("jid"));
+//                        if (success) {
+//                            Toast.makeText(getApplicationContext(), "Request sent", Toast.LENGTH_SHORT).show();
+//                            requestId = SportsUnityDBHelper.getInstance(getApplicationContext()).checkJidForPendingRequest(getIntent().getStringExtra("jid"));
+//                            toolbarActionButton.setText(REQUEST_SENT);
+//                        }
+//                    } else {
+//                        Toast.makeText(getApplicationContext(), "check your internet connection and try again", Toast.LENGTH_SHORT).show();
+//                    }
+                    //TODO
+                } else if (requestId == Contacts.WAITING_FOR_REQUEST_ACCEPTANCE) {
+                    //do nothing as friend request has already been sent
+                }
+            }
+        });
 
         ImageView backButton = (ImageView) toolbar.findViewById(R.id.backarrow);
         backButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));

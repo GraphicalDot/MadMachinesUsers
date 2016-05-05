@@ -2,12 +2,9 @@ package com.sports.unity.messages.controller;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,6 +14,7 @@ import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.messages.controller.viewhelper.ChatKeyboardHelper;
 
@@ -87,7 +85,7 @@ public class BlockUnblockUserHelper {
         new BlockOrUnBlockUserAsyncTask(status, activity, contactId, phoneNumber, menu).execute();
     }
 
-    private void postActionOnBlockOrUnblock(boolean status, Menu menu) {
+    private void postActionOnBlockOrUnblock(boolean status, Menu menu, String phoneNumber) {
         MenuItem item = null;
         blockStatus = status;
 
@@ -97,7 +95,7 @@ public class BlockUnblockUserHelper {
         }
         if (blockStatus == true) {
             if (null != blockUnblockListener) {
-                blockUnblockListener.onBlock(true);
+                blockUnblockListener.onBlock(true, phoneNumber);
             }
             if (item != null) {
                 item.setTitle("Unblock User");
@@ -150,6 +148,7 @@ public class BlockUnblockUserHelper {
             if (success == true) {
                 SportsUnityDBHelper.getInstance(activity.getApplicationContext()).
                         updateUserBlockStatus(contactId, status);
+                checkIfRequestStatusNotDefaultThenUpdateRequestStatus(phoneNumber);
             } else {
                 //nothing
             }
@@ -159,13 +158,13 @@ public class BlockUnblockUserHelper {
         @Override
         protected void onPostExecute(Void aVoid) {
             if (success == true) {
-                postActionOnBlockOrUnblock(status, menu);
+                postActionOnBlockOrUnblock(status, menu, phoneNumber);
             } else {
                 if (null != blockUnblockListener) {
                     if (blockStatus) {
                         blockUnblockListener.onUnblock(false);
                     } else {
-                        blockUnblockListener.onBlock(false);
+                        blockUnblockListener.onBlock(false, phoneNumber);
                     }
                 }
                 Toast.makeText(activity.getApplicationContext(), "failed !!", Toast.LENGTH_SHORT).show();
@@ -174,6 +173,15 @@ public class BlockUnblockUserHelper {
             progressDialog.dismiss();
         }
 
+    }
+
+    private void checkIfRequestStatusNotDefaultThenUpdateRequestStatus(String phoneNumber) {
+        int requestId = SportsUnityDBHelper.getInstance(activity).checkJidForPendingRequest(phoneNumber);
+        if (requestId == Contacts.REQUEST_BLOCKED) {
+            SportsUnityDBHelper.getInstance(activity).updateContactFriendRequestStatus(phoneNumber, Contacts.PENDING_REQUESTS_TO_PROCESS);
+        } else {
+            // do nothing
+        }
     }
 
     public void addBlockUnblockListener(BlockUnblockListener listener) {
@@ -186,7 +194,7 @@ public class BlockUnblockUserHelper {
 
     public interface BlockUnblockListener {
 
-        public void onBlock(boolean success);
+        public void onBlock(boolean success, String phoneNumber);
 
         public void onUnblock(boolean success);
     }

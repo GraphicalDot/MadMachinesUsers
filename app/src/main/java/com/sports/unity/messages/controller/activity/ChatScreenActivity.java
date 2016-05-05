@@ -38,7 +38,6 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPConnectionUtil;
-import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.UserProfileActivity;
 import com.sports.unity.common.model.FontTypeface;
@@ -210,7 +209,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     }
 
                 });
-            } else if (id == ActivityActionHandler.EVENT_FRIEND_REQUEST_SENT) {
+            } else if (id == ActivityActionHandler.EVENT_FRIEND_REQUEST_SENT || id == ActivityActionHandler.EVENT_FRIEND_REQUEST_RECEIVED) {
                 ChatScreenActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -801,7 +800,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             }
 
         } else if (userImageBytes != null) {
-            userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
+            if (userImageBytes.length > 0) {
+                userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
+            } else {
+                userPic.setImageResource(R.drawable.ic_user);
+            }
         } else {
             userPic.setImageResource(R.drawable.ic_user);
         }
@@ -1435,7 +1438,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     @Override
-    public void onBlock(boolean success) {
+    public void onBlock(boolean success, String phoneNumber) {
         if (success) {
             findViewById(R.id.add_block_layout).setVisibility(View.GONE);
             initAddBlockView();

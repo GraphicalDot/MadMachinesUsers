@@ -449,17 +449,21 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactChatEntry.COLUMN_ID,
                 ContactChatEntry.COLUMN_STATUS,
                 ContactChatEntry.COLUMN_AVAILABLE_STATUS,
-                ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST
+                ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST,
+                ContactChatEntry.COLUMN_BLOCK_USER
         };
 
-        String selection = ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST + " = " + Contacts.PENDING_REQUESTS_TO_PROCESS + " AND " + ContactChatEntry.COLUMN_GROUP_CHAT + " = ? ";
-        String[] selectionArgs = new String[]{"0"};
+        String selection = ContactChatEntry.COLUMN_PENDING_FRIEND_REQUEST + " = " + Contacts.PENDING_REQUESTS_TO_PROCESS
+                + " AND " + ContactChatEntry.COLUMN_GROUP_CHAT + " = ? "
+                + " AND " + ContactChatEntry.COLUMN_BLOCK_USER + " !=  ? ";        // we dont want to accept requests of blocked contacts from people around me
+        String[] selectionArgs = new String[]{"0", "1"};
         String sortOrder = ContactChatEntry.COLUMN_NAME + " COLLATE NOCASE ASC ";
 
         Cursor c = db.query(ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, sortOrder);
         if (c.moveToFirst()) {
             do {
-                list.add(new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5), c.getInt(6), c.getInt(7)));
+                boolean blockstatus = c.getInt(8) > 0;
+                list.add(new Contacts(c.getString(0), c.getString(1), c.getString(2), c.getBlob(3), c.getInt(4), c.getString(5), c.getInt(6), c.getInt(7), blockstatus));
             } while (c.moveToNext());
         }
         c.close();

@@ -4,17 +4,18 @@ import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.PermissionUtil;
+import com.sports.unity.messages.controller.BlockUnblockUserHelper;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.peoplearound.PeopleAroundActivity;
 import com.sports.unity.util.ActivityActionHandler;
@@ -25,7 +26,7 @@ import com.sports.unity.util.Constants;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class FriendRequestsActivity extends CustomAppCompatActivity {
+public class FriendRequestsActivity extends CustomAppCompatActivity implements BlockUnblockUserHelper.BlockUnblockListener {
 
     public static final String DUMMY_JABBER_ID = "dummy_friend_request_id";
 
@@ -152,4 +153,26 @@ public class FriendRequestsActivity extends CustomAppCompatActivity {
         });
     }
 
+    @Override
+    public void onBlock(boolean success, String jid) {
+        ArrayList<Contacts> list = ((FriendRequestsActivityAdapter) listView.getAdapter()).getContactsArrayList();
+        for (Contacts contact : list) {
+            if (contact.jid.equals(jid)) {
+                contact.requestStatus = Contacts.REQUEST_BLOCKED;
+                break;
+            }
+        }
+        FriendRequestsActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((FriendRequestsActivityAdapter) listView.getAdapter()).notifyDataSetChanged();
+            }
+        });
+        SportsUnityDBHelper.getInstance(getApplicationContext()).updateContactFriendRequestStatus(jid, Contacts.REQUEST_BLOCKED);
+    }
+
+    @Override
+    public void onUnblock(boolean success) {
+        Toast.makeText(getApplicationContext(), "block operation was unsuccesful, check your internet connection and try again", Toast.LENGTH_SHORT).show();
+    }
 }
