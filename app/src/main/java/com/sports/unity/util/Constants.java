@@ -90,6 +90,7 @@ public class Constants {
 
     public static final String IS_OWN_PROFILE = "is_own_profile";
     public static final String INTENT_TEAM_LEAGUE_DETAIL_EXTRA = "team_league_detail_extra";
+
     public static final int REQUEST_CODE_PICK_IMAGE = 2201;
     public static final int REQUEST_CODE_SCORE = 1298;
     public static final int REQUEST_CODE_NEWS = 1397;
@@ -104,6 +105,8 @@ public class Constants {
     public static final int REQUEST_CODE_GALLERY_STORAGE_PERMISSION = 105;
     public static final int REQUEST_CODE_RECORD_AUDIO_PERMISSION = 106;
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 107;
+    public static final int REQUEST_CODE_BLANK = 108;
+
     public static final String PLAYER_NAME = "player_name";
     public static final String INTENT_KEY_TOSS = "toss";
     public static final String INTENT_KEY_MATCH_NAME = "match_name";

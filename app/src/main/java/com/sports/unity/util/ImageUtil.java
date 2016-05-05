@@ -451,7 +451,6 @@ public class ImageUtil {
                 mimeType = contentType.substring(0, contentType.indexOf("/"));
             }
         }
-        Log.i("URI", mimeType);
         return mimeType;
     }
 

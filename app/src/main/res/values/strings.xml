@@ -182,6 +182,7 @@ message to verify your mobile number.</string>
     <string name="read_sms_permission_message">We need access to your messages to auto fetch OTP.</string>
     <string name="camera_permission_message">We need to access your camera to click images</string>
     <string name="gallery_permission_message">We need to access your photo gallery to complete this action.</string>
+    <string name="external_storage_permission_message">We need to access your external storage to complete this action.</string>
     <string name="audio_permission_message">We need to access your microphone to record audio.</string>
     <string name="location_permission_message">We need to access your location to find people around you.</string>
     <string name="permission_denied">Permissions were not granted.</string>

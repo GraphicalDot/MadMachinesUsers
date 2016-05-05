@@ -1,6 +1,7 @@
 package com.sports.unity.Database;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -15,7 +16,9 @@ import android.provider.MediaStore;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.sports.unity.R;
 import com.sports.unity.common.model.PermissionUtil;
+import com.sports.unity.util.Constants;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -23,6 +26,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
@@ -357,6 +361,34 @@ public class DBUtil {
         }
 
 //        context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse("file://"+ Environment.getExternalStorageDirectory())));
+    }
+
+    public static boolean isPermissionAvailable(Context context, String fileName){
+        boolean available = false;
+        if ( DBUtil.isExternalFile(fileName) ) {
+            if( PermissionUtil.getInstance().isPermissionGranted(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) ) {
+                available = true;
+            } else {
+                //nothing
+            }
+        } else {
+            available = true;
+        }
+        return available;
+    }
+
+    public static boolean requestPermission(Activity activity, String fileName){
+        boolean available = false;
+        if ( DBUtil.isExternalFile(fileName) ) {
+            if( PermissionUtil.getInstance().requestPermission(activity, new ArrayList<String>(Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE)), activity.getString(R.string.external_storage_permission_message), Constants.REQUEST_CODE_BLANK) ) {
+                available = true;
+            } else {
+                //nothing
+            }
+        } else {
+            available = true;
+        }
+        return available;
     }
 
     private static boolean isExternalFile(String fileName){
