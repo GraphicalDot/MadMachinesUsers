@@ -1,32 +1,53 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context="com.sports.unity.messages.controller.activity.ForwardSelectedItems">
 
-    <include
-        android:id="@+id/tool_bar"
-        layout="@layout/toolbar_forward_contact"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:minHeight="?android:attr/actionBarSize" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <com.sports.unity.common.view.SlidingTabLayout
-        android:id="@+id/tabs"
+        <include
+            android:id="@+id/tool_bar"
+            layout="@layout/toolbar_forward_contact"
+            android:layout_width="match_parent"
+            android:layout_height="?android:attr/actionBarSize"
+            android:minHeight="?android:attr/actionBarSize" />
+
+        <com.sports.unity.common.view.SlidingTabLayout
+            android:id="@+id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/app_theme_blue"
+            android:elevation="@dimen/toolbar_elevation" />
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+        <!--android:id="@+id/fragment_container"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" />-->
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/grant_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/app_theme_blue"
-        android:elevation="@dimen/toolbar_elevation" />
+        android:layout_height="match_parent"
+        android:background="@color/floating_button_tap_background"
+        android:clickable="true">
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/container"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--android:id="@+id/fragment_container"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent" />-->
-
-</LinearLayout>
+        <com.sports.unity.common.view.CustomRobotoRegularTextView
+            android:id="@+id/grant_permission"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:text="Please grant the permission first."
+            android:textSize="@dimen/font_size_medium" />
+    </FrameLayout>
+</FrameLayout>

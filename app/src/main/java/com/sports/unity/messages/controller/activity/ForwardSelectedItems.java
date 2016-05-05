@@ -15,6 +15,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
+import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
@@ -51,13 +53,14 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
     private SlidingTabLayout tabs;
-
+    private FrameLayout grantLayout;
     private int filesNotSent = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forward_selected_items);
+        grantLayout = (FrameLayout) findViewById(R.id.grant_layout);
         initToolbar();
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -81,12 +84,18 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
         screenWidth = this.getResources().getDisplayMetrics().widthPixels;
 
         if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+            grantLayout.setVisibility(View.GONE);
             checkForImplicitIntent();
         } else {
-            if (PermissionUtil.getInstance().requestPermission(this, new ArrayList<String>(Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE)), getResources().getString(R.string.gallery_permission_message), Constants.REQUEST_CODE_GALLERY_STORAGE_PERMISSION)) {
+            if (!PermissionUtil.getInstance().isPermissionGranted(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                PermissionUtil.getInstance().requestPermission(this, new ArrayList<String>(Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE)), getResources().getString(R.string.gallery_permission_message), Constants.REQUEST_CODE_GALLERY_STORAGE_PERMISSION);
+                grantLayout.setVisibility(View.VISIBLE);
+            } else {
+                grantLayout.setVisibility(View.GONE);
                 checkForImplicitIntent();
             }
         }
+
 
     }
 
@@ -132,8 +141,8 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
             }
 
         } else {
-
-            dataList = intent.getParcelableArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS);
+            ArrayList<ShareableData> data = intent.getParcelableArrayListExtra(Constants.INTENT_FORWARD_SELECTED_IDS);
+            dataList.addAll(data);
         }
 
         if (dataList.isEmpty()) {
@@ -161,7 +170,8 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
         if (URI != null) {
             Log.i("URI", URI.toString());
             String filename = DBUtil.getUniqueFileName(SportsUnityDBHelper.MIME_TYPE_AUDIO, false);
-            if (ImageUtil.getMimeType(URI).contains("image")) {
+            String mimeType = ImageUtil.getMimeType(ForwardSelectedItems.this, URI);
+            if (mimeType.contains("image")) {
                 try {
 
                     String path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Images.Media.DATA);
@@ -173,14 +183,14 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
                     e.printStackTrace();
                 }
 
-            } else if (ImageUtil.getMimeType(URI).contains("audio")) {
+            } else if (mimeType.contains("audio")) {
 
                 String path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Audio.Media.DATA);
                 byte[] content = getByteArrayFromPath(path);
                 DBUtil.writeContentToExternalFileStorage(getApplicationContext(), filename, content, SportsUnityDBHelper.MIME_TYPE_AUDIO);
                 dataList.add(new ShareableData(SportsUnityDBHelper.MIME_TYPE_AUDIO, "", filename));
 
-            } else if (ImageUtil.getMimeType(URI).contains("video")) {
+            } else if (mimeType.contains("video")) {
 
                 String path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Video.Media.DATA);
                 byte[] content = getByteArrayFromPath(path);
@@ -343,9 +353,12 @@ public class ForwardSelectedItems extends CustomAppCompatActivity implements Act
         if (requestCode == Constants.REQUEST_CODE_GALLERY_STORAGE_PERMISSION) {
             if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
                 checkForImplicitIntent();
+                grantLayout.setVisibility(View.GONE);
+                Toast.makeText(getApplicationContext(), "Choose a contact.", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(getApplicationContext(), " Permissions were not granted ", Toast.LENGTH_LONG).show();
-                finish();
+                grantLayout.setVisibility(View.VISIBLE);
+                PermissionUtil.getInstance().requestPermission(this, new ArrayList<String>(Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE)), getResources().getString(R.string.gallery_permission_message), Constants.REQUEST_CODE_GALLERY_STORAGE_PERMISSION);
+                Toast.makeText(getApplicationContext(), " Permissions were not granted", Toast.LENGTH_LONG).show();
             }
         }
     }

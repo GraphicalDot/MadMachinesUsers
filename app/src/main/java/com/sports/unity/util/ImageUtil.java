@@ -11,6 +11,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.MediaStore;
+import android.provider.OpenableColumns;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
 import android.renderscript.RenderScript;
@@ -402,43 +403,49 @@ public class ImageUtil {
 
     public static final long getFileSize(Context context, Uri URI, String scheme) {
         String path = null;
+        long fileSizeInBytes = 0;
         if (scheme.equals("content")) {
-            if (getMimeType(URI).equals("image")) {
-                path = getFilePathFromURI(context, URI, MediaStore.Images.Media.DATA);
-            } else if (getMimeType(URI).equals("audio")) {
-                path = getFilePathFromURI(context, URI, MediaStore.Audio.Media.DATA);
-            } else if (getMimeType(URI).equals("video")) {
-                path = getFilePathFromURI(context, URI, MediaStore.Video.Media.DATA);
-            }
+            Cursor returnCursor =
+                    context.getContentResolver().query(URI, null, null, null, null);
+    /*
+     * Get the column indexes of the data in the Cursor,
+     * move to the first row in the Cursor, get the data,
+     * and display it.
+     */
+            int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+            returnCursor.moveToFirst();
+            fileSizeInBytes = returnCursor.getLong(sizeIndex);
         } else if (scheme.equals("file")) {
             path = URI.getPath();
+            File f = new File(path);
+            fileSizeInBytes = f.length();
         }
-        File f = new File(path);
-        long fileSizeInBytes = f.length();
+        Log.d("max","FILE SIZE>> "+fileSizeInBytes);
         return fileSizeInBytes;
     }
 
     public static final String getFilePathFromURI(Context context, Uri contentUri, String meta) {
         String[] proj = {meta};
         Cursor cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
-        int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        int column_index = cursor.getColumnIndexOrThrow(meta);
         cursor.moveToFirst();
         Log.i("filepath", cursor.getString(column_index));
         return cursor.getString(column_index);
     }
 
-    public static final String getMimeType(Uri URI) {
-        String mimeType = null;
+    public static final String getMimeType(Context ctx, Uri URI) {
+        String mimeType=null;
         if (URI != null) {
             String scheme = URI.getScheme();
             if (scheme.equals("content")) {
-                if (URI.getPath().contains("image")) {
+               /* if (URI.getPath().contains("image")) {
                     mimeType = "image";
                 } else if (URI.getPath().contains("video")) {
                     mimeType = "video";
                 } else if (URI.getPath().contains("audio")) {
                     mimeType = "audio";
-                }
+                }*/
+                mimeType = ctx.getContentResolver().getType(URI);
             } else if (scheme.equals("file")) {
                 String contentType = URLConnection.guessContentTypeFromName(URI.getPath());
                 mimeType = contentType.substring(0, contentType.indexOf("/"));

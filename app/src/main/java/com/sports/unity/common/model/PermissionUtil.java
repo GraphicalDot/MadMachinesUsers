@@ -119,14 +119,15 @@ public class PermissionUtil {
         }
         if (isGranted) {
             final Snackbar sb = Snackbar.make(activity.findViewById(android.R.id.content), message,
-                    Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.allow, new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            ActivityCompat.requestPermissions(activity,
-                                    permission.toArray(new String[permission.size()]), requestCode);
-                        }
-                    });
+                    Snackbar.LENGTH_INDEFINITE);
+            sb.setAction(R.string.allow, new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sb.dismiss();
+                    ActivityCompat.requestPermissions(activity,
+                            permission.toArray(new String[permission.size()]), requestCode);
+                }
+            });
             View v = sb.getView();
             FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) v.getLayoutParams();
             params.gravity = Gravity.TOP;
@@ -139,7 +140,6 @@ public class PermissionUtil {
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    sb.dismiss();
                 }
             });
         } else {

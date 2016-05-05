@@ -6,7 +6,9 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -429,7 +431,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         getIntentExtras();
 
         boolean isPending = SportsUnityDBHelper.getInstance(this).isRequestPending(jabberId);
-        Log.d("max", "is Pending>> " + isPending);
         clearUnreadCount();
         initToolbar();
         hideStatusIfUserBlocked();
@@ -437,7 +438,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         final Handler mHandler = new Handler();
 
 //        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
-//            Log.d("dmax", "Already Connected CHat");
 //            isChatInitialized = true;
 //            getChatThread();
 //        } else {
@@ -726,6 +726,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         if (filesNotSent > 0) {
             Toast.makeText(getApplicationContext(), getResources().getQuantityString(R.plurals.file_count, filesNotSent, filesNotSent), Toast.LENGTH_LONG).show();
         }
+        messageList.clear();
+        messageList = null;
     }
 
     private void populateMessagesOnScreen() {
@@ -1056,14 +1058,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         final Uri URI = data.getData();
         long filesize = ImageUtil.getFileSize(getApplicationContext(), URI, URI.getScheme());
         String path = null;
-        if (ImageUtil.getMimeType(URI).equals("image")) {
+        String mimeType = ImageUtil.getMimeType(ChatScreenActivity.this, URI);
+        if (mimeType.contains("image")) {
             if (filesize > 5120 && filesize <= 10485760) {
                 path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Images.Media.DATA);
                 sendMediaFile(URI, path);
             } else {
                 filesNotSent++;
             }
-        } else if (ImageUtil.getMimeType(URI).equals("video")) {
+        } else if (mimeType.contains("video")) {
             if (filesize > 51200 && filesize <= 10485760) {
                 path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Video.Media.DATA);
                 sendMediaFile(URI, path);
@@ -1097,14 +1100,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
                         long filesize = ImageUtil.getFileSize(getApplicationContext(), URI, URI.getScheme());
                         String path = null;
-                        if (ImageUtil.getMimeType(URI).equals("image")) {
+                        String mimeType = ImageUtil.getMimeType(ChatScreenActivity.this, URI);
+                        if (mimeType.contains("image")) {
                             if (filesize > 5120 && filesize <= 10485760) {
                                 path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Images.Media.DATA);
                                 sendMediaFile(URI, path);
                             } else {
                                 filesNotSent++;
                             }
-                        } else if (ImageUtil.getMimeType(URI).equals("video")) {
+                        } else if (mimeType.contains("video")) {
                             if (filesize > 51200 && filesize <= 10485760) {
                                 path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Video.Media.DATA);
                                 sendMediaFile(URI, path);
@@ -1133,7 +1137,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
                 @Override
                 public Object process() {
-                    hasVideoContent = ImageUtil.getMimeType(URI).equals("video");
+                    hasVideoContent = ImageUtil.getMimeType(ChatScreenActivity.this,URI).contains("video");
 
                     String fileName = null;
                     try {
