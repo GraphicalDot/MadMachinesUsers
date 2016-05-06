@@ -869,7 +869,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         public View mView = null;
         private TextView tvDayName;
         private TextView tvLeagueName;
-        private CardView rvChild;
+        private ViewGroup rvChild;
         private ImageView ivSportsIcon;
         private RelativeLayout leagueLayout;
 
@@ -905,7 +905,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                 leagueLayout = (RelativeLayout) view.findViewById(R.id.league_layout);
                 tvLeagueName = (TextView) view.findViewById(R.id.league_name);
                 ivSportsIcon = (ImageView) view.findViewById(R.id.iv_league);
-                rvChild = (CardView) view.findViewById(R.id.child_rv);
+                rvChild = (ViewGroup) view.findViewById(R.id.child_rv);
                 t1flag = (ImageView) rvChild.findViewById(R.id.t1flag);
                 team1 = (TextView) rvChild.findViewById(R.id.team1);
                 team_score = (TextView) rvChild.findViewById(R.id.team_score);
