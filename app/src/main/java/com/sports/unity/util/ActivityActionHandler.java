@@ -11,6 +11,7 @@ public class ActivityActionHandler {
 
     public static final String CHAT_SCREEN_KEY = "chat_screen_key";
     public static final String REQEUSTS_SCREEN_KEY = "requests_screen_key";
+    public static final String USER_PROFILE_KEY = "user_profile_key";
     public static final String CHAT_LIST_KEY = "chat_list_key";
     public static final String CHAT_OTHERS_LIST_KEY = "chat_list_others_key";
     public static final String UNREAD_COUNT_KEY = "unread_count";
@@ -214,14 +215,14 @@ public class ActivityActionHandler {
         return success;
     }
 
-    public boolean receivedRequestStatusEvent(String key, String filter, Object data) {
+    public boolean receivedRequestStatusEvent(String key, String filter, Object data, int EVENT) {
         boolean success = false;
 
         ActivityActionHandler activityActionHandler = ActivityActionHandler.getInstance();
         ActivityActionListener actionListener = activityActionHandler.getActionListener(key, filter);
 
         if (actionListener != null) {
-            actionListener.handleAction(EVENT_FRIEND_REQUEST_SENT, data);
+            actionListener.handleAction(EVENT, data);
             success = true;
         }
 

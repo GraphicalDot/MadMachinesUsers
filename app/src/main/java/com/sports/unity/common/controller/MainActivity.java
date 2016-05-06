@@ -333,6 +333,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 invalidateOptionsMenu();
+                pendingRequestsCount.setVisibility(View.GONE);
             }
 
             @Override

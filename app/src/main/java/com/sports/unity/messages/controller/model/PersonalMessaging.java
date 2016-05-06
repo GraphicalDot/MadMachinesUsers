@@ -354,11 +354,21 @@ public class PersonalMessaging {
                 String jid = sportsUnityDBHelper.getContact(contactId).jid;
                 if (receiptId.contains("REQUEST")) {
                     sportsUnityDBHelper.updateContactFriendRequestStatus(jid, Contacts.WAITING_FOR_REQUEST_ACCEPTANCE);
-                    ActivityActionHandler.getInstance().dispatchRequestStatusEvent(ActivityActionHandler.CHAT_SCREEN_KEY, jid, "Request Sent succesfully");
+                    boolean success = ActivityActionHandler.getInstance().dispatchRequestStatusEvent(ActivityActionHandler.CHAT_SCREEN_KEY, jid, "Request Sent succesfully");
+                    if (success) {
+                        //do nothing
+                    } else {
+                        ActivityActionHandler.getInstance().dispatchRequestStatusEvent(ActivityActionHandler.USER_PROFILE_KEY, jid, "REQUEST SENT");
+                    }
                 } else if (receiptId.contains("ACCEPT")) {
                     sportsUnityDBHelper.updateContactFriendRequestStatus(jid, Contacts.REQUEST_ACCEPTED);
                     sportsUnityDBHelper.updateContactAvailability(jid);
-                    ActivityActionHandler.getInstance().acceptRequestStatusEvent(ActivityActionHandler.REQEUSTS_SCREEN_KEY, FriendRequestsActivity.DUMMY_JABBER_ID, jid);
+                    boolean success = ActivityActionHandler.getInstance().acceptRequestStatusEvent(ActivityActionHandler.REQEUSTS_SCREEN_KEY, FriendRequestsActivity.DUMMY_JABBER_ID, jid);
+                    if (success) {
+                        //do nothing
+                    } else {
+                        ActivityActionHandler.getInstance().acceptRequestStatusEvent(ActivityActionHandler.USER_PROFILE_KEY, jid, null);
+                    }
                 }
             } else {
                 sportsUnityDBHelper.updateServerReceived(receiptId);
@@ -550,15 +560,15 @@ public class PersonalMessaging {
         }
     }
 
-    public boolean acceptFriendRequest(Contacts contact) {
+    public boolean acceptFriendRequest(String jid) {
         boolean success = false;
         Message message = new Message();
         message.setStanzaId(message.getStanzaId().concat("ACCEPT"));
-        message.setTo(contact.jid.concat("@mm.io"));
+        message.setTo(jid.concat("@mm.io"));
         message.setBody("acceptance message");
         try {
             XMPPClient.getConnection().sendStanza(message);
-            sportsUnityDBHelper.createRequestStatusEntry(sportsUnityDBHelper.getContactIdFromJID(contact.jid), message.getStanzaId());
+            sportsUnityDBHelper.createRequestStatusEntry(sportsUnityDBHelper.getContactIdFromJID(jid), message.getStanzaId());
             success = true;
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
@@ -595,13 +605,14 @@ public class PersonalMessaging {
             } else {
                 if (contact.availableStatus != Contacts.AVAILABLE_NOT) {
                     if (contact.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS) {
-                        acceptFriendRequest(contact);
+                        acceptFriendRequest(contact.jid);
                     } else {
                         sportsUnityDBHelper.updateContactFriendRequestStatus(jid, Contacts.PENDING_REQUESTS_TO_PROCESS);
-                        boolean success = ActivityActionHandler.getInstance().receivedRequestStatusEvent(ActivityActionHandler.CHAT_SCREEN_KEY, jid, " friend Request received from " + contact.getName());
+                        boolean success = ActivityActionHandler.getInstance().receivedRequestStatusEvent(ActivityActionHandler.CHAT_SCREEN_KEY, jid, " friend Request received from " + contact.getName(), ActivityActionHandler.EVENT_FRIEND_REQUEST_RECEIVED);
                         if (success) {
                             //do nothing
                         } else {
+                            ActivityActionHandler.getInstance().receivedRequestStatusEvent(ActivityActionHandler.USER_PROFILE_KEY, jid, "ACCEPT FRIEND", ActivityActionHandler.EVENT_FRIEND_REQUEST_RECEIVED);
                             displayNotificationForFriendRequest(contact);
                         }
                     }
@@ -614,10 +625,11 @@ public class PersonalMessaging {
                 sportsUnityDBHelper.updateContactFriendRequestStatus(jid, Contacts.REQUEST_ACCEPTED);
                 sportsUnityDBHelper.updateContactAvailability(jid);
                 Contacts contact = sportsUnityDBHelper.getContactByJid(jid);
-                boolean success = ActivityActionHandler.getInstance().receivedRequestStatusEvent(ActivityActionHandler.CHAT_SCREEN_KEY, jid, contact.getName() + " has accepted your friend request ");
+                boolean success = ActivityActionHandler.getInstance().receivedRequestStatusEvent(ActivityActionHandler.CHAT_SCREEN_KEY, jid, contact.getName() + " has accepted your friend request ", ActivityActionHandler.EVENT_FRIEND_REQUEST_ACCEPTED);
                 if (success) {
                     //do nothing
                 } else {
+                    ActivityActionHandler.getInstance().receivedRequestStatusEvent(ActivityActionHandler.USER_PROFILE_KEY, jid, null, ActivityActionHandler.EVENT_FRIEND_REQUEST_ACCEPTED);
                     displayNotificationForFriendRequestAccepted(contact);
                 }
             }

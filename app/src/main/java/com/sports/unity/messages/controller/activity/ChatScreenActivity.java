@@ -154,6 +154,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     private Menu menu = null;
 
+    private Handler removeViewHandler;
+    private TextView friendRequestStatus;
+    private LinearLayout addBlockLayout;
+
     private SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
     private BlockUnblockUserHelper blockUnblockUserHelper = null;
     private ChatKeyboardHelper chatKeyboardHelper = null;
@@ -211,16 +215,18 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     }
 
                 });
-            } else if (id == ActivityActionHandler.EVENT_FRIEND_REQUEST_SENT || id == ActivityActionHandler.EVENT_FRIEND_REQUEST_RECEIVED) {
+            } else if (id == ActivityActionHandler.EVENT_FRIEND_REQUEST_SENT
+                    || id == ActivityActionHandler.EVENT_FRIEND_REQUEST_RECEIVED
+                    || id == ActivityActionHandler.EVENT_FRIEND_REQUEST_ACCEPTED) {
                 ChatScreenActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        TextView friendRequestStatus = (TextView) findViewById(R.id.request_status);
-                        if (friendRequestStatus.getVisibility() == View.VISIBLE) {
-                            friendRequestStatus.setText((CharSequence) object);
-                        }
+                        friendRequestStatus.setVisibility(View.VISIBLE);
+                        addBlockLayout.setVisibility(View.GONE);
+
+                        friendRequestStatus.setText((CharSequence) object);
                         long milliseconds = 5000;
-                        removeRequestStatusFromWindow(milliseconds, friendRequestStatus);
+                        removeRequestStatusFromWindow(milliseconds);
                     }
                 });
             }
@@ -288,14 +294,22 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     };
 
-    private void removeRequestStatusFromWindow(long milliseconds, final TextView friendRequestStatus) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                friendRequestStatus.setVisibility(View.GONE);
-            }
-        }, milliseconds);
+    private void removeRequestStatusFromWindow(long milliseconds) {
+        if (removeViewHandler != null) {
+            removeViewHandler.removeCallbacks(postDelayedRunnableToRemoveViewFromWindow);
+            removeViewHandler.postDelayed(postDelayedRunnableToRemoveViewFromWindow, milliseconds);
+        } else {
+            removeViewHandler = new Handler();
+            removeViewHandler.postDelayed(postDelayedRunnableToRemoveViewFromWindow, milliseconds);
+        }
     }
+
+    Runnable postDelayedRunnableToRemoveViewFromWindow = new Runnable() {
+        @Override
+        public void run() {
+            friendRequestStatus.setVisibility(View.GONE);
+        }
+    };
 
     @Override
     protected void onDestroy() {
@@ -373,6 +387,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         NotificationHandler.dismissNotification(getBaseContext());
         NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatID));
 
+        initAddBlockView();
         //TODO update message list
 //        activityActionListener.handleAction(0);
     }
@@ -428,13 +443,14 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         mSend = (Button) findViewById(R.id.send);
         mSend.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
 
+        friendRequestStatus = (TextView) findViewById(R.id.request_status);
+
         getIntentExtras();
 
         boolean isPending = SportsUnityDBHelper.getInstance(this).isRequestPending(jabberId);
         clearUnreadCount();
         initToolbar();
         hideStatusIfUserBlocked();
-        initAddBlockView();
         final Handler mHandler = new Handler();
 
 //        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
@@ -452,7 +468,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void initAddBlockView() {
-        final LinearLayout addBlockLayout = (LinearLayout) findViewById(R.id.add_block_layout);
+        addBlockLayout = (LinearLayout) findViewById(R.id.add_block_layout);
         final TextView requestStatus = (TextView) findViewById(R.id.request_status);
         if ((availableStatus == Contacts.AVAILABLE_BY_OTHER_CONTACTS || availableStatus == Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME) && !blockUnblockUserHelper.isBlockStatus()) {
             int requestId = sportsUnityDBHelper.checkJidForPendingRequest(jabberId);
@@ -464,6 +480,9 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                 addBlockLayout.setVisibility(View.GONE);
                 requestStatus.setVisibility(View.VISIBLE);
                 requestStatus.setText(R.string.request_pending);
+            } else if (requestId == Contacts.REQUEST_ACCEPTED) {
+                addBlockLayout.setVisibility(View.GONE);
+                requestStatus.setVisibility(View.GONE);
             } else {
                 addBlockLayout.setVisibility(View.VISIBLE);
                 TextView addFriend = (TextView) findViewById(R.id.add_friend);
@@ -493,10 +512,12 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     }
                 });
             }
+        } else
 
-        } else {
+        {
             addBlockLayout.setVisibility(View.GONE);
         }
+
     }
 
     private void hideStatusIfUserBlocked() {
@@ -831,7 +852,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         chatID = getIntent().getIntExtra(INTENT_KEY_CHAT_ID, SportsUnityDBHelper.DEFAULT_ENTRY_ID);
         userImageBytes = getIntent().getByteArrayExtra(INTENT_KEY_IMAGE);
         otherChat = getIntent().getBooleanExtra(INTENT_KEY_NEARBY_CHAT, false);
-        availableStatus = getIntent().getIntExtra(Constants.INTENT_KEY_USER_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
+        availableStatus = getIntent().getIntExtra(INTENT_KEY_CONTACT_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
 
         if (!isGroupChat) {
             if (XMPPClient.getInstance().isConnectionAuthenticated()) {
@@ -1137,7 +1158,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
                 @Override
                 public Object process() {
-                    hasVideoContent = ImageUtil.getMimeType(ChatScreenActivity.this,URI).contains("video");
+                    hasVideoContent = ImageUtil.getMimeType(ChatScreenActivity.this, URI).contains("video");
 
                     String fileName = null;
                     try {
