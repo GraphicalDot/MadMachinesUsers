@@ -121,7 +121,11 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
     @Override
     public void onBackPressed() {
-        moveBack();
+        if( UserUtil.isFilterCompleted() ) {
+            //nothing
+        } else {
+            moveBack();
+        }
 
         super.onBackPressed();
     }
@@ -131,6 +135,13 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.gray1), android.graphics.PorterDuff.Mode.MULTIPLY);
 
         LinearLayout editNumberLayout = (LinearLayout) findViewById(R.id.editNumberLayout);
+        editNumberLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+        if( UserUtil.isFilterCompleted() ){
+            // when user re-verify its account. Don't allow to change phone number.
+            editNumberLayout.setVisibility(View.GONE);
+        } else {
+
+        }
         editNumberLayout.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -139,8 +150,6 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
             }
 
         });
-
-        editNumberLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
 
         TextView editNumberTextView = (TextView) findViewById(R.id.editNumber);
         editNumberTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());

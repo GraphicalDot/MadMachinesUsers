@@ -86,7 +86,7 @@ import static com.sports.unity.util.CommonUtil.getDeviceId;
 import static com.sports.unity.util.Constants.REQUEST_PARAMETER_KEY_APK_VERSION;
 import static com.sports.unity.util.Constants.REQUEST_PARAMETER_KEY_UDID;
 
-public class PeopleAroundActivity extends AppCompatActivity implements PeopleService,TokenRegistrationHandler.TokenRegistrationContentListener ,PlaceSelectionListener,PeopleAroundMeFragment.DataRequestService {
+public class PeopleAroundActivity extends AppCompatActivity implements PeopleService, TokenRegistrationHandler.TokenRegistrationContentListener, PlaceSelectionListener, PeopleAroundMeFragment.DataRequestService {
 
     private static final String REQUEST_LISTENER_KEY = "nearby_key";
     private static final String REQUEST_TAG = "nearby_tag";
@@ -123,8 +123,8 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     private ArrayList<Person> peopleFriends = new ArrayList<>();
     private ArrayList<Person> peopleSU = new ArrayList<>();
     private ArrayList<Person> peopleNeedHeading = new ArrayList<>();
-    private  ImageView refreshButton;
-    private Boolean refreshEnable= true;
+    private ImageView refreshButton;
+    private Boolean refreshEnable = true;
     private ProgressBar progress;
     private SlidingTabLayout tabs;
 
@@ -146,23 +146,18 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         locManager = LocManager.getInstance(getApplicationContext());
         locManager.buildApiClient();
-        // setCustomButtonsForNavigationAndUsers();
         hideSoftKeyboard();
         initToolbar();
         InitSeekbar();
-        //bindAutoComplete();
         userPrivacyUpdate();
         getLocation();
-        // getPeopleAroundMe(latLong.latitude, latLong.longitude);
 
-        int tab_index = 0;
         mViewPager = (ViewPager) findViewById(R.id.pager);
         String peopleAroundMeTitles[] = {getString(R.string.friends_tab), getString(R.string.su_users_tab), getString(R.string.same_interest)};
         int peopleAroundMeTabs = peopleAroundMeTitles.length;
 
-        peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs,peopleFriends,peopleSU,peopleNeedHeading);
+        peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs, peopleFriends, peopleSU, peopleNeedHeading);
         mViewPager.setAdapter(peopleAroundMeViewPagerAdapter);
-        tab_index = getIntent().getIntExtra("tab_index", 1);
 
         tabs.setDistributeEvenly(true);
         //tabs.setTabTextColor(R.color.filter_tab_selector);
@@ -175,10 +170,11 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
 
         tabs.setViewPager(mViewPager);
-        mViewPager.setCurrentItem(tab_index);
+
+        int position = getIntent().getIntExtra("tabPosition", 1);
+        mViewPager.setCurrentItem(position);
 
     }
-
 
 
     private ScoresContentHandler.ContentListener contentListener = new ScoresContentHandler.ContentListener() {
@@ -198,18 +194,18 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
                     peopleSU.clear();
                     peopleNeedHeading.clear();
                     Collections.sort(people);
-                    for(Person person : people){
-                        if(person.isFriend()){
+                    for (Person person : people) {
+                        if (person.isFriend()) {
                             peopleFriends.add(person);
-                        }else if(person.isCommonInterest()){
+                        } else if (person.isCommonInterest()) {
                             peopleNeedHeading.add(person);
-                        }else{
+                        } else {
                             peopleSU.add(person);
                         }
                     }
-                    for(Fragment fragment: getSupportFragmentManager().getFragments()){
-                        if(fragment instanceof DataNotifier) {
-                            DataNotifier listner = (DataNotifier)fragment;
+                    for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                        if (fragment instanceof DataNotifier) {
+                            DataNotifier listner = (DataNotifier) fragment;
                             listner.notifyPeoples();
                         }
                     }
@@ -349,7 +345,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         }
 
 
-
     }
 
     private void checkAndEnableLocation() {
@@ -384,9 +379,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     }
 
 
-
-
-
     private void setCurrentAddressOnToolbar(TextView titleAddress, TextView titleCity) {
         titleAddress.setText(getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_LOCATION));
         titleCity.setText(getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_STATE));
@@ -414,49 +406,8 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         return success;
     }
 
-    /*private void renderProfile(final Person person) {
-        LayoutInflater inflater = PeopleAroundActivity.this.getLayoutInflater();
-        View popupProfile = inflater.inflate(R.layout.chat_other_profile_layout, null);
-
-//        AlertDialog.Builder otherProfileBuilder = new AlertDialog.Builder(PeopleAroundMeMap.this);
-//        otherProfileBuilder.setView(popupProfile);
-        progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-
-            @Override
-            public void onCancel(DialogInterface dialog) {
-                profilefetching = false;
-            }
-
-        });
-//        otherProfileBuilder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-//
-//            @Override
-//            public void onDismiss(DialogInterface dialog) {
-//                profilefetching = false;
-//            }
-//
-//        });
-
-        progressDialog.setContentView(R.layout.chat_other_profile_layout);
-        progressDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        progressDialog.show();
-
-        progressDialog.findViewById(R.id.progressBarProfile).setVisibility(VISIBLE);
-
-//        int distance = (int) Math.round(Double.parseDouble(marker.getSnippet().substring(marker.getSnippet().indexOf(",") + 1, marker.getSnippet().length())));
-        int distance = person.getDistance();
-        new GetVcardForUser(popupProfile, distance, person).execute(person.getUsername());
-
-    }
-*/
     @Override
     public boolean showProfile(Person person) {
-        /*if (profilefetching == true) {
-            //nothing
-        } else {
-            profilefetching = true;
-            renderProfile(person);
-        }*/
         return false;
     }
 
@@ -666,6 +617,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             progressDialog.cancel();
         }
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -695,13 +647,13 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
     public void handleContent(String content) {
         try {
             JSONObject object = new JSONObject(content);
-            if(object!=null && !object.isNull("status") ){
+            if (object != null && !object.isNull("status")) {
 
-                if(200 == object.getInt("status") && !object.isNull("info") && object.getString("info").equalsIgnoreCase("Success")){
+                if (200 == object.getInt("status") && !object.isNull("info") && object.getString("info").equalsIgnoreCase("Success")) {
                 }
 
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
@@ -714,10 +666,11 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
     @Override
     public void cancelRequest() {
-        if(contentListener!=null){
+        if (contentListener != null) {
             contentListener = null;
         }
     }
+
     class FetchAndDisplayCurrentAddress extends AsyncTask<Void, Void, Void> {
 
         Location location = null;
@@ -753,6 +706,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             this.distance = distance;
             this.person = person;
         }
+
         @Override
         protected VCard doInBackground(String... param) {
             XMPPTCPConnection connection = XMPPClient.getInstance().getConnection();
@@ -772,6 +726,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
             }
             return card;
         }
+
         @Override
         protected void onPostExecute(VCard vCard) {
             if (success) {
@@ -794,7 +749,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
         latLong = place.getLatLng();
         getPeopleAroundMe(place.getLatLng().latitude, place.getLatLng().longitude);
     }
-
 
 
     @Override

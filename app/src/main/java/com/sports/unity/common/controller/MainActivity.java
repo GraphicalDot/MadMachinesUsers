@@ -333,6 +333,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 invalidateOptionsMenu();
+                pendingRequestsCount.setVisibility(View.GONE);
             }
 
             @Override
@@ -644,7 +645,8 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
             public void onClick(DialogInterface dialog, int which) {
                 UserUtil.setOtpSent(MainActivity.this, false);
                 UserUtil.setUserRegistered(MainActivity.this, false);
-                Intent intent = new Intent(MainActivity.this, EnterPhoneActivity.class);
+
+                Intent intent = new Intent(MainActivity.this, EnterOtpActivity.class);
                 startActivity(intent);
                 finish();
             }

@@ -142,7 +142,7 @@ public class FriendRequestsActivityAdapter extends ArrayAdapter<Contacts> {
     private void sendAcceptance(View v) {
         if (XMPPClient.getInstance().isConnectionAuthenticated()) {
             Contacts contact = contacts.get((Integer) v.getTag());
-            boolean success = PersonalMessaging.getInstance(context).acceptFriendRequest(contact);
+            boolean success = PersonalMessaging.getInstance(context).acceptFriendRequest(contact.jid);
             if (success) {
                 ((Button) v).setText(R.string.accepting_friend);
                 v.setEnabled(false);

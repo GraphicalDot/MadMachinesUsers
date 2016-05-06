@@ -126,14 +126,18 @@ public class FriendRequestsActivity extends CustomAppCompatActivity implements B
 
     private void openPeopleAroundMe() {
         if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {  // android below marshmallow so not runtime permissiosn required
-            Intent intent = new Intent(FriendRequestsActivity.this, PeopleAroundActivity.class);
-            startActivity(intent);
+            openActivity();
         } else {
             if (PermissionUtil.getInstance().requestPermission(FriendRequestsActivity.this, new ArrayList<String>(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)), getResources().getString(R.string.location_permission_message), Constants.REQUEST_CODE_LOCATION_PERMISSION)) {
-                Intent intent = new Intent(FriendRequestsActivity.this, PeopleAroundActivity.class);
-                startActivity(intent);
+                openActivity();
             }
         }
+    }
+
+    private void openActivity() {
+        Intent intent = new Intent(FriendRequestsActivity.this, PeopleAroundActivity.class);
+        intent.putExtra("tabPosition", 2);
+        startActivity(intent);
     }
 
     private void initToolbar() {

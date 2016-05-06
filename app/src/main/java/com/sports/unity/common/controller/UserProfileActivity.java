@@ -53,6 +53,8 @@ import com.sports.unity.messages.controller.model.Person;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.playerprofile.cricket.PlayerCricketBioDataActivity;
 import com.sports.unity.playerprofile.football.PlayerProfileView;
+import com.sports.unity.util.ActivityActionHandler;
+import com.sports.unity.util.ActivityActionListener;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
@@ -144,7 +146,43 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         public void onClick(View view) {
             onClickStatus(view);
         }
+    };
 
+    ActivityActionListener activityActionListener = new ActivityActionListener() {
+        @Override
+        public void handleAction(int id, Object object) {
+            final int eventId = id;
+            UserProfileActivity.this.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    requestId = SportsUnityDBHelper.getInstance(getApplicationContext()).checkJidForPendingRequest(getIntent().getStringExtra("jid"));
+                    if (eventId == ActivityActionHandler.EVENT_FRIEND_REQUEST_SENT) {
+                        toolbarActionButton.setText(REQUEST_SENT);
+                    } else if (eventId == ActivityActionHandler.EVENT_FRIEND_REQUEST_RECEIVED) {
+                        toolbarActionButton.setText(ACCEPT_REQUEST);
+                        Toast.makeText(getApplicationContext(), "Friend request received", Toast.LENGTH_SHORT).show();
+                    } else if (eventId == ActivityActionHandler.EVENT_FRIEND_REQUEST_ACCEPTED) {
+                        toolbarActionButton.setVisibility(View.GONE);
+                        Toast.makeText(getApplicationContext(), "You are now friends", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void handleAction(int id) {
+
+        }
+
+        @Override
+        public void handleMediaContent(int id, String mimeType, Object messageContent, Object mediaContent) {
+
+        }
+
+        @Override
+        public void handleMediaContent(int id, String mimeType, Object messageContent, String thumbnailImage, Object mediaContent) {
+
+        }
     };
 
     @Override
@@ -208,19 +246,23 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             @Override
             public void onClick(View v) {
                 if (requestId == Contacts.PENDING_REQUESTS_TO_PROCESS) {
-                    Toast.makeText(getApplicationContext(), "not implemented yet", Toast.LENGTH_SHORT).show();
+                    if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+                        boolean success = PersonalMessaging.getInstance(getApplicationContext()).acceptFriendRequest(getIntent().getStringExtra("jid"));
+                        if (success) {
+                            Toast.makeText(getApplicationContext(), "Accepting...", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getApplicationContext(), R.string.conn_not_authenticated, Toast.LENGTH_SHORT).show();
+                        }
+                    }
                 } else if (requestId == Contacts.DEFAULT_PENDNG_REQUEST_ID) {
-//                    if (XMPPClient.getInstance().isConnectionAuthenticated()) {
-//                        boolean success = PersonalMessaging.getInstance(getApplicationContext()).sendFriendRequest(getIntent().getStringExtra("jid"));
-//                        if (success) {
-//                            Toast.makeText(getApplicationContext(), "Request sent", Toast.LENGTH_SHORT).show();
-//                            requestId = SportsUnityDBHelper.getInstance(getApplicationContext()).checkJidForPendingRequest(getIntent().getStringExtra("jid"));
-//                            toolbarActionButton.setText(REQUEST_SENT);
-//                        }
-//                    } else {
-//                        Toast.makeText(getApplicationContext(), "check your internet connection and try again", Toast.LENGTH_SHORT).show();
-//                    }
-                    //TODO
+                    if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+                        boolean success = PersonalMessaging.getInstance(getApplicationContext()).sendFriendRequest(getIntent().getStringExtra("jid"));
+                        if (success) {
+                            Toast.makeText(getApplicationContext(), "Sending...", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(getApplicationContext(), R.string.conn_not_authenticated, Toast.LENGTH_SHORT).show();
+                    }
                 } else if (requestId == Contacts.WAITING_FOR_REQUEST_ACCEPTANCE) {
                     //do nothing as friend request has already been sent
                 }
@@ -247,12 +289,19 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     protected void onResume() {
         super.onResume();
         UserProfileHandler.getInstance().addContentListener(LISTENER_KEY, this);
+        ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.USER_PROFILE_KEY, getIntent().getStringExtra("jid"), activityActionListener);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         UserProfileHandler.getInstance().removeContentListener(LISTENER_KEY);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.USER_PROFILE_KEY, getIntent().getStringExtra("jid"));
     }
 
     private void onClickSaveButton() {

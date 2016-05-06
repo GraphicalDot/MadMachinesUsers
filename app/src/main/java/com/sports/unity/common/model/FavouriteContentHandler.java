@@ -59,19 +59,19 @@ public class FavouriteContentHandler {
     private static final String SEARCH_FOOTBALL_PLAYER_TAG = "fav_search_request_football_player_tag";
 
 
-    private static final String URL_FOOTBALL_LEAGUE = Constants.SCORE_BASE_URL + "/get_football_leagues";
-    private static final String URL_FOOTBALL_PLAYER = Constants.SCORE_BASE_URL + "/get_top_football_players";
-    private static final String URL_FOOTBALL_TEAM = Constants.SCORE_BASE_URL + "/get_top_football_teams";
-    private static final String URL_CRICKET_TEAM = Constants.SCORE_BASE_URL + "/v1/get_cricket_teams";
-    private static final String URL_CRICKET_PLAYER = Constants.SCORE_BASE_URL + "/top_cricket_players";
+    private static final String URL_FOOTBALL_LEAGUE = Constants.SCORE_BASE_URL + "get_football_leagues";
+    private static final String URL_FOOTBALL_PLAYER = Constants.SCORE_BASE_URL + "get_top_football_players";
+    private static final String URL_FOOTBALL_TEAM = Constants.SCORE_BASE_URL + "get_top_football_teams";
+    private static final String URL_CRICKET_TEAM = Constants.SCORE_BASE_URL + "v1/get_cricket_teams";
+    private static final String URL_CRICKET_PLAYER = Constants.SCORE_BASE_URL + "top_cricket_players";
 
 
-    private static final String URL_FOOTBALL_LEAGUE_SEARCH = Constants.SEARCH_BASE_URL + "/fav_league?league=";
+    private static final String URL_FOOTBALL_LEAGUE_SEARCH = Constants.SEARCH_BASE_URL + "fav_league?league=";
 
-    private static final String URL_CRICKET_TEAM_SEARCH = Constants.SEARCH_BASE_URL + "/fav_team?sport_type=cricket&team=";
-    private static final String URL_CRICKET_PLAYER_SEARCH = Constants.SEARCH_BASE_URL + "/fav_player?sport_type=cricket&player=";
-    private static final String URL_FOOTBALL_TEAM_SEARCH = Constants.SEARCH_BASE_URL + "/fav_team?sport_type=football&team=";
-    private static final String URL_FOOTBALL_PLAYER_SEARCH = Constants.SEARCH_BASE_URL + "/fav_player?sport_type=football&player=";
+    private static final String URL_CRICKET_TEAM_SEARCH = Constants.SEARCH_BASE_URL + "fav_team?sport_type=cricket&team=";
+    private static final String URL_CRICKET_PLAYER_SEARCH = Constants.SEARCH_BASE_URL + "fav_player?sport_type=cricket&player=";
+    private static final String URL_FOOTBALL_TEAM_SEARCH = Constants.SEARCH_BASE_URL + "fav_team?sport_type=football&team=";
+    private static final String URL_FOOTBALL_PLAYER_SEARCH = Constants.SEARCH_BASE_URL + "fav_player?sport_type=football&player=";
 
 
     private final String errorMessage = "Something went wrong";
