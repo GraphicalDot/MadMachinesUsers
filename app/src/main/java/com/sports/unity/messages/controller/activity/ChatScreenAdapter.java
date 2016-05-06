@@ -512,12 +512,17 @@ public class ChatScreenAdapter extends BaseAdapter implements StickyListHeadersA
 
             String content = message.textData;
             int separatorIndex = content.indexOf('/');
-            String folderName = content.substring(0, separatorIndex);
-            String name = content.substring(separatorIndex + 1);
+            String folderName = separatorIndex > 0 ? content.substring(0, separatorIndex) : "";
+            String name = separatorIndex > 0 ? content.substring(separatorIndex + 1) : "";
 
-            Stickers.getInstance().loadStickerFromAsset(activity, folderName, name);
+            Bitmap bitmap = null;
+            if( folderName.length() > 0 && name.length() > 0 ) {
+                Stickers.getInstance().loadStickerFromAsset(activity, folderName, name);
+                bitmap = Stickers.getInstance().getStickerBitmap(folderName, name);
+            } else {
+                //nothing
+            }
 
-            Bitmap bitmap = Stickers.getInstance().getStickerBitmap(folderName, name);
             if (bitmap != null) {
                 int size = activity.getResources().getDimensionPixelSize(R.dimen.sticker_msg_content_size);
                 image.setImageBitmap(bitmap);
