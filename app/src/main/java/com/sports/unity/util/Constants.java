@@ -16,7 +16,7 @@ public class Constants {
     private static final String NEWS_BASE_URL = BuildConfig.NEWS_BASE_URL;
     public static final String FOOTBALL_PLAYER_BASE_URL = BuildConfig.PLAYER_PROFILE_BASE_URL;
 
-    public static final String URL_NEWS_CONTENT = Constants.NEWS_BASE_URL + "mixed?";
+    public static final String URL_NEWS_CONTENT = Constants.NEWS_BASE_URL + "/mixed?";
 
     public static final String GAME_KEY_CRICKET = "cricket";
     public static final String GAME_KEY_FOOTBALL = "football";
