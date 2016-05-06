@@ -158,6 +158,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PeopleSer
 
         peopleAroundMeViewPagerAdapter = new PeopleAroundMeViewPagerAdapter(getSupportFragmentManager(), peopleAroundMeTitles, peopleAroundMeTabs, peopleFriends, peopleSU, peopleNeedHeading);
         mViewPager.setAdapter(peopleAroundMeViewPagerAdapter);
+        mViewPager.setOffscreenPageLimit(2);
 
         tabs.setDistributeEvenly(true);
         //tabs.setTabTextColor(R.color.filter_tab_selector);

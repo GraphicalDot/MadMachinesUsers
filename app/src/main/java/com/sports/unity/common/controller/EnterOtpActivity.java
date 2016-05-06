@@ -304,7 +304,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
             public void onTick(long millisUntilFinished) {
                 int progress = (int) ((lennghtInMillis - millisUntilFinished) / 1000);
                 mProgressBar.setProgress(progress);
-                seekMessage.setText("Your SMS should arive within " + millisUntilFinished / 1000 + " second.");
+                seekMessage.setText("Your SMS should arrive within " + millisUntilFinished / 1000 + " second.");
             }
 
             @Override
