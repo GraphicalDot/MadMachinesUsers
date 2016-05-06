@@ -16,16 +16,18 @@
         android:orientation="horizontal"
         android:paddingLeft="@dimen/horizontal_padding_very_small"
         android:paddingRight="@dimen/horizontal_padding_very_small"
-        android:paddingTop="@dimen/vertical_padding_very_small">
+        android:paddingTop="@dimen/vertical_padding_very_very_small"
+        >
 
-        <TextView
+        <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
+            android:paddingStart="@dimen/horizontal_padding_medium"
             android:gravity="center|center_horizontal"
             android:text="MATCH WINNER 2-WAY"
-            android:textColor="@color/gray1"
+            android:textColor="@color/score_dark_grey"
             android:textSize="@dimen/font_size_small_large" />
 
         <ImageView
@@ -38,14 +40,14 @@
             android:src="@drawable/ic_close_blk" />
     </LinearLayout>
     <TextView
-        android:paddingRight="@dimen/horizontal_padding_medium"
+        android:paddingBottom="@dimen/vertical_padding_very_very_small"
         android:id="@+id/value"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center|center_horizontal"
         android:text="PRE GAME ODDS"
         android:textColor="@color/gray1"
-        android:textSize="@dimen/font_size_small_large" />
+        android:textSize="@dimen/font_size_small_medium" />
 
     <View
         android:layout_width="wrap_content"

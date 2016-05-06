@@ -3,9 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/sv_swipe_football_match_lineup"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+
+
         <LinearLayout
             android:id="@+id/parent_layout"
             android:layout_width="match_parent"
@@ -134,7 +144,12 @@
 
             </LinearLayout>
         </LinearLayout>
+
+
+
     </ScrollView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <include
         android:id="@+id/error"

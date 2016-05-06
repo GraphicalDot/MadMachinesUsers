@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,8 +52,12 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
     private TextView tvCaptainFirst;
     private TextView tvCaptainSecond;
 
+
+
     private RecyclerView rvLineup;
     private RecyclerView rvSubstitutes;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private CompleteFootballLineUpAdapter completeFootballLineUpAdapter;
     private CompleteFootballLineUpAdapter completeFootballSubstituteUpAdapter;
@@ -114,23 +119,40 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
     }
 
     private void initView(View view) {
-        Context context = view.getContext();
+        try {
 
-        manageRootView = view.findViewById(R.id.parent_layout);
-        manageRootView.setVisibility(View.GONE);
+            Context context = view.getContext();
 
-        tvCaptainFirst=(TextView)view.findViewById(R.id.tv_team_first_captain);
-        tvCaptainSecond=(TextView)view.findViewById(R.id.tv_team_second_captain);
-        rvLineup = (RecyclerView) view.findViewById(R.id.rv_lineup);
-        rvLineup.setLayoutManager(new LinearLayoutManager(context, VERTICAL, true));
-        rvSubstitutes = (RecyclerView) view.findViewById(R.id.rv_substitutes);
-        rvSubstitutes.setLayoutManager(new LinearLayoutManager(context, VERTICAL, true));
-        rvSubstitutes.setNestedScrollingEnabled(false);
-        completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(lineUpList, context);
-        rvLineup.setAdapter(completeFootballLineUpAdapter);
-        rvLineup.setNestedScrollingEnabled(false);
-        completeFootballSubstituteUpAdapter = new CompleteFootballLineUpAdapter(substitutesList, context);
-        rvSubstitutes.setAdapter(completeFootballSubstituteUpAdapter);
+            manageRootView = view.findViewById(R.id.parent_layout);
+            manageRootView.setVisibility(View.GONE);
+
+            tvCaptainFirst = (TextView) view.findViewById(R.id.tv_team_first_captain);
+            tvCaptainSecond = (TextView) view.findViewById(R.id.tv_team_second_captain);
+            rvLineup = (RecyclerView) view.findViewById(R.id.rv_lineup);
+            rvLineup.setLayoutManager(new LinearLayoutManager(context, VERTICAL, true));
+            rvSubstitutes = (RecyclerView) view.findViewById(R.id.rv_substitutes);
+            rvSubstitutes.setLayoutManager(new LinearLayoutManager(context, VERTICAL, true));
+            rvSubstitutes.setNestedScrollingEnabled(false);
+            completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(lineUpList, context);
+            rvLineup.setAdapter(completeFootballLineUpAdapter);
+            rvLineup.setNestedScrollingEnabled(false);
+            completeFootballSubstituteUpAdapter = new CompleteFootballLineUpAdapter(substitutesList, context);
+            rvSubstitutes.setAdapter(completeFootballSubstituteUpAdapter);
+            swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_lineup);
+            swipeRefreshLayout.setVisibility(View.GONE);
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+                @Override
+                public void onRefresh() {
+                    requestContent();
+                }
+
+            });
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     private boolean handleContent(String content) {
@@ -304,10 +326,38 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
         }
 
         @Override
+        protected void showErrorLayout() {
+            if( manageRootView.getVisibility() == View.VISIBLE ) {
+                //nothing
+            } else {
+                super.showErrorLayout();
+            }
+        }
+
+        @Override
+        protected void showProgress() {
+            if( manageRootView.getVisibility() == View.VISIBLE ) {
+                //nothing
+            } else {
+                super.showProgress();
+            }
+        }
+
+        @Override
+        protected void hideProgress() {
+            super.hideProgress();
+
+            if( swipeRefreshLayout != null ){
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }
+
+        @Override
         public void changeUI(String tag) {
             boolean success = renderDisplay();
             if( success ){
                 manageRootView.setVisibility(View.VISIBLE);
+                swipeRefreshLayout.setVisibility(View.VISIBLE);
             } else {
                 showErrorLayout();
             }
