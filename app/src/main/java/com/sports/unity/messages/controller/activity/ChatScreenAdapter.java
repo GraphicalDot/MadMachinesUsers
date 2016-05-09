@@ -1,5 +1,6 @@
 package com.sports.unity.messages.controller.activity;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +33,7 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.messages.controller.model.Message;
 import com.sports.unity.messages.controller.model.Stickers;
 import com.sports.unity.messages.controller.model.ToolbarActionsForChatScreen;
@@ -44,6 +46,7 @@ import org.jivesoftware.smack.chat.Chat;
 import org.jivesoftware.smack.chat.ChatManager;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.io.File;
@@ -351,7 +354,7 @@ public class ChatScreenAdapter extends BaseAdapter implements StickyListHeadersA
 
             audioRecordingHelper.initUI(message.mediaFileName, holder, message.id);
 
-            if (message.mediaFileName != null && DBUtil.isFileExist(activity, message.mimeType, message.mediaFileName)) {
+            if (message.mediaFileName != null && DBUtil.isFileExist(activity, message.mimeType, message.mediaFileName) && DBUtil.isPermissionAvailable(activity, message.mediaFileName) ) {
                 holder.seekBar.setEnabled(true);
                 holder.seekBar.setOnSeekBarChangeListener(audioEventListener);
             } else {
@@ -403,7 +406,7 @@ public class ChatScreenAdapter extends BaseAdapter implements StickyListHeadersA
 
             image.setLayoutParams(new FrameLayout.LayoutParams(width, height));
 
-            if (message.mediaFileName != null && DBUtil.isFileExist(activity, message.mimeType, message.mediaFileName)) {
+            if (message.mediaFileName != null && DBUtil.isFileExist(activity, message.mimeType, message.mediaFileName) && DBUtil.isPermissionAvailable(activity, message.mediaFileName)) {
                 File file = new File(DBUtil.getFilePath(activity, message.mimeType, message.mediaFileName));
                 if (message.media != null) {
                     BitmapDrawable thumbnailDrawable = new BitmapDrawable(activity.getResources(), BitmapFactory.decodeByteArray(message.media, 0, message.media.length));
@@ -509,12 +512,17 @@ public class ChatScreenAdapter extends BaseAdapter implements StickyListHeadersA
 
             String content = message.textData;
             int separatorIndex = content.indexOf('/');
-            String folderName = content.substring(0, separatorIndex);
-            String name = content.substring(separatorIndex + 1);
+            String folderName = separatorIndex > 0 ? content.substring(0, separatorIndex) : "";
+            String name = separatorIndex > 0 ? content.substring(separatorIndex + 1) : "";
 
-            Stickers.getInstance().loadStickerFromAsset(activity, folderName, name);
+            Bitmap bitmap = null;
+            if( folderName.length() > 0 && name.length() > 0 ) {
+                Stickers.getInstance().loadStickerFromAsset(activity, folderName, name);
+                bitmap = Stickers.getInstance().getStickerBitmap(folderName, name);
+            } else {
+                //nothing
+            }
 
-            Bitmap bitmap = Stickers.getInstance().getStickerBitmap(folderName, name);
             if (bitmap != null) {
                 int size = activity.getResources().getDimensionPixelSize(R.dimen.sticker_msg_content_size);
                 image.setImageBitmap(bitmap);
@@ -572,48 +580,66 @@ public class ChatScreenAdapter extends BaseAdapter implements StickyListHeadersA
             int contentStatus = FileOnCloudHandler.getInstance(activity).getMediaContentStatus(message);
 
             if (contentStatus == FileOnCloudHandler.STATUS_DOWNLOADED || contentStatus == FileOnCloudHandler.STATUS_UPLOADED) {
-                if (DBUtil.isFileExist(activity, message.mimeType, message.mediaFileName)) {
-                    Intent intent = new Intent(activity, ImageOrVideoViewActivity.class);
-                    intent.putExtra(Constants.INTENT_KEY_FILENAME, message.mediaFileName);
-                    intent.putExtra(Constants.INTENT_KEY_MIMETYPE, message.mimeType);
-                    activity.startActivity(intent);
+                boolean permissionAvailable = DBUtil.requestPermission(activity, message.mediaFileName);
+
+                if ( permissionAvailable ) {
+                    if (DBUtil.isFileExist(activity, message.mimeType, message.mediaFileName)) {
+                        Intent intent = new Intent(activity, ImageOrVideoViewActivity.class);
+                        intent.putExtra(Constants.INTENT_KEY_FILENAME, message.mediaFileName);
+                        intent.putExtra(Constants.INTENT_KEY_MIMETYPE, message.mimeType);
+                        activity.startActivity(intent);
+                    } else {
+                        Toast.makeText(activity, "Media doesn't exist.", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(activity, "Media doesn't exist.", Toast.LENGTH_SHORT).show();
+
                 }
             } else if (contentStatus == FileOnCloudHandler.STATUS_DOWNLOAD_FAILED) {
-                FileOnCloudHandler.getInstance(activity).requestForDownload(message.textData, message.mimeType, message.id, jid);
+                boolean permissionAvailable = FileOnCloudHandler.getInstance(activity).isPermissionAvailable();
 
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyDataSetChanged();
-                    }
-                });
-            } else if (contentStatus == FileOnCloudHandler.STATUS_UPLOAD_FAILED) {
-                Chat chat = null;
-                if (!isGroupChat) {
-                    ChatManager chatManager = ChatManager.getInstanceFor(XMPPClient.getConnection());
-                    chat = chatManager.getThreadChat(jid);
-                    if (chat == null) {
-                        chat = chatManager.createChat(jid + "@mm.io");
-                    }
+                if ( permissionAvailable ) {
+                    FileOnCloudHandler.getInstance(activity).requestForDownload(message.textData, message.mimeType, message.id, jid);
+
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyDataSetChanged();
+                        }
+                    });
                 } else {
-                    //do nothing
+                    PermissionUtil.getInstance().requestPermission(activity, new ArrayList<String>(Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE)), activity.getString(R.string.external_storage_permission_message), Constants.REQUEST_CODE_BLANK);
                 }
+            } else if (contentStatus == FileOnCloudHandler.STATUS_UPLOAD_FAILED) {
+                boolean permissionAvailable = DBUtil.requestPermission(activity, message.mediaFileName);
 
-                String thumbnailImage = null;
-                if (message.media != null) {
-                    thumbnailImage = Base64.encodeToString(message.media, Base64.DEFAULT);
-                }
-
-                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, thumbnailImage, message.mimeType, chat, message.id, nearByChat, isGroupChat, jid);
-
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyDataSetChanged();
+                if ( permissionAvailable ) {
+                    Chat chat = null;
+                    if (!isGroupChat) {
+                        ChatManager chatManager = ChatManager.getInstanceFor(XMPPClient.getConnection());
+                        chat = chatManager.getThreadChat(jid);
+                        if (chat == null) {
+                            chat = chatManager.createChat(jid + "@mm.io");
+                        }
+                    } else {
+                        //do nothing
                     }
-                });
+
+                    String thumbnailImage = null;
+                    if (message.media != null) {
+                        thumbnailImage = Base64.encodeToString(message.media, Base64.DEFAULT);
+                    }
+
+                    FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, thumbnailImage, message.mimeType, chat, message.id, nearByChat, isGroupChat, jid);
+
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyDataSetChanged();
+                        }
+                    });
+                } else {
+
+                }
             }
 
         }
@@ -710,39 +736,57 @@ public class ChatScreenAdapter extends BaseAdapter implements StickyListHeadersA
             int contentStatus = FileOnCloudHandler.getInstance(activity).getMediaContentStatus(message);
 
             if (contentStatus == FileOnCloudHandler.STATUS_DOWNLOADED || contentStatus == FileOnCloudHandler.STATUS_UPLOADED) {
-                if (DBUtil.isFileExist(v.getContext(), message.mimeType, message.mediaFileName)) {
-                    audioRecordingHelper.handlePlayOrPauseEvent(message, holder);
+                boolean permissionAvailable = DBUtil.requestPermission(activity, message.mediaFileName);
+
+                if ( permissionAvailable ) {
+                    if (DBUtil.isFileExist(v.getContext(), message.mimeType, message.mediaFileName)) {
+                        audioRecordingHelper.handlePlayOrPauseEvent(message, holder);
+                    } else {
+                        Toast.makeText(activity, "Media doesn't exist.", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(activity, "Media doesn't exist.", Toast.LENGTH_SHORT).show();
+
                 }
             } else if (contentStatus == FileOnCloudHandler.STATUS_DOWNLOAD_FAILED) {
-                FileOnCloudHandler.getInstance(activity).requestForDownload(message.textData, message.mimeType, message.id, jid);
+                boolean permissionAvailable = FileOnCloudHandler.getInstance(activity).isPermissionAvailable();
 
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyDataSetChanged();
-                    }
-                });
+                if ( permissionAvailable ) {
+                    FileOnCloudHandler.getInstance(activity).requestForDownload(message.textData, message.mimeType, message.id, jid);
+
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyDataSetChanged();
+                        }
+                    });
+                } else {
+                    PermissionUtil.getInstance().requestPermission(activity, new ArrayList<String>(Arrays.asList(Manifest.permission.WRITE_EXTERNAL_STORAGE)), activity.getString(R.string.external_storage_permission_message), Constants.REQUEST_CODE_BLANK);
+                }
             } else if (contentStatus == FileOnCloudHandler.STATUS_UPLOAD_FAILED) {
-                ChatManager chatManager = ChatManager.getInstanceFor(XMPPClient.getConnection());
-                Chat chat = chatManager.getThreadChat(jid);
-                if (chat == null) {
-                    chat = chatManager.createChat(jid + "@mm.io");
-                }
+                boolean permissionAvailable = DBUtil.requestPermission(activity, message.mediaFileName);
 
-                String thumbnailImage = null;
-                if (message.media != null) {
-                    thumbnailImage = Base64.encodeToString(message.media, Base64.DEFAULT);
-                }
-                FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, thumbnailImage, message.mimeType, chat, message.id, nearByChat, isGroupChat, jid);
-
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyDataSetChanged();
+                if ( permissionAvailable ) {
+                    ChatManager chatManager = ChatManager.getInstanceFor(XMPPClient.getConnection());
+                    Chat chat = chatManager.getThreadChat(jid);
+                    if (chat == null) {
+                        chat = chatManager.createChat(jid + "@mm.io");
                     }
-                });
+
+                    String thumbnailImage = null;
+                    if (message.media != null) {
+                        thumbnailImage = Base64.encodeToString(message.media, Base64.DEFAULT);
+                    }
+                    FileOnCloudHandler.getInstance(activity).requestForUpload(message.mediaFileName, thumbnailImage, message.mimeType, chat, message.id, nearByChat, isGroupChat, jid);
+
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            notifyDataSetChanged();
+                        }
+                    });
+                } else {
+
+                }
             }
         }
 

@@ -39,30 +39,32 @@
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:id="@+id/data_exist"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:id="@+id/tv_empty_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:paddingLeft="@dimen/horizontal_padding_large"
-            android:paddingRight="@dimen/horizontal_padding_large"
+            android:paddingLeft="@dimen/horizontal_padding_small"
+            android:paddingRight="@dimen/horizontal_padding_small"
             android:orientation="vertical"
             android:gravity="center">
-            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            <com.sports.unity.common.view.CustomRobotoLightTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/gray5"
-                android:textSize="@dimen/font_size_large"
+                android:gravity="center"
+                android:textSize="@dimen/font_size_xlarge"
+                android:textColor="#1a1a1a"
                 android:text="@string/pam_search_title"
                 />
-            <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
+            <com.sports.unity.common.view.CustomRobotoLightTextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:text="@string/pam_search_descraotion"
-                android:textColor="@color/gray1"
-                android:textSize="@dimen/font_size_large"
+                android:textSize="@dimen/font_size_small_large"
+                android:textColor="@color/tour_details_color"
                 />
         </LinearLayout>
 

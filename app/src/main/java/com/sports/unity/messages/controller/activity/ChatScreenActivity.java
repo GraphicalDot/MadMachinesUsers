@@ -6,7 +6,9 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -38,7 +40,6 @@ import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPConnectionUtil;
-import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.CustomAppCompatActivity;
 import com.sports.unity.common.controller.UserProfileActivity;
 import com.sports.unity.common.model.FontTypeface;
@@ -153,6 +154,10 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     private Menu menu = null;
 
+    private Handler removeViewHandler;
+    private TextView friendRequestStatus;
+    private LinearLayout addBlockLayout;
+
     private SportsUnityDBHelper sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
     private BlockUnblockUserHelper blockUnblockUserHelper = null;
     private ChatKeyboardHelper chatKeyboardHelper = null;
@@ -210,16 +215,18 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     }
 
                 });
-            } else if (id == ActivityActionHandler.EVENT_FRIEND_REQUEST_SENT) {
+            } else if (id == ActivityActionHandler.EVENT_FRIEND_REQUEST_SENT
+                    || id == ActivityActionHandler.EVENT_FRIEND_REQUEST_RECEIVED
+                    || id == ActivityActionHandler.EVENT_FRIEND_REQUEST_ACCEPTED) {
                 ChatScreenActivity.this.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        TextView friendRequestStatus = (TextView) findViewById(R.id.request_status);
-                        if (friendRequestStatus.getVisibility() == View.VISIBLE) {
-                            friendRequestStatus.setText((CharSequence) object);
-                        }
+                        friendRequestStatus.setVisibility(View.VISIBLE);
+                        addBlockLayout.setVisibility(View.GONE);
+
+                        friendRequestStatus.setText((CharSequence) object);
                         long milliseconds = 5000;
-                        removeRequestStatusFromWindow(milliseconds, friendRequestStatus);
+                        removeRequestStatusFromWindow(milliseconds);
                     }
                 });
             }
@@ -287,14 +294,22 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
     };
 
-    private void removeRequestStatusFromWindow(long milliseconds, final TextView friendRequestStatus) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                friendRequestStatus.setVisibility(View.GONE);
-            }
-        }, milliseconds);
+    private void removeRequestStatusFromWindow(long milliseconds) {
+        if (removeViewHandler != null) {
+            removeViewHandler.removeCallbacks(postDelayedRunnableToRemoveViewFromWindow);
+            removeViewHandler.postDelayed(postDelayedRunnableToRemoveViewFromWindow, milliseconds);
+        } else {
+            removeViewHandler = new Handler();
+            removeViewHandler.postDelayed(postDelayedRunnableToRemoveViewFromWindow, milliseconds);
+        }
     }
+
+    Runnable postDelayedRunnableToRemoveViewFromWindow = new Runnable() {
+        @Override
+        public void run() {
+            friendRequestStatus.setVisibility(View.GONE);
+        }
+    };
 
     @Override
     protected void onDestroy() {
@@ -372,6 +387,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         NotificationHandler.dismissNotification(getBaseContext());
         NotificationHandler.getInstance(getApplicationContext()).clearNotificationMessages(String.valueOf(chatID));
 
+        initAddBlockView();
         //TODO update message list
 //        activityActionListener.handleAction(0);
     }
@@ -427,18 +443,17 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         mSend = (Button) findViewById(R.id.send);
         mSend.setTypeface(FontTypeface.getInstance(this).getRobotoCondensedRegular());
 
+        friendRequestStatus = (TextView) findViewById(R.id.request_status);
+
         getIntentExtras();
 
         boolean isPending = SportsUnityDBHelper.getInstance(this).isRequestPending(jabberId);
-        Log.d("max", "is Pending>> " + isPending);
         clearUnreadCount();
         initToolbar();
         hideStatusIfUserBlocked();
-        initAddBlockView();
         final Handler mHandler = new Handler();
 
 //        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
-//            Log.d("dmax", "Already Connected CHat");
 //            isChatInitialized = true;
 //            getChatThread();
 //        } else {
@@ -453,7 +468,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     private void initAddBlockView() {
-        final LinearLayout addBlockLayout = (LinearLayout) findViewById(R.id.add_block_layout);
+        addBlockLayout = (LinearLayout) findViewById(R.id.add_block_layout);
         final TextView requestStatus = (TextView) findViewById(R.id.request_status);
         if ((availableStatus == Contacts.AVAILABLE_BY_OTHER_CONTACTS || availableStatus == Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME) && !blockUnblockUserHelper.isBlockStatus()) {
             int requestId = sportsUnityDBHelper.checkJidForPendingRequest(jabberId);
@@ -465,6 +480,9 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                 addBlockLayout.setVisibility(View.GONE);
                 requestStatus.setVisibility(View.VISIBLE);
                 requestStatus.setText(R.string.request_pending);
+            } else if (requestId == Contacts.REQUEST_ACCEPTED) {
+                addBlockLayout.setVisibility(View.GONE);
+                requestStatus.setVisibility(View.GONE);
             } else {
                 addBlockLayout.setVisibility(View.VISIBLE);
                 TextView addFriend = (TextView) findViewById(R.id.add_friend);
@@ -494,10 +512,12 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     }
                 });
             }
+        } else
 
-        } else {
+        {
             addBlockLayout.setVisibility(View.GONE);
         }
+
     }
 
     private void hideStatusIfUserBlocked() {
@@ -727,6 +747,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         if (filesNotSent > 0) {
             Toast.makeText(getApplicationContext(), getResources().getQuantityString(R.plurals.file_count, filesNotSent, filesNotSent), Toast.LENGTH_LONG).show();
         }
+        messageList.clear();
+        messageList = null;
     }
 
     private void populateMessagesOnScreen() {
@@ -801,7 +823,11 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             }
 
         } else if (userImageBytes != null) {
-            userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
+            if (userImageBytes.length > 0) {
+                userPic.setImageBitmap(BitmapFactory.decodeByteArray(userImageBytes, 0, userImageBytes.length));
+            } else {
+                userPic.setImageResource(R.drawable.ic_user);
+            }
         } else {
             userPic.setImageResource(R.drawable.ic_user);
         }
@@ -826,7 +852,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         chatID = getIntent().getIntExtra(INTENT_KEY_CHAT_ID, SportsUnityDBHelper.DEFAULT_ENTRY_ID);
         userImageBytes = getIntent().getByteArrayExtra(INTENT_KEY_IMAGE);
         otherChat = getIntent().getBooleanExtra(INTENT_KEY_NEARBY_CHAT, false);
-        availableStatus = getIntent().getIntExtra(Constants.INTENT_KEY_USER_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
+        availableStatus = getIntent().getIntExtra(INTENT_KEY_CONTACT_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
 
         if (!isGroupChat) {
             if (XMPPClient.getInstance().isConnectionAuthenticated()) {
@@ -1053,14 +1079,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         final Uri URI = data.getData();
         long filesize = ImageUtil.getFileSize(getApplicationContext(), URI, URI.getScheme());
         String path = null;
-        if (ImageUtil.getMimeType(URI).equals("image")) {
+        String mimeType = ImageUtil.getMimeType(ChatScreenActivity.this, URI);
+        if (mimeType.contains("image")) {
             if (filesize > 5120 && filesize <= 10485760) {
                 path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Images.Media.DATA);
                 sendMediaFile(URI, path);
             } else {
                 filesNotSent++;
             }
-        } else if (ImageUtil.getMimeType(URI).equals("video")) {
+        } else if (mimeType.contains("video")) {
             if (filesize > 51200 && filesize <= 10485760) {
                 path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Video.Media.DATA);
                 sendMediaFile(URI, path);
@@ -1094,14 +1121,15 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
                         long filesize = ImageUtil.getFileSize(getApplicationContext(), URI, URI.getScheme());
                         String path = null;
-                        if (ImageUtil.getMimeType(URI).equals("image")) {
+                        String mimeType = ImageUtil.getMimeType(ChatScreenActivity.this, URI);
+                        if (mimeType.contains("image")) {
                             if (filesize > 5120 && filesize <= 10485760) {
                                 path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Images.Media.DATA);
                                 sendMediaFile(URI, path);
                             } else {
                                 filesNotSent++;
                             }
-                        } else if (ImageUtil.getMimeType(URI).equals("video")) {
+                        } else if (mimeType.contains("video")) {
                             if (filesize > 51200 && filesize <= 10485760) {
                                 path = ImageUtil.getPathforURI(getApplicationContext(), URI, MediaStore.Video.Media.DATA);
                                 sendMediaFile(URI, path);
@@ -1130,7 +1158,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
                 @Override
                 public Object process() {
-                    hasVideoContent = ImageUtil.getMimeType(URI).equals("video");
+                    hasVideoContent = ImageUtil.getMimeType(ChatScreenActivity.this, URI).contains("video");
 
                     String fileName = null;
                     try {
@@ -1435,7 +1463,7 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     }
 
     @Override
-    public void onBlock(boolean success) {
+    public void onBlock(boolean success, String phoneNumber) {
         if (success) {
             findViewById(R.id.add_block_layout).setVisibility(View.GONE);
             initAddBlockView();

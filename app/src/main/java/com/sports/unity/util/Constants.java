@@ -13,7 +13,7 @@ public class Constants {
     public static final String XMPP_SERVER_BASE_URL = BuildConfig.XMPP_SERVER_BASE_URL;
     public static final String SCORE_BASE_URL = BuildConfig.SCORES_BASE_URL;
     public static final String SEARCH_BASE_URL = BuildConfig.SEARCH_BASE_URL;
-    public static final String NEWS_BASE_URL = BuildConfig.NEWS_BASE_URL;
+    private static final String NEWS_BASE_URL = BuildConfig.NEWS_BASE_URL;
     public static final String FOOTBALL_PLAYER_BASE_URL = BuildConfig.PLAYER_PROFILE_BASE_URL;
 
     public static final String URL_NEWS_CONTENT = Constants.NEWS_BASE_URL + "/mixed?";
@@ -90,6 +90,7 @@ public class Constants {
 
     public static final String IS_OWN_PROFILE = "is_own_profile";
     public static final String INTENT_TEAM_LEAGUE_DETAIL_EXTRA = "team_league_detail_extra";
+
     public static final int REQUEST_CODE_PICK_IMAGE = 2201;
     public static final int REQUEST_CODE_SCORE = 1298;
     public static final int REQUEST_CODE_NEWS = 1397;
@@ -104,6 +105,8 @@ public class Constants {
     public static final int REQUEST_CODE_GALLERY_STORAGE_PERMISSION = 105;
     public static final int REQUEST_CODE_RECORD_AUDIO_PERMISSION = 106;
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 107;
+    public static final int REQUEST_CODE_BLANK = 108;
+
     public static final String PLAYER_NAME = "player_name";
     public static final String INTENT_KEY_TOSS = "toss";
     public static final String INTENT_KEY_MATCH_NAME = "match_name";

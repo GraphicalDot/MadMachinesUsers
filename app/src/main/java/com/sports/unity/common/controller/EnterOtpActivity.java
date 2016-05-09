@@ -121,7 +121,11 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
     @Override
     public void onBackPressed() {
-        moveBack();
+        if( UserUtil.isFilterCompleted() ) {
+            //nothing
+        } else {
+            moveBack();
+        }
 
         super.onBackPressed();
     }
@@ -131,6 +135,13 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         progressBar.getIndeterminateDrawable().setColorFilter(getResources().getColor(R.color.gray1), android.graphics.PorterDuff.Mode.MULTIPLY);
 
         LinearLayout editNumberLayout = (LinearLayout) findViewById(R.id.editNumberLayout);
+        editNumberLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
+        if( UserUtil.isFilterCompleted() ){
+            // when user re-verify its account. Don't allow to change phone number.
+            editNumberLayout.setVisibility(View.GONE);
+        } else {
+
+        }
         editNumberLayout.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -139,8 +150,6 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
             }
 
         });
-
-        editNumberLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
 
         TextView editNumberTextView = (TextView) findViewById(R.id.editNumber);
         editNumberTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
@@ -158,7 +167,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         String countryCode = countryDetails.get(0);
 
         TextView otpText = (TextView) findViewById(com.sports.unity.R.id.enterotpText);
-        otpText.setText(getString(R.string.otp_message_verification) + "+" + countryCode + " " + getPhoneNumber());
+        otpText.setText(getString(R.string.otp_message_verification) + "+" + countryCode + " " + getPhoneNumberWithoutCountryCode());
         otpText.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoLight());
 
         otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
@@ -192,9 +201,13 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
     }
 
-    private String getPhoneNumber() {
+    private String getPhoneNumberWithCountryCode() {
         String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
-        phoneNumber = phoneNumber.substring(2);
+        return phoneNumber;
+    }
+
+    private String getPhoneNumberWithoutCountryCode() {
+        String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USER_MOBILE_NUMBER);
         return phoneNumber;
     }
 
@@ -205,9 +218,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
         EditText otpEditText = (EditText) findViewById(com.sports.unity.R.id.enterOtp);
         String otp = otpEditText.getText().toString();
-        ArrayList<String> countryDetails = CommonUtil.getCountryDetailsByCountryCode(EnterOtpActivity.this, UserUtil.getCountryCode());
-        String countryCode = countryDetails.get(0);
-        String phoneNumber = countryCode + getPhoneNumber();
+        String phoneNumber = getPhoneNumberWithCountryCode();
 
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, phoneNumber);
@@ -222,9 +233,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
 
         enterOtpCustomComponentListener.setCurrentTag(RESEND_OTP_REQUEST_TAG);
 
-        ArrayList<String> countryDetails = CommonUtil.getCountryDetailsByCountryCode(EnterOtpActivity.this, UserUtil.getCountryCode());
-        String countryCode = countryDetails.get(0);
-        String phoneNumber = countryCode + getPhoneNumber();
+        String phoneNumber = getPhoneNumberWithCountryCode();
         HashMap<String, String> parameters = new HashMap<>();
         parameters.put(Constants.REQUEST_PARAMETER_KEY_PHONE_NUMBER, phoneNumber);
         parameters.put(Constants.REQUEST_PARAMETER_KEY_APK_VERSION, CommonUtil.getBuildConfig());
@@ -244,7 +253,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
     }
 
     private void moveBack() {
-        String phoneNumber = getPhoneNumber();
+        String phoneNumber = getPhoneNumberWithoutCountryCode();
 
         Intent intent = new Intent(this, EnterPhoneActivity.class);
         intent.putExtra(Constants.INTENT_KEY_PHONE_NUMBER, phoneNumber);
@@ -274,7 +283,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
         String countryCode = countryDetails.get(0);
         final TextView seekMessage = (TextView) layout.findViewById(R.id.seek_msg);
         TextView phNo = (TextView) layout.findViewById(R.id.ph_no);
-        phNo.setText("+" + countryCode + " " + getPhoneNumber());
+        phNo.setText("+" + countryCode + " " + getPhoneNumberWithoutCountryCode());
 
 
         final ProgressBar mProgressBar = (ProgressBar) layout.findViewById(R.id.progressbar);
@@ -295,7 +304,7 @@ public class EnterOtpActivity extends CustomVolleyCallerActivity {
             public void onTick(long millisUntilFinished) {
                 int progress = (int) ((lennghtInMillis - millisUntilFinished) / 1000);
                 mProgressBar.setProgress(progress);
-                seekMessage.setText("Your SMS should arive within " + millisUntilFinished / 1000 + " second.");
+                seekMessage.setText("Your SMS should arrive within " + millisUntilFinished / 1000 + " second.");
             }
 
             @Override

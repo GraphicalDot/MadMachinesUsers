@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -145,9 +146,6 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
         } else {
             seriesId = i.getStringExtra(Constants.INTENT_KEY_SERIES);
         }
-
-        matchStatus = "L";
-        isLive = true;
     }
 
     private boolean isMatchLive(){
@@ -516,7 +514,11 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
                 ((TextView) findViewById(R.id.venue)).setText(cricketMatchJsonCaller.getVenue());
                 ((TextView) findViewById(R.id.date)).setText(DateUtil.getDateFromEpochTime(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000));
-                tvNeededRun.setText(cricketMatchJsonCaller.getTeam1() + " vs " + cricketMatchJsonCaller.getTeam2() + ", " + cricketMatchJsonCaller.getMatchNumber());
+                String matchName=cricketMatchJsonCaller.getTeam1() + " vs " + cricketMatchJsonCaller.getTeam2();
+                if(!TextUtils.isEmpty(cricketMatchJsonCaller.getMatchNumber())){
+                    matchName=matchName+", " + cricketMatchJsonCaller.getMatchNumber();
+                }
+                tvNeededRun.setText(matchName);
 
                 if (cricketMatchJsonCaller.getStatus().equalsIgnoreCase("N")) {
 

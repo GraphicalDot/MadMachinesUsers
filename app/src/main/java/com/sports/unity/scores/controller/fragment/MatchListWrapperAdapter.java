@@ -707,7 +707,10 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                 matchId = cricketMatchJsonCaller.getMatchId();
                 matchStatus = cricketMatchJsonCaller.getStatus();
                 toss = cricketMatchJsonCaller.getToss();
-                matchName = cricketMatchJsonCaller.getMatchNumber() + ", " + cricketMatchJsonCaller.getTeam1() + " v " + cricketMatchJsonCaller.getTeam2();
+                matchName=cricketMatchJsonCaller.getTeam1() + " vs " + cricketMatchJsonCaller.getTeam2();
+                if(!TextUtils.isEmpty(cricketMatchJsonCaller.getMatchNumber())){
+                    matchName=cricketMatchJsonCaller.getMatchNumber()+", "+matchName;
+                }
                 date = DateUtil.getDateFromEpochTime(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000);
                 seriesId = cricketMatchJsonCaller.getSeriesId();
                 leagueName = cricketMatchJsonCaller.getSeriesName();
@@ -869,7 +872,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         public View mView = null;
         private TextView tvDayName;
         private TextView tvLeagueName;
-        private CardView rvChild;
+        private ViewGroup rvChild;
         private ImageView ivSportsIcon;
         private RelativeLayout leagueLayout;
 
@@ -905,7 +908,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                 leagueLayout = (RelativeLayout) view.findViewById(R.id.league_layout);
                 tvLeagueName = (TextView) view.findViewById(R.id.league_name);
                 ivSportsIcon = (ImageView) view.findViewById(R.id.iv_league);
-                rvChild = (CardView) view.findViewById(R.id.child_rv);
+                rvChild = (ViewGroup) view.findViewById(R.id.child_rv);
                 t1flag = (ImageView) rvChild.findViewById(R.id.t1flag);
                 team1 = (TextView) rvChild.findViewById(R.id.team1);
                 team_score = (TextView) rvChild.findViewById(R.id.team_score);

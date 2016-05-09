@@ -7,6 +7,7 @@ import android.util.Log;
 import com.sports.unity.BuildConfig;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
+import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.UserUtil;
@@ -26,6 +27,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -81,7 +83,7 @@ public class FileOnCloudHandler {
     public void requestForUpload(String fileName, String thumbnailImage, String mimeType, Chat chat, int messageId, boolean nearByChat, boolean isGroupChat, String toJid) {
         boolean handleRequest = shouldHandleRequest(messageId);
 
-        if (handleRequest) {
+        if (handleRequest && isPermissionAvailable()) {
             Log.i("File on cloud", "upload request message id " + messageId);
             CloudContentRequest request = new CloudContentRequest(true, mimeType, messageId, null, fileName, thumbnailImage, chat, toJid);
             requests.add(request);
@@ -94,7 +96,7 @@ public class FileOnCloudHandler {
     public void requestForDownload(String checksum, String mimeType, int messageId, String fromJid) {
         boolean handleRequest = shouldHandleRequest(messageId);
 
-        if (handleRequest) {
+        if (handleRequest && isPermissionAvailable()) {
             CloudContentRequest request = new CloudContentRequest(false, mimeType, messageId, checksum, null, null, null, fromJid);
             requests.add(request);
             requestMapWithStatus.put(String.valueOf(messageId), STATUS_DOWNLOADING);
@@ -126,6 +128,16 @@ public class FileOnCloudHandler {
         }
 
         return status;
+    }
+
+    public boolean isPermissionAvailable(){
+        boolean available = false;
+        if( UserUtil.isSaveIncomingMediaToGallery() ){
+            available = PermissionUtil.getInstance().isPermissionGranted( context, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        } else {
+            available = true;
+        }
+        return available;
     }
 
     private boolean downloadContentDirectToFile(String mimeType) {

@@ -8,7 +8,6 @@ import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
@@ -29,7 +27,6 @@ import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.SettingsHelper;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.BlockUnblockUserHelper;
-import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.fragment.ContactListAdapter;
 import com.sports.unity.messages.controller.model.Chats;
 import com.sports.unity.messages.controller.model.Contacts;
@@ -170,7 +167,7 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
 
 
     @Override
-    public void onBlock(boolean success) {
+    public void onBlock(boolean success, String phoneNumber) {
 
     }
 

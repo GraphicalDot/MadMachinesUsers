@@ -46,7 +46,7 @@
                     android:id="@+id/league_layout"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingTop="@dimen/horizontal_padding_very_very_small"
+                    android:paddingTop="@dimen/horizontal_padding_small"
                     android:paddingBottom="@dimen/horizontal_padding_very_very_small"
                     android:gravity="center">
 

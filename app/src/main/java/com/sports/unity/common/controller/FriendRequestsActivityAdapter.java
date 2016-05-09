@@ -15,9 +15,11 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.messages.controller.BlockUnblockUserHelper;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.util.Constants;
@@ -80,7 +82,16 @@ public class FriendRequestsActivityAdapter extends ArrayAdapter<Contacts> {
 
             name.setTextColor(resources.getColor(R.color.app_theme_blue));
             status.setTextColor(resources.getColor(android.R.color.black));
-            parentLayout.setBackground(new ColorDrawable(resources.getColor(R.color.selector)));
+            parentLayout.setBackground(new ColorDrawable(resources.getColor(R.color.accepted_friend_request)));
+        } else if (contact.requestStatus == Contacts.REQUEST_BLOCKED) {
+            status.setVisibility(View.VISIBLE);
+            actionOnPendingRequest.setVisibility(View.GONE);
+
+            status.setText(contact.getName() + " is blocked ");
+
+            name.setTextColor(resources.getColor(R.color.app_theme_blue));
+            status.setTextColor(resources.getColor(android.R.color.black));
+            parentLayout.setBackground(new ColorDrawable(resources.getColor(R.color.accepted_friend_request)));
         } else {
 
             status.setVisibility(View.GONE);
@@ -88,10 +99,17 @@ public class FriendRequestsActivityAdapter extends ArrayAdapter<Contacts> {
             parentLayout.setBackground(new ColorDrawable(resources.getColor(android.R.color.white)));
         }
 
+        if (contact.image != null)
 
-        if (contact.image != null) {
-            userPic.setImageBitmap(BitmapFactory.decodeByteArray(contact.image, 0, contact.image.length));
-        } else {
+        {
+            if (contact.image.length > 0) {
+                userPic.setImageBitmap(BitmapFactory.decodeByteArray(contact.image, 0, contact.image.length));
+            } else {
+                userPic.setImageResource(R.drawable.ic_user);
+            }
+        } else
+
+        {
             userPic.setImageResource(R.drawable.ic_user);
         }
 
@@ -110,17 +128,21 @@ public class FriendRequestsActivityAdapter extends ArrayAdapter<Contacts> {
             } else if (v.getId() == R.id.block) {
                 blockUser(v);
             }
+
         }
     };
 
     private void blockUser(View v) {
-        // TODO
+        Contacts contact = contacts.get((Integer) v.getTag());
+        BlockUnblockUserHelper blockUnblockUserHelper = new BlockUnblockUserHelper(contact.blockStatus, context, null);
+        blockUnblockUserHelper.addBlockUnblockListener(((FriendRequestsActivity) context));
+        blockUnblockUserHelper.onMenuItemSelected(context, contact.id, contact.jid, null);
     }
 
     private void sendAcceptance(View v) {
         if (XMPPClient.getInstance().isConnectionAuthenticated()) {
             Contacts contact = contacts.get((Integer) v.getTag());
-            boolean success = PersonalMessaging.getInstance(context).acceptFriendRequest(contact);
+            boolean success = PersonalMessaging.getInstance(context).acceptFriendRequest(contact.jid);
             if (success) {
                 ((Button) v).setText(R.string.accepting_friend);
                 v.setEnabled(false);

@@ -139,6 +139,7 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
             } else if (v.getId() == R.id.friend_requests) {
                 Intent intent = new Intent(getActivity(), FriendRequestsActivity.class);
                 startActivity(intent);
+                ((MainActivity) getActivity()).closeDrawer();
             }
         }
     };
@@ -536,14 +537,12 @@ public class NavigationFragment extends Fragment implements ExpandableListView.O
         }
     }
 
-    public void updatePendingFriendRequestCount() {
-        int count = SportsUnityDBHelper.getInstance(getContext()).getPendingFriendRequestCount();
-        Log.d("max", "Count is>>" + count);
-        if (count == 0) {
+    public void updatePendingFriendRequestCount(int requestsCount) {
+        if (requestsCount == 0) {
             friendRequestCount.setVisibility(View.GONE);
         } else {
             friendRequestCount.setVisibility(View.VISIBLE);
-            friendRequestCount.setText(String.valueOf(count));
+            friendRequestCount.setText(String.valueOf(requestsCount));
         }
     }
 

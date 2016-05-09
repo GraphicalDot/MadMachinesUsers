@@ -55,11 +55,15 @@ public class ChatListAdapter extends ArrayAdapter<Chats> implements StickyListHe
         name.setTypeface(FontTypeface.getInstance(context.getApplicationContext()).getRobotoRegular());
 
         ImageView userPic = (ImageView) rowView.findViewById(R.id.user_pic);
-        if ( ! chats.isGroupChat ) {
+        if (!chats.isGroupChat) {
             if (chatArrayList.get(position).image != null) {
-                userPic.setImageBitmap(BitmapFactory.decodeByteArray(chatArrayList.get(position).image, 0, chatArrayList.get(position).image.length));
+                if (chatArrayList.get(position).image.length > 0) {
+                    userPic.setImageBitmap(BitmapFactory.decodeByteArray(chatArrayList.get(position).image, 0, chatArrayList.get(position).image.length));
+                } else {
+                    userPic.setImageResource(R.drawable.ic_user);
+                }
             } else {
-                //nothing
+                userPic.setImageResource(R.drawable.ic_user);
             }
         } else {
             if (chatArrayList.get(position).image == null) {

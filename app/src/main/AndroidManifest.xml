@@ -260,8 +260,12 @@
         <activity
             android:name=".peoplearound.PeopleAroundActivity"
             android:launchMode="singleTop"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"></activity>
+
+        <activity
+            android:name=".common.controller.FriendRequestsActivity"
+            android:label="@string/title_activity_friend_requests"
+            android:theme="@style/AppTheme"></activity>
     </application>
 
 </manifest>

@@ -14,6 +14,7 @@ public class Contacts {
     public static final int WAITING_FOR_REQUEST_ACCEPTANCE = 1;
     public static final int PENDING_REQUESTS_TO_PROCESS = 2;
     public static final int REQUEST_ACCEPTED = 3;
+    public static final int REQUEST_BLOCKED = 4;
 
     public int id;
     public String jid;
@@ -23,6 +24,7 @@ public class Contacts {
     public String status;
     public int availableStatus = AVAILABLE_NOT;
     public int requestStatus = DEFAULT_PENDNG_REQUEST_ID;
+    public boolean blockStatus = false;
 
     public Contacts(String name, String jid, String phoneNumber, byte[] userImage, int cId, String status, int availableStatus) {
         this.name = name;
@@ -34,7 +36,7 @@ public class Contacts {
         this.availableStatus = availableStatus;
     }
 
-    public Contacts(String name, String jid, String phoneNumber, byte[] userImage, int cId, String status, int availableStatus, int requestStatus) {
+    public Contacts(String name, String jid, String phoneNumber, byte[] userImage, int cId, String status, int availableStatus, int requestStatus, boolean blockStatus) {
         this.name = name;
         this.jid = jid;
         this.phoneNumber = phoneNumber;
@@ -43,6 +45,7 @@ public class Contacts {
         this.id = cId;
         this.availableStatus = availableStatus;
         this.requestStatus = requestStatus;
+        this.blockStatus = blockStatus;
     }
 
     public boolean isAvailable() {
