@@ -707,7 +707,10 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                 matchId = cricketMatchJsonCaller.getMatchId();
                 matchStatus = cricketMatchJsonCaller.getStatus();
                 toss = cricketMatchJsonCaller.getToss();
-                matchName = cricketMatchJsonCaller.getMatchNumber() + ", " + cricketMatchJsonCaller.getTeam1() + " v " + cricketMatchJsonCaller.getTeam2();
+                matchName=cricketMatchJsonCaller.getTeam1() + " vs " + cricketMatchJsonCaller.getTeam2();
+                if(!TextUtils.isEmpty(cricketMatchJsonCaller.getMatchNumber())){
+                    matchName=cricketMatchJsonCaller.getMatchNumber()+", "+matchName;
+                }
                 date = DateUtil.getDateFromEpochTime(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000);
                 seriesId = cricketMatchJsonCaller.getSeriesId();
                 leagueName = cricketMatchJsonCaller.getSeriesName();
