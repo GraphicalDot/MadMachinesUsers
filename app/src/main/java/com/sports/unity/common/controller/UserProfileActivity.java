@@ -102,6 +102,8 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private TextView currentStatus;
     private boolean ownProfile;
 
+    private String jabberId = null;
+
     private LayoutInflater mInflater;
 
     private ProgressBar progessBar;
@@ -197,6 +199,11 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
         setToolbar(ownProfile);
         initView(ownProfile);
+
+        jabberId = getIntent().getStringExtra("jid");
+        if (jabberId == null) {
+            jabberId = "ownProfile";
+        }
     }
 
     private void initFacebookLogin() {
@@ -277,7 +284,6 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             public void onClick(View v) {
                 onBack();
             }
-
         });
     }
 
@@ -289,7 +295,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     protected void onResume() {
         super.onResume();
         UserProfileHandler.getInstance().addContentListener(LISTENER_KEY, this);
-        ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.USER_PROFILE_KEY, getIntent().getStringExtra("jid"), activityActionListener);
+        ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.USER_PROFILE_KEY, jabberId, activityActionListener);
     }
 
     @Override
@@ -301,7 +307,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     @Override
     protected void onStop() {
         super.onStop();
-        ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.USER_PROFILE_KEY, getIntent().getStringExtra("jid"));
+        ActivityActionHandler.getInstance().removeActionListener(ActivityActionHandler.USER_PROFILE_KEY, jabberId);
     }
 
     private void onClickSaveButton() {
