@@ -172,6 +172,12 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
         super.onResume();
 
         UserProfileHandler.getInstance().addContentListener(LISTENER_KEY, this);
+
+        if(UserProfileHandler.getInstance().requestInProgress()){
+            //nothing
+        } else {
+            afterAsyncCall();
+        }
     }
 
     @Override
@@ -180,7 +186,6 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
 
         UserProfileHandler.getInstance().removeContentListener(LISTENER_KEY);
     }
-
 
     private void addListnerToProfilePicture() {
         CircleImageView circleImageView = (CircleImageView) findViewById(R.id.profile_image);
@@ -237,7 +242,6 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
 
         LoginButton loginButton = (LoginButton) findViewById(R.id.login_button);
         loginButton.setVisibility(View.GONE);
-
 
         findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
     }
@@ -319,10 +323,14 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
                 }
             });
 
+        } else if (requestTag.equals(UserProfileHandler.DOWNLOADING_FACEBOOK_IMAGE_TAG) ) {
+            beforeAsyncCall();
         }
     }
 
     private void setProfileDetail(UserProfileHandler.ProfileDetail profileDetail) {
+        afterAsyncCall();
+
         nameText = (EditText) findViewById(R.id.nameView);
         nameText.setText(profileDetail.getName());
 
@@ -350,5 +358,6 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
             }
         }
     }
+
 }
 

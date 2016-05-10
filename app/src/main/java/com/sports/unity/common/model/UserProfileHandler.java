@@ -53,7 +53,7 @@ import java.util.HashMap;
 public class UserProfileHandler {
 
     public static final String FB_REQUEST_TAG = "fb_request_tag";
-    public static final String DOWNLOAD_IMAGE_REQUEST_TAG = "download_image_request_tag";
+    public static final String DOWNLOADING_FACEBOOK_IMAGE_TAG = "download_facebook_image_request_tag";
     public static final String CONNECT_XMPP_SERVER_TAG = "connect_xmpp_server_request_tag";
     public static final String SUBMIT_PROFILE_REQUEST_TAG = "submit_profile_tag";
     public static final String LOAD_PROFILE_REQUEST_TAG = "load_profile_tag";
@@ -87,6 +87,22 @@ public class UserProfileHandler {
 
     public void removeContentListener(String key) {
         contentListenerHashMap.remove(key);
+    }
+
+    public boolean requestInProgress(){
+        boolean inProgress = false;
+        if (requestInProcess_RequestTagAndListenerKey.size() > 0) {
+            inProgress = true;
+        }
+        return inProgress;
+    }
+
+    public boolean isFacebookDetailFetchingInProgress(){
+        boolean inProgress = false;
+        if (requestInProcess_RequestTagAndListenerKey.containsKey(FB_REQUEST_TAG)) {
+            inProgress = true;
+        }
+        return inProgress;
     }
 
     public int connectToXmppServer(Context context, String listenerKey) {
@@ -347,49 +363,6 @@ public class UserProfileHandler {
         }
     }
 
-    private void fetchMyProfileFromDB(String listenerKey) {
-        UserThreadTask userThreadTask = new UserThreadTask(null, listenerKey, null) {
-
-            @Override
-            public Object process() {
-                //TODO fetch content from db.
-                return null;
-            }
-
-        };
-        userThreadTask.start();
-    }
-
-    private void saveMyProfileInDB(String listenerKey, Contacts contacts) {
-        UserThreadTask userThreadTask = new UserThreadTask(null, listenerKey, contacts) {
-
-            @Override
-            public Object process() {
-                Contacts userContact = (Contacts) object;
-                //TODO save user profile in db.
-                return null;
-            }
-
-        };
-        userThreadTask.start();
-    }
-
-    public void initFacebookLogin(Context context) {
-        FacebookSdk.sdkInitialize(context.getApplicationContext());
-        try {
-            PackageInfo info = context.getPackageManager().getPackageInfo("co.sports.unity", PackageManager.GET_SIGNATURES);
-            for (Signature signature : info.signatures) {
-                MessageDigest md = MessageDigest.getInstance("SHA");
-                md.update(signature.toByteArray());
-                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
-            }
-        } catch (PackageManager.NameNotFoundException e) {
-
-        } catch (NoSuchAlgorithmException e) {
-
-        }
-    }
-
     public void setFacebookDetails(final Context context, LoginButton loginButton, final String listenerKey, CallbackManager callback) {
         CallbackManager callbackManager = callback;
         loginButton.setReadPermissions(Arrays.asList("public_profile, email"));
@@ -412,6 +385,8 @@ public class UserProfileHandler {
                                         if (data.has("picture")) {
                                             String profilePicUrl = data.getJSONObject("picture").getJSONObject("data").getString("url");
                                             profileDetail.setProfilePicUri(profilePicUrl);
+
+                                            contentListener.handleContent(DOWNLOADING_FACEBOOK_IMAGE_TAG, null);
 
                                             UserProfileHandler.getInstance().downloadImageFromUri(profileDetail, listenerKey, FB_REQUEST_TAG);
                                         } else {
@@ -443,14 +418,6 @@ public class UserProfileHandler {
                 Toast.makeText(context, R.string.profile_facebook_login_failed, Toast.LENGTH_LONG).show();
             }
         });
-    }
-
-    public void downloadProfileImage(ProfileDetail profileDetail, String listenerKey) {
-        downloadImageFromUri(profileDetail, listenerKey, DOWNLOAD_IMAGE_REQUEST_TAG);
-    }
-
-    private void downloadProfileImage(ProfileDetail profileDetail, String listenerKey, String requestTag) {
-        downloadImageFromUri(profileDetail, listenerKey, requestTag);
     }
 
     private int downloadImageFromUri(ProfileDetail profileDetail, String listenerKey, String requestTag) {
@@ -612,7 +579,7 @@ public class UserProfileHandler {
 
     public interface ContentListener {
 
-        public void handleContent(String listenerKey, Object content);
+        public void handleContent(String requestTag, Object content);
 
     }
 
