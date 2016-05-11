@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -60,6 +61,10 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
     private TextView tvlastfivematchteamsecond;
     private ImageView[] tvfirstmatchteamsecond = new ImageView[5];
 
+
+
+    private LinearLayout rootlayout;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private TextView tvpointofsecondteam;
     private TextView tvwinmatchofsecondteam;
@@ -157,6 +162,19 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
         tvwinmatchofsecondteam=(TextView)view.findViewById(R.id.tv_win_match_of_second_team);
         tvdrawmatchofsecondteam=(TextView)view.findViewById(R.id.tv_draw_match_of_second_team);
         tvlossmatchofsecondteam=(TextView)view.findViewById(R.id.tv_loss_match_of_second_team);
+        rootlayout=(LinearLayout)view.findViewById(R.id.root_layout);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_form);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                requestContent();
+            }
+
+        });
+
     }
 
     private void showDataNotExists() {
@@ -316,6 +334,34 @@ public class UpCommingFootballMatchFromFragment extends BasicVolleyRequestRespon
         public void handleErrorContent(String tag) {
 
         }
+
+        @Override
+        protected void showErrorLayout() {
+            if( rootlayout == null || rootlayout.getVisibility() == View.GONE ) {
+                super.showErrorLayout();
+            } else {
+                //nothing
+            }
+        }
+
+        @Override
+        protected void showProgress() {
+            if( rootlayout == null || rootlayout.getVisibility() == View.GONE ) {
+                super.showProgress();
+            } else {
+                //nothing
+            }
+        }
+
+        @Override
+        protected void hideProgress() {
+            super.hideProgress();
+
+            if( swipeRefreshLayout != null ){
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }
+
 
         @Override
         public void changeUI(String tag) {

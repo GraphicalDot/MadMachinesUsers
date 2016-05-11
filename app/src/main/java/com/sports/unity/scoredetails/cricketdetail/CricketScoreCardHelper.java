@@ -1,6 +1,7 @@
 package com.sports.unity.scoredetails.cricketdetail;
 
 import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewGroup;
@@ -88,6 +89,8 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
     private RelativeLayout team1ScoreDetails;
     private RelativeLayout team2ScoreDetails;
 
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     private ScrollView scrollview = null;
 
     public CricketScoreCardHelper(String title, String matchStatus) {
@@ -146,6 +149,7 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
         boolean upcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
         if( upcoming ) {
             //nothing
+            swipeRefreshLayout.setRefreshing(false);
         } else {
             super.requestContent();
         }
@@ -167,9 +171,13 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
         scrollview = (ScrollView)view.findViewById(R.id.scorecard_scrollview);
         scrollview.setVisibility(View.GONE);
 
+
+
         boolean upcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
         if( upcoming ){
             view.findViewById(R.id.tv_empty_view).setVisibility(View.VISIBLE);
+
+
         } else {
             firstBattingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_first_view_visibility);
             firstBowlingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_first_bowling_visibility);
@@ -224,6 +232,8 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
             teamBFallOfWicketRecycler.setAdapter(teamBFallOfWicketAdapter);
             teamBFallOfWicketRecycler.setNestedScrollingEnabled(false);
 
+
+
             team1ScoreDetails = (RelativeLayout) view.findViewById(R.id.team1_scroll_details);
             team2ScoreDetails = (RelativeLayout) view.findViewById(R.id.team2_scroll_details);
             ivDwn.setOnClickListener(new View.OnClickListener() {
@@ -255,6 +265,18 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
                 }
             });
         }
+
+
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.scorecard_refresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                requestContent();
+            }
+
+        });
+
     }
 
     private void showHideTeamSecondScoreCard() {
@@ -478,18 +500,46 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
 
         @Override
         protected void showErrorLayout() {
+            if(   linearLayout == null ||  linearLayout.getVisibility() == View.GONE ) {
+                super.showErrorLayout();
+            } else {
+                //nothing
+            }
+        }
+
+        @Override
+        protected void showProgress() {
+            if(  linearLayout == null ||   linearLayout.getVisibility() == View.GONE ) {
+                super.showProgress();
+            } else {
+                //nothing
+            }
+        }
+
+        @Override
+        protected void hideProgress() {
+            super.hideProgress();
+
+            if( swipeRefreshLayout != null ){
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }
+
+       /* @Override
+        protected void showErrorLayout() {
             if( scrollview.getVisibility() == View.VISIBLE ) {
                 //nothing
             } else {
                 super.showErrorLayout();
             }
-        }
+        }*/
 
         @Override
         public void changeUI(String tag) {
             boolean success = renderDisplay();
             if( success ){
                 //nothing
+               // swipeRefreshLayout.setRefreshing(true);
             } else {
                 showErrorLayout();
             }

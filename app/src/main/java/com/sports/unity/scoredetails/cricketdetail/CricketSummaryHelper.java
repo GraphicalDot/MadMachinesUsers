@@ -1,9 +1,11 @@
 package com.sports.unity.scoredetails.cricketdetail;
 
 import android.content.Intent;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -40,6 +42,9 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
 
     private TextView tvUmpiresName;
     private TextView tvMatchReferee;
+
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private LinearLayout summaryparentlinearlayout;
 
     private ImageView ivPlayerProfileView;
     private TextView playerName;
@@ -80,9 +85,9 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
     @Override
     public CustomComponentListener getCustomComponentListener(View view) {
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
-        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
-        MatchSummaryComponentListener componentListener = new MatchSummaryComponentListener( getRequestTag(), progressBar, errorLayout);
+        MatchSummaryComponentListener componentListener = new MatchSummaryComponentListener(getRequestTag(), progressBar, errorLayout);
         return componentListener;
     }
 
@@ -95,7 +100,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
     public String getRequestCallName() {
         boolean completed = ScoresUtil.isCricketMatchCompleted(matchStatus);
         String callName = null;
-        if( completed ) {
+        if (completed) {
             callName = ScoresContentHandler.CALL_NAME_CRICKET_MATCH_SUMMARY;
         } else {
             //nothing
@@ -116,10 +121,10 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
     @Override
     public void requestContent() {
         boolean completed = ScoresUtil.isCricketMatchCompleted(matchStatus);
-        if( completed ) {
+        if (completed) {
             super.requestContent();
         } else {
-            //nothing
+            swipeRefreshLayout.setRefreshing(false);
         }
     }
 
@@ -129,7 +134,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
 
     private void initView(View view) {
         boolean isUpcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
-        if( isUpcoming ){
+        if (isUpcoming) {
             View playerOfTheMatchLayout = view.findViewById(R.id.player_of_the_match_layout);
             playerOfTheMatchLayout.setVisibility(View.GONE);
         }
@@ -145,6 +150,11 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
         tvUmpiresName = (TextView) view.findViewById(R.id.tv_umpires_name);
         tvMatchReferee = (TextView) view.findViewById(R.id.tv_match_referee);
 
+        summaryparentlinearlayout = (LinearLayout) view.findViewById(R.id.summary_parent_linear_layout);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.summary_refresh);
+
+
         {
             TextView tvSeriesName = (TextView) view.findViewById(R.id.tv_series_name);
             TextView tvMatchDate = (TextView) view.findViewById(R.id.tv_match_date);
@@ -157,7 +167,18 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
             if (isUpcoming) {
                 view.findViewById(R.id.umpires_layout).setVisibility(View.GONE);
                 view.findViewById(R.id.refree_layout).setVisibility(View.GONE);
+
             }
+
+
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+                @Override
+                public void onRefresh() {
+                    requestContent();
+                }
+
+            });
         }
 
         ivPlayerProfileView.setOnClickListener(new View.OnClickListener() {
@@ -166,7 +187,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
                 if (cricketMatchSummaryParser != null) {
                     try {
                         String playerId = cricketMatchSummaryParser.getPlayerId();
-                        Intent intent = PlayerCricketBioDataActivity.createIntent( v.getContext(), playerId, playerName.getText().toString());
+                        Intent intent = PlayerCricketBioDataActivity.createIntent(v.getContext(), playerId, playerName.getText().toString());
                         v.getContext().startActivity(intent);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -182,7 +203,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
                 if (cricketMatchSummaryParser != null) {
                     try {
                         String playerId = cricketMatchSummaryParser.getPlayerId();
-                        Intent intent = PlayerCricketBioDataActivity.createIntent( v.getContext(), playerId, playerName.getText().toString());
+                        Intent intent = PlayerCricketBioDataActivity.createIntent(v.getContext(), playerId, playerName.getText().toString());
                         v.getContext().startActivity(intent);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -214,6 +235,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
         boolean success = false;
 
         try {
+
             if (!response.isNull("data")) {
                 JSONArray dataArray = response.getJSONArray("data");
                 for (int i = 0; i < dataArray.length(); i++) {
@@ -234,7 +256,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
                     }
 
                     {
-                        Glide.with( ivPlayerProfileView.getContext()).load(cricketMatchSummaryParser.getPlayerImage()).placeholder(R.drawable.ic_user).into(ivPlayerProfileView);
+                        Glide.with(ivPlayerProfileView.getContext()).load(cricketMatchSummaryParser.getPlayerImage()).placeholder(R.drawable.ic_user).into(ivPlayerProfileView);
                         playerName.setText(cricketMatchSummaryParser.getPlayerName());
                         tvPlayerRun.setText(cricketMatchSummaryParser.getruns());
                         if (cricketMatchSummaryParser.getBalls().trim().equalsIgnoreCase("0".trim())) {
@@ -261,7 +283,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
             }
 
             success = true;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
@@ -270,7 +292,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
 
     public class MatchSummaryComponentListener extends CustomComponentListener {
 
-        public MatchSummaryComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
+        public MatchSummaryComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout) {
             super(requestTag, progressBar, errorLayout);
         }
 
@@ -286,10 +308,39 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
         }
 
         @Override
+        protected void showErrorLayout() {
+            if (summaryparentlinearlayout == null || summaryparentlinearlayout.getVisibility() == View.GONE) {
+                super.showErrorLayout();
+            } else {
+                //nothing
+            }
+        }
+
+        @Override
+        protected void showProgress() {
+            if (summaryparentlinearlayout == null || summaryparentlinearlayout.getVisibility() == View.GONE) {
+                super.showProgress();
+            } else {
+                //nothing
+            }
+
+        }
+
+        @Override
+        public void hideProgress() {
+            super.hideProgress();
+
+            if (swipeRefreshLayout != null) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        }
+
+        @Override
         public void changeUI(String tag) {
             boolean success = renderDisplay();
-            if( success ){
+            if (success) {
                 //nothing
+                swipeRefreshLayout.setRefreshing(false);
             } else {
                 showErrorLayout();
             }

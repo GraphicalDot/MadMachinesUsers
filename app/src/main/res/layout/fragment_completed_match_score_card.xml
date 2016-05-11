@@ -7,6 +7,12 @@
     android:focusableInTouchMode="true"
     >
 
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/scorecard_refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <ScrollView
         android:id="@+id/scorecard_scrollview"
         android:layout_width="match_parent"
@@ -734,6 +740,8 @@
         </LinearLayout>
 
     </ScrollView>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 
     <include
         android:id="@+id/error"
