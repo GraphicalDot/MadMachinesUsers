@@ -205,22 +205,22 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
         String lableValue = null;
 
         switch (tvLable) {
-            case "possestiontimetotal":
+            case "possesiontime":
                 lableValue = "POSSESION (%)";
                 break;
-            case "shotstotal":
+            case "shots_total":
                 lableValue = "SHOTS";
                 break;
-            case "shotsongoal":
+            case "shots_ongoal":
                 lableValue = "SHOTS ON TARGET";
                 break;
-            case "cornerstotal":
+            case "corners":
                 lableValue = "CORNERS";
                 break;
-            case "foulstotal":
+            case "fouls":
                 lableValue = "FOULS";
                 break;
-            case "offsidestotal":
+            case "offsides":
                 lableValue = "OFFSIDES";
                 break;
         }

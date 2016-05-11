@@ -71,7 +71,13 @@ public class NewsJsonCaller extends JsonObjectCaller{
     }
 
     public String getType() throws JSONException {
-        return jsonObject.getString("type");
+        String type=null;
+        if(!jsonObject.isNull("type")){
+            type=jsonObject.getString("type");
+        }else if(!jsonObject.isNull("sport_type")){
+            type=jsonObject.getString("sport_type");
+        }
+        return type;
     }
 
     public void setType(String type) throws JSONException {

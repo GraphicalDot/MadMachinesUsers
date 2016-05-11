@@ -68,29 +68,29 @@ public class ScoresContentHandler {
     private static final String URL_PARAMS_FOR_CRICKET_MATCH_DETAIL = "v1/get_match_widget?season_key=%s&match_id=";
     private static final String URL_PARAMS_FOR_CRICKET_COMMENTARY = "v1/get_match_commentary?season_key=%s&match_id=";
     private static final String URL_PARAMS_FOR_FOOTBALL_COMMENTARY = "get_football_commentary?match_id=";
-    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = Constants.FOOTBALL_PLAYER_BASE_URL + "/get_football_player_profile?player_id=";
-    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_CRICKET = Constants.SCORE_BASE_URL + "/v1/get_player_stats?player_id=";
+    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_FOOTBALL = Constants.FOOTBALL_PLAYER_BASE_URL + "get_football_player_stats?player_id=";
+    private static final String URL_PARAMS_FOR_PLAYER_PROFILE_CRICKET = Constants.SCORE_BASE_URL + "v1/get_player_stats?player_id=";
     private static final String URL_PARAMS_FOR_LEAGUE_FIXTURES = "get_football_league_specific_fixtures?league_id=";
     private static final String URL_PARAMS_FOR_FOOTBALL_TEAM_FIXTURES = "get_football_team_fixtures?team_id=";
     private static final String URL_PARAMS_FOR_CRICKET_TEAM_FIXTURES = "v1/get_specific_fixtures?team_id=";
-    private static final String URL_PARAMS_FOR_CRICKET_LEAGUE_FIXTURES = "/v2/get_series_fixtures?season_key=";
-    private static final String URL_PARAMS_FOR_STAFF_LEAGUE = "/v1/get_major_tournament";
+    private static final String URL_PARAMS_FOR_CRICKET_LEAGUE_FIXTURES = "v2/get_series_fixtures?season_key=";
+    private static final String URL_PARAMS_FOR_STAFF_LEAGUE = "v1/get_major_tournament";
 
-    private static final String URL_PARAMS_FOR_CRICKET_MATCH_SUMMARY = Constants.SCORE_BASE_URL + "/v1/get_cricket_match_summary?season_key=%s&match_id=%s";
-    private static final String URL_PARAMS_FOR_CRICKET_MATCH_SCORECARD = Constants.SCORE_BASE_URL + "/v1/get_match_scorecard?season_key=%s&match_id=%s";
+    private static final String URL_PARAMS_FOR_CRICKET_MATCH_SUMMARY = Constants.SCORE_BASE_URL + "v1/get_cricket_match_summary?season_key=%s&match_id=%s";
+    private static final String URL_PARAMS_FOR_CRICKET_MATCH_SCORECARD = Constants.SCORE_BASE_URL + "v1/get_match_scorecard?season_key=%s&match_id=%s";
     private static final String URL_PARAMS_FOR_CRICKET_PLAYER = Constants.SCORE_BASE_URL + "v1/get_team_squad?team_id=%s";
 
     private static final String URL_PARAMS_FOR_FOOTBALL_FORM = Constants.SCORE_BASE_URL + "get_team_form?team_1=%s&team_2=%s&league_id=%s";
 
     private static final String URL_PARAMS_FOR_FOOTBALL_SQUAD = Constants.SCORE_BASE_URL + "get_football_squads?team_1=%s&team_2=%s";
-    private static final String URL_PARAMS_FOR_FOOTBALL_PLAYERS = Constants.SCORE_BASE_URL + "/get_team_players?team_id=%s";
+    private static final String URL_PARAMS_FOR_FOOTBALL_PLAYERS = Constants.SCORE_BASE_URL + "get_team_players?team_id=%s";
 
     private static final String URL_PARAMS_FOR_LEAGUE_TABLE = Constants.SCORE_BASE_URL + "get_league_standings?league_id=";
     private static final String URL_PARAMS_STAFF_PICK = Constants.SCORE_BASE_URL + "v1/get_season_table?season_key=";
 
     private static final String URL_PARAMS_FOR_FOOTBALL_LINE_UP = Constants.SCORE_BASE_URL + "get_match_squads?match_id=%s";
     private static final String URL_PARAMS_FOR_FOOTBALL_STATS = Constants.SCORE_BASE_URL + "get_match_stats?match_id=%s";
-    private static final String URL_PARAMS_FOR_FOOTBALL_TIMELINE = Constants.SCORE_BASE_URL + "/get_football_match_timeline?match_id=%s";
+    private static final String URL_PARAMS_FOR_FOOTBALL_TIMELINE = Constants.SCORE_BASE_URL + "get_football_match_timeline?match_id=%s";
 
     private static ScoresContentHandler SCORES_CONTENT_HANDLER = null;
 

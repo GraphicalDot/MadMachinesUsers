@@ -228,12 +228,12 @@ public class CompletedFootballMatchTimeLineFragment extends BasicVolleyRequestRe
     private Drawable getDrwableResource(String event) {
         Resources.Theme theme = swTimeLineRefresh.getContext().getTheme();
         int drwableId = R.drawable.ic_subsitute_circle;
-        if("yellowcards".equalsIgnoreCase(event)){
+        if("yellowcard".equalsIgnoreCase(event)){
             drwableId = R.drawable.ic_yellow_card_circle;
-        }else if("goals".equalsIgnoreCase(event)){
+        }else if("goal".equalsIgnoreCase(event)){
             drwableId = R.drawable.ic_goal_circle;
         }
-        else if("redcards".equalsIgnoreCase(event)){
+        else if("redcard".equalsIgnoreCase(event)||"yellowred".equalsIgnoreCase(event)){
             drwableId = R.drawable.ic_red_card_circle;
         }
         Drawable drawable = null;

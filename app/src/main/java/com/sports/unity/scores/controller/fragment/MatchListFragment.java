@@ -1,5 +1,6 @@
 package com.sports.unity.scores.controller.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -145,8 +146,10 @@ public class MatchListFragment extends Fragment implements MatchListWrapperNotif
             requestContent();
         }
         handleIfSportsChanged();
-        mWraperRecyclerView.getAdapter().notifyDataSetChanged();
-
+        if(FavouriteItemWrapper.getInstance(getActivity()).isFavouriteChanged()){
+            ((MatchListWrapperAdapter) mWraperRecyclerView.getAdapter()).notifyFavIconChanged();
+            FavouriteItemWrapper.getInstance(getActivity()).setFavouriteChanged(false);
+        }
     }
 
     private boolean handleStaffFavContent() {

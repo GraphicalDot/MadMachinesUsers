@@ -100,6 +100,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         this.activity = activity;
         this.matchListWrapperNotify = matchListWrapperNotify;
         this.shouldShowHeader = shouldShowHeader;
+
         favList = FavouriteItemWrapper.getInstance(activity).getAllTeams();
     }
 
@@ -196,24 +197,21 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             String homeTeam = cricketMatchJsonCaller.getTeam1();
                             String awayTeam = cricketMatchJsonCaller.getTeam2();
 
-//                            String homeTeamId = cricketMatchJsonCaller.getTeam1Id();
-//                            String awayTeamId = cricketMatchJsonCaller.getTeam2Id();
-//                            boolean isFav = false;
-//                            for (FavouriteItem f : favList) {
-//                                if (f.getId().equalsIgnoreCase(homeTeamId) || f.getId().equalsIgnoreCase(awayTeamId)) {
-//                                    isFav = true;
-//                                }
-//                            }
-//                            if (isFav) {
-//                                holder.favIcon.setVisibility(View.VISIBLE);
-//                            } else {
-//                                holder.favIcon.setVisibility(View.GONE);
-//                            }
-                            holder.favIcon.setVisibility(View.GONE);
+                            String homeTeamId = cricketMatchJsonCaller.getTeam1Id();
+                            String awayTeamId = cricketMatchJsonCaller.getTeam2Id();
+                            boolean isFav = false;
+                            for (FavouriteItem f : favList) {
+                                if (f.getId().equalsIgnoreCase(homeTeamId) || f.getId().equalsIgnoreCase(awayTeamId)) {
+                                    isFav = true;
+                                }
+                            }
+                            if (isFav) {
+                                holder.favIcon.setVisibility(View.VISIBLE);
+                            } else {
+                                holder.favIcon.setVisibility(View.GONE);
+                            }
                             Glide.with(activity).load(cricketMatchJsonCaller.getTeam1Flag()).placeholder(R.drawable.ic_no_img).into(holder.t1flag);
                             Glide.with(activity).load(cricketMatchJsonCaller.getTeam2Flag()).placeholder(R.drawable.ic_no_img).into(holder.t2flag);
-
-
                             if (widgetTeamsFirst != null) {
                                 for (int i = 0; i < widgetTeamsFirst.length(); i++) {
                                     JSONObject teamData = widgetTeamsFirst.getJSONObject(i);
@@ -707,9 +705,9 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                 matchId = cricketMatchJsonCaller.getMatchId();
                 matchStatus = cricketMatchJsonCaller.getStatus();
                 toss = cricketMatchJsonCaller.getToss();
-                matchName=cricketMatchJsonCaller.getTeam1() + " vs " + cricketMatchJsonCaller.getTeam2();
-                if(!TextUtils.isEmpty(cricketMatchJsonCaller.getMatchNumber())){
-                    matchName=cricketMatchJsonCaller.getMatchNumber()+", "+matchName;
+                matchName = cricketMatchJsonCaller.getTeam1() + " vs " + cricketMatchJsonCaller.getTeam2();
+                if (!TextUtils.isEmpty(cricketMatchJsonCaller.getMatchNumber())) {
+                    matchName = cricketMatchJsonCaller.getMatchNumber() + ", " + matchName;
                 }
                 date = DateUtil.getDateFromEpochTime(Long.valueOf(cricketMatchJsonCaller.getMatchDateTimeEpoch()) * 1000);
                 seriesId = cricketMatchJsonCaller.getSeriesId();
@@ -987,6 +985,12 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
     public void removeStaffBanner() {
         shouldShowHeader = false;
         removeBannerMatchObject();
+        this.notifyDataSetChanged();
+    }
+
+    public void notifyFavIconChanged() {
+
+        favList = FavouriteItemWrapper.getInstance(activity).getAllTeams();
         this.notifyDataSetChanged();
     }
 

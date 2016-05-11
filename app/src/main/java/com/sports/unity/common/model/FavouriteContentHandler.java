@@ -2,7 +2,6 @@ package com.sports.unity.common.model;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import com.sports.unity.scores.model.ScoresContentHandler;
 import com.sports.unity.util.Constants;
@@ -22,26 +21,8 @@ import java.util.List;
  * Helper class to handle the favourite filter selection.
  */
 public class FavouriteContentHandler {
+
     public static FavouriteContentHandler favouriteContentHandler;
-
-
-    private List<FavouriteItem> favFootballLeagues;
-    private List<FavouriteItem> favFootballTeams;
-    private List<FavouriteItem> favFootballPlayers;
-
-    private List<FavouriteItem> favCricketTeams;
-    private List<FavouriteItem> favCricketPlayers;
-
-
-    private List<FavouriteItem> favSearchFootballLeague;
-    private List<FavouriteItem> favSearchCricketTeam;
-    private List<FavouriteItem> favSearchCricketPlayer;
-    private List<FavouriteItem> favSearchFootballTeam;
-    private List<FavouriteItem> favSearchFootballPlayer;
-    private ArrayList<FavouriteItem> savedFavList;
-
-    private ArrayList<JSONObject> matches = new ArrayList<>();
-    private ScoresContentListener contentListener = new ScoresContentListener();
 
     private static final String LISTENER_KEY = "favourite_listener";
     private static final String FOOTBALL_LEAGUE_REQUEST_TAG = "football_league_request_tag";
@@ -59,45 +40,20 @@ public class FavouriteContentHandler {
     private static final String SEARCH_FOOTBALL_PLAYER_TAG = "fav_search_request_football_player_tag";
 
 
-    private static final String URL_FOOTBALL_LEAGUE = Constants.SCORE_BASE_URL + "/get_football_leagues";
-    private static final String URL_FOOTBALL_PLAYER = Constants.SCORE_BASE_URL + "/get_top_football_players";
-    private static final String URL_FOOTBALL_TEAM = Constants.SCORE_BASE_URL + "/get_top_football_teams";
-    private static final String URL_CRICKET_TEAM = Constants.SCORE_BASE_URL + "/v1/get_cricket_teams";
-    private static final String URL_CRICKET_PLAYER = Constants.SCORE_BASE_URL + "/top_cricket_players";
+    private static final String URL_FOOTBALL_LEAGUE = Constants.SCORE_BASE_URL + "get_football_leagues";
+    private static final String URL_FOOTBALL_PLAYER = Constants.SCORE_BASE_URL + "get_top_football_players";
+    private static final String URL_FOOTBALL_TEAM = Constants.SCORE_BASE_URL + "get_top_football_teams";
+    private static final String URL_CRICKET_TEAM = Constants.SCORE_BASE_URL + "v1/get_cricket_teams";
+    private static final String URL_CRICKET_PLAYER = Constants.SCORE_BASE_URL + "top_cricket_players";
 
 
-    private static final String URL_FOOTBALL_LEAGUE_SEARCH = Constants.SEARCH_BASE_URL + "/fav_league?league=";
+    private static final String URL_FOOTBALL_LEAGUE_SEARCH = Constants.SEARCH_BASE_URL + "fav_league?league=";
 
-    private static final String URL_CRICKET_TEAM_SEARCH = Constants.SEARCH_BASE_URL + "/fav_team?sport_type=cricket&team=";
-    private static final String URL_CRICKET_PLAYER_SEARCH = Constants.SEARCH_BASE_URL + "/fav_player?sport_type=cricket&player=";
-    private static final String URL_FOOTBALL_TEAM_SEARCH = Constants.SEARCH_BASE_URL + "/fav_team?sport_type=football&team=";
-    private static final String URL_FOOTBALL_PLAYER_SEARCH = Constants.SEARCH_BASE_URL + "/fav_player?sport_type=football&player=";
-
-
-    private final String errorMessage = "Something went wrong";
-    private final String noResultMessage = "No result found";
-
-    private ArrayList<ListPreparedListener> listPreparedListener;
-    public int responseNum = 0;
-    private ArrayList<Boolean> responseBool;
-    public boolean isDisplay;
-
-    public int searchNum = 0;
-
+    private static final String URL_CRICKET_TEAM_SEARCH = Constants.SEARCH_BASE_URL + "fav_team?sport_type=cricket&team=";
+    private static final String URL_CRICKET_PLAYER_SEARCH = Constants.SEARCH_BASE_URL + "fav_player?sport_type=cricket&player=";
+    private static final String URL_FOOTBALL_TEAM_SEARCH = Constants.SEARCH_BASE_URL + "fav_team?sport_type=football&team=";
+    private static final String URL_FOOTBALL_PLAYER_SEARCH = Constants.SEARCH_BASE_URL + "fav_player?sport_type=football&player=";
     private static Context context;
-    private int responseSearchnum = 0;
-    private ArrayList<Boolean> responseSearchBool = new ArrayList<Boolean>();
-
-    /**
-     * constructor
-     */
-    private FavouriteContentHandler() {
-
-        matches = new ArrayList<JSONObject>();
-        listPreparedListener = new ArrayList<ListPreparedListener>();
-        responseBool = new ArrayList<Boolean>();
-        makeRequest();
-    }
 
 
     /**
@@ -113,6 +69,55 @@ public class FavouriteContentHandler {
         return favouriteContentHandler;
     }
 
+    private List<FavouriteItem> favCricketTeams;
+    private List<FavouriteItem> favCricketPlayers;
+
+    private List<FavouriteItem> favFootballLeagues;
+    private List<FavouriteItem> favFootballTeams;
+    private List<FavouriteItem> favFootballPlayers;
+
+
+    private List<FavouriteItem> favSearchCricketTeam;
+    private List<FavouriteItem> favSearchCricketPlayer;
+
+    private List<FavouriteItem> favSearchFootballLeague;
+    private List<FavouriteItem> favSearchFootballTeam;
+    private List<FavouriteItem> favSearchFootballPlayer;
+
+    private ArrayList<FavouriteItem> savedFavList;
+
+    private ArrayList<ListPreparedListener> listPreparedListener;
+
+    private ArrayList<Boolean> responseBool;
+
+    private ArrayList<JSONObject> matches = new ArrayList<>();
+
+    private ArrayList<Boolean> responseSearchBool = new ArrayList<Boolean>();
+
+    private ScoresContentListener contentListener = new ScoresContentListener();
+
+    private final String errorMessage = "Something went wrong";
+    private final String noResultMessage = "No result found";
+
+    private int responseSearchCount = 0;
+
+
+    /**
+     * constructor
+     */
+    private FavouriteContentHandler() {
+
+        matches = new ArrayList<JSONObject>();
+        listPreparedListener = new ArrayList<ListPreparedListener>();
+        responseBool = new ArrayList<Boolean>();
+        makeRequest();
+    }
+
+
+    public boolean isDisplay;
+    public int responseNum = 0;
+    public int searchNum = 0;
+
     /**
      * resets the {@link ListPreparedListener} attached to the FavouriteContentHandler class.
      */
@@ -124,9 +129,7 @@ public class FavouriteContentHandler {
      * Request network API for top football leagues.
      */
     public void requestFootballLeagues() {
-        //FOOTBALL_FILTER_LEAGUE=initDataSet("League".concat(Constants.NAV_COMP));
         ScoresContentHandler.getInstance().requestFavouriteContent(URL_FOOTBALL_LEAGUE, LISTENER_KEY, FOOTBALL_LEAGUE_REQUEST_TAG);
-
     }
 
     /**
@@ -550,7 +553,7 @@ public class FavouriteContentHandler {
             if (!searchTag.contains(SEARCH_REQUEST_TAG)) {
                 responseNum++;
             } else {
-                responseSearchnum++;
+                responseSearchCount++;
             }
             boolean success = false;
             if (responseCode == 200) {
@@ -798,7 +801,7 @@ public class FavouriteContentHandler {
                     responseBool = new ArrayList<Boolean>();
                 }
             } else {
-                if (responseSearchnum == searchNum) {
+                if (responseSearchCount == searchNum) {
                     try {
                         for (int i = 0; i < listPreparedListener.size(); i++) {
                             listPreparedListener.get(i).onListPrepared(true, noResultMessage);
@@ -809,7 +812,7 @@ public class FavouriteContentHandler {
                         }
                     }
                     searchNum = 0;
-                    responseSearchnum = 0;
+                    responseSearchCount = 0;
                     responseSearchBool = new ArrayList<Boolean>();
                 }
             }
