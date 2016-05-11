@@ -52,6 +52,9 @@ public class CompletedFootballMatchTimeLineFragment extends BasicVolleyRequestRe
 
     private SwipeRefreshLayout swTimeLineRefresh;
     private RecyclerView recyclerView;
+
+    private View timelinerootlayout;
+
     private CompleteFootballTimeLineAdapter completeFootballTimeLineAdapter;
 
     private List<CompleteFootballTimeLineDTO> list = new ArrayList<>();
@@ -117,9 +120,11 @@ public class CompletedFootballMatchTimeLineFragment extends BasicVolleyRequestRe
         recyclerView.setLayoutManager(manager);
         completeFootballTimeLineAdapter = new CompleteFootballTimeLineAdapter(list, context);
         recyclerView.setAdapter(completeFootballTimeLineAdapter);
+        timelinerootlayout=(View)view.findViewById(R.id.timeline_root_layout);
+        timelinerootlayout.setVisibility(View.GONE);
 
         swTimeLineRefresh = (SwipeRefreshLayout) view.findViewById(R.id.sw_timeline_refresh);
-        swTimeLineRefresh.setVisibility(View.GONE);
+       // swTimeLineRefresh.setVisibility(View.GONE);
         swTimeLineRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -257,7 +262,7 @@ public class CompletedFootballMatchTimeLineFragment extends BasicVolleyRequestRe
 
         @Override
         protected void showErrorLayout() {
-            if (swTimeLineRefresh.getVisibility() == View.VISIBLE) {
+            if( timelinerootlayout.getVisibility() == View.VISIBLE ) {
                 //nothing
             } else {
                 super.showErrorLayout();
@@ -266,7 +271,7 @@ public class CompletedFootballMatchTimeLineFragment extends BasicVolleyRequestRe
 
         @Override
         protected void showProgress() {
-            if (swTimeLineRefresh.getVisibility() == View.VISIBLE) {
+            if( timelinerootlayout.getVisibility() == View.VISIBLE ) {
                 //nothing
             } else {
                 super.showProgress();
@@ -292,8 +297,8 @@ public class CompletedFootballMatchTimeLineFragment extends BasicVolleyRequestRe
         @Override
         public void changeUI(String tag) {
             boolean success = renderDisplay();
-            if (success) {
-                swTimeLineRefresh.setVisibility(View.VISIBLE);
+            if( success ){
+                timelinerootlayout.setVisibility(View.VISIBLE);
             } else {
                 showErrorLayout();
             }

@@ -121,7 +121,7 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
             completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(masterDataList, context);
             masterRecycleView.setAdapter(completeFootballLineUpAdapter);
             swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_lineup);
-            swipeRefreshLayout.setVisibility(View.GONE);
+//            swipeRefreshLayout.setVisibility(View.GONE);
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
                 @Override
@@ -424,6 +424,9 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
             } else {
                 super.showProgress();
             }
+            if( swipeRefreshLayout == null ) {
+                swipeRefreshLayout.setRefreshing(true);
+            }
         }
 
         @Override
@@ -440,9 +443,11 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
             boolean success = renderDisplay();
             if (success) {
                 manageRootView.setVisibility(View.VISIBLE);
-                swipeRefreshLayout.setVisibility(View.VISIBLE);
+//                swipeRefreshLayout.setVisibility(View.VISIBLE);
             } else {
                 showErrorLayout();
+                swipeRefreshLayout.setRefreshing(true);
+//                swipeRefreshLayout.setVisibility(View.VISIBLE);
             }
         }
 

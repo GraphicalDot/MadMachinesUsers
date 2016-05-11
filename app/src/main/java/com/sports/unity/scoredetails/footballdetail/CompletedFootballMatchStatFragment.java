@@ -46,6 +46,8 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
     private HashMap<String, String> requestParameters;
     private JSONObject response;
 
+    private LinearLayout matchstatsrootlayout;
+
     private RecyclerView rvFootballMatchStat;
     private CompleteFootballMatchStatAdapter completeFootballMatchStatAdapter;
     private ArrayList<CompleteFootballMatchStatDTO> dataStatsList = new ArrayList<CompleteFootballMatchStatDTO>();
@@ -114,9 +116,11 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
             rvFootballMatchStat.setLayoutManager(manager);
             completeFootballMatchStatAdapter = new CompleteFootballMatchStatAdapter(dataStatsList, context);
             rvFootballMatchStat.setAdapter(completeFootballMatchStatAdapter);
+            matchstatsrootlayout=(LinearLayout)view.findViewById(R.id.match_stats_root_layout);
+            matchstatsrootlayout.setVisibility(View.GONE);
 
             swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_stat);
-            swipeRefreshLayout.setVisibility(View.GONE);
+           // swipeRefreshLayout.setVisibility(View.GONE);
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
                 @Override
@@ -243,7 +247,7 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
 
         @Override
         protected void showErrorLayout() {
-            if (swipeRefreshLayout.getVisibility() == View.VISIBLE) {
+            if( matchstatsrootlayout.getVisibility() == View.VISIBLE ) {
                 //nothing
             } else {
                 super.showErrorLayout();
@@ -252,7 +256,7 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
 
         @Override
         protected void showProgress() {
-            if (swipeRefreshLayout.getVisibility() == View.VISIBLE) {
+            if( matchstatsrootlayout.getVisibility() == View.VISIBLE ) {
                 //nothing
             } else {
                 super.showProgress();
@@ -278,8 +282,8 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
         @Override
         public void changeUI(String tag) {
             boolean success = renderDisplay();
-            if (success) {
-                swipeRefreshLayout.setVisibility(View.VISIBLE);
+            if( success ){
+                matchstatsrootlayout.setVisibility(View.VISIBLE);
             } else {
                 showErrorLayout();
             }

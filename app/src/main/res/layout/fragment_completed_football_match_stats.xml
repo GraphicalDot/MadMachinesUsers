@@ -16,6 +16,7 @@
             <!--android:layout_height="match_parent">-->
 
             <LinearLayout
+                android:id="@+id/match_stats_root_layout"
                 android:layout_width="match_parent"
                 android:orientation="vertical"
                 android:layout_height="wrap_content"
