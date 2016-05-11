@@ -54,7 +54,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
 
     private TextView playedBallTag;
     private TextView playerStrikeRate;
-
+    private View manageRootView;
     private CompletedCricketMatchSummaryParser cricketMatchSummaryParser;
 
     public CricketSummaryHelper(String title, Intent intent) {
@@ -104,6 +104,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
             callName = ScoresContentHandler.CALL_NAME_CRICKET_MATCH_SUMMARY;
         } else {
             //nothing
+
         }
         return callName;
     }
@@ -138,7 +139,8 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
             View playerOfTheMatchLayout = view.findViewById(R.id.player_of_the_match_layout);
             playerOfTheMatchLayout.setVisibility(View.GONE);
         }
-
+        manageRootView = view.findViewById(R.id.content_layout);
+        manageRootView.setVisibility(View.GONE);
         ivPlayerProfileView = (ImageView) view.findViewById(R.id.iv_player_profile_image);
         playerName = (TextView) view.findViewById(R.id.tv_player_name);
         tvPlayerRun = (TextView) view.findViewById(R.id.tv_player_run);
@@ -167,7 +169,8 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
             if (isUpcoming) {
                 view.findViewById(R.id.umpires_layout).setVisibility(View.GONE);
                 view.findViewById(R.id.refree_layout).setVisibility(View.GONE);
-
+                manageRootView.setVisibility(View.VISIBLE);
+                swipeRefreshLayout.setEnabled(false);
             }
 
 
@@ -309,19 +312,19 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
 
         @Override
         protected void showErrorLayout() {
-            if (summaryparentlinearlayout == null || summaryparentlinearlayout.getVisibility() == View.GONE) {
-                super.showErrorLayout();
-            } else {
+            if (manageRootView.getVisibility() == View.VISIBLE) {
                 //nothing
+            } else {
+                super.showErrorLayout();
             }
         }
 
         @Override
         protected void showProgress() {
-            if (summaryparentlinearlayout == null || summaryparentlinearlayout.getVisibility() == View.GONE) {
-                super.showProgress();
-            } else {
+            if (manageRootView.getVisibility() == View.VISIBLE) {
                 //nothing
+            } else {
+                super.showProgress();
             }
 
         }
@@ -340,6 +343,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
             boolean success = renderDisplay();
             if (success) {
                 //nothing
+                manageRootView.setVisibility(View.VISIBLE);
                 swipeRefreshLayout.setRefreshing(false);
             } else {
                 showErrorLayout();
