@@ -15,8 +15,8 @@ public class CompleteFootballLineUpDTO {
     private String cardTypeSecond;
     private String goalSecond;
     private String enterExitImageSecond;
-
-
+    private String headerTitle;
+    private boolean isHeader=false;
 
 
     private String offPlayerPostionNumber;
@@ -190,5 +190,20 @@ public class CompleteFootballLineUpDTO {
 
     public void setOffEnterExitImageSecond(String offEnterExitImageSecond) {
         this.offEnterExitImageSecond = offEnterExitImageSecond;
+    }
+    public void setHeaderTitle(String title){
+        this.headerTitle=title;
+    }
+
+    public String getHeaderTitle() {
+        return headerTitle;
+    }
+
+    public void setHeader(boolean isHeader) {
+        this.isHeader = isHeader;
+    }
+
+    public boolean isHeader() {
+        return isHeader;
     }
 }

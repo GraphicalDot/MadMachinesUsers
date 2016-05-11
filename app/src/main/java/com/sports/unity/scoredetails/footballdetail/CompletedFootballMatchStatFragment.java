@@ -43,13 +43,12 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
 
     private int baseWidth;
     private String title;
-    private HashMap<String,String> requestParameters;
+    private HashMap<String, String> requestParameters;
     private JSONObject response;
 
     private RecyclerView rvFootballMatchStat;
     private CompleteFootballMatchStatAdapter completeFootballMatchStatAdapter;
-    private Map<String,CompleteFootballMatchStatDTO> map = new HashMap<>();
-
+    private ArrayList<CompleteFootballMatchStatDTO> dataStatsList = new ArrayList<CompleteFootballMatchStatDTO>();
     private SwipeRefreshLayout swipeRefreshLayout;
 
     public CompletedFootballMatchStatFragment(String title, int baseWidth) {
@@ -75,9 +74,9 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
     @Override
     public CustomComponentListener getCustomComponentListener(View view) {
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
-        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
-        MatchStatsComponentListener  componentListener = new MatchStatsComponentListener( getRequestTag(), progressBar, errorLayout);
+        MatchStatsComponentListener componentListener = new MatchStatsComponentListener(getRequestTag(), progressBar, errorLayout);
         return componentListener;
     }
 
@@ -102,7 +101,7 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
     }
 
 
-    public void setRequestParameters(HashMap<String,String> params ) {
+    public void setRequestParameters(HashMap<String, String> params) {
         this.requestParameters = params;
     }
 
@@ -111,9 +110,9 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
             Context context = view.getContext();
 
             rvFootballMatchStat = (RecyclerView) view.findViewById(R.id.rv_football_match_stat);
-            rvFootballMatchStat.setNestedScrollingEnabled(false);
-            rvFootballMatchStat.setLayoutManager(new LinearLayoutManager(context));
-            completeFootballMatchStatAdapter = new CompleteFootballMatchStatAdapter(map, context);
+            RecyclerView.LayoutManager manager = new android.support.v7.widget.LinearLayoutManager(context);
+            rvFootballMatchStat.setLayoutManager(manager);
+            completeFootballMatchStatAdapter = new CompleteFootballMatchStatAdapter(dataStatsList, context);
             rvFootballMatchStat.setAdapter(completeFootballMatchStatAdapter);
 
             swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_stat);
@@ -150,38 +149,42 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
     private boolean renderDisplay() {
         boolean success = false;
 
-        map.clear();
-        if ( ! response.isNull("data") ) {
+        dataStatsList.clear();
+        if (!response.isNull("data")) {
             try {
                 JSONArray dataArray = response.getJSONArray("data");
-                if( dataArray.length() != 0 ){
-                    JSONObject teamSecondStatsObject = dataArray.getJSONObject(0);
-                    JSONObject teamFirstStatsObject = dataArray.getJSONObject(1);
-
-                    Iterator<String> keysSetItr = teamFirstStatsObject.keys();
+                if (dataArray.length() != 0) {
+                    JSONObject teamSecondStatsObject = null;
+                    JSONObject teamFirstStatsObject = null;
+                    JSONObject tempObject = dataArray.getJSONObject(0);
+                    if (tempObject.getString("team").equalsIgnoreCase("localteam")) {
+                        teamFirstStatsObject = dataArray.getJSONObject(0);
+                        teamSecondStatsObject = dataArray.getJSONObject(1);
+                    } else {
+                        teamFirstStatsObject = dataArray.getJSONObject(1);
+                        teamSecondStatsObject = dataArray.getJSONObject(0);
+                    }
+                    String[] keys = {"possesiontime", "shots_total", "shots_ongoal", "corners", "fouls", "offsides"};
                     CompleteFootballMatchStatDTO completeFootballMatchStatDTO = null;
-                    while (keysSetItr.hasNext()) {
-                        String key = keysSetItr.next();
+                    for (int index = 0; index < keys.length; index++) {
+                        String key = keys[index];
                         try {
-                            if (getLabelValue(key) != null) {
-                                if (!(key.equals("match_id") || key.equals("team"))) {
-                                    completeFootballMatchStatDTO = new CompleteFootballMatchStatDTO();
-                                    completeFootballMatchStatDTO.setTvLable(getLabelValue(key));
-                                    completeFootballMatchStatDTO.setIvLeftStatus(teamFirstStatsObject.getString(key));
-                                    completeFootballMatchStatDTO.setIvRightStatus(teamSecondStatsObject.getString(key));
-                                    int red = Integer.parseInt(teamFirstStatsObject.getString(key));
-                                    int blue = Integer.parseInt(teamSecondStatsObject.getString(key));
-                                    int total = red + blue;
-                                    if (total == 0) {
-                                        completeFootballMatchStatDTO.setLeftGraphValue(0);
-                                        completeFootballMatchStatDTO.setRightGraphValue(0);
-                                    } else {
-                                        completeFootballMatchStatDTO.setLeftGraphValue((baseWidth * red) / (red + blue));
-                                        completeFootballMatchStatDTO.setRightGraphValue((baseWidth * blue) / (red + blue));
-                                    }
-                                    map.put(getLabelValue(key), completeFootballMatchStatDTO);
-                                }
+                            completeFootballMatchStatDTO = new CompleteFootballMatchStatDTO();
+                            completeFootballMatchStatDTO.setTvLable(getLabelValue(key));
+                            completeFootballMatchStatDTO.setIvLeftStatus(teamFirstStatsObject.getString(key));
+                            completeFootballMatchStatDTO.setIvRightStatus(teamSecondStatsObject.getString(key));
+                            int red = Integer.parseInt(teamFirstStatsObject.getString(key));
+                            int blue = Integer.parseInt(teamSecondStatsObject.getString(key));
+                            float total = red + blue;
+                            if (total == 0) {
+                                completeFootballMatchStatDTO.setLeftGraphValue(baseWidth);
+                                completeFootballMatchStatDTO.setRightGraphValue(baseWidth);
+                            } else {
+                                completeFootballMatchStatDTO.setLeftGraphValue( (int)(baseWidth * (1 - (red / total))) );
+                                completeFootballMatchStatDTO.setRightGraphValue( (int)(baseWidth * (1 - (blue / total))) );
                             }
+                            dataStatsList.add(completeFootballMatchStatDTO);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -229,7 +232,7 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
 
     public class MatchStatsComponentListener extends CustomComponentListener {
 
-        public MatchStatsComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
+        public MatchStatsComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout) {
             super(requestTag, progressBar, errorLayout);
         }
 
@@ -240,7 +243,7 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
 
         @Override
         protected void showErrorLayout() {
-            if( swipeRefreshLayout.getVisibility() == View.VISIBLE ) {
+            if (swipeRefreshLayout.getVisibility() == View.VISIBLE) {
                 //nothing
             } else {
                 super.showErrorLayout();
@@ -249,7 +252,7 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
 
         @Override
         protected void showProgress() {
-            if( swipeRefreshLayout.getVisibility() == View.VISIBLE ) {
+            if (swipeRefreshLayout.getVisibility() == View.VISIBLE) {
                 //nothing
             } else {
                 super.showProgress();
@@ -260,7 +263,7 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
         protected void hideProgress() {
             super.hideProgress();
 
-            if( swipeRefreshLayout != null ){
+            if (swipeRefreshLayout != null) {
                 swipeRefreshLayout.setRefreshing(false);
             }
         }
@@ -275,7 +278,7 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
         @Override
         public void changeUI(String tag) {
             boolean success = renderDisplay();
-            if( success ){
+            if (success) {
                 swipeRefreshLayout.setVisibility(View.VISIBLE);
             } else {
                 showErrorLayout();

@@ -39,18 +39,17 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
 
     private TextView tvCaptainFirst;
     private TextView tvCaptainSecond;
+    private Context context;
 
-
-    private RecyclerView rvLineup;
-    private RecyclerView rvSubstitutes;
+    private RecyclerView masterRecycleView;
 
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private CompleteFootballLineUpAdapter completeFootballLineUpAdapter;
-    private CompleteFootballLineUpAdapter completeFootballSubstituteUpAdapter;
 
     private List<CompleteFootballLineUpDTO> substitutesList = new ArrayList<>();
     private List<CompleteFootballLineUpDTO> lineUpList = new ArrayList<>();
+    private List<CompleteFootballLineUpDTO> masterDataList = new ArrayList<>();
 
     public CompletedFootballMatchLineUpFragment(String title) {
         this.title = title;
@@ -108,23 +107,19 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
     private void initView(View view) {
         try {
 
-            Context context = view.getContext();
+            context = view.getContext();
 
             manageRootView = view.findViewById(R.id.parent_layout);
             manageRootView.setVisibility(View.GONE);
 
             tvCaptainFirst = (TextView) view.findViewById(R.id.tv_team_first_captain);
             tvCaptainSecond = (TextView) view.findViewById(R.id.tv_team_second_captain);
-            rvLineup = (RecyclerView) view.findViewById(R.id.rv_lineup);
-            rvLineup.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
-            rvSubstitutes = (RecyclerView) view.findViewById(R.id.rv_substitutes);
-            rvSubstitutes.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
-            rvSubstitutes.setNestedScrollingEnabled(false);
-            completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(lineUpList, context);
-            rvLineup.setAdapter(completeFootballLineUpAdapter);
-            rvLineup.setNestedScrollingEnabled(false);
-            completeFootballSubstituteUpAdapter = new CompleteFootballLineUpAdapter(substitutesList, context);
-            rvSubstitutes.setAdapter(completeFootballSubstituteUpAdapter);
+
+            masterRecycleView = (RecyclerView) view.findViewById(R.id.rv_master);
+            RecyclerView.LayoutManager manager = new android.support.v7.widget.LinearLayoutManager(context);
+            masterRecycleView.setLayoutManager(manager);
+            completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(masterDataList, context);
+            masterRecycleView.setAdapter(completeFootballLineUpAdapter);
             swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_lineup);
             swipeRefreshLayout.setVisibility(View.GONE);
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -167,6 +162,7 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
                 JSONArray teamsObjectArray = dataObject.getJSONArray("teams");
                 JSONArray substitutionsArray = dataObject.getJSONArray("substitutions");
 
+                masterDataList.clear();
                 lineUpList.clear();
                 substitutesList.clear();
 
@@ -210,11 +206,24 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
 //
 //                }
 
-                substitutesList.addAll( getSubstituteListAsDTO(subsArray, substitutionsArray));
-                lineUpList.addAll( getLineUpListAsDTO(teamsObjectArray, substitutionsArray));
+                substitutesList.addAll(getSubstituteListAsDTO(subsArray, substitutionsArray));
+                lineUpList.addAll(getLineUpListAsDTO(teamsObjectArray, substitutionsArray));
+
+                CompleteFootballLineUpDTO lineUpHeader = new CompleteFootballLineUpDTO();
+                lineUpHeader.setHeader(true);
+                lineUpHeader.setHeaderTitle(context.getResources().getString(R.string.line_up));
+                masterDataList.add(lineUpHeader);
+
+                masterDataList.addAll(lineUpList);
+
+                CompleteFootballLineUpDTO substituteHeader = new CompleteFootballLineUpDTO();
+                substituteHeader.setHeader(true);
+                substituteHeader.setHeaderTitle(context.getResources().getString(R.string.substitutes));
+                masterDataList.add(substituteHeader);
+
+                masterDataList.addAll(substitutesList);
 
                 completeFootballLineUpAdapter.notifyDataSetChanged();
-                completeFootballSubstituteUpAdapter.notifyDataSetChanged();
 
                 success = true;
             } catch (Exception ex) {
@@ -235,13 +244,13 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
         for (int i = 0; i < subsArray.length(); i++) {
             try {
                 JSONObject tempObject = subsArray.getJSONObject(i);
-                if (tempObject.getString("team" ).equalsIgnoreCase("localteam")) {
+                if (tempObject.getString("team").equalsIgnoreCase("localteam")) {
                     teamFirstObject = subsArray.getJSONObject(i);
                     localTeam.add(teamFirstObject);
                 } else {
                     teamSecondObject = subsArray.getJSONObject(i);
                     awayTeam.add(teamSecondObject);
-                 }
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -250,7 +259,7 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
         int largeSize = Math.max(localTeam.size(), awayTeam.size());
         ArrayList<CompleteFootballLineUpDTO> list = new ArrayList<>();
         CompleteFootballLineUpDTO dto = null;
-        for(int index = 0; index < largeSize ; index++){
+        for (int index = 0; index < largeSize; index++) {
             teamFirstObject = localTeam.size() > index ? localTeam.get(index) : null;
             teamSecondObject = awayTeam.size() > index ? awayTeam.get(index) : null;
 
@@ -272,7 +281,7 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
         for (int i = 0; i < subsArray.length(); i++) {
             try {
                 JSONObject tempObject = subsArray.getJSONObject(i);
-                if (tempObject.getString("team" ).equalsIgnoreCase("localteam")) {
+                if (tempObject.getString("team").equalsIgnoreCase("localteam")) {
                     teamFirstObject = subsArray.getJSONObject(i);
                     localTeam.add(teamFirstObject);
                 } else {
@@ -287,7 +296,7 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
         int largeSize = Math.max(localTeam.size(), awayTeam.size());
         ArrayList<CompleteFootballLineUpDTO> list = new ArrayList<>();
         CompleteFootballLineUpDTO dto = null;
-        for(int index = 0; index < largeSize ; index++){
+        for (int index = 0; index < largeSize; index++) {
             teamFirstObject = localTeam.size() > index ? localTeam.get(index) : null;
             teamSecondObject = awayTeam.size() > index ? awayTeam.get(index) : null;
 
@@ -301,7 +310,7 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
     }
 
     private void setTeamSecondLineDetails(CompleteFootballLineUpDTO completeFootballLineUpDTO, JSONObject teamSecondObject, JSONArray substitutionsArray) throws JSONException {
-        if( teamSecondObject != null ) {
+        if (teamSecondObject != null) {
             completeFootballLineUpDTO.setPlayerNameSecond(teamSecondObject.getString("name"));
             completeFootballLineUpDTO.setPlayerPostionNumberSecond(teamSecondObject.getString("jersey_number"));
             //getMatchEventsSecond(matchEventsArray, teamSecondObject.getString("name"), completeFootballLineUpDTO);
@@ -317,7 +326,7 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
     }
 
     private void setTeamFirstLineUps(CompleteFootballLineUpDTO completeFootballLineUpDTO, JSONObject teamFirstObject, JSONArray substitutionsArray) throws JSONException {
-        if( teamFirstObject != null ) {
+        if (teamFirstObject != null) {
             completeFootballLineUpDTO.setPlayerName(teamFirstObject.getString("name"));
             completeFootballLineUpDTO.setPlayerPostionNumber(teamFirstObject.getString("jersey_number"));
 //        getMatchEventsFirst(matchEventsArray, teamFirstObject.getString("name"), completeFootballLineUpDTO);
@@ -332,7 +341,7 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
     }
 
     private void setSecondTeamDetails(CompleteFootballLineUpDTO completeFootballLineUpDTO, JSONObject teamSecondObject, JSONArray substitutionsArray) throws JSONException {
-        if(teamSecondObject != null) {
+        if (teamSecondObject != null) {
             completeFootballLineUpDTO.setPlayerNameSecond(teamSecondObject.getString("player_name"));
             completeFootballLineUpDTO.setPlayerPostionNumberSecond(teamSecondObject.getString("jersey_number"));
             //getMatchEventsSecond(matchEventsArray, teamSecondObject.getString("player_name"), completeFootballLineUpDTO);
@@ -348,7 +357,7 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
     }
 
     private void setPlayerDetails(CompleteFootballLineUpDTO completeFootballLineUpDTO, JSONObject teamFirstObject, JSONArray substitutionsArray) throws JSONException {
-        if(teamFirstObject != null) {
+        if (teamFirstObject != null) {
             completeFootballLineUpDTO.setPlayerName(teamFirstObject.getString("player_name"));
             completeFootballLineUpDTO.setPlayerPostionNumber(teamFirstObject.getString("jersey_number"));
             completeFootballLineUpDTO.setEnterExitImage(getOnOffPlayer(substitutionsArray, teamFirstObject.getString("player_name")));
