@@ -70,6 +70,12 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
         }
         return currentBowler.getString("name");
     }
+    public String getCurentBowlerEconomy() throws JSONException {
+        if(currentBowler.isNull("economy")){
+            return  "";
+        }
+        return currentBowler.getString("economy");
+    }
     public String getCurentBowlerOvers() throws JSONException {
         if(currentBowler.isNull("overs")){
             return  "";

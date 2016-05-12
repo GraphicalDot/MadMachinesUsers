@@ -3,6 +3,7 @@ package com.sports.unity.scoredetails.cricketdetail;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -65,7 +66,7 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
     private TextView tvBowlerEcon;
     private TextView tvBowlerOver;
 
-    public CricketLiveSummaryHelper(String title){
+    public CricketLiveSummaryHelper(String title) {
         this.title = title;
     }
 
@@ -102,14 +103,14 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
     @Override
     public CustomComponentListener getCustomComponentListener(View view) {
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
-        ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
+        ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
-        SummaryComponentListener matchCommentaryComponentListener = new SummaryComponentListener( getRequestTag(), progressBar, errorLayout);
+        SummaryComponentListener matchCommentaryComponentListener = new SummaryComponentListener(getRequestTag(), progressBar, errorLayout);
         return matchCommentaryComponentListener;
     }
 
     @Override
-    public void initialiseViews(View view){
+    public void initialiseViews(View view) {
         initViews(view);
     }
 
@@ -181,9 +182,9 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
             JSONObject object = new JSONObject(content);
             success = object.getBoolean("success");
 
-            if( success ){
+            if (success) {
                 success = false;
-                if ( ! object.isNull("data") ) {
+                if (!object.isNull("data")) {
                     JSONArray dataArray = object.getJSONArray("data");
                     JSONObject matchObject = dataArray.getJSONObject(0);
 
@@ -331,8 +332,7 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
                     tvThirdUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(2));
                     Glide.with(context).load(liveCricketMatchSummaryParser.getYetToPlayerImage(2)).placeholder(R.drawable.ic_user).into(ivUppComingPlayerThird);
                     tvBowlerName.setText(liveCricketMatchSummaryParser.getCurentBowlerName());
-
-                    tvBowlerEcon.setText("ECON " + liveCricketMatchSummaryParser.getCurentBowlerName());
+                    tvBowlerEcon.setText(TextUtils.isEmpty(liveCricketMatchSummaryParser.getCurentBowlerEconomy())?"Not Available":liveCricketMatchSummaryParser.getCurentBowlerEconomy());
 
                     tvBowlerOver.setText(liveCricketMatchSummaryParser.getCurentBowlerOvers());
                     tvBowlerWRun.setText(liveCricketMatchSummaryParser.getCurentBowlerWicket() + "/" + liveCricketMatchSummaryParser.getCurentBowlerRuns());
@@ -343,7 +343,7 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
             } else {
                 //nothing
             }
-        }catch(Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return success;
@@ -451,7 +451,7 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
 
     public class SummaryComponentListener extends CustomComponentListener {
 
-        public SummaryComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
+        public SummaryComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout) {
             super(requestTag, progressBar, errorLayout);
         }
 
@@ -481,7 +481,7 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
         @Override
         public void changeUI(String tag) {
             boolean success = renderResponse();
-            if( success ){
+            if (success) {
                 //nothing
             } else {
                 showErrorLayout();
