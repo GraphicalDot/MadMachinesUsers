@@ -26,7 +26,7 @@
             android:singleLine="true"
             android:text="asd"
             android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="26%" />
+            app:layout_widthPercent="25%" />
 
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/league_name"
@@ -39,7 +39,19 @@
             android:singleLine="true"
             android:text="asd"
             android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="26%" />
+            app:layout_widthPercent="40%" />
+
+
+        <com.sports.unity.common.view.CustomRobotoRegularTextView
+            android:id="@+id/assist"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/league_name"
+            android:gravity="center"
+            android:text=""
+            android:textSize="@dimen/font_size_small_medium"
+            android:visibility="gone"
+            app:layout_widthPercent="11%" />
 
         <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/game_count"
@@ -62,20 +74,10 @@
             app:layout_widthPercent="11%" />
 
         <com.sports.unity.common.view.CustomRobotoRegularTextView
-            android:id="@+id/assist"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/goals_count"
-            android:gravity="center"
-            android:text=""
-            android:textSize="@dimen/font_size_small_medium"
-            app:layout_widthPercent="11%" />
-
-        <com.sports.unity.common.view.CustomRobotoRegularTextView
             android:id="@+id/yc"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/assist"
+            android:layout_toRightOf="@id/goals_count"
             android:gravity="center"
             android:text=""
             android:textSize="@dimen/font_size_small_medium"

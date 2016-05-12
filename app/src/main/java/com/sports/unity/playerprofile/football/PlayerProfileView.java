@@ -151,10 +151,10 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
 
             JSONObject dataObject = datArray.getJSONObject(0);
             JSONArray otherComptetionArray = dataObject.getJSONArray("other_competitions");
-            playerName.setText(dataObject.getString("common_name"));
-            nationality.setText(dataObject.getString("nationality"));
+            playerName.setText(dataObject.getString("name"));
+            nationality.setText(dataObject.getString("Nationality"));
             positionValue.setText(dataObject.getString("Position"));
-            squadNumber.setText(dataObject.getString("Jersey"));
+            //squadNumber.setText(dataObject.getString("Jersey"));
             playerAge.setText(dataObject.getString("Age"));
 
             Glide.with(PlayerProfileView.this).load(dataObject.getString("player_image")).placeholder(R.drawable.ic_user).dontAnimate().into(playerProfileImage);
@@ -165,13 +165,13 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             for (int i = 0; i < otherComptetionArray.length(); i++) {
                 JSONObject comtObject = otherComptetionArray.getJSONObject(i);
                 dto = new PlayerScoreCardDTO();
-                dto.setTeamName(comtObject.getString("team"));
+                dto.setTeamName(comtObject.getString("name"));
                 dto.setLeagueName(comtObject.getString("league"));
-                dto.setNoOfAssists(comtObject.getString("assists"));
-                dto.setNoOfGames(comtObject.getString("games"));
+                dto.setNoOfAssists("25");
+                dto.setNoOfGames(comtObject.getString("appearances"));
                 dto.setNoOfgoals(comtObject.getString("goals"));
-                dto.setNoOfYellowCard(comtObject.getString("yellow_card"));
-                dto.setNoOfRedCard(comtObject.getString("red_card"));
+                dto.setNoOfYellowCard(comtObject.getString("yellowcards"));
+                dto.setNoOfRedCard(comtObject.getString("redcards"));
                 playerScoreCardDTOs.add(dto);
             }
             mplayerScorecardAdapter.notifyDataSetChanged();

@@ -59,7 +59,7 @@ public class UpCommingFootballMatchSquadAdapter extends RecyclerView.Adapter<UpC
             });
             if (!isCricketSquad) {
                 holder.tvPlayerName.setText(holder.dto.getTvPlayerName());
-                holder.tvPlayerAge.setText(holder.dto.getTvPlayerAge());
+                //holder.tvPlayerAge.setText(holder.dto.getTvPlayerAge());
                 holder.tvP.setText(holder.dto.getTvP());
                 holder.tvpl.setText(holder.dto.getTvpl());
                 holder.tvgol.setText(holder.dto.getTvgol());
