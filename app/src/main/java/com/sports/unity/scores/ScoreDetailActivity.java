@@ -215,6 +215,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
             mViewPager = (ViewPager) findViewById(R.id.pager);
             mViewPager.setAdapter( new GenericFragmentViewPagerAdapter(getSupportFragmentManager(), fragmentVolleyHelperList));
+            mViewPager.setOffscreenPageLimit(3);
 
             SlidingTabLayout tabs = (SlidingTabLayout) findViewById(com.sports.unity.R.id.tabs);
             tabs.setDistributeEvenly(false);
