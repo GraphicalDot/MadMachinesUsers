@@ -800,12 +800,10 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             final AlertDialog oddsDialog = oddsBuilder.create();
             oddsDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             try {
-                if (matchDay.get(position).getStatus().equalsIgnoreCase("F") || matchDay.get(position).getStatus().equalsIgnoreCase("FT")) {
+                oddsDialog.show();
 
-                } else {
-                    oddsDialog.show();
-                }
             } catch (Exception e) {
+                e.printStackTrace();
                 Log.i("Match status check", e.toString());
             }
 
