@@ -285,7 +285,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     @Override
     protected void onStart() {
         super.onStart();
-        locManager.connect();
     }
 
     private void initViews() {
@@ -481,7 +480,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
     private void updateLocation() {
         Location location = null;
         if (locManager.ismGoogleApiClientConnected()) {
-            location = locManager.getLocation();
+            location = locManager.getLocation(MainActivity.this);
             if (location != null) {
                 locManager.sendLatituteAndLongitude(location, false);
             }

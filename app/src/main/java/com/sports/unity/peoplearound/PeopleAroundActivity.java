@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.view.ViewPager;
@@ -13,7 +14,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -72,12 +75,14 @@ public class PeopleAroundActivity extends AppCompatActivity {
 
         @Override
         public void handleContent(String tag, String content, int responseCode) {
-            viewPager.setVisibility(View.VISIBLE);
             progressBar.setVisibility(View.GONE);
+            viewPager.setVisibility(View.VISIBLE);
             if (responseCode == 200) {
                 handleData(content);
             } else {
-                //TODO
+                listenersMap.get(FRIENDS_KEY).newData(null);
+                listenersMap.get(SPU_KEY).newData(null);
+                listenersMap.get(SIMILAR_USERS_KEY).newData(null);
             }
         }
     };
@@ -98,25 +103,27 @@ public class PeopleAroundActivity extends AppCompatActivity {
                     } else {
                         boolean success = false;
                         JSONArray interests = user.getJSONArray("interests");
-                        JSONArray ownInterests = FavouriteItemWrapper.getInstance(getApplicationContext()).getAllInterestsAsJsonArray();
 
-                        ArrayList<FavouriteItem> selfInterests = new ArrayList<>();
+                        ArrayList<FavouriteItem> selfInterests = FavouriteItemWrapper.getInstance(this).getFavList();
 
-                        for (int j = 0; j < ownInterests.length(); j++) {
-                            FavouriteItem f = new FavouriteItem(ownInterests.get(j).toString());
-                            selfInterests.add(f);
-                        }
+                        if (selfInterests.size() > 0) {
 
-                        for (int j = 0; j < interests.length(); j++) {
-                            String st = interests.getString(j);
-                            for (FavouriteItem item : selfInterests) {
-                                if (item.getName().equals(st)) {
-                                    similarUsers.add(new User(user.getString("name"), user.getString("username"), (int) Math.round(user.getDouble("distance"))));
-                                    success = true;
-                                    break;
+                            if (interests != null && interests.length() > 0) {
+                                for (int j = 0; j < interests.length(); j++) {
+                                    String st = interests.getString(j);
+                                    for (FavouriteItem item : selfInterests) {
+                                        if (item.getName().equals(st)) {
+                                            similarUsers.add(new User(user.getString("name"), user.getString("username"), (int) Math.round(user.getDouble("distance"))));
+                                            success = true;
+                                            break;
+                                        }
+                                    }
                                 }
                             }
+                        } else {
+                            //do nothing
                         }
+
                         if (success) {
                             //do nothing
                         } else {
@@ -191,7 +198,7 @@ public class PeopleAroundActivity extends AppCompatActivity {
     }
 
     private void initLocationButton() {
-        FloatingActionButton myLocationButton = (FloatingActionButton) findViewById(R.id.update_location);
+        final FloatingActionButton myLocationButton = (FloatingActionButton) findViewById(R.id.update_location);
         myLocationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -200,9 +207,20 @@ public class PeopleAroundActivity extends AppCompatActivity {
         });
     }
 
-    private void updateStreetAddressOnToolbar() {
-        titleAddress.setText(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_LOCATION));
-        titleCity.setText(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_STATE));
+    private void updateStreetAddressOnToolbar(final Location mLastKnownLocation) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                LocManager.getInstance(getApplicationContext()).saveLocation(mLastKnownLocation);
+                titleAddress.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        titleAddress.setText(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_LOCATION));
+                        titleCity.setText(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_STATE));
+                    }
+                });
+            }
+        }).start();
     }
 
     private void getPeopleAroundMe(double latitude, double longitude) {
@@ -246,11 +264,12 @@ public class PeopleAroundActivity extends AppCompatActivity {
     }
 
     private void getCurrentLocation() {
-        Location location = LocManager.getInstance(getApplicationContext()).getLocation();
+        Location location = LocManager.getInstance(getApplicationContext()).getLocation(PeopleAroundActivity.this);
         if (location != null) {
             mLastKnownLocation = location;
-            updateStreetAddressOnToolbar();
+            updateStreetAddressOnToolbar(mLastKnownLocation);
             getPeopleAroundMe(location.getLatitude(), location.getLongitude());
+            LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(mLastKnownLocation, true);
         } else {
             Toast.makeText(getApplicationContext(), "location is null", Toast.LENGTH_SHORT).show();
         }
@@ -379,6 +398,4 @@ public class PeopleAroundActivity extends AppCompatActivity {
 
         });
     }
-
-
 }

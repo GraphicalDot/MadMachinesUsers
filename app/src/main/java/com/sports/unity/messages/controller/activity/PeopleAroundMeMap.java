@@ -834,16 +834,16 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
     private void getLocation() {
         Log.i("gettingLocation", "true");
-        Location location = locManager.getLocation();
-        if (location != null) {
-            LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location, true);
-            getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LATITUDE, location.getLatitude());
-            getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LONGITUDE, location.getLongitude());
-            latLong = new LatLng(location.getLatitude(), location.getLongitude());
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
-            new FetchAndDisplayCurrentAddress(location).execute();
-            getPeopleAroundMe(latLong.latitude, latLong.longitude);
-        }
+//        Location location = locManager.getLocation();
+//        if (location != null) {
+//            LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location, true);
+//            getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LATITUDE, location.getLatitude());
+//            getInstance(getApplicationContext()).putDouble(KEY_CURRENT_LONGITUDE, location.getLongitude());
+//            latLong = new LatLng(location.getLatitude(), location.getLongitude());
+//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLong, getcurrentZoom()));
+//            new FetchAndDisplayCurrentAddress(location).execute();
+//            getPeopleAroundMe(latLong.latitude, latLong.longitude);
+//        }
 
     }
 
@@ -859,10 +859,10 @@ public class PeopleAroundMeMap extends CustomAppCompatActivity implements People
 
         if (checkIfGPSEnabled()) {
 
-            Location location = LocManager.getInstance(getApplicationContext()).getLocation();
-            if (location != null) {
-                LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location, true);
-            }
+//            Location location = LocManager.getInstance(getApplicationContext()).getLocation();
+//            if (location != null) {
+//                LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(location, true);
+//            }
         } else {
             //nothing
         }

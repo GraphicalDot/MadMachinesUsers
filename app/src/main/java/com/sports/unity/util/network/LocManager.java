@@ -1,6 +1,7 @@
 package com.sports.unity.util.network;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -10,26 +11,33 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.sports.unity.BuildConfig;
+import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPClient;
+import com.sports.unity.common.controller.MainActivity;
+import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.util.CommonUtil;
+import com.sports.unity.util.Constants;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 /**
  * Created by madmachines on 29/12/15.
  */
-public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, ActivityCompat.OnRequestPermissionsResultCallback {
 
     private static String base_url = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/set_location?username=";
     private static LocManager locManager = null;
@@ -60,6 +68,11 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .build();
+        if (mGoogleApiClient != null) {
+            connect();
+        } else {
+            //do nothing
+        }
     }
 
     public void connect() {
@@ -69,45 +82,36 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     }
 
     public void retrieveLocation() {
-//        if (getLocation != null && getLocation.isAlive()) {
-//            //do nothing
-//        } else {
-//            getLocation = new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    try {
-//                        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//                    } catch (SecurityException ex) {
-//                        ex.printStackTrace();
-//                    }
-//                    if (mLastLocation != null) {
-//                        saveLocation(mLastLocation);
-//                    }
-//                }
-//            });
-//            getLocation.start();
-//        }
-        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
+        if (getLocation != null && getLocation.isAlive()) {
+            //do nothing
         } else {
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            if (mLastLocation != null) {
-                saveLocation(mLastLocation);
-            }
+            getLocation = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+                    } catch (SecurityException ex) {
+                        ex.printStackTrace();
+                    }
+                    if (mLastLocation != null) {
+                        saveLocation(mLastLocation);
+                    }
+                }
+            });
+            getLocation.start();
         }
     }
 
-    public Location getLocation() {
+    public Location getLocation(Activity activity) {
         if (mLastLocation == null) {
-            retrieveLocation();
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                    ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                //TODO handle permissions
+
+            } else {
+                mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            }
         }
         return mLastLocation;
 
@@ -115,7 +119,7 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.i("mGoogle api client", "connected");
+        Log.i("client", "connected");
         retrieveLocation();
     }
 
@@ -204,5 +208,14 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
         } else {
             return false;
         }
+    }
+
+    public GoogleApiClient getClient() {
+        return mGoogleApiClient;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        //TODO
     }
 }

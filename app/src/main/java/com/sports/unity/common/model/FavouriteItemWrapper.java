@@ -44,7 +44,7 @@ public class FavouriteItemWrapper {
         return favouriteItemWrapper;
     }
 
-    private boolean isFavouriteChanged=false;
+    private boolean isFavouriteChanged = false;
     private List<FavouriteItem> savedFootballLeagues;
     private List<FavouriteItem> savedFootballTeams;
     private List<FavouriteItem> savedFootballPlayers;
@@ -120,7 +120,7 @@ public class FavouriteItemWrapper {
      * @param favouriteItems {@link ArrayList} of {@link FavouriteItem}
      */
     public void saveList(Context context, ArrayList<FavouriteItem> favouriteItems) {
-        isFavouriteChanged=true;
+        isFavouriteChanged = true;
         JSONArray jsonArray = new JSONArray();
         for (FavouriteItem f : favouriteItems) {
             jsonArray.put(f.getJsonObject());
@@ -370,8 +370,16 @@ public class FavouriteItemWrapper {
 
     public JSONArray getAllInterestsAsJsonArray() throws Exception {
         JSONArray interests = new JSONArray();
-        for(FavouriteItem item : savedAllFavorites){
+        for (FavouriteItem item : savedAllFavorites) {
             interests.put(item.getId());
+        }
+        return interests;
+    }
+
+    public JSONArray getAllInterestsAsNameInJsonArray() throws Exception {
+        JSONArray interests = new JSONArray();
+        for (FavouriteItem item : savedAllFavorites) {
+            interests.put(item.getName());
         }
         return interests;
     }
@@ -379,6 +387,7 @@ public class FavouriteItemWrapper {
     /**
      * Set this flag to true if favourites has been changed
      * otherwise set to false.
+     *
      * @param isFavouriteChanged
      */
     public void setFavouriteChanged(boolean isFavouriteChanged) {
@@ -387,6 +396,7 @@ public class FavouriteItemWrapper {
 
     /**
      * Check favourites has been changed recently.
+     *
      * @return weather favourites changed or not.
      */
     public boolean isFavouriteChanged() {
