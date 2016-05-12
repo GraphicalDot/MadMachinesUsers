@@ -367,7 +367,7 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
             vifirsttv[index].setText(recentOverValue + " ovs");
         } else {
             dividerView[index].setVisibility(View.INVISIBLE);
-            vifirsttv[index].setVisibility(View.INVISIBLE);
+            vifirsttv[index].setText("");
         }
     }
 
