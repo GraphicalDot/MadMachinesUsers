@@ -14,7 +14,6 @@ import android.widget.RelativeLayout;
 
 import com.sports.unity.R;
 import com.sports.unity.messages.controller.model.User;
-import com.sports.unity.messages.controller.model.User2;
 import com.sports.unity.peoplearound.adapters.PeopleAroundMeAdapter;
 
 import java.util.ArrayList;

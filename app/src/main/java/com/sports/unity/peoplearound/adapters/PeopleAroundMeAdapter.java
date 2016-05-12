@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.sports.unity.R;
 import com.sports.unity.messages.controller.model.User;
-import com.sports.unity.messages.controller.model.User2;
 
 import java.util.ArrayList;
 
