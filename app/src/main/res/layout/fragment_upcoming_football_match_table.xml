@@ -6,7 +6,7 @@
     >
 
     <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/sv_swipe_football_match_table"
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
@@ -22,7 +22,7 @@
                     android:id="@+id/rv_football_match_table"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/gray3"
+                    android:background="@android:color/white"
                     android:scrollbars="vertical" />
         </LinearLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
@@ -39,6 +39,6 @@
         layout="@layout/error_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone" />
+        />
 
 </FrameLayout>

@@ -46,12 +46,11 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
     private HashMap<String, String> requestParameters;
     private JSONObject response;
 
-    private LinearLayout matchstatsrootlayout;
+    private View contentLayout = null;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
-    private RecyclerView rvFootballMatchStat;
     private CompleteFootballMatchStatAdapter completeFootballMatchStatAdapter;
     private ArrayList<CompleteFootballMatchStatDTO> dataStatsList = new ArrayList<CompleteFootballMatchStatDTO>();
-    private SwipeRefreshLayout swipeRefreshLayout;
 
     public CompletedFootballMatchStatFragment(String title, int baseWidth) {
         this.title = title;
@@ -78,7 +77,7 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
-        MatchStatsComponentListener componentListener = new MatchStatsComponentListener(getRequestTag(), progressBar, errorLayout);
+        MatchStatsComponentListener componentListener = new MatchStatsComponentListener(getRequestTag(), progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         return componentListener;
     }
 
@@ -111,16 +110,9 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
         try {
             Context context = view.getContext();
 
-            rvFootballMatchStat = (RecyclerView) view.findViewById(R.id.rv_football_match_stat);
-            RecyclerView.LayoutManager manager = new android.support.v7.widget.LinearLayoutManager(context);
-            rvFootballMatchStat.setLayoutManager(manager);
-            completeFootballMatchStatAdapter = new CompleteFootballMatchStatAdapter(dataStatsList, context);
-            rvFootballMatchStat.setAdapter(completeFootballMatchStatAdapter);
-            matchstatsrootlayout=(LinearLayout)view.findViewById(R.id.match_stats_root_layout);
-            matchstatsrootlayout.setVisibility(View.GONE);
+            contentLayout = view.findViewById(R.id.content_layout);
 
-            swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_stat);
-           // swipeRefreshLayout.setVisibility(View.GONE);
+            swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
                 @Override
@@ -129,6 +121,12 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
                 }
 
             });
+
+            RecyclerView rvFootballMatchStat = (RecyclerView) contentLayout;
+            RecyclerView.LayoutManager manager = new android.support.v7.widget.LinearLayoutManager(context);
+            rvFootballMatchStat.setLayoutManager(manager);
+            completeFootballMatchStatAdapter = new CompleteFootballMatchStatAdapter(dataStatsList, context);
+            rvFootballMatchStat.setAdapter(completeFootballMatchStatAdapter);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -236,40 +234,18 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
 
     public class MatchStatsComponentListener extends CustomComponentListener {
 
-        public MatchStatsComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout) {
-            super(requestTag, progressBar, errorLayout);
+        public MatchStatsComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout) {
+            super(requestTag, progressBar, errorLayout, contentLayout, swipeRefreshLayout);
+        }
+
+        @Override
+        protected boolean isContentLayoutAvailable() {
+            return dataStatsList.size() > 0;
         }
 
         @Override
         public void handleErrorContent(String tag) {
 
-        }
-
-        @Override
-        protected void showErrorLayout() {
-            if( matchstatsrootlayout.getVisibility() == View.VISIBLE ) {
-                //nothing
-            } else {
-                super.showErrorLayout();
-            }
-        }
-
-        @Override
-        protected void showProgress() {
-            if( matchstatsrootlayout.getVisibility() == View.VISIBLE ) {
-                //nothing
-            } else {
-                super.showProgress();
-            }
-        }
-
-        @Override
-        protected void hideProgress() {
-            super.hideProgress();
-
-            if (swipeRefreshLayout != null) {
-                swipeRefreshLayout.setRefreshing(false);
-            }
         }
 
         @Override
@@ -283,7 +259,7 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
         public void changeUI(String tag) {
             boolean success = renderDisplay();
             if( success ){
-                matchstatsrootlayout.setVisibility(View.VISIBLE);
+                //nothing
             } else {
                 showErrorLayout();
             }

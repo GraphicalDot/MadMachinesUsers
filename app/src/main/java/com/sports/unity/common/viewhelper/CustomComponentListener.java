@@ -1,9 +1,12 @@
 package com.sports.unity.common.viewhelper;
 
+import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.sports.unity.R;
 import com.sports.unity.util.CommonUtil;
@@ -45,6 +48,9 @@ public abstract class CustomComponentListener {
         }
     }
 
+    private View contentLayout = null;
+    private SwipeRefreshLayout swipeRefreshLayout = null;
+
     private ProgressBar progressBar = null;
     private ViewGroup errorLayout = null;
 
@@ -54,8 +60,15 @@ public abstract class CustomComponentListener {
     private int requestStatus = VolleyCallComponentHelper.REQUEST_STATUS_NONE;
 
     public CustomComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
+        this(requestTag, progressBar, errorLayout, null, null);
+    }
+
+    public CustomComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout){
         this.progressBar = progressBar;
         this.errorLayout = errorLayout;
+
+        this.contentLayout = contentLayout;
+        this.swipeRefreshLayout = swipeRefreshLayout;
 
         this.requestTag = requestTag;
 
@@ -84,13 +97,11 @@ public abstract class CustomComponentListener {
     }
 
     protected void initErrorLayout(){
-        if( errorLayout != null ) {
-            TextView oops = (TextView) errorLayout.findViewById(R.id.oops);
-//                oops.setTypeface(FontTypeface.getInstance(CustomVolleyCallerActivity.this).getRobotoLight());
+        //nothing
+    }
 
-            TextView something_wrong = (TextView) errorLayout.findViewById(R.id.something_wrong);
-//                something_wrong.setTypeface(FontTypeface.getInstance(CustomVolleyCallerActivity.this).getRobotoLight());
-        }
+    protected boolean isContentLayoutAvailable(){
+        return contentLayout != null && contentLayout.getVisibility() == View.VISIBLE;
     }
 
     protected void initProgress(){
@@ -101,9 +112,22 @@ public abstract class CustomComponentListener {
 
     protected void showErrorLayout(){
         requestStatus = VolleyCallComponentHelper.REQUEST_STATUS_FAILED;
-        if( errorLayout != null  ) {
-            errorLayout.setVisibility(View.VISIBLE);
-            renderAppropriateErrorLayout(errorLayout);
+        if( ! isContentLayoutAvailable() ) {
+            if (errorLayout != null) {
+                errorLayout.setVisibility(View.VISIBLE);
+                renderAppropriateErrorLayout(errorLayout);
+            }
+        } else {
+            if( errorLayout != null ) {
+                Context context = errorLayout.getContext();
+                if( CommonUtil.isInternetConnectionAvailable(errorLayout.getContext()) ) {
+                    Toast.makeText(context, R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                //nothing
+            }
         }
     }
 
@@ -114,14 +138,21 @@ public abstract class CustomComponentListener {
     }
 
     protected void showProgress(){
-
-        if( progressBar != null ) {
-            progressBar.setVisibility(View.VISIBLE);
+        if( swipeRefreshLayout != null ){
+            swipeRefreshLayout.setRefreshing(true);
+        }
+        if( ! isContentLayoutAvailable() ) {
+            if (progressBar != null) {
+                progressBar.setVisibility(View.VISIBLE);
+            }
         }
     }
 
     protected void hideProgress(){
-        if( progressBar != null ) {
+        if( swipeRefreshLayout != null ){
+            swipeRefreshLayout.setRefreshing(false);
+        }
+        if (progressBar != null) {
             progressBar.setVisibility(View.GONE);
         }
     }

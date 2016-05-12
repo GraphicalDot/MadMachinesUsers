@@ -38,7 +38,8 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
     private String recentOverValue;
 
     private Context context = null;
-    private SwipeRefreshLayout swLivSummary;
+    private View contentLayout = null;
+    private SwipeRefreshLayout swipeRefreshLayout = null;
 
     private ImageView ivBalls[] = new ImageView[6];
     private View dividerView[] = new View[6];
@@ -105,7 +106,7 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
-        SummaryComponentListener matchCommentaryComponentListener = new SummaryComponentListener(getRequestTag(), progressBar, errorLayout);
+        SummaryComponentListener matchCommentaryComponentListener = new SummaryComponentListener(getRequestTag(), progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         return matchCommentaryComponentListener;
     }
 
@@ -121,6 +122,17 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
     private void initViews(View view) {
         try {
             context = view.getContext();
+
+            contentLayout = view.findViewById(R.id.content_layout);
+            contentLayout.setVisibility(View.GONE);
+
+            swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+            swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                @Override
+                public void onRefresh() {
+                    requestContent();
+                }
+            });
 
             ivBalls[0] = (ImageView) view.findViewById(R.id.iv_first_ball);
             ivBalls[1] = (ImageView) view.findViewById(R.id.iv_second_ball);
@@ -149,7 +161,6 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
             tvBowlerWRun = (TextView) view.findViewById(R.id.tv_bowler_W_Run);
             tvBowlerEcon = (TextView) view.findViewById(R.id.tv_bowler_econ);
             tvBowlerOver = (TextView) view.findViewById(R.id.tv_bowler_over);
-            swLivSummary = (SwipeRefreshLayout) view.findViewById(R.id.live_summary);
 
             vifirsttv[0] = (TextView) view.findViewById(R.id.vi_start_tv);
             vifirsttv[1] = (TextView) view.findViewById(R.id.vi_first_tv);
@@ -165,12 +176,6 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
             dividerView[4] = view.findViewById(R.id.vi_four);
             dividerView[5] = view.findViewById(R.id.vi_five);
 
-            swLivSummary.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                @Override
-                public void onRefresh() {
-                    requestContent();
-                }
-            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -451,26 +456,14 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
 
     public class SummaryComponentListener extends CustomComponentListener {
 
-        public SummaryComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout) {
-            super(requestTag, progressBar, errorLayout);
+        public SummaryComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout) {
+            super(requestTag, progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         }
 
         @Override
         public boolean handleContent(String tag, String content) {
             boolean success = CricketLiveSummaryHelper.this.handleContent(content);
             return success;
-        }
-
-        @Override
-        protected void hideProgress() {
-            super.hideProgress();
-
-            swLivSummary.setRefreshing(false);
-        }
-
-        @Override
-        protected void showErrorLayout() {
-//            super.showErrorLayout();
         }
 
         @Override
@@ -482,7 +475,7 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
         public void changeUI(String tag) {
             boolean success = renderResponse();
             if (success) {
-                //nothing
+                contentLayout.setVisibility(View.VISIBLE);
             } else {
                 showErrorLayout();
             }

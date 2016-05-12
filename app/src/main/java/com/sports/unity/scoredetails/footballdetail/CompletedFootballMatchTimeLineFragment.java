@@ -1,45 +1,29 @@
 package com.sports.unity.scoredetails.footballdetail;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.sports.unity.R;
-import com.sports.unity.common.view.CustomLinearLayoutManager;
 import com.sports.unity.common.viewhelper.BasicVolleyRequestResponseViewHelper;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballTimeLineAdapter;
 import com.sports.unity.scoredetails.footballdetail.fooballadaptersanddto.CompleteFootballTimeLineDTO;
-import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.scores.model.ScoresContentHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.solovyev.android.views.llm.LinearLayoutManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
-import static android.support.v7.widget.LinearLayoutManager.VERTICAL;
-import static com.sports.unity.util.Constants.INTENT_KEY_DATE;
-import static com.sports.unity.util.Constants.INTENT_KEY_ID;
-import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
-import static com.sports.unity.util.Constants.INTENT_KEY_TOSS;
 
 /**
  * Created by madmachines on 23/2/16.
@@ -50,10 +34,8 @@ public class CompletedFootballMatchTimeLineFragment extends BasicVolleyRequestRe
     private HashMap<String, String> requestParameters;
     private JSONObject response;
 
-    private SwipeRefreshLayout swTimeLineRefresh;
-    private RecyclerView recyclerView;
-
-    private View timelinerootlayout;
+    private View contentLayout = null;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     private CompleteFootballTimeLineAdapter completeFootballTimeLineAdapter;
 
@@ -83,7 +65,7 @@ public class CompletedFootballMatchTimeLineFragment extends BasicVolleyRequestRe
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
-        MatchTimelineComponentListener componentListener = new MatchTimelineComponentListener(getRequestTag(), progressBar, errorLayout);
+        MatchTimelineComponentListener componentListener = new MatchTimelineComponentListener(getRequestTag(), progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         return componentListener;
     }
 
@@ -115,23 +97,22 @@ public class CompletedFootballMatchTimeLineFragment extends BasicVolleyRequestRe
     private void initView(View view) {
         Context context = view.getContext();
 
-        recyclerView = (RecyclerView) view.findViewById(R.id.my_recycler_view);
-        RecyclerView.LayoutManager manager = new android.support.v7.widget.LinearLayoutManager(context);
-        recyclerView.setLayoutManager(manager);
-        completeFootballTimeLineAdapter = new CompleteFootballTimeLineAdapter(list, context);
-        recyclerView.setAdapter(completeFootballTimeLineAdapter);
-        timelinerootlayout=(View)view.findViewById(R.id.timeline_root_layout);
-        timelinerootlayout.setVisibility(View.GONE);
+        contentLayout = view.findViewById(R.id.content_layout);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
-        swTimeLineRefresh = (SwipeRefreshLayout) view.findViewById(R.id.sw_timeline_refresh);
-       // swTimeLineRefresh.setVisibility(View.GONE);
-        swTimeLineRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 requestContent();
             }
+
         });
 
+        RecyclerView recyclerView = (RecyclerView) contentLayout;
+        RecyclerView.LayoutManager manager = new android.support.v7.widget.LinearLayoutManager(context);
+        recyclerView.setLayoutManager(manager);
+        completeFootballTimeLineAdapter = new CompleteFootballTimeLineAdapter(list, context);
+        recyclerView.setAdapter(completeFootballTimeLineAdapter);
     }
 
     private boolean handleContent(String object) {
@@ -163,7 +144,7 @@ public class CompletedFootballMatchTimeLineFragment extends BasicVolleyRequestRe
                     JSONObject dataObject = dataArray.getJSONObject(i);
                     if (!dataObject.isNull("team")) {
                         completeFootballTimeLineDTO.setTeamName(dataObject.getString("team"));
-                        if (dataObject.getString("team").equalsIgnoreCase(swTimeLineRefresh.getContext().getString(R.string.home_team_name))) {
+                        if (dataObject.getString("team").equalsIgnoreCase(swipeRefreshLayout.getContext().getString(R.string.home_team_name))) {
                             setTeamFirstTimeDTO(completeFootballTimeLineDTO, dataObject);
                         } else {
                             setTeamSecondTimeDTO(completeFootballTimeLineDTO, dataObject);
@@ -231,7 +212,7 @@ public class CompletedFootballMatchTimeLineFragment extends BasicVolleyRequestRe
     }
 
     private Drawable getDrwableResource(String event) {
-        Resources.Theme theme = swTimeLineRefresh.getContext().getTheme();
+        Resources.Theme theme = swipeRefreshLayout.getContext().getTheme();
         int drwableId = R.drawable.ic_subsitute_circle;
         if ("yellowcard".equalsIgnoreCase(event)) {
             drwableId = R.drawable.ic_yellow_card_circle;
@@ -242,49 +223,27 @@ public class CompletedFootballMatchTimeLineFragment extends BasicVolleyRequestRe
         }
         Drawable drawable = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            drawable = swTimeLineRefresh.getResources().getDrawable(drwableId, theme);
+            drawable = swipeRefreshLayout.getResources().getDrawable(drwableId, theme);
         } else {
-            drawable = swTimeLineRefresh.getResources().getDrawable(drwableId);
+            drawable = swipeRefreshLayout.getResources().getDrawable(drwableId);
         }
         return drawable;
     }
 
     public class MatchTimelineComponentListener extends CustomComponentListener {
 
-        public MatchTimelineComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout) {
-            super(requestTag, progressBar, errorLayout);
+        public MatchTimelineComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout) {
+            super(requestTag, progressBar, errorLayout, contentLayout, swipeRefreshLayout);
+        }
+
+        @Override
+        protected boolean isContentLayoutAvailable() {
+            return list.size() > 0;
         }
 
         @Override
         public void handleErrorContent(String tag) {
 
-        }
-
-        @Override
-        protected void showErrorLayout() {
-            if( timelinerootlayout.getVisibility() == View.VISIBLE ) {
-                //nothing
-            } else {
-                super.showErrorLayout();
-            }
-        }
-
-        @Override
-        protected void showProgress() {
-            if( timelinerootlayout.getVisibility() == View.VISIBLE ) {
-                //nothing
-            } else {
-                super.showProgress();
-            }
-        }
-
-        @Override
-        protected void hideProgress() {
-            super.hideProgress();
-
-            if (swTimeLineRefresh != null) {
-                swTimeLineRefresh.setRefreshing(false);
-            }
         }
 
         @Override
@@ -298,7 +257,7 @@ public class CompletedFootballMatchTimeLineFragment extends BasicVolleyRequestRe
         public void changeUI(String tag) {
             boolean success = renderDisplay();
             if( success ){
-                timelinerootlayout.setVisibility(View.VISIBLE);
+                //nothing
             } else {
                 showErrorLayout();
             }

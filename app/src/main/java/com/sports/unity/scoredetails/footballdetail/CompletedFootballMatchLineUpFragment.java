@@ -35,14 +35,8 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
     private HashMap<String, String> requestParameters;
     private JSONObject response;
 
-    private View manageRootView;
-
-    private TextView tvCaptainFirst;
-    private TextView tvCaptainSecond;
     private Context context;
-
-    private RecyclerView masterRecycleView;
-
+    private View contentLayout = null;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     private CompleteFootballLineUpAdapter completeFootballLineUpAdapter;
@@ -75,7 +69,7 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
-        MatchLineUpComponentListener componentListener = new MatchLineUpComponentListener(getRequestTag(), progressBar, errorLayout);
+        MatchLineUpComponentListener componentListener = new MatchLineUpComponentListener(getRequestTag(), progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         return componentListener;
     }
 
@@ -106,22 +100,10 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
 
     private void initView(View view) {
         try {
-
             context = view.getContext();
 
-            manageRootView = view.findViewById(R.id.parent_layout);
-            manageRootView.setVisibility(View.GONE);
-
-            tvCaptainFirst = (TextView) view.findViewById(R.id.tv_team_first_captain);
-            tvCaptainSecond = (TextView) view.findViewById(R.id.tv_team_second_captain);
-
-            masterRecycleView = (RecyclerView) view.findViewById(R.id.rv_master);
-            RecyclerView.LayoutManager manager = new android.support.v7.widget.LinearLayoutManager(context);
-            masterRecycleView.setLayoutManager(manager);
-            completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(masterDataList, context);
-            masterRecycleView.setAdapter(completeFootballLineUpAdapter);
-            swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_lineup);
-//            swipeRefreshLayout.setVisibility(View.GONE);
+            contentLayout = view.findViewById(R.id.content_layout);
+            swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
             swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
                 @Override
@@ -130,10 +112,16 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
                 }
 
             });
+
+            RecyclerView recyclerView = (RecyclerView) contentLayout;
+            RecyclerView.LayoutManager manager = new android.support.v7.widget.LinearLayoutManager(context);
+            recyclerView.setLayoutManager(manager);
+            completeFootballLineUpAdapter = new CompleteFootballLineUpAdapter(masterDataList, context);
+            recyclerView.setAdapter(completeFootballLineUpAdapter);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private boolean handleContent(String content) {
@@ -166,10 +154,7 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
                 lineUpList.clear();
                 substitutesList.clear();
 
-                tvCaptainFirst.setText("N/A");
-                tvCaptainSecond.setText("N/A");
-
-                CompleteFootballLineUpDTO completeFootballLineUpDTO = null;
+//                CompleteFootballLineUpDTO completeFootballLineUpDTO = null;
 //                for (int i = 0; i < subsArray.length(); i++) {
 //                    try {
 //                        JSONObject teamSecondObject = new JSONObject();
@@ -393,8 +378,18 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
 
     public class MatchLineUpComponentListener extends CustomComponentListener {
 
-        public MatchLineUpComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout) {
-            super(requestTag, progressBar, errorLayout);
+        public MatchLineUpComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout) {
+            super(requestTag, progressBar, errorLayout, contentLayout, swipeRefreshLayout);
+        }
+
+        @Override
+        protected boolean isContentLayoutAvailable() {
+            return masterDataList.size() > 0;
+        }
+
+        @Override
+        public void handleErrorContent(String tag) {
+
         }
 
         @Override
@@ -404,50 +399,12 @@ public class CompletedFootballMatchLineUpFragment extends BasicVolleyRequestResp
         }
 
         @Override
-        public void handleErrorContent(String tag) {
-
-        }
-
-        @Override
-        protected void showErrorLayout() {
-            if (manageRootView.getVisibility() == View.VISIBLE) {
-                //nothing
-            } else {
-                super.showErrorLayout();
-            }
-        }
-
-        @Override
-        protected void showProgress() {
-            if (manageRootView.getVisibility() == View.VISIBLE) {
-                //nothing
-            } else {
-                super.showProgress();
-            }
-            if( swipeRefreshLayout == null ) {
-                swipeRefreshLayout.setRefreshing(true);
-            }
-        }
-
-        @Override
-        protected void hideProgress() {
-            super.hideProgress();
-
-            if (swipeRefreshLayout != null) {
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        }
-
-        @Override
         public void changeUI(String tag) {
             boolean success = renderDisplay();
             if (success) {
-                manageRootView.setVisibility(View.VISIBLE);
-//                swipeRefreshLayout.setVisibility(View.VISIBLE);
+
             } else {
                 showErrorLayout();
-                swipeRefreshLayout.setRefreshing(true);
-//                swipeRefreshLayout.setVisibility(View.VISIBLE);
             }
         }
 

@@ -46,6 +46,9 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
     private JSONObject response;
     private HashMap<String, String> parameters;
 
+    private SwipeRefreshLayout swipeRefreshLayout;
+    private View contentLayout = null;
+
     private TextView tvFirstTeamInning;
     private TextView tvSecondTeamInning;
     private ImageView ivDwn;
@@ -78,7 +81,7 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
     private RecyclerView teamBBowlingRecycler;
     private RecyclerView teamAFallOfWicketRecycler;
     private RecyclerView teamBFallOfWicketRecycler;
-    private LinearLayout linearLayout;
+
     private LinearLayout firstBattingLinearLayout;
     private LinearLayout firstBowlingLinearLayout;
     private LinearLayout firstFallofWicketsLinearLayout;
@@ -88,10 +91,6 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
 
     private RelativeLayout team1ScoreDetails;
     private RelativeLayout team2ScoreDetails;
-
-    private SwipeRefreshLayout swipeRefreshLayout;
-
-    private ScrollView scrollview = null;
 
     public CricketScoreCardHelper(String title, String matchStatus) {
         this.title  = title;
@@ -118,7 +117,7 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
         ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
 
-        MatchScoreCardComponentListener matchScoreCardComponentListener = new MatchScoreCardComponentListener( getRequestTag(), progressBar, errorLayout);
+        MatchScoreCardComponentListener matchScoreCardComponentListener = new MatchScoreCardComponentListener( getRequestTag(), progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         return matchScoreCardComponentListener;
     }
 
@@ -149,7 +148,6 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
         boolean upcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
         if( upcoming ) {
             //nothing
-            swipeRefreshLayout.setRefreshing(false);
         } else {
             super.requestContent();
         }
@@ -168,16 +166,23 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
     private void initView(View view) {
         Context context = view.getContext();
 
-        scrollview = (ScrollView)view.findViewById(R.id.scorecard_scrollview);
-        scrollview.setVisibility(View.GONE);
+        contentLayout = view.findViewById(R.id.content_layout);
+        contentLayout.setVisibility(View.GONE);
 
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
+            @Override
+            public void onRefresh() {
+                requestContent();
+            }
+
+        });
 
         boolean upcoming = ScoresUtil.isCricketMatchUpcoming(matchStatus);
         if( upcoming ){
             view.findViewById(R.id.tv_empty_view).setVisibility(View.VISIBLE);
-
-
+            swipeRefreshLayout.setEnabled(false);
         } else {
             firstBattingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_first_view_visibility);
             firstBowlingLinearLayout = (LinearLayout) view.findViewById(R.id.ll_first_bowling_visibility);
@@ -186,8 +191,6 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
             secondBowlingLinearLayout = (LinearLayout) view.findViewById(R.id.second_bowling_layout);
             secondFallofWicketsLinearLayout = (LinearLayout) view.findViewById(R.id.layout_fall_wicket_second);
 
-            linearLayout = (LinearLayout) view.findViewById(R.id.scorecard_parent_layout);
-            linearLayout.setVisibility(View.GONE);
             tvFirstTeamInning = (TextView) view.findViewById(R.id.tv_first_team_inning);
             tvSecondTeamInning = (TextView) view.findViewById(R.id.tv_Second_team_inning);
             ivDwn = (ImageView) view.findViewById(R.id.iv_down);
@@ -266,17 +269,6 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
             });
         }
 
-
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.scorecard_refresh);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-
-            @Override
-            public void onRefresh() {
-                requestContent();
-            }
-
-        });
-
     }
 
     private void showHideTeamSecondScoreCard() {
@@ -336,7 +328,6 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
             teamBBowlingCardList.clear();
             teamBFallOfWicketCardList.clear();
 
-            linearLayout.setVisibility(View.VISIBLE);
             if( ! response.isNull("data") ) {
                 JSONArray jsonArray = response.getJSONArray("data");
                 final JSONObject dataObject = jsonArray.getJSONObject(0);
@@ -344,7 +335,7 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
                 cricketMatchScoreJsonParser.setJsonObject(dataObject);
                 setScoreCard(cricketMatchScoreJsonParser);
 
-                scrollview.setVisibility(View.VISIBLE);
+                contentLayout.setVisibility(View.VISIBLE);
                 success = true;
             }else {
                 success = false;
@@ -483,8 +474,8 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
 
     public class MatchScoreCardComponentListener extends CustomComponentListener {
 
-        public MatchScoreCardComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
-            super(requestTag, progressBar, errorLayout);
+        public MatchScoreCardComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout){
+            super(requestTag, progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         }
 
         @Override
@@ -498,48 +489,29 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
 
         }
 
-        @Override
-        protected void showErrorLayout() {
-            if(   linearLayout == null ||  linearLayout.getVisibility() == View.GONE ) {
-                super.showErrorLayout();
-            } else {
-                //nothing
-            }
-        }
-
-        @Override
-        protected void showProgress() {
-            if(  linearLayout == null ||   linearLayout.getVisibility() == View.GONE ) {
-                super.showProgress();
-            } else {
-                //nothing
-            }
-        }
-
-        @Override
-        protected void hideProgress() {
-            super.hideProgress();
-
-            if( swipeRefreshLayout != null ){
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        }
-
-       /* @Override
-        protected void showErrorLayout() {
-            if( scrollview.getVisibility() == View.VISIBLE ) {
-                //nothing
-            } else {
-                super.showErrorLayout();
-            }
-        }*/
+//        @Override
+//        protected void showErrorLayout() {
+//            if(   linearLayout == null ||  linearLayout.getVisibility() == View.GONE ) {
+//                super.showErrorLayout();
+//            } else {
+//                //nothing
+//            }
+//        }
+//
+//        @Override
+//        protected void showProgress() {
+//            if(  linearLayout == null ||   linearLayout.getVisibility() == View.GONE ) {
+//                super.showProgress();
+//            } else {
+//                //nothing
+//            }
+//        }
 
         @Override
         public void changeUI(String tag) {
             boolean success = renderDisplay();
             if( success ){
                 //nothing
-               // swipeRefreshLayout.setRefreshing(true);
             } else {
                 showErrorLayout();
             }

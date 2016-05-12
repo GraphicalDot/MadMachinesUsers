@@ -63,14 +63,14 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
     private UpCommingFootballMatchSquadAdapter upCommingFootballMatchSquadAdapterSecond;
     private List<UpCommingFootballMatchSquadDTO> listTeamSecond = new ArrayList<UpCommingFootballMatchSquadDTO>();
 
+    private View contentLayout;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
     private RecyclerView rcRecyclerViewTeamFirst;
     private RecyclerView rcRecyclerViewTeamSecond;
     private TextView tvTeamFirst;
     private TextView tvTeamSecond;
 
-    private SwipeRefreshLayout swipeRefreshLayout;
-
-    private LinearLayout squadParnetLinearLayout;
     private JSONArray teamFirstSquadArray;
     private JSONArray teamSecondSquadArray;
     private View layoutView;
@@ -119,7 +119,7 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
         ProgressBar progressBar = (ProgressBar) view.findViewById(R.id.progress);
 
-        UpcomingFootballMatchSquadComponentListener componentListener = new UpcomingFootballMatchSquadComponentListener(getRequestTag(), progressBar, errorLayout);
+        UpcomingFootballMatchSquadComponentListener componentListener = new UpcomingFootballMatchSquadComponentListener(getRequestTag(), progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         return componentListener;
     }
 
@@ -176,24 +176,10 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
         context = view.getContext();
         layoutView = view;
 
-        tvTeamFirst = (TextView) view.findViewById(R.id.tv_team_first_name);
-        tvTeamSecond = (TextView) view.findViewById(R.id.tv_team_second_name);
+        contentLayout = view.findViewById(R.id.content_layout);
+        contentLayout.setVisibility(View.GONE);
 
-        rcRecyclerViewTeamFirst = (RecyclerView) view.findViewById(R.id.rc_child1_rv);
-        rcRecyclerViewTeamFirst.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
-        rcRecyclerViewTeamFirst.setNestedScrollingEnabled(false);
-        rcRecyclerViewTeamSecond = (RecyclerView) view.findViewById(R.id.rc_child2_rv);
-        rcRecyclerViewTeamSecond.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
-        rcRecyclerViewTeamSecond.setNestedScrollingEnabled(false);
-        upCommingFootballMatchSquadAdapterFirst = new UpCommingFootballMatchSquadAdapter(listTeamFirst, context);
-        rcRecyclerViewTeamFirst.setAdapter(upCommingFootballMatchSquadAdapterFirst);
-        upCommingFootballMatchSquadAdapterSecond = new UpCommingFootballMatchSquadAdapter(listTeamSecond, context);
-        rcRecyclerViewTeamSecond.setAdapter(upCommingFootballMatchSquadAdapterSecond);
-        squadParnetLinearLayout = (LinearLayout) view.findViewById(R.id.squad_parent_linearlayout);
-        squadParnetLinearLayout.setVisibility(View.GONE);
-
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_squad);
-
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
@@ -202,6 +188,23 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
             }
 
         });
+
+        tvTeamFirst = (TextView) view.findViewById(R.id.tv_team_first_name);
+        tvTeamSecond = (TextView) view.findViewById(R.id.tv_team_second_name);
+
+        rcRecyclerViewTeamFirst = (RecyclerView) view.findViewById(R.id.rc_child1_rv);
+        rcRecyclerViewTeamFirst.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
+        rcRecyclerViewTeamFirst.setNestedScrollingEnabled(false);
+
+        rcRecyclerViewTeamSecond = (RecyclerView) view.findViewById(R.id.rc_child2_rv);
+        rcRecyclerViewTeamSecond.setLayoutManager(new LinearLayoutManager(context, VERTICAL, false));
+        rcRecyclerViewTeamSecond.setNestedScrollingEnabled(false);
+
+        upCommingFootballMatchSquadAdapterFirst = new UpCommingFootballMatchSquadAdapter(listTeamFirst, context);
+        rcRecyclerViewTeamFirst.setAdapter(upCommingFootballMatchSquadAdapterFirst);
+
+        upCommingFootballMatchSquadAdapterSecond = new UpCommingFootballMatchSquadAdapter(listTeamSecond, context);
+        rcRecyclerViewTeamSecond.setAdapter(upCommingFootballMatchSquadAdapterSecond);
 
     }
 
@@ -240,7 +243,7 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
                         cricketTeamName.setText("NAME");
                     }
                 }
-                squadParnetLinearLayout.setVisibility(View.VISIBLE);
+
                 {
                     tvTeamFirst.setText(teamFirstName);
                     tvTeamSecond.setText(teamSecondName);
@@ -346,8 +349,8 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
 
     public class UpcomingFootballMatchSquadComponentListener extends CustomComponentListener {
 
-        public UpcomingFootballMatchSquadComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout) {
-            super(requestTag, progressBar, errorLayout);
+        public UpcomingFootballMatchSquadComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout) {
+            super(requestTag, progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         }
 
         @Override
@@ -362,39 +365,10 @@ public class UpCommingFootballMatchSqadFragment extends BasicVolleyRequestRespon
         }
 
         @Override
-        protected void showErrorLayout() {
-            if( squadParnetLinearLayout == null || squadParnetLinearLayout.getVisibility() == View.GONE ) {
-                super.showErrorLayout();
-            } else {
-                //nothing
-            }
-        }
-
-        @Override
-        protected void showProgress() {
-            if( squadParnetLinearLayout == null || squadParnetLinearLayout.getVisibility() == View.GONE ) {
-                super.showProgress();
-            } else {
-                //nothing
-            }
-        }
-
-        @Override
-        protected void hideProgress() {
-            super.hideProgress();
-
-            if( swipeRefreshLayout != null ){
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        }
-
-
-
-        @Override
         public void changeUI(String tag) {
             boolean success = renderDisplay();
             if (success) {
-                //nothing
+                contentLayout.setVisibility(View.VISIBLE);
             } else {
                 showErrorLayout();
             }

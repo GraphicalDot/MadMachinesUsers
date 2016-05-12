@@ -1,30 +1,21 @@
 package com.sports.unity.scoredetails;
 
-import android.app.Activity;
 import android.content.Context;
-import android.os.Bundle;
-import android.support.percent.PercentRelativeLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.sports.unity.R;
-import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.viewhelper.BasicVolleyRequestResponseViewHelper;
 import com.sports.unity.common.viewhelper.CustomComponentListener;
 import com.sports.unity.scores.model.ScoresContentHandler;
-import com.sports.unity.util.Constants;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.solovyev.android.views.llm.LinearLayoutManager;
 
@@ -44,7 +35,7 @@ public class StaffPickedFragment extends BasicVolleyRequestResponseViewHelper {
     private JSONObject response;
 
     private SwipeRefreshLayout swipeRefreshLayout;
-    private LinearLayout tableView;
+    private LinearLayout contentLayout;
 
     public StaffPickedFragment(String title) {
         this.title = title;
@@ -70,7 +61,7 @@ public class StaffPickedFragment extends BasicVolleyRequestResponseViewHelper {
         ViewGroup errorLayout = (ViewGroup) view.findViewById(R.id.error);
         ProgressBar progressBar = (ProgressBar)view.findViewById(R.id.progress);
 
-        StaffPickComponentListener componentListener = new StaffPickComponentListener( getRequestTag(), progressBar, errorLayout);
+        StaffPickComponentListener componentListener = new StaffPickComponentListener( getRequestTag(), progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         return componentListener;
     }
 
@@ -99,17 +90,8 @@ public class StaffPickedFragment extends BasicVolleyRequestResponseViewHelper {
         this.requestParameters = params;
     }
 
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        Bundle bundle = getArguments();
-//        String s = bundle.getString(Constants.INTENT_KEY_ID);
-//        favouriteItem = new FavouriteItem(s);
-//    }
-
     private void initView(View view) {
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.sv_swipe_football_match_table);
-        swipeRefreshLayout.setVisibility(View.GONE);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swipe_refresh_layout);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -117,7 +99,8 @@ public class StaffPickedFragment extends BasicVolleyRequestResponseViewHelper {
             }
         });
 
-        tableView = (LinearLayout) view.findViewById(R.id.staff_view);
+        contentLayout = (LinearLayout) view.findViewById(R.id.content_layout);
+        contentLayout.setVisibility(View.GONE);
     }
 
     private boolean handleContent(String object) {
@@ -153,7 +136,7 @@ public class StaffPickedFragment extends BasicVolleyRequestResponseViewHelper {
             Context context = swipeRefreshLayout.getContext();
 
             StaffPickTableDTO staffPickTableDTO = null;
-            tableView.removeAllViews();
+            contentLayout.removeAllViews();
 
             JSONArray dataArray = null;
             for (int j = 0; j < seriesArray.size(); j++) {
@@ -197,7 +180,7 @@ public class StaffPickedFragment extends BasicVolleyRequestResponseViewHelper {
                 {
                     if (seriesArray.size() > 0) {
                         textView.setText(groupName);
-                        tableView.addView(tableData);
+                        contentLayout.addView(tableData);
                         adapter.notifyDataSetChanged();
                     } else {
                         //nothing
@@ -214,8 +197,8 @@ public class StaffPickedFragment extends BasicVolleyRequestResponseViewHelper {
 
     public class StaffPickComponentListener extends CustomComponentListener {
 
-        public StaffPickComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout){
-            super(requestTag, progressBar, errorLayout);
+        public StaffPickComponentListener(String requestTag, ProgressBar progressBar, ViewGroup errorLayout, View contentLayout, SwipeRefreshLayout swipeRefreshLayout){
+            super(requestTag, progressBar, errorLayout, contentLayout, swipeRefreshLayout);
         }
 
         @Override
@@ -230,35 +213,10 @@ public class StaffPickedFragment extends BasicVolleyRequestResponseViewHelper {
         }
 
         @Override
-        protected void showErrorLayout() {
-            if( swipeRefreshLayout.getVisibility() == View.GONE ) {
-                super.showErrorLayout();
-            } else {
-                //nothing
-            }
-        }
-
-        @Override
-        protected void showProgress() {
-            if( swipeRefreshLayout.getVisibility() == View.GONE ) {
-                super.showProgress();
-            } else {
-                //nothing
-            }
-        }
-
-        @Override
-        protected void hideProgress() {
-            super.hideProgress();
-
-            swipeRefreshLayout.setRefreshing(false);
-        }
-
-        @Override
         public void changeUI(String tag) {
             boolean success = renderDisplay();
             if( success ){
-                swipeRefreshLayout.setVisibility(View.VISIBLE);
+                contentLayout.setVisibility(View.VISIBLE);
             } else {
                 showErrorLayout();
             }
