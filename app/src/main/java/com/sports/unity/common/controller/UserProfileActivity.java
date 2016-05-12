@@ -15,7 +15,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v7.app.AlertDialog;
@@ -47,9 +46,7 @@ import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.common.model.UserProfileHandler;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
-import com.sports.unity.messages.controller.activity.PeopleAroundMeMap;
 import com.sports.unity.messages.controller.model.Contacts;
-import com.sports.unity.messages.controller.model.Person;
 import com.sports.unity.messages.controller.model.PersonalMessaging;
 import com.sports.unity.playerprofile.cricket.PlayerCricketBioDataActivity;
 import com.sports.unity.playerprofile.football.PlayerProfileView;
@@ -116,12 +113,17 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     private Drawable oldBackgroundForNameEditView = null;
     private Drawable oldBackgroundForStatusEditView = null;
 
+
     private TextView.OnClickListener onClickListener = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
             if (toolbarActionButton.getText().equals(ADD_FRIEND)) {
                 onClickAddFriend();
+            } else if (toolbarActionButton.getText().equals(ACCEPT_REQUEST)) {
+                onClickAcceptFriend();
+            } else if (toolbarActionButton.getText().equals(REQUEST_SENT)) {
+                //do nothing as friend request has already been sent
             } else {
                 if (toolbarActionButton.getText().equals(INFO_SAVE)) {
                     onClickSaveButton();
@@ -249,33 +251,6 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
             }
         }
 
-        toolbarActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (requestId == Contacts.PENDING_REQUESTS_TO_PROCESS) {
-                    if (XMPPClient.getInstance().isConnectionAuthenticated()) {
-                        boolean success = PersonalMessaging.getInstance(getApplicationContext()).acceptFriendRequest(getIntent().getStringExtra("jid"));
-                        if (success) {
-                            Toast.makeText(getApplicationContext(), "Accepting...", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getApplicationContext(), R.string.conn_not_authenticated, Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                } else if (requestId == Contacts.DEFAULT_PENDNG_REQUEST_ID) {
-                    if (XMPPClient.getInstance().isConnectionAuthenticated()) {
-                        boolean success = PersonalMessaging.getInstance(getApplicationContext()).sendFriendRequest(getIntent().getStringExtra("jid"));
-                        if (success) {
-                            Toast.makeText(getApplicationContext(), "Sending...", Toast.LENGTH_SHORT).show();
-                        }
-                    } else {
-                        Toast.makeText(getApplicationContext(), R.string.conn_not_authenticated, Toast.LENGTH_SHORT).show();
-                    }
-                } else if (requestId == Contacts.WAITING_FOR_REQUEST_ACCEPTANCE) {
-                    //do nothing as friend request has already been sent
-                }
-            }
-        });
-
         ImageView backButton = (ImageView) toolbar.findViewById(R.id.backarrow);
         backButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, true));
         backButton.setOnClickListener(new View.OnClickListener() {
@@ -287,8 +262,26 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
         });
     }
 
+    private void onClickAcceptFriend() {
+        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+            boolean success = PersonalMessaging.getInstance(getApplicationContext()).acceptFriendRequest(getIntent().getStringExtra("jid"));
+            if (success) {
+                Toast.makeText(getApplicationContext(), "Accepting...", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(getApplicationContext(), R.string.conn_not_authenticated, Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     private void onClickAddFriend() {
-        //TODO
+        if (XMPPClient.getInstance().isConnectionAuthenticated()) {
+            boolean success = PersonalMessaging.getInstance(getApplicationContext()).sendFriendRequest(getIntent().getStringExtra("jid"));
+            if (success) {
+                Toast.makeText(getApplicationContext(), "Sending...", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(getApplicationContext(), R.string.conn_not_authenticated, Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

@@ -1,14 +1,18 @@
 package com.sports.unity.util.network;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.sports.unity.BuildConfig;
@@ -34,9 +38,10 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     private Thread getLocation = null;
     private String url = "";
     private Context context;
-    private Location mLastLocation;
+    private static Location mLastLocation;
     private GoogleApiClient mGoogleApiClient;
-    private  String UDID;
+    private String UDID;
+
     public LocManager(Context context) {
         this.context = context;
         UDID = CommonUtil.getDeviceId(context);
@@ -64,28 +69,39 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     }
 
     public void retrieveLocation() {
-        if (getLocation != null && getLocation.isAlive()) {
-            //do nothing
+//        if (getLocation != null && getLocation.isAlive()) {
+//            //do nothing
+//        } else {
+//            getLocation = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+//                    } catch (SecurityException ex) {
+//                        ex.printStackTrace();
+//                    }
+//                    if (mLastLocation != null) {
+//                        saveLocation(mLastLocation);
+//                    }
+//                }
+//            });
+//            getLocation.start();
+//        }
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
         } else {
-            if (getLocation != null && getLocation.isAlive()) {
-                //do nothing
-            } else {
-                getLocation = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-                        } catch (SecurityException ex) {
-                            ex.printStackTrace();
-                        }
-                        if (mLastLocation != null) {
-                            saveLocation(mLastLocation);
-                        }
-                    }
-                });
-                getLocation.start();
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (mLastLocation != null) {
+                saveLocation(mLastLocation);
             }
-
         }
     }
 
@@ -99,7 +115,7 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.i("fusedlocationapi", "connected");
+        Log.i("mGoogle api client", "connected");
         retrieveLocation();
     }
 
@@ -122,7 +138,7 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     public void uploadLatLng(Location mLastLocation) {
         HttpURLConnection httpURLConnection = null;
         //added by ashish
-        url = base_url + TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID)+"&password="+TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD) + "&@mm.io&lat=" + mLastLocation.getLatitude() + "&lng=" + mLastLocation.getLongitude()+"&apk_version="+ BuildConfig.VERSION_NAME+"&udid="+ UDID;
+        url = base_url + TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID) + "&password=" + TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD) + "&@mm.io&lat=" + mLastLocation.getLatitude() + "&lng=" + mLastLocation.getLongitude() + "&apk_version=" + BuildConfig.VERSION_NAME + "&udid=" + UDID;
         try {
             URL sendData = new URL(url);
             httpURLConnection = (HttpURLConnection) sendData.openConnection();
@@ -145,16 +161,16 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     }
 
     public void saveLocation(Location mLastLocation) {
-        if (mLastLocation != null) {
-            Log.i("latitude", String.valueOf(mLastLocation.getLatitude()));
-            Log.i("longitude", String.valueOf(mLastLocation.getLongitude()));
-
-            TinyDB.getInstance(context).putDouble(TinyDB.KEY_CURRENT_LATITUDE, mLastLocation.getLatitude());
-            TinyDB.getInstance(context).putDouble(TinyDB.KEY_CURRENT_LONGITUDE, mLastLocation.getLongitude());
-            saveStreetAddress(mLastLocation);
-
-
-        }
+//        if (mLastLocation != null) {
+//            Log.i("latitude", String.valueOf(mLastLocation.getLatitude()));
+//            Log.i("longitude", String.valueOf(mLastLocation.getLongitude()));
+//
+//            TinyDB.getInstance(context).putDouble(TinyDB.KEY_CURRENT_LATITUDE, mLastLocation.getLatitude());
+//            TinyDB.getInstance(context).putDouble(TinyDB.KEY_CURRENT_LONGITUDE, mLastLocation.getLongitude());
+//        }
+        Log.i("latitude", String.valueOf(mLastLocation.getLatitude()));
+        Log.i("longitude", String.valueOf(mLastLocation.getLongitude()));
+        saveStreetAddress(mLastLocation);
     }
 
     private void saveStreetAddress(Location mLastLocation) {
