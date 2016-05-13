@@ -4,7 +4,8 @@
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/vertical_padding_medium_small"
+    android:layout_marginTop="@dimen/vertical_padding_very_very_small"
+    android:layout_marginBottom="@dimen/vertical_padding_very_small"
     android:background="@color/ColorPrimary"
     android:orientation="vertical">
 

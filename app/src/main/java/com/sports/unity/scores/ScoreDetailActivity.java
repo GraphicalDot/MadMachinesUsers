@@ -357,11 +357,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
                 fragmentHelperList.add(helper);
             }
             {
-                DisplayMetrics metrics = new DisplayMetrics();
-                getWindowManager().getDefaultDisplay().getMetrics(metrics);
-                int baseWidth = (int) (metrics.widthPixels * .40);
-
-                CompletedFootballMatchStatFragment helper = new CompletedFootballMatchStatFragment(getString(R.string.matchstats), baseWidth);
+                CompletedFootballMatchStatFragment helper = new CompletedFootballMatchStatFragment(getString(R.string.matchstats));
                 helper.setRequestParameters(parameters);
                 fragmentHelperList.add(helper);
             }
@@ -372,11 +368,7 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
                 fragmentHelperList.add(helper);
             }
             {
-                DisplayMetrics metrics = new DisplayMetrics();
-                getWindowManager().getDefaultDisplay().getMetrics(metrics);
-                int baseWidth = (int) (metrics.widthPixels * .40);
-
-                CompletedFootballMatchStatFragment helper = new CompletedFootballMatchStatFragment(getString(R.string.matchstats), baseWidth);
+                CompletedFootballMatchStatFragment helper = new CompletedFootballMatchStatFragment(getString(R.string.matchstats));
                 helper.setRequestParameters(parameters);
                 fragmentHelperList.add(helper);
             }

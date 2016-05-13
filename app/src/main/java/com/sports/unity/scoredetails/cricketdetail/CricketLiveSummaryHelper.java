@@ -324,24 +324,24 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
                         tvSecondPlayerRunRate.setText("SR" + " " + formate.format(playerSecondRuns * 100 / (float) playerSecondBalls) + "");
                     }
                     tvFirstPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeFirstRuns() + "(" + liveCricketMatchSummaryParser.getPlayeFirstBalls() + ")");
-                    Glide.with(context).load(liveCricketMatchSummaryParser.getPlayerFirstImage()).placeholder(R.drawable.ic_user).into(ivFirstPlayer);
+                    Glide.with(context).load(liveCricketMatchSummaryParser.getPlayerFirstImage()).placeholder(R.drawable.ic_user).dontAnimate().into(ivFirstPlayer);
 
                     tvSecondPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeSecondRuns() + "(" + liveCricketMatchSummaryParser.getPlayeSecondBalls() + ")");
-                    Glide.with(context).load(liveCricketMatchSummaryParser.getPlayerSecondImage()).placeholder(R.drawable.ic_user).into(ivPlayerSecond);
+                    Glide.with(context).load(liveCricketMatchSummaryParser.getPlayerSecondImage()).placeholder(R.drawable.ic_user).dontAnimate().into(ivPlayerSecond);
 
                     tvPartnershipRecord.setText((playerFirstRuns + playerSecondRuns) + "(" + (playerFirstBalls + playerSecondBalls) + ")");
                     tvFirstUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(0));
-                    Glide.with(context).load(liveCricketMatchSummaryParser.getYetToPlayerImage(0)).placeholder(R.drawable.ic_user).into(ivUppComingPlayerFirst);
+                    Glide.with(context).load(liveCricketMatchSummaryParser.getYetToPlayerImage(0)).placeholder(R.drawable.ic_user).dontAnimate().into(ivUppComingPlayerFirst);
                     tvSecondUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(1));
-                    Glide.with(context).load(liveCricketMatchSummaryParser.getYetToPlayerImage(1)).placeholder(R.drawable.ic_user).into(ivUppComingPlayerSecond);
+                    Glide.with(context).load(liveCricketMatchSummaryParser.getYetToPlayerImage(1)).placeholder(R.drawable.ic_user).dontAnimate().into(ivUppComingPlayerSecond);
                     tvThirdUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(2));
-                    Glide.with(context).load(liveCricketMatchSummaryParser.getYetToPlayerImage(2)).placeholder(R.drawable.ic_user).into(ivUppComingPlayerThird);
+                    Glide.with(context).load(liveCricketMatchSummaryParser.getYetToPlayerImage(2)).placeholder(R.drawable.ic_user).dontAnimate().into(ivUppComingPlayerThird);
                     tvBowlerName.setText(liveCricketMatchSummaryParser.getCurentBowlerName());
                     tvBowlerEcon.setText(TextUtils.isEmpty(liveCricketMatchSummaryParser.getCurentBowlerEconomy())?"Not Available":liveCricketMatchSummaryParser.getCurentBowlerEconomy());
 
                     tvBowlerOver.setText(liveCricketMatchSummaryParser.getCurentBowlerOvers());
                     tvBowlerWRun.setText(liveCricketMatchSummaryParser.getCurentBowlerWicket() + "/" + liveCricketMatchSummaryParser.getCurentBowlerRuns());
-                    Glide.with(context).load(liveCricketMatchSummaryParser.getCurentBowlerImage()).placeholder(R.drawable.ic_user).into(ivBowlerProfile);
+                    Glide.with(context).load(liveCricketMatchSummaryParser.getCurentBowlerImage()).placeholder(R.drawable.ic_user).dontAnimate().into(ivBowlerProfile);
 
                     success = true;
                 }

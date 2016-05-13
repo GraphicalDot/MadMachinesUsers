@@ -29,6 +29,7 @@ public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<Compl
     private ArrayList<CompleteFootballMatchStatDTO> dataStatsList;
     private Context context;
 
+    private int barWidth = 0;
 
     public CompleteFootballMatchStatAdapter(ArrayList<CompleteFootballMatchStatDTO> dataStatsList, Context context) {
         this.dataStatsList = dataStatsList;
@@ -40,8 +41,12 @@ public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<Compl
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = null;
         try {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.completed_football_match_stats_card, parent, false);
+            if( barWidth == 0 ){
+                int sideMargin = parent.getContext().getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
+                barWidth = (int)((parent.getWidth() - sideMargin*2) * .40f);
+            }
 
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.completed_football_match_stats_card, parent, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -62,16 +67,8 @@ public class CompleteFootballMatchStatAdapter extends RecyclerView.Adapter<Compl
             holder.ivRightStatus.setImageDrawable(drawable);
             holder.ivCenterStatus.setImageDrawable(getCentralImageResource(value));
 
-            holder.redView.setPadding(holder.dto.getLeftGraphValue(), 0, 0, 0);
-            holder.blueView.setPadding(0, 0, holder.dto.getRightGraphValue(), 0);
-
-            if(position == 0){
-                Rect rect = new Rect();
-                holder.redView.getDrawingRect(rect);
-                if( rect != null ){
-                    Log.i( "##### ", "left red layout bounds " + rect.toString());
-                }
-            }
+            holder.redView.setPadding( (int)(barWidth * holder.dto.getLeftGraphValue()), 0, 0, 0);
+            holder.blueView.setPadding(0, 0, (int)(barWidth * holder.dto.getRightGraphValue()), 0);
         } catch (Exception e) {
             e.printStackTrace();
         }

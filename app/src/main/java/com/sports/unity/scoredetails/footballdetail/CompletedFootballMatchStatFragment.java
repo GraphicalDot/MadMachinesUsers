@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +42,6 @@ import static com.sports.unity.util.Constants.INTENT_KEY_MATCH_NAME;
  */
 public class CompletedFootballMatchStatFragment extends BasicVolleyRequestResponseViewHelper {
 
-    private int baseWidth;
     private String title;
     private HashMap<String, String> requestParameters;
     private JSONObject response;
@@ -52,9 +52,8 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
     private CompleteFootballMatchStatAdapter completeFootballMatchStatAdapter;
     private ArrayList<CompleteFootballMatchStatDTO> dataStatsList = new ArrayList<CompleteFootballMatchStatDTO>();
 
-    public CompletedFootballMatchStatFragment(String title, int baseWidth) {
+    public CompletedFootballMatchStatFragment(String title) {
         this.title = title;
-        this.baseWidth = baseWidth;
     }
 
     @Override
@@ -168,6 +167,7 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
                     }
                     String[] keys = {"possesiontime", "shots_total", "shots_ongoal", "corners", "fouls", "offsides"};
                     CompleteFootballMatchStatDTO completeFootballMatchStatDTO = null;
+
                     for (int index = 0; index < keys.length; index++) {
                         String key = keys[index];
                         try {
@@ -179,11 +179,11 @@ public class CompletedFootballMatchStatFragment extends BasicVolleyRequestRespon
                             int blue = Integer.parseInt(teamSecondStatsObject.getString(key));
                             float total = red + blue;
                             if (total == 0) {
-                                completeFootballMatchStatDTO.setLeftGraphValue(baseWidth);
-                                completeFootballMatchStatDTO.setRightGraphValue(baseWidth);
+                                completeFootballMatchStatDTO.setLeftGraphValue(1);
+                                completeFootballMatchStatDTO.setRightGraphValue(1);
                             } else {
-                                completeFootballMatchStatDTO.setLeftGraphValue( (int)(baseWidth * (1 - (red / total))) );
-                                completeFootballMatchStatDTO.setRightGraphValue( (int)(baseWidth * (1 - (blue / total))) );
+                                completeFootballMatchStatDTO.setLeftGraphValue( 1 - (red / total) );
+                                completeFootballMatchStatDTO.setRightGraphValue( 1 - (blue / total) );
                             }
                             dataStatsList.add(completeFootballMatchStatDTO);
 

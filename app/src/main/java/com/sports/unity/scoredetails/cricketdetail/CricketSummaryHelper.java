@@ -255,7 +255,7 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
                     }
 
                     {
-                        Glide.with(ivPlayerProfileView.getContext()).load(cricketMatchSummaryParser.getPlayerImage()).placeholder(R.drawable.ic_user).into(ivPlayerProfileView);
+                        Glide.with(ivPlayerProfileView.getContext()).load(cricketMatchSummaryParser.getPlayerImage()).placeholder(R.drawable.ic_user).dontAnimate().into(ivPlayerProfileView);
                         playerName.setText(cricketMatchSummaryParser.getPlayerName());
                         tvPlayerRun.setText(cricketMatchSummaryParser.getruns());
                         if (cricketMatchSummaryParser.getBalls().trim().equalsIgnoreCase("0".trim())) {
