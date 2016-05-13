@@ -16,6 +16,7 @@ import com.google.android.gms.gcm.GcmListenerService;
 import com.sports.unity.R;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.MainActivity;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.scores.ScoreDetailActivity;
 import com.sports.unity.util.Constants;
 
@@ -49,7 +50,9 @@ public class SUPushServiceListener extends GcmListenerService {
 
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
-        sendNotification(message);
+        if (UserUtil.isUserRegistered() && UserUtil.isProfileCreated()) {
+            sendNotification(message);
+        }
     }
 
 
@@ -63,7 +66,7 @@ public class SUPushServiceListener extends GcmListenerService {
                     int sportsId = notification.getInt(GCMConstants.SPORTS_ID);
                     if (sportsId == 1 || sportsId == 2) {
                         sportsType = sportsId == 1 ? Constants.SPORTS_TYPE_CRICKET : Constants.SPORTS_TYPE_FOOTBALL;
-                    }else{
+                    } else {
                         sportsType = Constants.APP_NOTIFICATION;
                     }
                 }
