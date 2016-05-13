@@ -6,9 +6,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
@@ -26,6 +24,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -661,6 +660,9 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         back.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
         messageText = (EditText) findViewById(R.id.msg);
         status = (TextView) toolbar.findViewById(R.id.status_active);
+
+        setStatusConnecting();
+
         LinearLayout profile_link = (LinearLayout) toolbar.findViewById(R.id.profile);
 
         profile_link.setOnClickListener(new View.OnClickListener() {
@@ -899,7 +901,12 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             Log.i("userPresence :", String.valueOf(availability.toXML()));
             int state = retrieveState_mode(availability.getStatus());
             if (state == 1) {
-                status.setText("Online");
+                status.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        status.setText("Online");
+                    }
+                });
             } else {
                 //do nothing
             }
@@ -1431,6 +1438,38 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     @Override
     public void onReconnecting(int seconds) {
         super.onReconnecting(seconds);
+        setStatusConnecting();
+    }
+
+
+    private void setStatusConnecting() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                status.setVisibility(View.VISIBLE);
+                status.setText("Connecting...");
+                chatKeyboardHelper.disableOrEnableKeyboardAndMediaButtons(true, ChatScreenActivity.this);
+            }
+        });
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(status.getWindowToken(), 0);
+    }
+
+    private void setStatusConnected() {
+        try {
+            if (!blockUnblockUserHelper.isBlockStatus()) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        status.setText("Connected");
+                        chatKeyboardHelper.disableOrEnableKeyboardAndMediaButtons(false, ChatScreenActivity.this);
+                    }
+                });
+            }
+            getLastSeen();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -1440,6 +1479,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     @Override
     public void onXMPPServiceAuthenticated(boolean connected, XMPPConnection connection) {
         if (connected) {
+            setStatusConnected();
+
             getChatThread();
             checkForwardMessageQueue();
 
