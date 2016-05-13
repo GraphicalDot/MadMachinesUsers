@@ -3,18 +3,11 @@ package com.sports.unity;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Base64;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,15 +15,8 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.sports.unity.Database.SportsUnityDBHelper;
-import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.controller.SelectSportsActivity;
@@ -44,18 +30,6 @@ import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
 
-import org.jivesoftware.smack.SmackException;
-import org.jivesoftware.smack.XMPPException;
-import org.jivesoftware.smackx.vcardtemp.VCardManager;
-import org.jivesoftware.smackx.vcardtemp.packet.VCard;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -228,7 +202,7 @@ public class ProfileCreationActivity extends AppCompatActivity implements Activi
 
     private void onUnSuccessfulVCardSubmit() {
         if (CommonUtil.isInternetConnectionAvailable(ProfileCreationActivity.this)) {
-            Toast.makeText(ProfileCreationActivity.this, R.string.message_submit_vcard_failed, Toast.LENGTH_SHORT).show();
+            Toast.makeText(ProfileCreationActivity.this, R.string.message_submit_failed, Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(ProfileCreationActivity.this, R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
         }
