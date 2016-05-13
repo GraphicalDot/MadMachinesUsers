@@ -28,6 +28,7 @@
 
     <android.support.design.widget.CoordinatorLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:fab="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/users_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/seekbar_distance"
@@ -44,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="gone" />
-        
+
         <ProgressBar
             android:id="@+id/progress_bar"
             android:layout_width="wrap_content"
@@ -60,10 +61,11 @@
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:elevation="1dp"
             android:src="@drawable/ic_my_location1"
-            app:fab_colorNormal="@android:color/white"
-            fab:fab_colorPressed="@color/app_theme_blue"
-            fab:fab_size="normal" />
+            app:fab_colorNormal="@color/app_theme_blue"
+            app:fab_colorPressed="@color/app_theme_blue"
+            fab:fab_size="mini" />
 
 
     </android.support.design.widget.CoordinatorLayout>
@@ -75,22 +77,28 @@
         android:layout_alignParentBottom="true"
         android:visibility="visible">
 
+        <View
+            android:id="@+id/border"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/grayBorder"></View>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/mapButtons"
+            android:layout_below="@id/border"
             android:layout_gravity="bottom"
             android:background="@color/gray3"
             android:orientation="vertical"
-            android:paddingLeft="@dimen/horizontal_padding_small"
-            android:paddingRight="@dimen/horizontal_padding_small">
+            android:paddingLeft="@dimen/horizontal_padding_very_small"
+            android:paddingRight="@dimen/horizontal_padding_very_small">
 
             <com.sports.unity.common.view.CustomRobotoCondenseBoldTextView
                 android:id="@+id/distance_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:paddingTop="@dimen/vertical_padding_very_very_small"
+                android:paddingTop="@dimen/vertical_padding_very_small"
                 android:text="@string/people_around_you"
                 android:textColor="@color/news_static"
                 android:textSize="@dimen/font_size_very_small" />
@@ -101,10 +109,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
                 android:layout_marginBottom="10dp"
-                android:paddingBottom="@dimen/vertical_padding_small"
+                android:paddingBottom="@dimen/vertical_padding_very_very_small"
                 android:paddingLeft="@dimen/vertical_padding_medium"
                 android:paddingRight="@dimen/vertical_padding_medium"
-                android:paddingTop="@dimen/vertical_padding_small"
+                android:paddingTop="@dimen/vertical_padding_very_very_small"
                 android:progressDrawable="@drawable/seekbar_drawable"
                 android:thumb="@drawable/ic_distance_slider_01" />
         </LinearLayout>

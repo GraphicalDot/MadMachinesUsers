@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -23,6 +24,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.clans.fab.FloatingActionButton;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.sports.unity.R;
 import com.sports.unity.common.controller.SettingsActivity;
 import com.sports.unity.common.model.FavouriteItem;
@@ -43,7 +54,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class PeopleAroundActivity extends AppCompatActivity {
+public class PeopleAroundActivity extends AppCompatActivity implements PlaceSelectionListener {
 
     private static final String REQUEST_LISTENER_KEY = "nearby_key";
     private static final String REQUEST_TAG = "nearby_tag";
@@ -58,11 +69,11 @@ public class PeopleAroundActivity extends AppCompatActivity {
     private int stepRange = 25;
 
     private TextView titleAddress;
-    private TextView titleCity;
 
     String[] titles = {"FRIENDS", "SU USERS", "SIMILAR USERS"};
 
     private SlidingTabLayout tabs;
+    int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
 
     private Location mLastKnownLocation;
     private TinyDB tinyDB;
@@ -153,10 +164,15 @@ public class PeopleAroundActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        checkIfGPSEnabled();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         ScoresContentHandler.getInstance().addResponseListener(contentListener, REQUEST_LISTENER_KEY);
-        checkIfGPSEnabled();
     }
 
     @Override
@@ -216,7 +232,6 @@ public class PeopleAroundActivity extends AppCompatActivity {
                     @Override
                     public void run() {
                         titleAddress.setText(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_LOCATION));
-                        titleCity.setText(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_STATE));
                     }
                 });
             }
@@ -257,10 +272,18 @@ public class PeopleAroundActivity extends AppCompatActivity {
         if (!gps_enabled && !network_enabled) {
             showDialogToPromptEnableGps();
         } else {
-            getCurrentLocation();
+            updateUsers();
             succcess = true;
         }
         return succcess;
+    }
+
+    private void updateUsers() {
+        if (mLastKnownLocation == null) {
+            getCurrentLocation();
+        } else {
+            getPeopleAroundMe(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+        }
     }
 
     private void getCurrentLocation() {
@@ -298,12 +321,17 @@ public class PeopleAroundActivity extends AppCompatActivity {
         AlertDialog dialog = build.create();
         dialog.setCancelable(false);
         dialog.show();
+        Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        positiveButton.setTextColor(getResources().getColor(R.color.app_theme_blue));
+        Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+        negativeButton.setTextColor(getResources().getColor(R.color.app_theme_blue));
+
     }
 
     private void initToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar_map);
         titleAddress = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        titleCity = (TextView) toolbar.findViewById(R.id.secondary_title);
+        titleAddress.setSelected(true);
 
         ImageView closeButton = (ImageView) toolbar.findViewById(R.id.close_icon);
         ImageView refreshUsersButton = (ImageView) toolbar.findViewById(R.id.refresh);
@@ -314,14 +342,12 @@ public class PeopleAroundActivity extends AppCompatActivity {
         privacySettingsButton.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_BLUE, true));
 
         titleAddress.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
-        titleCity.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
-
         titleAddress.setText(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_LOCATION));
-        titleCity.setText(TinyDB.getInstance(getApplicationContext()).getString(TinyDB.KEY_ADDRESS_STATE));
 
         closeButton.setOnClickListener(onClickListener);
         refreshUsersButton.setOnClickListener(onClickListener);
         privacySettingsButton.setOnClickListener(onClickListener);
+        titleAddress.setOnClickListener(onClickListener);
 
     }
 
@@ -331,14 +357,44 @@ public class PeopleAroundActivity extends AppCompatActivity {
             if (v.getId() == R.id.close_icon) {
                 onBackPressed();
             } else if (v.getId() == R.id.refresh) {
-                getPeopleAroundMe(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+                updateUsers();
             } else if (v.getId() == R.id.privacy_icon) {
                 Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
                 intent.putExtra(Constants.ENABLE_LOCATION, Constants.CHECK_LOCATION);
                 startActivity(intent);
+            } else if (v.getId() == R.id.toolbar_title) {
+                AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                        .setTypeFilter(AutocompleteFilter.TYPE_FILTER_REGIONS)
+                        .build();
+                try {
+                    Intent intent =
+                            new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_OVERLAY)
+                                    .setFilter(typeFilter)
+                                    .build(PeopleAroundActivity.this);
+                    startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+                } catch (GooglePlayServicesRepairableException e) {
+                    // TODO: Handle the error.
+                } catch (GooglePlayServicesNotAvailableException e) {
+                    // TODO: Handle the error.
+                }
             }
         }
     };
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlaceAutocomplete.getPlace(this, data);
+                onPlaceSelected(place);
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(this, data);
+                Log.i("status", status.toString());
+            } else if (resultCode == RESULT_CANCELED) {
+                // The user canceled the operation.
+            }
+        }
+    }
 
     private void InitSeekbar() {
         TextView distanceText = (TextView) findViewById(R.id.distance_text);
@@ -397,5 +453,23 @@ public class PeopleAroundActivity extends AppCompatActivity {
             }
 
         });
+    }
+
+    @Override
+    public void onPlaceSelected(Place place) {
+        Log.i("address", String.valueOf(place.getAddress()));
+        titleAddress.setText(place.getAddress());
+        LatLng selectedPlaceLatlng = place.getLatLng();
+        mLastKnownLocation = null;
+        mLastKnownLocation = new Location("");
+        mLastKnownLocation.setLatitude(selectedPlaceLatlng.latitude);
+        mLastKnownLocation.setLongitude(selectedPlaceLatlng.longitude);
+        updateStreetAddressOnToolbar(mLastKnownLocation);
+        updateUsers();
+    }
+
+    @Override
+    public void onError(Status status) {
+        //TODO
     }
 }

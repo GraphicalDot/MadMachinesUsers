@@ -184,8 +184,7 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                     mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
             if (addressList != null && addressList.size() > 0) {
                 Address address = addressList.get(0);
-                TinyDB.getInstance(context).putString(TinyDB.KEY_ADDRESS_LOCATION, address.getAddressLine(0));
-                TinyDB.getInstance(context).putString(TinyDB.KEY_ADDRESS_STATE, address.getLocality());
+                TinyDB.getInstance(context).putString(TinyDB.KEY_ADDRESS_LOCATION, address.getAddressLine(0) + "," + address.getLocality());
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -216,6 +215,11 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+//                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+//            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+//        }
+
         //TODO
     }
 }
