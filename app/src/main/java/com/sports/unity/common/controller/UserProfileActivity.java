@@ -304,8 +304,9 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
     }
 
     private void onClickSaveButton() {
-        showInDeterminateProgress("updating details on vcard...");
         if (!TextUtils.isEmpty(name.getText().toString()) && !TextUtils.isEmpty(status.getText().toString())) {
+            showInDeterminateProgress("updating details on vcard...");
+
             String nickname = name.getText().toString();
             String status = this.status.getText().toString();
             String phoneNumber = TinyDB.getInstance(this).getString(TinyDB.KEY_USERNAME);
@@ -637,7 +638,7 @@ public class UserProfileActivity extends CustomAppCompatActivity implements User
 
     private void onUnSuccessfulVCardSubmit() {
         dismissInDeterminateProgress();
-        Toast.makeText(UserProfileActivity.this, R.string.message_submit_vcard_failed, Toast.LENGTH_SHORT).show();
+        Toast.makeText(UserProfileActivity.this, R.string.message_submit_failed, Toast.LENGTH_SHORT).show();
     }
 
     private void successfulVCardSubmit() {
