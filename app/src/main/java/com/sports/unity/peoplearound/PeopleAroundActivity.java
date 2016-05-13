@@ -129,6 +129,9 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
                                             break;
                                         }
                                     }
+                                    if (success) {
+                                        break;
+                                    }
                                 }
                             }
                         } else {
