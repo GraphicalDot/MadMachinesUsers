@@ -736,13 +736,16 @@ public class ScoreDetailActivity extends CustomVolleyCallerActivity {
 
         @Override
         public void handleErrorContent(String tag) {
-
+            refreshImage.setVisibility(View.VISIBLE);
         }
 
         @Override
         public void changeUI(String tag) {
             ScoreDetailActivity.this.setTitle();
             ScoreDetailActivity.this.renderScores();
+            if (!isMatchLive()) {
+                refreshImage.setVisibility(View.GONE);
+            }
         }
 
     }
