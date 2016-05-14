@@ -219,6 +219,8 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
     public boolean handleContent(String content) {
         boolean success = false;
         try {
+            content = "{\"status\": 200, \"data\": [{\"status\": \"F\", \"home_team\": \"Bangalore\", \"away_team\": \"Gujarat\", \"match_id\": \"44\", \"venue\": \"M.Chinnaswamy Stadium\", \"series_name\": \"IPL\", \"summary\": {\"recent_over\": {\"18\": [{\"event\": [\"\", \"\", \"0\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"4\"], \"ball_id\": \"2\"}, {\"event\": [\"\", \"w\", \"0\"], \"ball_id\": \"3\"}, {\"event\": [\"\", \"w\", \"0\"], \"ball_id\": \"4\"}], \"17\": [{\"event\": [\"nb\", \"\", \"1\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"0\"], \"ball_id\": \"1\"}, {\"event\": [\"\", \"\", \"1\"], \"ball_id\": \"2\"}, {\"event\": [\"\", \"\", \"0\"], \"ball_id\": \"3\"}, {\"event\": [\"\", \"\", \"0\"], \"ball_id\": \"4\"}, {\"event\": [\"\", \"\", \"0\"], \"ball_id\": \"5\"}, {\"event\": [\"\", \"\", \"0\"], \"ball_id\": \"6\"}]}, \"upcoming_batsmen\": null, \"current_partnership\": [{\"player_2_runs\": \"0\", \"player_1_runs\": \"0\", \"player_1_id\": \"15431\", \"player_1_image\": \"\", \"player_1\": \"Tambe, PV\", \"player_2_balls\": \"1\", \"player_1_index\": \"1\", \"player_2_index\": \"2\", \"player_2\": \"Kaushik, S\", \"player_2_id\": \"16657\", \"player_1_balls\": \"0\", \"player_2_image\": \"\"}], \"toss\": \"Gujarat won the toss and elected to bowl\", \"man_of_the_match\": {}, \"venue\": \"M.Chinnaswamy Stadium\", \"umpires\": {\"first_umpire\": \"Dandekar, AN (IND)\", \"third_umpire\": \"Shamsuddin, C (IND)\", \"referee\": \"Madugalle, RS (SLA)\", \"second_umpire\": \"Tucker, RJ (AUS)\"}, \"current_bowler\": {\"runs\": \"4\", \"name\": \"Sachin Baby\", \"wicket\": \"2\", \"player_id\": \"15430\", \"overs\": \"0.4\", \"player_image\": \"\", \"economy\": 6.0}, \"last_wicket\": \"Kaushik, S,0(c:Aravind, S and b:Sachin Baby)\"}, \"series_id\": \"5181\", \"match_time\": 1463221800, \"result\": \"Live: GUJ 8/100 (17.5) Fol. RCB 3/248 (20.0)\", \"start_date\": \"2016-05-14T20:30:00\"}], \"success\": true, \"error\": false}";
+
             JSONObject jsonObject = new JSONObject(content);
             success = jsonObject.getBoolean("success");
             if (success) {
@@ -238,23 +240,22 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
             if (!response.isNull("data")) {
                 JSONArray dataArray = response.getJSONArray("data");
                 for (int i = 0; i < dataArray.length(); i++) {
-                    final JSONObject matchObject = dataArray.getJSONObject(i);
+                    JSONObject matchObject = dataArray.getJSONObject(i);
                     cricketMatchSummaryParser = new CompletedCricketMatchSummaryParser();
                     cricketMatchSummaryParser.setJsonObject(matchObject);
                     JSONObject matchSummary = cricketMatchSummaryParser.getMatchSummary();
                     cricketMatchSummaryParser.setCricketSummary(matchSummary);
-                    JSONObject manOftheMatch = cricketMatchSummaryParser.getManOfMatchDetails();
-                    cricketMatchSummaryParser.setManOfTheMatch(manOftheMatch);
-                    final JSONObject batting = cricketMatchSummaryParser.getBattingDetails();
-                    cricketMatchSummaryParser.setBatting(batting);
-                    final JSONObject umpire = cricketMatchSummaryParser.getUmpireDetails();
-                    cricketMatchSummaryParser.setUmpire(umpire);
-                    final JSONObject bowling = cricketMatchSummaryParser.getBowlingDetails();
-                    if (bowling != null) {
-                        cricketMatchSummaryParser.setBowling(bowling);
-                    }
 
-                    {
+                    JSONObject manOfTheMatch = cricketMatchSummaryParser.getManOfMatchDetails();
+                    cricketMatchSummaryParser.setManOfTheMatch(manOfTheMatch);
+                    if( manOfTheMatch != null && manOfTheMatch.length() > 0 ){
+                        JSONObject batting = cricketMatchSummaryParser.getBattingDetails();
+                        cricketMatchSummaryParser.setBatting(batting);
+                        JSONObject bowling = cricketMatchSummaryParser.getBowlingDetails();
+                        if (bowling != null) {
+                            cricketMatchSummaryParser.setBowling(bowling);
+                        }
+
                         Glide.with(ivPlayerProfileView.getContext()).load(cricketMatchSummaryParser.getPlayerImage()).placeholder(R.drawable.ic_user).dontAnimate().into(ivPlayerProfileView);
                         playerName.setText(cricketMatchSummaryParser.getPlayerName());
                         tvPlayerRun.setText(cricketMatchSummaryParser.getruns());
@@ -272,8 +273,12 @@ public class CricketSummaryHelper extends BasicVolleyRequestResponseViewHelper {
                     }
 
                     {
-                        tvUmpiresName.setText(cricketMatchSummaryParser.getFirstUmpire() + ", " + cricketMatchSummaryParser.secondFirstUmpire());
-                        tvMatchReferee.setText(cricketMatchSummaryParser.getRefree());
+                        JSONObject umpire = cricketMatchSummaryParser.getUmpireDetails();
+                        cricketMatchSummaryParser.setUmpire(umpire);
+                        if (umpire != null && umpire.length() > 0) {
+                            tvUmpiresName.setText(cricketMatchSummaryParser.getFirstUmpire() + ", " + cricketMatchSummaryParser.secondFirstUmpire());
+                            tvMatchReferee.setText(cricketMatchSummaryParser.getRefree());
+                        }
                     }
 
                 }
