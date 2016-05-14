@@ -369,6 +369,8 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
                 teamNameFirst = key.split(" ")[2];
                 teamFirstInnings[i++] = cricketMatchScoreJsonParser.getTeamFirstInnings(teamFirst, key);
             }
+        } else {
+            teamFirstInnings = null;
         }
 
         i= 0;
@@ -379,7 +381,10 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
 
                 teamSecondInnings[i++] = cricketMatchScoreJsonParser.getTeamSecondInnings(teamSecond, key);
             }
+        } else {
+            teamSecondInnings = null;
         }
+
         JSONArray teamABattingArray = null;
         JSONArray teamABowlingArray = null;
         JSONArray teamAFallWicketArray = null;
@@ -419,10 +424,10 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
                 }
             }
         }else{
-            tvFirstTeamInning.setText("Yet To Batting");
+            tvFirstTeamInning.setText("Yet To Bat");
         }
-        if (teamSecondInnings!=null) {
 
+        if (teamSecondInnings!=null) {
             JSONArray teamBBattingArray =  null;
             JSONArray teamBBowlingArray =  null;
             JSONArray teamBFallWicketArray =  null;
@@ -462,7 +467,7 @@ public class CricketScoreCardHelper extends BasicVolleyRequestResponseViewHelper
                 }
             }
         }else{
-            tvSecondTeamInning.setText("Yet To Batting");
+            tvSecondTeamInning.setText("Yet To Bat");
         }
         teamABattingAdapter.notifyDataSetChanged();
         teamABowlingAdapter.notifyDataSetChanged();
