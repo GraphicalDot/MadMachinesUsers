@@ -474,11 +474,6 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
 
         @Override
         public boolean handleContent(String tag, String content) {
-
-            content = "{\"status\": 200, \"data\": [{\"status\": \"L\", \"home_team\": \"Mumbai\", \"away_team\": \"Punjab\", \"match_id\": \"43\", \"series_name\": \"IPL\", \"venue\": \"ACA-VDCA Stadium\", \"summary\": {\"recent_over\": {}, \"upcoming_batsmen\": null, \"current_partnership\": [], \"toss\": \"Mumbai won the toss and elected to bat\", \"man_of_the_match\": {}, \"venue\": \"ACA-VDCA Stadium\", \"umpires\":\n" +
-                    "{\"first_umpire\": \"Dharmasena, HDPK (SLA)\", \"third_umpire\": \"Chaudhary, AK (IND)\", \"referee\": \"Mahanama, RS (SLA)\", \"second_umpire\": \"Nandan, CK (IND)\"}\n" +
-                    ", \"current_bowler\": null, \"last_wicket\": \"\"}, \"series_id\": \"5181\", \"match_time\": 1463149800, \"result\": \"Live: MUM 0/0 (0.0) Fol. KXI 0/0 (0.0)\", \"start_date\": \"2016-05-14T00:30:00\"}], \"success\": true, \"error\": false}";
-
             boolean success = CricketLiveSummaryHelper.this.handleContent(content);
             return success;
         }
