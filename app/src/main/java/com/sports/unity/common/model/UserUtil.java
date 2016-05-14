@@ -49,9 +49,9 @@ public class UserUtil {
     private static String NOTIFICATION_SOUND_TITLE = null;
     private static String NOTIFICATION_SOUND_URI = null;
 
-    private static boolean SHOW_MY_LOCATION = true;
-    private static boolean SHOW_TO_FRIENDS_LOCATION = true;
-    private static boolean SHOW_TO_ALL_LOCATION = true;
+    private static boolean SHOW_MY_LOCATION = false;
+    private static boolean SHOW_TO_FRIENDS_LOCATION = false;
+    private static boolean SHOW_TO_ALL_LOCATION = false;
 
     private static boolean SAVE_INCOMING_MEDIA_TO_GALLERY = true;
     private static boolean SAVE_IN_APP_CAPTURE_MEDIA_TO_GALLERY = true;

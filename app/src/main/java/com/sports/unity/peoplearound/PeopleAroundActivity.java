@@ -40,6 +40,7 @@ import com.sports.unity.common.model.FavouriteItem;
 import com.sports.unity.common.model.FavouriteItemWrapper;
 import com.sports.unity.common.model.FontTypeface;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.common.view.SlidingTabLayout;
 import com.sports.unity.messages.controller.model.User;
 import com.sports.unity.scores.model.ScoresContentHandler;
@@ -169,13 +170,48 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
     @Override
     protected void onStart() {
         super.onStart();
-        checkIfGPSEnabled();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         ScoresContentHandler.getInstance().addResponseListener(contentListener, REQUEST_LISTENER_KEY);
+        if (UserUtil.isShowMyLocation()) {
+            checkIfGPSEnabled();
+        } else {
+            promptDialogToEnableLocationSettings();
+        }
+
+    }
+
+    private void promptDialogToEnableLocationSettings() {
+        AlertDialog.Builder build = new AlertDialog.Builder(PeopleAroundActivity.this);
+        build.setTitle("People Around Me");
+        build.setMessage("Turn on location settings for other fans to find you");
+        build.setPositiveButton("ENABLE LOCATION", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int id) {
+                Intent intent = new Intent(getApplicationContext(), SettingsActivity.class);
+                intent.putExtra(Constants.ENABLE_LOCATION, Constants.CHECK_LOCATION);
+                startActivity(intent);
+            }
+
+        });
+        build.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int id) {
+                PeopleAroundActivity.this.finish();
+            }
+
+        });
+
+        AlertDialog dialog = build.create();
+        dialog.setCancelable(false);
+        dialog.show();
+        Button positiveButton = dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+        positiveButton.setTextColor(getResources().getColor(R.color.app_theme_blue));
+        Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
+        negativeButton.setTextColor(getResources().getColor(R.color.app_theme_blue));
     }
 
     @Override
@@ -304,8 +340,8 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
     private void showDialogToPromptEnableGps() {
         AlertDialog.Builder build = new AlertDialog.Builder(PeopleAroundActivity.this);
         build.setTitle("People Around Me");
-        build.setMessage("Turn on location settings for other fans to see you");
-        build.setPositiveButton("ENABLE LOCATION", new DialogInterface.OnClickListener() {
+        build.setMessage("Turn on location services for other users to see you");
+        build.setPositiveButton("ENABLE GPS", new DialogInterface.OnClickListener() {
 
             public void onClick(DialogInterface dialog, int id) {
                 Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -328,7 +364,6 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
         positiveButton.setTextColor(getResources().getColor(R.color.app_theme_blue));
         Button negativeButton = dialog.getButton(DialogInterface.BUTTON_NEGATIVE);
         negativeButton.setTextColor(getResources().getColor(R.color.app_theme_blue));
-
     }
 
     private void initToolbar() {

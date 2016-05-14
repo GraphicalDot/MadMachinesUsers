@@ -578,10 +578,14 @@ public class PersonalMessaging {
 
     public boolean sendFriendRequest(String jid) {
         boolean success = false;
+        String name = sportsUnityDBHelper.getNameByJID(jid);
+        if (name == null || name.length() == 0) {
+            name = "unknown";
+        }
         Message message = new Message();
         message.setStanzaId(message.getStanzaId().concat("REQUEST"));
         message.setTo(jid.concat("@mm.io"));
-        message.setBody("friend request");
+        message.setBody(name);
         try {
             XMPPClient.getConnection().sendStanza(message);
             sportsUnityDBHelper.createRequestStatusEntry(sportsUnityDBHelper.getContactIdFromJID(jid), message.getStanzaId());
@@ -598,7 +602,7 @@ public class PersonalMessaging {
         if (message.getStanzaId().contains("REQUEST")) {
             Contacts contact = sportsUnityDBHelper.getContactByJid(jid);
             if (contact == null) {
-                sportsUnityDBHelper.addToContacts("", null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
+                sportsUnityDBHelper.addToContacts(message.getBody(), null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
                 sportsUnityDBHelper.updateContactFriendRequestStatus(jid, Contacts.PENDING_REQUESTS_TO_PROCESS);
                 contact = sportsUnityDBHelper.getContactByJid(jid);
                 displayNotificationForFriendRequest(contact);
