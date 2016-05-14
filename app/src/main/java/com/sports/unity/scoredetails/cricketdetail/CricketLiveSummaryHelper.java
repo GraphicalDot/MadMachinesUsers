@@ -296,12 +296,12 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
                     for (int i = 0; i < 6; i++) {
                         if (!balls[i].getValue().equals("0")) {
                             ivBalls[i].setImageDrawable(balls[i].getDrawable());
-                            setBallOverWise(balls, i);
                         } else {
                             ivBalls[i].setImageResource(R.drawable.recent_dot_balls);
-                            setBallOverWise(balls, i);
                         }
                     }
+
+                    setBallOverWise(balls);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -383,13 +383,17 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
         }
     }
 
-    private void setBallOverWise(BallDetail[] balls, int index) {
-        if (balls[index].getBallId() == 1) {
-            dividerView[index].setVisibility(View.VISIBLE);
-            vifirsttv[index].setText(recentOverValue + " ovs");
-        } else {
-            dividerView[index].setVisibility(View.INVISIBLE);
-            vifirsttv[index].setText("");
+    private void setBallOverWise(BallDetail[] balls) {
+        boolean found = false;
+        for (int index = 0; index < 6; index++) {
+            if ( balls[index].getBallId() == 1 && !found ) {
+                dividerView[index].setVisibility(View.VISIBLE);
+                vifirsttv[index].setText(recentOverValue + " ovs");
+                found = true;
+            } else {
+                dividerView[index].setVisibility(View.INVISIBLE);
+                vifirsttv[index].setText("");
+            }
         }
     }
 
