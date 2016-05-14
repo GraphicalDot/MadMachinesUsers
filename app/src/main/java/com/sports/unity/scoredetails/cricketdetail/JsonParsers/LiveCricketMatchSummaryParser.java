@@ -10,12 +10,11 @@ import org.json.JSONObject;
 /**
  * Created by madmachines on 21/3/16.
  */
-public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
+public class LiveCricketMatchSummaryParser extends JsonObjectCaller {
     private JSONObject cricketSummary;
     private JSONObject currentBowler;
     private JSONObject currentPartnership;
-    private  JSONArray yetToBat;
-    private  JSONObject recentOver;
+    private JSONArray yetToBat;
 
     public JSONObject getMatchSummary() throws JSONException {
         return jsonObject.getJSONObject("summary");
@@ -27,33 +26,31 @@ public class LiveCricketMatchSummaryParser   extends JsonObjectCaller {
     public void setCurrentPartnership(JSONObject currentPartnership) {
         this.currentPartnership = currentPartnership;
     }
+
     public void setYetToBat(JSONArray yetToBat) {
         this.yetToBat = yetToBat;
     }
+
     public JSONObject getCurentBowler() throws JSONException {
         if(cricketSummary.isNull("current_bowler")){
             return  new JSONObject();
         }
         return cricketSummary.getJSONObject("current_bowler");
     }
+
     public JSONArray getCurrentPartnership() throws JSONException {
         return cricketSummary.getJSONArray("current_partnership");
     }
-
 
     public JSONObject getRecentOver() throws JSONException {
         return cricketSummary.getJSONObject("recent_over");
     }
 
-    public void setRecentOver(JSONObject recentOver) throws JSONException {
-        this.recentOver = recentOver;
-    }
-
     public JSONObject getUmpires() throws JSONException {
         return cricketSummary.getJSONObject("umpires");
     }
-    public JSONArray getUpCommingBatsMan() throws JSONException {
 
+    public JSONArray getUpCommingBatsMan() throws JSONException {
         if(cricketSummary.isNull("upcoming_batsmen")){
             return new JSONArray();
         }

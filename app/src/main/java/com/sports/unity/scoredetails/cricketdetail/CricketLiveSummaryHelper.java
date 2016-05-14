@@ -214,17 +214,26 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
             liveCricketMatchSummaryParser.setJsonObject(response);
             liveCricketMatchSummaryParser.setCricketSummary(liveCricketMatchSummaryParser.getMatchSummary());
 
-            JSONObject recentOver = liveCricketMatchSummaryParser.getRecentOver();
-            JSONArray currentPartnershipDetails = liveCricketMatchSummaryParser.getCurrentPartnership();
-            JSONArray yetToBatting = liveCricketMatchSummaryParser.getUpCommingBatsMan();
-            JSONObject currentBowlerObject = liveCricketMatchSummaryParser.getCurentBowler();
+            JSONObject currentPartnershipDetails = null;
+            JSONArray yetToBatting = null;
+            JSONObject currentBowlerObject = null;
+            JSONObject recentOver = null;
+            {
+                JSONArray array = liveCricketMatchSummaryParser.getCurrentPartnership();
+                if( array!= null && array.length() > 0 ) {
+                    currentPartnershipDetails = (JSONObject)array.get(0);
+                    liveCricketMatchSummaryParser.setCurrentPartnership(currentPartnershipDetails);
+                }
 
-            if (currentBowlerObject != null) {
-                liveCricketMatchSummaryParser.setCurrentBowler(currentBowlerObject);
-                liveCricketMatchSummaryParser.setCurrentPartnership(currentPartnershipDetails.getJSONObject(0));
+                yetToBatting = liveCricketMatchSummaryParser.getUpCommingBatsMan();
+                currentBowlerObject = liveCricketMatchSummaryParser.getCurentBowler();
+                recentOver = liveCricketMatchSummaryParser.getRecentOver();
+
                 liveCricketMatchSummaryParser.setYetToBat(yetToBatting);
-                liveCricketMatchSummaryParser.setRecentOver(recentOver);
+                liveCricketMatchSummaryParser.setCurrentBowler(currentBowlerObject);
+            }
 
+            if( recentOver != null && recentOver.length() > 0 ) {
                 Stack<JSONObject> ballsStack = new Stack<>();
                 BallDetail defb = new BallDetail();
                 BallDetail[] balls = new BallDetail[]{defb, defb, defb, defb, defb, defb};
@@ -242,6 +251,7 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
                     }
 
                 }
+
                 if (keys[0] < keys[1]) {
                     recentOverValue = keys[1].toString();
                     JSONArray recentOverJSONArray = recentOver.getJSONArray(keys[0].toString());
@@ -258,6 +268,7 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
                     recentOverJSONArray = recentOver.getJSONArray(keys[0].toString());
                     getAllBalls(ballsStack, recentOverJSONArray);
                 }
+
                 int queuSize = ballsStack.size();
                 for (int i = 0; i < queuSize; i++) {
                     if (i == 6) {
@@ -286,68 +297,69 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
                     ballIndex--;
                 }
 
-                {
-
-                    Context context = tvFirstPlayerName.getContext();
-
-                    for (int i = 0; i < 6; i++) {
-                        if (!balls[i].getValue().equals("0")) {
-                            ivBalls[i].setImageDrawable(balls[i].getDrawable());
-                            setBallOverWise(balls, i);
-                        } else {
-                            ivBalls[i].setImageResource(R.drawable.recent_dot_balls);
-                            setBallOverWise(balls, i);
-                        }
-                    }
-
-                    int playerFirstRuns = liveCricketMatchSummaryParser.getPlayeFirstRuns();
-                    int playerSecondRuns = liveCricketMatchSummaryParser.getPlayeSecondRuns();
-                    int playerFirstBalls = liveCricketMatchSummaryParser.getPlayeFirstBalls();
-                    int playerSecondBalls = liveCricketMatchSummaryParser.getPlayeSecondBalls();
-
-                    tvFirstPlayerName.setText(liveCricketMatchSummaryParser.getPlayeFirstName());
-                    tvSecondPlayerName.setText(liveCricketMatchSummaryParser.getPlayeSecondName());
-                    DecimalFormat formate = new DecimalFormat();
-                    formate.setMinimumFractionDigits(2);
-                    formate.setMaximumFractionDigits(2);
-                    if (playerFirstBalls == 0) {
-                        tvFirstPlayerRunRate.setText(0 + "");
+                for (int i = 0; i < 6; i++) {
+                    if (!balls[i].getValue().equals("0")) {
+                        ivBalls[i].setImageDrawable(balls[i].getDrawable());
+                        setBallOverWise(balls, i);
                     } else {
-
-
-                        tvFirstPlayerRunRate.setText("SR" + " " + formate.format(playerFirstRuns * 100 / (float) playerFirstBalls) + "");
+                        ivBalls[i].setImageResource(R.drawable.recent_dot_balls);
+                        setBallOverWise(balls, i);
                     }
-                    if (playerSecondBalls == 0) {
-                        tvSecondPlayerRunRate.setText(0 + "");
-
-                    } else {
-                        tvSecondPlayerRunRate.setText("SR" + " " + formate.format(playerSecondRuns * 100 / (float) playerSecondBalls) + "");
-                    }
-                    tvFirstPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeFirstRuns() + "(" + liveCricketMatchSummaryParser.getPlayeFirstBalls() + ")");
-                    Glide.with(context).load(liveCricketMatchSummaryParser.getPlayerFirstImage()).placeholder(R.drawable.ic_user).dontAnimate().into(ivFirstPlayer);
-
-                    tvSecondPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeSecondRuns() + "(" + liveCricketMatchSummaryParser.getPlayeSecondBalls() + ")");
-                    Glide.with(context).load(liveCricketMatchSummaryParser.getPlayerSecondImage()).placeholder(R.drawable.ic_user).dontAnimate().into(ivPlayerSecond);
-
-                    tvPartnershipRecord.setText((playerFirstRuns + playerSecondRuns) + "(" + (playerFirstBalls + playerSecondBalls) + ")");
-                    tvFirstUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(0));
-                    Glide.with(context).load(liveCricketMatchSummaryParser.getYetToPlayerImage(0)).placeholder(R.drawable.ic_user).dontAnimate().into(ivUppComingPlayerFirst);
-                    tvSecondUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(1));
-                    Glide.with(context).load(liveCricketMatchSummaryParser.getYetToPlayerImage(1)).placeholder(R.drawable.ic_user).dontAnimate().into(ivUppComingPlayerSecond);
-                    tvThirdUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(2));
-                    Glide.with(context).load(liveCricketMatchSummaryParser.getYetToPlayerImage(2)).placeholder(R.drawable.ic_user).dontAnimate().into(ivUppComingPlayerThird);
-                    tvBowlerName.setText(liveCricketMatchSummaryParser.getCurentBowlerName());
-                    tvBowlerEcon.setText(TextUtils.isEmpty(liveCricketMatchSummaryParser.getCurentBowlerEconomy())?"Not Available":liveCricketMatchSummaryParser.getCurentBowlerEconomy());
-
-                    tvBowlerOver.setText(liveCricketMatchSummaryParser.getCurentBowlerOvers());
-                    tvBowlerWRun.setText(liveCricketMatchSummaryParser.getCurentBowlerWicket() + "/" + liveCricketMatchSummaryParser.getCurentBowlerRuns());
-                    Glide.with(context).load(liveCricketMatchSummaryParser.getCurentBowlerImage()).placeholder(R.drawable.ic_user).dontAnimate().into(ivBowlerProfile);
-
-                    success = true;
                 }
-            } else {
-                //nothing
             }
+
+            if( currentPartnershipDetails != null && currentPartnershipDetails.length() > 0 ){
+                int playerFirstRuns = liveCricketMatchSummaryParser.getPlayeFirstRuns();
+                int playerSecondRuns = liveCricketMatchSummaryParser.getPlayeSecondRuns();
+                int playerFirstBalls = liveCricketMatchSummaryParser.getPlayeFirstBalls();
+                int playerSecondBalls = liveCricketMatchSummaryParser.getPlayeSecondBalls();
+
+                DecimalFormat formate = new DecimalFormat();
+                formate.setMinimumFractionDigits(2);
+                formate.setMaximumFractionDigits(2);
+
+                tvFirstPlayerName.setText(liveCricketMatchSummaryParser.getPlayeFirstName());
+                tvSecondPlayerName.setText(liveCricketMatchSummaryParser.getPlayeSecondName());
+
+                if (playerFirstBalls == 0) {
+                    tvFirstPlayerRunRate.setText(0 + "");
+                } else {
+                    tvFirstPlayerRunRate.setText("SR" + " " + formate.format(playerFirstRuns * 100 / (float) playerFirstBalls) + "");
+                }
+                if (playerSecondBalls == 0) {
+                    tvSecondPlayerRunRate.setText(0 + "");
+                } else {
+                    tvSecondPlayerRunRate.setText("SR" + " " + formate.format(playerSecondRuns * 100 / (float) playerSecondBalls) + "");
+                }
+
+                tvFirstPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeFirstRuns() + "(" + liveCricketMatchSummaryParser.getPlayeFirstBalls() + ")");
+                Glide.with(context).load(liveCricketMatchSummaryParser.getPlayerFirstImage()).placeholder(R.drawable.ic_user).dontAnimate().into(ivFirstPlayer);
+
+                tvSecondPlayerRunOnBall.setText(liveCricketMatchSummaryParser.getPlayeSecondRuns() + "(" + liveCricketMatchSummaryParser.getPlayeSecondBalls() + ")");
+                Glide.with(context).load(liveCricketMatchSummaryParser.getPlayerSecondImage()).placeholder(R.drawable.ic_user).dontAnimate().into(ivPlayerSecond);
+
+                tvPartnershipRecord.setText((playerFirstRuns + playerSecondRuns) + "(" + (playerFirstBalls + playerSecondBalls) + ")");
+            }
+
+            if( yetToBatting != null && yetToBatting.length() > 0 ){
+                tvFirstUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(0));
+                Glide.with(context).load(liveCricketMatchSummaryParser.getYetToPlayerImage(0)).placeholder(R.drawable.ic_user).dontAnimate().into(ivUppComingPlayerFirst);
+                tvSecondUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(1));
+                Glide.with(context).load(liveCricketMatchSummaryParser.getYetToPlayerImage(1)).placeholder(R.drawable.ic_user).dontAnimate().into(ivUppComingPlayerSecond);
+                tvThirdUpComingPlayerName.setText(liveCricketMatchSummaryParser.getYetToPlayerName(2));
+                Glide.with(context).load(liveCricketMatchSummaryParser.getYetToPlayerImage(2)).placeholder(R.drawable.ic_user).dontAnimate().into(ivUppComingPlayerThird);
+            }
+
+            if( currentBowlerObject != null && currentBowlerObject.length() > 0 ){
+                tvBowlerName.setText(liveCricketMatchSummaryParser.getCurentBowlerName());
+                tvBowlerEcon.setText(TextUtils.isEmpty(liveCricketMatchSummaryParser.getCurentBowlerEconomy()) ? "Not Available" : liveCricketMatchSummaryParser.getCurentBowlerEconomy());
+
+                tvBowlerOver.setText(liveCricketMatchSummaryParser.getCurentBowlerOvers());
+                tvBowlerWRun.setText(liveCricketMatchSummaryParser.getCurentBowlerWicket() + "/" + liveCricketMatchSummaryParser.getCurentBowlerRuns());
+                Glide.with(context).load(liveCricketMatchSummaryParser.getCurentBowlerImage()).placeholder(R.drawable.ic_user).dontAnimate().into(ivBowlerProfile);
+            }
+
+            success = true;
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -462,6 +474,11 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
 
         @Override
         public boolean handleContent(String tag, String content) {
+
+            content = "{\"status\": 200, \"data\": [{\"status\": \"L\", \"home_team\": \"Mumbai\", \"away_team\": \"Punjab\", \"match_id\": \"43\", \"series_name\": \"IPL\", \"venue\": \"ACA-VDCA Stadium\", \"summary\": {\"recent_over\": {}, \"upcoming_batsmen\": null, \"current_partnership\": [], \"toss\": \"Mumbai won the toss and elected to bat\", \"man_of_the_match\": {}, \"venue\": \"ACA-VDCA Stadium\", \"umpires\":\n" +
+                    "{\"first_umpire\": \"Dharmasena, HDPK (SLA)\", \"third_umpire\": \"Chaudhary, AK (IND)\", \"referee\": \"Mahanama, RS (SLA)\", \"second_umpire\": \"Nandan, CK (IND)\"}\n" +
+                    ", \"current_bowler\": null, \"last_wicket\": \"\"}, \"series_id\": \"5181\", \"match_time\": 1463149800, \"result\": \"Live: MUM 0/0 (0.0) Fol. KXI 0/0 (0.0)\", \"start_date\": \"2016-05-14T00:30:00\"}], \"success\": true, \"error\": false}";
+
             boolean success = CricketLiveSummaryHelper.this.handleContent(content);
             return success;
         }
