@@ -51,6 +51,9 @@ public class ContactsHandler {
 
     private static ContactsHandler CONTACT_HANDLER = null;
 
+    private static long ONE_DAY_DURATION = 24 * 60 * 60 * 1000;
+    private static String TIME_KEY = "LastContactSyncTime";
+
     synchronized public static ContactsHandler getInstance() {
         if (CONTACT_HANDLER == null) {
             CONTACT_HANDLER = new ContactsHandler();
@@ -138,6 +141,7 @@ public class ContactsHandler {
 
     synchronized public void addCallToProcessPendingActions(Context context) {
         Log.d("ContactsHandler", "process pending actions");
+        checkCallForContactSyncPerDay(context);
 
         if (!inProcess) {
             process(context);
@@ -145,6 +149,28 @@ public class ContactsHandler {
             //nothing
         }
 
+    }
+
+    private void checkCallForContactSyncPerDay(Context context){
+        long lastTimeSynced = getLastTimeSync(context);
+        if( System.currentTimeMillis() - lastTimeSynced > ONE_DAY_DURATION ){
+            setLastTimeSync(context, System.currentTimeMillis());
+
+            addPendingActionAndUpdatePendingActions(context, CONTACT_PENDING_ACTION_FETCH_JID);
+        } else {
+            //nothing
+        }
+    }
+
+    private long getLastTimeSync(Context context){
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        long time = tinyDB.getLong( TIME_KEY, System.currentTimeMillis() - 2*ONE_DAY_DURATION );
+        return time;
+    }
+
+    private void setLastTimeSync(Context context, long time){
+        TinyDB tinyDB = TinyDB.getInstance(context);
+        tinyDB.putLong( TIME_KEY, time);
     }
 
     private void addContactActionsToProcess(Context context, boolean allContacts) {

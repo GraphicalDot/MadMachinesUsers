@@ -124,7 +124,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         locManager = LocManager.getInstance(getApplicationContext());
 
         {
-            //TODO temporary snippet, will remove it.
             if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
                 ContactsHandler.getInstance().addCallToProcessPendingActions(this);
             } else {
@@ -133,6 +132,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
                 }
             }
         }
+
         preferences = PreferenceManager.getDefaultSharedPreferences(this);
         if (preferences != null) {
             boolean sentToken = preferences.getBoolean(Constants.SENT_TOKEN_TO_SERVER, false);
