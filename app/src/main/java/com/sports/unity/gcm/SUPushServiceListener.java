@@ -3,13 +3,12 @@ package com.sports.unity.gcm;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GcmListenerService;
@@ -18,6 +17,7 @@ import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.scores.ScoreDetailActivity;
+import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
 import org.json.JSONException;
@@ -141,18 +141,22 @@ public class SUPushServiceListener extends GcmListenerService {
 
                 Bitmap largeIcon = BitmapFactory.decodeResource(getResources(), drawableId);
                 //int sportsTypeId = getSportId(sportsType);
-                NotificationCompat.Builder mBuilder =
-                        new NotificationCompat.Builder(this)
-                                .setVisibility(Notification.VISIBILITY_PUBLIC)
-                                .setSmallIcon(R.drawable.ic_stat_notification)
-                                .setLargeIcon(largeIcon)
-                                .setContentTitle(title)
-                                .setContentText(content)
-                                .setColor(getResources().getColor(R.color.app_theme_blue))
-                                .setPriority(Notification.PRIORITY_HIGH)
-                                .setAutoCancel(true)
-                                .addAction(R.drawable.ic_share_white, getString(R.string.share), shareIntent)
-                                .addAction(R.drawable.ic_mute_notification, getString(R.string.mute_alerts), mpi);
+                int defaults = 0;
+                NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
+
+                defaults = CommonUtil.getDefaults(getApplicationContext(), defaults, mBuilder);
+
+                mBuilder.setVisibility(Notification.VISIBILITY_PUBLIC)
+                        .setSmallIcon(R.drawable.ic_stat_notification)
+                        .setLargeIcon(largeIcon)
+                        .setContentTitle(title)
+                        .setContentText(content)
+                        .setDefaults(defaults)
+                        .setColor(getResources().getColor(R.color.app_theme_blue))
+                        .setPriority(Notification.PRIORITY_HIGH)
+                        .setAutoCancel(true)
+                        .addAction(R.drawable.ic_share_white, getString(R.string.share), shareIntent)
+                        .addAction(R.drawable.ic_mute_notification, getString(R.string.mute_alerts), mpi);
                 //                TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
 //                stackBuilder.addParentStack(ScoreDetailActivity.class);
 //                stackBuilder.addNextIntent(i);
@@ -170,6 +174,7 @@ public class SUPushServiceListener extends GcmListenerService {
 
 
     }
+
 
     private int getDrawableIconFootball(int event) {
         int drawable = 0;

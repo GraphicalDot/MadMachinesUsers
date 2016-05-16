@@ -270,8 +270,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                 final String key = cricketMatchJsonCaller.getMatchId() + "|" + cricketMatchJsonCaller.getSeriesId();
                                 String subsMatch = preferences.getString(key, "");
                                 if (key.equalsIgnoreCase(subsMatch) && !subsMatch.equals("")) {
-                                    holder.notification.setImageResource(R.drawable.ic_notification_enable);
                                     holder.notification.setVisibility(View.VISIBLE);
+                                    holder.notification.setImageResource(R.drawable.ic_notification_enable);
                                     holder.notification.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
@@ -282,8 +282,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                     });
 
                                 } else {
-                                    holder.notification.setImageResource(R.drawable.ic_notification_disabled);
                                     holder.notification.setVisibility(View.VISIBLE);
+                                    holder.notification.setImageResource(R.drawable.ic_notification_disabled);
                                     holder.notification.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View v) {
@@ -475,8 +475,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
         final String key = footballMatchJsonCaller.getMatchId() + "|" + footballMatchJsonCaller.getLeagueId();
         String subsMatch = preferences.getString(key, "");
         if (key.equalsIgnoreCase(subsMatch) && !subsMatch.equals("")) {
-            holder.notification.setImageResource(R.drawable.ic_notification_enable);
             holder.notification.setVisibility(View.VISIBLE);
+            holder.notification.setImageResource(R.drawable.ic_notification_enable);
             holder.notification.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -485,8 +485,8 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
             });
 
         } else {
-            holder.notification.setImageResource(R.drawable.ic_notification_disabled);
             holder.notification.setVisibility(View.VISIBLE);
+            holder.notification.setImageResource(R.drawable.ic_notification_disabled);
             holder.notification.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -557,7 +557,11 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
 
                 }
             } else {
-                Toast.makeText(activity, R.string.match_not_exist, Toast.LENGTH_SHORT).show();
+                if (CommonUtil.isInternetConnectionAvailable(activity)) {
+                    Toast.makeText(activity, R.string.oops_try_again, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(activity, R.string.common_message_internet_not_available, Toast.LENGTH_SHORT).show();
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();

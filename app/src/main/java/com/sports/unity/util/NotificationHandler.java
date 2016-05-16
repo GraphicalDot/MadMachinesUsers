@@ -275,7 +275,7 @@ public class NotificationHandler {
         builder.setContentIntent(pendingIntent);
         builder.setPriority(Notification.PRIORITY_HIGH);
         int defaults = 0;
-        defaults = getDefaults(context, defaults, builder);
+        defaults = CommonUtil.getDefaults(context, defaults, builder);
         builder.setDefaults(defaults);
         builder.setAutoCancel(true);
 
@@ -362,7 +362,7 @@ public class NotificationHandler {
         builder.setAutoCancel(true);
 
         int defaults = 0;
-        defaults = getDefaults(context, defaults, builder);
+        defaults = CommonUtil.getDefaults(context, defaults, builder);
         builder.setDefaults(defaults);
 
         if (UserUtil.isNotificationAndSound()) {
@@ -380,28 +380,6 @@ public class NotificationHandler {
         } else {
             notificationManager.notify(NotificationHandler.NOTIFICATION_ID, builder.build());
         }
-    }
-
-    private int getDefaults(Context context, int defaults, NotificationCompat.Builder builder) {
-        if (UserUtil.isConversationVibrate()) {
-            defaults = defaults | Notification.DEFAULT_VIBRATE;
-        } else {
-            long vibratePattern[] = new long[]{0l};
-            builder.setVibrate(vibratePattern);
-        }
-
-//        if ( soundEnabled(context) ) {
-//            defaults = defaults | Notification.DEFAULT_SOUND;
-//        } else {
-//            builder.setSound(null);
-//        }
-
-        if (UserUtil.isNotificationLight()) {
-            builder.setLights(context.getResources().getColor(R.color.app_theme_blue), 100, 3000);
-        } else {
-
-        }
-        return defaults;
     }
 
     private void setStyle(NotificationCompat.Builder builder, int chatCount, NotificationMessage messageArrived, Context context, int messageCount) {
