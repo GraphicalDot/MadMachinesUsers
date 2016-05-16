@@ -1,11 +1,13 @@
 package com.sports.unity.messages.controller.fragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -19,9 +21,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.sports.unity.R;
+import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.FontTypeface;
+import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.messages.controller.activity.GroupDetailActivity;
+import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -29,9 +37,9 @@ import de.hdodenhof.circleimageview.CircleImageView;
 /**
  * Created by amandeep on 30/10/15.
  */
-public class GroupCreateFragment extends Fragment {
+public class GroupCreateFragment extends Fragment implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    static final int LOAD_IMAGE_GALLERY_CAMERA = 1;
+    public static final int LOAD_IMAGE_GALLERY_CAMERA = 1;
 
     private CircleImageView groupAvatar;
     private byte[] groupImage;
@@ -85,23 +93,13 @@ public class GroupCreateFragment extends Fragment {
         groupAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                View view = getActivity().getCurrentFocus();
-                if (view != null) {
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                if (!PermissionUtil.getInstance().isRuntimePermissionRequired()) {
+                    openImagePicker(GroupCreateFragment.this);
+                } else {
+                    if (PermissionUtil.getInstance().requestPermission(getActivity(), new ArrayList<String>(Arrays.asList(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)), getResources().getString(R.string.camera_and_external_storage_permission_message), Constants.REQUEST_CODE_CAMERA_EXTERNAL_STORAGE_PERMISSION)) {
+                        openImagePicker(GroupCreateFragment.this);
+                    }
                 }
-
-                Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                galleryIntent.setType("image/*");
-
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-
-                Intent chooser = new Intent(Intent.ACTION_CHOOSER);
-                chooser.putExtra(Intent.EXTRA_INTENT, galleryIntent);
-
-                Intent[] intentArray = {cameraIntent};
-                chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
-                startActivityForResult(chooser, LOAD_IMAGE_GALLERY_CAMERA);
             }
         });
 
@@ -131,6 +129,38 @@ public class GroupCreateFragment extends Fragment {
             groupDetailActivity.setGroupDetails(groupName, "", groupImage);
 
             groupDetailActivity.moveToMembersListFragment();
+        }
+    }
+
+    public static void openImagePicker(Fragment fragment){
+        View view = fragment.getActivity().getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) fragment.getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryIntent.setType("image/*");
+
+        Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+
+        Intent chooser = new Intent(Intent.ACTION_CHOOSER);
+        chooser.putExtra(Intent.EXTRA_INTENT, galleryIntent);
+
+        Intent[] intentArray = {cameraIntent};
+        chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, intentArray);
+        fragment.startActivityForResult(chooser, LOAD_IMAGE_GALLERY_CAMERA);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == Constants.REQUEST_CODE_CAMERA_EXTERNAL_STORAGE_PERMISSION) {
+            if (PermissionUtil.getInstance().verifyPermissions(grantResults)) {
+                openImagePicker(this);
+            } else {
+                PermissionUtil.getInstance().showSnackBar(getActivity(), getString(R.string.permission_denied));
+            }
         }
     }
 

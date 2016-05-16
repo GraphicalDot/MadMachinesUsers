@@ -423,7 +423,7 @@ public class ContactsHandler {
 
                 boolean isGroupEntry = SportsUnityDBHelper.getInstance(context).isGroupEntry(contact.id);
                 if( isGroupEntry ){
-                    success = PubSubMessaging.getInstance().loadAffiliations(context, contact.id, contact.jid);
+                    success = PubSubMessaging.getInstance().loadGroupInfo(context, contact.id, contact.jid);
                     if( ! success ){
                         break;
                     }

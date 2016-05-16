@@ -22,8 +22,10 @@ import com.facebook.login.widget.LoginButton;
 import com.sports.unity.BuildConfig;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.XMPPManager.PubSubUtil;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.messages.controller.model.Contacts;
+import com.sports.unity.messages.controller.model.PubSubMessaging;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 import com.sports.unity.util.ThreadTask;
@@ -43,6 +45,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -57,13 +60,17 @@ public class UserProfileHandler {
     public static final String CONNECT_XMPP_SERVER_TAG = "connect_xmpp_server_request_tag";
     public static final String SUBMIT_PROFILE_REQUEST_TAG = "submit_profile_tag";
     public static final String LOAD_PROFILE_REQUEST_TAG = "load_profile_tag";
+    public static final String SUBMIT_GROUP_INFO_REQUEST_TAG = "submit_group_info_tag";
 
     public static int REQUEST_STATUS_QUEUED = 1;
     public static int REQUEST_STATUS_ALREADY_EXIST = 2;
     public static int REQUEST_STATUS_FAILED = 3;
 
-    private String SET_USER_INFO_URL = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/set_user_info?";
+    private static final String SET_USER_INFO_URL = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/set_user_info?";
     private static final String SET_USER_INTEREST = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/set_user_interests?";
+
+    private static final String SET_DISPLAY_PIC = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/set_dp?";
+    private static final String GET_DISPLAY_PIC = "http://" + BuildConfig.XMPP_SERVER_API_BASE_URL + "/get_dp?";
 
     private static UserProfileHandler USER_PROFILE_HANDLER;
 
@@ -218,6 +225,40 @@ public class UserProfileHandler {
                 };
                 userThreadTask.start();
             }
+        } else {
+            requestStatus = REQUEST_STATUS_ALREADY_EXIST;
+        }
+        return requestStatus;
+    }
+
+    public int submitGroupInfo(Context context, String groupJid, String groupTitle, String groupImage, String listenerKey) {
+        int requestStatus = REQUEST_STATUS_FAILED;
+        if (!requestInProcess_RequestTagAndListenerKey.containsKey(SUBMIT_GROUP_INFO_REQUEST_TAG)) {
+
+            requestInProcess_RequestTagAndListenerKey.put(SUBMIT_GROUP_INFO_REQUEST_TAG, listenerKey);
+            requestStatus = REQUEST_STATUS_QUEUED;
+
+            ArrayList content = new ArrayList();
+            content.add(groupJid);
+            content.add(groupTitle);
+            content.add(groupImage);
+
+            UserThreadTask userThreadTask = new UserThreadTask(context, SUBMIT_GROUP_INFO_REQUEST_TAG, content) {
+
+                @Override
+                public Object process() {
+                    ArrayList content = (ArrayList)object;
+
+                    String groupJid = (String)content.get(0);
+                    String groupTitle = (String)content.get(1);
+                    String groupImage = (String)content.get(2);
+
+                    boolean success = PubSubMessaging.getInstance().updateGroupInfo( groupJid, groupTitle, groupImage, context);
+                    return success;
+                }
+
+            };
+            userThreadTask.start();
         } else {
             requestStatus = REQUEST_STATUS_ALREADY_EXIST;
         }
@@ -515,6 +556,157 @@ public class UserProfileHandler {
         }
 
         return success;
+    }
+
+    public static boolean uploadDisplayPic(Context context, String jid, String imageContent) {
+        boolean  success = false;
+        if( imageContent == null ) {
+            success = true;
+        } else {
+            String jsonContent = null;
+            try {
+                String password = TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD);
+                String userJID = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
+
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("username", userJID);
+                jsonObject.put("password", password);
+                jsonObject.put("content", imageContent);
+                jsonObject.put("jid", jid);
+                jsonObject.put("apk_version", CommonUtil.getBuildConfig());
+                jsonObject.put("udid", CommonUtil.getDeviceId(context));
+
+                jsonContent = jsonObject.toString();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            if (jsonContent != null) {
+                HttpURLConnection httpURLConnection = null;
+                ByteArrayInputStream byteArrayInputStream = null;
+                try {
+                    URL sendInterests = new URL(SET_DISPLAY_PIC);
+                    httpURLConnection = (HttpURLConnection) sendInterests.openConnection();
+                    httpURLConnection.setConnectTimeout(Constants.CONNECTION_TIME_OUT);
+                    httpURLConnection.setDoInput(false);
+                    httpURLConnection.setRequestMethod("POST");
+
+                    byteArrayInputStream = new ByteArrayInputStream(jsonContent.getBytes());
+                    OutputStream outputStream = httpURLConnection.getOutputStream();
+
+                    byte chunk[] = new byte[4096];
+                    int read = 0;
+                    while ((read = byteArrayInputStream.read(chunk)) != -1) {
+                        outputStream.write(chunk, 0, read);
+                    }
+
+                    if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                        success = true;
+                    } else {
+                        //nothing
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        httpURLConnection.disconnect();
+                    } catch (Exception ex) {
+                    }
+                }
+            } else {
+                //nothing
+            }
+        }
+
+        return success;
+    }
+
+    /*
+     * return value
+     * NULL means some issue with downloading,
+     * EMPTY STRING means no image uploaded for this.
+     */
+    public static String downloadDisplayPic(Context context, String jid) {
+        String imageContent = null;
+        String requestJsonContent = null;
+        try {
+            String password = TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD);
+            String userJID = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
+
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put("username", userJID);
+            jsonObject.put("password", password);
+            jsonObject.put("jid", jid);
+            jsonObject.put("apk_version", CommonUtil.getBuildConfig());
+            jsonObject.put("udid", CommonUtil.getDeviceId(context));
+            jsonObject.put("version", "S");
+
+            requestJsonContent = jsonObject.toString();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+        if( requestJsonContent != null ) {
+            HttpURLConnection httpURLConnection = null;
+            ByteArrayOutputStream byteArrayOutputStream = null;
+            ByteArrayInputStream byteArrayInputStream = null;
+            try {
+                URL sendInterests = new URL(GET_DISPLAY_PIC);
+                httpURLConnection = (HttpURLConnection) sendInterests.openConnection();
+                httpURLConnection.setConnectTimeout(Constants.CONNECTION_TIME_OUT);
+                httpURLConnection.setReadTimeout(60000);
+                httpURLConnection.setDoInput(true);
+                httpURLConnection.setDoOutput(true);
+                httpURLConnection.setRequestMethod("POST");
+
+                {
+                    byteArrayInputStream = new ByteArrayInputStream(requestJsonContent.getBytes());
+                    OutputStream outputStream = httpURLConnection.getOutputStream();
+
+                    byte chunk[] = new byte[4096];
+                    int read = 0;
+                    while ((read = byteArrayInputStream.read(chunk)) != -1) {
+                        outputStream.write(chunk, 0, read);
+                    }
+                }
+
+                if (httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+
+                    {
+                        byteArrayOutputStream = new ByteArrayOutputStream();
+                        InputStream inputStream = httpURLConnection.getInputStream();
+
+                        byte chunk[] = new byte[4096];
+                        int read = 0;
+                        while ((read = inputStream.read(chunk)) != -1) {
+                            byteArrayOutputStream.write(chunk, 0, read);
+                        }
+                    }
+
+                    String content = String.valueOf(byteArrayOutputStream.toString());
+                    JSONObject responseJsonContent = new JSONObject(content);
+                    if( responseJsonContent.getInt("status") == 200 ) {
+                        if( responseJsonContent.has("content") ) {
+                            imageContent = responseJsonContent.getString("content");
+                        } else {
+                            imageContent = "";
+                        }
+                    }
+                } else {
+                    //nothing
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    httpURLConnection.disconnect();
+                } catch (Exception ex) {
+                }
+            }
+        } else {
+            //nothing
+        }
+        return imageContent;
     }
 
     public static class ProfileDetail {

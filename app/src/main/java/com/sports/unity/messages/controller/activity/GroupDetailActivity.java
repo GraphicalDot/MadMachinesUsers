@@ -1,8 +1,10 @@
 package com.sports.unity.messages.controller.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
@@ -25,6 +27,7 @@ import com.sports.unity.util.Constants;
 import com.sports.unity.util.ImageUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GroupDetailActivity extends CustomAppCompatActivity {
 
@@ -53,6 +56,26 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        List<Fragment> fragmentList = getSupportFragmentManager().getFragments();
+        if( fragmentList.size() == 1 ) {
+            Fragment fragment = fragmentList.get(0);
+            if (fragment instanceof GroupInfoFragment) {
+                boolean success = ((GroupInfoFragment) fragment).onBackPressed();
+                if( success ){
+                    //nothing
+                } else {
+                    super.onBackPressed();
+                }
+            } else {
+                super.onBackPressed();
+            }
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     private void addGroupCreateFragment() {
         GroupCreateFragment groupCreateFragment = new GroupCreateFragment();
 
@@ -63,7 +86,7 @@ public class GroupDetailActivity extends CustomAppCompatActivity {
     private void addGroupInfoFragment() {
         Bundle bundle = new Bundle();
         bundle.putString("name", getIntent().getStringExtra("name"));
-        bundle.putString("profilePicture", getIntent().getStringExtra("profilePicture"));
+        bundle.putByteArray("profilePicture", getIntent().getByteArrayExtra("profilePicture"));
         bundle.putString("jid", getIntent().getStringExtra("jid"));
         bundle.putBoolean("blockStatus", getIntent().getBooleanExtra("blockStatus", false));
         bundle.putInt("chatID", getIntent().getIntExtra("chatID", SportsUnityDBHelper.DEFAULT_ENTRY_ID));

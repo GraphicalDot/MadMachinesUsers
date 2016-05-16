@@ -175,21 +175,18 @@ public class PubSubUtil {
         return success;
     }
 
-    public static void getNodeConfig(String nodeId) throws SmackException.NoResponseException, XMPPException.XMPPErrorException, SmackException.NotConnectedException {
+    public static ConfigureForm getNodeConfig(String nodeId) throws SmackException.NoResponseException, XMPPException.XMPPErrorException, SmackException.NotConnectedException {
         PubSub packet = PubSub.createPubsubPacket("pubsub.mm.io", IQ.Type.get, new NodeExtension(PubSubElementType.CONFIGURE, nodeId), PubSubNamespace.OWNER);
         String stanzaId = packet.getStanzaId();
         IQ reply = sendPubsubPacket(XMPPClient.getConnection(), packet);
 
         ConfigureForm configureForm = NodeUtils.getFormFromPacket(reply, PubSubElementType.CONFIGURE_OWNER);
+        return configureForm;
+    }
 
-        {
-            ConfigureForm configureForm1 = new ConfigureForm(DataForm.Type.submit);
-            configureForm1.setTitle("25march_aman14");
-
-            packet = PubSub.createPubsubPacket( "pubsub.mm.io", IQ.Type.set, new FormNode(FormNodeType.CONFIGURE_OWNER, nodeId, configureForm1), PubSubNamespace.OWNER);
-            XMPPClient.getConnection().sendStanza(packet);
-        }
-
+    public static void sendNodeConfig(String nodeId, ConfigureForm form) throws SmackException.NoResponseException, XMPPException.XMPPErrorException, SmackException.NotConnectedException {
+        PubSub packet = PubSub.createPubsubPacket( "pubsub.mm.io", IQ.Type.set, new FormNode(FormNodeType.CONFIGURE_OWNER, nodeId, form), PubSubNamespace.OWNER);
+        XMPPClient.getConnection().sendStanza(packet);
     }
 
     public static String publish(Item item, String nodeId) throws SmackException.NotConnectedException {

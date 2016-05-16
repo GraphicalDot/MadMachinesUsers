@@ -713,6 +713,22 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return db.update(ContactChatEntry.TABLE_NAME, values, selection, selectionArgs);
     }
 
+    public int updateGroupInfo(String jid, String groupName, byte[] groupImage) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ContactChatEntry.COLUMN_NAME, groupName);
+        if( groupImage != null ) {
+            values.put(ContactChatEntry.COLUMN_IMAGE, groupImage);
+        }
+        values.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, false);
+
+        String selection = ContactChatEntry.COLUMN_JID + " LIKE ? ";
+        String[] selectionArgs = {jid};
+
+        return db.update(ContactChatEntry.TABLE_NAME, values, selection, selectionArgs);
+    }
+
     public GroupParticipants getGroupParticipants(int chatId) {
         SQLiteDatabase db = this.getReadableDatabase();
 

@@ -259,6 +259,7 @@ public class ChatFragment extends Fragment implements OnSearchViewQueryListener 
         boolean success = PubSubMessaging.getInstance().exitGroup(currentUserJID + "@mm.io", chat.jid);
         if (success) {
             updateGroupStatusInDB(chat);
+            PubSubMessaging.getInstance().sendIntimationAboutMemberRemoved(getContext(), currentUserJID, chat.jid);
         }
     }
 

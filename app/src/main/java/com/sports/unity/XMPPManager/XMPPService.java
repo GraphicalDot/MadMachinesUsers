@@ -86,8 +86,9 @@ public class XMPPService extends Service {
         UserUtil.init(context);
 
         String name = sportsUnityDBHelper.getUserNameByJid(from);
+        String groupName = sportsUnityDBHelper.getGroupSubject(groupServerId);
         if (isGroupChat) {
-            name = name + "@" + sportsUnityDBHelper.getGroupSubject(groupServerId);
+            name = name + "@" + groupName;
             availabilityStatus = Contacts.AVAILABLE_BY_MY_CONTACTS;
         } else {
             //nothing
@@ -102,11 +103,10 @@ public class XMPPService extends Service {
             pendingIntent = getPendingIntentForMainActivity(context);
         } else if (chatCount == 1) {
             if (isGroupChat) {
-                String groupName = groupServerId.substring(groupServerId.indexOf("%") + 1, groupServerId.indexOf("%%"));
-                pendingIntent = getPendingIntentForChatActivity(context, isGroupChat, groupName, groupServerId, chatId, null, false, availabilityStatus, userStatus);
+                pendingIntent = getPendingIntentForChatActivity(context, isGroupChat, groupName, groupServerId, chatId, image, false, availabilityStatus, userStatus);
             } else {
                 Contacts contact = sportsUnityDBHelper.getContactByJid(from);
-                pendingIntent = getPendingIntentForChatActivity(context, isGroupChat, name, from, chatId, contact.image, contact.isOthers(), availabilityStatus, userStatus);
+                pendingIntent = getPendingIntentForChatActivity(context, isGroupChat, name, from, chatId, image, contact.isOthers(), availabilityStatus, userStatus);
             }
         }
 
