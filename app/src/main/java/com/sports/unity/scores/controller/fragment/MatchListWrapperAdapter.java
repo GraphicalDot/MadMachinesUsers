@@ -387,6 +387,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                                             holder.matchProgressBar.setProgress(holder.matchProgressBar.getMax());
                                         }
                                     }
+                                    holder.matchDay.setVisibility(View.GONE);
                                     holder.liveText.setVisibility(View.GONE);
                                     holder.date.setVisibility(View.GONE);
                                     holder.team_score.setVisibility(View.VISIBLE);
