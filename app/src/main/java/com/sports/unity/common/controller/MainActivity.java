@@ -122,7 +122,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
 
         sportsUnityDBHelper = SportsUnityDBHelper.getInstance(this);
         locManager = LocManager.getInstance(getApplicationContext());
-        locManager.buildApiClient();
 
         {
             //TODO temporary snippet, will remove it.
@@ -470,7 +469,7 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         super.onResume();
         shouldCloseDrawer = false;
         setNavigationProfile();
-        updateLocation();
+//        updateLocation();
         if (messagesFragmentInFront) {
             fabMenu.showMenuButton(true);
         }
@@ -487,7 +486,6 @@ public class MainActivity extends CustomAppCompatActivity implements ActivityCom
         } else {
             //TODO
         }
-//        GPSTracking.getInstance(getApplicationContext()).getLocation();
     }
 
     public void closeDrawer() {

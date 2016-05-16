@@ -56,6 +56,7 @@ import java.util.HashMap;
 
 import static com.sports.unity.common.model.TinyDB.KEY_PASSWORD;
 import static com.sports.unity.common.model.TinyDB.KEY_USER_JID;
+import static com.sports.unity.util.CommonUtil.getBuildConfig;
 import static com.sports.unity.util.CommonUtil.getDeviceId;
 
 public class SettingsActivity extends CustomAppCompatActivity implements BlockUnblockUserHelper.BlockUnblockListener {
@@ -372,8 +373,7 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
             } else {
                 data.put(LOCATION_STATUS, "n");
             }
-
-            data.put(APK_VERSION, "1.0");
+            data.put(APK_VERSION, getBuildConfig());
             data.put(UDID, getDeviceId(getApplicationContext()));
             Log.i("user", data.toString());
         } catch (JSONException e) {
@@ -477,8 +477,8 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                     for (int index = 0; index < childCount; index++) {
                         item = (ViewGroup) settingItemParentLayout.getChildAt(index);
                         checkBox = (CheckBox) item.findViewById(R.id.radio);
-                        Integer tag = (Integer)checkBox.getTag();
-                        if( tag != null ) {
+                        Integer tag = (Integer) checkBox.getTag();
+                        if (tag != null) {
                             if (tag.intValue() == itemId && checkBox.getVisibility() == View.VISIBLE) {
                                 checkBox.setChecked(!isChecked);
                                 break;
@@ -565,7 +565,7 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
         public void onClick(View view) {
             int itemId = (Integer) view.getTag();
             Object tag = view.getTag(R.layout.settings_item);
-            int itemType = tag != null ? (Integer)tag : 0;
+            int itemType = tag != null ? (Integer) tag : 0;
 
             if (itemType == SettingsHelper.ITEM_TYPE_DRILL_DOWN) {
                 renderDrillDownItems(itemId);

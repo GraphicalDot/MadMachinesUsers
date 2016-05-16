@@ -83,6 +83,10 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
 
     private static HashMap<String, DataNotifier> listenersMap = new HashMap<>();
 
+    ArrayList<User> friends = new ArrayList<>();
+    ArrayList<User> sportsUnityUsers = new ArrayList<>();
+    ArrayList<User> similarUsers = new ArrayList<>();
+
     private ScoresContentHandler.ContentListener contentListener = new ScoresContentHandler.ContentListener() {
 
         @Override
@@ -100,9 +104,10 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
     };
 
     private void handleData(String content) {
-        ArrayList<User> friends = new ArrayList<>();
-        ArrayList<User> sportsUnityUsers = new ArrayList<>();
-        ArrayList<User> similarUsers = new ArrayList<>();
+        friends.clear();
+        sportsUnityUsers.clear();
+        similarUsers.clear();
+
         try {
             JSONObject data = new JSONObject(content);
 
@@ -333,7 +338,7 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
             getPeopleAroundMe(location.getLatitude(), location.getLongitude());
             LocManager.getInstance(getApplicationContext()).sendLatituteAndLongitude(mLastKnownLocation, true);
         } else {
-            Toast.makeText(getApplicationContext(), "location is null", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "could not get location", Toast.LENGTH_SHORT).show();
         }
     }
 

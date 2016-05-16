@@ -23,6 +23,7 @@ import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.common.controller.MainActivity;
 import com.sports.unity.common.model.PermissionUtil;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.util.CommonUtil;
 import com.sports.unity.util.Constants;
 
@@ -53,6 +54,7 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     public LocManager(Context context) {
         this.context = context;
         UDID = CommonUtil.getDeviceId(context);
+        buildApiClient();
     }
 
     synchronized public static LocManager getInstance(Context context) {
@@ -95,6 +97,7 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                     }
                     if (mLastLocation != null) {
                         saveLocation(mLastLocation);
+                        sendLatituteAndLongitude(mLastLocation, false);
                     }
                 }
             });
@@ -103,15 +106,17 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     }
 
     public Location getLocation(Activity activity) {
-        if (mLastLocation == null) {
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                    ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-                //TODO handle permissions
+            PermissionUtil.getInstance().requestPermission(activity,
+                    new ArrayList<String>(Arrays.asList(Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION)), "Application wants permission to access location services", 987);
 
-            } else {
-                mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-            }
+//            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
+
+        } else {
+            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         }
         return mLastLocation;
 
@@ -141,7 +146,6 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     public void uploadLatLng(Location mLastLocation) {
         HttpURLConnection httpURLConnection = null;
-        //added by ashish
         url = base_url + TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID) + "&password=" + TinyDB.getInstance(context).getString(TinyDB.KEY_PASSWORD) + "&@mm.io&lat=" + mLastLocation.getLatitude() + "&lng=" + mLastLocation.getLongitude() + "&apk_version=" + BuildConfig.VERSION_NAME + "&udid=" + UDID;
         try {
             URL sendData = new URL(url);
@@ -165,13 +169,6 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
     }
 
     public void saveLocation(Location mLastLocation) {
-//        if (mLastLocation != null) {
-//            Log.i("latitude", String.valueOf(mLastLocation.getLatitude()));
-//            Log.i("longitude", String.valueOf(mLastLocation.getLongitude()));
-//
-//            TinyDB.getInstance(context).putDouble(TinyDB.KEY_CURRENT_LATITUDE, mLastLocation.getLatitude());
-//            TinyDB.getInstance(context).putDouble(TinyDB.KEY_CURRENT_LONGITUDE, mLastLocation.getLongitude());
-//        }
         Log.i("latitude", String.valueOf(mLastLocation.getLatitude()));
         Log.i("longitude", String.valueOf(mLastLocation.getLongitude()));
         saveStreetAddress(mLastLocation);
@@ -215,11 +212,6 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-//                ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-//            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-//        }
 
-        //TODO
     }
 }
