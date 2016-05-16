@@ -574,7 +574,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactChatEntry.COLUMN_IMAGE,
                 ContactChatEntry.COLUMN_ID,
                 ContactChatEntry.COLUMN_STATUS,
-                ContactChatEntry.COLUMN_BLOCK_USER,
                 ContactChatEntry.COLUMN_AVAILABLE_STATUS
         };
 
