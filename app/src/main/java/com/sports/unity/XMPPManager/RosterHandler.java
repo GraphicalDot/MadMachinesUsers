@@ -90,7 +90,7 @@ public class RosterHandler {
         this.context = context;
     }
 
-    private void checkForPendingEntriesToBeAddedInRoster() {
+    public void checkForPendingEntriesToBeAddedInRoster() {
         ArrayList<String> pendingJIDsToBeAddedInRoster = SportsUnityDBHelper.getInstance(context).getPendingRosterEntries();
         if (pendingJIDsToBeAddedInRoster.size() > 0) {
             addEntriesToRoster(pendingJIDsToBeAddedInRoster);
@@ -101,6 +101,7 @@ public class RosterHandler {
 
     public Roster loadRoster(XMPPConnection connection) {
         roster = Roster.getInstanceFor(connection);
+        roster.setSubscriptionMode(Roster.SubscriptionMode.accept_all);
         roster.addRosterLoadedListener(rosterLoadedListener);
         roster.addRosterListener(rosterListener);
         return roster;

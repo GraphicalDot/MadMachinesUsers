@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
@@ -24,11 +25,20 @@ public class PeopleAroundMeFragment extends Fragment {
 
     DataNotifier dataNotifier = new DataNotifier() {
         @Override
-        public void newData(ArrayList<User> content) {
+        public void newData(ArrayList<User> content, int responseCode) {
             if (content == null) {
                 list.setVisibility(View.GONE);
                 emptyLayout.setVisibility(View.GONE);
                 errorLayout.setVisibility(View.VISIBLE);
+                LinearLayout dataError = (LinearLayout) errorLayout.findViewById(R.id.data_error);
+                LinearLayout connectionError = (LinearLayout) errorLayout.findViewById(R.id.connection_error);
+                if (responseCode == 0) {
+                    dataError.setVisibility(View.GONE);
+                    connectionError.setVisibility(View.VISIBLE);
+                } else {
+                    dataError.setVisibility(View.VISIBLE);
+                    connectionError.setVisibility(View.GONE);
+                }
             } else {
                 list.setVisibility(View.VISIBLE);
                 errorLayout.setVisibility(View.GONE);

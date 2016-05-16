@@ -16,6 +16,7 @@ import android.util.Log;
 import com.sports.unity.Database.DBUtil;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.R;
+import com.sports.unity.XMPPManager.RosterHandler;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.FriendRequestsActivity;
@@ -369,6 +370,7 @@ public class PersonalMessaging {
                     } else {
                         ActivityActionHandler.getInstance().acceptRequestStatusEvent(ActivityActionHandler.USER_PROFILE_KEY, jid, null);
                     }
+                    RosterHandler.getInstance(context).checkForPendingEntriesToBeAddedInRoster();
                 }
             } else {
                 sportsUnityDBHelper.updateServerReceived(receiptId);
@@ -636,6 +638,7 @@ public class PersonalMessaging {
                     ActivityActionHandler.getInstance().receivedRequestStatusEvent(ActivityActionHandler.USER_PROFILE_KEY, jid, null, ActivityActionHandler.EVENT_FRIEND_REQUEST_ACCEPTED);
                     displayNotificationForFriendRequestAccepted(contact);
                 }
+                RosterHandler.getInstance(context).checkForPendingEntriesToBeAddedInRoster();
             }
         }
     }

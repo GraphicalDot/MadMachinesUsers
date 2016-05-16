@@ -94,16 +94,16 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
             progressBar.setVisibility(View.GONE);
             viewPager.setVisibility(View.VISIBLE);
             if (responseCode == 200) {
-                handleData(content);
+                handleData(content, responseCode);
             } else {
-                listenersMap.get(FRIENDS_KEY).newData(null);
-                listenersMap.get(SPU_KEY).newData(null);
-                listenersMap.get(SIMILAR_USERS_KEY).newData(null);
+                listenersMap.get(FRIENDS_KEY).newData(null, responseCode);
+                listenersMap.get(SPU_KEY).newData(null, responseCode);
+                listenersMap.get(SIMILAR_USERS_KEY).newData(null, responseCode);
             }
         }
     };
 
-    private void handleData(String content) {
+    private void handleData(String content, int responseCode) {
         friends.clear();
         sportsUnityUsers.clear();
         similarUsers.clear();
@@ -160,9 +160,9 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
             e.printStackTrace();
         }
 
-        listenersMap.get(FRIENDS_KEY).newData(friends);
-        listenersMap.get(SPU_KEY).newData(sportsUnityUsers);
-        listenersMap.get(SIMILAR_USERS_KEY).newData(similarUsers);
+        listenersMap.get(FRIENDS_KEY).newData(friends, responseCode);
+        listenersMap.get(SPU_KEY).newData(sportsUnityUsers, responseCode);
+        listenersMap.get(SIMILAR_USERS_KEY).newData(similarUsers, responseCode);
 
         Log.i("listeners", String.valueOf(friends.size()) + " --> " + String.valueOf(sportsUnityUsers.size()) + " --> " + String.valueOf(similarUsers.size()));
     }

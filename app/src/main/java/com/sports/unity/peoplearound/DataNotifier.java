@@ -9,5 +9,5 @@ import java.util.ArrayList;
  */
 public interface DataNotifier {
 
-    void newData(ArrayList<User> content);
+    void newData(ArrayList<User> content, int responseCode);
 }
