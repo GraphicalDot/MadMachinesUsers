@@ -461,6 +461,9 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 //        }
 
         populateMessagesOnScreen();
+
+        setStatusConnecting();
+
         setEventListeners(mHandler);
 
         toolbarActionsForChatScreen.resetVariables();
@@ -661,7 +664,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         messageText = (EditText) findViewById(R.id.msg);
         status = (TextView) toolbar.findViewById(R.id.status_active);
 
-        setStatusConnecting();
 
         LinearLayout profile_link = (LinearLayout) toolbar.findViewById(R.id.profile);
 
@@ -1448,11 +1450,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
             public void run() {
                 status.setVisibility(View.VISIBLE);
                 status.setText("Connecting...");
-                chatKeyboardHelper.disableOrEnableKeyboardAndMediaButtons(true, ChatScreenActivity.this);
             }
         });
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(status.getWindowToken(), 0);
     }
 
     private void setStatusConnected() {
@@ -1462,7 +1461,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
                     @Override
                     public void run() {
                         status.setText("Connected");
-                        chatKeyboardHelper.disableOrEnableKeyboardAndMediaButtons(false, ChatScreenActivity.this);
                     }
                 });
             }
@@ -1483,7 +1481,9 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
 
             getChatThread();
             checkForwardMessageQueue();
-
+            if (isGroupChat) {
+                setGroupMembers();
+            }
             if (!isGroupChat) {
                 if (isLastTimeRequired) {
                     personalMessaging.getLastTime(jabberId);
