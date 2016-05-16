@@ -452,8 +452,12 @@ public class CricketLiveSummaryHelper extends BasicVolleyRequestResponseViewHelp
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary));
                 ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
                 break;
-
             case "e1,nb":
+                ballDetail.setValue("NB");
+                ballDetail.setFontColor(getBallColor(R.color.font_color_boundary_no));
+                ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
+                break;
+            case "nb":
                 ballDetail.setValue("NB");
                 ballDetail.setFontColor(getBallColor(R.color.font_color_boundary_no));
                 ballDetail.setBackGroundColor(getBallColor(R.color.balls_color_boundary));
