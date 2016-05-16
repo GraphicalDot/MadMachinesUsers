@@ -375,7 +375,8 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
     @Override
     protected void onResume() {
         super.onResume();
-
+        populateMessagesOnScreen();
+        clearUnreadCount();
         blockUnblockUserHelper.addBlockUnblockListener(ChatScreenActivity.this);
         ActivityActionHandler.getInstance().addActionListener(ActivityActionHandler.CHAT_SCREEN_KEY, jabberId, activityActionListener);
 //        GlobalEventHandler.getInstance().addGlobalEventListener(ActivityActionHandler.CHAT_SCREEN_KEY, this);
@@ -447,7 +448,6 @@ public class ChatScreenActivity extends CustomAppCompatActivity implements Activ
         getIntentExtras();
 
         boolean isPending = SportsUnityDBHelper.getInstance(this).isRequestPending(jabberId);
-        clearUnreadCount();
         initToolbar();
         hideStatusIfUserBlocked();
         final Handler mHandler = new Handler();
