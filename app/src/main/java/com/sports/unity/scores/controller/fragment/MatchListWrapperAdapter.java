@@ -345,7 +345,7 @@ public class MatchListWrapperAdapter extends RecyclerView.Adapter<MatchListWrapp
                             if ("?".equals(footballMatchJsonCaller.getAwayTeamScore())) {
 
                                 if ("Postp.".equalsIgnoreCase(footballMatchJsonCaller.getMatchStatus())) {
-                                    holder.matchDay.setText("PostPond");
+                                    holder.matchDay.setText("Postponed");
                                     holder.liveText.setVisibility(View.GONE);
                                     holder.team_score.setVisibility(View.GONE);
                                     holder.date.setVisibility(View.VISIBLE);
