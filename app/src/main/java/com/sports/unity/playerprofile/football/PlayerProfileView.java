@@ -165,13 +165,13 @@ public class PlayerProfileView extends CustomVolleyCallerActivity {
             for (int i = 0; i < otherComptetionArray.length(); i++) {
                 JSONObject comtObject = otherComptetionArray.getJSONObject(i);
                 dto = new PlayerScoreCardDTO();
-                dto.setTeamName(comtObject.getString("name"));
+                dto.setTeamName(comtObject.getString("team"));
                 dto.setLeagueName(comtObject.getString("league"));
                 dto.setNoOfAssists("25");
-                dto.setNoOfGames(comtObject.getString("appearances"));
+                dto.setNoOfGames(comtObject.getString("games"));
                 dto.setNoOfgoals(comtObject.getString("goals"));
-                dto.setNoOfYellowCard(comtObject.getString("yellowcards"));
-                dto.setNoOfRedCard(comtObject.getString("redcards"));
+                dto.setNoOfYellowCard(comtObject.getString("yellow_card"));
+                dto.setNoOfRedCard(comtObject.getString("red_card"));
                 playerScoreCardDTOs.add(dto);
             }
             mplayerScorecardAdapter.notifyDataSetChanged();
