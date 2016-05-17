@@ -55,8 +55,8 @@ public class PeopleAroundMeAdapter extends ArrayAdapter<User> {
             String username = SportsUnityDBHelper.getInstance(context).getNameByJID(user.getJid());
             if (username == null) {
                 username = user.getName();
-                name.setText(username);
             }
+            name.setText(username);
         } else {
 
             name.setText(user.getName());
