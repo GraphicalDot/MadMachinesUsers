@@ -79,9 +79,10 @@ public class PeopleAroundMeFragment extends Fragment {
     }
 
     private void initView(View v) {
+        String TAG = getArguments().getString(PeopleAroundActivity.BUNDLE_TAG);
         list = (ListView) v.findViewById(R.id.people_around_list);
         emptyLayout = (RelativeLayout) v.findViewById(R.id.data_exist);
-        PeopleAroundMeAdapter peopleAroundMeAdapter = new PeopleAroundMeAdapter(getActivity(), R.layout.fragment_people_aroundme_card, data);
+        PeopleAroundMeAdapter peopleAroundMeAdapter = new PeopleAroundMeAdapter(getActivity(), R.layout.fragment_people_aroundme_card, data, TAG);
         list.setAdapter(peopleAroundMeAdapter);
         list.setEmptyView(emptyLayout);
         updateContent(data);

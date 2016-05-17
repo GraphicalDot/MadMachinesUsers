@@ -255,6 +255,9 @@ public class PeopleAroundActivity extends AppCompatActivity implements PlaceSele
         initLocationButton();
         InitSeekbar();
 
+        int position = getIntent().getIntExtra("tabPosition", 1);
+        viewPager.setCurrentItem(position);
+
     }
 
     private void initLocationButton() {

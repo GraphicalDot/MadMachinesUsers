@@ -21,6 +21,7 @@ import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.FriendRequestsActivity;
 import com.sports.unity.common.model.ContactsHandler;
+import com.sports.unity.common.model.TinyDB;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.CommonUtil;
@@ -580,8 +581,8 @@ public class PersonalMessaging {
 
     public boolean sendFriendRequest(String jid) {
         boolean success = false;
-        String name = sportsUnityDBHelper.getNameByJID(jid);
-        if (name == null || name.length() == 0) {
+        String name = TinyDB.getInstance(context).getString(TinyDB.KEY_USERNAME);
+        if (name == null) {
             name = "unknown";
         }
         Message message = new Message();
@@ -592,7 +593,6 @@ public class PersonalMessaging {
             XMPPClient.getConnection().sendStanza(message);
             sportsUnityDBHelper.createRequestStatusEntry(sportsUnityDBHelper.getContactIdFromJID(jid), message.getStanzaId());
             success = true;
-            Log.d("maxchat", "adding and waiting");
         } catch (SmackException.NotConnectedException e) {
             e.printStackTrace();
         }

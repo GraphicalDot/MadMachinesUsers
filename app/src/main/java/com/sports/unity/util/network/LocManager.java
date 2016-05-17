@@ -116,7 +116,11 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 //            ActivityCompat.requestPermissions(activity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 0);
 
         } else {
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            if (mGoogleApiClient != null) {
+                mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+            } else {
+                buildApiClient();
+            }
         }
         return mLastLocation;
 

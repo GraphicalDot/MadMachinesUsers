@@ -15,6 +15,7 @@ import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.User;
+import com.sports.unity.peoplearound.PeopleAroundActivity;
 
 import java.util.ArrayList;
 
@@ -26,12 +27,14 @@ public class PeopleAroundMeAdapter extends ArrayAdapter<User> {
     private Activity context;
     private ArrayList<User> users;
     private int layoutResourceId;
+    private String TAG;
 
-    public PeopleAroundMeAdapter(Activity context, int resource, ArrayList<User> users) {
+    public PeopleAroundMeAdapter(Activity context, int resource, ArrayList<User> users, String TAG) {
         super(context, resource);
         this.context = context;
         this.users = users;
         this.layoutResourceId = resource;
+        this.TAG = TAG;
     }
 
     @Override
@@ -48,7 +51,18 @@ public class PeopleAroundMeAdapter extends ArrayAdapter<User> {
         TextView name = (TextView) rowView.findViewById(R.id.tv_friend_name);
         TextView distance = (TextView) rowView.findViewById(R.id.tv_friend_distance);
 
-        name.setText(user.getName());
+        if (TAG == PeopleAroundActivity.FRIENDS_KEY) {
+            String username = SportsUnityDBHelper.getInstance(context).getNameByJID(user.getJid());
+            if (username == null) {
+                username = user.getName();
+                name.setText(username);
+            }
+        } else {
+
+            name.setText(user.getName());
+        }
+
+
         if (String.valueOf(user.getDistance()).length() > 3) {
             distance.setText("Approx " + String.valueOf(Math.round(user.getDistance() / 1000)) + " kms away");
         } else {
