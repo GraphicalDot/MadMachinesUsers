@@ -452,14 +452,17 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
             pDialog.dismiss();
 
             if (success) {
-//                if (itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID) {
-//                    UserUtil.setShowMyLocation(SettingsActivity.this, isChecked);
-//                    changeAllRadioButtons(isChecked);
-//                } else if (itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID) {
-//                    UserUtil.setShowToFriendsLocation(SettingsActivity.this, isChecked);
-//                } else if (itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {
-//                    UserUtil.setShowToAllLocation(SettingsActivity.this, isChecked);
-//                }
+                if (itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID || itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {
+                    if( UserUtil.isShowToFriendsLocation() || UserUtil.isShowToAllLocation() ){
+                        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+                        Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+                        switcher.setChecked(true);
+                    } else {
+                        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+                        Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+                        switcher.setChecked(false);
+                    }
+                }
             } else {
                 Toast.makeText(getApplicationContext(), "failure to update privacy settings", Toast.LENGTH_SHORT).show();
 
@@ -467,6 +470,7 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                     Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
                     Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
                     switcher.setChecked(!isChecked);
+                    changeAllRadioButtons(!isChecked);
                 } else if (itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID || itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {
                     LinearLayout settingItemParentLayout = (LinearLayout) findViewById(R.id.items_container);
                     int childCount = settingItemParentLayout.getChildCount();
@@ -616,6 +620,7 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                 }
             } else {
                 if (itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID) {
+                    changeAllRadioButtons(UserUtil.isShowMyLocation());
                     updatePrivacyPolicy(itemId, UserUtil.isShowMyLocation());
                 }
             }
@@ -676,7 +681,6 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                 UserUtil.setNotificationLight(SettingsActivity.this, isChecked);
             } else if (itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID) {
                 UserUtil.setShowMyLocation(SettingsActivity.this, isChecked);
-                changeAllRadioButtons(isChecked);
             } else if (itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID) {
                 UserUtil.setShowToFriendsLocation(SettingsActivity.this, isChecked);
             } else if (itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {

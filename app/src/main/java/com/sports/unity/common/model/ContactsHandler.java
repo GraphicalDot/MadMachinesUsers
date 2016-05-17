@@ -10,6 +10,7 @@ import android.util.Log;
 import com.sports.unity.BuildConfig;
 import com.sports.unity.Database.SportsUnityDBHelper;
 import com.sports.unity.XMPPManager.PubSubUtil;
+import com.sports.unity.XMPPManager.RosterHandler;
 import com.sports.unity.XMPPManager.XMPPClient;
 import com.sports.unity.messages.controller.model.Contacts;
 import com.sports.unity.messages.controller.model.PubSubMessaging;
@@ -618,7 +619,7 @@ public class ContactsHandler {
 
                     boolean success = getAndUpdateContactJIDs(context);
                     if (success) {
-                        //nothing
+                        RosterHandler.getInstance(context).checkForPendingEntriesToBeAddedInRoster();
                     } else {
                         failedActions = addPendingAction(failedActions, CONTACT_PENDING_ACTION_FETCH_JID);
                     }
