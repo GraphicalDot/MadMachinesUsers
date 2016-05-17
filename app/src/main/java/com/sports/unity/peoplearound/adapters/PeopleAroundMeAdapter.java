@@ -77,9 +77,7 @@ public class PeopleAroundMeAdapter extends ArrayAdapter<User> {
     };
 
     private void createContact(String jid, Context context, String name) {
-        byte[] emptyAvatar = new byte[0];
         SportsUnityDBHelper.getInstance(context).addToContacts(name, null, jid, ContactsHandler.getInstance().defaultStatus, null, Contacts.AVAILABLE_BY_PEOPLE_AROUND_ME);
-        SportsUnityDBHelper.getInstance(context).updateContacts(jid, emptyAvatar, ContactsHandler.getInstance().defaultStatus);
     }
 
     private void moveToChatActivity(Contacts contact) {
