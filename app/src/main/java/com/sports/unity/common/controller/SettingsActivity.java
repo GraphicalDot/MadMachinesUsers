@@ -360,15 +360,35 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
         return toneItems;
     }
 
-    private String getPrivacySettingsAsJSON() {
+    private String getPrivacySettingsAsJSON(int itemId, boolean isChecked) {
         JSONObject data = new JSONObject();
         try {
             data.put(USERNAME_KEY, TinyDB.getInstance(getApplicationContext()).getString(KEY_USER_JID));
             data.put(PASSWORD_KEY, TinyDB.getInstance(getApplicationContext()).getString(KEY_PASSWORD));
 
-            if (UserUtil.isShowToAllLocation()) {
+            HashMap<String,Boolean> map = new HashMap<>();
+            map.put(String.valueOf(SettingsHelper.SHOW_MY_LOCATION_ITEM_ID), UserUtil.isShowMyLocation());
+            map.put(String.valueOf(SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID), UserUtil.isShowToFriendsLocation());
+            map.put(String.valueOf(SettingsHelper.ALL_USER_LOCATION_ITEM_ID), UserUtil.isShowToAllLocation());
+
+            //add temp values
+            map.put(String.valueOf(itemId), isChecked);
+            if( itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID ){
+                map.put(String.valueOf(SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID), isChecked);
+                map.put(String.valueOf(SettingsHelper.ALL_USER_LOCATION_ITEM_ID), isChecked);
+            } else {
+                if (map.get(String.valueOf(SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID)) || map.get(String.valueOf(SettingsHelper.ALL_USER_LOCATION_ITEM_ID))) {
+                    map.put(String.valueOf(SettingsHelper.SHOW_MY_LOCATION_ITEM_ID), true);
+                } else {
+                    map.put(String.valueOf(SettingsHelper.SHOW_MY_LOCATION_ITEM_ID), false);
+                }
+            }
+
+            if ( map.get(String.valueOf(SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID)) && map.get(String.valueOf(SettingsHelper.ALL_USER_LOCATION_ITEM_ID)) ) {
                 data.put(LOCATION_STATUS, "a");
-            } else if (UserUtil.isShowToFriendsLocation()) {
+            } else if ( map.get(String.valueOf(SettingsHelper.ALL_USER_LOCATION_ITEM_ID)) ) {
+                data.put(LOCATION_STATUS, "a");
+            } else if ( map.get(String.valueOf(SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID)) ) {
                 data.put(LOCATION_STATUS, "f");
             } else {
                 data.put(LOCATION_STATUS, "n");
@@ -384,7 +404,7 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
     }
 
     private void updatePrivacyPolicy(int itemId, boolean isChecked) {
-        String privacyDataAsJson = getPrivacySettingsAsJSON();
+        String privacyDataAsJson = getPrivacySettingsAsJSON(itemId, isChecked);
         UpdatePrivacySettings updatePrivacySettings = new UpdatePrivacySettings(itemId, isChecked);
         updatePrivacySettings.execute(privacyDataAsJson);
     }
