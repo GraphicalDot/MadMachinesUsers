@@ -364,15 +364,14 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
             data.put(USERNAME_KEY, TinyDB.getInstance(getApplicationContext()).getString(KEY_USER_JID));
             data.put(PASSWORD_KEY, TinyDB.getInstance(getApplicationContext()).getString(KEY_PASSWORD));
 
-            if (UserUtil.isShowMyLocation()) {
-                if (UserUtil.isShowToAllLocation()) {
-                    data.put(LOCATION_STATUS, "a");
-                } else if (UserUtil.isShowToFriendsLocation()) {
-                    data.put(LOCATION_STATUS, "f");
-                }
+            if (UserUtil.isShowToAllLocation()) {
+                data.put(LOCATION_STATUS, "a");
+            } else if (UserUtil.isShowToFriendsLocation()) {
+                data.put(LOCATION_STATUS, "f");
             } else {
                 data.put(LOCATION_STATUS, "n");
             }
+
             data.put(APK_VERSION, getBuildConfig());
             data.put(UDID, getDeviceId(getApplicationContext()));
             Log.i("user", data.toString());
