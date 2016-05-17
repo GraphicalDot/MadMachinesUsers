@@ -11,8 +11,10 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -452,12 +454,40 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
             pDialog.dismiss();
 
             if (success) {
-                if (itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID || itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {
+                if (itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID) {
+                    UserUtil.setShowMyLocation(SettingsActivity.this, isChecked);
+                    UserUtil.setShowToFriendsLocation(SettingsActivity.this, isChecked);
+                    UserUtil.setShowToAllLocation(SettingsActivity.this, isChecked);
+
+                    changeAllRadioButtons(UserUtil.isShowMyLocation());
+                } else if (itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID) {
+                    UserUtil.setShowToFriendsLocation(SettingsActivity.this, isChecked);
+
                     if( UserUtil.isShowToFriendsLocation() || UserUtil.isShowToAllLocation() ){
+                        UserUtil.setShowMyLocation(SettingsActivity.this, true);
+
                         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
                         Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
                         switcher.setChecked(true);
                     } else {
+                        UserUtil.setShowMyLocation(SettingsActivity.this, false);
+
+                        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+                        Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+                        switcher.setChecked(false);
+                    }
+                } else if (itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {
+                    UserUtil.setShowToAllLocation(SettingsActivity.this, isChecked);
+
+                    if( UserUtil.isShowToFriendsLocation() || UserUtil.isShowToAllLocation() ){
+                        UserUtil.setShowMyLocation(SettingsActivity.this, true);
+
+                        Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
+                        Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
+                        switcher.setChecked(true);
+                    } else {
+                        UserUtil.setShowMyLocation(SettingsActivity.this, false);
+
                         Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
                         Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
                         switcher.setChecked(false);
@@ -470,7 +500,6 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                     Toolbar toolbar = (Toolbar) findViewById(R.id.tool_bar);
                     Switch switcher = (Switch) toolbar.findViewById(R.id.toolbarSwitcher);
                     switcher.setChecked(!isChecked);
-                    changeAllRadioButtons(!isChecked);
                 } else if (itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID || itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {
                     LinearLayout settingItemParentLayout = (LinearLayout) findViewById(R.id.items_container);
                     int childCount = settingItemParentLayout.getChildCount();
@@ -576,11 +605,11 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                 CheckBox checkBox = (CheckBox) view.findViewById(R.id.radio);
                 checkBox.setChecked(!checkBox.isChecked());
 
-                if (itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID) {
-                    updatePrivacyPolicy(itemId, UserUtil.isShowToFriendsLocation());
-                } else if (itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {
-                    updatePrivacyPolicy(itemId, UserUtil.isShowToAllLocation());
-                }
+//                if (itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID) {
+//                    updatePrivacyPolicy(itemId, UserUtil.isShowToFriendsLocation());
+//                } else if (itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {
+//                    updatePrivacyPolicy(itemId, UserUtil.isShowToAllLocation());
+//                }
             } else if (itemType == SettingsHelper.ITEM_TYPE_CLICK) {
                 if (itemId == SettingsHelper.CLEAR_ALL_CHATS_ITEM_ID) {
                     showdialogToClearOrDeleteAllChats(itemId);
@@ -619,10 +648,10 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                     listingAlertDialog.show(SettingsActivity.this);
                 }
             } else {
-                if (itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID) {
-                    changeAllRadioButtons(UserUtil.isShowMyLocation());
-                    updatePrivacyPolicy(itemId, UserUtil.isShowMyLocation());
-                }
+//                if (itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID) {
+//                    changeAllRadioButtons(UserUtil.isShowMyLocation());
+//                    updatePrivacyPolicy(itemId, UserUtil.isShowMyLocation());
+//                }
             }
         }
 
@@ -680,11 +709,17 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
             } else if (itemId == SettingsHelper.NOTIFICATIONS_LIGHT_ITEM_ID) {
                 UserUtil.setNotificationLight(SettingsActivity.this, isChecked);
             } else if (itemId == SettingsHelper.SHOW_MY_LOCATION_ITEM_ID) {
-                UserUtil.setShowMyLocation(SettingsActivity.this, isChecked);
+                if( UserUtil.isShowMyLocation() != isChecked ) {
+                    updatePrivacyPolicy(itemId, isChecked);
+                }
             } else if (itemId == SettingsHelper.FRIEND_ONLY_LOCATION_ITEM_ID) {
-                UserUtil.setShowToFriendsLocation(SettingsActivity.this, isChecked);
+                if( UserUtil.isShowToFriendsLocation() != isChecked ) {
+                    updatePrivacyPolicy(itemId, isChecked);
+                }
             } else if (itemId == SettingsHelper.ALL_USER_LOCATION_ITEM_ID) {
-                UserUtil.setShowToAllLocation(SettingsActivity.this, isChecked);
+                if( UserUtil.isShowToAllLocation() != isChecked ) {
+                    updatePrivacyPolicy(itemId, isChecked);
+                }
             } else if (itemId == SettingsHelper.SAVE_INCOMING_PHOTO_TO_GALLERY_ITEM_ID) {
                 UserUtil.setSaveIncomingMediaToGallery(SettingsActivity.this, isChecked);
             } else if (itemId == SettingsHelper.SAVE_CAPTURED_PHOTO_TO_GALLERY_ITEM_ID) {
