@@ -64,6 +64,7 @@ public class ContactsHandler {
 
     private Roster roster = null;
     private boolean inProcess = false;
+    private boolean forcedSync = false;
     private ContactCopyCompletedListener copyCompletedListener;
 
     private ContactsHandler() {
@@ -76,6 +77,7 @@ public class ContactsHandler {
 
     synchronized public void addCallToSyncContacts(Context context) {
         if (!inProcess) {
+            forcedSync = true;
             addContactActionsToProcess(context, true);
             process(context);
         } else {
@@ -355,7 +357,7 @@ public class ContactsHandler {
         boolean success = false;
 
         {
-            ArrayList<Contacts> contacts = SportsUnityDBHelper.getInstance(context).getListOfJIDRequireUpdate();
+            ArrayList<Contacts> contacts = SportsUnityDBHelper.getInstance(context).getListOfJIDRequireUpdate(forcedSync);
             success = updateContactInfoFromServer(context, contacts);
         }
 
@@ -363,10 +365,11 @@ public class ContactsHandler {
          * Intentionally repeating same statements in below block, to handle newly added contacts in above block.
          */
         if( success ){
-            ArrayList<Contacts> contacts = SportsUnityDBHelper.getInstance(context).getListOfJIDRequireUpdate();
+            ArrayList<Contacts> contacts = SportsUnityDBHelper.getInstance(context).getListOfJIDRequireUpdate(forcedSync);
             success = updateContactInfoFromServer(context, contacts);
         }
 
+        forcedSync = false;
         return success;
     }
 

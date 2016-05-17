@@ -334,7 +334,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
 
         ContentValues values = new ContentValues();
         values.put(ContactChatEntry.COLUMN_NAME, name);
-        values.put(ContactChatEntry.COLUMN_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
+//        values.put(ContactChatEntry.COLUMN_AVAILABLE_STATUS, Contacts.AVAILABLE_BY_MY_CONTACTS);
 
         String selection = ContactChatEntry.COLUMN_PHONE_NUMBER + " LIKE ? ";
         String[] selectionArgs = {phoneNumber};
@@ -563,7 +563,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return list;
     }
 
-    public ArrayList<Contacts> getListOfJIDRequireUpdate() {
+    public ArrayList<Contacts> getListOfJIDRequireUpdate(boolean forcedSync) {
         ArrayList<Contacts> list = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
@@ -577,7 +577,7 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
                 ContactChatEntry.COLUMN_AVAILABLE_STATUS
         };
 
-        String selection = ContactChatEntry.COLUMN_UPDATE_REQUIRED + " == 1 AND  " + ContactChatEntry.COLUMN_JID + " is not null ";
+        String selection =  (forcedSync ? " " : "ContactChatEntry.COLUMN_UPDATE_REQUIRED == 1 AND ") + ContactChatEntry.COLUMN_JID + " is not null ";
         String[] selectionArgs = null;
 
         Cursor c = db.query(ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);

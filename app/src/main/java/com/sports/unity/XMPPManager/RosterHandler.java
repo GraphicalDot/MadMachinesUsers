@@ -91,11 +91,15 @@ public class RosterHandler {
     }
 
     public void checkForPendingEntriesToBeAddedInRoster() {
-        ArrayList<String> pendingJIDsToBeAddedInRoster = SportsUnityDBHelper.getInstance(context).getPendingRosterEntries();
-        if (pendingJIDsToBeAddedInRoster.size() > 0) {
-            addEntriesToRoster(pendingJIDsToBeAddedInRoster);
-        } else {
-            //nothing
+        try {
+            ArrayList<String> pendingJIDsToBeAddedInRoster = SportsUnityDBHelper.getInstance(context).getPendingRosterEntries();
+            if (pendingJIDsToBeAddedInRoster.size() > 0) {
+                addEntriesToRoster(pendingJIDsToBeAddedInRoster);
+            } else {
+                //nothing
+            }
+        }catch (Exception ex){
+            ex.printStackTrace();
         }
     }
 
