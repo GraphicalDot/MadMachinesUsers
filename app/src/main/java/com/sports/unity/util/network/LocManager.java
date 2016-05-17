@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.sports.unity.BuildConfig;
 import com.sports.unity.R;
@@ -128,7 +130,6 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
 
     @Override
     public void onConnected(Bundle bundle) {
-        Log.i("client", "connected");
         retrieveLocation();
     }
 
@@ -185,7 +186,7 @@ public class LocManager implements GoogleApiClient.ConnectionCallbacks, GoogleAp
                     mLastLocation.getLatitude(), mLastLocation.getLongitude(), 1);
             if (addressList != null && addressList.size() > 0) {
                 Address address = addressList.get(0);
-                TinyDB.getInstance(context).putString(TinyDB.KEY_ADDRESS_LOCATION, address.getAddressLine(0) + "," + address.getLocality());
+                TinyDB.getInstance(context).putString(TinyDB.KEY_ADDRESS_LOCATION, address.getAddressLine(1) + "," + address.getLocality());
             }
         } catch (IOException e) {
             e.printStackTrace();

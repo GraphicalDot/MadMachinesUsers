@@ -22,6 +22,7 @@ import com.sports.unity.XMPPManager.XMPPService;
 import com.sports.unity.common.controller.FriendRequestsActivity;
 import com.sports.unity.common.model.ContactsHandler;
 import com.sports.unity.common.model.TinyDB;
+import com.sports.unity.common.model.UserUtil;
 import com.sports.unity.messages.controller.activity.ChatScreenActivity;
 import com.sports.unity.util.ActivityActionHandler;
 import com.sports.unity.util.CommonUtil;
@@ -672,7 +673,9 @@ public class PersonalMessaging {
         NotificationManager mNotifyMgr =
                 (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
 
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        if (UserUtil.isUserRegistered() && UserUtil.isProfileCreated()) {
+            mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        }
     }
 
     private void displayNotificationForFriendRequestAccepted(Contacts contact) {
@@ -700,6 +703,9 @@ public class PersonalMessaging {
         NotificationManager mNotifyMgr =
                 (NotificationManager) context.getSystemService(context.NOTIFICATION_SERVICE);
 
-        mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        if (UserUtil.isUserRegistered() && UserUtil.isProfileCreated()) {
+            mNotifyMgr.notify(mNotificationId, mBuilder.build());
+        }
+
     }
 }
