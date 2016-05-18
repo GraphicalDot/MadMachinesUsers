@@ -582,7 +582,9 @@ public class PersonalMessaging {
 
     public boolean sendFriendRequest(String jid) {
         boolean success = false;
-        String name = TinyDB.getInstance(context).getString(TinyDB.KEY_USERNAME);
+        String userJid = TinyDB.getInstance(context).getString(TinyDB.KEY_USER_JID);
+        Contacts contact = sportsUnityDBHelper.getContactByJid(userJid);
+        String name = contact.getName();
         if (name == null) {
             name = "unknown";
         }
