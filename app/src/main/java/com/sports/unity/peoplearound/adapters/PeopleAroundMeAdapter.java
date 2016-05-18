@@ -52,7 +52,7 @@ public class PeopleAroundMeAdapter extends ArrayAdapter<User> {
         TextView distance = (TextView) rowView.findViewById(R.id.tv_friend_distance);
 
         if (TAG == PeopleAroundActivity.FRIENDS_KEY) {
-            String username = SportsUnityDBHelper.getInstance(context).getNameByJID(user.getJid());
+            String username = SportsUnityDBHelper.getInstance(context).getNameByJIDFromAvailableContacts(user.getJid());
             if (username == null) {
                 username = user.getName();
             }

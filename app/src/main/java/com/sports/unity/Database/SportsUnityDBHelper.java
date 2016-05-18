@@ -1173,6 +1173,23 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         return name;
     }
 
+    public String getNameByJIDFromAvailableContacts(String jid) {
+        String name = null;
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String projection[] = {ContactChatEntry.COLUMN_NAME};
+        String selection = ContactChatEntry.COLUMN_JID + " LIKE ? AND " + ContactChatEntry.COLUMN_AVAILABLE_STATUS + " = " + Contacts.AVAILABLE_BY_MY_CONTACTS;
+        String[] selectionArgs = {String.valueOf(jid)};
+
+        Cursor c = db.query(ContactChatEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+        if (c.moveToFirst()) {
+            name = c.getString(0);
+        }
+        c.close();
+
+        return name;
+    }
+
     public int createGroupChatEntry(String subject, byte[] image, String groupJID) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
