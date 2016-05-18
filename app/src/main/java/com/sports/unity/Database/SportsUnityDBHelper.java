@@ -699,7 +699,35 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
         values.put(ContactChatEntry.COLUMN_IMAGE, userImage);
         values.put(ContactChatEntry.COLUMN_STATUS, status);
-        values.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, false);
+
+        String selection = ContactChatEntry.COLUMN_JID + " LIKE ? ";
+        String[] selectionArgs = {jid};
+
+        return db.update(ContactChatEntry.TABLE_NAME, values, selection, selectionArgs);
+    }
+
+    public int updateContacts(String jid, byte[] userImage, String status, boolean updateRequired) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ContactChatEntry.COLUMN_IMAGE, userImage);
+        values.put(ContactChatEntry.COLUMN_STATUS, status);
+        values.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, updateRequired);
+
+        String selection = ContactChatEntry.COLUMN_JID + " LIKE ? ";
+        String[] selectionArgs = {jid};
+
+        return db.update(ContactChatEntry.TABLE_NAME, values, selection, selectionArgs);
+    }
+
+    public int updateContacts(String jid, String name, byte[] userImage, String status, boolean updateRequired) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(ContactChatEntry.COLUMN_NAME, name);
+        values.put(ContactChatEntry.COLUMN_IMAGE, userImage);
+        values.put(ContactChatEntry.COLUMN_STATUS, status);
+        values.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, updateRequired);
 
         String selection = ContactChatEntry.COLUMN_JID + " LIKE ? ";
         String[] selectionArgs = {jid};
@@ -714,7 +742,6 @@ public class SportsUnityDBHelper extends SQLiteOpenHelper {
         values.put(ContactChatEntry.COLUMN_NAME, name);
         values.put(ContactChatEntry.COLUMN_IMAGE, userImage);
         values.put(ContactChatEntry.COLUMN_STATUS, status);
-        values.put(ContactChatEntry.COLUMN_UPDATE_REQUIRED, false);
 
         String selection = ContactChatEntry.COLUMN_JID + " LIKE ? ";
         String[] selectionArgs = {jid};

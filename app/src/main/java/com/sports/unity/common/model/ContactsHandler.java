@@ -429,20 +429,20 @@ public class ContactsHandler {
         return success;
     }
 
-    private boolean updateMyContactInfoFromVCards(Context context, ArrayList<String> jids){
-        boolean success = false;
-        try {
-            String jid = null;
-            for (int index = 0; index < jids.size(); index++) {
-                jid = jids.get(index);
-                UserProfileHandler.getInstance().loadVCardAndUpdateDB(context, jid, true);
-            }
-            success = true;
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
-        return success;
-    }
+//    private boolean updateMyContactInfoFromVCards(Context context, ArrayList<String> jids){
+//        boolean success = false;
+//        try {
+//            String jid = null;
+//            for (int index = 0; index < jids.size(); index++) {
+//                jid = jids.get(index);
+//                UserProfileHandler.getInstance().loadVCardAndUpdateDB(context, jid, true);
+//            }
+//            success = true;
+//        }catch (Exception ex){
+//            ex.printStackTrace();
+//        }
+//        return success;
+//    }
 
     private boolean updateContactInfoFromServer(Context context, ArrayList<Contacts> contacts){
         boolean success = true;
@@ -458,7 +458,7 @@ public class ContactsHandler {
                         break;
                     }
                 } else {
-                    VCard vCard = UserProfileHandler.getInstance().loadVCardAndUpdateDB(context, contact.jid, contact.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS);
+                    VCard vCard = UserProfileHandler.getInstance().loadVCardAndUpdateDBWithNoUpdateRequired(context, contact.jid, contact.availableStatus == Contacts.AVAILABLE_BY_MY_CONTACTS);
                     if (vCard == null) {
                         success = false;
                         break;

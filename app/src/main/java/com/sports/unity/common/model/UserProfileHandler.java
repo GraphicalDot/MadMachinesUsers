@@ -178,6 +178,28 @@ public class UserProfileHandler {
         return loadVCardAndUpdateDB(context, jid, true);
     }
 
+    VCard loadVCardAndUpdateDBWithNoUpdateRequired(Context context, String jid, boolean isAvailableInMyContacts){
+        VCard card = new VCard();
+        try {
+            card.load(XMPPClient.getConnection(), jid + "@" + XMPPClient.SERVICE_NAME);
+
+            String status = card.getMiddleName();
+            byte[] image = card.getAvatar();
+            String nickname = card.getNickName();
+
+            if( isAvailableInMyContacts ) {
+                SportsUnityDBHelper.getInstance(context).updateContacts(jid, image, status, false);
+            } else {
+                SportsUnityDBHelper.getInstance(context).updateContacts(jid, nickname, image, status, false);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            card = null;
+        }
+
+        return card;
+    }
+
     VCard loadVCardAndUpdateDB(Context context, String jid, boolean isAvailableInMyContacts){
         VCard card = new VCard();
         try {
