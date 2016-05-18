@@ -799,10 +799,21 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
         private ViewGroup getItemLayout() {
             ViewGroup viewGroup = (ViewGroup) LayoutInflater.from(SettingsActivity.this).inflate(R.layout.settings_item, null);
 
+            boolean isLayoutDisabled = false;
+            /*
+             * disable privacy layouts because we didn't implemented its functionality.
+             */
+            if( id == SettingsHelper.LAST_SEEN_ITEM_ID || id == SettingsHelper.PROFILE_PHOTO_ITEM_ID ||
+                    id == SettingsHelper.STATUS_ITEM_ID || id == SettingsHelper.READ_RECEIPTS_ITEM_ID ){
+                isLayoutDisabled = true;
+            }
+
             ViewGroup clickableLayout = (ViewGroup) viewGroup.findViewById(R.id.clickableLayout);
             clickableLayout.setTag(id);
             clickableLayout.setTag(R.layout.settings_item, itemType);
-            clickableLayout.setOnClickListener(itemEventListener);
+            if( isLayoutDisabled == false ) {
+                clickableLayout.setOnClickListener(itemEventListener);
+            }
             clickableLayout.setBackgroundResource(CommonUtil.getDrawable(Constants.COLOR_WHITE, false));
 
             if (iconResId != SettingsHelper.ITEM__WITH_NO_ICON) {
@@ -818,12 +829,18 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                 titleTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoSlabRegular());
             } else {
                 titleTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoRegular());
+                if( isLayoutDisabled == true ) {
+                    titleTextView.setTextColor(getResources().getColor(R.color.gray4));
+                }
             }
 
             TextView subtitleTextView = (TextView) clickableLayout.findViewById(R.id.subTitle);
             if (subTitle != null && !subTitle.isEmpty()) {
                 subtitleTextView.setText(subTitle);
                 subtitleTextView.setTypeface(FontTypeface.getInstance(getApplicationContext()).getRobotoCondensedRegular());
+                if( isLayoutDisabled == true ) {
+                    subtitleTextView.setTextColor(getResources().getColor(R.color.gray4));
+                }
             } else {
                 subtitleTextView.setVisibility(View.GONE);
             }
@@ -837,7 +854,11 @@ public class SettingsActivity extends CustomAppCompatActivity implements BlockUn
                 checkBox.setChecked(SettingsHelper.getCheckedValue(id));
                 checkBox.setVisibility(View.VISIBLE);
                 checkBox.setTag(id);
-                checkBox.setOnCheckedChangeListener(itemEventListener);
+                if( isLayoutDisabled == false ) {
+                    checkBox.setOnCheckedChangeListener(itemEventListener);
+                } else {
+                    checkBox.setEnabled(false);
+                }
             }
 
             return viewGroup;
